@@ -8,7 +8,7 @@ function plugin({
   async function onRampQuote(assetValue: AssetValue, fiatCurrency: string) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
-      throw new Error("asset chain not supported");
+      throw new Error(`Asset chain ${assetValue.chain} not supported by Kado`);
     }
     try {
       const quote = await RequestClient.get<{
@@ -47,7 +47,7 @@ function plugin({
     }
   }
 
-  async function offRampQuot(assetValue: AssetValue, fiatCurrency: string) {
+  async function offRampQuote(assetValue: AssetValue, fiatCurrency: string) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
       throw new Error("asset chain not supported");
@@ -69,10 +69,10 @@ function plugin({
           transactionType: "sell",
           fiatMethod: "sepa", // Default to ACH, can be made configurable
           partner: "fortress",
-          amount: 0.1,
-          asset: "BTC",
+          amount: assetValue.getBaseValue("number"),
+          asset: assetValue.symbol,
           blockchain,
-          currency: "EUR",
+          currency: fiatCurrency,
         },
         headers: {
           "X-Widget-Id": kadoApiKey,
@@ -162,7 +162,7 @@ function plugin({
 
   return {
     onRampQuote,
-    offRampQuot,
+    offRampQuote,
     getBlockchains,
     getAssets,
     supportedSwapkitProviders: [],
