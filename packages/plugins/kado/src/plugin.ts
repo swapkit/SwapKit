@@ -1,27 +1,63 @@
 import { type AssetValue, RequestClient, type SwapKitPluginParams } from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
 
-type KadoQuoteResponse = {
+type KadoQuoteRequest = {
   transactionType: "buy" | "sell";
-  fiatMethod: "ach" | "debit_card" | "credit_card" | "apple_pay_credit" | "apple_pay_debit" | "wire" | "sepa" | "pix" | "koywe";
+  fiatMethod:
+    | "ach"
+    | "debit_card"
+    | "credit_card"
+    | "apple_pay_credit"
+    | "apple_pay_debit"
+    | "wire"
+    | "sepa"
+    | "pix"
+    | "koywe";
   partner: "fortress";
   amount: number;
   asset: string;
   blockchain: string;
-  currency: "USD" | "CAD" | "GBP" | "EUR" | "MXN" | "COP" | "INR" | "CHF" | "AUD" | "ARS" | "BRL" | "CLP" | "JPY" | "KRW" | "PEN" | "PHP" | "SGD" | "TRY" | "UYU" | "TWD" | "VND" | "CRC" | "SEK" | "PLN" | "DKK" | "NOK" | "NZD";
+  currency:
+    | "USD"
+    | "CAD"
+    | "GBP"
+    | "EUR"
+    | "MXN"
+    | "COP"
+    | "INR"
+    | "CHF"
+    | "AUD"
+    | "ARS"
+    | "BRL"
+    | "CLP"
+    | "JPY"
+    | "KRW"
+    | "PEN"
+    | "PHP"
+    | "SGD"
+    | "TRY"
+    | "UYU"
+    | "TWD"
+    | "VND"
+    | "CRC"
+    | "SEK"
+    | "PLN"
+    | "DKK"
+    | "NOK"
+    | "NZD";
 };
 
 function plugin({
   getWallet,
   config: { kadoApiKey },
 }: SwapKitPluginParams<{ kadoApiKey: string }>) {
-  async function onRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteResponse['currency']) {
+  async function onRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteRequest["currency"]) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
       throw new Error(`Asset chain ${assetValue.chain} not supported by Kado`);
     }
     try {
-      const quoteRequest: KadoQuoteResponse = {
+      const quoteRequest: KadoQuoteRequest = {
         transactionType: "buy",
         fiatMethod: "sepa", // Default to SEPA, can be made configurable
         partner: "fortress",
@@ -59,13 +95,13 @@ function plugin({
     }
   }
 
-  async function offRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteResponse['currency']) {
+  async function offRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteRequest["currency"]) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
       throw new Error("asset chain not supported");
     }
     try {
-      const quoteRequest: KadoQuoteResponse = {
+      const quoteRequest: KadoQuoteRequest = {
         transactionType: "sell",
         fiatMethod: "sepa", // Default to SEPA, can be made configurable
         partner: "fortress",
