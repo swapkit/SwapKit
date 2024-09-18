@@ -15,12 +15,22 @@ function plugin({
   getWallet,
   config: { kadoApiKey },
 }: SwapKitPluginParams<{ kadoApiKey: string }>) {
-  async function onRampQuote(assetValue: AssetValue, fiatCurrency: string) {
+  async function onRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteResponse['currency']) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
       throw new Error(`Asset chain ${assetValue.chain} not supported by Kado`);
     }
     try {
+      const quoteRequest: KadoQuoteResponse = {
+        transactionType: "buy",
+        fiatMethod: "sepa", // Default to SEPA, can be made configurable
+        partner: "fortress",
+        amount: assetValue.getBaseValue("number"),
+        asset: assetValue.symbol,
+        blockchain,
+        currency: fiatCurrency,
+      };
+
       const quote = await RequestClient.get<{
         success: boolean;
         message: string;
@@ -33,15 +43,7 @@ function plugin({
           };
         };
       }>("https://api.kado.money/v2/ramp/quote", {
-        json: {
-          transactionType: "buy",
-          fiatMethod: "sepa", // Default to SEPA, can be made configurable
-          partner: "fortress",
-          amount: assetValue.getBaseValue("number"),
-          asset: assetValue.symbol,
-          blockchain,
-          currency: fiatCurrency,
-        },
+        json: quoteRequest,
         headers: {
           "X-Widget-Id": kadoApiKey,
         },
@@ -57,12 +59,22 @@ function plugin({
     }
   }
 
-  async function offRampQuote(assetValue: AssetValue, fiatCurrency: string) {
+  async function offRampQuote(assetValue: AssetValue, fiatCurrency: KadoQuoteResponse['currency']) {
     const blockchain = ChainToKadoChain(assetValue.chain);
     if (!blockchain) {
       throw new Error("asset chain not supported");
     }
     try {
+      const quoteRequest: KadoQuoteResponse = {
+        transactionType: "sell",
+        fiatMethod: "sepa", // Default to SEPA, can be made configurable
+        partner: "fortress",
+        amount: assetValue.getBaseValue("number"),
+        asset: assetValue.symbol,
+        blockchain,
+        currency: fiatCurrency,
+      };
+
       const quote = await RequestClient.get<{
         success: boolean;
         message: string;
@@ -75,15 +87,7 @@ function plugin({
           };
         };
       }>("https://api.kado.money/v2/ramp/quote", {
-        json: {
-          transactionType: "sell",
-          fiatMethod: "sepa", // Default to ACH, can be made configurable
-          partner: "fortress",
-          amount: assetValue.getBaseValue("number"),
-          asset: assetValue.symbol,
-          blockchain,
-          currency: fiatCurrency,
-        },
+        json: quoteRequest,
         headers: {
           "X-Widget-Id": kadoApiKey,
         },
