@@ -1,5 +1,5 @@
 "use client";
-import { type AssetValue, FeeOption, type QuoteResponseRoute } from "@swapkit/sdk";
+import { AssetValue, FeeOption, type QuoteResponseRoute } from "@swapkit/sdk";
 import { useCallback } from "react";
 
 import type { SwapKitClient } from "../swapKitClient";
@@ -30,6 +30,16 @@ export default function Swap({
     },
     [inputAsset, outputAsset?.chain, skClient],
   );
+
+  const kadoWidget = async () => {
+    const quote = await skClient?.kado.onRampQuote(
+      AssetValue.from({ asset: "ETH.ETH", value: 0.01 }),
+      "USD",
+    );
+    console.log(quote);
+  };
+
+  kadoWidget();
 
   return (
     <>

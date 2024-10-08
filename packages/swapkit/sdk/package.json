@@ -5,6 +5,7 @@
     "@swapkit/core": "workspace:*",
     "@swapkit/plugin-chainflip": "workspace:*",
     "@swapkit/plugin-evm": "workspace:*",
+    "@swapkit/plugin-kado": "workspace:*",
     "@swapkit/plugin-radix": "workspace:*",
     "@swapkit/plugin-thorchain": "workspace:*",
     "@swapkit/tokens": "workspace:*",

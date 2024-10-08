@@ -15,10 +15,11 @@ export const SupportedKadoChain = {
   Arbitrum: Chain.Arbitrum,
 };
 
-export const ChainToKadoChain = (chain: Chain): string | undefined => {
+export const ChainToKadoChain = (chain: Chain) => {
   const entries = Object.entries(SupportedKadoChain);
   const found = entries.find(([_, value]) => value === chain);
-  return found ? found[0] : undefined;
+  if (!found) throw new Error(`Chain ${chain} not supported`);
+  return found[0];
 };
 
 export const KadoChainToChain = (kadoChain: string) => {

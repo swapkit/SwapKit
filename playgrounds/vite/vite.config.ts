@@ -41,6 +41,8 @@ export default defineConfig({
 
       "@swapkit/plugin-chainflip": resolve("../../packages/plugins/chainflip/src"),
       "@swapkit/plugin-evm": resolve("../../packages/plugins/evm/src"),
+      "@swapkit/plugin-kado": resolve("../../packages/plugins/kado/src"),
+      "@swapkit/plugin-radix": resolve("../../packages/plugins/radix/src"),
       "@swapkit/plugin-thorchain": resolve("../../packages/plugins/thorchain/src"),
 
       "@swapkit/toolbox-cosmos": resolve("../../packages/toolboxes/cosmos/src"),
@@ -58,6 +60,7 @@ export default defineConfig({
       "@swapkit/wallet-keystore": resolve("../../packages/wallets/keystore/src"),
       "@swapkit/wallet-ledger": resolve("../../packages/wallets/ledger/src"),
       "@swapkit/wallet-okx": resolve("../../packages/wallets/okx/src"),
+      "@swapkit/wallet-onekey": resolve("../../packages/wallets/onekey/src"),
       "@swapkit/wallet-phantom": resolve("../../packages/wallets/phantom/src"),
       "@swapkit/wallet-radix": resolve("../../packages/wallets/radix/src"),
       "@swapkit/wallet-talisman": resolve("../../packages/wallets/talisman/src"),

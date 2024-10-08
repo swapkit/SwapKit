@@ -1,4 +1,10 @@
-import { type AssetValue, RequestClient, type SwapKitPluginParams } from "@swapkit/helpers";
+import {
+  type AssetValue,
+  type Chain,
+  ProviderName,
+  RequestClient,
+  type SwapKitPluginParams,
+} from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
 
 type KadoQuoteRequest = {
@@ -14,7 +20,7 @@ type KadoQuoteRequest = {
     | "pix"
     | "koywe";
   partner: "fortress";
-  amount: number;
+  amount: string;
   asset: string;
   blockchain: string;
   currency:
@@ -56,12 +62,13 @@ function plugin({
     if (!blockchain) {
       throw new Error(`Asset chain ${assetValue.chain} not supported by Kado`);
     }
+    debugger;
     try {
       const quoteRequest: KadoQuoteRequest = {
         transactionType: "buy",
         fiatMethod: "sepa", // Default to SEPA, can be made configurable
         partner: "fortress",
-        amount: assetValue.getBaseValue("number"),
+        amount: assetValue.getValue("string"),
         asset: assetValue.symbol,
         blockchain,
         currency: fiatCurrency,
@@ -79,7 +86,7 @@ function plugin({
           };
         };
       }>("https://api.kado.money/v2/ramp/quote", {
-        json: quoteRequest,
+        searchParams: quoteRequest,
         headers: {
           "X-Widget-Id": kadoApiKey,
         },
@@ -237,13 +244,49 @@ function plugin({
     }
   }
 
+  function getKadoWidgetUrl({
+    sellAssetValue,
+    buyAssetValue,
+    supportedAssets,
+    recipient,
+    networkList,
+    type,
+    typeList,
+    widgetMode,
+  }: {
+    sellAssetValue: AssetValue;
+    buyAssetValue: AssetValue;
+    supportedAssets: AssetValue[];
+    recipient: string;
+    networkList: Chain[];
+    type: "BUY" | "SELL";
+    typeList: "BUY" | "SELL";
+    widgetMode: "minimal" | "full";
+  }) {
+    const urlParams = new URLSearchParams({
+      onPayAmount: sellAssetValue.getValue("string"),
+      onPayCurrency: sellAssetValue.symbol,
+      onRevCurrency: buyAssetValue.symbol,
+      cryptoList: supportedAssets.map((asset) => asset.symbol).join(","),
+      onToAddress: recipient,
+      network: ChainToKadoChain(buyAssetValue.chain).toUpperCase(),
+      networkList: networkList.map((chain) => ChainToKadoChain(chain).toUpperCase()).join(","),
+      product: type,
+      productList: typeList,
+      mode: widgetMode,
+    });
+
+    return `https://app.kado.money/?${urlParams.toString()}`;
+  }
+
   return {
     onRampQuote,
     offRampQuote,
     getBlockchains,
     getAssets,
     getOrderStatus,
-    supportedSwapkitProviders: [],
+    getKadoWidgetUrl,
+    supportedSwapkitProviders: [ProviderName.KADO],
   };
 }
 

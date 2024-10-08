@@ -69,6 +69,11 @@ export type ConnectConfig = {
     applicationVersion: string;
     network: RadixNetwork;
   };
+
+  /**
+   * @optional for setting the kado api key
+   */
+  kadoApiKey?: string;
 };
 
 export type ConnectWalletParams<M = { [key in string]: any }> = {
