@@ -1,4 +1,4 @@
-import type { QuoteResponseRoute } from "@swapkit/api";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
 import {
   ApproveMode,
   type ApproveReturnType,
@@ -30,8 +30,8 @@ function plugin({ getWallet }: SwapKitPluginParams) {
 
     if (!(EVMChains.includes(evmChain) && tx)) throw new SwapKitError("core_swap_invalid_params");
 
-    const { from, to, data } = tx;
-    return wallet.sendTransaction({ from, to, data, value: BigInt(tx.value) }, feeOptionKey);
+    const { from, to, data, value } = tx as EVMTransaction;
+    return wallet.sendTransaction({ from, to, data, value: BigInt(value) }, feeOptionKey);
   }
 
   /**

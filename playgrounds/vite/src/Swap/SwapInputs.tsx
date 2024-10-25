@@ -1,5 +1,5 @@
 "use client";
-import type { AssetValue, QuoteResponseRoute, SwapKit } from "@swapkit/sdk";
+import type { AssetValue, EVMTransaction, QuoteResponseRoute, SwapKit } from "@swapkit/sdk";
 import { ProviderName, SwapKitApi, SwapKitNumber } from "@swapkit/sdk";
 import { useCallback, useState } from "react";
 
@@ -68,10 +68,12 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
       return;
     }
 
-    route.tx?.from && (await skClient.isAssetValueApproved(inputAssetValue, route.tx?.from))
+    const tx = route.tx as EVMTransaction;
+
+    tx?.from && (await skClient.isAssetValueApproved(inputAssetValue, tx?.from))
       ? handleSwap(route, false)
-      : route.tx?.from
-        ? skClient.approveAssetValue(inputAssetValue, route.tx?.from)
+      : tx?.from
+        ? skClient.approveAssetValue(inputAssetValue, tx?.from)
         : new Error("Approval Spender not found");
   };
 

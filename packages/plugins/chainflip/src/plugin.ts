@@ -160,7 +160,7 @@ function plugin({
       sellAsset,
       maxBoostFeeBps,
       chainflipSDKBroker: useChainflipSDKBroker,
-      ...chainflip,
+      ...(chainflip ? chainflip : {}),
     });
 
     const tx = await wallet.transfer({

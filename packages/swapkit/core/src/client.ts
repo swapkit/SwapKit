@@ -1,4 +1,4 @@
-import type { QuoteResponseRoute } from "@swapkit/api";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
 
 import {
   ApproveMode,
@@ -359,7 +359,10 @@ export function SwapKit<
             return undefined;
           }
 
-          return wallet.estimateTransactionFee({ ...tx, value: BigInt(tx.value) }, feeOptionKey);
+          return wallet.estimateTransactionFee(
+            { ...(tx as EVMTransaction), value: BigInt((tx as EVMTransaction).value) },
+            feeOptionKey,
+          );
         }
 
         return AssetValue.from({ chain });
