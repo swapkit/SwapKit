@@ -240,6 +240,14 @@ function broadcastTransaction(connection: Connection) {
 export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: string } = {}) => {
   const connection = new Connection(rpcUrl, "confirmed");
 
+  const txBuffer = Buffer.from(
+    "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAsXaajhKfcBQRfsEgQNrpYAsLt6lONXsjWcoINdqVJrFFk3NY",
+    "base64",
+  );
+  const tx = Transaction.from(txBuffer);
+
+  console.log(tx);
+
   return {
     connection,
     createKeysForPath,
