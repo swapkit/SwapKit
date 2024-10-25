@@ -245,18 +245,17 @@ export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: stri
       // First try to decode as base64
       const txBuffer = Buffer.from(serializedTx, "base64");
       return Transaction.from(txBuffer);
-    } catch (e) {
-      console.log(e);
-      const txData = JSON.parse(serializedTx);
-      return Transaction.from(Buffer.from(txData));
+    } catch {
+      try {
+        // If base64 fails, try parsing as serialized transaction data
+        const txData = JSON.parse(serializedTx);
+        const serializedData = typeof txData === 'string' ? txData : txData.data;
+        return Transaction.from(Buffer.from(serializedData, 'base64'));
+      } catch (error) {
+        throw new SwapKitError("core_transaction_invalid_format", error);
+      }
     }
   };
-
-  console.log(
-    deserializeTransaction(
-      "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAsXaajhKfcBQRfsEgQNrpYAsLt6lONXsjWcoINdqVJrFFk3NY",
-    ),
-  );
 
   return {
     connection,
