@@ -20,7 +20,7 @@ import type {
   EVMTxParams,
   Eip1193Provider,
 } from "@swapkit/toolbox-evm";
-import type { SolanaProvider } from "@swapkit/toolbox-solana";
+import type { PublicKey, SOLToolbox, SolanaProvider } from "@swapkit/toolbox-solana";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -237,6 +237,34 @@ export function cosmosTransfer({
     } catch (error) {
       throw new SwapKitError("core_transaction_failed", { error });
     }
+  };
+}
+
+export function solanaTransfer(
+  solToolbox: ReturnType<typeof SOLToolbox>,
+  walletPublicKey: PublicKey,
+) {
+  return async ({
+    recipient,
+    assetValue,
+    memo,
+    isProgramDerivedAddress,
+  }: TransferParams & { isProgramDerivedAddress?: boolean }) => {
+    const transaction = await solToolbox.createSolanaTransaction({
+      recipient,
+      assetValue,
+      memo,
+      fromPublicKey: walletPublicKey,
+      isProgramDerivedAddress,
+    });
+
+    const signedTransaction = await window.xfi?.solana.signTransaction(transaction);
+
+    if (!signedTransaction) {
+      throw new SwapKitError("core_transaction_failed");
+    }
+
+    return solToolbox.broadcastTransaction(signedTransaction);
   };
 }
 

@@ -1,4 +1,5 @@
 import { mnemonicToSeedSync } from "@scure/bip39";
+import { createMemoInstruction } from "@solana/spl-memo";
 import {
   TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
@@ -157,15 +158,16 @@ export async function createSolanaTokenTransaction({
   return transaction;
 }
 
-function transfer(connection: Connection) {
+function createSolanaTransaction(connection: Connection) {
   return async ({
     recipient,
     assetValue,
-    fromKeypair,
+    fromPublicKey,
+    memo,
     isProgramDerivedAddress,
   }: WalletTxParams & {
     assetValue: AssetValue;
-    fromKeypair: Keypair;
+    fromPublicKey: PublicKey;
     isProgramDerivedAddress?: boolean;
   }) => {
     if (!(isProgramDerivedAddress || validateAddress(recipient))) {
@@ -175,7 +177,7 @@ function transfer(connection: Connection) {
     const transaction = assetValue.isGasAsset
       ? new Transaction().add(
           SystemProgram.transfer({
-            fromPubkey: fromKeypair.publicKey,
+            fromPubkey: fromPublicKey,
             lamports: assetValue.getBaseValue("number"),
             toPubkey: new PublicKey(recipient),
           }),
@@ -185,7 +187,7 @@ function transfer(connection: Connection) {
             amount: assetValue.getBaseValue("number"),
             connection,
             decimals: assetValue.decimal as number,
-            from: fromKeypair.publicKey,
+            from: fromPublicKey,
             recipient,
             tokenAddress: assetValue.address,
           })
@@ -195,11 +197,43 @@ function transfer(connection: Connection) {
       throw new SwapKitError("core_transaction_invalid_sender_address");
     }
 
+    if (memo) transaction.add(createMemoInstruction(memo));
+
     const blockHash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockHash.blockhash;
-    transaction.feePayer = fromKeypair.publicKey;
+    transaction.feePayer = fromPublicKey;
+
+    return transaction;
+  };
+}
+
+function transfer(connection: Connection) {
+  return async ({
+    recipient,
+    assetValue,
+    fromKeypair,
+    memo,
+    isProgramDerivedAddress,
+  }: WalletTxParams & {
+    assetValue: AssetValue;
+    fromKeypair: Keypair;
+    isProgramDerivedAddress?: boolean;
+  }) => {
+    const transaction = await createSolanaTransaction(connection)({
+      recipient,
+      assetValue,
+      memo,
+      fromPublicKey: fromKeypair.publicKey,
+      isProgramDerivedAddress,
+    });
 
     return sendAndConfirmTransaction(connection, transaction, [fromKeypair]);
+  };
+}
+
+function broadcastTransaction(connection: Connection) {
+  return (transaction: Transaction) => {
+    return connection.sendRawTransaction(transaction.serialize());
   };
 }
 
@@ -210,8 +244,10 @@ export const SOLToolbox = ({ rpcUrl = RPCUrl.Solana }: { rpcUrl?: string } = {})
     connection,
     createKeysForPath,
     getAddressFromKeys,
+    createSolanaTransaction: createSolanaTransaction(connection),
     getBalance: getBalance(connection),
     transfer: transfer(connection),
+    broadcastTransaction: broadcastTransaction(connection),
     validateAddress,
   };
 };

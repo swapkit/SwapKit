@@ -26,6 +26,8 @@ export type SolanaWallets = {
   [Chain.Solana]: ReturnType<typeof SOLToolbox>;
 };
 
+export type { PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
+
 export interface SolanaProvider {
   connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;
   disconnect: () => Promise<void>;
@@ -40,10 +42,10 @@ export interface SolanaProvider {
     transaction: Transaction | VersionedTransaction,
     opts?: SendOptions,
   ) => Promise<{ signature: string; publicKey: PublicKey }>;
-  signTransaction: (
-    transaction: Transaction | VersionedTransaction,
-  ) => Promise<Transaction | VersionedTransaction>;
-  signAllTransactions: (
-    transactions: (Transaction | VersionedTransaction)[],
-  ) => Promise<(Transaction | VersionedTransaction)[]>;
+  signTransaction: <T extends Transaction | VersionedTransaction = Transaction>(
+    transaction: T,
+  ) => Promise<T>;
+  signAllTransactions: <T extends Transaction | VersionedTransaction = Transaction>(
+    transactions: T[],
+  ) => Promise<T[]>;
 }
