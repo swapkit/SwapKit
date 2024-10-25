@@ -8,6 +8,156 @@ import {
 } from "@swapkit/helpers";
 import { z } from "zod";
 
+export enum ErrorCode {
+  unknownError = "unknownError",
+  test_error = "test_error",
+  providerDetailsError = "providerDetailsError",
+  blockHeaderNotFound = "blockHeaderNotFound",
+  blockHashNotFoundAtHeight = "blockHashNotFoundAtHeight",
+  blockHashNotFoundAtHash = "blockHashNotFoundAtHash",
+  txHashMissing = "txHashMissing",
+  assetValueMissingInfo = "assetValueMissingInfo",
+  invalidAsset = "invalidAsset",
+  blockIsRequired = "blockIsRequired",
+  currentBlockHeaderNotFound = "currentBlockHeaderNotFound",
+  failedToRetrieveBalance = "failedToRetrieveBalance",
+  failedToRetrieveBlock = "failedToRetrieveBlock",
+  failedToRetrieveFees = "failedToRetrieveFees",
+  notImplementedBCH = "notImplementedBCH",
+  notImplementedDoge = "notImplementedDoge",
+  noPoolsFound = "noPoolsFound",
+  noVaultsFound = "noVaultsFound",
+  noTxFound = "noTxFound",
+  noInputCoinFound = "noInputCoinFound",
+  noBlockDataFound = "noBlockDataFound",
+  multipleCosmosMessages = "multipleCosmosMessages",
+  heightOrHashNotProvided = "heightOrHashNotProvided",
+  unknownDenom = "unknownDenom",
+  invalidBlockHeight = "invalidBlockHeight",
+  timestampExtrinsicNoArgumentsForBlock = "timestampExtrinsicNoArgumentsForBlock",
+  timestampExtrinsicNoTimestampForBlock = "timestampExtrinsicNoTimestampForBlock",
+  noTimestampExtrinsicForHash = "noTimestampExtrinsicForHash",
+  timestampExtrinsicNoArgumentsForHash = "timestampExtrinsicNoArgumentsForHash",
+  txMemoUndefined = "txMemoUndefined",
+  txMemoIncorrect = "txMemoIncorrect",
+  txTypeNotFound = "txTypeNotFound",
+  txNoMessage = "txNoMessage",
+  txNotFound = "txNotFound",
+  txReceiptNotFound = "txReceiptNotFound",
+  txParsingError = "txParsingError",
+  txLogsParsingError = "txLogsParsingError",
+  blockNotFound = "blockNotFound",
+  balanceNotFound = "balanceNotFound",
+  configError = "configError",
+  synthSwapDisallowed = "synthSwapDisallowed",
+  providerQuoteTimeout = "providerQuoteTimeout",
+  noQuoteResponse = "noQuoteResponse",
+  noPoolAssetsFound = "noPoolAssetsFound",
+  noThorchainPools = "noThorchainPools",
+  noMayachainPools = "noMayachainPools",
+  noThorchainNetworkInfo = "noThorchainNetworkInfo",
+  invalidAffiliateFee = "invalidAffiliateFee",
+  invalidBuyAssetAddress = "invalidBuyAssetAddress",
+  invalidSellAssetAddress = "invalidSellAssetAddress",
+  invalidSourceAddress = "invalidSourceAddress",
+  invalidDestinationAddress = "invalidDestinationAddress",
+  sourceAddressIsSmartContract = "sourceAddressIsSmartContract",
+  destinationAddressIsSmartContract = "destinationAddressIsSmartContract",
+  invalidChainId = "invalidChainId",
+  unsupportedChainId = "unsupportedChainId",
+  unsupportedEVMChainId = "unsupportedEVMChainId",
+  unsupportedMethod = "unsupportedMethod",
+  unsupportedProvider = "unsupportedProvider",
+  invalidParamsForMethod = "invalidParamsForMethod",
+  unsupportedAdapter = "unsupportedAdapter",
+  noWhitelistTokens = "noWhitelistTokens",
+  failedFetchGasPrice = "failedFetchGasPrice",
+  failedToCreateDepositChannel = "failedToCreateDepositChannel",
+  noProviderDetailsFound = "noProviderDetailsFound",
+  noTokenListsFound = "noTokenListsFound",
+  tokenNotFound = "tokenNotFound",
+  tokenPriceNotFound = "tokenPriceNotFound",
+  tokenPriceFailedToUpdate = "tokenPriceFailedToUpdate",
+  swapAmountTooSmall = "swapAmountTooSmall",
+  legsArrayIsEmpty = "legsArrayIsEmpty",
+  failedToFetchQuoteForLeg = "failedToFetchQuoteForLeg",
+  noBlockHeaderFound = "noBlockHeaderFound",
+  failedToSimulateSwap = "failedToSimulateSwap",
+  addressScreeningFailed = "addressScreeningFailed",
+  noLiquidtyProvidersFound = "noLiquidtyProvidersFound",
+  insufficientLiquidity = "insufficientLiquidity",
+  noSaversFound = "noSaversFound",
+  noInboundDataFound = "noInbounDataFound",
+  noInboundAddressesFound = "noInboundAddressesFound",
+  noInboundAddressFoundForChain = "noInboundAddressFoundForChain",
+  noLastBlocksFound = "noLastBlocksFound",
+  noVersionFound = "noVersionFound",
+  noConstantsFound = "noConstantsFound",
+  noMimirsFound = "noMimirsFound",
+  noRoutesFound = "noRoutesFound",
+  quoteNotFound = "quoteNotFound",
+  ledgerSignFailed = "ledgerSignFailed",
+  ledgerWrongPayload = "ledgerWrongPayload",
+  ledgerFetchSwapFailed = "ledgerFetchSwapFailed",
+  failedToFetchTx = "failedToFetchTx",
+  failedBuildTransactionDetails = "failedBuildTransactionDetails",
+  noLegsForRoute = "noLegsForRoute",
+  noRouterAddressFound = "noRouterAddressFound",
+  noAggregatorAddressFound = "noAggregatorAddressFound",
+  noContractInstanceFound = "noContractInstanceFound",
+  noContractAddressFound = "noContractAddressFound",
+  invalidAffiliate = "invalidAffiliate",
+  thornameAffiliate = "thornameAffiliate",
+  providerNotfound = "No provider found",
+  noRecordFound = "No Record found",
+  slippageTooLow = "Slippage too low",
+  tradingHalted = "tradingHalted",
+  noWrappedGasAsset = "noWrappedGasAsset",
+  aggregatorAddressNotFound = "aggregatorAddressNotFound",
+  routerAddressNotFound = "routerAddressNotFound",
+  dummyAddressNotFound = "dummyAddressNotFound",
+  trackerError = "trackerError",
+  thorchainPoolUnavailable = "thorchainPoolUnavailable",
+  noOhlcvDataFound = "noOhlcvDataFound",
+  noTradingPairs = "noTradingPairs",
+  noLoanPositionFound = "noLoanPositionFound",
+  noLendingAvailability = "noLendingAvailability",
+  lendingRepayTooSmall = "lendingRepayTooSmall",
+  missingState = "missingState",
+  ledgerSwapNotFound = "ledgerSwapNotFound",
+  ledgerSwapNotReadyForTracking = "ledgerSwapNotReadyForTracking",
+  errorEstimatingGas = "errorEstimatingGas",
+  apiKeyInvalid = "apiKeyInvalid",
+  apiKeyFailedToUpdate = "apiKeyFailedToUpdate",
+  apiKeyExpired = "apiKeyExpired",
+  unauthorized = "unauthorized",
+  failedToCreateMemo = "failedToCreateMemo",
+  radixIncorrectInstructions = "radixIncorrectInstructions",
+  radixTxMissedParam = "radixTxMissedParam",
+  radixTxMissedAccount = "radixTxMissedAccount",
+  radixManifestParseError = "radixManifestParseError",
+  radixManifestBuildError = "radixManifestBuildError",
+  invalidAddressForChain = "invalidAddressForChain",
+  riskyAddress = "riskyAddress",
+  noRoutesToProcess = "noRoutesToProcess",
+  sellAssetAmountTooSmall = "sellAssetAmountTooSmall",
+  missingPrivateKey = "missingPrivateKey",
+  noMemoPriceProtection = "noMemoPriceProtection",
+}
+
+export enum PriorityLabel {
+  CHEAPEST = "CHEAPEST",
+  FASTEST = "FASTEST",
+  RECOMMENDED = "RECOMMENDED",
+}
+
+export enum RouteQuoteTxType {
+  PSBT = "PSBT",
+  EVM = "EVM",
+  COSMOS = "COSMOS",
+  RADIX = "RADIX",
+}
+
 export enum TxnType {
   native_send = "native_send", // native send, msgSend, etc.
   token_transfer = "token_transfer", // token transfer
@@ -514,6 +664,26 @@ export const RouteQuoteMetadataAssetSchema = z.object({
 
 export type RouteQuoteMetadataAsset = z.infer<typeof RouteQuoteMetadataAssetSchema>;
 
+export const ChainflipMetadataSchema = z.object({
+  boost: z.optional(z.boolean()),
+  maxBoostFeeBps: z.optional(z.number()),
+  dcaParams: z.optional(
+    z.object({
+      chunkIntervalBlocks: z.number(),
+      numberOfChunks: z.number(),
+    }),
+  ),
+  killOrFillParams: z.optional(
+    z.object({
+      refundAddress: z.string(),
+      retryDurationBlocks: z.number(),
+      slippageTolerancePercent: z.number(),
+    }),
+  ),
+});
+
+export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
+
 export const RouteQuoteMetadataSchema = z.object({
   priceImpact: z.optional(
     z.number({
@@ -528,6 +698,13 @@ export const RouteQuoteMetadataSchema = z.object({
   ),
   streamingInterval: z.number().optional(),
   maxStreamingQuantity: z.number().optional(),
+  tags: z.array(z.nativeEnum(PriorityLabel)),
+
+  affiliate: z.optional(z.string()),
+  affiliateFee: z.optional(z.string()),
+
+  txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
+  chainflip: z.optional(ChainflipMetadataSchema),
 });
 
 export const RouteQuoteWarningSchema = z.array(
@@ -537,6 +714,8 @@ export const RouteQuoteWarningSchema = z.array(
     tooltip: z.string().optional(),
   }),
 );
+
+export type RouteQuoteWarning = z.infer<typeof RouteQuoteWarningSchema>;
 
 const QuoteResponseRouteLegItem = z.object({
   provider: z.nativeEnum(ProviderName),
@@ -602,8 +781,8 @@ const QuoteResponseRouteItem = z.object({
     }),
   ),
   fees: FeesSchema,
-  tx: z.optional(EVMTransactionSchema),
-  transaction: z.optional(z.unknown()), // Can take many forms depending on the chains
+  txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
+  tx: z.optional(z.union([EVMTransactionSchema, z.string()])),
   estimatedTime: z.optional(EstimatedTimeSchema), // TODO remove optionality
   totalSlippageBps: z.number({
     description: "Total slippage in bps",
@@ -618,10 +797,21 @@ export const QuoteResponseSchema = z.object({
     description: "Quote ID",
   }),
   routes: z.array(QuoteResponseRouteItem),
+  // in case of bad request or actual backend error, not bad quotes from providers
   error: z.optional(
     z.string({
       description: "Error message",
     }),
+  ),
+  // errors from providers
+  providerErrors: z.optional(
+    z.array(
+      z.object({
+        provider: z.nativeEnum(ProviderName).optional(),
+        errorCode: z.optional(z.nativeEnum(ErrorCode)),
+        message: z.optional(z.string()),
+      }),
+    ),
   ),
 });
 
