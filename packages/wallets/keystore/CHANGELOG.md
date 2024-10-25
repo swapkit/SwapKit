@@ -1,5 +1,13 @@
 # @swapkit/wallet-keystore
 
+## 1.2.32
+
+### Patch Changes
+
+- Updated dependencies [[`931028a`](https://github.com/thorswap/SwapKit/commit/931028ab14c54cf85655ce02e947a9bf57b67d2e)]:
+  - @swapkit/toolbox-solana@1.2.0
+  - @swapkit/helpers@1.14.0
+
 ## 1.2.31
 
 ### Patch Changes
