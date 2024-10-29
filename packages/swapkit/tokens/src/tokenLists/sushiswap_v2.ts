@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2024-10-22T01:01:08.214Z",
+  timestamp: "2024-10-29T00:01:11.490Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 91,
+  count: 89,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -412,16 +412,6 @@ export const list = {
       ticker: "KP3R",
     },
     {
-      address: "0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.LDO-0X5A98FCBEA516CF06857215779FD812CA3BEF1B32",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.ldo-0x5a98fcbea516cf06857215779fd812ca3bef1b32.png",
-      ticker: "LDO",
-    },
-    {
       address: "0x55332170Cb7d36545B500f66a80291C83d40Bba7",
       chain: "ETH",
       chainId: "1",
@@ -630,16 +620,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.rail-0xe76c6c83af64e4c60245d8c7de953df673a7a33d.png",
       ticker: "RAIL",
-    },
-    {
-      address: "0xba5BDe662c17e2aDFF1075610382B9B691296350",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.RARE-0XBA5BDE662C17E2ADFF1075610382B9B691296350",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.rare-0xba5bde662c17e2adff1075610382b9b691296350.png",
-      ticker: "RARE",
     },
     {
       address: "0xa35Bd2246978Dfbb1980DFf8Ff0f5834335dFdbc",
