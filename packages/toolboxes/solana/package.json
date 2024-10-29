@@ -6,7 +6,8 @@
     "@solana/spl-token": "0.4.9",
     "@solana/spl-token-registry": "0.2.4574",
     "@solana/web3.js": "1.95.3",
-    "@swapkit/helpers": "workspace:*"
+    "@swapkit/helpers": "workspace:*",
+    "micro-key-producer": "0.7.1"
   },
   "description": "SwapKit - Toolbox solana",
   "files": [

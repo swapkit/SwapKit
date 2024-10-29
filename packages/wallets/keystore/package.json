@@ -9,7 +9,7 @@
     "@swapkit/toolbox-substrate": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*",
     "blakejs": "1.2.1",
-    "micro-key-producer": "0.7.0"
+    "micro-key-producer": "0.7.1"
   },
   "description": "SwapKit Wallet - Keystore",
   "files": [
