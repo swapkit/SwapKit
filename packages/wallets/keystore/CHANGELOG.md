@@ -1,5 +1,15 @@
 # @swapkit/wallet-keystore
 
+## 1.2.33
+
+### Patch Changes
+
+- [#1075](https://github.com/thorswap/SwapKit/pull/1075) [`003b4df`](https://github.com/thorswap/SwapKit/commit/003b4df48afc1abf7694f2fb5310a08e91b954ad) Thanks [@towanTG](https://github.com/towanTG)! - Adds and updates solana HDKey package dependency
+
+- Updated dependencies [[`003b4df`](https://github.com/thorswap/SwapKit/commit/003b4df48afc1abf7694f2fb5310a08e91b954ad)]:
+  - @swapkit/toolbox-solana@1.2.1
+  - @swapkit/helpers@1.14.0
+
 ## 1.2.32
 
 ### Patch Changes
