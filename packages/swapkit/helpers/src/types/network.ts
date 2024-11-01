@@ -1,6 +1,6 @@
 export enum RPCUrl {
   Arbitrum = "https://arb1.arbitrum.io/rpc",
-  Avalanche = "https://node-router.thorswap.net/avalanche-c",
+  Avalanche = "https://avalanche-c-chain-rpc.publicnode.com",
   Base = "https://base.llamarpc.com",
   BinanceSmartChain = "https://bsc-dataseed.binance.org",
   Bitcoin = "https://node-router.thorswap.net/bitcoin",
@@ -9,7 +9,7 @@ export enum RPCUrl {
   Cosmos = "https://node-router.thorswap.net/cosmos/rpc",
   Dash = "https://node-router.thorswap.net/dash",
   Dogecoin = "https://node-router.thorswap.net/dogecoin",
-  Ethereum = "https://node-router.thorswap.net/ethereum",
+  Ethereum = "https://ethereum-rpc.publicnode.com",
   Kujira = "https://rpc-kujira.synergynodes.com/",
   Litecoin = "https://node-router.thorswap.net/litecoin",
   Maya = "https://tendermint.mayachain.info",
