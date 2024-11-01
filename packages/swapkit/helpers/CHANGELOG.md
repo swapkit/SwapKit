@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 1.14.1
+
+### Patch Changes
+
+- [#1077](https://github.com/thorswap/SwapKit/pull/1077) [`e0690ea`](https://github.com/thorswap/SwapKit/commit/e0690ea10fb0691f28783b16b624b7f7361e8916) Thanks [@towanTG](https://github.com/towanTG)! - Uses public evm nodes
+
 ## 1.14.0
 
 ### Minor Changes

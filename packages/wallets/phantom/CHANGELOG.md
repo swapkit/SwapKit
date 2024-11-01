@@ -1,5 +1,15 @@
 # @swapkit/wallet-phantom
 
+## 1.1.22
+
+### Patch Changes
+
+- Updated dependencies [[`e0690ea`](https://github.com/thorswap/SwapKit/commit/e0690ea10fb0691f28783b16b624b7f7361e8916)]:
+  - @swapkit/helpers@1.14.1
+  - @swapkit/toolbox-evm@1.6.2
+  - @swapkit/toolbox-solana@1.2.2
+  - @swapkit/toolbox-utxo@1.1.27
+
 ## 1.1.21
 
 ### Patch Changes

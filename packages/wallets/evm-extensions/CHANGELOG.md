@@ -1,5 +1,13 @@
 # @swapkit/wallet-evm-extensions
 
+## 1.1.18
+
+### Patch Changes
+
+- Updated dependencies [[`e0690ea`](https://github.com/thorswap/SwapKit/commit/e0690ea10fb0691f28783b16b624b7f7361e8916)]:
+  - @swapkit/helpers@1.14.1
+  - @swapkit/toolbox-evm@1.6.2
+
 ## 1.1.17
 
 ### Patch Changes
