@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 1.14.2
+
+### Patch Changes
+
+- [#1079](https://github.com/thorswap/SwapKit/pull/1079) [`c59a204`](https://github.com/thorswap/SwapKit/commit/c59a2041006965026bb5c3fd52e59eb9fb204182) Thanks [@towanTG](https://github.com/towanTG)! - Changes some RPCUrl to third party
+
 ## 1.14.1
 
 ### Patch Changes

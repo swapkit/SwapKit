@@ -1,5 +1,15 @@
 # @swapkit/wallet-keepkey-bex
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`c59a204`](https://github.com/thorswap/SwapKit/commit/c59a2041006965026bb5c3fd52e59eb9fb204182)]:
+  - @swapkit/helpers@1.14.2
+  - @swapkit/toolbox-cosmos@1.4.3
+  - @swapkit/toolbox-evm@1.6.3
+  - @swapkit/toolbox-utxo@1.1.28
+
 ## 1.0.8
 
 ### Patch Changes
