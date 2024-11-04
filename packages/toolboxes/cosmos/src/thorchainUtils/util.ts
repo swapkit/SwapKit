@@ -1,4 +1,4 @@
-import { type AssetValue, ChainId, RPCUrl } from "@swapkit/helpers";
+import { type AssetValue, ChainId, getRPCUrl } from "@swapkit/helpers";
 
 import { createStargateClient, getDenomWithChain } from "../util";
 import { bech32ToBase64 } from "./addressFormat";
@@ -17,7 +17,7 @@ export const buildDepositTx = async ({
   assetValue: AssetValue;
 }) => {
   const client = await createStargateClient(
-    isStagenet ? RPCUrl.THORChainStagenet : RPCUrl.THORChain,
+    isStagenet ? getRPCUrl("THORChainStagenet") : getRPCUrl("THORChain"),
   );
   const accountOnChain = await client.getAccount(signer);
 

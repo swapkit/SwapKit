@@ -4,7 +4,7 @@ import {
   ChainId,
   ChainToExplorerUrl,
   FeeOption,
-  RPCUrl,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
 import { Contract, Transaction } from "ethers";
@@ -94,7 +94,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.OptimismHex,
   chainName: "Optimism",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [RPCUrl.Optimism],
+  rpcUrls: [getRPCUrl("Optimism")],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
 });
 

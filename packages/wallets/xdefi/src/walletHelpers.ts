@@ -7,10 +7,10 @@ import {
   type EVMChain,
   EVMChains,
   type FeeOption,
-  RPCUrl,
   SwapKitError,
   WalletOption,
   erc20ABI,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type {
@@ -219,7 +219,7 @@ export function cosmosTransfer({
     // @ts-ignore
     const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
     const cosmJS = await createSigningStargateClient(
-      rpcUrl || RPCUrl.Cosmos,
+      rpcUrl || getRPCUrl("Cosmos"),
       offlineSigner,
       chainId === ChainId.Kujira ? "0.0003ukuji" : undefined,
     );

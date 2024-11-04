@@ -4,7 +4,7 @@ import {
   ChainId,
   ChainToExplorerUrl,
   type FeeOption,
-  RPCUrl,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
@@ -18,7 +18,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.PolygonHex,
   chainName: "Polygon Mainnet",
   nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals: BaseDecimal.MATIC },
-  rpcUrls: [RPCUrl.Polygon],
+  rpcUrls: [getRPCUrl("Polygon")],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Polygon]],
 });
 

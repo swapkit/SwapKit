@@ -4,13 +4,13 @@ import {
   type ConnectWalletParams,
   type DerivationPathArray,
   NetworkDerivationPath,
-  RPCUrl,
   type WalletChain,
   WalletOption,
   type WalletTxParams,
   type Witness,
   derivationPathToString,
   ensureEVMApiKeys,
+  getRPCUrl,
   setRequestClientConfig,
   updatedLastIndex,
 } from "@swapkit/helpers";
@@ -167,7 +167,7 @@ const getWalletMethodsForChain = async ({
       const signer = await createKeyring(phrase, Network[chain].prefix);
       const toolbox = await getToolboxByChain(chain, {
         signer,
-        providerUrl: chain === Chain.Polkadot ? RPCUrl.Polkadot : RPCUrl.Chainflip,
+        providerUrl: chain === Chain.Polkadot ? getRPCUrl("Polkadot") : getRPCUrl("Chainflip"),
       });
 
       return { address: signer.address, walletMethods: toolbox };

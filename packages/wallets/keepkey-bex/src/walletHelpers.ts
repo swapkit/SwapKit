@@ -5,10 +5,10 @@ import {
   type EVMChain,
   EVMChains,
   type FeeOption,
-  RPCUrl,
   SwapKitError,
   WalletOption,
   erc20ABI,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type {
@@ -190,7 +190,7 @@ export function cosmosTransfer({
     );
     // @ts-expect-error assumed available connection
     const offlineSigner = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(chainId);
-    const cosmJS = await createSigningStargateClient(rpcUrl || RPCUrl.Cosmos, offlineSigner);
+    const cosmJS = await createSigningStargateClient(rpcUrl || getRPCUrl("Cosmos"), offlineSigner);
 
     const coins = [
       {

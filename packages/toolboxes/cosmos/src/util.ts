@@ -11,9 +11,9 @@ import {
   ChainId,
   type CosmosChain,
   FeeOption,
-  RPCUrl,
   defaultRequestHeaders,
   getGasAsset,
+  getRPCUrl,
 } from "@swapkit/helpers";
 
 import type { CosmosNativeTransferTxParams } from "./thorchainUtils";
@@ -156,18 +156,18 @@ export const createOfflineStargateClient = (
 export const getRPC = (chainId: ChainId, stagenet?: boolean) => {
   switch (chainId) {
     case ChainId.Cosmos:
-      return RPCUrl.Cosmos;
+      return getRPCUrl("Cosmos");
     case ChainId.Kujira:
-      return RPCUrl.Kujira;
+      return getRPCUrl("Kujira");
 
     case ChainId.THORChain:
     case "thorchain-mainnet-v1" as ChainId:
-      return stagenet ? RPCUrl.THORChainStagenet : RPCUrl.THORChain;
+      return stagenet ? getRPCUrl("THORChainStagenet") : getRPCUrl("THORChain");
     case ChainId.Maya:
-      return stagenet ? RPCUrl.MayaStagenet : RPCUrl.Maya;
+      return stagenet ? getRPCUrl("MayaStagenet") : getRPCUrl("Maya");
 
     default:
-      return RPCUrl.Cosmos;
+      return getRPCUrl("Cosmos");
   }
 };
 

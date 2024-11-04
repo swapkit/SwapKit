@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { KeyringPair } from "@polkadot/keyring/types";
-import { AssetValue, Chain, RPCUrl, type SubstrateChain, SwapKitNumber } from "@swapkit/helpers";
+import { AssetValue, Chain, type SubstrateChain, SwapKitNumber, getRPCUrl } from "@swapkit/helpers";
 
 import { Network } from "../types/network";
 
@@ -8,7 +8,7 @@ import type { Signer } from "@polkadot/types/types";
 import { BaseSubstrateToolbox } from "./baseSubstrateToolbox";
 
 type ToolboxParams = {
-  providerUrl?: (typeof RPCUrl)[keyof typeof RPCUrl];
+  providerUrl?: ReturnType<typeof getRPCUrl>;
   generic?: boolean;
   signer: KeyringPair | Signer;
 };
@@ -33,7 +33,7 @@ export const ToolboxFactory = async ({
 
 export const PolkadotToolbox = ({ providerUrl, signer, generic = false }: ToolboxParams) => {
   return ToolboxFactory({
-    providerUrl: providerUrl || RPCUrl.Polkadot,
+    providerUrl: providerUrl || getRPCUrl("Polkadot"),
     chain: Chain.Polkadot,
     generic,
     signer,
@@ -78,7 +78,7 @@ type ToolboxType = {
 export const getToolboxByChain = <T extends keyof ToolboxType>(
   chain: T,
   params: {
-    providerUrl?: (typeof RPCUrl)[keyof typeof RPCUrl];
+    providerUrl?: ReturnType<typeof getRPCUrl>;
     signer: KeyringPair | Signer;
     generic?: boolean;
   },

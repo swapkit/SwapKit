@@ -4,7 +4,7 @@ import {
   ChainId,
   ChainToExplorerUrl,
   type FeeOption,
-  RPCUrl,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
@@ -18,7 +18,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.BaseHex,
   chainName: "Base Mainnet",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [RPCUrl.Base],
+  rpcUrls: [getRPCUrl("Base")],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Base]],
 });
 

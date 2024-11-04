@@ -23,14 +23,133 @@ export const DefaultRPCUrl = {
   Solana: "https://solana-rpc.publicnode.com",
 };
 
-export let RPCUrl: typeof DefaultRPCUrl;
-
+let RPCUrl: typeof DefaultRPCUrl;
 RPCUrl = { ...DefaultRPCUrl };
+
+export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
+  return RPCUrl[chain];
+};
+
+const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string): Promise<boolean> => {
+  const getRpcBody = () => {
+    switch (chain) {
+      case "Arbitrum":
+      case "Avalanche":
+      case "Base":
+      case "BinanceSmartChain":
+      case "Ethereum":
+      case "Optimism":
+      case "Polygon":
+        return {
+          jsonrpc: "2.0",
+          method: "eth_blockNumber",
+          params: [],
+          id: 1,
+        };
+      case "Bitcoin":
+      case "Dogecoin":
+      case "BitcoinCash":
+      case "Dash":
+      case "Litecoin":
+        return {
+          jsonrpc: "1.0",
+          id: "test",
+          method: "getblockchaininfo",
+          params: [],
+        };
+      case "Cosmos":
+      case "Kujira":
+      case "Maya":
+      case "MayaStagenet":
+      case "THORChain":
+      case "THORChainStagenet":
+        return {
+          id: 1,
+          jsonrpc: "2.0",
+          method: "status",
+          params: {},
+        };
+      case "Polkadot":
+        return {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "system_health",
+          params: [],
+        };
+      case "Radix":
+        return "";
+      case "Solana":
+        return {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "getHealth",
+        };
+      default:
+        throw new Error(`Unsupported chain: ${chain}`);
+    }
+  };
+
+  function getChainStatuEndpoint() {
+    switch (chain) {
+      case "Radix":
+        return "/status/network-configuration";
+      default:
+        return "";
+    }
+  }
+
+  try {
+    const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
+    const response = await fetch(`${endpoint}${getChainStatuEndpoint()}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(getRpcBody()),
+      signal: AbortSignal.timeout(3000),
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
+export const initializeWorkingRPCUrls = async (
+  chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
+) => {
+  const workingUrls: Record<keyof typeof RPCUrl, string> = {} as Record<
+    keyof typeof RPCUrl,
+    string
+  >;
+
+  const getRPCUrlWithFallback = async (chain: keyof typeof RPCUrl): Promise<string> => {
+    const primaryUrl = RPCUrl[chain];
+
+    if (await testRPCConnection(chain, primaryUrl)) {
+      return primaryUrl;
+    }
+
+    for (const fallbackUrl of FALLBACK_URLS[chain]) {
+      if (await testRPCConnection(chain, fallbackUrl)) {
+        return fallbackUrl;
+      }
+    }
+
+    return primaryUrl;
+  };
+
+  await Promise.all(
+    chains.map(async (chain) => {
+      const workingUrl = await getRPCUrlWithFallback(chain as keyof typeof RPCUrl);
+      workingUrls[chain as keyof typeof RPCUrl] = workingUrl;
+    }),
+  );
+
+  return workingUrls;
+};
 
 export const initializeRPCUrlsWithFallback = async (
   chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
 ) => {
-  const { initializeWorkingRPCUrls } = await import("../helpers/others");
   const workingUrls = await initializeWorkingRPCUrls(chains);
   RPCUrl = { ...RPCUrl, ...workingUrls };
 };

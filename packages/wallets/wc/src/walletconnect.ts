@@ -3,10 +3,10 @@ import {
   Chain,
   ChainId,
   type ConnectWalletParams,
-  RPCUrl,
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
+  getRPCUrl,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { BaseCosmosToolboxType, DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
@@ -165,7 +165,7 @@ async function getToolbox({
         });
         const txBytes = TxRaw.encode(txRaw).finish();
 
-        const broadcaster = await createStargateClient(RPCUrl.THORChain);
+        const broadcaster = await createStargateClient(getRPCUrl("THORChain"));
         const result = await broadcaster.broadcastTx(txBytes);
         return result.transactionHash;
       }

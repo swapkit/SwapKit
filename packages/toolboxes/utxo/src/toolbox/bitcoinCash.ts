@@ -8,7 +8,7 @@ import {
 } from "@psf/bitcoincashjs-lib";
 
 import { mnemonicToSeedSync } from "@scure/bip39";
-import { Chain, DerivationPath, FeeOption, RPCUrl, type UTXOChain } from "@swapkit/helpers";
+import { Chain, DerivationPath, FeeOption, type UTXOChain, getRPCUrl } from "@swapkit/helpers";
 import { Psbt } from "bitcoinjs-lib";
 import { ECPairFactory } from "ecpair";
 
@@ -259,7 +259,7 @@ const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) =>
 
 export const createBCHToolbox = ({
   apiKey,
-  rpcUrl = RPCUrl.BitcoinCash,
+  rpcUrl = getRPCUrl("BitcoinCash"),
   apiClient: client,
 }: {
   apiKey?: string;

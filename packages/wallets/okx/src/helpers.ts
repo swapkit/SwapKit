@@ -3,9 +3,9 @@ import {
   ChainId,
   ChainToHexChainId,
   type EVMChain,
-  RPCUrl,
   SwapKitError,
   addEVMWalletNetwork,
+  getRPCUrl,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
 import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
@@ -23,7 +23,7 @@ const cosmosTransfer =
     const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
 
     const { createSigningStargateClient } = await import("@swapkit/toolbox-cosmos");
-    const cosmJS = await createSigningStargateClient(rpcUrl || RPCUrl.Cosmos, offlineSigner);
+    const cosmJS = await createSigningStargateClient(rpcUrl || getRPCUrl("Cosmos"), offlineSigner);
 
     const coins = [
       { denom: asset?.symbol === "MUON" ? "umuon" : "uatom", amount: amount.amount().toString() },
