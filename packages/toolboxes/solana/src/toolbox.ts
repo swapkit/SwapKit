@@ -20,10 +20,10 @@ import {
   AssetValue,
   Chain,
   DerivationPath,
+  RPCUrl,
   SwapKitError,
   SwapKitNumber,
   type WalletTxParams,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import { HDKey } from "micro-key-producer/slip10.js";
 
@@ -237,8 +237,8 @@ function broadcastTransaction(connection: Connection) {
   };
 }
 
-export const SOLToolbox = async ({ rpcUrl }: { rpcUrl?: string } = {}) => {
-  const connection = new Connection(rpcUrl || (await getRPCUrl("Solana")), "confirmed");
+export const SOLToolbox = ({ rpcUrl = RPCUrl.Solana }: { rpcUrl?: string } = {}) => {
+  const connection = new Connection(rpcUrl, "confirmed");
 
   return {
     connection,

@@ -199,7 +199,7 @@ export const ChainToRPC = chains.reduce(
     acc[chain] = RPCUrl[ChainToChainName[chain]];
     return acc;
   },
-  {} as { [key in Chain]: RPCUrl },
+  {} as { [key in Chain]: (typeof RPCUrl)[keyof typeof RPCUrl] },
 );
 
 export const ChainToHexChainId = chains.reduce(

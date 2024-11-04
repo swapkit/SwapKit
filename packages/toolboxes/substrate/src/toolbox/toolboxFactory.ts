@@ -8,7 +8,7 @@ import type { Signer } from "@polkadot/types/types";
 import { BaseSubstrateToolbox } from "./baseSubstrateToolbox";
 
 type ToolboxParams = {
-  providerUrl?: RPCUrl;
+  providerUrl?: (typeof RPCUrl)[keyof typeof RPCUrl];
   generic?: boolean;
   signer: KeyringPair | Signer;
 };
@@ -77,7 +77,11 @@ type ToolboxType = {
 
 export const getToolboxByChain = <T extends keyof ToolboxType>(
   chain: T,
-  params: { providerUrl?: RPCUrl; signer: KeyringPair | Signer; generic?: boolean },
+  params: {
+    providerUrl?: (typeof RPCUrl)[keyof typeof RPCUrl];
+    signer: KeyringPair | Signer;
+    generic?: boolean;
+  },
 ): ToolboxType[T] => {
   switch (chain) {
     case Chain.Chainflip:
