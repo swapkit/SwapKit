@@ -196,10 +196,10 @@ export const ChainToChainId = chains.reduce(
 
 export const ChainToRPC = chains.reduce(
   (acc, chain) => {
-    acc[chain] = getRPCUrl([ChainToChainName[chain]] as any);
+    acc[chain] = getRPCUrlByChain(chain);
     return acc;
   },
-  {} as { [key in Chain]: ReturnType<typeof getRPCUrl> },
+  {} as { [key in Chain]: string },
 );
 
 export const ChainToHexChainId = chains.reduce(

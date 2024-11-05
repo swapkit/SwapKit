@@ -60,54 +60,52 @@ export const getRPCUrlByChain = (chain: Chain) => {
   return RPC_URLS[chain];
 };
 
-const getRpcBody = (chain: keyof typeof RPCUrl) => {
+const getRpcBody = (chain: Chain) => {
   switch (chain) {
-    case "Arbitrum":
-    case "Avalanche":
-    case "Base":
-    case "BinanceSmartChain":
-    case "Ethereum":
-    case "Optimism":
-    case "Polygon":
+    case Chain.Arbitrum:
+    case Chain.Avalanche:
+    case Chain.Base:
+    case Chain.BinanceSmartChain:
+    case Chain.Ethereum:
+    case Chain.Optimism:
+    case Chain.Polygon:
       return {
         jsonrpc: "2.0",
         method: "eth_blockNumber",
         params: [],
         id: 1,
       };
-    case "Bitcoin":
-    case "Dogecoin":
-    case "BitcoinCash":
-    case "Dash":
-    case "Litecoin":
+    case Chain.Bitcoin:
+    case Chain.Dogecoin:
+    case Chain.BitcoinCash:
+    case Chain.Dash:
+    case Chain.Litecoin:
       return {
         jsonrpc: "1.0",
         id: "test",
         method: "getblockchaininfo",
         params: [],
       };
-    case "Cosmos":
-    case "Kujira":
-    case "Maya":
-    case "MayaStagenet":
-    case "THORChain":
-    case "THORChainStagenet":
+    case Chain.Cosmos:
+    case Chain.Kujira:
+    case Chain.Maya:
+    case Chain.THORChain:
       return {
         id: 1,
         jsonrpc: "2.0",
         method: "status",
         params: {},
       };
-    case "Polkadot":
+    case Chain.Polkadot:
       return {
         jsonrpc: "2.0",
         id: 1,
         method: "system_health",
         params: [],
       };
-    case "Radix":
+    case Chain.Radix:
       return "";
-    case "Solana":
+    case Chain.Solana:
       return {
         jsonrpc: "2.0",
         id: 1,
@@ -118,16 +116,16 @@ const getRpcBody = (chain: keyof typeof RPCUrl) => {
   }
 };
 
-function getChainStatuEndpoint(chain: keyof typeof RPCUrl) {
+function getChainStatuEndpoint(chain: Chain) {
   switch (chain) {
-    case "Radix":
+    case Chain.Radix:
       return "/status/network-configuration";
     default:
       return "";
   }
 }
 
-const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string) => {
+const testRPCConnection = async (chain: Chain, url: string) => {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
     const response = await fetch(`${endpoint}${getChainStatuEndpoint()}`, {
@@ -143,8 +141,8 @@ const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string) => {
   }
 };
 
-const getRPCUrlWithFallback = async (chain: keyof typeof RPCUrl) => {
-  const primaryUrl = RPCUrl[chain];
+const getRPCUrlWithFallback = async (chain: Chain) => {
+  const primaryUrl = RPC_URLS[chain];
 
   if (await testRPCConnection(chain, primaryUrl)) {
     return primaryUrl;
@@ -160,17 +158,14 @@ const getRPCUrlWithFallback = async (chain: keyof typeof RPCUrl) => {
 };
 
 export const initializeWorkingRPCUrls = async (
-  chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
+  chains: Chain[] = Object.values(Chain),
 ) => {
-  const workingUrls: Record<keyof typeof RPCUrl, string> = {} as Record<
-    keyof typeof RPCUrl,
-    string
-  >;
+  const workingUrls: Record<Chain, string> = {} as Record<Chain, string>;
 
   await Promise.all(
     chains.map(async (chain) => {
-      const workingUrl = await getRPCUrlWithFallback(chain as keyof typeof RPCUrl);
-      workingUrls[chain as keyof typeof RPCUrl] = workingUrl;
+      const workingUrl = await getRPCUrlWithFallback(chain);
+      workingUrls[chain] = workingUrl;
     }),
   );
 
@@ -178,16 +173,14 @@ export const initializeWorkingRPCUrls = async (
 };
 
 export const initializeRPCUrlsWithFallback = async (
-  chains: (keyof typeof rpcUrlAfterInit)[] = Object.keys(
-    RPCUrl,
-  ) as (keyof typeof rpcUrlAfterInit)[],
+  chains: Chain[] = Object.values(Chain),
 ) => {
-  const workingUrls = (await initializeWorkingRPCUrls(chains)) as typeof RPCUrl;
-  rpcUrlAfterInit = { ...rpcUrlAfterInit, ...workingUrls };
+  const workingUrls = await initializeWorkingRPCUrls(chains);
+  RPC_URLS = { ...RPC_URLS, ...workingUrls };
 };
 
-export const FALLBACK_URLS: Record<keyof typeof RPCUrl, string[]> = {
-  Arbitrum: [
+export const FALLBACK_URLS: Record<Chain, string[]> = {
+  [Chain.Arbitrum]: [
     "https://arb-mainnet.g.alchemy.com/v2/demo",
     "https://arbitrum.blockpi.network/v1/rpc/public",
   ],
