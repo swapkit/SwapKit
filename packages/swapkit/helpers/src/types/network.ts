@@ -1,3 +1,5 @@
+import { Chain } from "./chains";
+
 /** @deprecated Use RPC_URLS instead */
 export enum RPCUrl {
   Arbitrum = "https://arb1.arbitrum.io/rpc",
@@ -24,9 +26,7 @@ export enum RPCUrl {
   Solana = "https://solana-rpc.publicnode.com",
 }
 
-import { Chain } from './chains';
-
-export const RPC_URLS: Record<Chain, string> = {
+export let RPC_URLS: Record<Chain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
   [Chain.Base]: "https://base.llamarpc.com",
@@ -47,13 +47,6 @@ export const RPC_URLS: Record<Chain, string> = {
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.THORChain]: "https://rpc.thorswap.net",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
-};
-
-export let rpcUrlAfterInit = { ...RPCUrl }; // Keep for backwards compatibility
-
-/** @deprecated Use getRPCUrlByChain instead */
-export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
-  return rpcUrlAfterInit[chain];
 };
 
 export const getRPCUrlByChain = (chain: Chain) => {
@@ -128,10 +121,10 @@ function getChainStatuEndpoint(chain: Chain) {
 const testRPCConnection = async (chain: Chain, url: string) => {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
-    const response = await fetch(`${endpoint}${getChainStatuEndpoint()}`, {
+    const response = await fetch(`${endpoint}${getChainStatuEndpoint(chain)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(getRpcBody()),
+      body: JSON.stringify(getRpcBody(chain)),
       signal: AbortSignal.timeout(3000),
     });
 
@@ -157,9 +150,7 @@ const getRPCUrlWithFallback = async (chain: Chain) => {
   return primaryUrl;
 };
 
-export const initializeWorkingRPCUrls = async (
-  chains: Chain[] = Object.values(Chain),
-) => {
+export const initializeWorkingRPCUrls = async (chains: Chain[] = Object.values(Chain)) => {
   const workingUrls: Record<Chain, string> = {} as Record<Chain, string>;
 
   await Promise.all(
@@ -172,9 +163,7 @@ export const initializeWorkingRPCUrls = async (
   return workingUrls;
 };
 
-export const initializeRPCUrlsWithFallback = async (
-  chains: Chain[] = Object.values(Chain),
-) => {
+export const initializeRPCUrlsWithFallback = async (chains: Chain[] = Object.values(Chain)) => {
   const workingUrls = await initializeWorkingRPCUrls(chains);
   RPC_URLS = { ...RPC_URLS, ...workingUrls };
 };
@@ -189,10 +178,16 @@ export const FALLBACK_URLS: Record<Chain, string[]> = {
     "https://avalanche-c-chain-rpc.publicnode.com",
   ],
   [Chain.Base]: ["https://base.blockpi.network/v1/rpc/public", "https://1rpc.io/base"],
-  [Chain.BinanceSmartChain]: ["https://bsc-rpc.gateway.pokt.network", "https://bsc-dataseed2.binance.org"],
+  [Chain.BinanceSmartChain]: [
+    "https://bsc-rpc.gateway.pokt.network",
+    "https://bsc-dataseed2.binance.org",
+  ],
   [Chain.Bitcoin]: ["https://bitcoin.publicnode.com"],
   [Chain.BitcoinCash]: ["https://bch-dataseed.binance.org", "https://bch.getblock.io/mainnet"],
-  [Chain.Chainflip]: ["wss://archive-1.mainnet.chainflip.io", "wss://archive-2.mainnet.chainflip.io"],
+  [Chain.Chainflip]: [
+    "wss://archive-1.mainnet.chainflip.io",
+    "wss://archive-2.mainnet.chainflip.io",
+  ],
   [Chain.Cosmos]: ["https://cosmos-rpc.quickapi.com", "https://cosmos-rpc.publicnode.com"],
   [Chain.Dash]: ["https://dash-rpc.publicnode.com"],
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
@@ -201,7 +196,10 @@ export const FALLBACK_URLS: Record<Chain, string[]> = {
   [Chain.Litecoin]: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   [Chain.Maya]: ["https://tendermint.mayachain.info", "https://maya-tendermint.publicnode.com"],
   [Chain.Optimism]: ["https://optimism.llamarpc.com", "https://1rpc.io/op"],
-  [Chain.Polkadot]: ["wss://polkadot-rpc.dwellir.com", "wss://polkadot.api.onfinality.io/public-ws"],
+  [Chain.Polkadot]: [
+    "wss://polkadot-rpc.dwellir.com",
+    "wss://polkadot.api.onfinality.io/public-ws",
+  ],
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", "https://thornode.thorswap.net"],
