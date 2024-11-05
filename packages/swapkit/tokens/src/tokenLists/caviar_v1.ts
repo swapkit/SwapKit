@@ -2,14 +2,14 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-10-29T00:01:36.363Z",
+  timestamp: "2024-11-05T12:01:47.092Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 127,
+  count: 128,
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -540,6 +540,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.ida-resource_rdx1tkmwanknxau3f62kvufsk7sn80gaqhtllz8dasuq2en7nzdfka4t2t.png",
       ticker: "ida",
+    },
+    {
+      address: "resource_rdx1t4r86qqjtzl8620ahvsxuxaf366s6rf6cpy24psdkmrlkdqvzn47c2",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.ILIS-resource_rdx1t4r86qqjtzl8620ahvsxuxaf366s6rf6cpy24psdkmrlkdqvzn47c2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.ilis-resource_rdx1t4r86qqjtzl8620ahvsxuxaf366s6rf6cpy24psdkmrlkdqvzn47c2.png",
+      ticker: "ILIS",
     },
     {
       address: "resource_rdx1t5muwkqqthsv2w25syfmeef3yul6qc7vs0phulms2hyazf9p863zpq",

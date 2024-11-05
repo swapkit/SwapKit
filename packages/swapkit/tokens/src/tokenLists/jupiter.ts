@@ -2,14 +2,14 @@ export const list = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",
-  timestamp: "2024-10-29T00:01:38.803Z",
+  timestamp: "2024-11-05T12:01:49.897Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 1750,
+  count: 1791,
   tokens: [
     {
       address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
@@ -606,6 +606,15 @@ export const list = {
       ticker: "$VIDEOGAME",
     },
     {
+      address: "ViEWSwQnsrvn6pi8jfwGmDPj2efWKn1gDpAtkSXxFhA",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.$VIEWS-ViEWSwQnsrvn6pi8jfwGmDPj2efWKn1gDpAtkSXxFhA",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.$views-viewswqnsrvn6pi8jfwgmdpj2efwkn1gdpatksxxfha.png",
+      ticker: "$VIEWS",
+    },
+    {
       address: "8doS8nzmgVZEaACxALkbK5fZtw4UuoRp4Yt8NEaXfDMb",
       chainId: "solana",
       decimals: 6,
@@ -739,6 +748,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.333-ob5bh9fzm55fvtozabkxn52w3iazdpsn2argpyzvxmc.png",
       ticker: "333",
+    },
+    {
+      address: "HdHqKPz3n52e6FCJREKY3MS56TagyvRxsxVYG7E4rF99",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.47-HdHqKPz3n52e6FCJREKY3MS56TagyvRxsxVYG7E4rF99",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.47-hdhqkpz3n52e6fcjreky3ms56tagyvrxsxvyg7e4rf99.png",
+      ticker: "47",
     },
     {
       address: "4TRUMPJwguiFjfY6PLpwT6SZ5BZmCuzfqWWeJAdR6xP3",
@@ -1047,6 +1065,15 @@ export const list = {
       ticker: "ai16z",
     },
     {
+      address: "PD11M8MB8qQUAiWzyEK4JwfS8rt7Set6av6a5JYpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.AICRYNODE-PD11M8MB8qQUAiWzyEK4JwfS8rt7Set6av6a5JYpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.aicrynode-pd11m8mb8qquaiwzyek4jwfs8rt7set6av6a5jypump.png",
+      ticker: "AICRYNODE",
+    },
+    {
       address: "FqSkp1BxNKEaLeyZPA7REd47aQMDUzz8fsg1f3rtKrJh",
       chainId: "solana",
       decimals: 4,
@@ -1090,6 +1117,24 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.alexis-bqcybzjp7xwvrowzvxwjd6a858twkpuyapu4ewq2bjic.png",
       ticker: "ALEXIS",
+    },
+    {
+      address: "aepLFer6JQBNmKwa5a87cEc2NpkyXfEQvxwTByZeGWs",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.alfSOL-aepLFer6JQBNmKwa5a87cEc2NpkyXfEQvxwTByZeGWs",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.alfsol-aeplfer6jqbnmkwa5a87cec2npkyxfeqvxwtbyzegws.png",
+      ticker: "alfSOL",
+    },
+    {
+      address: "GKHgTd6tqvycgG3mqcZraSZDFR32hXhRgo6sZQtudMsC",
+      chainId: "solana",
+      decimals: 8,
+      identifier: "SOL.ALL-GKHgTd6tqvycgG3mqcZraSZDFR32hXhRgo6sZQtudMsC",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.all-gkhgtd6tqvycgg3mqczraszdfr32hxhrgo6szqtudmsc.png",
+      ticker: "ALL",
     },
     {
       address: "2UXQvRGgZTZywU1TsnYtFy7hqoNwDEEW6XqADsqnpump",
@@ -1497,6 +1542,15 @@ export const list = {
       ticker: "AVAX",
     },
     {
+      address: "6d5zHW5B8RkGKd51Lpb9RqFQSqDudr9GJgZ1SgQZpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.AVB-6d5zHW5B8RkGKd51Lpb9RqFQSqDudr9GJgZ1SgQZpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.avb-6d5zhw5b8rkgkd51lpb9rqfqsqdudr9gjgz1sgqzpump.png",
+      ticker: "AVB",
+    },
+    {
       address: "5hmf8Jt9puwoqiFQTb3vr22732ZTKYRLRw9Vo7tN3rcz",
       chainId: "solana",
       decimals: 6,
@@ -1875,6 +1929,15 @@ export const list = {
       ticker: "BGG1",
     },
     {
+      address: "BGSo18NXTWGtyNa5DBBP1ZCfUFRPWj6bECrPKakn8qN",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.BGSOL-BGSo18NXTWGtyNa5DBBP1ZCfUFRPWj6bECrPKakn8qN",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bgsol-bgso18nxtwgtyna5dbbp1zcfufrpwj6becrpkakn8qn.png",
+      ticker: "BGSOL",
+    },
+    {
       address: "BHSTv1nsz57fsXZzcsYWXhEygyqAaQu63DUJd3Rcp5Jo",
       chainId: "solana",
       decimals: 9,
@@ -2181,6 +2244,15 @@ export const list = {
       ticker: "BON",
     },
     {
+      address: "bonegFPgrpZ4bfVn3kQK1aMbGYddWtfMAywNt5LsuVE",
+      chainId: "solana",
+      decimals: 2,
+      identifier: "SOL.BONES-bonegFPgrpZ4bfVn3kQK1aMbGYddWtfMAywNt5LsuVE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bones-bonegfpgrpz4bfvn3kqk1ambgyddwtfmaywnt5lsuve.png",
+      ticker: "BONES",
+    },
+    {
       address: "HUdqc5MR5h3FssESabPnQ1GTgTcPvnNudAuLj5J6a9sU",
       chainId: "solana",
       decimals: 9,
@@ -2215,6 +2287,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bonksol-bonk1yhkxeglzzwtcvrtip3gal9nceqd7ppzblxhtts.png",
       ticker: "bonkSOL",
+    },
+    {
+      address: "GdiPk4dx3pFDrrxHZmbnyed8W9sL5DR6WpigrBANpj7y",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.BOO-GdiPk4dx3pFDrrxHZmbnyed8W9sL5DR6WpigrBANpj7y",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.boo-gdipk4dx3pfdrrxhzmbnyed8w9sl5dr6wpigrbanpj7y.png",
+      ticker: "BOO",
     },
     {
       address: "4nFwuKievw5wcpcXtUDdfxWLyXsEdvgkpENzC9M9Y5me",
@@ -2269,6 +2350,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bop-blwtnykqf7u4qjgzrrskens2ezwkmlqvcu6j8ihyrna3.png",
       ticker: "BOP",
+    },
+    {
+      address: "F5hqdbykXuksp8P78CAZenSvpPShAYKrP2U2MiZMdgFN",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.bop-F5hqdbykXuksp8P78CAZenSvpPShAYKrP2U2MiZMdgFN",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bop-f5hqdbykxuksp8p78cazensvppshaykrp2u2mizmdgfn.png",
+      ticker: "bop",
     },
     {
       address: "2kATD4v94ahnHyB8rHywAdLUwWAWAiDq9heMqmVEpump",
@@ -2395,6 +2485,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.brettgold-f6exbzkdlrcjkcaknqgfbhrxx78ehqonxpnegjwppump.png",
       ticker: "BRETTGOLD",
+    },
+    {
+      address: "33rVymHHPxfMvg4EHKBRF3h8a37cG7Et3eQWZzAkpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.bro-33rVymHHPxfMvg4EHKBRF3h8a37cG7Et3eQWZzAkpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bro-33rvymhhpxfmvg4ehkbrf3h8a37cg7et3eqwzzakpump.png",
+      ticker: "bro",
     },
     {
       address: "6h5QZc6MoMyZL471g2K5WCyQVpBaeh8AhUXGK6fTpump",
@@ -2548,6 +2647,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bul-8rgy4bzuekw9dc2uez3qhyydas66x63vazdzjezgjw5e.png",
       ticker: "bul",
+    },
+    {
+      address: "A6JVLMAjR1aeCfz3X2z4vVQ9GafYWVT75tC5V5qefja2",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.BULB-A6JVLMAjR1aeCfz3X2z4vVQ9GafYWVT75tC5V5qefja2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bulb-a6jvlmajr1aecfz3x2z4vvq9gafywvt75tc5v5qefja2.png",
+      ticker: "BULB",
     },
     {
       address: "BULLa6g9e5UCuTXC5Z3Cf7s7CgvJhnJfY71DwipSmF8w",
@@ -2802,6 +2910,15 @@ export const list = {
       ticker: "CAT",
     },
     {
+      address: "GmbC2HgWpHpq9SHnmEXZNT5e1zgcU9oASDqbAkGTpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.CATANA-GmbC2HgWpHpq9SHnmEXZNT5e1zgcU9oASDqbAkGTpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.catana-gmbc2hgwphpq9shnmexznt5e1zgcu9oasdqbakgtpump.png",
+      ticker: "CATANA",
+    },
+    {
       address: "GVwpWU5PtJFHS1mH35sHmsRN1XWUwRV3Qo94h5Lepump",
       chainId: "solana",
       decimals: 6,
@@ -3007,6 +3124,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.chango-kee9sbraplv2oumzwy9htnzozqrvnajvygiokvhpump.png",
       ticker: "CHANGO",
+    },
+    {
+      address: "8SgNwESovnbG1oNEaPVhg6CR9mTMSK7jPvcYRe3wpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.CHAOS-8SgNwESovnbG1oNEaPVhg6CR9mTMSK7jPvcYRe3wpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.chaos-8sgnwesovnbg1oneapvhg6cr9mtmsk7jpvcyre3wpump.png",
+      ticker: "CHAOS",
     },
     {
       address: "947tEoG318GUmyjVYhraNRvWpMX7fpBTDQFBoJvSkSG3",
@@ -3927,6 +4053,15 @@ export const list = {
       ticker: "D2X",
     },
     {
+      address: "dab15vg2k8zGJPy4xM2DH2G2BY3khrqduXapzYAV3y8",
+      chainId: "solana",
+      decimals: 8,
+      identifier: "SOL.DABLNS-dab15vg2k8zGJPy4xM2DH2G2BY3khrqduXapzYAV3y8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.dablns-dab15vg2k8zgjpy4xm2dh2g2by3khrqduxapzyav3y8.png",
+      ticker: "DABLNS",
+    },
+    {
       address: "2J5uSgqgarWoh7QDBmHSDA3d7UbfBKDZsdy1ypTSpump",
       chainId: "solana",
       decimals: 6,
@@ -4386,6 +4521,15 @@ export const list = {
       ticker: "DJT",
     },
     {
+      address: "Agi84n7Hfw9sQMah9sumHU6Jyjsc6Uw2WjehSFG92qMG",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.DKS-Agi84n7Hfw9sQMah9sumHU6Jyjsc6Uw2WjehSFG92qMG",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.dks-agi84n7hfw9sqmah9sumhu6jyjsc6uw2wjehsfg92qmg.png",
+      ticker: "DKS",
+    },
+    {
       address: "DLGToUUnqy9hXxpJTm5VaiBKqnw9Zt1qzvrpwKwUmuuZ",
       chainId: "solana",
       decimals: 9,
@@ -4683,15 +4827,6 @@ export const list = {
       ticker: "dSOL",
     },
     {
-      address: "DUALa4FC2yREwZ59PHeu1un4wis36vHRv5hWVBmzykCJ",
-      chainId: "solana",
-      decimals: 6,
-      identifier: "SOL.DUAL-DUALa4FC2yREwZ59PHeu1un4wis36vHRv5hWVBmzykCJ",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.dual-duala4fc2yrewz59pheu1un4wis36vhrv5hwvbmzykcj.png",
-      ticker: "DUAL",
-    },
-    {
       address: "DUAL6T9pATmQUFPYmrWq2BkkGdRxLtERySGScYmbHMER",
       chainId: "solana",
       decimals: 9,
@@ -4764,6 +4899,15 @@ export const list = {
       ticker: "DVINCI",
     },
     {
+      address: "DVYcTNFVGxePLgK8rUjViJvurRmTnD1FZUBR7puADymT",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.DVY-DVYcTNFVGxePLgK8rUjViJvurRmTnD1FZUBR7puADymT",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.dvy-dvyctnfvgxeplgk8rujvijvurrmtnd1fzubr7puadymt.png",
+      ticker: "DVY",
+    },
+    {
       address: "9oUXhgFmW2HWqWHds1NoV3DKLY3AAtNevA3dP7PtyEbr",
       chainId: "solana",
       decimals: 6,
@@ -4834,6 +4978,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.ear-2buz19ft8tyvpzhuvtccp9ceu9enrcmy11s4vsatpump.png",
       ticker: "EAR",
+    },
+    {
+      address: "BjjvKX5k7gQoGRmvQAA5WMr7EkQ2cirGTSGxAznDpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.EARL-BjjvKX5k7gQoGRmvQAA5WMr7EkQ2cirGTSGxAznDpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.earl-bjjvkx5k7gqogrmvqaa5wmr7ekq2cirgtsgxazndpump.png",
+      ticker: "EARL",
     },
     {
       address: "edge86g9cVz87xcpKpy3J77vbp4wYd9idEV562CCntt",
@@ -5169,6 +5322,15 @@ export const list = {
       ticker: "EZB",
     },
     {
+      address: "ezSoL6fY1PVdJcJsUpe5CM3xkfmy3zoVCABybm5WtiC",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.ezSOL-ezSoL6fY1PVdJcJsUpe5CM3xkfmy3zoVCABybm5WtiC",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.ezsol-ezsol6fy1pvdjcjsupe5cm3xkfmy3zovcabybm5wtic.png",
+      ticker: "ezSOL",
+    },
+    {
       address: "EdAhkbj5nF9sRM7XN7ewuW8C9XEUMs8P7cnoQ57SYE96",
       chainId: "solana",
       decimals: 9,
@@ -5248,6 +5410,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fcat-ccffgmu9jodk6s5fszm1vygf3unng7fzvtmpgzvu1scf.png",
       ticker: "FCAT",
+    },
+    {
+      address: "CSGB1SJtMtzFAKcmMVCnACRFBwgExnRK9F5jpWSDpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Fcktard-CSGB1SJtMtzFAKcmMVCnACRFBwgExnRK9F5jpWSDpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fcktard-csgb1sjtmtzfakcmmvcnacrfbwgexnrk9f5jpwsdpump.png",
+      ticker: "Fcktard",
     },
     {
       address: "HovGjrBGTfna4dvg6exkMxXuexB3tUfEZKcut8AWowXj",
@@ -5619,6 +5790,15 @@ export const list = {
       ticker: "FREE",
     },
     {
+      address: "EswvJvhPy8A8rWPdLJ5ATYW6cY5x483oS4QWWroZpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.FRIDGE-EswvJvhPy8A8rWPdLJ5ATYW6cY5x483oS4QWWroZpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fridge-eswvjvhpy8a8rwpdlj5atyw6cy5x483os4qwwrozpump.png",
+      ticker: "FRIDGE",
+    },
+    {
       address: "J5tzd1ww1V1qrgDUQHVCGqpmpbnEnjzGs9LAqJxwkNde",
       chainId: "solana",
       decimals: 6,
@@ -5842,15 +6022,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.gemini-arizfq6dk19unqxwyrudhbm2mswlyyhvuhdndgkffdgc.png",
       ticker: "GEMINI",
-    },
-    {
-      address: "2YJH1Y5NbdwJGEUAMY6hoTycKWrRCP6kLKs62xiSKWHM",
-      chainId: "solana",
-      decimals: 9,
-      identifier: "SOL.GEMS-2YJH1Y5NbdwJGEUAMY6hoTycKWrRCP6kLKs62xiSKWHM",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.gems-2yjh1y5nbdwjgeuamy6hotyckwrrcp6klks62xiskwhm.png",
-      ticker: "GEMS",
     },
     {
       address: "1F1sRpidpKBQjmCnHAu8vJpmktLVK3ZjKyxVwEy8XpC",
@@ -6265,6 +6436,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.goo-grfkaabc518sqxmvbpavyuztvt3nj4myk7e7xu4ga5rg.png",
       ticker: "GOO",
+    },
+    {
+      address: "G9b9Lt78x5JXhFLeDY4ZAfMkWWugnbsfKBR2qipJWXaT",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.Gooby-G9b9Lt78x5JXhFLeDY4ZAfMkWWugnbsfKBR2qipJWXaT",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.gooby-g9b9lt78x5jxhfledy4zafmkwwugnbsfkbr2qipjwxat.png",
+      ticker: "Gooby",
     },
     {
       address: "BorpaZo2RdiYcriLJu2GRefZdgQPmv63nA8jsVVsMV7W",
@@ -6933,15 +7113,6 @@ export const list = {
       ticker: "HOLLY",
     },
     {
-      address: "HezGWsxSVMqEZy7HJf7TtXzQRLiDruYsheYWqoUVnWQo",
-      chainId: "solana",
-      decimals: 9,
-      identifier: "SOL.HOLY-HezGWsxSVMqEZy7HJf7TtXzQRLiDruYsheYWqoUVnWQo",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.holy-hezgwsxsvmqezy7hjf7ttxzqrlidruysheywqouvnwqo.png",
-      ticker: "HOLY",
-    },
-    {
       address: "4vMsoUT2BWatFweudnQM1xedRLfJgJ7hswhcpz4xgBTy",
       chainId: "solana",
       decimals: 9,
@@ -7401,6 +7572,15 @@ export const list = {
       ticker: "jeoing737",
     },
     {
+      address: "C2nneybCJP2i6mk6Nu6SfTcxoNXNLjngnzwDgje2eNrr",
+      chainId: "solana",
+      decimals: 3,
+      identifier: "SOL.JHH-C2nneybCJP2i6mk6Nu6SfTcxoNXNLjngnzwDgje2eNrr",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.jhh-c2nneybcjp2i6mk6nu6sftcxonxnljngnzwdgje2enrr.png",
+      ticker: "JHH",
+    },
+    {
       address: "jimBqijNp9yZwgMmxFaLECr5rFypPGZQNEqL9YU4UjT",
       chainId: "solana",
       decimals: 6,
@@ -7696,6 +7876,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.keke-ggkddej9n2nchhone5qsxvgpkgqnsbexekr1shdlappv.png",
       ticker: "KEKE",
+    },
+    {
+      address: "DexxZWtZd8hdmeth9gKYXgTWa1VYdMVrWFBZ9RXXXhBn",
+      chainId: "solana",
+      decimals: 8,
+      identifier: "SOL.Kekec-DexxZWtZd8hdmeth9gKYXgTWa1VYdMVrWFBZ9RXXXhBn",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.kekec-dexxzwtzd8hdmeth9gkyxgtwa1vydmvrwfbz9rxxxhbn.png",
+      ticker: "Kekec",
     },
     {
       address: "CEYNkwuEXU1KD3MN47NaMvHznPPimR15Sjfv6Y2r1SVw",
@@ -8022,6 +8211,15 @@ export const list = {
       ticker: "KWIF",
     },
     {
+      address: "kySo1nETpsZE2NWe5vj2C64mPSciH1SppmHb4XieQ7B",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.kySOL-kySo1nETpsZE2NWe5vj2C64mPSciH1SppmHb4XieQ7B",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.kysol-kyso1netpsze2nwe5vj2c64mpscih1sppmhb4xieq7b.png",
+      ticker: "kySOL",
+    },
+    {
       address: "2emYMetySwE7Xh6qrG1AwAQ3TDvrLkUSpSZ5AjcWCc7B",
       chainId: "solana",
       decimals: 6,
@@ -8292,6 +8490,15 @@ export const list = {
       ticker: "LIQ",
     },
     {
+      address: "BoisYJqhMhgpD5291J6HRC3u1jeDkF8uSLyFy3fKb5o5",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.LIQQ-BoisYJqhMhgpD5291J6HRC3u1jeDkF8uSLyFy3fKb5o5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.liqq-boisyjqhmhgpd5291j6hrc3u1jedkf8uslyfy3fkb5o5.png",
+      ticker: "LIQQ",
+    },
+    {
       address: "F4YtvyXr9wqsLv6oiHQLpF37JwCKqJEfbP9hSvMGXTWq",
       chainId: "solana",
       decimals: 6,
@@ -8497,6 +8704,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.ltx-ltxh7ncgxz5tbz57h8ozu7ywmdsvfsqwviw4b28yg8x.png",
       ticker: "LTX",
+    },
+    {
+      address: "CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.LUCE-CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.luce-cbdcxko9qavr9hfshgpebg3zekoraed7w1jfq2o3pump.png",
+      ticker: "LUCE",
     },
     {
       address: "5Ke381D44MEQg3BQarWhAwhj1xbdNvXe2KHkTiZzw7r5",
@@ -8992,6 +9208,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.migo-8odnqwcqnvq4urymygkwpuedbr3yemwy2zbhtnw7jrcu.png",
       ticker: "MIGO",
+    },
+    {
+      address: "6tVZVjcppH2BZ9Xj5yFU1Zt34m2rYcyDqqpSeMDZpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.miharu-6tVZVjcppH2BZ9Xj5yFU1Zt34m2rYcyDqqpSeMDZpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.miharu-6tvzvjcpph2bz9xj5yfu1zt34m2rycydqqpsemdzpump.png",
+      ticker: "miharu",
     },
     {
       address: "HB2pjBPuquh1XGEVC1GCKepdh4daoJnkJiHFmaorfBWu",
@@ -9649,15 +9874,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.nard-f89dozeeue9ajcu6gnr1f5rlaqwcjmdpdnsuluvjust9.png",
       ticker: "NARD",
-    },
-    {
-      address: "CYndQCN5WJL2iF4V42mZ5u8CHPAHCLz7wCXYwPd5hJ37",
-      chainId: "solana",
-      decimals: 9,
-      identifier: "SOL.NARK-CYndQCN5WJL2iF4V42mZ5u8CHPAHCLz7wCXYwPd5hJ37",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.nark-cyndqcn5wjl2if4v42mz5u8chpahclz7wcxywpd5hj37.png",
-      ticker: "NARK",
     },
     {
       address: "FRySi8LPkuByB7VPSCCggxpewFUeeJiwEGRKKuhwpKcX",
@@ -10884,6 +11100,15 @@ export const list = {
       ticker: "PLD",
     },
     {
+      address: "2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Pnut-2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.pnut-2qehjdldlbubgryvsxhc5d6udwaivnfzgan56p1tpump.png",
+      ticker: "Pnut",
+    },
+    {
       address: "DuhSwRVN7z8bWjYzwtRv2uDfpAsbTPxDnDezzi9Nsf1y",
       chainId: "solana",
       decimals: 6,
@@ -11541,6 +11766,15 @@ export const list = {
       ticker: "RAi",
     },
     {
+      address: "Ra1so1sTkvX3PorAM9ewqrsUMz9sPSbfFZ5oZUjN4oc",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.raiSOL-Ra1so1sTkvX3PorAM9ewqrsUMz9sPSbfFZ5oZUjN4oc",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.raisol-ra1so1stkvx3poram9ewqrsumz9spsbffz5ozujn4oc.png",
+      ticker: "raiSOL",
+    },
+    {
       address: "RAPRz9fd87y9qcBGj1VVqUbbUM6DaBggSDA58zc3N2b",
       chainId: "solana",
       decimals: 9,
@@ -11656,6 +11890,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.rewd-2eu1k3wvfpc7gvj1ck8ohv4ggusdn6qxyxpjhytckjzt.png",
       ticker: "REWD",
+    },
+    {
+      address: "3DK98MXPz8TRuim7rfQnebSLpA7VSoc79Bgiee1m4Zw5",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.REZ-3DK98MXPz8TRuim7rfQnebSLpA7VSoc79Bgiee1m4Zw5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.rez-3dk98mxpz8truim7rfqnebslpa7vsoc79bgiee1m4zw5.png",
+      ticker: "REZ",
     },
     {
       address: "Trhor7npQLca4DFiUWR9vJCAw1je2zghSbwh37nW81i",
@@ -12360,6 +12603,15 @@ export const list = {
       ticker: "SEYLER",
     },
     {
+      address: "BLiUhfaUFbSoMVeRqq3QYTA1eJsTsB3ZDEYtUsGGQ9em",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.SFG-BLiUhfaUFbSoMVeRqq3QYTA1eJsTsB3ZDEYtUsGGQ9em",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sfg-bliuhfaufbsomverqq3qyta1ejstsb3zdeytusggq9em.png",
+      ticker: "SFG",
+    },
+    {
       address: "FTT9rBBrYwcHam4qLvkzzzhrsihYMbZ3k6wJbdoahxAt",
       chainId: "solana",
       decimals: 9,
@@ -12466,6 +12718,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.shib-f6qoefqq4icblonz34rjeqhjhkd8vtmorsdw9nd55j1k.png",
       ticker: "SHIB",
+    },
+    {
+      address: "yG6bXPEFaUnGAEHHqH9H7t1VSfaK7YrggCqHy35pump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.SHIBU-yG6bXPEFaUnGAEHHqH9H7t1VSfaK7YrggCqHy35pump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.shibu-yg6bxpefaungaehhqh9h7t1vsfak7yrggcqhy35pump.png",
+      ticker: "SHIBU",
     },
     {
       address: "6cVgJUqo4nmvQpbgrDZwyfd6RwWw5bfnCamS3M9N1fd",
@@ -12673,6 +12934,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.skyh-j9hbnna1tmysx9ha3fgic5xyph5pyhmclvq2sp36hdkz.png",
       ticker: "SKYH",
+    },
+    {
+      address: "7wUwkXo8Qjt3cYM8BaHHHeyfDY7ZSn7qvod92pNupump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.SL-7wUwkXo8Qjt3cYM8BaHHHeyfDY7ZSn7qvod92pNupump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sl-7wuwkxo8qjt3cym8bahhheyfdy7zsn7qvod92pnupump.png",
+      ticker: "SL",
     },
     {
       address: "2uRFEWRBQLEKpLmF8mohFZGDcFQmrkQEEZmHQvMUBvY7",
@@ -13132,6 +13402,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sonic-7ew2ntuqfykvxf3wta1l1v62pxb7rfymvc7vegxndfis.png",
       ticker: "SONIC",
+    },
+    {
+      address: "FAJW358HjJ2mHXSHbHyxghfVGzX5SBoupdjRr2y9pump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.sonny-FAJW358HjJ2mHXSHbHyxghfVGzX5SBoupdjRr2y9pump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sonny-fajw358hjj2mhxshbhyxghfvgzx5sboupdjrr2y9pump.png",
+      ticker: "sonny",
     },
     {
       address: "F6weWmuc1vwdL4u38Ro9jKXHEMjP9BoNdWMF5o5TvtJf",
@@ -13665,6 +13944,15 @@ export const list = {
       ticker: "sUST-8",
     },
     {
+      address: "ABDoiSudvFjjJ25rtXn8V2b6QGrH59KN6thAbsPvpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.suwi-ABDoiSudvFjjJ25rtXn8V2b6QGrH59KN6thAbsPvpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.suwi-abdoisudvfjjj25rtxn8v2b6qgrh59kn6thabspvpump.png",
+      ticker: "suwi",
+    },
+    {
       address: "GV6n9Uow3XzMWSs8vwTCML8SvMA6ozbidaEfdPoSoraQ",
       chainId: "solana",
       decimals: 9,
@@ -13827,6 +14115,15 @@ export const list = {
       ticker: "tard",
     },
     {
+      address: "BoBj68cWnCvzMNUKzJyR7Jq7tLM3v76D1pYL1E8rpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.TateAI-BoBj68cWnCvzMNUKzJyR7Jq7tLM3v76D1pYL1E8rpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.tateai-bobj68cwncvzmnukzjyr7jq7tlm3v76d1pyl1e8rpump.png",
+      ticker: "TateAI",
+    },
+    {
       address: "EjkkxYpfSwS6TAtKKuiJuNMMngYvumc1t1v9ZX1WJKMp",
       chainId: "solana",
       decimals: 6,
@@ -13879,6 +14176,24 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.tenkai-tkdrcm3n4mfxffpkzolp5sorsdfqsmywldomdkl3ktu.png",
       ticker: "TENKAI",
+    },
+    {
+      address: "A8rnTyqWyM6bPYqFTxA37YcwwXdQARP9AeL1XznQpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.terminal-A8rnTyqWyM6bPYqFTxA37YcwwXdQARP9AeL1XznQpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.terminal-a8rntyqwym6bpyqftxa37ycwwxdqarp9ael1xznqpump.png",
+      ticker: "terminal",
+    },
+    {
+      address: "TMEvsrnGfUVQEBAFnQhC37jg27Nm3CLxSQyNi2duPce",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.TestME-TMEvsrnGfUVQEBAFnQhC37jg27Nm3CLxSQyNi2duPce",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.testme-tmevsrngfuvqebafnqhc37jg27nm3clxsqyni2dupce.png",
+      ticker: "TestME",
     },
     {
       address: "APa3QKbkUBZa8qM9ejgwEkJfvdZtSckeU1g1mmEopump",
@@ -14736,6 +15051,15 @@ export const list = {
       ticker: "VUNCE",
     },
     {
+      address: "FQ1tyso61AH1tzodyJfSwmzsD3GToybbRNoZxUBz21p8",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.vvaifu-FQ1tyso61AH1tzodyJfSwmzsD3GToybbRNoZxUBz21p8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.vvaifu-fq1tyso61ah1tzodyjfswmzsd3gtoybbrnozxubz21p8.png",
+      ticker: "vvaifu",
+    },
+    {
       address: "85VBFQZC9TZkfaptBWjvUw7YbZjy52A6mjtPGjstQAmQ",
       chainId: "solana",
       decimals: 6,
@@ -15114,6 +15438,15 @@ export const list = {
       ticker: "WLKN",
     },
     {
+      address: "9pWPUXoZKWNPWyaegPQeR3Kn8aFz9nrGtm5jeAFzpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.WMM-9pWPUXoZKWNPWyaegPQeR3Kn8aFz9nrGtm5jeAFzpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.wmm-9pwpuxozkwnpwyaegpqer3kn8afz9nrgtm5jeafzpump.png",
+      ticker: "WMM",
+    },
+    {
       address: "E8G4uo2i9d12aGnXDHXXcw6hU2fh2NytR5XR3qurTLBx",
       chainId: "solana",
       decimals: 9,
@@ -15184,6 +15517,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.work-f7hwf8ib5dvcoiuygr618y3gon429rnd1r5f9r5upump.png",
       ticker: "WORK",
+    },
+    {
+      address: "DwDtUqBZJtbRpdjsFw3N7YKB5epocSru25BGcVhfcYtg",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.WORM-DwDtUqBZJtbRpdjsFw3N7YKB5epocSru25BGcVhfcYtg",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.worm-dwdtuqbzjtbrpdjsfw3n7ykb5epocsru25bgcvhfcytg.png",
+      ticker: "WORM",
     },
     {
       address: "7zBbQAPGgoKvqcK74Yua8qGwEkEjAZxUPb5m3kKvvHyF",
@@ -15310,6 +15652,24 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.xalgo-xalgoh1zufrmpcriy94qbfomxhtk6ndnmkzt4xdvgms.png",
       ticker: "xALGO",
+    },
+    {
+      address: "XANDuUoVoUqniKkpcKhrxmvYJybpJvUxJLr21Gaj3Hx",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.XAND-XANDuUoVoUqniKkpcKhrxmvYJybpJvUxJLr21Gaj3Hx",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.xand-xanduuovouqnikkpckhrxmvyjybpjvuxjlr21gaj3hx.png",
+      ticker: "XAND",
+    },
+    {
+      address: "XAnDeUmMcqFyCdef9jzpNgtZPjTj3xUMj9eXKn2reFN",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.xandSOL-XAnDeUmMcqFyCdef9jzpNgtZPjTj3xUMj9eXKn2reFN",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.xandsol-xandeummcqfycdef9jzpngtzpjtj3xumj9exkn2refn.png",
+      ticker: "xandSOL",
     },
     {
       address: "XBGdqJ9P175hCC1LangCEyXWNeCPHaKWA17tymz2PrY",
@@ -15607,6 +15967,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.yumi-9vbhkur9dxdp1wqci9mpfy5q8fkyb62cpuypx4gppump.png",
       ticker: "YUMI",
+    },
+    {
+      address: "yUSDX7W89jXWn4zzDPLnhykDymSjQSmpaJ8e4fjC1fg",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.yUSD-yUSDX7W89jXWn4zzDPLnhykDymSjQSmpaJ8e4fjC1fg",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.yusd-yusdx7w89jxwn4zzdplnhykdymsjqsmpaj8e4fjc1fg.png",
+      ticker: "yUSD",
     },
     {
       address: "8vCAUbxejdtaxn6jnX5uaQTyTZLmXALg9u1bvFCAjtx7",
