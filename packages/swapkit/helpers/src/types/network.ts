@@ -1,3 +1,4 @@
+/** @deprecated Use RPC_URLS instead */
 export enum RPCUrl {
   Arbitrum = "https://arb1.arbitrum.io/rpc",
   Avalanche = "https://avalanche-c-chain-rpc.publicnode.com",
@@ -23,10 +24,40 @@ export enum RPCUrl {
   Solana = "https://solana-rpc.publicnode.com",
 }
 
-export let rpcUrlAfterInit = { ...RPCUrl };
+import { Chain } from './chains';
 
+export const RPC_URLS: Record<Chain, string> = {
+  [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
+  [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
+  [Chain.Base]: "https://base.llamarpc.com",
+  [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
+  [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
+  [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",
+  [Chain.Chainflip]: "wss://mainnet-archive.chainflip.io",
+  [Chain.Cosmos]: "https://node-router.thorswap.net/cosmos/rpc",
+  [Chain.Dash]: "https://dash-rpc.publicnode.com",
+  [Chain.Dogecoin]: "https://node-router.thorswap.net/dogecoin",
+  [Chain.Ethereum]: "https://ethereum-rpc.publicnode.com",
+  [Chain.Kujira]: "https://rpc-kujira.synergynodes.com/",
+  [Chain.Litecoin]: "https://node-router.thorswap.net/litecoin",
+  [Chain.Maya]: "https://tendermint.mayachain.info",
+  [Chain.Optimism]: "https://mainnet.optimism.io",
+  [Chain.Polkadot]: "wss://rpc.polkadot.io",
+  [Chain.Polygon]: "https://polygon-rpc.com",
+  [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
+  [Chain.THORChain]: "https://rpc.thorswap.net",
+  [Chain.Solana]: "https://solana-rpc.publicnode.com",
+};
+
+export let rpcUrlAfterInit = { ...RPCUrl }; // Keep for backwards compatibility
+
+/** @deprecated Use getRPCUrlByChain instead */
 export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
   return rpcUrlAfterInit[chain];
+};
+
+export const getRPCUrlByChain = (chain: Chain) => {
+  return RPC_URLS[chain];
 };
 
 const getRpcBody = (chain: keyof typeof RPCUrl) => {
