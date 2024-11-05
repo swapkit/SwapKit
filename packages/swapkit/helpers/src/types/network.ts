@@ -1,4 +1,4 @@
-import { Chain } from "./chains";
+import { Chain, StagenetChain } from "./chains";
 
 /** @deprecated Use getRPCUrl or RPC_URLS instead */
 export enum RPCUrl {
@@ -26,7 +26,7 @@ export enum RPCUrl {
   Solana = "https://solana-rpc.publicnode.com",
 }
 
-export let RPC_URLS: Record<Chain, string> = {
+export let RPC_URLS: Record<Chain & StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
   [Chain.Base]: "https://base.llamarpc.com",
@@ -46,6 +46,7 @@ export let RPC_URLS: Record<Chain, string> = {
   [Chain.Polygon]: "https://polygon-rpc.com",
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.THORChain]: "https://rpc.thorswap.net",
+  [StagenetChain.THORChain]: "https://rpc.thorswap.net",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
 };
 
