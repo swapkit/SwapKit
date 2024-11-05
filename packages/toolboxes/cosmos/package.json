@@ -41,5 +41,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "1.4.2"
+  "version": "1.4.3"
 }

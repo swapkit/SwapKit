@@ -1,5 +1,16 @@
 # @swapkit/plugin-chainflip
 
+## 1.3.22
+
+### Patch Changes
+
+- Updated dependencies [[`c59a204`](https://github.com/thorswap/SwapKit/commit/c59a2041006965026bb5c3fd52e59eb9fb204182)]:
+  - @swapkit/helpers@1.14.2
+  - @swapkit/api@1.9.9
+  - @swapkit/toolbox-evm@1.6.3
+  - @swapkit/toolbox-substrate@1.2.23
+  - @swapkit/toolbox-utxo@1.1.28
+
 ## 1.3.21
 
 ### Patch Changes
