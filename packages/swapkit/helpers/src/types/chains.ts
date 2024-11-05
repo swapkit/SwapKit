@@ -214,7 +214,7 @@ export const ChainToHexChainId = chains.reduce(
 
 export const ChainToExplorerUrl = chains.reduce(
   (acc, chain) => {
-    acc[chain] = ExplorerUrl[ChainToChainName[chain]];
+    acc[chain] = EXPLORER_URLS[chain];
     return acc;
   },
   {} as { [key in Chain]: string },

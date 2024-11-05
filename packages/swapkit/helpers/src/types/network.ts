@@ -206,6 +206,7 @@ export const FALLBACK_URLS: Record<Chain, string[]> = {
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
 };
 
+/** @deprecated Use EXPLORER_URLS instead */
 export enum ExplorerUrl {
   Arbitrum = "https://arbiscan.io",
   Avalanche = "https://snowtrace.io",
@@ -228,3 +229,26 @@ export enum ExplorerUrl {
   THORChain = "https://runescan.io",
   Solana = "https://solscan.io",
 }
+
+export const EXPLORER_URLS: Record<Chain, string> = {
+  [Chain.Arbitrum]: "https://arbiscan.io",
+  [Chain.Avalanche]: "https://snowtrace.io",
+  [Chain.Base]: "https://basescan.org",
+  [Chain.BinanceSmartChain]: "https://bscscan.com",
+  [Chain.Bitcoin]: "https://blockchair.com/bitcoin",
+  [Chain.BitcoinCash]: "https://www.blockchair.com/bitcoin-cash",
+  [Chain.Chainflip]: "https://explorer.polkascan.io/polkadot",
+  [Chain.Cosmos]: "https://www.mintscan.io/cosmos",
+  [Chain.Dash]: "https://blockchair.com/dash",
+  [Chain.Dogecoin]: "https://blockchair.com/dogecoin",
+  [Chain.Ethereum]: "https://etherscan.io",
+  [Chain.Kujira]: "https://finder.kujira.network/kaiyo-1",
+  [Chain.Litecoin]: "https://blockchair.com/litecoin",
+  [Chain.Maya]: "https://www.mayascan.org",
+  [Chain.Optimism]: "https://optimistic.etherscan.io",
+  [Chain.Polkadot]: "https://polkadot.subscan.io",
+  [Chain.Polygon]: "https://polygonscan.com",
+  [Chain.Radix]: "https://dashboard.radixdlt.com",
+  [Chain.THORChain]: "https://runescan.io",
+  [Chain.Solana]: "https://solscan.io",
+};
