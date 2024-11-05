@@ -85,6 +85,8 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
     case Chain.Kujira:
     case Chain.Maya:
     case Chain.THORChain:
+    case StagenetChain.Maya:
+    case StagenetChain.THORChain:
       return {
         id: 1,
         jsonrpc: "2.0",
@@ -111,7 +113,7 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
   }
 };
 
-function getChainStatusEndpoint(chain: Chain) {
+function getChainStatusEndpoint(chain: Chain | StagenetChain) {
   switch (chain) {
     case Chain.Radix:
       return "/status/network-configuration";
@@ -120,7 +122,7 @@ function getChainStatusEndpoint(chain: Chain) {
   }
 }
 
-const testRPCConnection = async (chain: Chain, url: string) => {
+const testRPCConnection = async (chain: Chain | StagenetChain, url: string) => {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
     const response = await fetch(`${endpoint}${getChainStatusEndpoint(chain)}`, {
@@ -136,7 +138,7 @@ const testRPCConnection = async (chain: Chain, url: string) => {
   }
 };
 
-const getRPCUrlWithFallback = async (chain: Chain) => {
+const getRPCUrlWithFallback = async (chain: Chain | StagenetChain) => {
   const primaryUrl = RPC_URLS[chain];
 
   if (await testRPCConnection(chain, primaryUrl)) {
@@ -152,8 +154,13 @@ const getRPCUrlWithFallback = async (chain: Chain) => {
   return primaryUrl;
 };
 
-export const initializeRPCUrlsWithFallback = async (chains: (Chain | StagenetChain)[] = [...Object.values(Chain), ...Object.values(StagenetChain)]) => {
-  const workingUrls: Record<Chain | StagenetChain, string> = {} as Record<Chain | StagenetChain, string>;
+export const initializeRPCUrlsWithFallback = async (
+  chains: (Chain | StagenetChain)[] = [...Object.values(Chain), ...Object.values(StagenetChain)],
+) => {
+  const workingUrls: Record<Chain | StagenetChain, string> = {} as Record<
+    Chain | StagenetChain,
+    string
+  >;
 
   await Promise.all(
     chains.map(async (chain) => {
@@ -165,7 +172,7 @@ export const initializeRPCUrlsWithFallback = async (chains: (Chain | StagenetCha
   RPC_URLS = { ...RPC_URLS, ...workingUrls };
 };
 
-export const FALLBACK_URLS: Record<Chain, string[]> = {
+export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: [
     "https://arb-mainnet.g.alchemy.com/v2/demo",
     "https://arbitrum.blockpi.network/v1/rpc/public",
@@ -192,6 +199,7 @@ export const FALLBACK_URLS: Record<Chain, string[]> = {
   [Chain.Kujira]: ["https://kujira-rpc.polkachu.com", "https://kujira-rpc.ibs.team"],
   [Chain.Litecoin]: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   [Chain.Maya]: ["https://tendermint.mayachain.info", "https://maya-tendermint.publicnode.com"],
+  [StagenetChain.Maya]: [],
   [Chain.Optimism]: ["https://optimism.llamarpc.com", "https://1rpc.io/op"],
   [Chain.Polkadot]: [
     "wss://polkadot-rpc.dwellir.com",
@@ -200,6 +208,7 @@ export const FALLBACK_URLS: Record<Chain, string[]> = {
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", "https://thornode.thorswap.net"],
+  [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
 };
 

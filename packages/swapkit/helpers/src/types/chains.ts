@@ -23,6 +23,11 @@ export enum Chain {
   Solana = "SOL",
 }
 
+export enum StagenetChain {
+  THORChain = "THOR_STAGENET",
+  Maya = "MAYA_STAGENET",
+}
+
 export type WalletChain = Exclude<Chain, Chain.Radix>;
 
 export enum ChainId {
