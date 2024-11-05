@@ -1,4 +1,4 @@
-import { ExplorerUrl, getRPCUrl } from "./network";
+import { EXPLORER_URLS, getRPCUrl } from "./network";
 
 export enum Chain {
   Arbitrum = "ARB",
@@ -196,7 +196,7 @@ export const ChainToChainId = chains.reduce(
 
 export const ChainToRPC = chains.reduce(
   (acc, chain) => {
-    acc[chain] = getRPCUrlByChain(chain);
+    acc[chain] = getRPCUrl(chain);
     return acc;
   },
   {} as { [key in Chain]: string },

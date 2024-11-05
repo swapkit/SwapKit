@@ -1,6 +1,6 @@
 import { Chain } from "./chains";
 
-/** @deprecated Use RPC_URLS instead */
+/** @deprecated Use getRPCUrl or RPC_URLS instead */
 export enum RPCUrl {
   Arbitrum = "https://arb1.arbitrum.io/rpc",
   Avalanche = "https://avalanche-c-chain-rpc.publicnode.com",
@@ -49,7 +49,7 @@ export let RPC_URLS: Record<Chain, string> = {
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
 };
 
-export const getRPCUrlByChain = (chain: Chain) => {
+export const getRPCUrl = (chain: Chain) => {
   return RPC_URLS[chain];
 };
 
@@ -109,7 +109,7 @@ const getRpcBody = (chain: Chain) => {
   }
 };
 
-function getChainStatuEndpoint(chain: Chain) {
+function getChainStatusEndpoint(chain: Chain) {
   switch (chain) {
     case Chain.Radix:
       return "/status/network-configuration";
@@ -121,7 +121,7 @@ function getChainStatuEndpoint(chain: Chain) {
 const testRPCConnection = async (chain: Chain, url: string) => {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
-    const response = await fetch(`${endpoint}${getChainStatuEndpoint(chain)}`, {
+    const response = await fetch(`${endpoint}${getChainStatusEndpoint(chain)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(getRpcBody(chain)),
@@ -150,7 +150,7 @@ const getRPCUrlWithFallback = async (chain: Chain) => {
   return primaryUrl;
 };
 
-export const initializeWorkingRPCUrls = async (chains: Chain[] = Object.values(Chain)) => {
+export const initializeRPCUrlsWithFallback = async (chains: Chain[] = Object.values(Chain)) => {
   const workingUrls: Record<Chain, string> = {} as Record<Chain, string>;
 
   await Promise.all(
@@ -160,11 +160,6 @@ export const initializeWorkingRPCUrls = async (chains: Chain[] = Object.values(C
     }),
   );
 
-  return workingUrls;
-};
-
-export const initializeRPCUrlsWithFallback = async (chains: Chain[] = Object.values(Chain)) => {
-  const workingUrls = await initializeWorkingRPCUrls(chains);
   RPC_URLS = { ...RPC_URLS, ...workingUrls };
 };
 
