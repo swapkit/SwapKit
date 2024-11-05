@@ -219,7 +219,7 @@ export function cosmosTransfer({
     // @ts-ignore
     const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
     const cosmJS = await createSigningStargateClient(
-      rpcUrl || getRPCUrl("Cosmos"),
+      rpcUrl || getRPCUrl(Chain.Cosmos),
       offlineSigner,
       chainId === ChainId.Kujira ? "0.0003ukuji" : undefined,
     );

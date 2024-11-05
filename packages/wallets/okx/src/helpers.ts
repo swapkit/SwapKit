@@ -23,7 +23,10 @@ const cosmosTransfer =
     const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
 
     const { createSigningStargateClient } = await import("@swapkit/toolbox-cosmos");
-    const cosmJS = await createSigningStargateClient(rpcUrl || getRPCUrl("Cosmos"), offlineSigner);
+    const cosmJS = await createSigningStargateClient(
+      rpcUrl || getRPCUrl(Chain.Cosmos),
+      offlineSigner,
+    );
 
     const coins = [
       { denom: asset?.symbol === "MUON" ? "umuon" : "uatom", amount: amount.amount().toString() },

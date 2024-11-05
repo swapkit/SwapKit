@@ -1,6 +1,6 @@
 import { RequestClient } from "../modules/requestClient";
 import { type ErrorKeys, SwapKitError } from "../modules/swapKitError";
-import { Chain, ChainId, getRPCUrl } from "../types";
+import { Chain, ChainId, StagenetChain, getRPCUrl } from "../types";
 
 // 10 rune for register, 1 rune per year
 // MINIMUM_REGISTRATION_FEE = 11
@@ -71,7 +71,7 @@ export async function getDynamicChainId(chainId: ChainId = ChainId.THORChain) {
     return chainId;
   try {
     const response = await RequestClient.get<{ result: { node_info: { network: string } } }>(
-      `${chainId !== ChainId.THORChain ? getRPCUrl("THORChainStagenet") : getRPCUrl("THORChain")}/status`,
+      `${chainId !== ChainId.THORChain ? getRPCUrl(StagenetChain.THORChain) : getRPCUrl(Chain.THORChain)}/status`,
     );
     return response.result.node_info.network as ChainId;
   } catch (_error) {

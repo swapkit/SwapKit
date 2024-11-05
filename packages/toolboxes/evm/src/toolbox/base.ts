@@ -18,7 +18,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.BaseHex,
   chainName: "Base Mainnet",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [getRPCUrl("Base")],
+  rpcUrls: [getRPCUrl(Chain.Base)],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Base]],
 });
 

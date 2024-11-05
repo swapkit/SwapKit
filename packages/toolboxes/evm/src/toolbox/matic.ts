@@ -18,7 +18,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.PolygonHex,
   chainName: "Polygon Mainnet",
   nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals: BaseDecimal.MATIC },
-  rpcUrls: [getRPCUrl("Polygon")],
+  rpcUrls: [getRPCUrl(Chain.Polygon)],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Polygon]],
 });
 

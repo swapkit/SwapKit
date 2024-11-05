@@ -165,7 +165,7 @@ async function getToolbox({
         });
         const txBytes = TxRaw.encode(txRaw).finish();
 
-        const broadcaster = await createStargateClient(getRPCUrl("THORChain"));
+        const broadcaster = await createStargateClient(getRPCUrl(Chain.THORChain));
         const result = await broadcaster.broadcastTx(txBytes);
         return result.transactionHash;
       }

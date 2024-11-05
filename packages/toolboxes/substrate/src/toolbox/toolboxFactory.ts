@@ -33,7 +33,7 @@ export const ToolboxFactory = async ({
 
 export const PolkadotToolbox = ({ providerUrl, signer, generic = false }: ToolboxParams) => {
   return ToolboxFactory({
-    providerUrl: providerUrl || getRPCUrl("Polkadot"),
+    providerUrl: providerUrl || getRPCUrl(Chain.Polkadot),
     chain: Chain.Polkadot,
     generic,
     signer,

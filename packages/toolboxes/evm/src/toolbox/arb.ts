@@ -18,7 +18,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.ArbitrumHex,
   chainName: "Arbitrum One",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [getRPCUrl("Arbitrum")],
+  rpcUrls: [getRPCUrl(Chain.Arbitrum)],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Arbitrum]],
 });
 

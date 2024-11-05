@@ -237,7 +237,7 @@ function broadcastTransaction(connection: Connection) {
   };
 }
 
-export const SOLToolbox = ({ rpcUrl = getRPCUrl("Solana") }: { rpcUrl?: string } = {}) => {
+export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: string } = {}) => {
   const connection = new Connection(rpcUrl, "confirmed");
 
   return {

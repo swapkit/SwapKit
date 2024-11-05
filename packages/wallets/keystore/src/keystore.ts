@@ -167,7 +167,8 @@ const getWalletMethodsForChain = async ({
       const signer = await createKeyring(phrase, Network[chain].prefix);
       const toolbox = await getToolboxByChain(chain, {
         signer,
-        providerUrl: chain === Chain.Polkadot ? getRPCUrl("Polkadot") : getRPCUrl("Chainflip"),
+        providerUrl:
+          chain === Chain.Polkadot ? getRPCUrl(Chain.Polkadot) : getRPCUrl(Chain.Chainflip),
       });
 
       return { address: signer.address, walletMethods: toolbox };

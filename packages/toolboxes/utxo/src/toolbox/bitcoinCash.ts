@@ -259,7 +259,7 @@ const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) =>
 
 export const createBCHToolbox = ({
   apiKey,
-  rpcUrl = getRPCUrl("BitcoinCash"),
+  rpcUrl = getRPCUrl(Chain.BitcoinCash),
   apiClient: client,
 }: {
   apiKey?: string;

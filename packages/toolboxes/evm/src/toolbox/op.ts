@@ -94,7 +94,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.OptimismHex,
   chainName: "Optimism",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [getRPCUrl("Optimism")],
+  rpcUrls: [getRPCUrl(Chain.Optimism)],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
 });
 

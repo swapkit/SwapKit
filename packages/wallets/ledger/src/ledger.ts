@@ -4,6 +4,7 @@ import {
   type ConnectWalletParams,
   type DerivationPathArray,
   FeeOption,
+  StagenetChain,
   WalletOption,
   ensureEVMApiKeys,
   getRPCUrl,
@@ -142,7 +143,7 @@ const getToolbox = async ({
         };
 
         const signingClient = await createSigningStargateClient(
-          getRPCUrl("Cosmos"),
+          getRPCUrl(Chain.Cosmos),
           signer,
           "0.007uatom",
         );
@@ -192,7 +193,7 @@ const getToolbox = async ({
         if (!assetValue) throw new Error("invalid asset");
 
         if (!value) throw new Error("Account pubkey not found");
-        const rpcUrl = stagenet ? getRPCUrl("THORChainStagenet") : getRPCUrl("THORChain");
+        const rpcUrl = stagenet ? getRPCUrl(StagenetChain.THORChain) : getRPCUrl(Chain.THORChain);
 
         const { accountNumber, sequence: sequenceNumber } = account;
         const sequence = (sequenceNumber || 0).toString();

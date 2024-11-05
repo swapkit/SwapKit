@@ -190,7 +190,10 @@ export function cosmosTransfer({
     );
     // @ts-expect-error assumed available connection
     const offlineSigner = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(chainId);
-    const cosmJS = await createSigningStargateClient(rpcUrl || getRPCUrl("Cosmos"), offlineSigner);
+    const cosmJS = await createSigningStargateClient(
+      rpcUrl || getRPCUrl(Chain.Cosmos),
+      offlineSigner,
+    );
 
     const coins = [
       {
