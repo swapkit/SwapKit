@@ -29,74 +29,74 @@ export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
   return rpcUrlAfterInit[chain];
 };
 
-const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string): Promise<boolean> => {
-  const getRpcBody = () => {
-    switch (chain) {
-      case "Arbitrum":
-      case "Avalanche":
-      case "Base":
-      case "BinanceSmartChain":
-      case "Ethereum":
-      case "Optimism":
-      case "Polygon":
-        return {
-          jsonrpc: "2.0",
-          method: "eth_blockNumber",
-          params: [],
-          id: 1,
-        };
-      case "Bitcoin":
-      case "Dogecoin":
-      case "BitcoinCash":
-      case "Dash":
-      case "Litecoin":
-        return {
-          jsonrpc: "1.0",
-          id: "test",
-          method: "getblockchaininfo",
-          params: [],
-        };
-      case "Cosmos":
-      case "Kujira":
-      case "Maya":
-      case "MayaStagenet":
-      case "THORChain":
-      case "THORChainStagenet":
-        return {
-          id: 1,
-          jsonrpc: "2.0",
-          method: "status",
-          params: {},
-        };
-      case "Polkadot":
-        return {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "system_health",
-          params: [],
-        };
-      case "Radix":
-        return "";
-      case "Solana":
-        return {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getHealth",
-        };
-      default:
-        throw new Error(`Unsupported chain: ${chain}`);
-    }
-  };
-
-  function getChainStatuEndpoint() {
-    switch (chain) {
-      case "Radix":
-        return "/status/network-configuration";
-      default:
-        return "";
-    }
+const getRpcBody = (chain: keyof typeof RPCUrl) => {
+  switch (chain) {
+    case "Arbitrum":
+    case "Avalanche":
+    case "Base":
+    case "BinanceSmartChain":
+    case "Ethereum":
+    case "Optimism":
+    case "Polygon":
+      return {
+        jsonrpc: "2.0",
+        method: "eth_blockNumber",
+        params: [],
+        id: 1,
+      };
+    case "Bitcoin":
+    case "Dogecoin":
+    case "BitcoinCash":
+    case "Dash":
+    case "Litecoin":
+      return {
+        jsonrpc: "1.0",
+        id: "test",
+        method: "getblockchaininfo",
+        params: [],
+      };
+    case "Cosmos":
+    case "Kujira":
+    case "Maya":
+    case "MayaStagenet":
+    case "THORChain":
+    case "THORChainStagenet":
+      return {
+        id: 1,
+        jsonrpc: "2.0",
+        method: "status",
+        params: {},
+      };
+    case "Polkadot":
+      return {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "system_health",
+        params: [],
+      };
+    case "Radix":
+      return "";
+    case "Solana":
+      return {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getHealth",
+      };
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
   }
+};
 
+function getChainStatuEndpoint(chain: keyof typeof RPCUrl) {
+  switch (chain) {
+    case "Radix":
+      return "/status/network-configuration";
+    default:
+      return "";
+  }
+}
+
+const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string) => {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
     const response = await fetch(`${endpoint}${getChainStatuEndpoint()}`, {
@@ -112,6 +112,22 @@ const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string): Promi
   }
 };
 
+const getRPCUrlWithFallback = async (chain: keyof typeof RPCUrl) => {
+  const primaryUrl = RPCUrl[chain];
+
+  if (await testRPCConnection(chain, primaryUrl)) {
+    return primaryUrl;
+  }
+
+  for (const fallbackUrl of FALLBACK_URLS[chain]) {
+    if (await testRPCConnection(chain, fallbackUrl)) {
+      return fallbackUrl;
+    }
+  }
+
+  return primaryUrl;
+};
+
 export const initializeWorkingRPCUrls = async (
   chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
 ) => {
@@ -119,22 +135,6 @@ export const initializeWorkingRPCUrls = async (
     keyof typeof RPCUrl,
     string
   >;
-
-  const getRPCUrlWithFallback = async (chain: keyof typeof RPCUrl): Promise<string> => {
-    const primaryUrl = RPCUrl[chain];
-
-    if (await testRPCConnection(chain, primaryUrl)) {
-      return primaryUrl;
-    }
-
-    for (const fallbackUrl of FALLBACK_URLS[chain]) {
-      if (await testRPCConnection(chain, fallbackUrl)) {
-        return fallbackUrl;
-      }
-    }
-
-    return primaryUrl;
-  };
 
   await Promise.all(
     chains.map(async (chain) => {
