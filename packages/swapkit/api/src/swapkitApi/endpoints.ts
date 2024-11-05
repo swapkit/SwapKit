@@ -20,7 +20,9 @@ function getBaseUrl(isDev?: boolean) {
 }
 
 export function getTrackerDetails(payload: TrackerParams) {
-  return RequestClient.post<TrackerResponse>(`${getBaseUrl()}/track`, { json: payload });
+  return RequestClient.post<TrackerResponse>(`${getBaseUrl()}/track`, {
+    json: payload,
+  });
 }
 
 export async function getSwapQuoteV2<T extends boolean>(searchParams: QuoteRequest, isDev?: T) {

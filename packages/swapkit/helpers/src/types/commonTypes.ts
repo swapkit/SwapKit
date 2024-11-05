@@ -6,7 +6,11 @@ import type { ChainWallet } from "./wallet";
 export type ConnectConfig = {
   stagenet?: boolean;
   /**
-   * @required
+   * @required for swapkit API access
+   */
+  swapkitApiKey?: string;
+  /**
+   * @required for AVAX & BSC
    */
   thorswapApiKey?: string;
   /**

@@ -1,4 +1,4 @@
-export const DefaultRPCUrl = {
+export const RPCUrl = {
   Arbitrum: "https://arb1.arbitrum.io/rpc",
   Avalanche: "https://node-router.thorswap.net/avalanche-c",
   Base: "https://base.llamarpc.com",
@@ -23,11 +23,10 @@ export const DefaultRPCUrl = {
   Solana: "https://solana-rpc.publicnode.com",
 };
 
-let RPCUrl: typeof DefaultRPCUrl;
-RPCUrl = { ...DefaultRPCUrl };
+export let rpcUrlAfterInit: typeof RPCUrl = { ...RPCUrl };
 
 export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
-  return RPCUrl[chain];
+  return rpcUrlAfterInit[chain];
 };
 
 const testRPCConnection = async (chain: keyof typeof RPCUrl, url: string): Promise<boolean> => {
@@ -151,7 +150,7 @@ export const initializeRPCUrlsWithFallback = async (
   chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
 ) => {
   const workingUrls = await initializeWorkingRPCUrls(chains);
-  RPCUrl = { ...RPCUrl, ...workingUrls };
+  rpcUrlAfterInit = { ...RPCUrl, ...workingUrls };
 };
 
 export const FALLBACK_URLS: Record<keyof typeof RPCUrl, string[]> = {
