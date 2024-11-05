@@ -26,7 +26,7 @@ export enum RPCUrl {
   Solana = "https://solana-rpc.publicnode.com",
 }
 
-export let RPC_URLS: Record<Chain & StagenetChain, string> = {
+export let RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
   [Chain.Base]: "https://base.llamarpc.com",
@@ -46,15 +46,16 @@ export let RPC_URLS: Record<Chain & StagenetChain, string> = {
   [Chain.Polygon]: "https://polygon-rpc.com",
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.THORChain]: "https://rpc.thorswap.net",
-  [StagenetChain.THORChain]: "https://rpc.thorswap.net",
+  [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
+  [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
 };
 
-export const getRPCUrl = (chain: Chain) => {
+export const getRPCUrl = (chain: Chain | StagenetChain) => {
   return RPC_URLS[chain];
 };
 
-const getRpcBody = (chain: Chain) => {
+const getRpcBody = (chain: Chain | StagenetChain) => {
   switch (chain) {
     case Chain.Arbitrum:
     case Chain.Avalanche:
@@ -151,8 +152,8 @@ const getRPCUrlWithFallback = async (chain: Chain) => {
   return primaryUrl;
 };
 
-export const initializeRPCUrlsWithFallback = async (chains: Chain[] = Object.values(Chain)) => {
-  const workingUrls: Record<Chain, string> = {} as Record<Chain, string>;
+export const initializeRPCUrlsWithFallback = async (chains: (Chain | StagenetChain)[] = [...Object.values(Chain), ...Object.values(StagenetChain)]) => {
+  const workingUrls: Record<Chain | StagenetChain, string> = {} as Record<Chain | StagenetChain, string>;
 
   await Promise.all(
     chains.map(async (chain) => {
