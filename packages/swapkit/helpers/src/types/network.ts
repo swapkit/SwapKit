@@ -1,29 +1,29 @@
-export const RPCUrl = {
-  Arbitrum: "https://arb1.arbitrum.io/rpc",
-  Avalanche: "https://node-router.thorswap.net/avalanche-c",
-  Base: "https://base.llamarpc.com",
-  BinanceSmartChain: "https://bsc-dataseed.binance.org",
-  Bitcoin: "https://node-router.thorswap.net/bitcoin",
-  BitcoinCash: "https://node-router.thorswap.net/bitcoin-cash",
-  Chainflip: "wss://mainnet-archive.chainflip.io",
-  Cosmos: "https://node-router.thorswap.net/cosmos/rpc",
-  Dash: "https://node-router.thorswap.net/dash",
-  Dogecoin: "https://node-router.thorswap.net/dogecoin",
-  Ethereum: "https://node-router.thorswap.net/ethereum",
-  Kujira: "https://kujira-rpc.publicnode.com:443",
-  Litecoin: "https://node-router.thorswap.net/litecoin",
-  Maya: "https://tendermint.mayachain.info",
-  MayaStagenet: "https://stagenet.tendermint.mayachain.info",
-  Optimism: "https://mainnet.optimism.io",
-  Polkadot: "wss://rpc.polkadot.io",
-  Polygon: "https://polygon-rpc.com",
-  Radix: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
-  THORChain: "https://rpc.thorswap.net",
-  THORChainStagenet: "https://stagenet-rpc.ninerealms.com",
-  Solana: "https://solana-rpc.publicnode.com",
-};
+export enum RPCUrl {
+  Arbitrum = "https://arb1.arbitrum.io/rpc",
+  Avalanche = "https://avalanche-c-chain-rpc.publicnode.com",
+  Base = "https://base.llamarpc.com",
+  BinanceSmartChain = "https://bsc-dataseed.binance.org",
+  Bitcoin = "https://bitcoin-rpc.publicnode.com",
+  BitcoinCash = "https://node-router.thorswap.net/bitcoin-cash",
+  Chainflip = "wss://mainnet-archive.chainflip.io",
+  Cosmos = "https://node-router.thorswap.net/cosmos/rpc",
+  Dash = "https://dash-rpc.publicnode.com",
+  Dogecoin = "https://node-router.thorswap.net/dogecoin",
+  Ethereum = "https://ethereum-rpc.publicnode.com",
+  Kujira = "https://rpc-kujira.synergynodes.com/",
+  Litecoin = "https://node-router.thorswap.net/litecoin",
+  Maya = "https://tendermint.mayachain.info",
+  MayaStagenet = "https://stagenet.tendermint.mayachain.info",
+  Optimism = "https://mainnet.optimism.io",
+  Polkadot = "wss://rpc.polkadot.io",
+  Polygon = "https://polygon-rpc.com",
+  Radix = "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
+  THORChain = "https://rpc.thorswap.net",
+  THORChainStagenet = "https://stagenet-rpc.ninerealms.com",
+  Solana = "https://solana-rpc.publicnode.com",
+}
 
-export let rpcUrlAfterInit: typeof RPCUrl = { ...RPCUrl };
+export let rpcUrlAfterInit = { ...RPCUrl };
 
 export const getRPCUrl = (chain: keyof typeof RPCUrl) => {
   return rpcUrlAfterInit[chain];
@@ -147,10 +147,12 @@ export const initializeWorkingRPCUrls = async (
 };
 
 export const initializeRPCUrlsWithFallback = async (
-  chains: (keyof typeof RPCUrl)[] = Object.keys(RPCUrl) as (keyof typeof RPCUrl)[],
+  chains: (keyof typeof rpcUrlAfterInit)[] = Object.keys(
+    RPCUrl,
+  ) as (keyof typeof rpcUrlAfterInit)[],
 ) => {
-  const workingUrls = await initializeWorkingRPCUrls(chains);
-  rpcUrlAfterInit = { ...RPCUrl, ...workingUrls };
+  const workingUrls = (await initializeWorkingRPCUrls(chains)) as typeof RPCUrl;
+  rpcUrlAfterInit = { ...rpcUrlAfterInit, ...workingUrls };
 };
 
 export const FALLBACK_URLS: Record<keyof typeof RPCUrl, string[]> = {
