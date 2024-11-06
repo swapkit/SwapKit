@@ -1,5 +1,15 @@
 # @swapkit/wallet-phantom
 
+## 1.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.15.1
+  - @swapkit/toolbox-evm@1.7.1
+  - @swapkit/toolbox-solana@1.3.1
+  - @swapkit/toolbox-utxo@1.2.1
+
 ## 1.1.24
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @swapkit/toolbox-cosmos
 
+## 1.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.15.1
+  - @swapkit/api@1.10.1
+
 ## 1.5.0
 
 ### Minor Changes

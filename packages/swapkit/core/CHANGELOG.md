@@ -1,5 +1,20 @@
 # @swapkit/core
 
+## 2.0.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.15.1
+  - @swapkit/plugin-evm@1.1.35
+  - @swapkit/api@1.10.1
+  - @swapkit/toolbox-cosmos@1.5.1
+  - @swapkit/toolbox-evm@1.7.1
+  - @swapkit/toolbox-radix@1.2.17
+  - @swapkit/toolbox-solana@1.3.1
+  - @swapkit/toolbox-substrate@1.3.1
+  - @swapkit/toolbox-utxo@1.2.1
+
 ## 2.0.8
 
 ### Patch Changes

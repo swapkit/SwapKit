@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 1.8.4
+
+### Patch Changes
+
+- [#1082](https://github.com/thorswap/SwapKit/pull/1082) [`cf6df7e`](https://github.com/thorswap/SwapKit/commit/cf6df7e889fd94c33fac69d138c964ce741469cd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Updates token lists
+
 ## 1.8.3
 
 ### Patch Changes
