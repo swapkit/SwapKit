@@ -1,14 +1,14 @@
 export const list = {
   provider: "OPENOCEAN_V2",
   name: "OPENOCEAN_V2",
-  timestamp: "2024-11-05T12:02:11.058Z",
+  timestamp: "2024-11-06T12:02:01.960Z",
   version: {
     major: 4,
     minor: 0,
     patch: 0,
   },
   keywords: ["OpenOcean"],
-  count: 1139,
+  count: 1143,
   tokens: [
     {
       address: "0x7cb16cb78ea464ad35c8a50abf95dff3c9e09d5d",
@@ -6281,6 +6281,16 @@ export const list = {
       ticker: "BAC",
     },
     {
+      address: "0x32b86b99441480a7e5bd3a26c124ec2373e3f015",
+      chain: "eth",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.BAD-0x32b86b99441480a7e5bd3a26c124ec2373e3f015",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.bad-0x32b86b99441480a7e5bd3a26c124ec2373e3f015.png",
+      ticker: "BAD",
+    },
+    {
       address: "0x3472a5a71965499acd81997a54bba8d852c6e53d",
       chain: "eth",
       chainId: "1",
@@ -8491,6 +8501,16 @@ export const list = {
       ticker: "LYXE",
     },
     {
+      address: "0x80122c6a83C8202Ea365233363d3f4837D13e888",
+      chain: "eth",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.M87-0x80122c6a83C8202Ea365233363d3f4837D13e888",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.m87-0x80122c6a83c8202ea365233363d3f4837d13e888.png",
+      ticker: "M87",
+    },
+    {
       address: "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
       chain: "eth",
       chainId: "1",
@@ -8849,6 +8869,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.nec-0xcc80c051057b774cd75067dc48f8987c4eb97a5e.png",
       ticker: "NEC",
+    },
+    {
+      address: "0xEE2a03Aa6Dacf51C18679C516ad5283d8E7C2637",
+      chain: "eth",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.NEIRO_ON_ETH-0xEE2a03Aa6Dacf51C18679C516ad5283d8E7C2637",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.neiro_on_eth-0xee2a03aa6dacf51c18679c516ad5283d8e7c2637.png",
+      ticker: "NEIRO_ON_ETH",
     },
     {
       address: "0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee",
@@ -10989,6 +11019,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.vib-0x2c974b2d0ba1716e644c1fc59982a89ddd2ff724.png",
       ticker: "VIB",
+    },
+    {
+      address: "0xc9bca88b04581699fab5aa276ccaff7df957cbbf",
+      chain: "eth",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.VISTA-0xc9bca88b04581699fab5aa276ccaff7df957cbbf",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.vista-0xc9bca88b04581699fab5aa276ccaff7df957cbbf.png",
+      ticker: "VISTA",
     },
     {
       address: "0xc9bca88b04581699fab5aa276ccaff7df957cbbf",

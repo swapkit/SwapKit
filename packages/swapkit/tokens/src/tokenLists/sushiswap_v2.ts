@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2024-11-05T12:01:20.287Z",
+  timestamp: "2024-11-06T12:01:14.781Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 86,
+  count: 89,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -100,6 +100,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.bdi-0x0309c98b1bffa350bcb3f9fb9780970ca32a5060.png",
       ticker: "BDI",
+    },
+    {
+      address: "0xF17e65822b568B3903685a7c9F496CF7656Cc6C2",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.BICO-0XF17E65822B568B3903685A7C9F496CF7656CC6C2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.bico-0xf17e65822b568b3903685a7c9f496cf7656cc6c2.png",
+      ticker: "BICO",
     },
     {
       address: "0x1A4b46696b2bB4794Eb3D4c26f1c55F9170fa4C5",
@@ -200,6 +210,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.dai-0x6b175474e89094c44da98b954eedeac495271d0f.png",
       ticker: "DAI",
+    },
+    {
+      address: "0x8f693ca8D21b157107184d29D398A8D082b38b76",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.DATA-0X8F693CA8D21B157107184D29D398A8D082B38B76",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.data-0x8f693ca8d21b157107184d29d398a8d082b38b76.png",
+      ticker: "DATA",
     },
     {
       address: "0x9EA3b5b4EC044b70375236A281986106457b20EF",
@@ -590,6 +610,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.rail-0xe76c6c83af64e4c60245d8c7de953df673a7a33d.png",
       ticker: "RAIL",
+    },
+    {
+      address: "0xba5BDe662c17e2aDFF1075610382B9B691296350",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.RARE-0XBA5BDE662C17E2ADFF1075610382B9B691296350",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.rare-0xba5bde662c17e2adff1075610382b9b691296350.png",
+      ticker: "RARE",
     },
     {
       address: "0xa35Bd2246978Dfbb1980DFf8Ff0f5834335dFdbc",

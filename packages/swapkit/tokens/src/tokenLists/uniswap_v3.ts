@@ -9,7 +9,7 @@ export const list = {
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 573,
+  count: 576,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -1032,6 +1032,16 @@ export const list = {
       ticker: "LDO",
     },
     {
+      address: "0x655a6beebf2361a19549a99486ff65f709bd2646",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.LILAI-0x655a6beebf2361a19549a99486ff65f709bd2646",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.lilai-0x655a6beebf2361a19549a99486ff65f709bd2646.png",
+      ticker: "LILAI",
+    },
+    {
       address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
       chain: "ARB",
       chainId: "42161",
@@ -1652,6 +1662,16 @@ export const list = {
       ticker: "RNDR",
     },
     {
+      address: "0x4186bfc76e2e237523cbc30fd220fe055156b41f",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.rsETH-0x4186bfc76e2e237523cbc30fd220fe055156b41f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.rseth-0x4186bfc76e2e237523cbc30fd220fe055156b41f.png",
+      ticker: "rsETH",
+    },
+    {
       address: "0x3096e7bfd0878cc65be71f8899bc4cfb57187ba3",
       chain: "ARB",
       chainId: "42161",
@@ -1862,6 +1882,16 @@ export const list = {
       ticker: "tBTC",
     },
     {
+      address: "0x429fed88f10285e61b12bdf00848315fbdfcc341",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.TGT-0x429fed88f10285e61b12bdf00848315fbdfcc341",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
+      ticker: "TGT",
+    },
+    {
       address: "0xe85b662fe97e8562f4099d8a1d5a92d4b453bf30",
       chain: "ARB",
       chainId: "42161",
@@ -1870,16 +1900,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.thales-0xe85b662fe97e8562f4099d8a1d5a92d4b453bf30.png",
       ticker: "THALES",
-    },
-    {
-      address: "0xc47d9753f3b32aa9548a7c3f30b6aec3b2d2798c",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.TND-0xc47d9753f3b32aa9548a7c3f30b6aec3b2d2798c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.tnd-0xc47d9753f3b32aa9548a7c3f30b6aec3b2d2798c.png",
-      ticker: "TND",
     },
     {
       address: "0xd58D345Fd9c82262E087d2D0607624B410D88242",
@@ -2060,6 +2080,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
+    },
+    {
+      address: "0x323665443cef804a3b5206103304bd4872ea4253",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 6,
+      identifier: "ARB.USDV-0x323665443cef804a3b5206103304bd4872ea4253",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdv-0x323665443cef804a3b5206103304bd4872ea4253.png",
+      ticker: "USDV",
     },
     {
       address: "0x088cd8f5ef3652623c22d48b1605dcfe860cd704",
@@ -3922,6 +3952,16 @@ export const list = {
       ticker: "LIT",
     },
     {
+      address: "0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.LLD-0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
+      ticker: "LLD",
+    },
+    {
       address: "0x61E90A50137E1F645c9eF4a0d3A4f01477738406",
       chain: "ETH",
       chainId: "1",
@@ -5050,16 +5090,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.sol-0xd31a59c85ae9d8edefec411d448f90841571b89c.png",
       ticker: "SOL",
-    },
-    {
-      address: "0x7a56e1c57c7475ccf742a1832b028f0456652f97",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SolvBTC-0x7a56e1c57c7475ccf742a1832b028f0456652f97",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.solvbtc-0x7a56e1c57c7475ccf742a1832b028f0456652f97.png",
-      ticker: "SolvBTC",
     },
     {
       address: "0x2c5bc2ba3614fd27fcc7022ea71d9172e2632c16",

@@ -2,14 +2,14 @@ export const list = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",
-  timestamp: "2024-11-05T12:01:49.897Z",
+  timestamp: "2024-11-06T12:01:42.694Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 1791,
+  count: 1797,
   tokens: [
     {
       address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
@@ -5367,6 +5367,15 @@ export const list = {
       ticker: "FAP",
     },
     {
+      address: "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Fartcoin-9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fartcoin-9bb6nfecjbctnnlfko2fqvqbq8hhm13kcyycdqbgpump.png",
+      ticker: "Fartcoin",
+    },
+    {
       address: "DXCoKQ7iLpux398fNHewQn6djfGobzFuPiR5o8hrVHAb",
       chainId: "solana",
       decimals: 9,
@@ -6679,6 +6688,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.hades-bwxrryfht7bmhmnbfoqfwdssga3yxoanmhdk6fn1esen.png",
       ticker: "HADES",
+    },
+    {
+      address: "U237C8hKyZYL42TEtTv6JGtdwDr3pZaQeeWMCVVpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Haggis-U237C8hKyZYL42TEtTv6JGtdwDr3pZaQeeWMCVVpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.haggis-u237c8hkyzyl42tettv6jgtdwdr3pzaqeewmcvvpump.png",
+      ticker: "Haggis",
     },
     {
       address: "AYyYgh3i43s1QSpvG4vwhJ6s3gewfN7uteFwYrswgMGw",
@@ -9327,6 +9345,15 @@ export const list = {
       ticker: "MIW",
     },
     {
+      address: "7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.MLG-7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.mlg-7xjiwldrjzxdydzipnjxzpr1idtmk55xixsfaa7jgnel.png",
+      ticker: "MLG",
+    },
+    {
       address: "MMAx26JtJgSWv6yH48nEHCGZcVvRbf9Lt9ALa7jSipe",
       chainId: "solana",
       decimals: 9,
@@ -9424,15 +9451,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.mockjup-jxxwsvm9jht4ah7dt9nulyvlyzczludpd93pcpq71ka.png",
       ticker: "mockJUP",
-    },
-    {
-      address: "A98UDy7z8MfmWnTQt6cKjje7UfqV3pTLf4yEbuwL2HrH",
-      chainId: "solana",
-      decimals: 9,
-      identifier: "SOL.MODUL-A98UDy7z8MfmWnTQt6cKjje7UfqV3pTLf4yEbuwL2HrH",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.modul-a98udy7z8mfmwntqt6ckjje7ufqv3ptlf4yebuwl2hrh.png",
-      ticker: "MODUL",
     },
     {
       address: "Bzu1nWVKRFEn7FRumTNrTC4qqxtBaMCMBNY1z7ejpump",
@@ -10162,6 +10180,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.nos-nosxbvoacttydlvky6csb4ac8jcdqkkaawytx2zmoo7.png",
       ticker: "NOS",
+    },
+    {
+      address: "CgbcLNUZP7jWmFeXtaKmABRFXDhxejkeUH94JLu3Lcvk",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.NOTE-CgbcLNUZP7jWmFeXtaKmABRFXDhxejkeUH94JLu3Lcvk",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.note-cgbclnuzp7jwmfextakmabrfxdhxejkeuh94jlu3lcvk.png",
+      ticker: "NOTE",
     },
     {
       address: "cocogeotrEMgATPmCCdp9TNtUypBFL73mkdbERJFom6",
@@ -11928,6 +11955,15 @@ export const list = {
       ticker: "RICH",
     },
     {
+      address: "GRFK7sv4KhkMzJ7BXDUBy4PLyZVBeXuW1FeaT6Mnpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.RICH-GRFK7sv4KhkMzJ7BXDUBy4PLyZVBeXuW1FeaT6Mnpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.rich-grfk7sv4khkmzj7bxduby4plyzvbexuw1feat6mnpump.png",
+      ticker: "RICH",
+    },
+    {
       address: "E5ndSkaB17Dm7CsD22dvcjfrYSDLCxFcMd6z8ddCk5wp",
       chainId: "solana",
       decimals: 9,
@@ -12684,6 +12720,15 @@ export const list = {
       ticker: "SHDW",
     },
     {
+      address: "2KgAN8nLAU74wjiyKi85m4ZT6Z9MtqrUTGfse8Xapump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.SHEGEN-2KgAN8nLAU74wjiyKi85m4ZT6Z9MtqrUTGfse8Xapump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.shegen-2kgan8nlau74wjiyki85m4zt6z9mtqrutgfse8xapump.png",
+      ticker: "SHEGEN",
+    },
+    {
       address: "2MMJXYvSJuY4C3sSj9eAWVroiLWnuxG7DQieB5PCMjKm",
       chainId: "solana",
       decimals: 9,
@@ -12781,6 +12826,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.shroom-xyzr4s6h724buq6q7mtqwxunhi8lm5fikkuq38h8m1p.png",
       ticker: "SHROOM",
+    },
+    {
+      address: "GN78Djb7J2xc2ZLZaJLoGoF8FU6x7DnK3kUJFsnDpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.SHRUB-GN78Djb7J2xc2ZLZaJLoGoF8FU6x7DnK3kUJFsnDpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.shrub-gn78djb7j2xc2zlzajlogof8fu6x7dnk3kujfsndpump.png",
+      ticker: "SHRUB",
     },
     {
       address: "6WErZ2aMZYLUyzbP9n5gm4fwHJbv9Ln8yimSQRwZpump",
@@ -13141,15 +13195,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sns-snsnkv9zfg5zkwqs6x4hxvbrv6s8sqmfsgctecdvdmd.png",
       ticker: "SNS",
-    },
-    {
-      address: "SENBBKVCM7homnf5RX9zqpf1GFe935hnbU4uVzY1Y6M",
-      chainId: "solana",
-      decimals: 9,
-      identifier: "SOL.SNTR-SENBBKVCM7homnf5RX9zqpf1GFe935hnbU4uVzY1Y6M",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sntr-senbbkvcm7homnf5rx9zqpf1gfe935hnbu4uvzy1y6m.png",
-      ticker: "SNTR",
     },
     {
       address: "CsZ5LZkDS7h9TDKjrbL7VAwQZ9nsRu8vJLhRYfmGaN8K",
@@ -13888,6 +13933,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.supersol-super8cpwxojpq7zksgmwfvjbqhjahwummpv4fvatbw.png",
       ticker: "superSOL",
+    },
+    {
+      address: "susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.sUSD-susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.susd-susdabgdnbhrnca6ncryo81u4s9gm8eck2uwmyziq4x.png",
+      ticker: "sUSD",
     },
     {
       address: "88881Hu2jGMfCs9tMu5Rr7Ah7WBNBuXqde4nR5ZmKYYy",

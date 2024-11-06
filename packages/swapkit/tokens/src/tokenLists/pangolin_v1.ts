@@ -2,14 +2,14 @@ export const list = {
   provider: "PANGOLIN_V1",
   chainId: "43114",
   name: "PANGOLIN_V1",
-  timestamp: "2024-11-05T12:01:19.460Z",
+  timestamp: "2024-11-06T12:01:13.841Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 14,
+  count: 15,
   tokens: [
     {
       address: "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
@@ -120,6 +120,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.wavax-0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png",
       ticker: "WAVAX",
+    },
+    {
+      address: "0x50b7545627a5162F82A992c33b87aDc75187B218",
+      chain: "AVAX",
+      chainId: "43114",
+      decimals: 8,
+      identifier: "AVAX.WBTC.E-0X50B7545627A5162F82A992C33B87ADC75187B218",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.wbtc.e-0x50b7545627a5162f82a992c33b87adc75187b218.png",
+      ticker: "WBTC.E",
     },
     {
       address: "0xB1466d4cf0DCfC0bCdDcf3500F473cdACb88b56D",
