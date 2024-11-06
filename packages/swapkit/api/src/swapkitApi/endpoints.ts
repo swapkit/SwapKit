@@ -87,7 +87,11 @@ export async function getPrice(body: PriceRequest, isDev = false, apiKey?: strin
 }
 
 // TODO update this once the trading pairs are supported by BE api
-export async function getTokenTradingPairs(providers: ProviderName[], isDev = false, apiKey?: string) {
+export async function getTokenTradingPairs(
+  providers: ProviderName[],
+  isDev = false,
+  apiKey?: string,
+) {
   const tradingPairs = new Map<
     string,
     {
