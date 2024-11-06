@@ -1,7 +1,7 @@
 {
   "description": "SwapKit Wallet - Phantom",
   "dependencies": {
-    "@solana/web3.js": "1.95.3",
+    "@solana/web3.js": "1.95.4",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
     "@swapkit/toolbox-solana": "workspace:*",
