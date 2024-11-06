@@ -19,15 +19,21 @@ function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
 
-export function getTrackerDetails(payload: TrackerParams) {
+export function getTrackerDetails(payload: TrackerParams, apiKey?: string) {
   return RequestClient.post<TrackerResponse>(`${getBaseUrl()}/track`, {
     json: payload,
+    headers: apiKey ? { "x-api-key": apiKey } : {},
   });
 }
 
-export async function getSwapQuoteV2<T extends boolean>(searchParams: QuoteRequest, isDev?: T) {
+export async function getSwapQuoteV2<T extends boolean>(
+  searchParams: QuoteRequest,
+  isDev?: T,
+  apiKey?: string,
+) {
   const response = await RequestClient.post<QuoteResponse>(`${getBaseUrl(isDev)}/quote`, {
     json: searchParams,
+    headers: apiKey ? { "x-api-key": apiKey } : {},
   });
 
   if (response.error) {
