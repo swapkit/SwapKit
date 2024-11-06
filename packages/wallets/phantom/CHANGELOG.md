@@ -1,5 +1,17 @@
 # @swapkit/wallet-phantom
 
+## 1.1.24
+
+### Patch Changes
+
+- [#1084](https://github.com/thorswap/SwapKit/pull/1084) [`d90ec0b`](https://github.com/thorswap/SwapKit/commit/d90ec0b9d50921109e4214f7c85595b2c9a97c6d) Thanks [@alexisshleverx](https://github.com/alexisshleverx)! - Bump @solana/web3.js version
+
+- Updated dependencies [[`1181ddc`](https://github.com/thorswap/SwapKit/commit/1181ddcbbc23b62225ec7f6c78cbf4797b80b178), [`d90ec0b`](https://github.com/thorswap/SwapKit/commit/d90ec0b9d50921109e4214f7c85595b2c9a97c6d)]:
+  - @swapkit/toolbox-solana@1.3.0
+  - @swapkit/helpers@1.15.0
+  - @swapkit/toolbox-utxo@1.2.0
+  - @swapkit/toolbox-evm@1.7.0
+
 ## 1.1.23
 
 ### Patch Changes
