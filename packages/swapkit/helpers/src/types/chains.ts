@@ -178,51 +178,6 @@ export const MAYASupportedChains = [
   Chain.THORChain,
 ] as const;
 
-const ChainToChainName = chains.reduce(
-  (acc, chain) => {
-    const chainName = chainNames.find((key) => Chain[key as ChainNameType] === chain);
-
-    if (chainName) acc[chain] = chainName;
-
-    return acc;
-  },
-  {} as { [key in Chain]: ChainNameType },
-);
-
-export const ChainToChainId = chains.reduce(
-  (acc, chain) => {
-    acc[chain] = ChainId[ChainToChainName[chain]];
-    return acc;
-  },
-  {} as { [key in Chain]: ChainId },
-);
-
-export const ChainToRPC = chains.reduce(
-  (acc, chain) => {
-    acc[chain] = getRPCUrl(chain);
-    return acc;
-  },
-  {} as { [key in Chain]: string },
-);
-
-export const ChainToHexChainId = chains.reduce(
-  (acc, chain) => {
-    const chainString = `${ChainToChainName[chain]}Hex` as keyof typeof ChainId;
-
-    acc[chain] = ChainId[chainString];
-    return acc;
-  },
-  {} as { [key in Chain]: ChainId },
-);
-
-export const ChainToExplorerUrl = chains.reduce(
-  (acc, chain) => {
-    acc[chain] = EXPLORER_URLS[chain];
-    return acc;
-  },
-  {} as { [key in Chain]: string },
-);
-
 export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
@@ -433,3 +388,48 @@ export const initializeRPCUrlsWithFallback = async (
 
   RPCUrlsMerged = { ...RPCUrlsMerged, ...workingUrls };
 };
+
+const ChainToChainName = chains.reduce(
+  (acc, chain) => {
+    const chainName = chainNames.find((key) => Chain[key as ChainNameType] === chain);
+
+    if (chainName) acc[chain] = chainName;
+
+    return acc;
+  },
+  {} as { [key in Chain]: ChainNameType },
+);
+
+export const ChainToChainId = chains.reduce(
+  (acc, chain) => {
+    acc[chain] = ChainId[ChainToChainName[chain]];
+    return acc;
+  },
+  {} as { [key in Chain]: ChainId },
+);
+
+export const ChainToRPC = chains.reduce(
+  (acc, chain) => {
+    acc[chain] = getRPCUrl(chain);
+    return acc;
+  },
+  {} as { [key in Chain]: string },
+);
+
+export const ChainToHexChainId = chains.reduce(
+  (acc, chain) => {
+    const chainString = `${ChainToChainName[chain]}Hex` as keyof typeof ChainId;
+
+    acc[chain] = ChainId[chainString];
+    return acc;
+  },
+  {} as { [key in Chain]: ChainId },
+);
+
+export const ChainToExplorerUrl = chains.reduce(
+  (acc, chain) => {
+    acc[chain] = EXPLORER_URLS[chain];
+    return acc;
+  },
+  {} as { [key in Chain]: string },
+);
