@@ -1,5 +1,18 @@
 # @swapkit/toolbox-solana
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1081](https://github.com/thorswap/SwapKit/pull/1081) [`1181ddc`](https://github.com/thorswap/SwapKit/commit/1181ddcbbc23b62225ec7f6c78cbf4797b80b178) Thanks [@towanTG](https://github.com/towanTG)! - Adds node rpc fallback logic.
+
+### Patch Changes
+
+- [#1084](https://github.com/thorswap/SwapKit/pull/1084) [`d90ec0b`](https://github.com/thorswap/SwapKit/commit/d90ec0b9d50921109e4214f7c85595b2c9a97c6d) Thanks [@alexisshleverx](https://github.com/alexisshleverx)! - Bump @solana/web3.js version
+
+- Updated dependencies [[`1181ddc`](https://github.com/thorswap/SwapKit/commit/1181ddcbbc23b62225ec7f6c78cbf4797b80b178)]:
+  - @swapkit/helpers@1.15.0
+
 ## 1.2.3
 
 ### Patch Changes

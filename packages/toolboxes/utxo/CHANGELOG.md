@@ -1,5 +1,16 @@
 # @swapkit/toolbox-utxo
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1081](https://github.com/thorswap/SwapKit/pull/1081) [`1181ddc`](https://github.com/thorswap/SwapKit/commit/1181ddcbbc23b62225ec7f6c78cbf4797b80b178) Thanks [@towanTG](https://github.com/towanTG)! - Adds node rpc fallback logic.
+
+### Patch Changes
+
+- Updated dependencies [[`1181ddc`](https://github.com/thorswap/SwapKit/commit/1181ddcbbc23b62225ec7f6c78cbf4797b80b178)]:
+  - @swapkit/helpers@1.15.0
+
 ## 1.1.28
 
 ### Patch Changes
