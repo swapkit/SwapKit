@@ -426,6 +426,29 @@ export const ChainToHexChainId = chains.reduce(
   {} as { [key in Chain]: ChainId },
 );
 
+export const BlockTimes: Record<Chain, number> = {
+  [Chain.Arbitrum]: 1200, // Example value in milliseconds
+  [Chain.Avalanche]: 2000, // Example value in milliseconds
+  [Chain.Base]: 1500, // Example value in milliseconds
+  [Chain.BinanceSmartChain]: 3000, // Example value in milliseconds
+  [Chain.Bitcoin]: 600000, // Example value in milliseconds
+  [Chain.BitcoinCash]: 600000, // Example value in milliseconds
+  [Chain.Cosmos]: 6000, // Example value in milliseconds
+  [Chain.Dash]: 150000, // Example value in milliseconds
+  [Chain.Dogecoin]: 60000, // Example value in milliseconds
+  [Chain.Ethereum]: 13000, // Example value in milliseconds
+  [Chain.Kujira]: 6000, // Example value in milliseconds
+  [Chain.Litecoin]: 150000, // Example value in milliseconds
+  [Chain.Maya]: 5000, // Example value in milliseconds
+  [Chain.Optimism]: 1200, // Example value in milliseconds
+  [Chain.Polkadot]: 6000, // Example value in milliseconds
+  [Chain.Chainflip]: 6000, // Example value in milliseconds
+  [Chain.Polygon]: 2000, // Example value in milliseconds
+  [Chain.Radix]: 4000, // Example value in milliseconds
+  [Chain.THORChain]: 5000, // Example value in milliseconds
+  [Chain.Solana]: 400, // Example value in milliseconds
+};
+
 export const ChainToExplorerUrl = chains.reduce(
   (acc, chain) => {
     acc[chain] = EXPLORER_URLS[chain];
