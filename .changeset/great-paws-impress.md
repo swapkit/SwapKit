@@ -1,5 +1,5 @@
 ---
-"@swapkit/helpers": major
+"@swapkit/helpers": minor
 ---
 
 Add blockchain times
