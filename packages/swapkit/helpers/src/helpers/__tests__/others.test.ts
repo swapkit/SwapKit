@@ -71,7 +71,7 @@ describe("getAssetBy", () => {
 
   test("find asset by chain and Solana resource", async () => {
     const assetByChainAndContract = await findAssetBy({
-      chain: Chain.Radix,
+      chain: Chain.Solana,
       contract: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     });
     expect(assetByChainAndContract?.toUpperCase()).toBe(
