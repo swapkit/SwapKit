@@ -255,7 +255,7 @@ export const filterAssets = (
 
 export async function findAssetBy(
   params:
-    | { chain: EVMChain | Chain.Radix; contract: string }
+    | { chain: EVMChain | Chain.Radix | Chain.Solana; contract: string }
     | { identifier: `${Chain}.${string}` },
 ) {
   const tokenPackages = await import("@swapkit/tokens");
