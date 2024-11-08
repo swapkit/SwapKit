@@ -119,6 +119,29 @@ export const BaseDecimal: Record<Chain, number> = {
   XRD: 18,
 };
 
+export const BlockTimes: Record<Chain, number> = {
+  [Chain.Arbitrum]: 0.3,
+  [Chain.Avalanche]: 3,
+  [Chain.Base]: 2,
+  [Chain.BinanceSmartChain]: 3,
+  [Chain.Bitcoin]: 600,
+  [Chain.BitcoinCash]: 600,
+  [Chain.Chainflip]: 5,
+  [Chain.Cosmos]: 2,
+  [Chain.Dash]: 150,
+  [Chain.Dogecoin]: 600,
+  [Chain.Ethereum]: 12.5,
+  [Chain.Kujira]: 2.2,
+  [Chain.Litecoin]: 150,
+  [Chain.Maya]: 6,
+  [Chain.Optimism]: 2,
+  [Chain.Polkadot]: 6,
+  [Chain.Polygon]: 2.1,
+  [Chain.Radix]: 5,
+  [Chain.Solana]: 0.4,
+  [Chain.THORChain]: 6,
+};
+
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
 export const SubstrateChains = [Chain.Polkadot, Chain.Chainflip];
 
@@ -425,29 +448,6 @@ export const ChainToHexChainId = chains.reduce(
   },
   {} as { [key in Chain]: ChainId },
 );
-
-export const BlockTimes: Record<Chain, number> = {
-  [Chain.Arbitrum]: 1200, // Example value in milliseconds
-  [Chain.Avalanche]: 2000, // Example value in milliseconds
-  [Chain.Base]: 1500, // Example value in milliseconds
-  [Chain.BinanceSmartChain]: 3000, // Example value in milliseconds
-  [Chain.Bitcoin]: 600000, // Example value in milliseconds
-  [Chain.BitcoinCash]: 600000, // Example value in milliseconds
-  [Chain.Cosmos]: 6000, // Example value in milliseconds
-  [Chain.Dash]: 150000, // Example value in milliseconds
-  [Chain.Dogecoin]: 60000, // Example value in milliseconds
-  [Chain.Ethereum]: 13000, // Example value in milliseconds
-  [Chain.Kujira]: 6000, // Example value in milliseconds
-  [Chain.Litecoin]: 150000, // Example value in milliseconds
-  [Chain.Maya]: 5000, // Example value in milliseconds
-  [Chain.Optimism]: 1200, // Example value in milliseconds
-  [Chain.Polkadot]: 6000, // Example value in milliseconds
-  [Chain.Chainflip]: 6000, // Example value in milliseconds
-  [Chain.Polygon]: 2000, // Example value in milliseconds
-  [Chain.Radix]: 4000, // Example value in milliseconds
-  [Chain.THORChain]: 5000, // Example value in milliseconds
-  [Chain.Solana]: 400, // Example value in milliseconds
-};
 
 export const ChainToExplorerUrl = chains.reduce(
   (acc, chain) => {
