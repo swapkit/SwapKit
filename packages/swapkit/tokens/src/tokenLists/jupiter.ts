@@ -2,14 +2,14 @@ export const list = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",
-  timestamp: "2024-11-06T12:01:42.694Z",
+  timestamp: "2024-11-07T05:01:33.540Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 1797,
+  count: 1804,
   tokens: [
     {
       address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
@@ -1747,6 +1747,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.basc-dm3y4r7n1hghp9aknt6ex4w1qqtpgq1tyujrmdx11fmt.png",
       ticker: "BASC",
+    },
+    {
+      address: "Em4rcuhX6STfB7mxb66dUXDmZPYCjDiQFthvzSzpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.BASED-Em4rcuhX6STfB7mxb66dUXDmZPYCjDiQFthvzSzpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.based-em4rcuhx6stfb7mxb66duxdmzpycjdiqfthvzszpump.png",
+      ticker: "BASED",
     },
     {
       address: "Basis9oJw9j8cw53oMV7iqsgo6ihi9ALw4QR31rcjUJa",
@@ -3630,6 +3639,15 @@ export const list = {
       ticker: "coconut",
     },
     {
+      address: "dFVMDELpHeSL4CfCmNiuGS6XRyxSAgP7AwW266Lpump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.cog/acc-dFVMDELpHeSL4CfCmNiuGS6XRyxSAgP7AwW266Lpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sol.cog.acc-dfvmdelphesl4cfcmniugs6xryxsagp7aww266lpump.png",
+      ticker: "cog/acc",
+    },
+    {
       address: "3xvLSHrLcM7246X1vu34cM9gNX741kQrzqj6T2HhLvXp",
       chainId: "solana",
       decimals: 5,
@@ -3862,6 +3880,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.crt-crtx1jouzhzsu6xytse42uqraogqihgxabocvfarty2s.png",
       ticker: "CRT",
+    },
+    {
+      address: "9iVJR1tjDgNHw88xtXXGaU2We2fR8qEm75ZSgztqDkag",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.CRUNCH-9iVJR1tjDgNHw88xtXXGaU2We2fR8qEm75ZSgztqDkag",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.crunch-9ivjr1tjdgnhw88xtxxgau2we2fr8qem75zsgztqdkag.png",
+      ticker: "CRUNCH",
     },
     {
       address: "CRWNYkqdgvhGGae9CKfNka58j6QQkaD5bLhKXvUYqnc1",
@@ -5860,6 +5887,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fuack-4p6gqynz2avwmar37gceuq1vyk1pqjmxnua1qfrkghkz.png",
       ticker: "FUACK",
+    },
+    {
+      address: "91Fv8PztVLsf4S49RANPGW92veJ2oL6BjwsP9i666Wxu",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.FUD-91Fv8PztVLsf4S49RANPGW92veJ2oL6BjwsP9i666Wxu",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.fud-91fv8pztvlsf4s49ranpgw92vej2ol6bjwsp9i666wxu.png",
+      ticker: "FUD",
     },
     {
       address: "9nD29a6TMDFHqAXS3iJ6nwLByLBS1gx2664ieQf7Zo7H",
@@ -9858,6 +9894,15 @@ export const list = {
       ticker: "N64",
     },
     {
+      address: "mkvXiNBpa8uiSApe5BrhWVJaT87pJFTZxRy7zFapump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Nailong-mkvXiNBpa8uiSApe5BrhWVJaT87pJFTZxRy7zFapump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.nailong-mkvxinbpa8uisape5brhwvjat87pjftzxry7zfapump.png",
+      ticker: "Nailong",
+    },
+    {
       address: "Em9zr2tgSmGgRbz3kxyQeRXjRi9oc13wMu6cKam4zWFW",
       chainId: "solana",
       decimals: 6,
@@ -11908,6 +11953,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.retardio-6ogzhhzdrqr9pgv6hz2mnze7urzbmafybbwuyp1fhitx.png",
       ticker: "RETARDIO",
+    },
+    {
+      address: "zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.retire-zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.retire-zgh48jtnhvbb5evgozlxwgpd2qu4mhkwdjlgdaupump.png",
+      ticker: "retire",
     },
     {
       address: "2eu1K3wvfPC7gVj1CK8ohv4ggusdN6qxyxpjHyTCkjZT",
@@ -15580,6 +15634,15 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.worm-dwdtuqbzjtbrpdjsfw3n7ykb5epocsru25bgcvhfcytg.png",
       ticker: "WORM",
+    },
+    {
+      address: "3JgFwoYV74f6LwWjQWnr3YDPFnmBdwQfNyubv99jqUoq",
+      chainId: "solana",
+      decimals: 3,
+      identifier: "SOL.wPOND-3JgFwoYV74f6LwWjQWnr3YDPFnmBdwQfNyubv99jqUoq",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.wpond-3jgfwoyv74f6lwwjqwnr3ydpfnmbdwqfnyubv99jquoq.png",
+      ticker: "wPOND",
     },
     {
       address: "7zBbQAPGgoKvqcK74Yua8qGwEkEjAZxUPb5m3kKvvHyF",

@@ -2,7 +2,7 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2024-11-06T12:00:54.231Z",
+  timestamp: "2024-11-07T05:00:45.968Z",
   version: {
     major: 1,
     minor: 0,

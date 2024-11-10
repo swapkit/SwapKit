@@ -2,14 +2,14 @@ export const list = {
   provider: "UNISWAP_V2",
   name: "Uniswap Labs Default",
   tags: {},
-  timestamp: "2024-10-15T20:43:44.935Z",
+  timestamp: "2024-11-06T21:42:54.075Z",
   version: {
     major: 12,
-    minor: 23,
+    minor: 25,
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 537,
+  count: 539,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -320,6 +320,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.cbeth-0x1debd73e752beaf79865fd6446b0c970eae7732f.png",
       ticker: "cbETH",
+    },
+    {
+      address: "0xe99db8258529923b72fef11371db967af50715a9",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 9,
+      identifier: "ARB.CBL-0xe99db8258529923b72fef11371db967af50715a9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.cbl-0xe99db8258529923b72fef11371db967af50715a9.png",
+      ticker: "CBL",
     },
     {
       address: "0x292ae05365e480b6e7fdd85135cdb0a1739a0593",
@@ -1282,13 +1292,13 @@ export const list = {
       ticker: "RAI",
     },
     {
-      address: "0xCF8600347Dc375C5f2FdD6Dab9BB66e0b6773cd7",
+      address: "0xCf78572A8fE97b2B9a4B9709f6a7D9a863c1b8E0",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.RARI-0xCF8600347Dc375C5f2FdD6Dab9BB66e0b6773cd7",
+      identifier: "ARB.RARI-0xCf78572A8fE97b2B9a4B9709f6a7D9a863c1b8E0",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.rari-0xcf8600347dc375c5f2fdd6dab9bb66e0b6773cd7.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.rari-0xcf78572a8fe97b2b9a4b9709f6a7d9a863c1b8e0.png",
       ticker: "RARI",
     },
     {
@@ -2682,16 +2692,6 @@ export const list = {
       ticker: "DIA",
     },
     {
-      address: "0x5d269fac3b2e0552b0f34cdc253bdb427682a4b9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 9,
-      identifier: "ETH.DJ15-0x5d269fac3b2e0552b0f34cdc253bdb427682a4b9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.dj15-0x5d269fac3b2e0552b0f34cdc253bdb427682a4b9.png",
-      ticker: "DJ15",
-    },
-    {
       address: "0x0AbdAce70D3790235af448C88547603b945604ea",
       chain: "ETH",
       chainId: "1",
@@ -2930,16 +2930,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.floki-0xcf0c122c6b73ff809c693db761e7baebe62b6a2e.png",
       ticker: "FLOKI",
-    },
-    {
-      address: "0x4f08705fb8f33affc231ed66e626b40e84a71870",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 11,
-      identifier: "ETH.FLUT-0x4f08705fb8f33affc231ed66e626b40e84a71870",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.flut-0x4f08705fb8f33affc231ed66e626b40e84a71870.png",
-      ticker: "FLUT",
     },
     {
       address: "0x41545f8b9472D758bB669ed8EaEEEcD7a9C4Ec29",
@@ -3382,6 +3372,16 @@ export const list = {
       ticker: "KEEP",
     },
     {
+      address: "0x8c7ac134ed985367eadc6f727d79e8295e11435c",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.Kekec-0x8c7ac134ed985367eadc6f727d79e8295e11435c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.kekec-0x8c7ac134ed985367eadc6f727d79e8295e11435c.png",
+      ticker: "Kekec",
+    },
+    {
       address: "0x4CC19356f2D37338b9802aa8E8fc58B0373296E7",
       chain: "ETH",
       chainId: "1",
@@ -3770,16 +3770,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mln-0xec67005c4e498ec7f55e092bd1d35cbc47c91892.png",
       ticker: "MLN",
-    },
-    {
-      address: "0xf944e35f95e819e752f3ccb5faf40957d311e8c5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.MOCA-0xf944e35f95e819e752f3ccb5faf40957d311e8c5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.moca-0xf944e35f95e819e752f3ccb5faf40957d311e8c5.png",
-      ticker: "MOCA",
     },
     {
       address: "0xaaeE1A9723aaDB7afA2810263653A34bA2C21C7a",
@@ -5092,6 +5082,16 @@ export const list = {
       ticker: "USDC",
     },
     {
+      address: "0xe343167631d89B6Ffc58B88d6b7fB0228795491D",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.USDG-0xe343167631d89B6Ffc58B88d6b7fB0228795491D",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdg-0xe343167631d89b6ffc58b88d6b7fb0228795491d.png",
+      ticker: "USDG",
+    },
+    {
       address: "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
       chain: "ETH",
       chainId: "1",
@@ -5170,6 +5170,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.wampl-0xedb171c18ce90b633db442f2a6f72874093b49ef.png",
       ticker: "WAMPL",
+    },
+    {
+      address: "0x6af53c6ec427525f7240e211941223288a0e7c66",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.WARPED-0x6af53c6ec427525f7240e211941223288a0e7c66",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.warped-0x6af53c6ec427525f7240e211941223288a0e7c66.png",
+      ticker: "WARPED",
     },
     {
       address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
@@ -5290,6 +5300,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.xfi-0x5befbb272290dd5b8521d4a938f6c4757742c430.png",
       ticker: "XFI",
+    },
+    {
+      address: "0x391cf4b21f557c935c7f670218ef42c21bd8d686",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.XMW-0x391cf4b21f557c935c7f670218ef42c21bd8d686",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.xmw-0x391cf4b21f557c935c7f670218ef42c21bd8d686.png",
+      ticker: "XMW",
     },
     {
       address: "0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96",

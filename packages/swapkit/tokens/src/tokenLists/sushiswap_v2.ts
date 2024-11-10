@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2024-11-06T12:01:14.781Z",
+  timestamp: "2024-11-07T05:01:06.674Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 89,
+  count: 91,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -280,6 +280,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.float-0xb05097849bca421a3f51b249ba6cca4af4b97cb9.png",
       ticker: "FLOAT",
+    },
+    {
+      address: "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.FTM-0X4E15361FD6B4BB609FA63C81A2BE19D873717870",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.ftm-0x4e15361fd6b4bb609fa63c81a2be19d873717870.png",
+      ticker: "FTM",
     },
     {
       address: "0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9",
@@ -640,6 +650,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.robo-0x6fc2f1044a3b9bb3e43a43ec8f840843ed753061.png",
       ticker: "ROBO",
+    },
+    {
+      address: "0xEe7527841A932d2912224E20a405e1a1FF747084",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 7,
+      identifier: "ETH.SHX-0XEE7527841A932D2912224E20A405E1A1FF747084",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.shx-0xee7527841a932d2912224e20a405e1a1ff747084.png",
+      ticker: "SHX",
     },
     {
       address: "0xbCDa9E0658f4eECF56A0bd099e6DBc0C91f6A8c2",
