@@ -2,14 +2,14 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-11-07T05:01:31.015Z",
+  timestamp: "2024-11-12T18:31:09.220Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 128,
+  count: 130,
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -390,6 +390,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.floop-resource_rdx1tkhseye4w0hmf2af5enwurkxu4x29zk73yckyzhndv8xdk8tp2tn8q.png",
       ticker: "floop",
+    },
+    {
+      address: "resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.FOMO-resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.fomo-resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9.png",
+      ticker: "FOMO",
     },
     {
       address: "resource_rdx1t4km4k306ul40s3zr8zwwrm25xfmx7w8ytjvdwqh0u3kkch0eph9rn",
@@ -1020,6 +1030,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.slg-resource_rdx1t4mtpqwly2p8pes0camm8zsalknyaag2qee9ks34y990zrcjqnmpal.png",
       ticker: "SLG",
+    },
+    {
+      address: "resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.SRG-resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.srg-resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk.png",
+      ticker: "SRG",
     },
     {
       address: "resource_rdx1tk33qqrfz2m0p4t8mkpw9ahr3w3qngpwfrnhh7vq2kuqpdv90lkmcs",
