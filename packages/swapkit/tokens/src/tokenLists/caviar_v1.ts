@@ -2,14 +2,14 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-11-07T05:01:31.015Z",
+  timestamp: "2024-11-13T00:01:38.303Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 128,
+  count: 131,
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -390,6 +390,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.floop-resource_rdx1tkhseye4w0hmf2af5enwurkxu4x29zk73yckyzhndv8xdk8tp2tn8q.png",
       ticker: "floop",
+    },
+    {
+      address: "resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.FOMO-resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.fomo-resource_rdx1t5l954908vmg465pkj7j37z0fn4j33cdjt2g6czavjde406y4uxdy9.png",
+      ticker: "FOMO",
     },
     {
       address: "resource_rdx1t4km4k306ul40s3zr8zwwrm25xfmx7w8ytjvdwqh0u3kkch0eph9rn",
@@ -1022,6 +1032,16 @@ export const list = {
       ticker: "SLG",
     },
     {
+      address: "resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.SRG-resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.srg-resource_rdx1tka3kqqkjxcpddvcx0u300qt66z3tlzv7swqx9rklp60m5yqry6yzk.png",
+      ticker: "SRG",
+    },
+    {
       address: "resource_rdx1tk33qqrfz2m0p4t8mkpw9ahr3w3qngpwfrnhh7vq2kuqpdv90lkmcs",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -1279,6 +1299,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.xwbtc-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75.png",
       ticker: "xwBTC",
+    },
+    {
+      address: "resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.YOMM-resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.yomm-resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5.png",
+      ticker: "YOMM",
     },
     {
       address: "resource_rdx1t4tzgxlmq93c2te5ackj6v6qy8f23k6tt5rf7g3e3q49c2jmnn8tn2",
