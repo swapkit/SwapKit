@@ -2,7 +2,7 @@ export const list = {
   provider: "PANGOLIN_V1",
   chainId: "43114",
   name: "PANGOLIN_V1",
-  timestamp: "2024-11-12T18:30:47.438Z",
+  timestamp: "2024-11-13T04:31:03.949Z",
   version: {
     major: 1,
     minor: 0,

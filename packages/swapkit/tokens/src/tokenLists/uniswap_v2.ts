@@ -9,7 +9,7 @@ export const list = {
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 540,
+  count: 539,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -1620,16 +1620,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
-    },
-    {
-      address: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.VEE-0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.vee-0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9.png",
-      ticker: "VEE",
     },
     {
       address: "0x1c8Ec4DE3c2BFD3050695D89853EC6d78AE650bb",
@@ -3512,6 +3502,16 @@ export const list = {
       ticker: "LIT",
     },
     {
+      address: "0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.LMEOW-0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lmeow-0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b.png",
+      ticker: "LMEOW",
+    },
+    {
       address: "0xd4f4d0a10bcae123bb6655e8fe93a30d01eebd04",
       chain: "ETH",
       chainId: "1",
@@ -5130,16 +5130,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
-    },
-    {
-      address: "0x8de5b80a0c1b02fe4976851d030b36122dbb8624",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.VANRY-0x8de5b80a0c1b02fe4976851d030b36122dbb8624",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.vanry-0x8de5b80a0c1b02fe4976851d030b36122dbb8624.png",
-      ticker: "VANRY",
     },
     {
       address: "0x3C4B6E6e1eA3D4863700D7F76b36B7f3D3f13E3d",

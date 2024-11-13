@@ -2,14 +2,14 @@ export const list = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",
-  timestamp: "2024-11-12T18:31:11.655Z",
+  timestamp: "2024-11-13T04:31:34.571Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 1833,
+  count: 1835,
   tokens: [
     {
       address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
@@ -3260,6 +3260,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.cart-ftbvjbp8vrjwvgzob8cppkh5motqvypmocd6kjvbpump.png",
       ticker: "CART",
+    },
+    {
+      address: "H4iSABxCygF5caEvqZeVY4ELqqXAUBkMhGh1z4GEpump",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.casino-H4iSABxCygF5caEvqZeVY4ELqqXAUBkMhGh1z4GEpump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.casino-h4isabxcygf5caevqzevy4elqqxaubkmhgh1z4gepump.png",
+      ticker: "casino",
     },
     {
       address: "7hWcHohzwtLddDUG81H2PkWq6KEkMtSDNkYXsso18Fy3",
@@ -10650,6 +10660,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.mmip-ccgfe34o6auhhbggtzp2rrcscxxjgbehquazniee1cx7.png",
       ticker: "MMIP",
+    },
+    {
+      address: "FwfrwnNVLGyS8ucVjWvyoRdFDpTY8w6ACMAxJ4rqGUSS",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 9,
+      identifier: "SOL.MMOSH-FwfrwnNVLGyS8ucVjWvyoRdFDpTY8w6ACMAxJ4rqGUSS",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.mmosh-fwfrwnnvlgys8ucvjwvyordfdpty8w6acmaxj4rqguss.png",
+      ticker: "MMOSH",
     },
     {
       address: "MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey",

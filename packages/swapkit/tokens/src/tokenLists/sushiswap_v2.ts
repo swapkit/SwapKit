@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2024-11-12T18:30:48.652Z",
+  timestamp: "2024-11-13T04:31:05.073Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 98,
+  count: 97,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -860,16 +860,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
-    },
-    {
-      address: "0x677ddbd918637E5F2c79e164D402454dE7dA8619",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.VUSD-0X677DDBD918637E5F2C79E164D402454DE7DA8619",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.vusd-0x677ddbd918637e5f2c79e164d402454de7da8619.png",
-      ticker: "VUSD",
     },
     {
       address: "0x135B810e48e4307AB2a59ea294A6f1724781bD3C",

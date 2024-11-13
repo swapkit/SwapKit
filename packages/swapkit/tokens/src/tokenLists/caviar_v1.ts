@@ -2,14 +2,14 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-11-12T18:31:09.220Z",
+  timestamp: "2024-11-13T04:31:31.830Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 130,
+  count: 131,
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -1299,6 +1299,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.xwbtc-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75.png",
       ticker: "xwBTC",
+    },
+    {
+      address: "resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.YOMM-resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.yomm-resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5.png",
+      ticker: "YOMM",
     },
     {
       address: "resource_rdx1t4tzgxlmq93c2te5ackj6v6qy8f23k6tt5rf7g3e3q49c2jmnn8tn2",
