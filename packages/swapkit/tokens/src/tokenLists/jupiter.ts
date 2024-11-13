@@ -12,16 +12,6 @@ export const list = {
   count: 1833,
   tokens: [
     {
-      address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
-      chain: "SOL",
-      chainId: "solana",
-      decimals: 6,
-      identifier: "SOL.🐕-DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.🐕-dlscrnwofxiygqnvzwgy9gt98mpqkdznak4trukxpump.png",
-      ticker: "🐕",
-    },
-    {
       address: "GpzTUBLEPTFL6S8L8rDY2ABXS9FaXq13cy8UtdYppump",
       chain: "SOL",
       chainId: "solana",
