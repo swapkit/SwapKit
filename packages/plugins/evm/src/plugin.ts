@@ -85,6 +85,8 @@ function plugin({ getWallet }: SwapKitPluginParams) {
     approveAssetValue,
     isAssetValueApproved,
     supportedSwapkitProviders: [
+      ProviderName.CAMELOT_V3,
+      ProviderName.OPENOCEAN_V2,
       ProviderName.ONEINCH,
       ProviderName.PANCAKESWAP,
       ProviderName.PANGOLIN_V1,

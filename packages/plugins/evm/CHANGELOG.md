@@ -1,5 +1,11 @@
 # @swapkit/plugin-evm
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1094](https://github.com/thorswap/SwapKit/pull/1094) [`9421d52`](https://github.com/thorswap/SwapKit/commit/9421d52df6f0755d104b29d0367e1bf2c093e4e3) Thanks [@towanTG](https://github.com/towanTG)! - Adds new providers
+
 ## 1.1.36
 
 ### Patch Changes

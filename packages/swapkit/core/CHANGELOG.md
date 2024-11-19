@@ -1,5 +1,12 @@
 # @swapkit/core
 
+## 2.0.11
+
+### Patch Changes
+
+- Updated dependencies [[`9421d52`](https://github.com/thorswap/SwapKit/commit/9421d52df6f0755d104b29d0367e1bf2c093e4e3)]:
+  - @swapkit/plugin-evm@1.2.0
+
 ## 2.0.10
 
 ### Patch Changes
