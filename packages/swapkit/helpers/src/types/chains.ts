@@ -119,7 +119,7 @@ export const BaseDecimal: Record<Chain, number> = {
   XRD: 18,
 };
 
-export const BlockTimes: Record<Chain, number> = {
+export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Arbitrum]: 0.3,
   [Chain.Avalanche]: 3,
   [Chain.Base]: 2,
