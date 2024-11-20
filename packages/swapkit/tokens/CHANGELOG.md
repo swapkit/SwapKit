@@ -1,5 +1,15 @@
 # @swapkit/tokens
 
+## 1.9.0
+
+### Minor Changes
+
+- [#1090](https://github.com/thorswap/SwapKit/pull/1090) [`d317f5c`](https://github.com/thorswap/SwapKit/commit/d317f5c0ce1614cddc3fb5cc9a1713aedf0580d2) Thanks [@towanTG](https://github.com/towanTG)! - Updates token provider list
+
+### Patch Changes
+
+- [#1088](https://github.com/thorswap/SwapKit/pull/1088) [`a2f1571`](https://github.com/thorswap/SwapKit/commit/a2f157186da1ce4df60374371b2b5872119cd0b4) Thanks [@alexisshleverx](https://github.com/alexisshleverx)! - Add Jupiter tokenlist
+
 ## 1.8.4
 
 ### Patch Changes

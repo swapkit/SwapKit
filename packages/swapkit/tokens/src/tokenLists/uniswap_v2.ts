@@ -2,14 +2,14 @@ export const list = {
   provider: "UNISWAP_V2",
   name: "Uniswap Labs Default",
   tags: {},
-  timestamp: "2024-10-15T20:43:44.935Z",
+  timestamp: "2024-11-06T21:42:54.075Z",
   version: {
     major: 12,
-    minor: 23,
+    minor: 25,
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 537,
+  count: 539,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -1112,6 +1112,16 @@ export const list = {
       ticker: "NMR",
     },
     {
+      address: "0x8a75e8b6f82264d65a6d7df42eea046fdf2450d1",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 9,
+      identifier: "ARB.NS-0x8a75e8b6f82264d65a6d7df42eea046fdf2450d1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.ns-0x8a75e8b6f82264d65a6d7df42eea046fdf2450d1.png",
+      ticker: "NS",
+    },
+    {
       address: "0x933d31561e470478079FEB9A6Dd2691fAD8234DF",
       chain: "ARB",
       chainId: "42161",
@@ -1282,13 +1292,13 @@ export const list = {
       ticker: "RAI",
     },
     {
-      address: "0xCF8600347Dc375C5f2FdD6Dab9BB66e0b6773cd7",
+      address: "0xCf78572A8fE97b2B9a4B9709f6a7D9a863c1b8E0",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.RARI-0xCF8600347Dc375C5f2FdD6Dab9BB66e0b6773cd7",
+      identifier: "ARB.RARI-0xCf78572A8fE97b2B9a4B9709f6a7D9a863c1b8E0",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.rari-0xcf8600347dc375c5f2fdd6dab9bb66e0b6773cd7.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.rari-0xcf78572a8fe97b2b9a4b9709f6a7d9a863c1b8e0.png",
       ticker: "RARI",
     },
     {
@@ -1740,16 +1750,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.1inch-0x111111111117dc0aa78b770fa6a738034120c302.png",
       ticker: "1INCH",
-    },
-    {
-      address: "0x2de1218c31a04e1040fc5501b89e3a58793b3ddf",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.3AC-0x2de1218c31a04e1040fc5501b89e3a58793b3ddf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.3ac-0x2de1218c31a04e1040fc5501b89e3a58793b3ddf.png",
-      ticker: "3AC",
     },
     {
       address: "0x3E5A19c91266aD8cE2477B91585d1856B84062dF",
@@ -2220,16 +2220,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.bit-0x1a4b46696b2bb4794eb3d4c26f1c55f9170fa4c5.png",
       ticker: "BIT",
-    },
-    {
-      address: "0x72e4f9f808c49a2a61de9c5896298920dc4eeea9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 8,
-      identifier: "ETH.BITCOIN-0x72e4f9f808c49a2a61de9c5896298920dc4eeea9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.bitcoin-0x72e4f9f808c49a2a61de9c5896298920dc4eeea9.png",
-      ticker: "BITCOIN",
     },
     {
       address: "0x5283D291DBCF85356A21bA090E6db59121208b44",
@@ -2932,16 +2922,6 @@ export const list = {
       ticker: "FLOKI",
     },
     {
-      address: "0x4f08705fb8f33affc231ed66e626b40e84a71870",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 11,
-      identifier: "ETH.FLUT-0x4f08705fb8f33affc231ed66e626b40e84a71870",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.flut-0x4f08705fb8f33affc231ed66e626b40e84a71870.png",
-      ticker: "FLUT",
-    },
-    {
       address: "0x41545f8b9472D758bB669ed8EaEEEcD7a9C4Ec29",
       chain: "ETH",
       chainId: "1",
@@ -3392,6 +3372,16 @@ export const list = {
       ticker: "KEY",
     },
     {
+      address: "0xa2b4c0af19cc16a6cfacce81f192b024d625817d",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.KISHU-0xa2b4c0af19cc16a6cfacce81f192b024d625817d",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.kishu-0xa2b4c0af19cc16a6cfacce81f192b024d625817d.png",
+      ticker: "KISHU",
+    },
+    {
       address: "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
       chain: "ETH",
       chainId: "1",
@@ -3512,6 +3502,16 @@ export const list = {
       ticker: "LIT",
     },
     {
+      address: "0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.LMEOW-0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lmeow-0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b.png",
+      ticker: "LMEOW",
+    },
+    {
       address: "0xd4f4d0a10bcae123bb6655e8fe93a30d01eebd04",
       chain: "ETH",
       chainId: "1",
@@ -3550,6 +3550,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.loom-0xa4e8c3ec456107ea67d3075bf9e3df3a75823db0.png",
       ticker: "LOOM",
+    },
+    {
+      address: "0x975da7b2325f815f1de23c8b68f721fb483b8071",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.LOOPIN-0x975da7b2325f815f1de23c8b68f721fb483b8071",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.loopin-0x975da7b2325f815f1de23c8b68f721fb483b8071.png",
+      ticker: "LOOPIN",
     },
     {
       address: "0x58b6A8A3302369DAEc383334672404Ee733aB239",
@@ -3692,16 +3702,6 @@ export const list = {
       ticker: "MDT",
     },
     {
-      address: "0xddaf27167929cd045a7d97d09a4fa1046ece3d89",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.MELLSTROY-0xddaf27167929cd045a7d97d09a4fa1046ece3d89",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mellstroy-0xddaf27167929cd045a7d97d09a4fa1046ece3d89.png",
-      ticker: "MELLSTROY",
-    },
-    {
       address: "0xb131f4A55907B10d1F0A50d8ab8FA09EC342cd74",
       chain: "ETH",
       chainId: "1",
@@ -3810,16 +3810,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mpl-0x33349b282065b0284d756f0577fb39c158f935e6.png",
       ticker: "MPL",
-    },
-    {
-      address: "0x42069026eac8eee0fd9b5f7adfa4f6e6d69a2b39",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 9,
-      identifier: "ETH.MSTR-0x42069026eac8eee0fd9b5f7adfa4f6e6d69a2b39",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mstr-0x42069026eac8eee0fd9b5f7adfa4f6e6d69a2b39.png",
-      ticker: "MSTR",
     },
     {
       address: "0xF433089366899D83a9f26A773D59ec7eCF30355e",
@@ -4572,6 +4562,16 @@ export const list = {
       ticker: "SD",
     },
     {
+      address: "0x40e3d1a4b2c47d9aa61261f5606136ef73e28042",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.SERV-0x40e3d1a4b2c47d9aa61261f5606136ef73e28042",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.serv-0x40e3d1a4b2c47d9aa61261f5606136ef73e28042.png",
+      ticker: "SERV",
+    },
+    {
       address: "0x560363bda52bc6a44ca6c8c9b4a5fadbda32fa60",
       chain: "ETH",
       chainId: "1",
@@ -5092,6 +5092,16 @@ export const list = {
       ticker: "USDC",
     },
     {
+      address: "0xe343167631d89B6Ffc58B88d6b7fB0228795491D",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.USDG-0xe343167631d89B6Ffc58B88d6b7fB0228795491D",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdg-0xe343167631d89b6ffc58b88d6b7fb0228795491d.png",
+      ticker: "USDG",
+    },
+    {
       address: "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
       chain: "ETH",
       chainId: "1",
@@ -5170,6 +5180,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.wampl-0xedb171c18ce90b633db442f2a6f72874093b49ef.png",
       ticker: "WAMPL",
+    },
+    {
+      address: "0x6af53c6ec427525f7240e211941223288a0e7c66",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.WARPED-0x6af53c6ec427525f7240e211941223288a0e7c66",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.warped-0x6af53c6ec427525f7240e211941223288a0e7c66.png",
+      ticker: "WARPED",
     },
     {
       address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",

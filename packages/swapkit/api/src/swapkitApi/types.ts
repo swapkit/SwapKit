@@ -2,11 +2,25 @@ import {
   type AssetValue,
   Chain,
   ChainId,
+  ErrorCode,
   FeeTypeEnum,
   ProviderName,
   WarningCodeEnum,
 } from "@swapkit/helpers";
 import { z } from "zod";
+
+export enum PriorityLabel {
+  CHEAPEST = "CHEAPEST",
+  FASTEST = "FASTEST",
+  RECOMMENDED = "RECOMMENDED",
+}
+
+export enum RouteQuoteTxType {
+  PSBT = "PSBT",
+  EVM = "EVM",
+  COSMOS = "COSMOS",
+  RADIX = "RADIX",
+}
 
 export enum TxnType {
   native_send = "native_send", // native send, msgSend, etc.
@@ -371,8 +385,6 @@ export const FeesSchema = z.array(
 
 export type Fees = z.infer<typeof FeesSchema>;
 
-export type EVMTransaction = z.infer<typeof EVMTransactionSchema>;
-
 export const EstimatedTimeSchema = z.object({
   inbound: z.optional(
     z.number({
@@ -410,6 +422,8 @@ export const EVMTransactionSchema = z.object({
     description: "Data to send",
   }),
 });
+
+export type EVMTransaction = z.infer<typeof EVMTransactionSchema>;
 
 export const EVMTransactionDetailsParamsSchema = z.array(
   z.union([
@@ -514,6 +528,26 @@ export const RouteQuoteMetadataAssetSchema = z.object({
 
 export type RouteQuoteMetadataAsset = z.infer<typeof RouteQuoteMetadataAssetSchema>;
 
+export const ChainflipMetadataSchema = z.object({
+  boost: z.optional(z.boolean()),
+  maxBoostFeeBps: z.optional(z.number()),
+  dcaParams: z.optional(
+    z.object({
+      chunkIntervalBlocks: z.number(),
+      numberOfChunks: z.number(),
+    }),
+  ),
+  killOrFillParams: z.optional(
+    z.object({
+      refundAddress: z.string(),
+      retryDurationBlocks: z.number(),
+      slippageTolerancePercent: z.number(),
+    }),
+  ),
+});
+
+export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
+
 export const RouteQuoteMetadataSchema = z.object({
   priceImpact: z.optional(
     z.number({
@@ -528,6 +562,13 @@ export const RouteQuoteMetadataSchema = z.object({
   ),
   streamingInterval: z.number().optional(),
   maxStreamingQuantity: z.number().optional(),
+  tags: z.array(z.nativeEnum(PriorityLabel)),
+
+  affiliate: z.optional(z.string()),
+  affiliateFee: z.optional(z.string()),
+
+  txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
+  chainflip: z.optional(ChainflipMetadataSchema),
 });
 
 export const RouteQuoteWarningSchema = z.array(
@@ -537,6 +578,8 @@ export const RouteQuoteWarningSchema = z.array(
     tooltip: z.string().optional(),
   }),
 );
+
+export type RouteQuoteWarning = z.infer<typeof RouteQuoteWarningSchema>;
 
 const QuoteResponseRouteLegItem = z.object({
   provider: z.nativeEnum(ProviderName),
@@ -602,8 +645,8 @@ const QuoteResponseRouteItem = z.object({
     }),
   ),
   fees: FeesSchema,
-  tx: z.optional(EVMTransactionSchema),
-  transaction: z.optional(z.unknown()), // Can take many forms depending on the chains
+  txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
+  tx: z.optional(z.union([EVMTransactionSchema, z.string()])),
   estimatedTime: z.optional(EstimatedTimeSchema), // TODO remove optionality
   totalSlippageBps: z.number({
     description: "Total slippage in bps",
@@ -618,10 +661,21 @@ export const QuoteResponseSchema = z.object({
     description: "Quote ID",
   }),
   routes: z.array(QuoteResponseRouteItem),
+  // in case of bad request or actual backend error, not bad quotes from providers
   error: z.optional(
     z.string({
       description: "Error message",
     }),
+  ),
+  // errors from providers
+  providerErrors: z.optional(
+    z.array(
+      z.object({
+        provider: z.nativeEnum(ProviderName).optional(),
+        errorCode: z.optional(z.nativeEnum(ErrorCode)),
+        message: z.optional(z.string()),
+      }),
+    ),
   ),
 });
 

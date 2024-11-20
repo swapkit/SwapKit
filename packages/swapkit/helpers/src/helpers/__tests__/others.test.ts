@@ -68,4 +68,21 @@ describe("getAssetBy", () => {
     });
     expect(assetByChainAndContract?.toUpperCase()).toBe("XRD.XRD".toUpperCase());
   });
+
+  test("find asset by chain and Solana resource", async () => {
+    const assetByChainAndContract = await findAssetBy({
+      chain: Chain.Solana,
+      contract: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    });
+    expect(assetByChainAndContract?.toUpperCase()).toBe(
+      "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toUpperCase(),
+    );
+  });
+
+  test("find asset by Solana identifier", async () => {
+    const assetByChainAndContract = await findAssetBy({
+      identifier: "SOL.SOL",
+    });
+    expect(assetByChainAndContract?.toUpperCase()).toBe("SOL.SOL".toUpperCase());
+  });
 });

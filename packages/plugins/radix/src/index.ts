@@ -31,7 +31,7 @@ function plugin({ getWallet }: SwapKitPluginParams) {
       //     )
       //   ).value as string;
       return wallet.signAndBroadcast({
-        manifest: route.transaction as string,
+        manifest: route.tx as string,
       });
     } catch (error) {
       throw new SwapKitError("core_swap_invalid_params", error);

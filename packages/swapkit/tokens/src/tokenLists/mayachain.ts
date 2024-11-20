@@ -2,14 +2,14 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2024-11-06T12:00:54.231Z",
+  timestamp: "2024-11-13T04:30:40.581Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 55,
+  count: 53,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -162,16 +162,6 @@ export const list = {
       identifier: "ETH.ETH",
       logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
       ticker: "ETH",
-    },
-    {
-      address: "0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.MOG-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mog-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a.png",
-      ticker: "MOG",
     },
     {
       address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",
@@ -385,7 +375,7 @@ export const list = {
       identifier: "MAYA.ARB/wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
-      ticker: "WSTETH",
+      ticker: "wstETH",
     },
     {
       address: "0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
@@ -430,16 +420,6 @@ export const list = {
       ticker: "ETH",
     },
     {
-      address: "0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.ETH/MOG-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.mog-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a.png",
-      ticker: "MOG",
-    },
-    {
       address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
@@ -477,7 +457,7 @@ export const list = {
       identifier: "MAYA.ETH/wstETH-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.wsteth-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0.png",
-      ticker: "WstETH",
+      ticker: "wstETH",
     },
     {
       chain: "MAYA",

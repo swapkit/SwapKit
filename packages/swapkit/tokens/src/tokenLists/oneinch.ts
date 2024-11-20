@@ -1,14 +1,14 @@
 export const list = {
   provider: "ONEINCH",
   name: "ONEINCH",
-  timestamp: "2024-11-06T12:00:56.656Z",
+  timestamp: "2024-11-13T04:30:42.653Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
-  count: 1402,
+  count: 1404,
   tokens: [
     {
       address: "0xba5ddd1f9d7f570dc94a51479a000e3bce967196",
@@ -11895,6 +11895,16 @@ export const list = {
       ticker: "SCA",
     },
     {
+      address: "0x0655977feb2f289a4ab78af67bab0d17aab84367",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.scrvUSD-0x0655977feb2f289a4ab78af67bab0d17aab84367",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.scrvusd-0x0655977feb2f289a4ab78af67bab0d17aab84367.png",
+      ticker: "scrvUSD",
+    },
+    {
       address: "0x30d20208d987713f46dfd34ef128bb16c404d10f",
       chain: "ETH",
       chainId: "1",
@@ -13953,6 +13963,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.xpr-0xd7efb00d12c2c13131fd319336fdf952525da2af.png",
       ticker: "XPR",
+    },
+    {
+      address: "0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.xrETH-0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.xreth-0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe.png",
+      ticker: "xrETH",
     },
     {
       address: "0x7de91b204c1c737bcee6f000aaa6569cf7061cb7",

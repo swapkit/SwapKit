@@ -15,9 +15,11 @@ function parseIdentifier(identifier: string) {
 
 const providers = (await SwapKitApi.getTokenListProvidersV2(true)).filter(
   (provider) =>
-    ![ProviderName.THORCHAIN_STREAMING, ProviderName.MAYACHAIN_STREAMING].includes(
-      provider.provider,
-    ),
+    ![
+      ProviderName.THORCHAIN_STREAMING,
+      ProviderName.MAYACHAIN_STREAMING,
+      ProviderName.OCISWAP_V1,
+    ].includes(provider.provider),
 );
 
 console.info(providers);
