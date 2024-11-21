@@ -1,5 +1,24 @@
 # @swapkit/core
 
+## 2.1.0
+
+### Minor Changes
+
+- [#1073](https://github.com/thorswap/SwapKit/pull/1073) [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7) Thanks [@towanTG](https://github.com/towanTG)! - Updates Quote typings and enables dca feature for chainflip broker
+
+### Patch Changes
+
+- Updated dependencies [[`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489), [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/helpers@1.17.0
+  - @swapkit/plugin-evm@1.3.0
+  - @swapkit/api@1.11.0
+  - @swapkit/toolbox-cosmos@1.5.3
+  - @swapkit/toolbox-evm@1.7.3
+  - @swapkit/toolbox-radix@1.2.19
+  - @swapkit/toolbox-solana@1.3.3
+  - @swapkit/toolbox-substrate@1.3.3
+  - @swapkit/toolbox-utxo@1.2.3
+
 ## 2.0.11
 
 ### Patch Changes

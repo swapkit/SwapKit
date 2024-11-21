@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 1.17.0
+
+### Minor Changes
+
+- [#1089](https://github.com/thorswap/SwapKit/pull/1089) [`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489) Thanks [@olegpetroveth](https://github.com/olegpetroveth)! - Add blockchain times
+
+- [#1073](https://github.com/thorswap/SwapKit/pull/1073) [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7) Thanks [@towanTG](https://github.com/towanTG)! - Updates Quote typings and enables dca feature for chainflip broker
+
 ## 1.16.0
 
 ### Minor Changes
