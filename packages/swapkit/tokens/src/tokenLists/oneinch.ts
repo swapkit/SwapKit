@@ -1,14 +1,14 @@
 export const list = {
   provider: "ONEINCH",
   name: "ONEINCH",
-  timestamp: "2024-11-21T12:01:00.893Z",
+  timestamp: "2024-11-22T00:00:52.407Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
-  count: 1415,
+  count: 1418,
   tokens: [
     {
       address: "0xba5ddd1f9d7f570dc94a51479a000e3bce967196",
@@ -6886,6 +6886,16 @@ export const list = {
       ticker: "MNW",
     },
     {
+      address: "0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.MOG-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.mog-0xaaee1a9723aadb7afa2810263653a34ba2c21c7a.png",
+      ticker: "MOG",
+    },
+    {
       address: "0x275f5ad03be0fa221b4c6649b8aee09a42d9412a",
       chain: "ETH",
       chainId: "1",
@@ -6914,6 +6924,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.moon-0x68a3637ba6e75c0f66b61a42639c4e9fcd3d4824.png",
       ticker: "MOON",
+    },
+    {
+      address: "0x58d97b57bb95320f9a05dc918aef65434969c2b2",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.MORPHO-0x58d97b57bb95320f9a05dc918aef65434969c2b2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.morpho-0x58d97b57bb95320f9a05dc918aef65434969c2b2.png",
+      ticker: "MORPHO",
     },
     {
       address: "0x018fb5af9d015af25592a014c4266a84143de7a0",
@@ -12363,6 +12383,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.spell-0x090185f2135308bad17527004364ebcc2d37e5f6.png",
       ticker: "SPELL",
+    },
+    {
+      address: "0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 8,
+      identifier: "ETH.SPX-0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.spx-0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c.png",
+      ticker: "SPX",
     },
     {
       address: "0x0488401c3f535193fa8df029d9ffe615a06e74e6",

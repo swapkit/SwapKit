@@ -1,7 +1,7 @@
 export const list = {
   provider: "OPENOCEAN_V2",
   name: "OPENOCEAN_V2",
-  timestamp: "2024-11-21T12:02:20.178Z",
+  timestamp: "2024-11-22T00:02:11.483Z",
   version: {
     major: 4,
     minor: 0,

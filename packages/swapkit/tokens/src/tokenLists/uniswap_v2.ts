@@ -1642,6 +1642,16 @@ export const list = {
       ticker: "USDT",
     },
     {
+      address: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.VEE-0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.vee-0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9.png",
+      ticker: "VEE",
+    },
+    {
       address: "0x1c8Ec4DE3c2BFD3050695D89853EC6d78AE650bb",
       chain: "ARB",
       chainId: "42161",
@@ -4642,16 +4652,6 @@ export const list = {
       ticker: "SHPING",
     },
     {
-      address: "0x3b991130eae3cca364406d718da22fa1c3e7c256",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SHRUB-0x3b991130eae3cca364406d718da22fa1c3e7c256",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.shrub-0x3b991130eae3cca364406d718da22fa1c3e7c256.png",
-      ticker: "SHRUB",
-    },
-    {
       address: "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
       chain: "ETH",
       chainId: "1",
@@ -4932,16 +4932,6 @@ export const list = {
       ticker: "tBTC",
     },
     {
-      address: "0x16a3543fa6b32cac3b0a755f64a729e84f89a75c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.TENSOR-0x16a3543fa6b32cac3b0a755f64a729e84f89a75c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.tensor-0x16a3543fa6b32cac3b0a755f64a729e84f89a75c.png",
-      ticker: "TENSOR",
-    },
-    {
       address: "0x485d17A6f1B8780392d53D64751824253011A260",
       chain: "ETH",
       chainId: "1",
@@ -5180,6 +5170,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
+    },
+    {
+      address: "0x8de5b80a0c1b02fe4976851d030b36122dbb8624",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.VANRY-0x8de5b80a0c1b02fe4976851d030b36122dbb8624",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.vanry-0x8de5b80a0c1b02fe4976851d030b36122dbb8624.png",
+      ticker: "VANRY",
     },
     {
       address: "0x3C4B6E6e1eA3D4863700D7F76b36B7f3D3f13E3d",

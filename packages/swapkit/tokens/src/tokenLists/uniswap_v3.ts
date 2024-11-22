@@ -532,16 +532,6 @@ export const list = {
       ticker: "DIA",
     },
     {
-      address: "0x050c24dbf1eec17babe5fc585f06116a259cc77a",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 8,
-      identifier: "ARB.DLCBTC-0x050c24dbf1eec17babe5fc585f06116a259cc77a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.dlcbtc-0x050c24dbf1eec17babe5fc585f06116a259cc77a.png",
-      ticker: "DLCBTC",
-    },
-    {
       address: "0xE3696a02b2C9557639E29d829E9C45EFa49aD47A",
       chain: "ARB",
       chainId: "42161",
@@ -940,6 +930,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.hopr-0x177f394a3ed18faa85c1462ae626438a70294ef7.png",
       ticker: "HOPR",
+    },
+    {
+      address: "0x8b5d1d8b3466ec21f8ee33ce63f319642c026142",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.hyETH-0x8b5d1d8b3466ec21f8ee33ce63f319642c026142",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.hyeth-0x8b5d1d8b3466ec21f8ee33ce63f319642c026142.png",
+      ticker: "hyETH",
     },
     {
       address: "0x61cA9D186f6b9a793BC08F6C79fd35f205488673",
