@@ -3902,16 +3902,6 @@ export const list = {
       ticker: "KP3R",
     },
     {
-      address: "0x263b0f5e179c1d72b884c43105c620d2112df2a0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.kpSATS-3-0x263b0f5e179c1d72b884c43105c620d2112df2a0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.kpsats-3-0x263b0f5e179c1d72b884c43105c620d2112df2a0.png",
-      ticker: "kpSATS-3",
-    },
-    {
       address: "0x464eBE77c293E473B48cFe96dDCf88fcF7bFDAC0",
       chain: "ETH",
       chainId: "1",
@@ -5510,6 +5500,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.upi-0x70d2b7c19352bb76e4409858ff5746e500f2b67c.png",
       ticker: "UPI",
+    },
+    {
+      address: "0x4f3cc6359364004b245ad5be36e6ad4e805dc961",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.urLRT-0x4f3cc6359364004b245ad5be36e6ad4e805dc961",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.urlrt-0x4f3cc6359364004b245ad5be36e6ad4e805dc961.png",
+      ticker: "urLRT",
     },
     {
       address: "0x9abc68b33961268a3ea4116214d7039226de01e1",

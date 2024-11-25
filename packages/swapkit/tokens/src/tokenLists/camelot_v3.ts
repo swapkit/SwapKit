@@ -2,7 +2,7 @@ export const list = {
   provider: "CAMELOT_V3",
   chainId: "42161",
   name: "Camelot V3",
-  timestamp: "1732233625106",
+  timestamp: "1732296430514",
   count: 1565,
   tokens: [
     {
