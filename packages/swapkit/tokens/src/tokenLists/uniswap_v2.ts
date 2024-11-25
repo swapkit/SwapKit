@@ -1002,16 +1002,6 @@ export const list = {
       ticker: "MATIC",
     },
     {
-      address: "0x37f43fd633f260506bd809b8527471e1d1f8e099",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 9,
-      identifier: "ARB.MEMEFI-0x37f43fd633f260506bd809b8527471e1d1f8e099",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.memefi-0x37f43fd633f260506bd809b8527471e1d1f8e099.png",
-      ticker: "MEMEFI",
-    },
-    {
       address: "0x7F728F3595db17B0B359f4FC47aE80FAd2e33769",
       chain: "ARB",
       chainId: "42161",
@@ -2910,6 +2900,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.farm-0xa0246c9032bc3a600820415ae600c6388619a14d.png",
       ticker: "FARM",
+    },
+    {
+      address: "0x956f47f50a910163d8bf957cf5846d573e7f87ca",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.FEI-0x956f47f50a910163d8bf957cf5846d573e7f87ca",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.fei-0x956f47f50a910163d8bf957cf5846d573e7f87ca.png",
+      ticker: "FEI",
     },
     {
       address: "0xaea46A60368A7bD060eec7DF8CBa43b7EF41Ad85",

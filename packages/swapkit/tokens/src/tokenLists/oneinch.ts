@@ -1,14 +1,14 @@
 export const list = {
   provider: "ONEINCH",
   name: "ONEINCH",
-  timestamp: "2024-11-22T00:00:52.407Z",
+  timestamp: "2024-11-22T17:30:49.811Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
-  count: 1418,
+  count: 1420,
   tokens: [
     {
       address: "0xba5ddd1f9d7f570dc94a51479a000e3bce967196",
@@ -6016,6 +6016,16 @@ export const list = {
       ticker: "JASMY",
     },
     {
+      address: "0xba386a4ca26b85fd057ab1ef86e3dc7bdeb5ce70",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.JESUS-0xba386a4ca26b85fd057ab1ef86e3dc7bdeb5ce70",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.jesus-0xba386a4ca26b85fd057ab1ef86e3dc7bdeb5ce70.png",
+      ticker: "JESUS",
+    },
+    {
       address: "0x73374ea518de7addd4c2b624c0e8b113955ee041",
       chain: "ETH",
       chainId: "1",
@@ -7704,6 +7714,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.pbtc35a-0xa8b12cc90abf65191532a12bb5394a714a46d358.png",
       ticker: "pBTC35A",
+    },
+    {
+      address: "0x3ffeea07a27fab7ad1df5297fa75e77a43cb5790",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.PEIPEI-0x3ffeea07a27fab7ad1df5297fa75e77a43cb5790",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.peipei-0x3ffeea07a27fab7ad1df5297fa75e77a43cb5790.png",
+      ticker: "PEIPEI",
     },
     {
       address: "0x808507121b80c02388fad14726482e061b8da827",
