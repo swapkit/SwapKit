@@ -1,5 +1,13 @@
 # @swapkit/wallet-coinbase
 
+## 1.1.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.1
+  - @swapkit/toolbox-evm@1.7.4
+
 ## 1.1.28
 
 ### Patch Changes
