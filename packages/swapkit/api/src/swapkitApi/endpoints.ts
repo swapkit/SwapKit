@@ -103,7 +103,6 @@ export async function getSwapQuoteV2<T extends boolean>(
     json: searchParams,
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -141,7 +140,6 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
   return RequestClient.get<TokenListProvidersResponse>(url, {
     headers: {
        ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -166,7 +164,6 @@ export function getTokenListV2(
   return RequestClient.get<TokensResponseV2>(url, {
     headers: {
        ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
