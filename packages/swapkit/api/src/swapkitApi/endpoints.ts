@@ -76,7 +76,8 @@ export function getTrackerDetails(payload: TrackerParams, apiKey?: string, refer
   return RequestClient.post<TrackerResponse>(url, {
     json: payload,
     headers: {
-      ...(apiKey ? { "x-api-key": apiKey } : {}),
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -101,7 +102,8 @@ export async function getSwapQuoteV2<T extends boolean>(
   const response = await RequestClient.post<QuoteResponse>(url, {
     json: searchParams,
     headers: {
-      ...(apiKey ? { "x-api-key": apiKey } : {}),
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -138,7 +140,8 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
     : undefined;
   return RequestClient.get<TokenListProvidersResponse>(url, {
     headers: {
-      ...(apiKey ? { "x-api-key": apiKey } : {}),
+       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -162,7 +165,8 @@ export function getTokenListV2(
     : undefined;
   return RequestClient.get<TokensResponseV2>(url, {
     headers: {
-      ...(apiKey ? { "x-api-key": apiKey } : {}),
+       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -187,7 +191,7 @@ export async function getPrice(
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
     headers: {
-      ...(apiKey ? { "x-api-key": apiKey } : {}),
+       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
       ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
     },
