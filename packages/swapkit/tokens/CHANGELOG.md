@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 1.9.1
+
+### Patch Changes
+
+- [#1099](https://github.com/thorswap/SwapKit/pull/1099) [`03675e7`](https://github.com/thorswap/SwapKit/commit/03675e726d67be8e54b01831e3cb4e854c1f9e85) Thanks [@alexisshleverx](https://github.com/alexisshleverx)! - Update token lists
+
 ## 1.9.0
 
 ### Minor Changes
