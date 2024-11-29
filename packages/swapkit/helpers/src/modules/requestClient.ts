@@ -13,7 +13,10 @@ let clientConfig: Options = {};
 export const defaultRequestHeaders =
   typeof window !== "undefined"
     ? ({} as Record<string, string>)
-    : { referrer: "https://sk.thorswap.net", referer: "https://sk.thorswap.net" };
+    : {
+        referrer: "https://sk.thorswap.net",
+        referer: "https://sk.thorswap.net",
+      };
 
 export function setRequestClientConfig({ apiKey, ...config }: Options) {
   clientConfig = { ...config, apiKey };
