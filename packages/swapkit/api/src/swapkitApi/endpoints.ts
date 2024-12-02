@@ -67,7 +67,7 @@ export const computeHashForPost = ({
 
 export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl()}/track`;
-  const hash = apiKey
+  const hash = referer && apiKey
     ? computeHash({
         method: "POST",
         apiKey: apiKey ?? "",
@@ -144,7 +144,7 @@ export async function getSwapQuote<T extends boolean>(
 
 export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/providers`;
-  const hash = apiKey
+  const hash = referer && apiKey
     ? computeHash({
         method: "GET",
         apiKey: apiKey ?? "",
