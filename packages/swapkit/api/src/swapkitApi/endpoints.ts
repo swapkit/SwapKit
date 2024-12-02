@@ -84,7 +84,19 @@ export function getTrackerDetails(payload: TrackerParams, apiKey?: string, refer
   });
 }
 
-export async function getSwapQuoteV2<T extends boolean>(
+/**
+ * @deprecated Use getSwapQuote instead
+ */
+export function getSwapQuoteV2<T extends boolean>(
+  searchParams: QuoteRequest,
+  isDev?: T,
+  apiKey?: string,
+  referer?: string,
+) {
+  return getSwapQuote(searchParams, isDev, apiKey, referer);
+}
+
+export async function getSwapQuote<T extends boolean>(
   searchParams: QuoteRequest,
   isDev?: T,
   apiKey?: string,
@@ -139,14 +151,26 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
     : undefined;
   return RequestClient.get<TokenListProvidersResponse>(url, {
     headers: {
-       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
   });
 }
 
+/**
+ * @deprecated Use getTokenList instead
+ */
 export function getTokenListV2(
+  provider: ProviderName,
+  isDev = false,
+  apiKey?: string,
+  referer?: string,
+) {
+  return getTokenList(provider, isDev, apiKey, referer);
+}
+
+export function getTokenList(
   provider: ProviderName,
   isDev = false,
   apiKey?: string,
@@ -163,7 +187,7 @@ export function getTokenListV2(
     : undefined;
   return RequestClient.get<TokensResponseV2>(url, {
     headers: {
-       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
       ...(referer ? { referer } : {}),
     },
@@ -188,7 +212,7 @@ export async function getPrice(
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
     headers: {
-       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
       ...(referer ? { referer } : {}),
       ...(hash ? { "x-payload-hash": hash } : {}),
     },
