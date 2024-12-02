@@ -20,7 +20,15 @@ export const P1_VALUES = {
   SHOW_ADDRESS_IN_DEVICE: 0x01,
 };
 
-const ERROR_DESCRIPTION = {
+export const P2_VALUES = {
+  JSON: 0x0,
+};
+
+export const ERROR_CODE = {
+  NoError: 0x9000,
+};
+
+const ERROR_DESCRIPTION: any = {
   1: "U2F: Unknown",
   2: "U2F: Bad request",
   3: "U2F: Configuration unsupported",
@@ -45,19 +53,18 @@ const ERROR_DESCRIPTION = {
   28417: "Sign/verify error",
 };
 
-export function errorCodeToString(statusCode: any) {
-  if (statusCode in ERROR_DESCRIPTION) return ERROR_DESCRIPTION[statusCode as 1];
+export function errorCodeToString(statusCode: number) {
+  if (statusCode in ERROR_DESCRIPTION) return ERROR_DESCRIPTION[statusCode];
   return `Unknown Status Code: ${statusCode}`;
+}
+
+function isDict(v: any) {
+  return typeof v === "object" && v !== null && !Array.isArray(v) && !(v instanceof Date);
 }
 
 export function processErrorResponse(response: any) {
   if (response) {
-    if (
-      typeof response === "object" &&
-      response !== null &&
-      !Array.isArray(response) &&
-      !(response instanceof Date)
-    ) {
+    if (isDict(response)) {
       if (Object.prototype.hasOwnProperty.call(response, "statusCode")) {
         return {
           return_code: response.statusCode,
