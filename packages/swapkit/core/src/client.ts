@@ -47,7 +47,9 @@ type PluginsType = {
 
 export type SwapKitParams<P, W> = {
   apis?: ChainApis;
-  config?: ConnectConfig;
+  config?: ConnectConfig & {
+    swapkitApiKey?: string;
+  };
   plugins?: P;
   rpcUrls?: { [key in Chain]?: string };
   // TODO: migrate to `config` only
