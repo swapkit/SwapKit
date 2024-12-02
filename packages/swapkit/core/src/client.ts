@@ -1,4 +1,13 @@
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
+import {
+  getGasRate,
+  getPrice,
+  getSwapQuote,
+  getTokenList,
+  getTokenListProvidersV2,
+  getTokenTradingPairs,
+  getTrackerDetails,
+} from "@swapkit/api";
 
 import {
   ApproveMode,
@@ -402,6 +411,22 @@ export function SwapKit<
     }
   }
 
+  const api = config?.swapkitApiKey
+    ? {
+        getGasRate: (isDev = stagenet) => getGasRate(isDev, config.swapkitApiKey),
+        getPrice: (body: any, isDev = stagenet) => getPrice(body, isDev, config.swapkitApiKey),
+        getSwapQuote: (params: any, isDev = stagenet) =>
+          getSwapQuote(params, isDev, config.swapkitApiKey),
+        getTokenList: (provider: any, isDev = stagenet) =>
+          getTokenList(provider, isDev, config.swapkitApiKey),
+        getTokenListProviders: (isDev = stagenet) =>
+          getTokenListProvidersV2(isDev, config.swapkitApiKey),
+        getTokenTradingPairs: (providers: any, isDev = stagenet) =>
+          getTokenTradingPairs(providers, isDev, config.swapkitApiKey),
+        getTrackerDetails: (payload: any) => getTrackerDetails(payload, config.swapkitApiKey),
+      }
+    : undefined;
+
   return {
     ...availablePlugins,
     ...connectWalletMethods,
@@ -424,5 +449,7 @@ export function SwapKit<
     transfer,
     validateAddress,
     verifyMessage,
+    
+    ...(api && { api }),
   };
 }
