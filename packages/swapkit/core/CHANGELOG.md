@@ -1,5 +1,24 @@
 # @swapkit/core
 
+## 3.0.0
+
+### Major Changes
+
+- [#1101](https://github.com/thorswap/SwapKit/pull/1101) [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e) Thanks [@ochhii1337](https://github.com/ochhii1337)! - Removes support for THORSwap API - improves support for SwapkitAPI. Adds api object to the swapkit client.
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/api@2.0.0
+  - @swapkit/toolbox-cosmos@1.6.0
+  - @swapkit/helpers@1.18.0
+  - @swapkit/plugin-evm@1.3.3
+  - @swapkit/toolbox-evm@1.7.6
+  - @swapkit/toolbox-radix@1.2.22
+  - @swapkit/toolbox-solana@1.3.6
+  - @swapkit/toolbox-substrate@1.3.6
+  - @swapkit/toolbox-utxo@1.2.6
+
 ## 2.1.2
 
 ### Patch Changes
