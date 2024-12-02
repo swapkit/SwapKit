@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 1.10.0
+
+### Minor Changes
+
+- [#1102](https://github.com/thorswap/SwapKit/pull/1102) [`0b71fca`](https://github.com/thorswap/SwapKit/commit/0b71fcaf2765adb80971feb12fb6f0b5b016571e) Thanks [@towanTG](https://github.com/towanTG)! - Updates tokenlists
+
 ## 1.9.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @swapkit/wallet-polkadotjs
 
+## 1.0.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.2
+  - @swapkit/toolbox-substrate@1.3.5
+
 ## 1.0.46
 
 ### Patch Changes
