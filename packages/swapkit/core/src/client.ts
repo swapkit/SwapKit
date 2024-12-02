@@ -1,4 +1,11 @@
-import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
+import type {
+  EVMTransaction,
+  PriceRequest,
+  QuoteRequest,
+  QuoteResponseRoute,
+  TrackerParams,
+} from "@swapkit/api";
+import { SwapKitApi } from "@swapkit/api";
 
 import {
   ApproveMode,
@@ -41,8 +48,6 @@ export type SwapKitParams<P, W> = {
   config?: ConnectConfig;
   plugins?: P;
   rpcUrls?: { [key in Chain]?: string };
-  // TODO: migrate to `config` only
-  stagenet?: boolean;
   wallets?: W;
 };
 
@@ -54,9 +59,10 @@ export function SwapKit<
   config = {},
   plugins,
   rpcUrls = {},
-  stagenet = false,
   wallets = {} as Wallets,
 }: SwapKitParams<Plugins, Wallets> = {}) {
+  const stagenet = config.stagenet;
+  const isDev = config.swapkitConfig?.isDev;
   type PluginName = keyof Plugins;
   const connectedWallets = {} as FullWallet;
 
@@ -402,6 +408,26 @@ export function SwapKit<
     }
   }
 
+  const swapkitConfig = config.swapkitConfig || {};
+  const swapkitApiKey = swapkitConfig?.swapkitApiKey || config?.swapkitApiKey;
+  const referer = swapkitConfig.useHashedApiKey ? swapkitConfig.referer : undefined;
+
+  const api = swapkitApiKey
+    ? {
+        getGasRate: () => SwapKitApi.getGasRate(isDev, swapkitApiKey, referer),
+        getPrice: (body: PriceRequest) => SwapKitApi.getPrice(body, isDev, swapkitApiKey, referer),
+        getSwapQuote: (params: QuoteRequest) =>
+          SwapKitApi.getSwapQuote(params, isDev, swapkitApiKey, referer),
+        getTokenList: (provider: string) => SwapKitApi.getTokenList(provider),
+        getTokenListProviders: () =>
+          SwapKitApi.getTokenListProvidersV2(isDev, swapkitApiKey, referer),
+        getTokenTradingPairs: (providers: PluginNameEnum[]) =>
+          SwapKitApi.getTokenTradingPairs(providers, isDev, swapkitApiKey, referer),
+        getTrackerDetails: (payload: TrackerParams) =>
+          SwapKitApi.getTrackerDetails(payload, swapkitApiKey, referer),
+      }
+    : { undefined };
+
   return {
     ...availablePlugins,
     ...connectWalletMethods,
@@ -424,5 +450,6 @@ export function SwapKit<
     transfer,
     validateAddress,
     verifyMessage,
+    api,
   };
 }

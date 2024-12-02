@@ -682,3 +682,15 @@ export const QuoteResponseSchema = z.object({
 export type QuoteResponse = z.infer<typeof QuoteResponseSchema>;
 export type QuoteResponseRoute = z.infer<typeof QuoteResponseRouteItem>;
 export type QuoteResponseRouteLeg = z.infer<typeof QuoteResponseRouteLegItem>;
+
+export const GasResponseSchema = z.array(
+  z.object({
+    id: z.number(),
+    chainId: z.string(),
+    value: z.string(),
+    unit: z.string(),
+    createdAt: z.string(),
+  }),
+);
+
+export type GasResponse = z.infer<typeof GasResponseSchema>;

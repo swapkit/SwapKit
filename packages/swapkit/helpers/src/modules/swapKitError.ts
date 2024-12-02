@@ -120,6 +120,7 @@ const errorCodes = {
    */
   api_v2_invalid_response: 50001,
   api_v2_server_error: 50002,
+  api_v2_invalid_method_key_hash: 50003,
   /**
    * Toolboxes
    */
