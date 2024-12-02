@@ -3,12 +3,21 @@ import type { Chain } from "./chains";
 import type { ChainApis } from "./sdk";
 import type { ChainWallet } from "./wallet";
 
-export type ConnectConfig = {
-  stagenet?: boolean;
-  /**
-   * @required for swapkit API access
-   */
+/**
+ * @optional for swapkit API access
+ */
+type SwapkitConfig = {
+  swapkitConfig?: {
+    isDev?: boolean;
+    swapkitApiKey?: string;
+    useHashedApiKey?: boolean;
+    referer?: string;
+  };
   swapkitApiKey?: string;
+};
+
+export type ConnectConfig = SwapkitConfig & {
+  stagenet?: boolean;
   /**
    * @required for AVAX & BSC
    */

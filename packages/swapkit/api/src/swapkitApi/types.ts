@@ -690,7 +690,7 @@ export const GasResponseSchema = z.array(
     value: z.string(),
     unit: z.string(),
     createdAt: z.string(),
-  })
+  }),
 );
 
 export type GasResponse = z.infer<typeof GasResponseSchema>;

@@ -1,10 +1,6 @@
 import crypto from "crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 
-const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
-  ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-  ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-});
 import {
   type GasResponse,
   GasResponseSchema,
@@ -25,6 +21,11 @@ const baseUrlDev = "https://dev-api.swapkit.dev";
 function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
+
+const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
+  ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+  ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
+});
 
 export const computeHash = (
   hashParams:

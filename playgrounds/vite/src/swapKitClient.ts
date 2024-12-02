@@ -24,7 +24,6 @@ export const getSwapKitClient = (
   oldKey = key;
 
   client = createSwapKit({
-    stagenet: params.stagenet,
     config: {
       ...params,
       keepkeyConfig: {
