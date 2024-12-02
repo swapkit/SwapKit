@@ -1,5 +1,10 @@
 import crypto from "crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
+
+const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
+  ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+  ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
+});
 import {
   type GasResponse,
   GasResponseSchema,
@@ -80,10 +85,7 @@ export function getTrackerDetails(payload: TrackerParams, apiKey?: string, refer
       : undefined;
   return RequestClient.post<TrackerResponse>(url, {
     json: payload,
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
@@ -116,10 +118,7 @@ export async function getSwapQuote<T extends boolean>(
       : undefined;
   const response = await RequestClient.post<QuoteResponse>(url, {
     json: searchParams,
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 
   if (response.error) {
@@ -152,10 +151,7 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
         })
       : undefined;
   return RequestClient.get<TokenListProvidersResponse>(url, {
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
@@ -187,10 +183,7 @@ export function getTokenList(
         })
       : undefined;
   return RequestClient.get<TokensResponseV2>(url, {
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
@@ -211,10 +204,7 @@ export async function getPrice(
       : undefined;
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 
   try {
@@ -242,10 +232,7 @@ export async function getGasRate(isDev = false, apiKey?: string, referer?: strin
       : undefined;
 
   const response = await RequestClient.get<GasResponse>(url, {
-    headers: {
-      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-    },
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 
   try {
