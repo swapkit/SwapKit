@@ -21,22 +21,25 @@ function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
 
-export const computeHash = ({
-  method,
-  url,
-  apiKey,
-  payload,
-}: {
-  method: string;
-  url: string;
-  apiKey: string;
-  payload: any;
-}): string => {
+export const computeHash = (
+  hashParams:
+    | {
+        apiKey: string;
+        method: "POST";
+        payload: any;
+      }
+    | {
+        apiKey: string;
+        method: "GET";
+        url: string;
+      },
+): string => {
+  const { method } = hashParams;
   switch (method) {
     case "POST":
-      return computeHashForPost({ payload, apiKey });
+      return computeHashForPost(hashParams);
     case "GET":
-      return computeHashForGet({ url, apiKey });
+      return computeHashForGet(hashParams);
     default:
       throw new SwapKitError("api_v2_invalid_method_key_hash", {
         message: `Invalid method: ${method}`,
@@ -67,21 +70,19 @@ export const computeHashForPost = ({
 
 export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl()}/track`;
-  const hash = referer && apiKey
-    ? computeHash({
-        method: "POST",
-        apiKey: apiKey ?? "",
-        url,
-        payload,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey,
+          payload,
+        })
+      : undefined;
   return RequestClient.post<TrackerResponse>(url, {
     json: payload,
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(referer ? { referer } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
-      ...(referer ? { referer } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 }
@@ -109,8 +110,7 @@ export async function getSwapQuote<T extends boolean>(
     referer && apiKey
       ? computeHash({
           method: "POST",
-          apiKey: apiKey ?? "",
-          url,
+          apiKey: apiKey,
           payload: searchParams,
         })
       : undefined;
@@ -118,8 +118,7 @@ export async function getSwapQuote<T extends boolean>(
     json: searchParams,
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
-      ...(referer ? { referer } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 
@@ -144,19 +143,18 @@ export async function getSwapQuote<T extends boolean>(
 
 export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/providers`;
-  const hash = referer && apiKey
-    ? computeHash({
-        method: "GET",
-        apiKey: apiKey ?? "",
-        url,
-        payload: undefined,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
   return RequestClient.get<TokenListProvidersResponse>(url, {
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
-      ...(referer ? { referer } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 }
@@ -180,19 +178,18 @@ export function getTokenList(
   referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/tokens?provider=${provider}`;
-  const hash = apiKey
-    ? computeHash({
-        method: "GET",
-        apiKey: apiKey ?? "",
-        url,
-        payload: undefined,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
   return RequestClient.get<TokensResponseV2>(url, {
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
-      ...(referer ? { referer } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 }
@@ -204,20 +201,19 @@ export async function getPrice(
   referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/price`;
-  const hash = apiKey
-    ? computeHash({
-        method: "POST",
-        apiKey: apiKey ?? "",
-        url,
-        payload: body,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey,
+          payload: body,
+        })
+      : undefined;
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(referer ? { referer } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 
@@ -236,20 +232,19 @@ export async function getPrice(
 
 export async function getGasRate(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/gas`;
-  const hash = apiKey
-    ? computeHash({
-        method: "GET",
-        apiKey: apiKey ?? "",
-        url,
-        payload: undefined,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
 
   const response = await RequestClient.get<GasResponse>(url, {
     headers: {
       ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-      ...(hash ? { "x-payload-hash": hash } : {}),
-      ...(referer ? { referer } : {}),
+      ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
     },
   });
 
