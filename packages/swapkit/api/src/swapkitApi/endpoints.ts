@@ -232,6 +232,38 @@ export async function getPrice(
 }
 
 // TODO update this once the trading pairs are supported by BE api
+export async function getGas(isDev = false, apiKey?: string, referer?: string) {
+  const url = `${getBaseUrl(isDev)}/gas`;
+  const hash = apiKey
+    ? computeHash({
+        method: "GET",
+        apiKey: apiKey ?? "",
+        url,
+        payload: undefined,
+      })
+    : undefined;
+
+  const response = await RequestClient.get<GasResponse>(url, {
+    headers: {
+      ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+      ...(hash ? { "x-payload-hash": hash } : {}),
+      ...(referer ? { referer } : {}),
+    },
+  });
+
+  try {
+    const parsedResponse = GasResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+    }
+
+    return parsedResponse.data;
+  } catch (error) {
+    throw new SwapKitError("api_v2_invalid_response", error);
+  }
+}
+
 export async function getTokenTradingPairs(
   providers: ProviderName[],
   isDev = false,
