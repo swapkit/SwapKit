@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 import {
+  type GasResponse,
+  GasResponseSchema,
   type PriceRequest,
   type PriceResponse,
   PriceResponseSchema,
@@ -103,14 +105,15 @@ export async function getSwapQuote<T extends boolean>(
   referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/quote`;
-  const hash = apiKey
-    ? computeHash({
-        method: "POST",
-        apiKey: apiKey ?? "",
-        url,
-        payload: searchParams,
-      })
-    : undefined;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey: apiKey ?? "",
+          url,
+          payload: searchParams,
+        })
+      : undefined;
   const response = await RequestClient.post<QuoteResponse>(url, {
     json: searchParams,
     headers: {
@@ -231,8 +234,7 @@ export async function getPrice(
   }
 }
 
-// TODO update this once the trading pairs are supported by BE api
-export async function getGas(isDev = false, apiKey?: string, referer?: string) {
+export async function getGasRate(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/gas`;
   const hash = apiKey
     ? computeHash({
@@ -264,6 +266,7 @@ export async function getGas(isDev = false, apiKey?: string, referer?: string) {
   }
 }
 
+// TODO update this once the trading pairs are supported by BE api
 export async function getTokenTradingPairs(
   providers: ProviderName[],
   isDev = false,
