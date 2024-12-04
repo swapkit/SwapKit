@@ -1,4 +1,3 @@
-import type { QuoteRoute } from "@swapkit/api";
 import type {
   AssetValue,
   CosmosWallets,
@@ -59,14 +58,6 @@ export type NodeActionParams = { address: string } & (
   | { type: MemoType.BOND | MemoType.UNBOND; assetValue: AssetValue }
   | { type: MemoType.LEAVE; assetValue?: undefined }
 );
-
-export type SwapWithRouteParams = {
-  recipient: string;
-  route: QuoteRoute;
-  feeOptionKey?: FeeOption;
-  quoteId?: string;
-  streamSwap?: boolean;
-};
 
 export type SavingsParams = { assetValue: AssetValue; memo?: string } & (
   | { type: "add"; percent?: undefined }

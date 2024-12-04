@@ -1,5 +1,45 @@
 # @swapkit/api
 
+## 2.0.0
+
+### Major Changes
+
+- [#1101](https://github.com/thorswap/SwapKit/pull/1101) [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e) Thanks [@ochhii1337](https://github.com/ochhii1337)! - Removes support for THORSwap API - improves support for SwapkitAPI. Adds api object to the swapkit client.
+
+### Minor Changes
+
+- [#1101](https://github.com/thorswap/SwapKit/pull/1101) [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e) Thanks [@ochhii1337](https://github.com/ochhii1337)! - Added x-payload-hash logic and update api v2 requests to include this header
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/helpers@1.18.0
+
+## 1.11.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.2
+
+## 1.11.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.1
+
+## 1.11.0
+
+### Minor Changes
+
+- [#1073](https://github.com/thorswap/SwapKit/pull/1073) [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7) Thanks [@towanTG](https://github.com/towanTG)! - Updates Quote typings and enables dca feature for chainflip broker
+
+### Patch Changes
+
+- Updated dependencies [[`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489), [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/helpers@1.17.0
+
 ## 1.10.2
 
 ### Patch Changes

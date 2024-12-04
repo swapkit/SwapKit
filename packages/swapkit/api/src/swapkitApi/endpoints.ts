@@ -1,5 +1,9 @@
+import crypto from "crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
+
 import {
+  type GasResponse,
+  GasResponseSchema,
   type PriceRequest,
   type PriceResponse,
   PriceResponseSchema,
@@ -11,7 +15,6 @@ import {
   type TrackerParams,
   type TrackerResponse,
 } from "./types";
-
 const baseUrl = "https://api.swapkit.dev";
 const baseUrlDev = "https://dev-api.swapkit.dev";
 
@@ -19,21 +22,104 @@ function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
 
-export function getTrackerDetails(payload: TrackerParams, apiKey?: string) {
-  return RequestClient.post<TrackerResponse>(`${getBaseUrl()}/track`, {
+const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
+  ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
+  ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
+});
+
+export const computeHash = (
+  hashParams:
+    | {
+        apiKey: string;
+        method: "POST";
+        payload: any;
+      }
+    | {
+        apiKey: string;
+        method: "GET";
+        url: string;
+      },
+): string => {
+  const { method } = hashParams;
+  switch (method) {
+    case "POST":
+      return computeHashForPost(hashParams);
+    case "GET":
+      return computeHashForGet(hashParams);
+    default:
+      throw new SwapKitError("api_v2_invalid_method_key_hash", {
+        message: `Invalid method: ${method}`,
+      });
+  }
+};
+
+export const computeHashForGet = ({
+  url,
+  apiKey,
+}: {
+  url: string;
+  apiKey: string;
+}): string => {
+  return crypto.createHash("sha256").update(`${url}${apiKey}`, "utf8").digest("hex");
+};
+
+export const computeHashForPost = ({
+  apiKey,
+  payload,
+}: {
+  apiKey: string;
+  payload: any;
+}): string => {
+  const normalizedBody = JSON.stringify(payload);
+  return crypto.createHash("sha256").update(`${normalizedBody}${apiKey}`, "utf8").digest("hex");
+};
+
+export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
+  const url = `${getBaseUrl()}/track`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey,
+          payload,
+        })
+      : undefined;
+  return RequestClient.post<TrackerResponse>(url, {
     json: payload,
-    headers: apiKey ? { "x-api-key": apiKey } : {},
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
-export async function getSwapQuoteV2<T extends boolean>(
+/**
+ * @deprecated Use getSwapQuote instead
+ */
+export function getSwapQuoteV2<T extends boolean>(
   searchParams: QuoteRequest,
   isDev?: T,
   apiKey?: string,
+  referer?: string,
 ) {
-  const response = await RequestClient.post<QuoteResponse>(`${getBaseUrl(isDev)}/quote`, {
+  return getSwapQuote(searchParams, isDev, apiKey, referer);
+}
+
+export async function getSwapQuote<T extends boolean>(
+  searchParams: QuoteRequest,
+  isDev?: T,
+  apiKey?: string,
+  referer?: string,
+) {
+  const url = `${getBaseUrl(isDev)}/quote`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey: apiKey,
+          payload: searchParams,
+        })
+      : undefined;
+  const response = await RequestClient.post<QuoteResponse>(url, {
     json: searchParams,
-    headers: apiKey ? { "x-api-key": apiKey } : {},
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 
   if (response.error) {
@@ -55,26 +141,103 @@ export async function getSwapQuoteV2<T extends boolean>(
   }
 }
 
-export function getTokenListProvidersV2(isDev = false, apiKey?: string) {
-  return RequestClient.get<TokenListProvidersResponse>(`${getBaseUrl(isDev)}/providers`, {
-    headers: apiKey ? { "x-api-key": apiKey } : {},
+export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?: string) {
+  const url = `${getBaseUrl(isDev)}/providers`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
+  return RequestClient.get<TokenListProvidersResponse>(url, {
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
-export function getTokenListV2(provider: ProviderName, isDev = false, apiKey?: string) {
-  return RequestClient.get<TokensResponseV2>(`${getBaseUrl(isDev)}/tokens?provider=${provider}`, {
-    headers: apiKey ? { "x-api-key": apiKey } : {},
+/**
+ * @deprecated Use getTokenList instead
+ */
+export function getTokenListV2(
+  provider: ProviderName,
+  isDev = false,
+  apiKey?: string,
+  referer?: string,
+) {
+  return getTokenList(provider, isDev, apiKey, referer);
+}
+
+export function getTokenList(
+  provider: ProviderName,
+  isDev = false,
+  apiKey?: string,
+  referer?: string,
+) {
+  const url = `${getBaseUrl(isDev)}/tokens?provider=${provider}`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
+  return RequestClient.get<TokensResponseV2>(url, {
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 }
 
-export async function getPrice(body: PriceRequest, isDev = false, apiKey?: string) {
-  const response = await RequestClient.post<PriceResponse>(`${getBaseUrl(isDev)}/price`, {
+export async function getPrice(
+  body: PriceRequest,
+  isDev = false,
+  apiKey?: string,
+  referer?: string,
+) {
+  const url = `${getBaseUrl(isDev)}/price`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "POST",
+          apiKey,
+          payload: body,
+        })
+      : undefined;
+  const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
-    headers: apiKey ? { "x-api-key": apiKey } : {},
+    headers: getAuthHeaders(hash, apiKey, referer),
   });
 
   try {
     const parsedResponse = PriceResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+    }
+
+    return parsedResponse.data;
+  } catch (error) {
+    throw new SwapKitError("api_v2_invalid_response", error);
+  }
+}
+
+export async function getGasRate(isDev = false, apiKey?: string, referer?: string) {
+  const url = `${getBaseUrl(isDev)}/gas`;
+  const hash =
+    referer && apiKey
+      ? computeHash({
+          method: "GET",
+          apiKey,
+          url,
+        })
+      : undefined;
+
+  const response = await RequestClient.get<GasResponse>(url, {
+    headers: getAuthHeaders(hash, apiKey, referer),
+  });
+
+  try {
+    const parsedResponse = GasResponseSchema.safeParse(response);
 
     if (!parsedResponse.success) {
       throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
@@ -91,6 +254,7 @@ export async function getTokenTradingPairs(
   providers: ProviderName[],
   isDev = false,
   apiKey?: string,
+  referer?: string,
 ) {
   const tradingPairs = new Map<
     string,
@@ -103,7 +267,7 @@ export async function getTokenTradingPairs(
   if (!providers.length) return tradingPairs;
 
   const providerRequests = providers.map(async (provider) => {
-    const tokenList = await getTokenListV2(provider, isDev, apiKey);
+    const tokenList = await getTokenListV2(provider, isDev, apiKey, referer);
     return tokenList;
   });
 

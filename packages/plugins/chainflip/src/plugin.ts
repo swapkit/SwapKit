@@ -22,6 +22,9 @@ export async function getDepositAddress({
   maxBoostFeeBps,
   brokerCommissionBPS,
   ccmParams,
+  ccmMetadata,
+  fillOrKillParams,
+  dcaParams,
   chainflipSDKBroker,
 }: {
   buyAsset: AssetValue;
@@ -31,6 +34,9 @@ export async function getDepositAddress({
   maxBoostFeeBps: number;
   brokerCommissionBPS?: number;
   ccmParams?: DepositAddressRequest["ccmParams"];
+  ccmMetadata?: DepositAddressRequest["ccmMetadata"];
+  dcaParams?: DepositAddressRequest["dcaParams"];
+  fillOrKillParams?: DepositAddressRequest["fillOrKillParams"];
   chainflipSDKBroker?: boolean;
 }) {
   try {
@@ -56,8 +62,11 @@ export async function getDepositAddress({
         destAsset,
         destChain,
         amount: sellAsset.getBaseValue("string"),
-        brokerCommissionBps: brokerCommissionBPS || 0,
+        maxBoostFeeBps,
         ccmParams,
+        ccmMetadata,
+        fillOrKillParams,
+        dcaParams,
       });
 
       return {
@@ -75,6 +84,10 @@ export async function getDepositAddress({
         sellAsset: sellAsset.toString(),
         destinationAddress: recipient,
         maxBoostFeeBps,
+        ccmParams,
+        ccmMetadata,
+        fillOrKillParams,
+        dcaParams,
       }),
     }).then((res) => res.json());
 
@@ -110,12 +123,14 @@ function plugin({
         chainflipBrokerUrl: brokerUrl,
       });
     }
+
     const {
       route: {
         buyAsset: buyAssetString,
         sellAsset: sellAssetString,
         sellAmount,
         destinationAddress: recipient,
+        meta: { chainflip },
       },
       maxBoostFeeBps = 0,
     } = swapParams;
@@ -145,6 +160,7 @@ function plugin({
       sellAsset,
       maxBoostFeeBps,
       chainflipSDKBroker: useChainflipSDKBroker,
+      ...(chainflip ? chainflip : {}),
     });
 
     const tx = await wallet.transfer({

@@ -1,5 +1,41 @@
 # @swapkit/plugin-radix
 
+## 1.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/api@2.0.0
+  - @swapkit/helpers@1.18.0
+
+## 1.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.2
+  - @swapkit/api@1.11.2
+
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.1
+  - @swapkit/api@1.11.1
+
+## 1.2.0
+
+### Minor Changes
+
+- [#1073](https://github.com/thorswap/SwapKit/pull/1073) [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7) Thanks [@towanTG](https://github.com/towanTG)! - Updates Quote typings and enables dca feature for chainflip broker
+
+### Patch Changes
+
+- Updated dependencies [[`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489), [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/helpers@1.17.0
+  - @swapkit/api@1.11.0
+
 ## 1.1.21
 
 ### Patch Changes

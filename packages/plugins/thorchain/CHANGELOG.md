@@ -1,5 +1,57 @@
 # @swapkit/plugin-thorchain
 
+## 2.0.0
+
+### Major Changes
+
+- [#1101](https://github.com/thorswap/SwapKit/pull/1101) [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e) Thanks [@ochhii1337](https://github.com/ochhii1337)! - Removes support for THORSwap API - improves support for SwapkitAPI. Adds api object to the swapkit client.
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/api@2.0.0
+  - @swapkit/toolbox-cosmos@1.6.0
+  - @swapkit/helpers@1.18.0
+  - @swapkit/toolbox-evm@1.7.6
+  - @swapkit/toolbox-substrate@1.3.6
+  - @swapkit/toolbox-utxo@1.2.6
+
+## 1.1.57
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.2
+  - @swapkit/api@1.11.2
+  - @swapkit/toolbox-cosmos@1.5.5
+  - @swapkit/toolbox-evm@1.7.5
+  - @swapkit/toolbox-substrate@1.3.5
+  - @swapkit/toolbox-utxo@1.2.5
+
+## 1.1.56
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.1
+  - @swapkit/api@1.11.1
+  - @swapkit/toolbox-cosmos@1.5.4
+  - @swapkit/toolbox-evm@1.7.4
+  - @swapkit/toolbox-substrate@1.3.4
+  - @swapkit/toolbox-utxo@1.2.4
+
+## 1.1.55
+
+### Patch Changes
+
+- Updated dependencies [[`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489), [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/helpers@1.17.0
+  - @swapkit/api@1.11.0
+  - @swapkit/toolbox-cosmos@1.5.3
+  - @swapkit/toolbox-evm@1.7.3
+  - @swapkit/toolbox-substrate@1.3.3
+  - @swapkit/toolbox-utxo@1.2.3
+
 ## 1.1.54
 
 ### Patch Changes

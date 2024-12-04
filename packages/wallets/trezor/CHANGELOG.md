@@ -1,5 +1,41 @@
 # @swapkit/wallet-trezor
 
+## 1.2.14
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/helpers@1.18.0
+  - @swapkit/toolbox-evm@1.7.6
+  - @swapkit/toolbox-utxo@1.2.6
+
+## 1.2.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.2
+  - @swapkit/toolbox-evm@1.7.5
+  - @swapkit/toolbox-utxo@1.2.5
+
+## 1.2.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@1.17.1
+  - @swapkit/toolbox-evm@1.7.4
+  - @swapkit/toolbox-utxo@1.2.4
+
+## 1.2.11
+
+### Patch Changes
+
+- Updated dependencies [[`69e4ec4`](https://github.com/thorswap/SwapKit/commit/69e4ec4232d50f88ec3529fe517de889b99d2489), [`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/helpers@1.17.0
+  - @swapkit/toolbox-evm@1.7.3
+  - @swapkit/toolbox-utxo@1.2.3
+
 ## 1.2.10
 
 ### Patch Changes

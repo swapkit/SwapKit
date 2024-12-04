@@ -123,6 +123,29 @@ export const BaseDecimal: Record<Chain, number> = {
   XRD: 18,
 };
 
+export const BlockTimes: Record<Partial<Chain>, number> = {
+  [Chain.Arbitrum]: 0.3,
+  [Chain.Avalanche]: 3,
+  [Chain.Base]: 2,
+  [Chain.BinanceSmartChain]: 3,
+  [Chain.Bitcoin]: 600,
+  [Chain.BitcoinCash]: 600,
+  [Chain.Chainflip]: 5,
+  [Chain.Cosmos]: 2,
+  [Chain.Dash]: 150,
+  [Chain.Dogecoin]: 600,
+  [Chain.Ethereum]: 12.5,
+  [Chain.Kujira]: 2.2,
+  [Chain.Litecoin]: 150,
+  [Chain.Maya]: 6,
+  [Chain.Optimism]: 2,
+  [Chain.Polkadot]: 6,
+  [Chain.Polygon]: 2.1,
+  [Chain.Radix]: 5,
+  [Chain.Solana]: 0.4,
+  [Chain.THORChain]: 6,
+};
+
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
 export const SubstrateChains = [Chain.Polkadot, Chain.Chainflip];
 

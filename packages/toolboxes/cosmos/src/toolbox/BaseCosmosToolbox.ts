@@ -16,9 +16,11 @@ type Params = {
 
 export const getFeeRateFromThorswap = async (chainId: ChainId, safeDefault: number) => {
   try {
-    const response = await SwapKitApi.getGasRates();
+    const response = await SwapKitApi.getGasRate();
 
-    return response.find((gas) => gas.chainId === chainId)?.gas || safeDefault;
+    const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
+
+    return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
   } catch (e) {
     console.error(e);
     return safeDefault;

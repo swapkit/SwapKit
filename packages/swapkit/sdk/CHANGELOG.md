@@ -1,5 +1,67 @@
 # @swapkit/sdk
 
+## 2.0.12
+
+### Patch Changes
+
+- Updated dependencies [[`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e), [`c634681`](https://github.com/thorswap/SwapKit/commit/c634681d1d36f7be272d285c09a832e61e64767e)]:
+  - @swapkit/api@2.0.0
+  - @swapkit/plugin-thorchain@2.0.0
+  - @swapkit/core@3.0.0
+  - @swapkit/plugin-chainflip@1.4.3
+  - @swapkit/plugin-evm@1.3.3
+  - @swapkit/plugin-radix@1.2.3
+  - @swapkit/wallets@1.2.37
+
+## 2.0.11
+
+### Patch Changes
+
+- Updated dependencies [[`0b71fca`](https://github.com/thorswap/SwapKit/commit/0b71fcaf2765adb80971feb12fb6f0b5b016571e)]:
+  - @swapkit/tokens@1.10.0
+  - @swapkit/plugin-chainflip@1.4.2
+  - @swapkit/plugin-evm@1.3.2
+  - @swapkit/plugin-radix@1.2.2
+  - @swapkit/plugin-thorchain@1.1.57
+  - @swapkit/api@1.11.2
+  - @swapkit/core@2.1.2
+  - @swapkit/wallets@1.2.36
+
+## 2.0.10
+
+### Patch Changes
+
+- Updated dependencies [[`03675e7`](https://github.com/thorswap/SwapKit/commit/03675e726d67be8e54b01831e3cb4e854c1f9e85)]:
+  - @swapkit/tokens@1.9.1
+  - @swapkit/plugin-chainflip@1.4.1
+  - @swapkit/plugin-evm@1.3.1
+  - @swapkit/plugin-radix@1.2.1
+  - @swapkit/plugin-thorchain@1.1.56
+  - @swapkit/api@1.11.1
+  - @swapkit/core@2.1.1
+  - @swapkit/wallets@1.2.35
+
+## 2.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`d38de3e`](https://github.com/thorswap/SwapKit/commit/d38de3ec78faf5b83b428d9201f00318bfe733e7)]:
+  - @swapkit/plugin-chainflip@1.4.0
+  - @swapkit/plugin-evm@1.3.0
+  - @swapkit/plugin-radix@1.2.0
+  - @swapkit/api@1.11.0
+  - @swapkit/core@2.1.0
+  - @swapkit/plugin-thorchain@1.1.55
+  - @swapkit/wallets@1.2.34
+
+## 2.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`9421d52`](https://github.com/thorswap/SwapKit/commit/9421d52df6f0755d104b29d0367e1bf2c093e4e3)]:
+  - @swapkit/plugin-evm@1.2.0
+  - @swapkit/core@2.0.11
+
 ## 2.0.7
 
 ### Patch Changes
