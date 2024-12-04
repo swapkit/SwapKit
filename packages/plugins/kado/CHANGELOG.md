@@ -1,5 +1,11 @@
 # @swapkit/plugin-kado
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1110](https://github.com/thorswap/SwapKit/pull/1110) [`8e64b40`](https://github.com/thorswap/SwapKit/commit/8e64b40af1a97f9d3182ba8b9acb2ff1df73d0a8) Thanks [@towanTG](https://github.com/towanTG)! - Adds missing swap method to plugin
+
 ## 0.1.0
 
 ### Minor Changes
