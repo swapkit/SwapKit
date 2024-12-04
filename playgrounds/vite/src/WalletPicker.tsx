@@ -277,13 +277,12 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     [chains],
   );
 
-  console.log("chains", chains);
   const handleChainSelect = useCallback((chain: Chain) => {
     setChains(
       (prev) =>
         (prev.includes(chain as never)
           ? prev.filter((c) => c !== chain)
-          : [...prev, chain]) as never[],
+          : [...prev, chain]) as never,
     );
   }, []);
 
@@ -291,7 +290,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     const selectedChains = Array.from(e.target.selectedOptions).map((o: any) => o.value);
 
     if (selectedChains.length > 1) {
-      setChains(selectedChains as never[]);
+      setChains(selectedChains as never);
     }
   }, []);
 
