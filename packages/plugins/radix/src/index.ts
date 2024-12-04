@@ -29,7 +29,7 @@ function plugin({ getWallet }: SwapKitPluginParams) {
       //     await convertInstructionsToManifest({ network: RadixMainnet })(
       //       route.transaction as Instructions,
       //     )
-      //   ).value as string;
+      //   ).value as string;c
       return wallet.signAndBroadcast({
         manifest: route.tx as string,
       });

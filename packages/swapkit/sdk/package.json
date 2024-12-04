@@ -5,6 +5,7 @@
     "@swapkit/core": "workspace:*",
     "@swapkit/plugin-chainflip": "workspace:*",
     "@swapkit/plugin-evm": "workspace:*",
+    "@swapkit/plugin-kado": "workspace:*",
     "@swapkit/plugin-radix": "workspace:*",
     "@swapkit/plugin-thorchain": "workspace:*",
     "@swapkit/tokens": "workspace:*",
@@ -31,5 +32,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "2.0.12"
+  "version": "2.1.0"
 }

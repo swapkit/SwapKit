@@ -278,3 +278,27 @@ export async function findAssetBy(
 
   return;
 }
+
+export const blockTimes = {
+  [Chain.Arbitrum]: 1,
+  [Chain.Avalanche]: 3,
+  [Chain.Base]: 1,
+  [Chain.BinanceSmartChain]: 3,
+  [Chain.Bitcoin]: 600,
+  [Chain.BitcoinCash]: 600,
+  [Chain.Chainflip]: 5,
+  [Chain.Cosmos]: 1.5,
+  [Chain.Dash]: 150,
+  [Chain.Dogecoin]: 600,
+  [Chain.Ethereum]: 12.5,
+  [Chain.Fiat]: 60,
+  [Chain.Kujira]: 2.2,
+  [Chain.Litecoin]: 150,
+  [Chain.Maya]: 6,
+  [Chain.Optimism]: 1,
+  [Chain.Polkadot]: 6,
+  [Chain.Polygon]: 2.1,
+  [Chain.Radix]: 5,
+  [Chain.Solana]: 1,
+  [Chain.THORChain]: 6,
+};

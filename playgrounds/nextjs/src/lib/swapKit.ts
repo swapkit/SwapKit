@@ -19,6 +19,7 @@ export const useSwapKit = () => {
     const loadSwapKit = async () => {
       const { SwapKit } = await import("@swapkit/core");
       const { ChainflipPlugin } = await import("@swapkit/plugin-chainflip");
+      const { KadoPlugin } = await import("@swapkit/plugin-kado");
       const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugin-thorchain");
       const { wallets } = await import("@swapkit/wallets");
 
@@ -41,7 +42,7 @@ export const useSwapKit = () => {
           },
         },
         wallets,
-        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin },
+        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin, ...KadoPlugin },
       });
 
       setSwapKit(swapKitClient);

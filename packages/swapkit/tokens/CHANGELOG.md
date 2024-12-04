@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 1.11.0
+
+### Minor Changes
+
+- [#1107](https://github.com/thorswap/SwapKit/pull/1107) [`d88fe02`](https://github.com/thorswap/SwapKit/commit/d88fe02d8683a74a9b2f521b60381032099e5c40) Thanks [@towanTG](https://github.com/towanTG)! - Adds Kado plugin
+
 ## 1.10.0
 
 ### Minor Changes

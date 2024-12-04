@@ -7,7 +7,7 @@ import type { UTXOWallets } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
-import type { Chain } from "./chains";
+import type { Chain, WalletChain } from "./chains";
 import type { ConnectWalletParams } from "./commonTypes";
 
 declare global {
@@ -67,9 +67,9 @@ export type ChainWallet<T extends Chain> = {
   signMessage?: (message: string) => Promise<string>;
 };
 
-export type EmptyWallet = { [key in Chain]?: unknown };
+export type EmptyWallet = { [key in WalletChain]?: unknown };
 export type BaseWallet<T extends EmptyWallet | Record<string, unknown>> = {
-  [key in Chain]: ChainWallet<key> & (T extends EmptyWallet ? T[key] : never);
+  [key in WalletChain]: ChainWallet<key> & (T extends EmptyWallet ? T[key] : never);
 };
 
 export type FullWallet = BaseWallet<
@@ -92,7 +92,7 @@ export type SwapKitWallet<ConnectParams extends any[]> = (
 ) => (...connectParams: ConnectParams) => boolean | Promise<boolean>;
 
 export type SwapKitPluginParams<Config = {}> = {
-  getWallet: <T extends Chain>(chain: T) => FullWallet[T];
+  getWallet: <T extends WalletChain>(chain: T) => FullWallet[T];
   stagenet?: boolean;
   config: Config;
 };

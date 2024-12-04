@@ -35,6 +35,7 @@
     "@swapkit/core": "workspace:*",
     "@swapkit/plugin-chainflip": "workspace:*",
     "@swapkit/plugin-evm": "workspace:*",
+    "@swapkit/plugin-kado": "workspace:*",
     "@swapkit/plugin-thorchain": "workspace:*",
     "@swapkit/tokens": "workspace:*",
     "@swapkit/wallets": "workspace:*",

@@ -9,6 +9,7 @@ export enum Chain {
   Dash = "DASH",
   Dogecoin = "DOGE",
   Ethereum = "ETH",
+  Fiat = "FIAT",
   Kujira = "KUJI",
   Litecoin = "LTC",
   Maya = "MAYA",
@@ -26,7 +27,7 @@ export enum StagenetChain {
   Maya = "MAYA_STAGENET",
 }
 
-export type WalletChain = Exclude<Chain, Chain.Radix>;
+export type WalletChain = Exclude<Chain, Chain.Fiat>;
 
 export enum ChainId {
   Arbitrum = "42161",
@@ -46,6 +47,7 @@ export enum ChainId {
   Kujira = "kaiyo-1",
   Ethereum = "1",
   EthereumHex = "0x1",
+  Fiat = "fiat",
   Litecoin = "litecoin",
   Maya = "mayachain-mainnet-v1",
   MayaStagenet = "mayachain-stagenet-v1",
@@ -76,6 +78,7 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Dash]: Chain.Dash,
   [ChainId.Dogecoin]: Chain.Dogecoin,
   [ChainId.EthereumHex]: Chain.Ethereum,
+  [ChainId.Fiat]: Chain.Fiat,
   [ChainId.Kujira]: Chain.Kujira,
   [ChainId.Ethereum]: Chain.Ethereum,
   [ChainId.Litecoin]: Chain.Litecoin,
@@ -107,6 +110,7 @@ export const BaseDecimal: Record<Chain, number> = {
   DOGE: 8,
   DOT: 10,
   ETH: 18,
+  FIAT: 2,
   FLIP: 18,
   GAIA: 6,
   KUJI: 6,
@@ -131,6 +135,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Dash]: 150,
   [Chain.Dogecoin]: 600,
   [Chain.Ethereum]: 12.5,
+  [Chain.Fiat]: 60,
   [Chain.Kujira]: 2.2,
   [Chain.Litecoin]: 150,
   [Chain.Maya]: 6,
@@ -213,6 +218,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Dash]: "https://dash-rpc.publicnode.com",
   [Chain.Dogecoin]: "https://node-router.thorswap.net/dogecoin",
   [Chain.Ethereum]: "https://ethereum-rpc.publicnode.com",
+  [Chain.Fiat]: "",
   [Chain.Kujira]: "https://rpc-kujira.synergynodes.com/",
   [Chain.Litecoin]: "https://node-router.thorswap.net/litecoin",
   [Chain.Maya]: "https://tendermint.mayachain.info",
@@ -250,6 +256,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Dash]: ["https://dash-rpc.publicnode.com"],
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
   [Chain.Ethereum]: ["https://eth.llamarpc.com", "https://rpc.ankr.com/eth"],
+  [Chain.Fiat]: [],
   [Chain.Kujira]: ["https://kujira-rpc.polkachu.com", "https://kujira-rpc.ibs.team"],
   [Chain.Litecoin]: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   [Chain.Maya]: ["https://tendermint.mayachain.info", "https://maya-tendermint.publicnode.com"],
@@ -278,6 +285,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Dash]: "https://blockchair.com/dash",
   [Chain.Dogecoin]: "https://blockchair.com/dogecoin",
   [Chain.Ethereum]: "https://etherscan.io",
+  [Chain.Fiat]: "",
   [Chain.Kujira]: "https://finder.kujira.network/kaiyo-1",
   [Chain.Litecoin]: "https://blockchair.com/litecoin",
   [Chain.Maya]: "https://www.mayascan.org",

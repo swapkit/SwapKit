@@ -14,9 +14,10 @@ import {
   FeeOption,
   SwapKitError,
   SwapKitNumber,
+  type WalletChain,
   WalletOption,
   setRequestClientConfig,
-} from "@swapkit/sdk";
+} from "@swapkit/helpers";
 import { ETHToolbox, getProvider } from "@swapkit/toolbox-evm";
 import type { UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import { BigNumber as BigNumberJS } from "bignumber.js";
@@ -37,14 +38,14 @@ export enum LedgerLiveChain {
   ATOM = "cosmos",
 }
 
-export const LEDGER_LIVE_SUPPORTED_CHAINS: Chain[] = [
+export const LEDGER_LIVE_SUPPORTED_CHAINS = [
   Chain.Bitcoin,
   Chain.Ethereum,
   Chain.Cosmos,
   Chain.Litecoin,
   Chain.Dogecoin,
   Chain.BitcoinCash,
-];
+] as WalletChain[];
 
 export const ChainToLedgerLiveChain: Partial<Record<Chain, LedgerLiveChain>> = {
   [Chain.Arbitrum]: LedgerLiveChain.ARB,

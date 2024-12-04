@@ -35,5 +35,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "1.18.0"
+  "version": "1.19.0"
 }
