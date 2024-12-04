@@ -326,12 +326,80 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     return `https://app.kado.money/?${urlParams.toString()}`;
   }
 
+  function createPopover(url: string) {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    `;
+
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.cssText = `
+      width: 440px;
+      height: 700px;
+      border: none;
+      border-radius: 12px;
+      background: white;
+    `;
+
+    overlay.appendChild(iframe);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        document.body.removeChild(overlay);
+      }
+    });
+
+    return overlay;
+  }
+
+  async function swap(route: QuoteResponseRoute) {
+    if (!route.sourceAddress || !route.destinationAddress) {
+      throw new Error("Source and destination addresses are required");
+    }
+
+    const sellAsset = new AssetValue(route.sellAsset);
+    const buyAsset = new AssetValue(route.buyAsset);
+
+    // Determine if this is a buy or sell operation
+    const type = sellAsset.chain === Chain.Fiat ? "BUY" : "SELL";
+
+    const url = getKadoWidgetUrl({
+      sellAsset,
+      buyAsset,
+      supportedAssets: [sellAsset, buyAsset],
+      recipient: route.destinationAddress,
+      networkList: [buyAsset.chain],
+      type,
+      typeList: type,
+      widgetMode: "minimal",
+    });
+
+    createPopover(url);
+
+    return {
+      status: "pending",
+      txHash: null,
+    };
+  }
+
   return {
     fetchProviderQuote,
     getBlockchains,
     getAssets,
     getOrderStatus,
     getKadoWidgetUrl,
+    swap,
     supportedSwapkitProviders: [ProviderName.KADO],
   };
 }
