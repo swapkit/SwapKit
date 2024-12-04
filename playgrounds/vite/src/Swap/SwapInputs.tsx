@@ -1,10 +1,10 @@
 "use client";
-import type {
+import {
   AssetValue,
-  EVMTransaction,
-  QuoteResponseRoute,
-  SwapKit,
-  WalletChain,
+  type EVMTransaction,
+  type QuoteResponseRoute,
+  type SwapKit,
+  type WalletChain,
 } from "@swapkit/sdk";
 import { ProviderName, SwapKitApi, SwapKitNumber } from "@swapkit/sdk";
 import { useCallback, useState } from "react";
@@ -82,6 +82,13 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
         ? skClient.approveAssetValue(inputAssetValue, tx?.from)
         : new Error("Approval Spender not found");
   };
+
+  skClient?.kado
+    ?.fetchProviderQuote({
+      sellAsset: AssetValue.from({ asset: "ETH.ETH", value: 1 }),
+      buyAsset: AssetValue.from({ asset: "FIAT.EUR" }),
+    })
+    .then((quote) => skClient.swap({ route: quote.routes[0] }));
 
   return (
     <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>

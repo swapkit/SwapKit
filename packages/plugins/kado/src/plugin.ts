@@ -178,7 +178,7 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
   async function fetchProviderQuote({
     sellAsset,
     buyAsset,
-    fiatMethod,
+    fiatMethod = "credit_card",
   }: {
     sellAsset: AssetValue;
     buyAsset: AssetValue;
@@ -296,30 +296,37 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     buyAsset,
     supportedAssets,
     recipient,
-    networkList,
     type,
-    typeList,
+    sender,
     widgetMode,
   }: {
     sellAsset: AssetValue;
     buyAsset: AssetValue;
     supportedAssets: AssetValue[];
     recipient: string;
-    networkList: Chain[];
+    sender: string;
     type: "BUY" | "SELL";
     typeList: "BUY" | "SELL";
     widgetMode: "minimal" | "full";
   }) {
     const urlParams = new URLSearchParams({
-      onPayAmount: sellAsset.getValue("string"),
-      onPayCurrency: sellAsset.symbol,
-      onRevCurrency: buyAsset.symbol,
+      apiKey: kadoApiKey,
+      ...(type === "BUY"
+        ? {
+            onPayAmount: sellAsset.getValue("string"),
+            onPayCurrency: sellAsset.symbol,
+            onRevCurrency: buyAsset.symbol,
+            onToAddress: recipient,
+          }
+        : {
+            offPayAmount: sellAsset.getValue("string"),
+            offPayCurrency: sellAsset.symbol,
+            offRevCurrency: buyAsset.symbol,
+            offFromAddress: sender,
+          }),
       cryptoList: supportedAssets.map((asset) => asset.symbol).join(","),
-      onToAddress: recipient,
-      network: ChainToKadoChain(buyAsset.chain).toUpperCase(),
-      networkList: networkList.map((chain) => ChainToKadoChain(chain).toUpperCase()).join(","),
+      network: ChainToKadoChain(type === "BUY" ? buyAsset.chain : sellAsset.chain).toUpperCase(),
       product: type,
-      productList: typeList,
       mode: widgetMode,
     });
 
@@ -379,7 +386,7 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
       buyAsset,
       supportedAssets: [sellAsset, buyAsset],
       recipient: route.destinationAddress,
-      networkList: [buyAsset.chain],
+      sender: route.sourceAddress,
       type,
       typeList: type,
       widgetMode: "minimal",
@@ -399,6 +406,7 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     getAssets,
     getOrderStatus,
     getKadoWidgetUrl,
+    createPopover,
     swap,
     supportedSwapkitProviders: [ProviderName.KADO],
   };
