@@ -135,6 +135,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Dash]: 150,
   [Chain.Dogecoin]: 600,
   [Chain.Ethereum]: 12.5,
+  [Chain.Fiat]: 60,
   [Chain.Kujira]: 2.2,
   [Chain.Litecoin]: 150,
   [Chain.Maya]: 6,

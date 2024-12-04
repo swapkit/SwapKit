@@ -100,7 +100,9 @@ function mapKadoQuoteToQuoteResponse({
         },
       ],
       warnings: [],
-      meta: {},
+      meta: {
+        tags: [],
+      },
       estimatedTime: {
         inbound,
         swap,

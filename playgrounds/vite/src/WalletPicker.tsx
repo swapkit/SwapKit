@@ -19,7 +19,7 @@ import type { SwapKitClient } from "./swapKitClient";
 
 type Props = {
   setPhrase: (phrase: string) => void;
-  setWallet: (wallet: FullWallet[Chain] | FullWallet[Chain][]) => void;
+  setWallet: (wallet: FullWallet[WalletChain] | FullWallet[WalletChain][]) => void;
   skClient?: SwapKitClient;
 };
 
