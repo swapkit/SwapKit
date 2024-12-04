@@ -1,5 +1,11 @@
 # @swapkit/plugin-kado
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1112](https://github.com/thorswap/SwapKit/pull/1112) [`1859a1d`](https://github.com/thorswap/SwapKit/commit/1859a1d7664ee07d1e23ed406b4ee59669122cec) Thanks [@towanTG](https://github.com/towanTG)! - Fixes kado widget mapping
+
 ## 0.1.1
 
 ### Patch Changes
