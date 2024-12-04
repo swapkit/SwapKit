@@ -1,13 +1,13 @@
 import type { QuoteResponse, QuoteResponseRoute } from "@swapkit/api";
 import {
-  type AssetValue,
+  AssetValue,
   Chain,
   FeeTypeEnum,
   ProviderName,
   RequestClient,
   blockTimes,
 } from "@swapkit/helpers";
-import type { SwapKitPluginParams } from "@swapkit/helpers";
+import type { SwapKitPluginParams, SwapParams } from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
 import type {
   KadoFiatCurrency,
@@ -363,13 +363,13 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     return overlay;
   }
 
-  async function swap(route: QuoteResponseRoute) {
-    if (!route.sourceAddress || !route.destinationAddress) {
+  function swap({ route }: SwapParams<"evm", QuoteResponseRoute>) {
+    if (!(route.sourceAddress && route.destinationAddress)) {
       throw new Error("Source and destination addresses are required");
     }
 
-    const sellAsset = new AssetValue(route.sellAsset);
-    const buyAsset = new AssetValue(route.buyAsset);
+    const sellAsset = AssetValue.from({ asset: route.sellAsset });
+    const buyAsset = AssetValue.from({ asset: route.buyAsset });
 
     // Determine if this is a buy or sell operation
     const type = sellAsset.chain === Chain.Fiat ? "BUY" : "SELL";
