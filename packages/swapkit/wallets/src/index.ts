@@ -1,3 +1,4 @@
+import { bitgetWallet } from "@swapkit/wallet-bitget";
 import { coinbaseWallet } from "@swapkit/wallet-coinbase";
 import { evmWallet } from "@swapkit/wallet-evm-extensions";
 import { keepkeyWallet } from "@swapkit/wallet-keepkey";
@@ -15,6 +16,7 @@ import { walletconnectWallet } from "@swapkit/wallet-wc";
 import { xdefiWallet } from "@swapkit/wallet-xdefi";
 
 export const wallets = {
+  ...bitgetWallet,
   ...coinbaseWallet,
   ...evmWallet,
   ...keepkeyBexWallet,

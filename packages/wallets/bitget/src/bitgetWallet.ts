@@ -12,14 +12,14 @@ export const BITGET_SUPPORTED_CHAINS = [
   ...EVMChains,
   Chain.Cosmos,
   Chain.Bitcoin,
-  //TODO: add solana
+  Chain.Solana,
 ] as const;
 
 function connectBitget({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
-  return async function connectOkx(chains: (typeof BITGET_SUPPORTED_CHAINS)[number][]) {
+  return async function connectBitget(chains: (typeof BITGET_SUPPORTED_CHAINS)[number][]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
     const promises = chains.map(async (chain) => {
@@ -34,7 +34,7 @@ function connectBitget({
         ...walletMethods,
         chain,
         balance: [],
-        walletType: WalletOption.OKX,
+        walletType: WalletOption.BITGET,
       });
     });
 

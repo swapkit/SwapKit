@@ -1,6 +1,6 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 
-export type OKXConfig = {
+export type BitgetConfig = {
   covalentApiKey?: string;
   ethplorerApiKey?: string;
   blockchairApiKey?: string;

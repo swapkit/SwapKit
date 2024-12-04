@@ -14,6 +14,7 @@ import { decryptFromKeystore } from "@swapkit/wallet-keystore";
 import { useCallback, useState } from "react";
 
 import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallet-bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
 import type { SwapKitClient } from "./swapKitClient";
 
@@ -47,6 +48,7 @@ const AllChainsSupported = [
 ] as WalletChain[];
 
 export const availableChainsByWallet = {
+  [WalletOption.BITGET]: BITGET_SUPPORTED_CHAINS,
   [WalletOption.BRAVE]: EVMChains,
   [WalletOption.COINBASE_MOBILE]: EVMChains,
   [WalletOption.COINBASE_WEB]: EVMChains,
@@ -154,6 +156,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     async (option: WalletOption, provider?: Eip1193Provider) => {
       if (!skClient) return alert("client is not ready");
       switch (option) {
+        case WalletOption.BITGET:
+          return skClient.connectBitget?.(chains);
         case WalletOption.COINBASE_WEB:
         case WalletOption.METAMASK:
         case WalletOption.TRUSTWALLET_WEB:
@@ -273,12 +277,13 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     [chains],
   );
 
+  console.log("chains", chains);
   const handleChainSelect = useCallback((chain: Chain) => {
     setChains(
       (prev) =>
         (prev.includes(chain as never)
           ? prev.filter((c) => c !== chain)
-          : [...prev, chain]) as never,
+          : [...prev, chain]) as never[],
     );
   }, []);
 
@@ -286,7 +291,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     const selectedChains = Array.from(e.target.selectedOptions).map((o: any) => o.value);
 
     if (selectedChains.length > 1) {
-      setChains(selectedChains as never);
+      setChains(selectedChains as never[]);
     }
   }, []);
 
