@@ -12,11 +12,30 @@ export const list = {
   count: 27,
   tokens: [
     {
+      chain: "BTC",
+      chainId: "bitcoin",
+      decimals: 8,
+      identifier: "BTC.BTC",
+      logoURI: "",
+      symbol: "BTC",
+      ticker: "BTC",
+    },
+    {
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.ETH",
+      logoURI: "",
+      symbol: "ETH",
+      ticker: "ETH",
+    },
+    {
       chain: "FIAT",
       chainId: "fiat",
       decimals: 2,
       identifier: "FIAT.USD",
       logoURI: "",
+      symbol: "USD",
       ticker: "USD",
     },
     {
@@ -25,6 +44,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.CAD",
       logoURI: "",
+      symbol: "CAD",
       ticker: "CAD",
     },
     {
@@ -33,6 +53,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.GBP",
       logoURI: "",
+      symbol: "GBP",
       ticker: "GBP",
     },
     {
@@ -41,6 +62,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.EUR",
       logoURI: "",
+      symbol: "EUR",
       ticker: "EUR",
     },
     {
@@ -49,6 +71,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.MXN",
       logoURI: "",
+      symbol: "MXN",
       ticker: "MXN",
     },
     {
@@ -57,6 +80,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.COP",
       logoURI: "",
+      symbol: "COP",
       ticker: "COP",
     },
     {
@@ -65,6 +89,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.INR",
       logoURI: "",
+      symbol: "INR",
       ticker: "INR",
     },
     {
@@ -73,6 +98,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.CHF",
       logoURI: "",
+      symbol: "CHF",
       ticker: "CHF",
     },
     {
@@ -81,6 +107,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.AUD",
       logoURI: "",
+      symbol: "AUD",
       ticker: "AUD",
     },
     {
@@ -89,6 +116,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.ARS",
       logoURI: "",
+      symbol: "ARS",
       ticker: "ARS",
     },
     {
@@ -97,6 +125,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.BRL",
       logoURI: "",
+      symbol: "BRL",
       ticker: "BRL",
     },
     {
@@ -105,6 +134,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.CLP",
       logoURI: "",
+      symbol: "CLP",
       ticker: "CLP",
     },
     {
@@ -113,6 +143,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.JPY",
       logoURI: "",
+      symbol: "JPY",
       ticker: "JPY",
     },
     {
@@ -121,6 +152,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.KRW",
       logoURI: "",
+      symbol: "KRW",
       ticker: "KRW",
     },
     {
@@ -129,6 +161,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.PEN",
       logoURI: "",
+      symbol: "PEN",
       ticker: "PEN",
     },
     {
@@ -137,6 +170,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.PHP",
       logoURI: "",
+      symbol: "PHP",
       ticker: "PHP",
     },
     {
@@ -145,6 +179,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.SGD",
       logoURI: "",
+      symbol: "SGD",
       ticker: "SGD",
     },
     {
@@ -153,6 +188,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.TRY",
       logoURI: "",
+      symbol: "TRY",
       ticker: "TRY",
     },
     {
@@ -161,6 +197,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.UYU",
       logoURI: "",
+      symbol: "UYU",
       ticker: "UYU",
     },
     {
@@ -169,6 +206,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.TWD",
       logoURI: "",
+      symbol: "TWD",
       ticker: "TWD",
     },
     {
@@ -177,6 +215,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.VND",
       logoURI: "",
+      symbol: "VND",
       ticker: "VND",
     },
     {
@@ -185,6 +224,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.CRC",
       logoURI: "",
+      symbol: "CRC",
       ticker: "CRC",
     },
     {
@@ -193,6 +233,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.SEK",
       logoURI: "",
+      symbol: "SEK",
       ticker: "SEK",
     },
     {
@@ -201,6 +242,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.PLN",
       logoURI: "",
+      symbol: "PLN",
       ticker: "PLN",
     },
     {
@@ -209,6 +251,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.DKK",
       logoURI: "",
+      symbol: "DKK",
       ticker: "DKK",
     },
     {
@@ -217,6 +260,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.NOK",
       logoURI: "",
+      symbol: "NOK",
       ticker: "NOK",
     },
     {
@@ -225,6 +269,7 @@ export const list = {
       decimals: 2,
       identifier: "FIAT.NZD",
       logoURI: "",
+      symbol: "NZD",
       ticker: "NZD",
     },
   ],
