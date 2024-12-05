@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.0.0
+
+### Major Changes
+
+- [#1114](https://github.com/thorswap/SwapKit/pull/1114) [`00488c6`](https://github.com/thorswap/SwapKit/commit/00488c6235e4d1c322cd5b4b26dc8143f90e73d3) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Changes - Renames xdefi wallet to ctrl and updates enums, types accordingly
+
 ## 1.19.0
 
 ### Minor Changes

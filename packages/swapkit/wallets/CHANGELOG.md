@@ -1,5 +1,31 @@
 # @swapkit/wallets
 
+## 2.0.0
+
+### Major Changes
+
+- [#1114](https://github.com/thorswap/SwapKit/pull/1114) [`00488c6`](https://github.com/thorswap/SwapKit/commit/00488c6235e4d1c322cd5b4b26dc8143f90e73d3) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Changes - Renames xdefi wallet to ctrl and updates enums, types accordingly
+
+### Patch Changes
+
+- Updated dependencies [[`00488c6`](https://github.com/thorswap/SwapKit/commit/00488c6235e4d1c322cd5b4b26dc8143f90e73d3), [`00f766e`](https://github.com/thorswap/SwapKit/commit/00f766e9215cf3182638793470befab5ead29f74)]:
+  - @swapkit/wallet-ctrl@2.0.0
+  - @swapkit/wallet-ledger@1.8.0
+  - @swapkit/wallet-coinbase@1.1.33
+  - @swapkit/wallet-evm-extensions@1.1.28
+  - @swapkit/wallet-exodus@1.2.34
+  - @swapkit/wallet-keepkey@1.4.8
+  - @swapkit/wallet-keepkey-bex@1.1.8
+  - @swapkit/wallet-keplr@1.1.18
+  - @swapkit/wallet-keystore@1.3.8
+  - @swapkit/wallet-okx@1.3.8
+  - @swapkit/wallet-phantom@1.1.32
+  - @swapkit/wallet-polkadotjs@1.0.50
+  - @swapkit/wallet-radix@1.2.24
+  - @swapkit/wallet-talisman@1.3.15
+  - @swapkit/wallet-trezor@1.2.16
+  - @swapkit/wallet-wc@1.5.8
+
 ## 1.2.38
 
 ### Patch Changes
