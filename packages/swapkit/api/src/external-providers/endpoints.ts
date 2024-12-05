@@ -17,13 +17,15 @@ function getBaseUrl(isDev?: boolean) {
 export const SwaptkitExternalProvidersApi = ({
   apiKey,
   chainId,
+  isDev,
 }: {
   apiKey: string;
   chainId: ChainId;
+  isDev?: boolean;
 }) => ({
   getBalance: async (address: string) => {
     const chain = ChainIdToChain[chainId];
-    const url = `${getBaseUrl()}/balance?chain=${chain}&address=${address}`;
+    const url = `${getBaseUrl(isDev)}/balance?chain=${chain}&address=${address}`;
 
     const data = await RequestClient.get<SwapkitApiBalanceResponse>(url, {
       headers: { "x-api-key": apiKey },
@@ -39,16 +41,15 @@ export const SwaptkitExternalProvidersApi = ({
   },
   getRawTx: async (hash: string) => {
     const chain = ChainIdToChain[chainId];
-    const url = `${getBaseUrl()}/tx?chain=${chain}&hash=${hash}`;
+    const url = `${getBaseUrl(isDev)}/tx?chain=${chain}&hash=${hash}`;
     const data = await RequestClient.get<SwapkitApiRawTxResponse>(url, {
       headers: { "x-api-key": apiKey },
     });
-    console.log(data, "data");
     return data;
   },
   scanUTXOs: async (address: string, fetchTxHex = false) => {
     const chain = ChainIdToChain[chainId];
-    const url = `${getBaseUrl()}/scanUTXO?chain=${chain}&address=${address}&fetchTxHex=${fetchTxHex}`;
+    const url = `${getBaseUrl(isDev)}/scanUTXO?chain=${chain}&address=${address}&fetchTxHex=${fetchTxHex}`;
     const data = await RequestClient.get<SwapkitApiScanUTXOResponse>(url, {
       headers: { "x-api-key": apiKey },
     });
@@ -56,7 +57,7 @@ export const SwaptkitExternalProvidersApi = ({
   },
   getAddressData: async (address: string) => {
     const chain = ChainIdToChain[chainId];
-    const url = `${getBaseUrl()}/address?chain=${chain}&address=${address}`;
+    const url = `${getBaseUrl(isDev)}/address?chain=${chain}&address=${address}`;
     const data = await RequestClient.get<SwapkitApiAddressDataResponse>(url, {
       headers: { "x-api-key": apiKey },
     });
@@ -64,7 +65,7 @@ export const SwaptkitExternalProvidersApi = ({
   },
   getSuggestedTxFee: async () => {
     const chain = ChainIdToChain[chainId];
-    const url = `${getBaseUrl()}/suggestedFee?chain=${chain}`;
+    const url = `${getBaseUrl(isDev)}/suggestedFee?chain=${chain}`;
     const data = await RequestClient.get<SwapkitApiSuggestedTxFeeResponse>(url, {
       headers: { "x-api-key": apiKey },
     });
