@@ -1,5 +1,5 @@
 {
-  "description": "SwapKit Wallet - XDEFI",
+  "description": "SwapKit Wallet - Ctrl",
   "dependencies": {
     "@keplr-wallet/types": "0.12.110",
     "@swapkit/helpers": "workspace:*",
@@ -15,7 +15,7 @@
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
-  "name": "@swapkit/wallet-xdefi",
+  "name": "@swapkit/wallet-ctrl",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorswap/SwapKit.git"

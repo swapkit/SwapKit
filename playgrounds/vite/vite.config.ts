@@ -66,7 +66,7 @@ export default defineConfig({
       "@swapkit/wallet-talisman": resolve("../../packages/wallets/talisman/src"),
       "@swapkit/wallet-trezor": resolve("../../packages/wallets/trezor/src"),
       "@swapkit/wallet-wc": resolve("../../packages/wallets/wc/src"),
-      "@swapkit/wallet-xdefi": resolve("../../packages/wallets/xdefi/src"),
+      "@swapkit/wallet-ctrl": resolve("../../packages/wallets/ctrl/src"),
 
       crypto: "crypto-browserify",
       stream: "stream-browserify",

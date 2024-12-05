@@ -34,7 +34,7 @@ enum Wallet {
   TALISMAN = "talisman",
   TREZOR = "trezor",
   WC = "wc",
-  XDEFI = "xdefi",
+  CTRL = "ctrl",
   EVM_EXTENSIONS = "evm-extensions",
   KEYSTORE = "keystore",
 }
@@ -57,7 +57,7 @@ const walletOptions = [
   { value: Wallet.TALISMAN, label: "Talisman" },
   { value: Wallet.TREZOR, label: "Trezor", hint: "Trezor Hardware Wallet" },
   { value: Wallet.WC, label: "WalletConnect" },
-  { value: Wallet.XDEFI, label: "XDEFI" },
+  { value: Wallet.CTRL, label: "Ctrl" },
   {
     value: Wallet.EVM_EXTENSIONS,
     label: "Browser Extensions",

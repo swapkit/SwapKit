@@ -59,7 +59,7 @@ export const availableChainsByWallet = {
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
-  [WalletOption.XDEFI]: AllChainsSupported,
+  [WalletOption.CTRL]: AllChainsSupported,
   [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot],
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
@@ -192,8 +192,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         // return skClient.connectExodusWallet(chains, wallet);
         case WalletOption.COINBASE_MOBILE:
           return skClient.connectCoinbaseWallet?.(chains);
-        case WalletOption.XDEFI:
-          return skClient.connectXDEFI?.(chains);
+        case WalletOption.CTRL:
+          return skClient.connectCtrl?.(chains);
         case WalletOption.OKX:
           return skClient.connectOkx?.(chains);
         case WalletOption.POLKADOT_JS:

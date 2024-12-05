@@ -29,6 +29,7 @@ export enum WalletOption {
   BRAVE = "BRAVE",
   COINBASE_MOBILE = "COINBASE_MOBILE",
   COINBASE_WEB = "COINBASE_WEB",
+  CTRL = "CTRL",
   EIP6963 = "EIP6963",
   EXODUS = "EXODUS",
   KEEPKEY = "KEEPKEY",
@@ -48,7 +49,6 @@ export enum WalletOption {
   TALISMAN = "TALISMAN",
   TRUSTWALLET_WEB = "TRUSTWALLET_WEB",
   WALLETCONNECT = "WALLETCONNECT",
-  XDEFI = "XDEFI",
 }
 
 export enum LedgerErrorCode {

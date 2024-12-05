@@ -14,14 +14,14 @@ import type { ARBToolbox, AVAXToolbox, BSCToolbox } from "@swapkit/toolbox-evm";
 
 import type { WalletTxParams } from "./walletHelpers";
 import {
-  getXDEFIAddress,
-  getXDEFIProvider,
-  getXdefiMethods,
+  getCtrlAddress,
+  getCtrlMethods,
+  getCtrlProvider,
   solanaTransfer,
   walletTransfer,
 } from "./walletHelpers";
 
-export const XDEFI_SUPPORTED_CHAINS = [
+export const CTRL_SUPPORTED_CHAINS = [
   Chain.Arbitrum,
   Chain.Avalanche,
   Chain.Base,
@@ -45,7 +45,7 @@ async function getWalletMethodsForChain({
   blockchairApiKey,
   covalentApiKey,
   ethplorerApiKey,
-}: ConnectConfig & { chain: (typeof XDEFI_SUPPORTED_CHAINS)[number] }) {
+}: ConnectConfig & { chain: (typeof CTRL_SUPPORTED_CHAINS)[number] }) {
   switch (chain) {
     case Chain.Solana: {
       const { SOLToolbox } = await import("@swapkit/toolbox-solana");
@@ -54,7 +54,7 @@ async function getWalletMethodsForChain({
       const pubKey = await window.xfi?.solana?.connect();
 
       if (!pubKey) {
-        throw new SwapKitError("wallet_xdefi_not_found");
+        throw new SwapKitError("wallet_ctrl_not_found");
       }
 
       return { ...toolbox, transfer: solanaTransfer(toolbox, pubKey.publicKey) };
@@ -128,17 +128,17 @@ async function getWalletMethodsForChain({
         getBalance,
         BrowserProvider,
       } = await import("@swapkit/toolbox-evm");
-      const ethereumWindowProvider = getXDEFIProvider(chain);
+      const ethereumWindowProvider = getCtrlProvider(chain);
 
       if (!ethereumWindowProvider) {
-        throw new SwapKitError("wallet_xdefi_not_found");
+        throw new SwapKitError("wallet_ctrl_not_found");
       }
 
       const apiKeys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
       const toolbox = getToolboxByChain(chain)({ ...apiKeys, provider, signer });
-      const xdefiMethods = getXdefiMethods(provider);
+      const ctrlMethods = getCtrlMethods(provider);
 
       try {
         chain !== Chain.Ethereum &&
@@ -155,7 +155,7 @@ async function getWalletMethodsForChain({
       } catch (_error) {
         throw new SwapKitError({
           errorKey: "wallet_failed_to_add_or_switch_network",
-          info: { wallet: WalletOption.XDEFI, chain },
+          info: { wallet: WalletOption.CTRL, chain },
         });
       }
 
@@ -170,8 +170,8 @@ async function getWalletMethodsForChain({
         chainId: ChainToHexChainId[chain],
         toolbox: {
           ...toolbox,
-          ...xdefiMethods,
-          // Overwrite xdefi getBalance due to race condition in their app when connecting multiple evm wallets
+          ...ctrlMethods,
+          // Overwrite ctrl getBalance due to race condition in their app when connecting multiple evm wallets
           getBalance: (address: string, potentialScamFilter?: boolean) =>
             getBalance({
               chain,
@@ -189,15 +189,15 @@ async function getWalletMethodsForChain({
   }
 }
 
-function connectXDEFI({
+function connectCtrl({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
-  return async (chains: (typeof XDEFI_SUPPORTED_CHAINS)[number][]) => {
+  return async (chains: (typeof CTRL_SUPPORTED_CHAINS)[number][]) => {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
     const promises = chains.map(async (chain) => {
-      const address = await getXDEFIAddress(chain);
+      const address = await getCtrlAddress(chain);
       const walletMethods = await getWalletMethodsForChain({
         chain,
         blockchairApiKey,
@@ -210,7 +210,7 @@ function connectXDEFI({
         address,
         balance: [],
         chain,
-        walletType: WalletOption.XDEFI,
+        walletType: WalletOption.CTRL,
       });
     });
 
@@ -220,4 +220,4 @@ function connectXDEFI({
   };
 }
 
-export const xdefiWallet = { connectXDEFI } as const;
+export const ctrlWallet = { connectCtrl } as const;
