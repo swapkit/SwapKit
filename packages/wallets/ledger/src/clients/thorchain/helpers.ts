@@ -63,12 +63,12 @@ function compressPublicKey(publicKey: Buffer) {
   if (publicKey.length !== 65) {
     throw new Error("decompressed public key length should be 65 bytes");
   }
-  const y = publicKey.subarray(33, 65);
+  const y = publicKey.slice(33, 65);
 
   // @ts-ignore
   const z = Buffer.from([2 + (y[y.length - 1] & 1)]);
   // @ts-ignore
-  return Buffer.concat([z, publicKey.subarray(1, 33)]);
+  return Buffer.concat([z, publicKey.slice(1, 33)]);
 }
 
 export async function publicKeyv1(app: any, data: Buffer) {
