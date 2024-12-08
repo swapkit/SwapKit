@@ -1,7 +1,7 @@
 import type { StdSignDoc, StdSignature } from "@cosmjs/amino";
+import type { AminoSignResponse, OfflineAminoSigner } from "@cosmjs/amino";
 import type { Transaction } from "@solana/web3.js";
 import type { EthereumWindowProvider } from "@swapkit/helpers";
-import type { AminoSignResponse, OfflineAminoSigner } from "./types";
 
 export { bitgetWallet, BITGET_SUPPORTED_CHAINS } from "./bitgetWallet";
 

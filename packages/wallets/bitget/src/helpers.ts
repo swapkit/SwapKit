@@ -11,34 +11,50 @@ import {
   getRPCUrl,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
-import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
+import type { GaiaToolbox, TransferParams } from "@swapkit/toolbox-cosmos";
 import type { Eip1193Provider } from "@swapkit/toolbox-evm";
 import type { SOLToolbox } from "@swapkit/toolbox-solana";
 import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 
-const cosmosTransfer =
-  (rpcUrl?: string) =>
-  async ({ from, recipient, amount, asset, memo }: any) => {
+export function cosmosTransfer({
+  chainId,
+  rpcUrl,
+}: {
+  chainId: ChainId.Cosmos | ChainId.Kujira;
+  rpcUrl?: string;
+}) {
+  return async ({ from, recipient, assetValue, memo }: TransferParams) => {
+    const { getMsgSendDenom, createSigningStargateClient } = await import(
+      "@swapkit/toolbox-cosmos"
+    );
     if (!(window.bitkeep && "keplr" in window.bitkeep)) {
       throw new Error("No cosmos bitkeep found");
     }
 
     const { keplr: wallet } = window.bitkeep;
-    const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
 
-    const { createSigningStargateClient } = await import("@swapkit/toolbox-cosmos");
+    const offlineSigner = wallet.getOfflineSignerOnlyAmino(chainId);
     const cosmJS = await createSigningStargateClient(
       rpcUrl || getRPCUrl(Chain.Cosmos),
       offlineSigner,
+      chainId === ChainId.Kujira ? "0.0003ukuji" : undefined,
     );
 
     const coins = [
-      { denom: asset?.symbol === "MUON" ? "umuon" : "uatom", amount: amount.amount().toString() },
+      {
+        denom: getMsgSendDenom(assetValue.symbol).toLowerCase(),
+        amount: assetValue.getBaseValue("string"),
+      },
     ];
 
-    const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 1.6, memo);
-    return transactionHash;
+    try {
+      const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 2, memo);
+      return transactionHash;
+    } catch (error) {
+      throw new SwapKitError("core_transaction_failed", { error });
+    }
   };
+}
 
 export const getWalletForChain = async ({
   chain,
@@ -53,7 +69,7 @@ export const getWalletForChain = async ({
   covalentApiKey?: string;
   blockchairApiKey?: string;
   rpcUrl?: string;
-  api?: any;
+  api?: string;
 }): Promise<
   (
     | ReturnType<typeof GaiaToolbox>
@@ -135,7 +151,7 @@ export const getWalletForChain = async ({
       return {
         address,
         ...GaiaToolbox({ server: api }),
-        transfer: cosmosTransfer(rpcUrl),
+        transfer: cosmosTransfer({ chainId: ChainId.Cosmos, rpcUrl }),
       };
     }
 
