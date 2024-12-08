@@ -129,7 +129,7 @@ export const switchEVMWalletNetwork = (provider: BrowserProvider, chainId = Chai
 
 export const addAccountsChangedCallback = (callback: () => void) => {
   window.ethereum?.on("accountsChanged", () => callback());
-  // @ts-expect-error that should be implemented in xdefi and hooked up via swapkit core
+  // @ts-expect-error that should be implemented in ctrl and hooked up via swapkit core
   window.xfi?.ethereum.on("accountsChanged", () => callback());
 };
 
@@ -139,7 +139,7 @@ export const getETHDefaultWallet = () => {
   if (isTrust) return WalletOption.TRUSTWALLET_WEB;
   if (isBraveWallet) return WalletOption.BRAVE;
   if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;
-  if (__XDEFI) WalletOption.XDEFI;
+  if (__XDEFI) WalletOption.CTRL;
   return WalletOption.METAMASK;
 };
 
@@ -149,8 +149,8 @@ export const isDetected = (walletOption: WalletOption) => {
 
 export const listWeb3EVMWallets = () => {
   const metamaskEnabled = window?.ethereum && !window.ethereum?.isBraveWallet;
-  // @ts-ignore that should be implemented in xdefi and hooked up via swapkit core
-  const xdefiEnabled = window?.xfi || window?.ethereum?.__XDEFI;
+  // @ts-ignore that should be implemented in ctrl and hooked up via swapkit core
+  const ctrlEnabled = window?.xfi || window?.ethereum?.__XDEFI;
   const braveEnabled = window?.ethereum?.isBraveWallet;
   const trustEnabled = window?.ethereum?.isTrust || window?.trustwallet;
   const coinbaseEnabled =
@@ -160,7 +160,7 @@ export const listWeb3EVMWallets = () => {
 
   const wallets = [];
   if (metamaskEnabled) wallets.push(WalletOption.METAMASK);
-  if (xdefiEnabled) wallets.push(WalletOption.XDEFI);
+  if (ctrlEnabled) wallets.push(WalletOption.CTRL);
   if (braveEnabled) wallets.push(WalletOption.BRAVE);
   if (trustEnabled) wallets.push(WalletOption.TRUSTWALLET_WEB);
   if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);

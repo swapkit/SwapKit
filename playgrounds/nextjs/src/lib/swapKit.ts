@@ -76,8 +76,8 @@ export const useSwapKit = () => {
   const connectWallet = useCallback(
     (option: WalletOption, chains: Chain[]) => {
       switch (option) {
-        case WalletOption.XDEFI: {
-          swapKit?.connectXDEFI(chains);
+        case WalletOption.CTRL: {
+          swapKit?.connectCtrl(chains);
           break;
         }
 

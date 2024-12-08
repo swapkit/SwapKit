@@ -1,5 +1,19 @@
 # @swapkit/wallet-ledger
 
+## 1.8.0
+
+### Minor Changes
+
+- [#1115](https://github.com/thorswap/SwapKit/pull/1115) [`00f766e`](https://github.com/thorswap/SwapKit/commit/00f766e9215cf3182638793470befab5ead29f74) Thanks [@towanTG](https://github.com/towanTG)! - Adds new TC hardwar app code
+
+### Patch Changes
+
+- Updated dependencies [[`00488c6`](https://github.com/thorswap/SwapKit/commit/00488c6235e4d1c322cd5b4b26dc8143f90e73d3)]:
+  - @swapkit/helpers@2.0.0
+  - @swapkit/toolbox-cosmos@1.6.2
+  - @swapkit/toolbox-evm@1.7.8
+  - @swapkit/toolbox-utxo@1.2.8
+
 ## 1.7.0
 
 ### Minor Changes

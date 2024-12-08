@@ -41,7 +41,7 @@ export type WalletTxParams = {
   gasLimit?: string | bigint | undefined;
 };
 
-export function getXDEFIProvider<T extends Chain>(
+export function getCtrlProvider<T extends Chain>(
   chain: T,
 ): T extends Chain.Solana
   ? SolanaProvider
@@ -50,7 +50,7 @@ export function getXDEFIProvider<T extends Chain>(
     : T extends EVMChain
       ? Eip1193Provider
       : undefined {
-  if (!window.xfi) throw new SwapKitError("wallet_xdefi_not_found");
+  if (!window.xfi) throw new SwapKitError("wallet_ctrl_not_found");
 
   switch (chain) {
     case Chain.Arbitrum:
@@ -105,7 +105,7 @@ async function transaction({
   params: TransactionParams[];
   chain: Chain;
 }): Promise<string> {
-  const client = getXDEFIProvider(chain);
+  const client = getCtrlProvider(chain);
 
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
@@ -117,21 +117,21 @@ async function transaction({
   });
 }
 
-export async function getXDEFIAddress(chain: Chain) {
-  const eipProvider = getXDEFIProvider(chain) as Eip1193Provider;
+export async function getCtrlAddress(chain: Chain) {
+  const eipProvider = getCtrlProvider(chain) as Eip1193Provider;
   if (!eipProvider) {
     throw new SwapKitError({
       errorKey: "wallet_provider_not_found",
-      info: { wallet: WalletOption.XDEFI, chain },
+      info: { wallet: WalletOption.CTRL, chain },
     });
   }
 
   if ([Chain.Cosmos, Chain.Kujira].includes(chain)) {
-    const provider = getXDEFIProvider(Chain.Cosmos);
+    const provider = getCtrlProvider(Chain.Cosmos);
     if (!provider || "request" in provider) {
       throw new SwapKitError({
         errorKey: "wallet_provider_not_found",
-        info: { wallet: WalletOption.XDEFI, chain },
+        info: { wallet: WalletOption.CTRL, chain },
       });
     }
 
@@ -154,7 +154,7 @@ export async function getXDEFIAddress(chain: Chain) {
   }
 
   if (chain === Chain.Solana) {
-    const provider = getXDEFIProvider(Chain.Solana);
+    const provider = getCtrlProvider(Chain.Solana);
 
     const accounts = await provider.connect();
     return accounts.publicKey.toString();
@@ -174,7 +174,7 @@ export async function walletTransfer(
   method: TransactionMethod = "transfer",
 ) {
   if (!assetValue) {
-    throw new SwapKitError("wallet_xdefi_asset_not_defined");
+    throw new SwapKitError("wallet_ctrl_asset_not_defined");
   }
 
   /**
@@ -182,7 +182,7 @@ export async function walletTransfer(
    * UTXO/Cosmos requires amount to be number
    */
 
-  const from = await getXDEFIAddress(assetValue.chain);
+  const from = await getCtrlAddress(assetValue.chain);
   const params = [
     {
       amount: {
@@ -268,7 +268,7 @@ export function solanaTransfer(
   };
 }
 
-export function getXdefiMethods(provider: BrowserProvider) {
+export function getCtrlMethods(provider: BrowserProvider) {
   return {
     call: async <T>({
       contractAddress,
@@ -279,7 +279,7 @@ export function getXdefiMethods(provider: BrowserProvider) {
     }: CallParams): Promise<T> => {
       const contractProvider = provider;
       if (!contractAddress) {
-        throw new SwapKitError("wallet_xdefi_contract_address_not_provided");
+        throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
       }
       const { createContract, createContractTxObject, isStateChangingCall, toHexString } =
         await import("@swapkit/toolbox-evm");
@@ -339,7 +339,7 @@ export function getXdefiMethods(provider: BrowserProvider) {
     sendTransaction: async (tx: EVMTxParams) => {
       const { from, to, data, value } = tx;
       if (!to) {
-        throw new SwapKitError("wallet_xdefi_send_transaction_no_address");
+        throw new SwapKitError("wallet_ctrl_send_transaction_no_address");
       }
 
       const { toHexString } = await import("@swapkit/toolbox-evm");

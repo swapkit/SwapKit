@@ -16,7 +16,7 @@ const errorCodes = {
    * Core - Wallet
    */
   core_wallet_connection_not_found: 10100,
-  core_wallet_xdefi_not_installed: 10101,
+  core_wallet_ctrl_not_installed: 10101,
   core_wallet_evmwallet_not_installed: 10102,
   core_wallet_walletconnect_not_installed: 10103,
   core_wallet_keystore_not_installed: 10104,
@@ -74,10 +74,10 @@ const errorCodes = {
   wallet_ledger_device_not_found: 20104,
   wallet_ledger_device_locked: 20105,
   wallet_phantom_not_found: 20201,
-  wallet_xdefi_not_found: 20301,
-  wallet_xdefi_send_transaction_no_address: 20302,
-  wallet_xdefi_contract_address_not_provided: 20303,
-  wallet_xdefi_asset_not_defined: 20304,
+  wallet_ctrl_not_found: 20301,
+  wallet_ctrl_send_transaction_no_address: 20302,
+  wallet_ctrl_contract_address_not_provided: 20303,
+  wallet_ctrl_asset_not_defined: 20304,
   wallet_walletconnect_project_id_not_specified: 20401,
   wallet_walletconnect_connection_not_established: 20402,
   wallet_walletconnect_namespace_not_supported: 20403,

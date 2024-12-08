@@ -265,6 +265,11 @@ export const QuoteRequestSchema = z
         description: "Set to true to include an transaction object (EVM only)",
       }),
     ),
+    cfBoost: z.optional(
+      z.boolean({
+        description: "Set to true to enable CF boost to speed up Chainflip swaps. BTC only.",
+      }),
+    ),
   })
   .refine((data) => data.sellAsset !== data.buyAsset, {
     message: "Must be different",

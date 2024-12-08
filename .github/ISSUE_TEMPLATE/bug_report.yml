@@ -73,7 +73,7 @@ body:
         - label: "@swapkit/wallet-okx"
         - label: "@swapkit/wallet-trezor"
         - label: "@swapkit/wallet-wc"
-        - label: "@swapkit/wallet-xdefi"
+        - label: "@swapkit/wallet-ctrl"
 
   - type: textarea
     attributes:

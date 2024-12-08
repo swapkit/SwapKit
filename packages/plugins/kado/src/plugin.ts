@@ -1,13 +1,13 @@
 import type { QuoteResponse, QuoteResponseRoute } from "@swapkit/api";
 import {
-  type AssetValue,
+  AssetValue,
   Chain,
   FeeTypeEnum,
   ProviderName,
   RequestClient,
   blockTimes,
 } from "@swapkit/helpers";
-import type { SwapKitPluginParams } from "@swapkit/helpers";
+import type { SwapKitPluginParams, SwapParams } from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
 import type {
   KadoFiatCurrency,
@@ -178,7 +178,7 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
   async function fetchProviderQuote({
     sellAsset,
     buyAsset,
-    fiatMethod,
+    fiatMethod = "credit_card",
   }: {
     sellAsset: AssetValue;
     buyAsset: AssetValue;
@@ -296,34 +296,108 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     buyAsset,
     supportedAssets,
     recipient,
-    networkList,
     type,
-    typeList,
+    sender,
     widgetMode,
   }: {
     sellAsset: AssetValue;
     buyAsset: AssetValue;
     supportedAssets: AssetValue[];
     recipient: string;
-    networkList: Chain[];
+    sender: string;
     type: "BUY" | "SELL";
     typeList: "BUY" | "SELL";
     widgetMode: "minimal" | "full";
   }) {
     const urlParams = new URLSearchParams({
-      onPayAmount: sellAsset.getValue("string"),
-      onPayCurrency: sellAsset.symbol,
-      onRevCurrency: buyAsset.symbol,
+      apiKey: kadoApiKey,
+      ...(type === "BUY"
+        ? {
+            onPayAmount: sellAsset.getValue("string"),
+            onPayCurrency: sellAsset.symbol,
+            onRevCurrency: buyAsset.symbol,
+            onToAddress: recipient,
+          }
+        : {
+            offPayAmount: sellAsset.getValue("string"),
+            offPayCurrency: sellAsset.symbol,
+            offRevCurrency: buyAsset.symbol,
+            offFromAddress: sender,
+          }),
       cryptoList: supportedAssets.map((asset) => asset.symbol).join(","),
-      onToAddress: recipient,
-      network: ChainToKadoChain(buyAsset.chain).toUpperCase(),
-      networkList: networkList.map((chain) => ChainToKadoChain(chain).toUpperCase()).join(","),
+      network: ChainToKadoChain(type === "BUY" ? buyAsset.chain : sellAsset.chain).toUpperCase(),
       product: type,
-      productList: typeList,
       mode: widgetMode,
     });
 
     return `https://app.kado.money/?${urlParams.toString()}`;
+  }
+
+  function createPopover(url: string) {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    `;
+
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.cssText = `
+      width: 440px;
+      height: 700px;
+      border: none;
+      border-radius: 12px;
+      background: white;
+    `;
+
+    overlay.appendChild(iframe);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        document.body.removeChild(overlay);
+      }
+    });
+
+    return overlay;
+  }
+
+  function swap({ route }: SwapParams<"evm", QuoteResponseRoute>) {
+    if (!(route.sourceAddress && route.destinationAddress)) {
+      throw new Error("Source and destination addresses are required");
+    }
+
+    const sellAsset = AssetValue.from({ asset: route.sellAsset });
+    const buyAsset = AssetValue.from({ asset: route.buyAsset });
+
+    // Determine if this is a buy or sell operation
+    const type = sellAsset.chain === Chain.Fiat ? "BUY" : "SELL";
+
+    const url = getKadoWidgetUrl({
+      sellAsset,
+      buyAsset,
+      supportedAssets: [sellAsset, buyAsset],
+      recipient: route.destinationAddress,
+      sender: route.sourceAddress,
+      type,
+      typeList: type,
+      widgetMode: "minimal",
+    });
+
+    createPopover(url);
+
+    return {
+      status: "pending",
+      txHash: null,
+    };
   }
 
   return {
@@ -332,6 +406,8 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     getAssets,
     getOrderStatus,
     getKadoWidgetUrl,
+    createPopover,
+    swap,
     supportedSwapkitProviders: [ProviderName.KADO],
   };
 }

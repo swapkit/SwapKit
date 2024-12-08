@@ -105,7 +105,7 @@ export class THORChainApp {
       if (i > buffer.length) {
         end = buffer.length;
       }
-      chunks.push(buffer.subarray(i, end));
+      chunks.push(buffer.slice(i, end));
     }
 
     return chunks;
@@ -286,7 +286,8 @@ export class THORChainApp {
     }
   }
 
-  async sign(path: number[], buffer: Buffer, txType = P2_VALUES.JSON) {
+  async sign(path: number[], message: string, txType = P2_VALUES.JSON) {
+    const buffer = Buffer.from(message);
     let chunks: Buffer[] = [];
     let response: any;
     try {

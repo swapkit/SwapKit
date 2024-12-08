@@ -1,5 +1,6 @@
 import { bitgetWallet } from "@swapkit/wallet-bitget";
 import { coinbaseWallet } from "@swapkit/wallet-coinbase";
+import { ctrlWallet } from "@swapkit/wallet-ctrl";
 import { evmWallet } from "@swapkit/wallet-evm-extensions";
 import { keepkeyWallet } from "@swapkit/wallet-keepkey";
 import { keepkeyBexWallet } from "@swapkit/wallet-keepkey-bex";
@@ -13,7 +14,6 @@ import { radixWallet } from "@swapkit/wallet-radix";
 import { talismanWallet } from "@swapkit/wallet-talisman";
 import { trezorWallet } from "@swapkit/wallet-trezor";
 import { walletconnectWallet } from "@swapkit/wallet-wc";
-import { xdefiWallet } from "@swapkit/wallet-xdefi";
 
 export const wallets = {
   ...bitgetWallet,
@@ -31,5 +31,5 @@ export const wallets = {
   ...talismanWallet,
   ...trezorWallet,
   ...walletconnectWallet,
-  ...xdefiWallet,
+  ...ctrlWallet,
 };
