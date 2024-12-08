@@ -218,10 +218,16 @@ export const substrateValidateAddress = ({
 }: { address: string; chain: Chain.Polkadot | Chain.Chainflip }) => {
   switch (chain) {
     case Chain.Polkadot: {
-      return validateAddress(address, Network.DOT.prefix || Network.GENERIC.prefix);
+      return (
+        validateAddress(address, Network.DOT.prefix) ||
+        validateAddress(address, Network.GENERIC.prefix)
+      );
     }
     case Chain.Chainflip: {
-      return validateAddress(address, Network.FLIP.prefix || Network.GENERIC.prefix);
+      return (
+        validateAddress(address, Network.FLIP.prefix) ||
+        validateAddress(address, Network.GENERIC.prefix)
+      );
     }
   }
   return false;
