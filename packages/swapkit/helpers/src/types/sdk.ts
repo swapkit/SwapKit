@@ -18,6 +18,8 @@ export type ChainApis = { [key in CovalentChains]?: CovalentApiType } & {
   [key in UTXOChain]?: BlockchairApiType;
 } & {
   [key in CosmosChain | Chain.Solana | Chain.Radix | Chain.Polkadot | Chain.Chainflip]?: string;
+} & {
+  [key in Chain.Fiat]?: undefined;
 };
 
 export type GenericSwapParams<T = unknown> = {

@@ -1,7 +1,7 @@
 import type { RadixNetwork } from "@swapkit/toolbox-radix";
-import type { Chain, WalletChain } from "./chains";
+import type { Chain } from "./chains";
 import type { ChainApis } from "./sdk";
-import type { ChainWallet } from "./wallet";
+import type { ChainWallet, CryptoChain } from "./wallet";
 
 /**
  * @optional for swapkit API access
@@ -86,10 +86,10 @@ export type ConnectConfig = SwapkitConfig & {
 };
 
 export type ConnectWalletParams<M = { [key in string]: any }> = {
-  addChain: <T extends WalletChain>(params: ChainWallet<T> & M) => void;
+  addChain: <T extends CryptoChain>(params: ChainWallet<T> & M) => void;
   apis: ChainApis;
   config: ConnectConfig;
-  rpcUrls: { [chain in Chain]?: string };
+  rpcUrls: { [chain in CryptoChain]?: string };
 };
 
 export type Witness = {
