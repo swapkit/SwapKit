@@ -27,8 +27,6 @@ export enum StagenetChain {
   Maya = "MAYA_STAGENET",
 }
 
-export type WalletChain = Exclude<Chain, Chain.Fiat>;
-
 export enum ChainId {
   Arbitrum = "42161",
   ArbitrumHex = "0xa4b1",

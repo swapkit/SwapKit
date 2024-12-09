@@ -1,4 +1,4 @@
-import { AssetValue, type FullWallet, type WalletChain } from "@swapkit/core";
+import { AssetValue, type Chain, type FullWallet } from "@swapkit/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { WalletWidget } from "@swapkit/wallet-exodus";
@@ -14,7 +14,7 @@ import { getSwapKitClient } from "./swapKitClient";
 
 const apiKeys = ["walletConnectProjectId"] as const;
 
-type WalletDataType = FullWallet[WalletChain] | FullWallet[WalletChain][] | null;
+type WalletDataType = FullWallet[Chain] | FullWallet[Chain][] | null;
 
 const App = () => {
   const [widgetType, setWidgetType] = useState<"swap" | "loan" | "earn">("swap");
@@ -62,7 +62,7 @@ const App = () => {
     [inputAsset, outputAsset],
   );
 
-  const disconnectChain = (chain: WalletChain) => {
+  const disconnectChain = (chain: Chain) => {
     if (!skClient) return;
     skClient.disconnectChain(chain);
     setWallet(Object.values(skClient.getAllWallets()));
@@ -154,17 +154,15 @@ const App = () => {
                     key={`${walletData?.address}-${walletData?.balance?.[0]?.chain}`}
                     setAsset={setAsset}
                     walletData={walletData}
-                    disconnect={() =>
-                      disconnectChain(walletData?.balance?.[0]?.chain as WalletChain)
-                    }
+                    disconnect={() => disconnectChain(walletData?.balance?.[0]?.chain as Chain)}
                   />
                 ))
               ) : (
                 <Wallet
                   key={`${wallet?.address}-${wallet?.balance?.[0]?.chain}`}
                   setAsset={setAsset}
-                  walletData={wallet as FullWallet[WalletChain]}
-                  disconnect={() => disconnectChain(wallet?.balance?.[0]?.chain as WalletChain)}
+                  walletData={wallet as FullWallet[Chain]}
+                  disconnect={() => disconnectChain(wallet?.balance?.[0]?.chain as Chain)}
                 />
               )}
             </>

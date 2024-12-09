@@ -14,7 +14,6 @@ import {
   FeeOption,
   SwapKitError,
   SwapKitNumber,
-  type WalletChain,
   WalletOption,
   setRequestClientConfig,
 } from "@swapkit/helpers";
@@ -45,7 +44,7 @@ export const LEDGER_LIVE_SUPPORTED_CHAINS = [
   Chain.Litecoin,
   Chain.Dogecoin,
   Chain.BitcoinCash,
-] as WalletChain[];
+] as const;
 
 export const ChainToLedgerLiveChain: Partial<Record<Chain, LedgerLiveChain>> = {
   [Chain.Arbitrum]: LedgerLiveChain.ARB,

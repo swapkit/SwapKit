@@ -4,7 +4,6 @@ import {
   EVMChains,
   SubstrateChains,
   UTXOChains,
-  type WalletChain,
   WalletOption,
   getDerivationPathFor,
   getEIP6963Wallets,
@@ -19,7 +18,7 @@ import type { SwapKitClient } from "./swapKitClient";
 
 type Props = {
   setPhrase: (phrase: string) => void;
-  setWallet: (wallet: FullWallet[WalletChain] | FullWallet[WalletChain][]) => void;
+  setWallet: (wallet: FullWallet[Chain] | FullWallet[Chain][]) => void;
   skClient?: SwapKitClient;
 };
 
@@ -44,7 +43,7 @@ const AllChainsSupported = [
   Chain.Kujira,
   Chain.THORChain,
   Chain.Solana,
-] as WalletChain[];
+] as Chain[];
 
 export const availableChainsByWallet = {
   [WalletOption.BRAVE]: EVMChains,
@@ -229,7 +228,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           const phrases = await decryptFromKeystore(JSON.parse(keystoreFile), password);
           setPhrase(phrases);
 
-          await skClient.connectKeystore(chains as WalletChain[], phrases);
+          await skClient.connectKeystore(chains, phrases);
 
           const walletDataArray = await Promise.all(
             chains.map((chain) => skClient.getWalletWithBalance(chain, true)),
