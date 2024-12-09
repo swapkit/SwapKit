@@ -2,6 +2,7 @@ import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
+  type ChainApi,
   ChainId,
   ChainToHexChainId,
   type EVMChain,
@@ -69,7 +70,7 @@ export const getWalletForChain = async ({
   covalentApiKey?: string;
   blockchairApiKey?: string;
   rpcUrl?: string;
-  api?: string;
+  api?: ChainApi;
 }): Promise<
   (
     | ReturnType<typeof GaiaToolbox>
@@ -120,8 +121,9 @@ export const getWalletForChain = async ({
       const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
 
       const [address] = await wallet.requestAccounts();
+      const apiClient = typeof api === "object" && "getConfirmedBalance" in api ? api : undefined;
 
-      const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient: api });
+      const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient });
       const signTransaction = async (psbt: Psbt) => {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });
 
@@ -150,7 +152,7 @@ export const getWalletForChain = async ({
 
       return {
         address,
-        ...GaiaToolbox({ server: api }),
+        ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
         transfer: cosmosTransfer({ chainId: ChainId.Cosmos, rpcUrl }),
       };
     }

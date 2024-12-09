@@ -20,6 +20,8 @@ export type ChainApis = { [key in CovalentChains]?: CovalentApiType } & {
   [key in CosmosChain | Chain.Solana | Chain.Radix | Chain.Polkadot | Chain.Chainflip]?: string;
 };
 
+export type ChainApi = EthplorerApiType | CovalentApiType | BlockchairApiType | string;
+
 export type GenericSwapParams<T = unknown> = {
   buyAsset?: AssetValue;
   sellAsset?: AssetValue;
