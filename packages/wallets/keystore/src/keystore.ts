@@ -4,7 +4,6 @@ import {
   type ConnectWalletParams,
   type DerivationPathArray,
   NetworkDerivationPath,
-  type WalletChain,
   WalletOption,
   type WalletTxParams,
   type Witness,
@@ -21,6 +20,8 @@ import type {
   UTXOTransferParams,
   UTXOWalletTransferParams,
 } from "@swapkit/toolbox-utxo";
+
+type KeystoreSupportedChain = Exclude<Chain, Chain.Fiat | Chain.Radix>;
 
 type KeystoreOptions = {
   ethplorerApiKey?: string;
@@ -201,7 +202,7 @@ function connectKeystore({
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
 }: ConnectWalletParams) {
   return async function connectKeystore(
-    chains: WalletChain[],
+    chains: KeystoreSupportedChain[],
     phrase: string,
     derivationPathMapOrIndex?: { [chain in Chain]?: DerivationPathArray } | number,
   ) {

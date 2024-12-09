@@ -1,11 +1,5 @@
 "use client";
-import type {
-  AssetValue,
-  EVMTransaction,
-  QuoteResponseRoute,
-  SwapKit,
-  WalletChain,
-} from "@swapkit/sdk";
+import type { AssetValue, Chain, EVMTransaction, QuoteResponseRoute, SwapKit } from "@swapkit/sdk";
 import { ProviderName, SwapKitApi, SwapKitNumber } from "@swapkit/sdk";
 import { useCallback, useState } from "react";
 
@@ -40,8 +34,8 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
     setLoading(true);
     setRoutes([]);
 
-    const sourceAddress = skClient.getAddress(inputAsset.chain as WalletChain);
-    const destinationAddress = skClient.getAddress(outputAsset.chain as WalletChain);
+    const sourceAddress = skClient.getAddress(inputAsset.chain as Chain);
+    const destinationAddress = skClient.getAddress(outputAsset.chain as Chain);
     // const providers = Object.values(ProviderName);
 
     try {

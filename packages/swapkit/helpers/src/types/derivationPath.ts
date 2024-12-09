@@ -31,6 +31,7 @@ export enum DerivationPath {
   SOL = "m/44'/501'/0'/0",
   THOR = "m/44'/931'/0'/0",
   XRD = "////",
+  FIAT = "////",
 }
 
 export type DerivationPathArray = [number, number, number, number, number?];
