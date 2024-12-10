@@ -2,14 +2,14 @@ export const list = {
   provider: "UNISWAP_V3",
   name: "Uniswap Labs Default",
   tags: {},
-  timestamp: "2024-11-19T14:45:14.827Z",
+  timestamp: "2024-12-09T15:30:52.478Z",
   version: {
     major: 12,
-    minor: 27,
+    minor: 31,
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 582,
+  count: 592,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -222,6 +222,16 @@ export const list = {
       ticker: "ATH",
     },
     {
+      address: "0xa71e2738704e367798baa2755af5a10499634953",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.AVRK-0xa71e2738704e367798baa2755af5a10499634953",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.avrk-0xa71e2738704e367798baa2755af5a10499634953.png",
+      ticker: "AVRK",
+    },
+    {
       address: "0x23ee2343B892b1BB63503a4FAbc840E0e2C6810f",
       chain: "ARB",
       chainId: "42161",
@@ -340,16 +350,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.busd-0x31190254504622cefdfa55a7d3d272e6462629a2.png",
       ticker: "BUSD",
-    },
-    {
-      address: "0x9e3c88e95811db0db93b675f9985faff3972c615",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.CAI-0x9e3c88e95811db0db93b675f9985faff3972c615",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.cai-0x9e3c88e95811db0db93b675f9985faff3972c615.png",
-      ticker: "CAI",
     },
     {
       address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
@@ -582,16 +582,6 @@ export const list = {
       ticker: "ELON",
     },
     {
-      address: "0xdfb8be6f8c87f74295a87de951974362cedcfa30",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.EMC-0xdfb8be6f8c87f74295a87de951974362cedcfa30",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.emc-0xdfb8be6f8c87f74295a87de951974362cedcfa30.png",
-      ticker: "EMC",
-    },
-    {
       address: "0x772598e9e62155d7fdfe65fdf01eb5a53a8465be",
       chain: "ARB",
       chainId: "42161",
@@ -730,6 +720,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.fox-0xf929de51d91c77e42f5090069e0ad7a09e513c73.png",
       ticker: "FOX",
+    },
+    {
+      address: "0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.FRAX-0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.frax-0x17fc002b466eec40dae837fc4be5c67993ddbd6f.png",
+      ticker: "FRAX",
     },
     {
       address: "0x7468a5d8E02245B00E8C0217fCE021C70Bc51305",
@@ -872,6 +872,16 @@ export const list = {
       ticker: "GRT",
     },
     {
+      address: "0x580e933d90091b9ce380740e3a4a39c67eb85b4c",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.GSWIFT-0x580e933d90091b9ce380740e3a4a39c67eb85b4c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.gswift-0x580e933d90091b9ce380740e3a4a39c67eb85b4c.png",
+      ticker: "GSWIFT",
+    },
+    {
       address: "0x7f9a7DB853Ca816B9A138AEe3380Ef34c437dEe0",
       chain: "ARB",
       chainId: "42161",
@@ -942,6 +952,16 @@ export const list = {
       ticker: "hyETH",
     },
     {
+      address: "0x56659245931cb6920e39c189d2a0e7dd0da2d57b",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.IBEX-0x56659245931cb6920e39c189d2a0e7dd0da2d57b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.ibex-0x56659245931cb6920e39c189d2a0e7dd0da2d57b.png",
+      ticker: "IBEX",
+    },
+    {
       address: "0x61cA9D186f6b9a793BC08F6C79fd35f205488673",
       chain: "ARB",
       chainId: "42161",
@@ -1000,6 +1020,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.kuji-0x3a18dcc9745edcd1ef33ecb93b0b6eba5671e7ca.png",
       ticker: "KUJI",
+    },
+    {
+      address: "0x11e969e9b3f89cb16d686a03cd8508c9fc0361af",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 6,
+      identifier: "ARB.LAVA-0x11e969e9b3f89cb16d686a03cd8508c9fc0361af",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.lava-0x11e969e9b3f89cb16d686a03cd8508c9fc0361af.png",
+      ticker: "LAVA",
     },
     {
       address: "0x13Ad51ed4F1B7e9Dc168d8a00cB3f4dDD85EfA60",
@@ -1672,6 +1702,16 @@ export const list = {
       ticker: "RNDR",
     },
     {
+      address: "0xd79bb960dc8a206806c3a428b31bca49934d18d7",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 9,
+      identifier: "ARB.ROSNET-0xd79bb960dc8a206806c3a428b31bca49934d18d7",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.rosnet-0xd79bb960dc8a206806c3a428b31bca49934d18d7.png",
+      ticker: "ROSNET",
+    },
+    {
       address: "0x4186bfc76e2e237523cbc30fd220fe055156b41f",
       chain: "ARB",
       chainId: "42161",
@@ -1982,16 +2022,6 @@ export const list = {
       ticker: "UNI",
     },
     {
-      address: "0x6b2a01a5f79deb4c2f3c0eda7b01df456fbd726a",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 8,
-      identifier: "ARB.uniBTC-0x6b2a01a5f79deb4c2f3c0eda7b01df456fbd726a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.unibtc-0x6b2a01a5f79deb4c2f3c0eda7b01df456fbd726a.png",
-      ticker: "uniBTC",
-    },
-    {
       address: "0xe80772eaf6e2e18b651f160bc9158b2a5cafca65",
       chain: "ARB",
       chainId: "42161",
@@ -2009,16 +2039,6 @@ export const list = {
       identifier: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
-      ticker: "USDC",
-    },
-    {
-      address: "0xc85b8c8cf6d2e4739dbacd4c16e7a8484500e2a4",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 9,
-      identifier: "ARB.USDC-0xc85b8c8cf6d2e4739dbacd4c16e7a8484500e2a4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdc-0xc85b8c8cf6d2e4739dbacd4c16e7a8484500e2a4.png",
       ticker: "USDC",
     },
     {
@@ -2062,16 +2082,6 @@ export const list = {
       ticker: "USDP",
     },
     {
-      address: "0xd74f5255d557944cf7dd0e45ff521520002d5748",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.USDs-0xd74f5255d557944cf7dd0e45ff521520002d5748",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usds-0xd74f5255d557944cf7dd0e45ff521520002d5748.png",
-      ticker: "USDs",
-    },
-    {
       address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       chain: "ARB",
       chainId: "42161",
@@ -2080,16 +2090,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
-    },
-    {
-      address: "0x323665443cef804a3b5206103304bd4872ea4253",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 6,
-      identifier: "ARB.USDV-0x323665443cef804a3b5206103304bd4872ea4253",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdv-0x323665443cef804a3b5206103304bd4872ea4253.png",
-      ticker: "USDV",
     },
     {
       address: "0x088cd8f5ef3652623c22d48b1605dcfe860cd704",
@@ -2112,6 +2112,16 @@ export const list = {
       ticker: "VKA",
     },
     {
+      address: "0xa684cd057951541187f288294a1e1c2646aa2d24",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.VSTA-0xa684cd057951541187f288294a1e1c2646aa2d24",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.vsta-0xa684cd057951541187f288294a1e1c2646aa2d24.png",
+      ticker: "VSTA",
+    },
+    {
       address: "0x1c8Ec4DE3c2BFD3050695D89853EC6d78AE650bb",
       chain: "ARB",
       chainId: "42161",
@@ -2130,6 +2140,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
       ticker: "WBTC",
+    },
+    {
+      address: "0x35751007a407ca6feffe80b3cb397736d2cf4dbe",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.weETH-0x35751007a407ca6feffe80b3cb397736d2cf4dbe",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.weeth-0x35751007a407ca6feffe80b3cb397736d2cf4dbe.png",
+      ticker: "weETH",
     },
     {
       address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
@@ -2250,6 +2270,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.zrx-0xbd591bd4ddb64b77b5f76eab8f03d02519235ae2.png",
       ticker: "ZRX",
+    },
+    {
+      address: "0xd2d8d78087d0e43bc4804b6f946674b2ee406b80",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.✺RUG-0xd2d8d78087d0e43bc4804b6f946674b2ee406b80",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.✺rug-0xd2d8d78087d0e43bc4804b6f946674b2ee406b80.png",
+      ticker: "✺RUG",
     },
     {
       address: "0x111111111117dC0aa78b770fA6A738034120C302",
@@ -2842,6 +2872,16 @@ export const list = {
       ticker: "CBY",
     },
     {
+      address: "0xc29bbe89e98250ee2eee3ac677bbed542a049efb",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.CDN-0xc29bbe89e98250ee2eee3ac677bbed542a049efb",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cdn-0xc29bbe89e98250ee2eee3ac677bbed542a049efb.png",
+      ticker: "CDN",
+    },
+    {
       address: "0xcdb37a4fbc2da5b78aa4e41a432792f9533e85cc",
       chain: "ETH",
       chainId: "1",
@@ -2910,6 +2950,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.clv-0x80c62fe4487e1351b47ba49809ebd60ed085bf52.png",
       ticker: "CLV",
+    },
+    {
+      address: "0xe6829d9a7ee3040e1276fa75293bde931859e8fa",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.cmETH-0xe6829d9a7ee3040e1276fa75293bde931859e8fa",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cmeth-0xe6829d9a7ee3040e1276fa75293bde931859e8fa.png",
+      ticker: "cmETH",
     },
     {
       address: "0x000000007a58f5f58e697e51ab0357bc9e260a04",
@@ -2982,16 +3032,6 @@ export const list = {
       ticker: "CQT",
     },
     {
-      address: "0x49d72e3973900a195a155a46441f0c08179fdb64",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.CRETH2-0x49d72e3973900a195a155a46441f0c08179fdb64",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.creth2-0x49d72e3973900a195a155a46441f0c08179fdb64.png",
-      ticker: "CRETH2",
-    },
-    {
       address: "0xA0b73E1Ff0B80914AB6fe0444E65848C4C34450b",
       chain: "ETH",
       chainId: "1",
@@ -3050,6 +3090,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.cube-0xdf801468a808a32656d2ed2d2d80b72a129739f4.png",
       ticker: "CUBE",
+    },
+    {
+      address: "0x0000000000c5dc95539589fbd24be07c6c14eca4",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.CULT-0x0000000000c5dc95539589fbd24be07c6c14eca4",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cult-0x0000000000c5dc95539589fbd24be07c6c14eca4.png",
+      ticker: "CULT",
     },
     {
       address: "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
@@ -3160,16 +3210,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.dnt-0x0abdace70d3790235af448c88547603b945604ea.png",
       ticker: "DNT",
-    },
-    {
-      address: "0xfaca6611fca6de09f726b8a0a1448253b6f748e5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.DOLPHIN-0xfaca6611fca6de09f726b8a0a1448253b6f748e5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.dolphin-0xfaca6611fca6de09f726b8a0a1448253b6f748e5.png",
-      ticker: "DOLPHIN",
     },
     {
       address: "0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b",
@@ -3350,6 +3390,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.eurc-0x1abaea1f7c830bd89acc67ec4af516284b1bc33c.png",
       ticker: "EURC",
+    },
+    {
+      address: "0x8dF723295214Ea6f21026eeEb4382d475f146F9f",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.EURQ-0x8dF723295214Ea6f21026eeEb4382d475f146F9f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.eurq-0x8df723295214ea6f21026eeeb4382d475f146f9f.png",
+      ticker: "EURQ",
     },
     {
       address: "0xc581b735a1688071a1746c968e0798d642ede491",
@@ -3972,16 +4022,6 @@ export const list = {
       ticker: "LIT",
     },
     {
-      address: "0x054c9d4c6f4ea4e14391addd1812106c97d05690",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.LLD-0x054c9d4c6f4ea4e14391addd1812106c97d05690",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
-      ticker: "LLD",
-    },
-    {
       address: "0x61E90A50137E1F645c9eF4a0d3A4f01477738406",
       chain: "ETH",
       chainId: "1",
@@ -4040,6 +4080,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.lrds-0xd0a6053f087e87a25dc60701ba6e663b1a548e85.png",
       ticker: "LRDS",
+    },
+    {
+      address: "0x6033F7f88332B8db6ad452B7C6D5bB643990aE3f",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.LSK-0x6033F7f88332B8db6ad452B7C6D5bB643990aE3f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.lsk-0x6033f7f88332b8db6ad452b7c6d5bb643990ae3f.png",
+      ticker: "LSK",
     },
     {
       address: "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
@@ -4232,6 +4282,26 @@ export const list = {
       ticker: "MONA",
     },
     {
+      address: "0x58D97B57BB95320F9a05dC918Aef65434969c2B2",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.MORPHO-0x58D97B57BB95320F9a05dC918Aef65434969c2B2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.morpho-0x58d97b57bb95320f9a05dc918aef65434969c2b2.png",
+      ticker: "MORPHO",
+    },
+    {
+      address: "0x3073f7aAA4DB83f95e9FFf17424F71D4751a3073",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 8,
+      identifier: "ETH.MOVE-0x3073f7aAA4DB83f95e9FFf17424F71D4751a3073",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.move-0x3073f7aaa4db83f95e9fff17424f71d4751a3073.png",
+      ticker: "MOVE",
+    },
+    {
       address: "0x620aa20875ec1144126ea47fb27ecfe6e10d0c56",
       chain: "ETH",
       chainId: "1",
@@ -4332,6 +4402,16 @@ export const list = {
       ticker: "NCT",
     },
     {
+      address: "0x812Ba41e071C7b7fA4EBcFB62dF5F45f6fA853Ee",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.Neiro-0x812Ba41e071C7b7fA4EBcFB62dF5F45f6fA853Ee",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.neiro-0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee.png",
+      ticker: "Neiro",
+    },
+    {
       address: "0x04abEdA201850aC0124161F037Efd70c74ddC74C",
       chain: "ETH",
       chainId: "1",
@@ -4390,6 +4470,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.ogn-0x8207c1ffc5b6804f6024322ccf34f29c3541ae26.png",
       ticker: "OGN",
+    },
+    {
+      address: "0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.OHM-0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.ohm-0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5.png",
+      ticker: "OHM",
     },
     {
       address: "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
@@ -5252,6 +5342,16 @@ export const list = {
       ticker: "sUSD",
     },
     {
+      address: "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.sUSDS-0xa3931d71877c0e7a3148cb7eb4463524fec27fbd",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.susds-0xa3931d71877c0e7a3148cb7eb4463524fec27fbd.png",
+      ticker: "sUSDS",
+    },
+    {
       address: "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
       chain: "ETH",
       chainId: "1",
@@ -5552,6 +5652,16 @@ export const list = {
       ticker: "USDP",
     },
     {
+      address: "0xc83e27f270cce0A3A3A29521173a83F402c1768b",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.USDQ-0xc83e27f270cce0A3A3A29521173a83F402c1768b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdq-0xc83e27f270cce0a3a3a29521173a83f402c1768b.png",
+      ticker: "USDQ",
+    },
+    {
       address: "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
       chain: "ETH",
       chainId: "1",
@@ -5610,16 +5720,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.wampl-0xedb171c18ce90b633db442f2a6f72874093b49ef.png",
       ticker: "WAMPL",
-    },
-    {
-      address: "0x8ccd897ca6160ed76755383b201c1948394328c7",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 9,
-      identifier: "ETH.wBAI-0x8ccd897ca6160ed76755383b201c1948394328c7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.wbai-0x8ccd897ca6160ed76755383b201c1948394328c7.png",
-      ticker: "wBAI",
     },
     {
       address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
