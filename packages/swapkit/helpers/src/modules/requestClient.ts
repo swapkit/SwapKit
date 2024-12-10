@@ -48,7 +48,15 @@ async function fetchWithConfig(url: string, options: Options) {
       body: bodyToSend,
       headers,
     });
-    const body = await response.json();
+
+    const contentType = response.headers.get("content-type");
+    let body;
+
+    if (contentType?.includes("application/json")) {
+      body = await response.json();
+    } else if (contentType?.includes("text/plain")) {
+      body = await response.text();
+    }
 
     if (options.responseHandler) return options.responseHandler(body);
 
