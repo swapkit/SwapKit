@@ -93,6 +93,7 @@ const errorCodes = {
   wallet_keepkey_asset_not_defined: 20901,
   wallet_keepkey_contract_address_not_provided: 20902,
   wallet_keepkey_send_transaction_no_address: 20903,
+  wallet_bitkeep_not_found: 21001,
   /**
    * Chainflip
    */

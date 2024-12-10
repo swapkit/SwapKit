@@ -1,4 +1,4 @@
-import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
@@ -12,33 +12,25 @@ import {
   getRPCUrl,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
-import type { GaiaToolbox, TransferParams } from "@swapkit/toolbox-cosmos";
+import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { Eip1193Provider } from "@swapkit/toolbox-evm";
-import type { SOLToolbox } from "@swapkit/toolbox-solana";
-import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 
-export function cosmosTransfer({
-  chainId,
-  rpcUrl,
-}: {
-  chainId: ChainId.Cosmos | ChainId.Kujira;
-  rpcUrl?: string;
-}) {
+export function cosmosTransfer(rpcUrl?: string) {
   return async ({ from, recipient, assetValue, memo }: TransferParams) => {
     const { getMsgSendDenom, createSigningStargateClient } = await import(
       "@swapkit/toolbox-cosmos"
     );
     if (!(window.bitkeep && "keplr" in window.bitkeep)) {
-      throw new Error("No cosmos bitkeep found");
+      throw new SwapKitError("wallet_bitkeep_not_found");
     }
 
     const { keplr: wallet } = window.bitkeep;
 
-    const offlineSigner = wallet.getOfflineSignerOnlyAmino(chainId);
+    const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
     const cosmJS = await createSigningStargateClient(
       rpcUrl || getRPCUrl(Chain.Cosmos),
       offlineSigner,
-      chainId === ChainId.Kujira ? "0.0003ukuji" : undefined,
     );
 
     const coins = [
@@ -57,7 +49,8 @@ export function cosmosTransfer({
   };
 }
 
-export const getWalletForChain = async ({
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
+export async function getWalletForChain({
   chain,
   ethplorerApiKey,
   covalentApiKey,
@@ -71,14 +64,7 @@ export const getWalletForChain = async ({
   blockchairApiKey?: string;
   rpcUrl?: string;
   api?: ChainApi;
-}): Promise<
-  (
-    | ReturnType<typeof GaiaToolbox>
-    | Awaited<ReturnType<typeof getWeb3WalletMethods>>
-    | ReturnType<typeof BTCToolbox>
-    | ReturnType<typeof SOLToolbox>
-  ) & { address: string }
-> => {
+}) {
   const bitget = window.bitkeep;
 
   switch (chain) {
@@ -90,7 +76,7 @@ export const getWalletForChain = async ({
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
       if (!(bitget && "ethereum" in bitget)) {
-        throw new Error("No bitkeep found");
+        throw new SwapKitError("wallet_bitkeep_not_found");
       }
 
       const wallet = bitget.ethereum;
@@ -114,7 +100,7 @@ export const getWalletForChain = async ({
 
     case Chain.Bitcoin: {
       if (!(bitget && "unisat" in bitget)) {
-        throw new Error("No bitcoin bitkeep found");
+        throw new SwapKitError("wallet_bitkeep_not_found");
       }
       const { unisat: wallet } = bitget;
 
@@ -139,7 +125,7 @@ export const getWalletForChain = async ({
 
     case Chain.Cosmos: {
       if (!(bitget && "keplr" in bitget)) {
-        throw new Error("No bitcoin bitkeep found");
+        throw new SwapKitError("wallet_bitkeep_not_found");
       }
       const { keplr: wallet } = bitget;
 
@@ -153,16 +139,16 @@ export const getWalletForChain = async ({
       return {
         address,
         ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
-        transfer: cosmosTransfer({ chainId: ChainId.Cosmos, rpcUrl }),
+        transfer: cosmosTransfer(rpcUrl),
       };
     }
 
     case Chain.Solana: {
       if (!(bitget && "solana" in bitget)) {
-        throw new Error("No solana bitkeep found");
+        throw new SwapKitError("wallet_bitkeep_not_found");
       }
 
-      const { createSolanaTokenTransaction, SOLToolbox } = await import("@swapkit/toolbox-solana");
+      const { SOLToolbox } = await import("@swapkit/toolbox-solana");
       const provider = bitget?.solana;
 
       const providerConnection = await provider.connect();
@@ -174,56 +160,37 @@ export const getWalletForChain = async ({
         recipient,
         assetValue,
         isProgramDerivedAddress,
+        memo,
       }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
         if (!(isProgramDerivedAddress || toolbox.validateAddress(recipient))) {
           throw new SwapKitError("core_transaction_invalid_recipient_address");
         }
+        const fromPublicKey = new PublicKey(address);
 
-        const fromPubkey = new PublicKey(address);
-
-        const amount = assetValue.getBaseValue("number");
-
-        const transaction = assetValue.isGasAsset
-          ? new Transaction().add(
-              SystemProgram.transfer({
-                fromPubkey,
-                lamports: amount,
-                toPubkey: new PublicKey(recipient),
-              }),
-            )
-          : assetValue.address
-            ? await createSolanaTokenTransaction({
-                amount,
-                connection: toolbox.connection,
-                decimals: assetValue.decimal as number,
-                from: fromPubkey,
-                recipient,
-                tokenAddress: assetValue.address,
-              })
-            : undefined;
-
-        if (!transaction) {
-          throw new SwapKitError("core_transaction_invalid_sender_address");
-        }
+        const transaction = await toolbox.createSolanaTransaction({
+          recipient,
+          assetValue,
+          memo,
+          fromPublicKey,
+          isProgramDerivedAddress,
+        });
 
         const blockHash = await toolbox.connection.getLatestBlockhash();
         transaction.recentBlockhash = blockHash.blockhash;
-        transaction.feePayer = fromPubkey;
+        transaction.feePayer = fromPublicKey;
 
         const signedTransaction = await provider.signTransaction(transaction);
 
-        const txid = await toolbox.connection.sendRawTransaction(signedTransaction.serialize());
-
-        return txid;
+        return toolbox.broadcastTransaction(signedTransaction);
       };
 
       return { ...toolbox, transfer, address };
     }
 
     default:
-      throw new Error(`No wallet for chain ${chain}`);
+      throw new SwapKitError("wallet_chain_not_supported");
   }
-};
+}
 
 export const getWeb3WalletMethods = async ({
   ethereumWindowProvider,
@@ -237,7 +204,7 @@ export const getWeb3WalletMethods = async ({
   ethplorerApiKey?: string;
 }) => {
   const { getToolboxByChain, BrowserProvider } = await import("@swapkit/toolbox-evm");
-  if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
+  if (!ethereumWindowProvider) throw new SwapKitError("wallet_provider_not_found");
 
   if (
     (chain !== Chain.Ethereum && !covalentApiKey) ||
