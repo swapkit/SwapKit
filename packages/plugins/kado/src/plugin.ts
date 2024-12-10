@@ -10,6 +10,7 @@ import {
 import type { SwapKitPluginParams, SwapParams } from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
 import type {
+  KadoBlockchainsResponse,
   KadoFiatCurrency,
   KadoFiatMethod,
   KadoQuoteRequest,
@@ -119,62 +120,9 @@ function mapKadoQuoteToQuoteResponse({
   };
 }
 
-export type KadoBlockchainsResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    blockchains: {
-      _id: string;
-      supportedEnvironment: string;
-      network: string;
-      origin: string;
-      label: string;
-      associatedAssets: {
-        _id: string;
-        name: string;
-        description: string;
-        label: string;
-        supportedProviders: string[];
-        stablecoin: boolean;
-        liveOnRamp: boolean;
-        createdAt: string;
-        updatedAt: string;
-        __v: number;
-        priority: number;
-      };
-      avgTransactionTimeSeconds: number;
-      usesAvaxRouter: boolean;
-      liveOnRamp: boolean;
-      createdAt: string;
-      updatedAt: string;
-      __v: number;
-      priority: number;
-    }[];
-  };
-};
-
-export type KadoSupportedAssetsResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    assets: {
-      _id: string;
-      name: string;
-      description: string;
-      label: string;
-      symbol: string;
-      supportedProviders: string[];
-      stablecoin: boolean;
-      liveOnRamp: boolean;
-      createdAt: string;
-      updatedAt: string;
-      __v: number;
-      priority: number;
-    }[];
-  };
-};
-
-function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: string }>) {
+function plugin({
+  config: { kadoApiKey },
+}: Exclude<SwapKitPluginParams<{ kadoApiKey: string }>, SwapKitPluginParams["getWallet"]>) {
   async function fetchProviderQuote({
     sellAsset,
     buyAsset,
@@ -294,7 +242,6 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
   function getKadoWidgetUrl({
     sellAsset,
     buyAsset,
-    supportedAssets,
     recipient,
     type,
     sender,
@@ -302,31 +249,28 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
   }: {
     sellAsset: AssetValue;
     buyAsset: AssetValue;
-    supportedAssets: AssetValue[];
-    recipient: string;
-    sender: string;
-    type: "BUY" | "SELL";
-    typeList: "BUY" | "SELL";
+    recipient?: string;
+    sender?: string;
+    type: "buy" | "sell";
     widgetMode: "minimal" | "full";
   }) {
     const urlParams = new URLSearchParams({
       apiKey: kadoApiKey,
-      ...(type === "BUY"
+      ...(type === "buy"
         ? {
             onPayAmount: sellAsset.getValue("string"),
             onPayCurrency: sellAsset.symbol,
             onRevCurrency: buyAsset.symbol,
-            onToAddress: recipient,
+            ...(recipient ? { onToAddress: recipient } : {}),
           }
         : {
             offPayAmount: sellAsset.getValue("string"),
             offPayCurrency: sellAsset.symbol,
             offRevCurrency: buyAsset.symbol,
-            offFromAddress: sender,
+            ...(sender ? { offFromAddress: sender } : {}),
           }),
-      cryptoList: supportedAssets.map((asset) => asset.symbol).join(","),
-      network: ChainToKadoChain(type === "BUY" ? buyAsset.chain : sellAsset.chain).toUpperCase(),
-      product: type,
+      network: ChainToKadoChain(type === "buy" ? buyAsset.chain : sellAsset.chain).toUpperCase(),
+      product: type.toUpperCase(),
       mode: widgetMode,
     });
 
@@ -379,16 +323,14 @@ function plugin({ config: { kadoApiKey } }: SwapKitPluginParams<{ kadoApiKey: st
     const buyAsset = AssetValue.from({ asset: route.buyAsset });
 
     // Determine if this is a buy or sell operation
-    const type = sellAsset.chain === Chain.Fiat ? "BUY" : "SELL";
+    const type = sellAsset.chain === Chain.Fiat ? "buy" : "sell";
 
     const url = getKadoWidgetUrl({
       sellAsset,
       buyAsset,
-      supportedAssets: [sellAsset, buyAsset],
       recipient: route.destinationAddress,
       sender: route.sourceAddress,
       type,
-      typeList: type,
       widgetMode: "minimal",
     });
 
