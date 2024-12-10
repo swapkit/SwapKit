@@ -2,7 +2,7 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-12-10T00:01:33.002Z",
+  timestamp: "2024-12-10T12:01:50.180Z",
   version: {
     major: 1,
     minor: 0,

@@ -352,6 +352,16 @@ export const list = {
       ticker: "BUSD",
     },
     {
+      address: "0x9e3c88e95811db0db93b675f9985faff3972c615",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.CAI-0x9e3c88e95811db0db93b675f9985faff3972c615",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.cai-0x9e3c88e95811db0db93b675f9985faff3972c615.png",
+      ticker: "CAI",
+    },
+    {
       address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
       chain: "ARB",
       chainId: "42161",
@@ -1920,16 +1930,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.tbtc-0x7e2a1edee171c5b19e6c54d73752396c0a572594.png",
       ticker: "tBTC",
-    },
-    {
-      address: "0x429fed88f10285e61b12bdf00848315fbdfcc341",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.TGT-0x429fed88f10285e61b12bdf00848315fbdfcc341",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
-      ticker: "TGT",
     },
     {
       address: "0xe85b662fe97e8562f4099d8a1d5a92d4b453bf30",

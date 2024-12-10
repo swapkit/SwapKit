@@ -9,7 +9,7 @@ export const list = {
     patch: 0,
   },
   keywords: ["uniswap", "default"],
-  count: 553,
+  count: 551,
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -1070,16 +1070,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.mog-0x96c42662820f6ea32f0a61a06a38a72b206aabac.png",
       ticker: "MOG",
-    },
-    {
-      address: "0xcc516ee3cebd89518f3b4cb0d8e2194394c175ce",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 9,
-      identifier: "ARB.MOZ-0xcc516ee3cebd89518f3b4cb0d8e2194394c175ce",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.moz-0xcc516ee3cebd89518f3b4cb0d8e2194394c175ce.png",
-      ticker: "MOZ",
     },
     {
       address: "0x29024832eC3baBF5074D4F46102aA988097f0Ca0",
@@ -3462,6 +3452,16 @@ export const list = {
       ticker: "KNC",
     },
     {
+      address: "0x7ca5af5ba3472af6049f63c1abc324475d44efc1",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.KNDX-0x7ca5af5ba3472af6049f63c1abc324475d44efc1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.kndx-0x7ca5af5ba3472af6049f63c1abc324475d44efc1.png",
+      ticker: "KNDX",
+    },
+    {
       address: "0x1cEB5cB57C4D4E2b2433641b95Dd330A33185A44",
       chain: "ETH",
       chainId: "1",
@@ -5232,16 +5232,6 @@ export const list = {
       ticker: "USDT",
     },
     {
-      address: "0x54e43f06c5f974efdaddce8122060814e3881a45",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.USDX-0x54e43f06c5f974efdaddce8122060814e3881a45",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdx-0x54e43f06c5f974efdaddce8122060814e3881a45.png",
-      ticker: "USDX",
-    },
-    {
       address: "0x8de5b80a0c1b02fe4976851d030b36122dbb8624",
       chain: "ETH",
       chainId: "1",
@@ -5350,16 +5340,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.weth-0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
       ticker: "WETH",
-    },
-    {
-      address: "0x9cdf242ef7975d8c68d5c1f5b6905801699b1940",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.WHITE-0x9cdf242ef7975d8c68d5c1f5b6905801699b1940",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.white-0x9cdf242ef7975d8c68d5c1f5b6905801699b1940.png",
-      ticker: "WHITE",
     },
     {
       address: "0x2a3bff78b79a009976eea096a51a948a3dc00e34",

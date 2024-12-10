@@ -2,7 +2,7 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2024-12-10T00:01:07.701Z",
+  timestamp: "2024-12-10T12:01:20.182Z",
   version: {
     major: 1,
     minor: 0,
@@ -320,16 +320,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.float-0xb05097849bca421a3f51b249ba6cca4af4b97cb9.png",
       ticker: "FLOAT",
-    },
-    {
-      address: "0x7f280daC515121DcdA3EaC69eB4C13a52392CACE",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.FNC-0X7F280DAC515121DCDA3EAC69EB4C13A52392CACE",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.fnc-0x7f280dac515121dcda3eac69eb4c13a52392cace.png",
-      ticker: "FNC",
     },
     {
       address: "0x4E15361FD6b4BB609Fa63C81A2be19d873717870",
@@ -800,6 +790,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.sunder-0xbdbf245c690d54b67c6e610a28486a2c6de08be6.png",
       ticker: "SUNDER",
+    },
+    {
+      address: "0xe53EC727dbDEB9E2d5456c3be40cFF031AB40A55",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.SUPER-0XE53EC727DBDEB9E2D5456C3BE40CFF031AB40A55",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.super-0xe53ec727dbdeb9e2d5456c3be40cff031ab40a55.png",
+      ticker: "SUPER",
     },
     {
       address: "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",

@@ -2,14 +2,14 @@ export const list = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",
-  timestamp: "2024-12-10T00:01:34.878Z",
+  timestamp: "2024-12-10T12:01:52.253Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 2042,
+  count: 2043,
   tokens: [
     {
       address: "DLScRnWofxiYGqnvZWGy9Gt98MPqKdznaK4TRukxpump",
@@ -9449,6 +9449,16 @@ export const list = {
       identifier: "SOL.Jeff-3fq4H56Y365C8Yv27ji6bwQ6z7yziZwMbx2VkbpGm7rX",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/sol.jeff-3fq4h56y365c8yv27ji6bwq6z7yzizwmbx2vkbpgm7rx.png",
+      ticker: "Jeff",
+    },
+    {
+      address: "A8LCx85weSxU4ubQS16twdSdYphbAEDdMd9GkZq5pump",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.Jeff-A8LCx85weSxU4ubQS16twdSdYphbAEDdMd9GkZq5pump",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/sol.jeff-a8lcx85wesxu4ubqs16twdsdyphbaeddmd9gkzq5pump.png",
       ticker: "Jeff",
     },
     {
