@@ -1,7 +1,7 @@
+import { bitgetWallet } from "@swapkit/wallet-bitget";
 import { coinbaseWallet } from "@swapkit/wallet-coinbase";
 import { ctrlWallet } from "@swapkit/wallet-ctrl";
 import { evmWallet } from "@swapkit/wallet-evm-extensions";
-import { exodusWallet } from "@swapkit/wallet-exodus";
 import { keepkeyWallet } from "@swapkit/wallet-keepkey";
 import { keepkeyBexWallet } from "@swapkit/wallet-keepkey-bex";
 import { keplrWallet } from "@swapkit/wallet-keplr";
@@ -16,9 +16,9 @@ import { trezorWallet } from "@swapkit/wallet-trezor";
 import { walletconnectWallet } from "@swapkit/wallet-wc";
 
 export const wallets = {
+  ...bitgetWallet,
   ...coinbaseWallet,
   ...evmWallet,
-  ...exodusWallet,
   ...keepkeyBexWallet,
   ...keepkeyWallet,
   ...keplrWallet,

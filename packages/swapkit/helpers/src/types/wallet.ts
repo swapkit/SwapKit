@@ -26,6 +26,7 @@ export type {
 };
 
 export enum WalletOption {
+  BITGET = "BITGET",
   BRAVE = "BRAVE",
   COINBASE_MOBILE = "COINBASE_MOBILE",
   COINBASE_WEB = "COINBASE_WEB",

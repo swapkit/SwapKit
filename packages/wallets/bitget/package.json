@@ -1,17 +1,11 @@
 {
-  "author": "swapkit-oss",
+  "description": "SwapKit Wallet - Bitget",
   "dependencies": {
-    "@swapkit/api": "workspace:*",
-    "@swapkit/core": "workspace:*",
-    "@swapkit/plugin-chainflip": "workspace:*",
-    "@swapkit/plugin-evm": "workspace:*",
-    "@swapkit/plugin-kado": "workspace:*",
-    "@swapkit/plugin-radix": "workspace:*",
-    "@swapkit/plugin-thorchain": "workspace:*",
-    "@swapkit/tokens": "workspace:*",
-    "@swapkit/wallets": "workspace:*"
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolbox-cosmos": "workspace:*",
+    "@swapkit/toolbox-evm": "workspace:*",
+    "@swapkit/toolbox-utxo": "workspace:*"
   },
-  "description": "SwapKit - SDK",
   "files": [
     "src/",
     "dist/"
@@ -19,7 +13,7 @@
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
-  "name": "@swapkit/sdk",
+  "name": "@swapkit/wallet-bitget",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorswap/SwapKit.git"
@@ -28,9 +22,11 @@
     "build": "bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "lint": "biome check --diagnostic-level=error --write ./src",
+    "test": "echo 'bun test'",
+    "test:coverage": "bun test --coverage",
     "type-check": "tsc --noEmit"
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "2.1.6"
+  "version": "1.0.0"
 }

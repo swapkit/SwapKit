@@ -22,6 +22,8 @@ export type ChainApis = { [key in CovalentChains]?: CovalentApiType } & {
   [key in Chain.Fiat]?: undefined;
 };
 
+export type ChainApi = EthplorerApiType | CovalentApiType | BlockchairApiType | string;
+
 export type GenericSwapParams<T = unknown> = {
   buyAsset?: AssetValue;
   sellAsset?: AssetValue;

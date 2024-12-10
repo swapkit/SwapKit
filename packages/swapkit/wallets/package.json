@@ -1,6 +1,7 @@
 {
   "description": "SwapKit - Wallets",
   "dependencies": {
+    "@swapkit/wallet-bitget": "workspace:*",
     "@swapkit/wallet-coinbase": "workspace:*",
     "@swapkit/wallet-ctrl": "workspace:*",
     "@swapkit/wallet-evm-extensions": "workspace:*",
@@ -40,5 +41,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "2.0.1"
+  "version": "2.0.2"
 }

@@ -52,10 +52,12 @@ export default defineConfig({
       "@swapkit/toolbox-substrate": resolve("../../packages/toolboxes/substrate/src"),
       "@swapkit/toolbox-utxo": resolve("../../packages/toolboxes/utxo/src"),
 
+      "@swapkit/wallet-bitget": resolve("../../packages/wallets/bitget/src"),
       "@swapkit/wallet-coinbase": resolve("../../packages/wallets/coinbase/src"),
       "@swapkit/wallet-evm-extensions": resolve("../../packages/wallets/evm-extensions/src"),
       "@swapkit/wallet-exodus": resolve("../../packages/wallets/exodus/src"),
       "@swapkit/wallet-keepkey": resolve("../../packages/wallets/keepkey/src"),
+      "@swapkit/wallet-keepkey-bex": resolve("../../packages/wallets/keepkey-bex/src"),
       "@swapkit/wallet-keplr": resolve("../../packages/wallets/keplr/src"),
       "@swapkit/wallet-keystore": resolve("../../packages/wallets/keystore/src"),
       "@swapkit/wallet-ledger": resolve("../../packages/wallets/ledger/src"),

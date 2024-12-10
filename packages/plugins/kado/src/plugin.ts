@@ -122,7 +122,7 @@ function mapKadoQuoteToQuoteResponse({
 
 function plugin({
   config: { kadoApiKey },
-}: Exclude<SwapKitPluginParams<{ kadoApiKey: string }>, SwapKitPluginParams["getWallet"]>) {
+}: Omit<SwapKitPluginParams<{ kadoApiKey: string }>, "getWallet">) {
   async function fetchProviderQuote({
     sellAsset,
     buyAsset,

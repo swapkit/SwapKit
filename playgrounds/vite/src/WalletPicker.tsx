@@ -13,6 +13,7 @@ import { decryptFromKeystore } from "@swapkit/wallet-keystore";
 import { useCallback, useState } from "react";
 
 import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallet-bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
 import type { SwapKitClient } from "./swapKitClient";
 
@@ -46,6 +47,7 @@ const AllChainsSupported = [
 ] as Chain[];
 
 export const availableChainsByWallet = {
+  [WalletOption.BITGET]: BITGET_SUPPORTED_CHAINS,
   [WalletOption.BRAVE]: EVMChains,
   [WalletOption.COINBASE_MOBILE]: EVMChains,
   [WalletOption.COINBASE_WEB]: EVMChains,
@@ -153,6 +155,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     async (option: WalletOption, provider?: Eip1193Provider) => {
       if (!skClient) return alert("client is not ready");
       switch (option) {
+        case WalletOption.BITGET:
+          return skClient.connectBitget?.(chains);
         case WalletOption.COINBASE_WEB:
         case WalletOption.METAMASK:
         case WalletOption.TRUSTWALLET_WEB:
