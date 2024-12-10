@@ -2,14 +2,14 @@ export const list = {
   provider: "THORCHAIN",
   chainId: "thorchain-1",
   name: "THORCHAIN",
-  timestamp: "2024-11-22T17:31:18.179Z",
+  timestamp: "2024-12-10T00:01:09.268Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 63,
+  count: 64,
   tokens: [
     {
       chain: "AVAX",
@@ -184,6 +184,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.lusd-0x5f98805a4e8be255a32880fdec7f6728c6568ba0.png",
       ticker: "LUSD",
+    },
+    {
+      address: "0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.SNX-0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.snx-0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png",
+      ticker: "SNX",
     },
     {
       address: "0x108a850856db3f85d0269a2693d896b394c80325",

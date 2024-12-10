@@ -1,5 +1,12 @@
 # @swapkit/toolbox-evm
 
+## 1.7.9
+
+### Patch Changes
+
+- Updated dependencies [[`448604a`](https://github.com/thorswap/SwapKit/commit/448604ac8a5f901be53cbbf0be113ad8ff6d9c75)]:
+  - @swapkit/helpers@2.1.0
+
 ## 1.7.8
 
 ### Patch Changes

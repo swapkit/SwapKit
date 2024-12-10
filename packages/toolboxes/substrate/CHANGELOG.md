@@ -1,5 +1,14 @@
 # @swapkit/toolbox-substrate
 
+## 1.3.9
+
+### Patch Changes
+
+- [#1119](https://github.com/thorswap/SwapKit/pull/1119) [`baeb2e6`](https://github.com/thorswap/SwapKit/commit/baeb2e66990bd6c351432196f9e3670b598acdcd) Thanks [@0xepicode](https://github.com/0xepicode)! - Fix polkadot address validation
+
+- Updated dependencies [[`448604a`](https://github.com/thorswap/SwapKit/commit/448604ac8a5f901be53cbbf0be113ad8ff6d9c75)]:
+  - @swapkit/helpers@2.1.0
+
 ## 1.3.8
 
 ### Patch Changes

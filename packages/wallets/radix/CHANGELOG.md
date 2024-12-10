@@ -1,5 +1,12 @@
 # @swapkit/wallet-radix
 
+## 1.2.25
+
+### Patch Changes
+
+- Updated dependencies [[`448604a`](https://github.com/thorswap/SwapKit/commit/448604ac8a5f901be53cbbf0be113ad8ff6d9c75)]:
+  - @swapkit/helpers@2.1.0
+
 ## 1.2.24
 
 ### Patch Changes

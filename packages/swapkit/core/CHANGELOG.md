@@ -1,5 +1,24 @@
 # @swapkit/core
 
+## 3.2.0
+
+### Minor Changes
+
+- [#1120](https://github.com/thorswap/SwapKit/pull/1120) [`448604a`](https://github.com/thorswap/SwapKit/commit/448604ac8a5f901be53cbbf0be113ad8ff6d9c75) Thanks [@towanTG](https://github.com/towanTG)! - Improves Chain typing and removes WalletChain type
+
+### Patch Changes
+
+- Updated dependencies [[`baeb2e6`](https://github.com/thorswap/SwapKit/commit/baeb2e66990bd6c351432196f9e3670b598acdcd), [`448604a`](https://github.com/thorswap/SwapKit/commit/448604ac8a5f901be53cbbf0be113ad8ff6d9c75), [`18f1bd7`](https://github.com/thorswap/SwapKit/commit/18f1bd7c52516b48d571badae3580236f8aa62e9)]:
+  - @swapkit/toolbox-substrate@1.3.9
+  - @swapkit/helpers@2.1.0
+  - @swapkit/api@2.0.3
+  - @swapkit/plugin-evm@1.3.6
+  - @swapkit/toolbox-cosmos@1.6.3
+  - @swapkit/toolbox-evm@1.7.9
+  - @swapkit/toolbox-radix@1.2.25
+  - @swapkit/toolbox-solana@1.3.9
+  - @swapkit/toolbox-utxo@1.2.9
+
 ## 3.1.1
 
 ### Patch Changes
