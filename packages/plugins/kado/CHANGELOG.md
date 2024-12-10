@@ -1,5 +1,11 @@
 # @swapkit/plugin-kado
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1122](https://github.com/thorswap/SwapKit/pull/1122) [`ad33986`](https://github.com/thorswap/SwapKit/commit/ad339865e27f725b7464aa69894def19768087c8) Thanks [@towanTG](https://github.com/towanTG)! - Exports typing and helpers and changes kado url creation
+
 ## 0.1.4
 
 ### Patch Changes
