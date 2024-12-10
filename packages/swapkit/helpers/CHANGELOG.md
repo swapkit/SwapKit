@@ -1,5 +1,17 @@
 # @swapkit/helpers
 
+## 2.2.0
+
+### Minor Changes
+
+- [#1109](https://github.com/thorswap/SwapKit/pull/1109) [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038) Thanks [@0xepicode](https://github.com/0xepicode)! - Removes Kuji reference and adds new SwapKitError codes
+
+### Patch Changes
+
+- [#1109](https://github.com/thorswap/SwapKit/pull/1109) [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038) Thanks [@0xepicode](https://github.com/0xepicode)! - ChainApi type
+
+- [#1109](https://github.com/thorswap/SwapKit/pull/1109) [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038) Thanks [@0xepicode](https://github.com/0xepicode)! - Bitget wallet
+
 ## 2.1.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @swapkit/plugin-kado
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1109](https://github.com/thorswap/SwapKit/pull/1109) [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038) Thanks [@0xepicode](https://github.com/0xepicode)! - Fixes plugin typing
+
+- Updated dependencies [[`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038), [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038), [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038)]:
+  - @swapkit/helpers@2.2.0
+  - @swapkit/api@2.0.4
+
 ## 0.2.0
 
 ### Minor Changes

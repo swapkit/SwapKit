@@ -1,5 +1,30 @@
 # @swapkit/wallets
 
+## 2.0.2
+
+### Patch Changes
+
+- [#1109](https://github.com/thorswap/SwapKit/pull/1109) [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038) Thanks [@0xepicode](https://github.com/0xepicode)! - Bitget wallet
+
+- Updated dependencies [[`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038), [`cc61490`](https://github.com/thorswap/SwapKit/commit/cc61490c52782468ab6e4494e5120df5b2f6d038)]:
+  - @swapkit/wallet-bitget@1.0.0
+  - @swapkit/wallet-coinbase@1.1.35
+  - @swapkit/wallet-ctrl@2.0.2
+  - @swapkit/wallet-evm-extensions@1.1.30
+  - @swapkit/wallet-exodus@1.2.36
+  - @swapkit/wallet-keepkey@1.4.10
+  - @swapkit/wallet-keepkey-bex@1.1.10
+  - @swapkit/wallet-keplr@1.1.20
+  - @swapkit/wallet-keystore@1.4.1
+  - @swapkit/wallet-ledger@1.9.1
+  - @swapkit/wallet-okx@1.3.10
+  - @swapkit/wallet-phantom@1.1.34
+  - @swapkit/wallet-polkadotjs@1.0.52
+  - @swapkit/wallet-radix@1.2.26
+  - @swapkit/wallet-talisman@1.3.17
+  - @swapkit/wallet-trezor@1.2.18
+  - @swapkit/wallet-wc@1.5.10
+
 ## 2.0.1
 
 ### Patch Changes
