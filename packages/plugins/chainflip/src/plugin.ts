@@ -1,3 +1,4 @@
+import { getChainflipDepositChannel } from "@swapkit/api/src/swapkitApi/endpoints";
 import {
   AssetValue,
   type EVMWallets,
@@ -9,17 +10,15 @@ import {
   type UTXOWallets,
 } from "@swapkit/helpers";
 import type { RequestSwapDepositAddressParams } from "./types";
-import { getChainflipDepositChannel } from "@swapkit/api/src/swapkitApi/endpoints";
 
 type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & SolanaWallets);
-
 
 function plugin({
   getWallet,
   config: { chainflipBrokerUrl: legacyChainflipBrokerUrl, chainflipBrokerConfig },
 }: SwapKitPluginParams<{
   chainflipBrokerUrl?: string;
-  chainflipBrokerConfig?: { chainflipBrokerUrl: string; };
+  chainflipBrokerConfig?: { chainflipBrokerUrl: string };
 }>) {
   async function swap(swapParams: RequestSwapDepositAddressParams) {
     const { chainflipBrokerUrl } = chainflipBrokerConfig || {};
@@ -67,7 +66,7 @@ function plugin({
         sellAsset: sellAssetString,
         maxBoostFeeBps,
         ...(chainflip ? chainflip : {}),
-      }
+      },
     });
 
     const tx = await wallet.transfer({

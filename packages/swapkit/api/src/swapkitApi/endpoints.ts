@@ -1,14 +1,9 @@
 import crypto from "crypto";
-import {
-  AssetValue,
-  ProviderName,
-  RequestClient,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { AssetValue, ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 
 import {
-  DepositChannelRequest,
-  DepositChannelResponse,
+  type DepositChannelRequest,
+  type DepositChannelResponse,
   DepositChannelResponseSchema,
   type GasResponse,
   GasResponseSchema,
@@ -17,7 +12,6 @@ import {
   PriceResponseSchema,
   type QuoteRequest,
   type QuoteResponse,
-  QuoteResponseRoute,
   QuoteResponseSchema,
   type TokenListProvidersResponse,
   type TokensResponseV2,
@@ -47,7 +41,7 @@ export const computeHash = (
         apiKey: string;
         method: "GET";
         url: string;
-      }
+      },
 ): string => {
   const { method } = hashParams;
   switch (method) {
@@ -69,10 +63,7 @@ export const computeHashForGet = ({
   url: string;
   apiKey: string;
 }): string => {
-  return crypto
-    .createHash("sha256")
-    .update(`${url}${apiKey}`, "utf8")
-    .digest("hex");
+  return crypto.createHash("sha256").update(`${url}${apiKey}`, "utf8").digest("hex");
 };
 
 export const computeHashForPost = ({
@@ -83,17 +74,10 @@ export const computeHashForPost = ({
   payload: any;
 }): string => {
   const normalizedBody = JSON.stringify(payload);
-  return crypto
-    .createHash("sha256")
-    .update(`${normalizedBody}${apiKey}`, "utf8")
-    .digest("hex");
+  return crypto.createHash("sha256").update(`${normalizedBody}${apiKey}`, "utf8").digest("hex");
 };
 
-export function getTrackerDetails(
-  payload: TrackerParams,
-  apiKey?: string,
-  referer?: string
-) {
+export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl()}/track`;
   const hash =
     referer && apiKey
@@ -116,7 +100,7 @@ export function getSwapQuoteV2<T extends boolean>(
   searchParams: QuoteRequest,
   isDev?: T,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   return getSwapQuote(searchParams, isDev, apiKey, referer);
 }
@@ -125,7 +109,7 @@ export async function getSwapQuote<T extends boolean>(
   searchParams: QuoteRequest,
   isDev?: T,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/quote`;
   const hash =
@@ -160,11 +144,7 @@ export async function getSwapQuote<T extends boolean>(
   }
 }
 
-export function getTokenListProvidersV2(
-  isDev = false,
-  apiKey?: string,
-  referer?: string
-) {
+export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/providers`;
   const hash =
     referer && apiKey
@@ -186,7 +166,7 @@ export function getTokenListV2(
   provider: ProviderName,
   isDev = false,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   return getTokenList(provider, isDev, apiKey, referer);
 }
@@ -195,7 +175,7 @@ export function getTokenList(
   provider: ProviderName,
   isDev = false,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/tokens?provider=${provider}`;
   const hash =
@@ -215,7 +195,7 @@ export async function getPrice(
   body: PriceRequest,
   isDev = false,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   const url = `${getBaseUrl(isDev)}/price`;
   const hash =
@@ -244,11 +224,7 @@ export async function getPrice(
   }
 }
 
-export async function getGasRate(
-  isDev = false,
-  apiKey?: string,
-  referer?: string
-) {
+export async function getGasRate(isDev = false, apiKey?: string, referer?: string) {
   const url = `${getBaseUrl(isDev)}/gas`;
   const hash =
     referer && apiKey
@@ -281,7 +257,7 @@ export async function getTokenTradingPairs(
   providers: ProviderName[],
   isDev = false,
   apiKey?: string,
-  referer?: string
+  referer?: string,
 ) {
   const tradingPairs = new Map<
     string,
@@ -326,24 +302,19 @@ export async function getTokenTradingPairs(
 
   const chainableTokens = providersData
     .filter(({ data }) => {
-      return !UNCHAINABLE_PROVIDERS.includes(
-        (data?.provider || "") as ProviderName
-      );
+      return !UNCHAINABLE_PROVIDERS.includes((data?.provider || "") as ProviderName);
     })
     .reduce(
       (acc, { data }) => (data?.tokens ? acc.concat(data.tokens) : acc),
-      [] as TokensResponseV2["tokens"]
+      [] as TokensResponseV2["tokens"],
     );
   for (const { data } of providersData) {
     if (!data?.tokens) return;
     const isProviderChainable =
-      data.provider &&
-      !UNCHAINABLE_PROVIDERS.includes(data.provider as ProviderName);
+      data.provider && !UNCHAINABLE_PROVIDERS.includes(data.provider as ProviderName);
 
     for (const token of data.tokens) {
-      const existingTradingPairs = tradingPairs.get(
-        token.identifier.toLowerCase()
-      ) || {
+      const existingTradingPairs = tradingPairs.get(token.identifier.toLowerCase()) || {
         tokens: [],
         providers: [],
       };
@@ -367,9 +338,7 @@ export async function getTokenTradingPairs(
 
       tradingPairs.set(token.identifier.toLowerCase(), {
         tokens: existingTradingPairs.tokens.concat(tradingPairsForToken.tokens),
-        providers: existingTradingPairs.providers.concat(
-          tradingPairsForToken.providers
-        ),
+        providers: existingTradingPairs.providers.concat(tradingPairsForToken.providers),
       });
     }
   }
@@ -384,11 +353,7 @@ export async function getChainflipDepositChannel({
   isDev?: boolean;
   body: DepositChannelRequest;
 }) {
-  const {
-    sellAsset,
-    buyAsset,
-    recipient,
-  } = body;
+  const { sellAsset, buyAsset, recipient } = body;
   const sellAssetValue = AssetValue.from({ asset: sellAsset });
   const buyAssetValue = AssetValue.from({ asset: buyAsset });
 

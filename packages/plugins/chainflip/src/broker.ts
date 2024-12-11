@@ -7,9 +7,7 @@ import type { ChainflipToolbox } from "@swapkit/toolbox-substrate";
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { chainflipGateway } from "./chainflipGatewayABI";
-import type {
-  WithdrawFeeResponse,
-} from "./types";
+import type { WithdrawFeeResponse } from "./types";
 
 export const chainToChainflipChain = new Map<Chain, keyof typeof Chains>([
   [Chain.Arbitrum, Chains.Arbitrum],
