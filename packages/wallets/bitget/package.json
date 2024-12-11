@@ -1,9 +1,11 @@
 {
   "description": "SwapKit Wallet - Bitget",
   "dependencies": {
+    "@solana/web3.js": "1.95.8",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-cosmos": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
+    "@swapkit/toolbox-solana": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*"
   },
   "files": [
