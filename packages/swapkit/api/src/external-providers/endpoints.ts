@@ -14,7 +14,7 @@ function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
 
-export const SwaptkitExternalProvidersApi = ({
+export const swaptkitExternalProvidersApi = ({
   apiKey,
   chainId,
   isDev,
@@ -73,4 +73,4 @@ export const SwaptkitExternalProvidersApi = ({
   },
 });
 
-export type SwaptkitExternalProvidersApiType = ReturnType<typeof SwaptkitExternalProvidersApi>;
+export type SwaptkitExternalProvidersApiType = ReturnType<typeof swaptkitExternalProvidersApi>;

@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { ChainId } from "@swapkit/helpers";
-import { SwaptkitExternalProvidersApi } from "../endpoints";
+import { swaptkitExternalProvidersApi } from "../endpoints";
 
 describe("should return the correct response for balance", () => {
   test("LTC", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Litecoin,
       isDev: true,
@@ -23,7 +23,7 @@ describe("should return the correct response for balance", () => {
   });
 
   test("ETH", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Ethereum,
       isDev: true,
@@ -47,7 +47,7 @@ describe("should return the correct response for balance", () => {
 
 describe("should return the correct response for raw tx", () => {
   test("BTC", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Bitcoin,
       isDev: true,
@@ -66,7 +66,7 @@ describe("should return the correct response for raw tx", () => {
 
 describe("should return the correct response for scan utxos", () => {
   test("BTC", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Bitcoin,
       isDev: true,
@@ -100,7 +100,7 @@ describe("should return the correct response for scan utxos", () => {
   });
 
   test("BTC with tx hex", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Bitcoin,
       isDev: true,
@@ -117,7 +117,7 @@ describe("should return the correct response for scan utxos", () => {
 
 describe("should return the correct response for address details", () => {
   test("BTC address details", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Bitcoin,
       isDev: true,
@@ -169,7 +169,7 @@ describe("should return the correct response for address details", () => {
 
 describe("should return the correct response for suggested tx fee", () => {
   test("BTC", async () => {
-    const api = SwaptkitExternalProvidersApi({
+    const api = swaptkitExternalProvidersApi({
       apiKey: "55b9bbcd-9ef0-4a52-8b9a-a5aff43db4a3",
       chainId: ChainId.Bitcoin,
       isDev: true,
