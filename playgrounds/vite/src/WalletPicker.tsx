@@ -209,6 +209,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           return skClient.connectPhantom?.(chains);
         case WalletOption.RADIX_WALLET:
           return skClient.connectRadixWallet?.([Chain.Radix]);
+        case WalletOption.WALLETCONNECT:
+          return skClient.connectWalletconnect?.(chains);
 
         default:
           throw new Error(`Unsupported wallet option: ${option}`);

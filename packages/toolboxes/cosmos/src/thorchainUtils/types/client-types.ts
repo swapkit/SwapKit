@@ -91,6 +91,7 @@ export type ThorchainTransferTxParams = {
   assetValue: AssetValue;
   memo?: string;
   chain: Chain.THORChain | Chain.Maya;
+  asSignable?: boolean;
 };
 
 export type ThorcahinDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
