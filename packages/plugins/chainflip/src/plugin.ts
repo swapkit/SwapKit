@@ -25,18 +25,20 @@ export async function getDepositAddress({
   ccmMetadata,
   fillOrKillParams,
   dcaParams,
+  affiliateFees,
   chainflipSDKBroker,
 }: {
   buyAsset: AssetValue;
   sellAsset: AssetValue;
   recipient: string;
   brokerEndpoint: string;
-  maxBoostFeeBps: number;
+  maxBoostFeeBps?: number;
   brokerCommissionBPS?: number;
   ccmParams?: DepositAddressRequest["ccmParams"];
   ccmMetadata?: DepositAddressRequest["ccmMetadata"];
   dcaParams?: DepositAddressRequest["dcaParams"];
   fillOrKillParams?: DepositAddressRequest["fillOrKillParams"];
+  affiliateFees?: DepositAddressRequest["affiliateBrokers"];
   chainflipSDKBroker?: boolean;
 }) {
   try {
@@ -88,6 +90,7 @@ export async function getDepositAddress({
         ccmMetadata,
         fillOrKillParams,
         dcaParams,
+        affiliateFees,
       }),
     }).then((res) => res.json());
 
