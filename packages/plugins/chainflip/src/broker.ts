@@ -1,17 +1,13 @@
 import { Assets, Chains } from "@chainflip/sdk/swap";
-import { AssetValue, SwapKitError, SwapKitNumber, wrapWithThrow } from "@swapkit/helpers";
+import { AssetValue, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
 import { Chain } from "@swapkit/helpers";
 import type { ETHToolbox } from "@swapkit/toolbox-evm";
 import type { ChainflipToolbox } from "@swapkit/toolbox-substrate";
-import bs58 from "bs58";
 
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
-import { toCFTicker } from "./assets";
 import { chainflipGateway } from "./chainflipGatewayABI";
 import type {
-  RequestSwapDepositAddressParams,
-  SwapDepositResponse,
   WithdrawFeeResponse,
 } from "./types";
 
@@ -47,27 +43,6 @@ export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["SOL.USDC-EPJFWDD5AUFQSSQEM2QN1XZYBAPC8G4WEGGKZWYTDT1V", "SolUsdc"],
 ]);
 
-const decodeChainflipAddress = (address: string, chain: Chain) => {
-  switch (chain) {
-    case Chain.Solana:
-      return bs58.encode(new Uint8Array(Buffer.from(address.replace("0x", ""), "hex")));
-    default:
-      return address;
-  }
-};
-
-const encodeChainflipAddress =
-  (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) => (address: string, chain: Chain) => {
-    switch (chain) {
-      case Chain.Solana:
-        return toolbox.encodeAddress(bs58.decode(address), "hex");
-      case Chain.Polkadot:
-        return toolbox.encodeAddress(toolbox.decodeAddress(address), "hex");
-      default:
-        return address;
-    }
-  };
-
 const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) => () => {
   const extrinsic = toolbox.api.tx.swapping?.registerAsBroker?.();
 
@@ -77,94 +52,6 @@ const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>)
 
   return toolbox.signAndBroadcast(extrinsic);
 };
-
-const requestSwapDepositAddress =
-  (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
-  async ({
-    route,
-    sellAsset,
-    buyAsset,
-    recipient: _recipient,
-    brokerCommissionBPS = 0,
-    ccmMetadata = null,
-    maxBoostFeeBps = 0,
-  }: RequestSwapDepositAddressParams) => {
-    const sellAssetValue = sellAsset || (route && AssetValue.from({ asset: route.sellAsset }));
-    const buyAssetValue = buyAsset || (route && AssetValue.from({ asset: route.buyAsset }));
-    const recipient = _recipient || route?.destinationAddress;
-
-    if (!(sellAssetValue && buyAssetValue && recipient)) {
-      throw new SwapKitError("chainflip_broker_invalid_params");
-    }
-
-    const recipientAddress = wrapWithThrow(() => {
-      return encodeChainflipAddress(toolbox)(recipient, buyAsset?.chain || buyAssetValue.chain);
-    }, "chainflip_broker_recipient_error");
-
-    return new Promise<SwapDepositResponse>((resolve) => {
-      const tx = toolbox.api.tx.swapping?.requestSwapDepositAddress?.(
-        toCFTicker(sellAssetValue),
-        toCFTicker(buyAssetValue),
-        { [buyAssetValue.chain.toLowerCase()]: recipientAddress },
-        SwapKitNumber.fromBigInt(BigInt(brokerCommissionBPS)).getBaseValue("number"),
-        ccmMetadata,
-        maxBoostFeeBps,
-      );
-
-      if (!tx) {
-        throw new SwapKitError("chainflip_broker_tx_error");
-      }
-
-      toolbox.signAndBroadcast(tx, async (result) => {
-        if (!result.status?.isFinalized) {
-          return;
-        }
-
-        const depositChannelEvent = result.events.find(
-          (event) => event.event.method === "SwapDepositAddressReady",
-        );
-
-        if (!depositChannelEvent) {
-          throw new SwapKitError(
-            "chainflip_channel_error",
-            "Could not find 'SwapDepositAddressReady' event",
-          );
-        }
-
-        const {
-          event: {
-            data: {
-              depositAddress: depositAddressRaw,
-              sourceChainExpiryBlock,
-              destinationAddress,
-              channelId,
-            },
-          },
-        } = depositChannelEvent.toHuman() as any;
-
-        const hash = result.status?.toJSON?.() as { finalized: string };
-        const header = await toolbox.api.rpc.chain.getHeader(hash?.finalized);
-        const depositChannelId = `${header.number}-${chainToChainflipChain.get(
-          sellAssetValue.chain,
-        )}-${channelId.replaceAll(",", "")}`;
-
-        const depositAddress = decodeChainflipAddress(
-          Object.values(depositAddressRaw)[0] as string,
-          sellAssetValue.chain,
-        );
-
-        resolve({
-          brokerCommissionBPS,
-          buyAsset: buyAssetValue,
-          depositAddress,
-          depositChannelId,
-          recipient: Object.values(destinationAddress)[0] as string,
-          sellAsset: sellAssetValue,
-          srcChainExpiryBlock: Number((sourceChainExpiryBlock as string).replaceAll(",", "")),
-        });
-      });
-    });
-  };
 
 const withdrawFee =
   (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
@@ -258,8 +145,6 @@ export const ChainflipBroker = (
   chainflipToolbox: Awaited<ReturnType<typeof ChainflipToolbox>>,
 ) => ({
   registerAsBroker: registerAsBroker(chainflipToolbox),
-  requestSwapDepositAddress: requestSwapDepositAddress(chainflipToolbox),
   fundStateChainAccount: fundStateChainAccount(chainflipToolbox),
   withdrawFee: withdrawFee(chainflipToolbox),
-  decodeChainflipAddress,
 });
