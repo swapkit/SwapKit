@@ -1,5 +1,15 @@
 # @swapkit/wallet-bitget
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1127](https://github.com/thorswap/SwapKit/pull/1127) [`993774d`](https://github.com/thorswap/SwapKit/commit/993774d8f83199e7766ebd359d766a52c8720abe) Thanks [@towanTG](https://github.com/towanTG)! - Updates dependencies
+
+- Updated dependencies [[`993774d`](https://github.com/thorswap/SwapKit/commit/993774d8f83199e7766ebd359d766a52c8720abe)]:
+  - @swapkit/toolbox-solana@1.3.11
+  - @swapkit/helpers@2.2.0
+
 ## 1.0.0
 
 ### Major Changes

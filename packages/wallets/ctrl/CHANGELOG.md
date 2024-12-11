@@ -1,5 +1,13 @@
 # @swapkit/wallet-xdefi
 
+## 2.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`993774d`](https://github.com/thorswap/SwapKit/commit/993774d8f83199e7766ebd359d766a52c8720abe)]:
+  - @swapkit/toolbox-solana@1.3.11
+  - @swapkit/helpers@2.2.0
+
 ## 2.0.2
 
 ### Patch Changes
