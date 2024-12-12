@@ -1,5 +1,18 @@
 # @swapkit/api
 
+## 2.1.0
+
+### Minor Changes
+
+- [#1129](https://github.com/thorswap/SwapKit/pull/1129) [`a3ef441`](https://github.com/thorswap/SwapKit/commit/a3ef44162d558b2be2fb63c4c023bace9499e721) Thanks [@ochhii1337](https://github.com/ochhii1337)! - Export sub api collections
+
+### Patch Changes
+
+- [#1130](https://github.com/thorswap/SwapKit/pull/1130) [`6a0e9d9`](https://github.com/thorswap/SwapKit/commit/6a0e9d94ef88df26785f55d4f293095666dc28d8) Thanks [@towanTG](https://github.com/towanTG)! - Adds new Quote Response typing
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.2.0
+
 ## 2.0.4
 
 ### Patch Changes
