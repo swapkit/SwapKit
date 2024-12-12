@@ -119,19 +119,25 @@ const getAccount = async ({
 
 export const buildTransferTx =
   (rpcUrl: string) =>
-  async ({ from, recipient, assetValue, memo = "", chain }: ThorchainTransferTxParams) => {
+  async ({
+    from,
+    recipient,
+    assetValue,
+    memo = "",
+    chain,
+    asSignable = true,
+  }: ThorchainTransferTxParams) => {
     const account = await getAccount({ rpcUrl, from });
-    const msg = convertToSignable(
-      prepareMessageForBroadcast(
-        transferMsgAmino({
-          from,
-          recipient,
-          assetValue,
-          chain,
-        }),
-      ),
-      chain,
+    const preparedMessage = prepareMessageForBroadcast(
+      transferMsgAmino({
+        from,
+        recipient,
+        assetValue,
+        chain,
+      }),
     );
+
+    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
 
     const transaction = {
       chainId: ChainToChainId[chain],
@@ -147,12 +153,14 @@ export const buildTransferTx =
 
 export const buildDepositTx =
   (rpcUrl: string) =>
-  async ({ from, assetValue, memo = "", chain }: ThorcahinDepositTxParams) => {
+  async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorcahinDepositTxParams) => {
     const account = await getAccount({ rpcUrl, from });
-    const msg = convertToSignable(
-      prepareMessageForBroadcast(depositMsgAmino({ from, assetValue, memo, chain })),
-      chain,
+
+    const preparedMessage = prepareMessageForBroadcast(
+      depositMsgAmino({ from, assetValue, memo, chain }),
     );
+
+    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
 
     const transaction = {
       chainId: ChainToChainId[chain],

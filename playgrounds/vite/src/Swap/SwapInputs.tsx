@@ -21,8 +21,7 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
     (amountValue: string) => {
       if (!inputAsset) return;
 
-      // ... LoL
-      const amount = inputAsset.mul(0).add(amountValue);
+      const amount = inputAsset.set(amountValue);
       setInput(amount.gt(inputAsset) ? inputAsset : amount);
     },
     [inputAsset],
@@ -70,7 +69,7 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
     const tx = route.tx as EVMTransaction;
 
-    tx?.from && (await skClient.isAssetValueApproved(inputAssetValue, tx?.from))
+    (tx?.from && (await skClient.isAssetValueApproved(inputAssetValue, tx?.from))) || !tx?.from
       ? handleSwap(route, false)
       : tx?.from
         ? skClient.approveAssetValue(inputAssetValue, tx?.from)
