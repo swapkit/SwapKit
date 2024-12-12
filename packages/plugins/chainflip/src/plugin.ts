@@ -1,4 +1,4 @@
-import { getChainflipDepositChannel } from "@swapkit/api/src/swapkitApi/endpoints";
+import { swapkitApiEndpoints } from "@swapkit/api";
 import {
   AssetValue,
   type EVMWallets,
@@ -59,7 +59,7 @@ function plugin({
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const { depositAddress } = await getChainflipDepositChannel({
+    const { depositAddress } = await swapkitApiEndpoints.getChainflipDepositChannel({
       body: {
         buyAsset: buyAssetString,
         recipient,

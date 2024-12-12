@@ -9,6 +9,12 @@ export * from "./thorswapStatic/types";
 export * from "./thornode/types";
 export * from "./swapkitApi/types";
 
+export { microgardEndpoints };
+export { swapkitApiEndpoints };
+export { thornodeEndpoints };
+export { thorswapStaticEndpoints };
+export { mayachainMidgard, thorchainMidgard };
+
 export const SwapKitApi = {
   ...microgardEndpoints,
   ...thornodeEndpoints,
