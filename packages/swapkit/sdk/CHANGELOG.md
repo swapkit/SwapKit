@@ -1,5 +1,11 @@
 # @swapkit/sdk
 
+## 2.2.0
+
+### Minor Changes
+
+- [#1132](https://github.com/thorswap/SwapKit/pull/1132) [`516c136`](https://github.com/thorswap/SwapKit/commit/516c136d6076d5c5a52ae876bddcd42e19d315e9) Thanks [@towanTG](https://github.com/towanTG)! - Exports default plugins for easier typing and usage
+
 ## 2.1.8
 
 ### Patch Changes
