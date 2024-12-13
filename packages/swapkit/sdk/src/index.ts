@@ -9,7 +9,7 @@ import { wallets as defaultWallets } from "@swapkit/wallets";
 export * from "@swapkit/core";
 export * from "@swapkit/tokens";
 
-const defaultPlugins = {
+export const defaultPlugins = {
   ...ChainflipPlugin,
   ...EVMPlugin,
   ...KadoPlugin,
