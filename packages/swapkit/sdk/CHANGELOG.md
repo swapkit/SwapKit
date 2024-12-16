@@ -1,5 +1,14 @@
 # @swapkit/sdk
 
+## 2.2.1
+
+### Patch Changes
+
+- [#1134](https://github.com/thorswap/SwapKit/pull/1134) [`a9b122b`](https://github.com/thorswap/SwapKit/commit/a9b122bed7d1bb41f88791c0bf540453239c6bc1) Thanks [@towanTG](https://github.com/towanTG)! - Type improvements for using core / sdk
+
+- Updated dependencies [[`a9b122b`](https://github.com/thorswap/SwapKit/commit/a9b122bed7d1bb41f88791c0bf540453239c6bc1)]:
+  - @swapkit/core@3.2.4
+
 ## 2.2.0
 
 ### Minor Changes
