@@ -36,11 +36,15 @@ import {
   getExplorerTxUrl as getTxUrl,
 } from "./helpers/explorerUrls";
 
-type PluginsType = {
+export type PluginsType = {
   [key in string]: {
     plugin: (params: SwapKitPluginParams<any>) => any;
     config?: any;
   };
+};
+
+export type WalletsType = {
+  [key in string]: SwapKitWallet<any[]>;
 };
 
 export type SwapKitParams<P, W> = {
@@ -51,10 +55,7 @@ export type SwapKitParams<P, W> = {
   wallets?: W;
 };
 
-export function SwapKit<
-  Plugins extends PluginsType,
-  Wallets extends { [key in string]: SwapKitWallet<any[]> },
->({
+export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType>({
   apis = {},
   config = {},
   plugins,
