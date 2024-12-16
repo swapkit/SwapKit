@@ -273,6 +273,11 @@ export const QuoteRequestSchema = z
         description: "Set to true to enable CF boost to speed up Chainflip swaps. BTC only.",
       }),
     ),
+    referrer: z.optional(
+      z.string({
+        description: "Referrer address (referral program)",
+      }),
+    ),
   })
   .refine((data) => data.sellAsset !== data.buyAsset, {
     message: "Must be different",
@@ -654,6 +659,7 @@ export const RouteQuoteMetadataSchema = z.object({
 
   txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
   chainflip: z.optional(ChainflipMetadataSchema),
+  referrer: z.optional(z.string()),
 });
 
 export const RouteQuoteWarningSchema = z.array(
