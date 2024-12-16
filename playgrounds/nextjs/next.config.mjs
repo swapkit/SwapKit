@@ -50,7 +50,7 @@ const nextConfig = {
       syncWebAssembly: true,
       topLevelAwait: true,
     };
-    console.log("🔥", config);
+
     return config;
   },
 };
