@@ -1,5 +1,14 @@
 # @swapkit/api
 
+## 2.1.1
+
+### Patch Changes
+
+- [#1136](https://github.com/thorswap/SwapKit/pull/1136) [`e55d825`](https://github.com/thorswap/SwapKit/commit/e55d8250716e7ed0658d5451ee97513c34df9984) Thanks [@0xepicode](https://github.com/0xepicode)! - Update types for referral program
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.2.0
+
 ## 2.1.0
 
 ### Minor Changes
