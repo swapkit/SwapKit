@@ -297,48 +297,49 @@ export const PriceRequestSchema = z.object({
 
 export type PriceRequest = z.infer<typeof PriceRequestSchema>;
 
-export const DepositChannelRequestSchema = z.object({
-  sellAsset: z.string({
-    description: "Asset to sell",
+export const BrokerDepositChannelParamsSchema = z.object({
+  sellAsset: z.object({
+    chain: z.string(), // identifier of the asset
+    asset: z.string(), // identifier of the asset
   }),
-  buyAsset: z.string({
-    description: "Asset to buy",
+  buyAsset: z.object({
+    chain: z.string(), // identifier of the asset
+    asset: z.string(), // identifier of the asset
   }),
-  recipient: z.string({
-    description: "Final recipient of the swap",
-  }),
-  ccmMetadata: z.optional(
-    z.object({
-      message: z.string(),
-      gasBudget: z.string(),
-      cfParameters: z.string(),
-    }),
-  ),
-  dcaParameters: z.optional(
-    z.object({
-      chunkIntervalBlocks: z.number(),
-      numberOfChunks: z.number(),
-    }),
-  ),
-  maxBoostFeeBps: z.optional(z.number()),
-  affiliateFees: z.optional(
-    z.array(
+  destinationAddress: z.string(),
+  channelMetadata: z
+    .object({
+      cfParameters: z.string().optional(),
+      gasBudget: z.string().optional(),
+      message: z.string().optional(),
+    })
+    .optional(),
+  affiliateFees: z
+    .array(
       z.object({
         brokerAddress: z.string(),
-        basisPoints: z.number(),
+        feeBps: z.number(),
       }),
-    ),
-  ),
-  refundParameters: z.optional(
-    z.object({
-      retryDuration: z.number(),
-      refundAddress: z.string(),
-      minPrice: z.string(),
-    }),
-  ),
+    )
+    .optional(),
+  refundParameters: z
+    .object({
+      minPrice: z.string().optional(),
+      refundAddress: z.string().optional(),
+      retryDuration: z.number().optional(),
+    })
+    .optional(),
+  dcaParameters: z
+    .object({
+      chunkInterval: z.number().optional(),
+      numberOfChunks: z.number().optional(),
+    })
+    .optional(),
+  brokerCommissionBps: z.number().optional(),
+  maxBoostFeeBps: z.number().optional(),
 });
 
-export type DepositChannelRequest = z.infer<typeof DepositChannelRequestSchema>;
+export type BrokerDepositChannelParams = z.infer<typeof BrokerDepositChannelParamsSchema>;
 
 export const DepositChannelResponseSchema = z.object({
   channelId: z.string(),
@@ -618,23 +619,7 @@ export const RouteQuoteMetadataAssetSchema = z.object({
 
 export type RouteQuoteMetadataAsset = z.infer<typeof RouteQuoteMetadataAssetSchema>;
 
-export const ChainflipMetadataSchema = z.object({
-  boost: z.optional(z.boolean()),
-  maxBoostFeeBps: z.optional(z.number()),
-  dcaParams: z.optional(
-    z.object({
-      chunkIntervalBlocks: z.number(),
-      numberOfChunks: z.number(),
-    }),
-  ),
-  killOrFillParams: z.optional(
-    z.object({
-      refundAddress: z.string(),
-      retryDurationBlocks: z.number(),
-      slippageTolerancePercent: z.number(),
-    }),
-  ),
-});
+export const ChainflipMetadataSchema = BrokerDepositChannelParamsSchema;
 
 export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
 

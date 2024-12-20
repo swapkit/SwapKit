@@ -1,8 +1,8 @@
 import crypto from "crypto";
-import { AssetValue, ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
+import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 
 import {
-  type DepositChannelRequest,
+  type BrokerDepositChannelParams,
   type DepositChannelResponse,
   DepositChannelResponseSchema,
   type GasResponse,
@@ -351,13 +351,11 @@ export async function getChainflipDepositChannel({
   body,
 }: {
   isDev?: boolean;
-  body: DepositChannelRequest;
+  body: BrokerDepositChannelParams;
 }) {
-  const { sellAsset, buyAsset, recipient } = body;
-  const sellAssetValue = AssetValue.from({ asset: sellAsset });
-  const buyAssetValue = AssetValue.from({ asset: buyAsset });
+  const { destinationAddress } = body;
 
-  if (!(sellAssetValue && buyAssetValue && recipient)) {
+  if (!destinationAddress) {
     throw new SwapKitError("chainflip_broker_invalid_params");
   }
   const url = `${getBaseUrl(isDev)}/channel`;
