@@ -207,7 +207,8 @@ export function getEIP6963Wallets() {
   const providers: EIP6963Provider[] = [];
 
   function onAnnouncement(event: EIP6963AnnounceProviderEvent) {
-    if (providers.map((p) => p.info.uuid).includes(event.detail.info.uuid)) return;
+    // FIXME: vultisig gives new UUID each time, so we should either find and replace or ignore new entries
+    if (providers.map((p) => p.info.name).includes(event.detail.info.name)) return;
     providers.push(event.detail);
   }
 
@@ -217,7 +218,7 @@ export function getEIP6963Wallets() {
   function removeEIP6963EventListener() {
     window.removeEventListener("eip6963:announceProvider", onAnnouncement);
   }
-
+  console.log(providers, "providers");
   return { providers, removeEIP6963EventListener };
 }
 

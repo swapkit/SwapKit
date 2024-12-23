@@ -13,8 +13,8 @@ import { polkadotWallet } from "@swapkit/wallet-polkadotjs";
 import { radixWallet } from "@swapkit/wallet-radix";
 import { talismanWallet } from "@swapkit/wallet-talisman";
 import { trezorWallet } from "@swapkit/wallet-trezor";
+import { vultisigWallet } from "@swapkit/wallet-vultisig";
 import { walletconnectWallet } from "@swapkit/wallet-wc";
-
 export const wallets = {
   ...bitgetWallet,
   ...coinbaseWallet,
@@ -32,4 +32,5 @@ export const wallets = {
   ...trezorWallet,
   ...walletconnectWallet,
   ...ctrlWallet,
+  ...vultisigWallet,
 };

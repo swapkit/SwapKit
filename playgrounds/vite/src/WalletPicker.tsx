@@ -17,6 +17,7 @@ import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
 import type { Eip1193Provider } from "ethers";
 import type { SwapKitClient } from "./swapKitClient";
 
+
 type Props = {
   setPhrase: (phrase: string) => void;
   setWallet: (wallet: FullWallet[Chain] | FullWallet[Chain][]) => void;
@@ -145,6 +146,18 @@ export const availableChainsByWallet = {
   [WalletOption.EXODUS]: [Chain.Ethereum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Bitcoin],
   [WalletOption.LEDGER_LIVE]: [],
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
+  [WalletOption.VULTISIG]: [  
+	Chain.Ethereum,
+    Chain.THORChain,
+    Chain.Maya,
+    Chain.Cosmos,
+    Chain.Kujira,
+    Chain.BitcoinCash,
+    Chain.Dash,
+    Chain.Dogecoin,
+    Chain.Litecoin,
+    Chain.Bitcoin,
+  ]
 };
 
 export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
@@ -212,6 +225,9 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         case WalletOption.WALLETCONNECT:
           return skClient.connectWalletconnect?.(chains);
 
+		case WalletOption.VULTISIG:
+          return skClient.connectVultisig?.(chains);
+
         default:
           throw new Error(`Unsupported wallet option: ${option}`);
       }
@@ -260,6 +276,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
       const walletDataArray = await Promise.all(
         chains.map((chain) => skClient.getWalletWithBalance(chain, true)),
       );
+	  console.log(walletDataArray, 'walletDataArray');
 
       setWallet(walletDataArray.filter(Boolean));
       setLoading(false);
@@ -270,9 +287,9 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
   const isWalletDisabled = useCallback(
     (wallet: WalletOption) =>
       chains.length > 0
-        ? !chains.every((chain) =>
+        ? !chains.every((chain) =>{
             // @ts-ignore
-            availableChainsByWallet[wallet].includes(chain),
+            return availableChainsByWallet[wallet].includes(chain)}
           )
         : false,
     [chains],
@@ -303,7 +320,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         <select
           multiple
           onChange={handleMultipleSelect}
-          style={{ width: 50, height: 400 }}
+          style={{ width: 100, height: 400 }}
           value={chains}
         >
           {[

@@ -94,6 +94,10 @@ const errorCodes = {
   wallet_keepkey_contract_address_not_provided: 20902,
   wallet_keepkey_send_transaction_no_address: 20903,
   wallet_bitkeep_not_found: 21001,
+  wallet_vultisig_not_found: 21100,
+  wallet_vultisig_asset_not_defined: 21101,
+  wallet_vultisig_contract_address_not_provided: 21102,
+  wallet_vultisig_send_transaction_no_address: 21103,
   /**
    * Chainflip
    */

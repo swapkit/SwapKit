@@ -56,6 +56,7 @@ export type WalletTxParams = {
   from?: string;
   memo?: string; // optional memo to pass
   recipient: string;
+  gasLimit?: string | bigint | undefined;
 };
 
 export enum MemoType {

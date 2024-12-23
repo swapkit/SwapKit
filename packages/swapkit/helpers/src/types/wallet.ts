@@ -50,6 +50,7 @@ export enum WalletOption {
   TALISMAN = "TALISMAN",
   TRUSTWALLET_WEB = "TRUSTWALLET_WEB",
   WALLETCONNECT = "WALLETCONNECT",
+  VULTISIG = "VULTISIG",
 }
 
 export enum LedgerErrorCode {

@@ -171,6 +171,8 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
    * @Public
    */
   function getWallet<T extends Chain>(chain: T) {
+    console.log(chain);
+    console.log(connectedWallets);
     return connectedWallets[chain];
   }
 
