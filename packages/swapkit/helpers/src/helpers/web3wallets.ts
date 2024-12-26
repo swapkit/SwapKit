@@ -28,6 +28,7 @@ declare const window: {
   trustwallet: EthereumWindowProvider;
   coinbaseWalletExtension: EthereumWindowProvider;
   braveSolana: any;
+  bitkeep?: { ethereum: EthereumWindowProvider };
 } & Window;
 
 type NetworkParams = {
@@ -157,6 +158,7 @@ export const listWeb3EVMWallets = () => {
     (window?.ethereum?.overrideIsMetaMask &&
       window?.ethereum?.selectedProvider?.isCoinbaseWallet) ||
     window?.coinbaseWalletExtension;
+  const bitgetEnabled = window?.bitkeep?.ethereum;
 
   const wallets = [];
   if (metamaskEnabled) wallets.push(WalletOption.METAMASK);
@@ -165,6 +167,7 @@ export const listWeb3EVMWallets = () => {
   if (trustEnabled) wallets.push(WalletOption.TRUSTWALLET_WEB);
   if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);
   if (okxMobileEnabled()) wallets.push(WalletOption.OKX_MOBILE);
+  if (bitgetEnabled) wallets.push(WalletOption.BITGET);
 
   return wallets;
 };
