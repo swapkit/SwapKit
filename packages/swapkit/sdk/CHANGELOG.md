@@ -1,5 +1,19 @@
 # @swapkit/sdk
 
+## 2.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/plugin-chainflip@2.0.1
+  - @swapkit/plugin-evm@1.3.11
+  - @swapkit/plugin-kado@0.2.5
+  - @swapkit/plugin-radix@1.3.7
+  - @swapkit/plugin-thorchain@2.2.5
+  - @swapkit/api@2.2.1
+  - @swapkit/core@3.2.7
+  - @swapkit/wallets@2.0.7
+
 ## 2.2.3
 
 ### Patch Changes
