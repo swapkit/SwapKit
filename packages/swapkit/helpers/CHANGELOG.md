@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.2.1
+
+### Patch Changes
+
+- [#1142](https://github.com/thorswap/SwapKit/pull/1142) [`0dc7610`](https://github.com/thorswap/SwapKit/commit/0dc76102577e091dfdd9fc72b2cc751109ab5faf) Thanks [@0xepicode](https://github.com/0xepicode)! - Detect bitget wallet
+
 ## 2.2.0
 
 ### Minor Changes
