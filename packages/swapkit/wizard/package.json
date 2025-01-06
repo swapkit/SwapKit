@@ -5,7 +5,7 @@
     "@clack/prompts": "0.7.0",
     "ejs": "3.1.10",
     "picocolors": "1.0.1",
-    "zod": "3.23.8"
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@types/ejs": "3.1.5"

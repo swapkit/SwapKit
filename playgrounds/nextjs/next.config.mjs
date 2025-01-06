@@ -30,11 +30,13 @@ const nextConfig = {
       );
       config.resolve.fallback = {
         ...config.resolve.fallback,
+        crypto: require.resolve("crypto-browserify"),
         fs: false,
       };
 
       config.resolve.alias = {
         ...config.resolve.alias,
+        crypto: require.resolve("crypto-browserify"),
         path: require.resolve("path-browserify"),
         process: require.resolve("process/browser"),
         stream: require.resolve("stream-browserify"),

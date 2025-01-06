@@ -8,6 +8,7 @@ import {
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { ARBToolbox, AVAXToolbox, BSCToolbox } from "@swapkit/toolbox-evm";
@@ -193,10 +194,12 @@ function connectCtrl({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
-  return async (chains: (typeof CTRL_SUPPORTED_CHAINS)[number][]) => {
+  return async (chains: Chain[]) => {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(chains, CTRL_SUPPORTED_CHAINS, WalletOption.CTRL);
+
+    const promises = supportedChains.map(async (chain) => {
       const address = await getCtrlAddress(chain);
       const walletMethods = await getWalletMethodsForChain({
         chain,

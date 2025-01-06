@@ -10,6 +10,7 @@ import {
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { ARBToolbox, AVAXToolbox, BSCToolbox, Eip1193Provider } from "@swapkit/toolbox-evm";
@@ -187,10 +188,16 @@ function connectKeepkeyBex({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
-  return async (chains: (typeof KEEPKEY_SUPPORTED_CHAINS)[number][]) => {
+  return async (chains: Chain[]) => {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(
+      chains,
+      KEEPKEY_SUPPORTED_CHAINS,
+      WalletOption.KEEPKEY_BEX,
+    );
+
+    const promises = supportedChains.map(async (chain) => {
       const address = await getKEEPKEYAddress(chain);
       const walletMethods = await getWalletMethodsForChain({
         chain,
@@ -204,7 +211,7 @@ function connectKeepkeyBex({
         address,
         balance: [],
         chain,
-        walletType: WalletOption.KEEPKEY,
+        walletType: WalletOption.KEEPKEY_BEX,
       });
     });
 

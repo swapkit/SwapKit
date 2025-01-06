@@ -7,6 +7,7 @@ import {
   WalletOption,
   type WalletTxParams,
   ensureEVMApiKeys,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolbox-solana";
@@ -139,10 +140,14 @@ function connectPhantom({
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
   rpcUrls,
 }: ConnectWalletParams) {
-  return async function connectPhantom(
-    chainOrChains: PhantomSupportedChains | PhantomSupportedChains[],
-  ) {
+  return async function connectPhantom(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
+
+    const supportedChains = filterSupportedChains(
+      chains,
+      PHANTOM_SUPPORTED_CHAINS,
+      WalletOption.PHANTOM,
+    );
 
     async function connectChain(chain: PhantomSupportedChains) {
       const rpcUrl = rpcUrls[chain];
@@ -163,9 +168,7 @@ function connectPhantom({
     }
 
     try {
-      const chains = typeof chainOrChains === "string" ? [chainOrChains] : chainOrChains;
-
-      for (const chain of chains) {
+      for (const chain of supportedChains) {
         await connectChain(chain);
       }
 

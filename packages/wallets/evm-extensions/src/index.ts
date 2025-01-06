@@ -3,10 +3,12 @@ import {
   ChainToHexChainId,
   type ConnectWalletParams,
   type EVMChain,
+  EVMChains,
   type EthereumWindowProvider,
   WalletOption,
   addEVMWalletNetwork,
   ensureEVMApiKeys,
+  filterSupportedChains,
   prepareNetworkSwitch,
   setRequestClientConfig,
 } from "@swapkit/helpers";
@@ -99,13 +101,15 @@ function connectEVMWallet({
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
   return async function connectEVMWallet(
-    chains: EVMChain[],
+    chains: Chain[],
     walletType: EVMWalletOptions = WalletOption.METAMASK,
     eip1193Provider?: Eip1193Provider,
   ) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(chains, EVMChains, walletType);
+
+    const promises = supportedChains.map(async (chain) => {
       const { BrowserProvider, getProvider } = await import("@swapkit/toolbox-evm");
 
       if (walletType === WalletOption.EIP6963) {

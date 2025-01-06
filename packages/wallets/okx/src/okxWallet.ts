@@ -2,6 +2,7 @@ import {
   Chain,
   type ConnectWalletParams,
   WalletOption,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 
@@ -23,10 +24,12 @@ function connectOkx({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
-  return async function connectOkx(chains: (typeof OKX_SUPPORTED_CHAINS)[number][]) {
+  return async function connectOkx(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(chains, OKX_SUPPORTED_CHAINS, WalletOption.OKX);
+
+    const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
         chain,
         covalentApiKey,

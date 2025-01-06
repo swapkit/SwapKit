@@ -2,6 +2,7 @@ import {
   Chain,
   type ConnectWalletParams,
   WalletOption,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import { getWalletForChain } from "./helpers";
@@ -12,10 +13,16 @@ function connectPolkadotJs({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
 }: ConnectWalletParams) {
-  return async function connectPolkadotJs(chains: (typeof POLKADOT_SUPPORTED_CHAINS)[number][]) {
+  return async function connectPolkadotJs(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(
+      chains,
+      POLKADOT_SUPPORTED_CHAINS,
+      WalletOption.POLKADOT_JS,
+    );
+
+    const promises = supportedChains.map(async (chain) => {
       const { address, walletMethods } = await getWalletForChain({
         chain,
         covalentApiKey,

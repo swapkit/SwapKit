@@ -2,7 +2,7 @@
   "author": "swapkit-oss",
   "dependencies": {
     "@swapkit/helpers": "workspace:*",
-    "zod": "3.23.8"
+    "zod": "3.24.1"
   },
   "description": "SwapKit - API",
   "files": [

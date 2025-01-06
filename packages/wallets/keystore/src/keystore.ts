@@ -2,13 +2,17 @@ import {
   type AssetValue,
   Chain,
   type ConnectWalletParams,
+  CosmosChains,
   type DerivationPathArray,
+  EVMChains,
   NetworkDerivationPath,
+  UTXOChains,
   WalletOption,
   type WalletTxParams,
   type Witness,
   derivationPathToString,
   ensureEVMApiKeys,
+  filterSupportedChains,
   getRPCUrl,
   setRequestClientConfig,
   updatedLastIndex,
@@ -20,6 +24,15 @@ import type {
   UTXOTransferParams,
   UTXOWalletTransferParams,
 } from "@swapkit/toolbox-utxo";
+
+const KEYSTORE_SUPPORTED_CHAINS = [
+  ...EVMChains,
+  ...UTXOChains,
+  ...CosmosChains,
+  Chain.Polkadot,
+  Chain.Chainflip,
+  Chain.Solana,
+] as const;
 
 type KeystoreSupportedChain = Exclude<Chain, Chain.Fiat | Chain.Radix>;
 
@@ -202,13 +215,19 @@ function connectKeystore({
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
 }: ConnectWalletParams) {
   return async function connectKeystore(
-    chains: KeystoreSupportedChain[],
+    chains: Chain[],
     phrase: string,
     derivationPathMapOrIndex?: { [chain in Chain]?: DerivationPathArray } | number,
   ) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(
+      chains,
+      KEYSTORE_SUPPORTED_CHAINS,
+      WalletOption.KEYSTORE,
+    );
+
+    const promises = supportedChains.map(async (chain) => {
       const derivationPathIndex =
         typeof derivationPathMapOrIndex === "number" ? derivationPathMapOrIndex : 0;
 

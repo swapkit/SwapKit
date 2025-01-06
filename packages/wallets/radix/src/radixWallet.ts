@@ -214,7 +214,7 @@ function connectRadixWallet({
 }: ConnectWalletParams & {
   radixDappConfig?: RadixDappConfig;
 }) {
-  return async function connectRadixWallet(_chains: Chain.Radix[]) {
+  return async function connectRadixWallet(_chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
     const walletMethods = await getWalletMethods({
