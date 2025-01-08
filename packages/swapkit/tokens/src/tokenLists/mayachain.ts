@@ -2,14 +2,14 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2024-12-10T12:00:49.420Z",
+  timestamp: "2025-01-08T11:00:59.583Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 53,
+  count: 54,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -418,6 +418,16 @@ export const list = {
       identifier: "MAYA.ETH/ETH",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/eth.eth.png",
       ticker: "ETH",
+    },
+    {
+      address: "0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      chain: "MAYA",
+      chainId: "mayachain-mainnet-v1",
+      decimals: 8,
+      identifier: "MAYA.ETH/LLD-0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
+      ticker: "LLD",
     },
     {
       address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",

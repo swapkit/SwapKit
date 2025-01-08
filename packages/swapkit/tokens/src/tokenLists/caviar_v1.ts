@@ -2,15 +2,25 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2024-12-10T12:01:50.180Z",
+  timestamp: "2025-01-08T11:01:45.683Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 142,
+  count: 166,
   tokens: [
+    {
+      address: "resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.$CVX-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.$cvx-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9.png",
+      ticker: "$CVX",
+    },
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
       chain: "XRD",
@@ -50,6 +60,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.astrl-resource_rdx1t4tjx4g3qzd98nayqxm7qdpj0a0u8ns6a0jrchq49dyfevgh6u0gj3.png",
       ticker: "ASTRL",
+    },
+    {
+      address: "resource_rdx1tkqqz8zs5u4l8l27wvggyke23x7fn27tu6t3d5mgeq2cuqu0vjz3vu",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.BANANA-resource_rdx1tkqqz8zs5u4l8l27wvggyke23x7fn27tu6t3d5mgeq2cuqu0vjz3vu",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.banana-resource_rdx1tkqqz8zs5u4l8l27wvggyke23x7fn27tu6t3d5mgeq2cuqu0vjz3vu.png",
+      ticker: "BANANA",
     },
     {
       address: "resource_rdx1tkn5jcul0fdrtua60kkaasxl8592c2d0g2whas78eeqx8wur9tlzql",
@@ -240,6 +260,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.daxter-resource_rdx1tklk9zrjqaqwmjq2qkf5due8wsn96zvffj2jr3tpgs7u00we4rds8u.png",
       ticker: "daxter",
+    },
+    {
+      address: "resource_rdx1t4dsaa07eaytq0asfe774maqzhrakfjkpxyng2ud4j6y2tdm5l7a76",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.DELAY-resource_rdx1t4dsaa07eaytq0asfe774maqzhrakfjkpxyng2ud4j6y2tdm5l7a76",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.delay-resource_rdx1t4dsaa07eaytq0asfe774maqzhrakfjkpxyng2ud4j6y2tdm5l7a76.png",
+      ticker: "DELAY",
     },
     {
       address: "resource_rdx1tkktjr0ew96se7wpsqxxvhp2vr67jc8anq04r5xkgxq3f0rg9pcj0c",
@@ -692,6 +722,16 @@ export const list = {
       ticker: "KYW",
     },
     {
+      address: "resource_rdx1tk4juxzn2c64khzv3dtku9kl96h77g45ul6kwrp0ul9ddfvkm4hqyv",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.LOCK-resource_rdx1tk4juxzn2c64khzv3dtku9kl96h77g45ul6kwrp0ul9ddfvkm4hqyv",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.lock-resource_rdx1tk4juxzn2c64khzv3dtku9kl96h77g45ul6kwrp0ul9ddfvkm4hqyv.png",
+      ticker: "LOCK",
+    },
+    {
       address: "resource_rdx1tktu6gxvty5j0w0pkp3j8lv3wk348856w9wxk0ccsh0mz5sn5m92e8",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -802,6 +842,16 @@ export const list = {
       ticker: "NAKA",
     },
     {
+      address: "resource_rdx1thmq2j4eczsqlhtmv0sqcwphn7r4r0mwxat65q3frpsfrx3056f3sx",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.NEARLY-resource_rdx1thmq2j4eczsqlhtmv0sqcwphn7r4r0mwxat65q3frpsfrx3056f3sx",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.nearly-resource_rdx1thmq2j4eczsqlhtmv0sqcwphn7r4r0mwxat65q3frpsfrx3056f3sx.png",
+      ticker: "NEARLY",
+    },
+    {
       address: "resource_rdx1t58dla7ykxzxe5es89wlhgzatqla0gceukg0eeduzvtj4cxd55etn8",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -860,6 +910,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.now-resource_rdx1th42ay5yjg6ujak3ygnc6yerzx0ld622chz5tlnwjr7elcp3u48l2q.png",
       ticker: "NOW",
+    },
+    {
+      address: "resource_rdx1thgcx3nez5gm8zgyvekvs9rr7vk3wu3a477lrzlwpqhmdz5r5m7r3c",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.NRLY-resource_rdx1thgcx3nez5gm8zgyvekvs9rr7vk3wu3a477lrzlwpqhmdz5r5m7r3c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.nrly-resource_rdx1thgcx3nez5gm8zgyvekvs9rr7vk3wu3a477lrzlwpqhmdz5r5m7r3c.png",
+      ticker: "NRLY",
     },
     {
       address: "resource_rdx1t52pvtk5wfhltchwh3rkzls2x0r98fw9cjhpyrf3vsykhkuwrf7jg8",
@@ -1342,6 +1402,86 @@ export const list = {
       ticker: "WOWO",
     },
     {
+      address: "resource_rdx1tkyw4z4dxx8zwzg9qyu2fxjj9my5pdmzhs75unt03yxrrufvs3d786",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xAAVE-resource_rdx1tkyw4z4dxx8zwzg9qyu2fxjj9my5pdmzhs75unt03yxrrufvs3d786",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xaave-resource_rdx1tkyw4z4dxx8zwzg9qyu2fxjj9my5pdmzhs75unt03yxrrufvs3d786.png",
+      ticker: "xAAVE",
+    },
+    {
+      address: "resource_rdx1t49ukgsdsfv0232vez5nr2z9a0cwd6vjrzsssgxt9zlqglr5kxwpr9",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 6,
+      identifier: "XRD.xADA-resource_rdx1t49ukgsdsfv0232vez5nr2z9a0cwd6vjrzsssgxt9zlqglr5kxwpr9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xada-resource_rdx1t49ukgsdsfv0232vez5nr2z9a0cwd6vjrzsssgxt9zlqglr5kxwpr9.png",
+      ticker: "xADA",
+    },
+    {
+      address: "resource_rdx1t53mhl75r05r5x2cyty8l04fuh8nfukjkan3sswsvcrcj8v0d0yf6d",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 8,
+      identifier: "XRD.xBCH-resource_rdx1t53mhl75r05r5x2cyty8l04fuh8nfukjkan3sswsvcrcj8v0d0yf6d",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xbch-resource_rdx1t53mhl75r05r5x2cyty8l04fuh8nfukjkan3sswsvcrcj8v0d0yf6d.png",
+      ticker: "xBCH",
+    },
+    {
+      address: "resource_rdx1thcmmknq2mlhxzy20pd0kh4w2runhqhhax9tf99n50l9ylg8wf4sne",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xBNB-resource_rdx1thcmmknq2mlhxzy20pd0kh4w2runhqhhax9tf99n50l9ylg8wf4sne",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xbnb-resource_rdx1thcmmknq2mlhxzy20pd0kh4w2runhqhhax9tf99n50l9ylg8wf4sne.png",
+      ticker: "xBNB",
+    },
+    {
+      address: "resource_rdx1t5lwaxl3f6f88mtxvhhq6jd6dmv6u0hr9ssrqhvg3a8vw92yau4w8a",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 8,
+      identifier: "XRD.xCRO-resource_rdx1t5lwaxl3f6f88mtxvhhq6jd6dmv6u0hr9ssrqhvg3a8vw92yau4w8a",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xcro-resource_rdx1t5lwaxl3f6f88mtxvhhq6jd6dmv6u0hr9ssrqhvg3a8vw92yau4w8a.png",
+      ticker: "xCRO",
+    },
+    {
+      address: "resource_rdx1thc7mxrzd3u2v9nfd8zm52juswrsk9f74gqmzk5z46ap2vqk6cut3e",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xDAI-resource_rdx1thc7mxrzd3u2v9nfd8zm52juswrsk9f74gqmzk5z46ap2vqk6cut3e",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xdai-resource_rdx1thc7mxrzd3u2v9nfd8zm52juswrsk9f74gqmzk5z46ap2vqk6cut3e.png",
+      ticker: "xDAI",
+    },
+    {
+      address: "resource_rdx1t5d2qch32njedqpa204yswpxmxea5wazqf7tavptcxgq5j77suuxlr",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xENA-resource_rdx1t5d2qch32njedqpa204yswpxmxea5wazqf7tavptcxgq5j77suuxlr",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xena-resource_rdx1t5d2qch32njedqpa204yswpxmxea5wazqf7tavptcxgq5j77suuxlr.png",
+      ticker: "xENA",
+    },
+    {
+      address: "resource_rdx1t5qhyvgr5mh2nrwwntkk9q3nuy9e9rddgps68shalucr0cyx9fwrwv",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xETC-resource_rdx1t5qhyvgr5mh2nrwwntkk9q3nuy9e9rddgps68shalucr0cyx9fwrwv",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xetc-resource_rdx1t5qhyvgr5mh2nrwwntkk9q3nuy9e9rddgps68shalucr0cyx9fwrwv.png",
+      ticker: "xETC",
+    },
+    {
       address: "resource_rdx1th88qcj5syl9ghka2g9l7tw497vy5x6zaatyvgfkwcfe8n9jt2npww",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -1352,6 +1492,26 @@ export const list = {
       ticker: "xETH",
     },
     {
+      address: "resource_rdx1t56xvxq96c02vxsmp0uzq7r4zk2wqam5mjjg98ytv7aadgwagj60p7",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xGRT-resource_rdx1t56xvxq96c02vxsmp0uzq7r4zk2wqam5mjjg98ytv7aadgwagj60p7",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xgrt-resource_rdx1t56xvxq96c02vxsmp0uzq7r4zk2wqam5mjjg98ytv7aadgwagj60p7.png",
+      ticker: "xGRT",
+    },
+    {
+      address: "resource_rdx1tk3rs0wmsja4sldml4tkj993s7669heulw57jva777h5eqmg6xf8mx",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xIMX-resource_rdx1tk3rs0wmsja4sldml4tkj993s7669heulw57jva777h5eqmg6xf8mx",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.ximx-resource_rdx1tk3rs0wmsja4sldml4tkj993s7669heulw57jva777h5eqmg6xf8mx.png",
+      ticker: "xIMX",
+    },
+    {
       address: "resource_rdx1t4l27zjw5hhejrsztcee4sltrrgm7hzw9xmz9sw486kmrmumfyxzp7",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -1360,6 +1520,46 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.xj-resource_rdx1t4l27zjw5hhejrsztcee4sltrrgm7hzw9xmz9sw486kmrmumfyxzp7.png",
       ticker: "XJ",
+    },
+    {
+      address: "resource_rdx1t58k9jlygcw27sx7peza34jtk65qhe8y7qxmyp9l09pz5sjgadkcq3",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xLINK-resource_rdx1t58k9jlygcw27sx7peza34jtk65qhe8y7qxmyp9l09pz5sjgadkcq3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xlink-resource_rdx1t58k9jlygcw27sx7peza34jtk65qhe8y7qxmyp9l09pz5sjgadkcq3.png",
+      ticker: "xLINK",
+    },
+    {
+      address: "resource_rdx1tkc8uhc3frpveynthwzh0675zlv9cxzd68dvs6lcu6x5hc0wxkdw34",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xMKR-resource_rdx1tkc8uhc3frpveynthwzh0675zlv9cxzd68dvs6lcu6x5hc0wxkdw34",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xmkr-resource_rdx1tkc8uhc3frpveynthwzh0675zlv9cxzd68dvs6lcu6x5hc0wxkdw34.png",
+      ticker: "xMKR",
+    },
+    {
+      address: "resource_rdx1t4lqx3pzazlfp0e449ued6mmmfysevc8r2tzrcj70kpnlwt9kdpgf8",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xPEPE-resource_rdx1t4lqx3pzazlfp0e449ued6mmmfysevc8r2tzrcj70kpnlwt9kdpgf8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xpepe-resource_rdx1t4lqx3pzazlfp0e449ued6mmmfysevc8r2tzrcj70kpnlwt9kdpgf8.png",
+      ticker: "xPEPE",
+    },
+    {
+      address: "resource_rdx1tk0ma9ngnle2jka3j33d5d7072ywy033x0d6fkvc3x9sz6ts3nvxmz",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xPOL-resource_rdx1tk0ma9ngnle2jka3j33d5d7072ywy033x0d6fkvc3x9sz6ts3nvxmz",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xpol-resource_rdx1tk0ma9ngnle2jka3j33d5d7072ywy033x0d6fkvc3x9sz6ts3nvxmz.png",
+      ticker: "xPOL",
     },
     {
       address: "resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
@@ -1379,6 +1579,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.xse-resource_rdx1tkkzy2zg4na22kskk00q50v0kghw89akeh84u60xczxsr0ynes80d5.png",
       ticker: "xse",
+    },
+    {
+      address: "resource_rdx1t55ja5ser4g8rkh2qm6jhr44zej9h6yd2z9n34e3wffrhnth6e5awe",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xSHIB-resource_rdx1t55ja5ser4g8rkh2qm6jhr44zej9h6yd2z9n34e3wffrhnth6e5awe",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xshib-resource_rdx1t55ja5ser4g8rkh2qm6jhr44zej9h6yd2z9n34e3wffrhnth6e5awe.png",
+      ticker: "xSHIB",
+    },
+    {
+      address: "resource_rdx1t5ytfqwtqjfyq2ku0n5r4d275h2uc9cx0s4l6fghaffgnvsatjw6hk",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xUNI-resource_rdx1t5ytfqwtqjfyq2ku0n5r4d275h2uc9cx0s4l6fghaffgnvsatjw6hk",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xuni-resource_rdx1t5ytfqwtqjfyq2ku0n5r4d275h2uc9cx0s4l6fghaffgnvsatjw6hk.png",
+      ticker: "xUNI",
     },
     {
       address: "resource_rdx1t4upr78guuapv5ept7d7ptekk9mqhy605zgms33mcszen8l9fac8vf",
@@ -1409,6 +1629,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.xwbtc-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75.png",
       ticker: "xwBTC",
+    },
+    {
+      address: "resource_rdx1t5jlk3wlxrvml2a0aa59h8cjt59utuku8qt5mlt8s8590qt024km3y",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.xWLD-resource_rdx1t5jlk3wlxrvml2a0aa59h8cjt59utuku8qt5mlt8s8590qt024km3y",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xwld-resource_rdx1t5jlk3wlxrvml2a0aa59h8cjt59utuku8qt5mlt8s8590qt024km3y.png",
+      ticker: "xWLD",
+    },
+    {
+      address: "resource_rdx1tk35r6nlyjnt0aqjv7re27gu72ly7d3dwehe9e5k2nwjaue8fxtpkv",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 6,
+      identifier: "XRD.xXRP-resource_rdx1tk35r6nlyjnt0aqjv7re27gu72ly7d3dwehe9e5k2nwjaue8fxtpkv",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xxrp-resource_rdx1tk35r6nlyjnt0aqjv7re27gu72ly7d3dwehe9e5k2nwjaue8fxtpkv.png",
+      ticker: "xXRP",
     },
     {
       address: "resource_rdx1t4lkvwqd7wxqcatatelre2svxy04fn6980ydzld0faqamv8nrxhzm5",
