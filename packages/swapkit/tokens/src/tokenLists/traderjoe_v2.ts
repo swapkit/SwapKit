@@ -525,17 +525,7 @@ export const list = {
       chain: "AVAX",
       chainId: "43114",
       decimals: 8,
-      identifier: "AVAX.BTC.B-0X152B9D0FDC40C096757F570A51E494BD4B943E50",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.btc.b-0x152b9d0fdc40c096757f570a51e494bd4b943e50.png",
-      ticker: "BTC.B",
-    },
-    {
-      address: "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 8,
-      identifier: "AVAX.BTC.B-0X152B9D0FDC40C096757F570A51E494BD4B943E50",
+      identifier: "AVAX.BTC.b-0X152B9D0FDC40C096757F570A51E494BD4B943E50",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.btc.b-0x152b9d0fdc40c096757f570a51e494bd4b943e50.png",
       ticker: "BTC.B",
