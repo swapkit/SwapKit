@@ -1,5 +1,22 @@
 # @swapkit/core
 
+## 3.2.11
+
+### Patch Changes
+
+- [#1153](https://github.com/thorswap/SwapKit/pull/1153) [`6baf5f7`](https://github.com/thorswap/SwapKit/commit/6baf5f708a99822517ac15514eb8e894cad35ff1) Thanks [@towanTG](https://github.com/towanTG)! - Adds missing BASE address validator
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/plugin-evm@1.3.15
+  - @swapkit/api@2.3.3
+  - @swapkit/toolbox-cosmos@1.8.3
+  - @swapkit/toolbox-evm@1.8.3
+  - @swapkit/toolbox-radix@1.2.31
+  - @swapkit/toolbox-solana@1.4.3
+  - @swapkit/toolbox-substrate@1.3.15
+  - @swapkit/toolbox-utxo@1.2.15
+
 ## 3.2.10
 
 ### Patch Changes
