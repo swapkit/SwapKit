@@ -1,3 +1,3 @@
-export * from "./lists";
+export * as tokenLists from "./tokenLists";
+export * from "./tokenLists";
 export * from "./helpers";
-export * from "./types";

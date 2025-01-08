@@ -1,12 +1,8 @@
-import { tokenLists as defaultTokenLists } from "./lists";
-import type { TokenList } from "./types";
+import * as tokenLists from "./tokenLists";
 
-export function getTokenIcon(
-  identifier: string,
-  lists: Record<string, TokenList> = defaultTokenLists,
-): string | undefined {
+export function getTokenIcon(identifier: string): string | undefined {
   // Search through all lists for a matching token
-  for (const list of Object.values(lists)) {
+  for (const list of Object.values(tokenLists)) {
     const token = list.tokens.find((token) => token.identifier === identifier);
     if (token?.logoURI) {
       return token.logoURI;
