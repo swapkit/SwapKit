@@ -165,7 +165,7 @@ export async function getCtrlAddress(chain: Chain) {
 }
 
 export async function walletTransfer(
-  { assetValue, recipient, memo, gasLimit }: WalletTxParams & { assetValue: AssetValue },
+  { assetValue, recipient, memo, gasLimit }: WalletTxParams,
   method: TransactionMethod = "transfer",
 ) {
   if (!assetValue) {
@@ -189,7 +189,7 @@ export async function walletTransfer(
         symbol: assetValue.symbol.toUpperCase(),
         ticker: assetValue.symbol.toUpperCase(),
       },
-      memo,
+      memo: memo || "",
       from,
       recipient,
       gasLimit,

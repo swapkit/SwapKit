@@ -258,9 +258,9 @@ export async function findAssetBy(
     | { chain: EVMChain | Chain.Radix | Chain.Solana; contract: string }
     | { identifier: `${Chain}.${string}` },
 ) {
-  const tokenPackages = await import("@swapkit/tokens");
+  const { tokenLists } = await import("@swapkit/tokens");
 
-  for (const tokenList of Object.values(tokenPackages.tokenLists)) {
+  for (const tokenList of Object.values(tokenLists)) {
     for (const { identifier, chain: tokenChain, ...rest } of tokenList.tokens) {
       if ("identifier" in params && identifier === params.identifier) {
         return identifier as TokenNames;
