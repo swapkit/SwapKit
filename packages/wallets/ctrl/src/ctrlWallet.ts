@@ -120,7 +120,7 @@ async function getWalletMethodsForChain({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { prepareNetworkSwitch, addEVMWalletNetwork } = await import("@swapkit/helpers");
+      const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
       const { getProvider, getToolboxByChain, covalentApi, ethplorerApi, getBalance } =
         await import("@swapkit/toolbox-evm");
       const { BrowserProvider } = await import("ethers");
@@ -138,9 +138,10 @@ async function getWalletMethodsForChain({
 
       try {
         chain !== Chain.Ethereum &&
-          (await addEVMWalletNetwork(
+          (await switchEVMWalletNetwork(
             //@ts-expect-error
             ethereumWindowProvider,
+            ChainToHexChainId[chain],
             (
               toolbox as
                 | ReturnType<typeof AVAXToolbox>

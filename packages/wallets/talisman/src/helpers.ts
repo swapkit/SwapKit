@@ -6,9 +6,9 @@ import {
   type EthereumWindowProvider,
   SwapKitError,
   WalletOption,
-  addEVMWalletNetwork,
   ensureEVMApiKeys,
   prepareNetworkSwitch,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type {
   ARBToolbox,
@@ -60,8 +60,9 @@ export const getWeb3WalletMethods = async ({
 
   try {
     chain !== Chain.Ethereum &&
-      (await addEVMWalletNetwork(
+      (await switchEVMWalletNetwork(
         provider,
+        ChainToHexChainId[chain],
         (
           toolbox as
             | ReturnType<typeof ARBToolbox>

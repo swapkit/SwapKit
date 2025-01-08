@@ -5,11 +5,11 @@ import {
   type ConnectWalletParams,
   EVMChains,
   WalletOption,
-  addEVMWalletNetwork,
   ensureEVMApiKeys,
   filterSupportedChains,
   prepareNetworkSwitch,
   setRequestClientConfig,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import { type AVAXToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
 import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolbox-utxo";
@@ -133,8 +133,9 @@ export const getWalletMethods = async ({
 
       try {
         chain !== Chain.Ethereum &&
-          (await addEVMWalletNetwork(
+          (await switchEVMWalletNetwork(
             browserProvider,
+            ChainToHexChainId[chain],
             (toolbox as ReturnType<typeof AVAXToolbox>).getNetworkParams(),
           ));
       } catch (_error) {

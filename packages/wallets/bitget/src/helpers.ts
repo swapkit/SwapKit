@@ -8,9 +8,9 @@ import {
   type EVMChain,
   SwapKitError,
   type WalletTxParams,
-  addEVMWalletNetwork,
   getRPCUrl,
   prepareNetworkSwitch,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
@@ -231,7 +231,7 @@ export const getWeb3WalletMethods = async ({
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
-      await addEVMWalletNetwork(provider, toolbox.getNetworkParams());
+      await switchEVMWalletNetwork(provider, ChainToHexChainId[chain], toolbox.getNetworkParams());
     }
   } catch (_error) {
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
