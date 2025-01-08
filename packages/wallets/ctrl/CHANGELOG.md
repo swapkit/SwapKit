@@ -1,5 +1,18 @@
 # @swapkit/wallet-xdefi
 
+## 2.1.2
+
+### Patch Changes
+
+- [#1150](https://github.com/thorswap/SwapKit/pull/1150) [`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836) Thanks [@towanTG](https://github.com/towanTG)! - Fixes undefined memo error. Ctrl wallet expects an empty string
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+  - @swapkit/toolbox-cosmos@1.8.2
+  - @swapkit/toolbox-evm@1.8.2
+  - @swapkit/toolbox-solana@1.4.2
+  - @swapkit/toolbox-utxo@1.2.14
+
 ## 2.1.1
 
 ### Patch Changes

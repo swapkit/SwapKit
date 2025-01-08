@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.2.0
+
+### Minor Changes
+
+- [#1150](https://github.com/thorswap/SwapKit/pull/1150) [`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836) Thanks [@towanTG](https://github.com/towanTG)! - Changes tokenlist exports
+
 ## 2.1.0
 
 ### Minor Changes
