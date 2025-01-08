@@ -156,14 +156,14 @@ export const AssetValueSchema = z.object({
 });
 
 export const TokenDetailsMetadataSchema = z.object({
-  name: z.string(),
   id: z.string(),
-  market_cap: z.number(),
-  total_volume: z.number(),
-  price_change_24h_usd: z.number(),
-  price_change_percentage_24h_usd: z.number(),
-  timestamp: z.string(),
-  sparkline_in_7d: z.array(z.number()),
+  name: z.string().optional(),
+  market_cap: z.number().optional(),
+  total_volume: z.number().optional(),
+  price_change_24h_usd: z.number().optional(),
+  price_change_percentage_24h_usd: z.number().optional(),
+  timestamp: z.string().optional(),
+  sparkline_in_7d: z.array(z.number()).optional(),
 });
 
 export const PriceResponseSchema = z.array(
@@ -619,7 +619,11 @@ export const RouteQuoteMetadataAssetSchema = z.object({
 
 export type RouteQuoteMetadataAsset = z.infer<typeof RouteQuoteMetadataAssetSchema>;
 
-export const ChainflipMetadataSchema = BrokerDepositChannelParamsSchema;
+// Chainflip metadata comes as Broker schema or empty object
+export const ChainflipMetadataSchema = z.union([
+  BrokerDepositChannelParamsSchema,
+  z.object({}).strict(),
+]);
 
 export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
 
