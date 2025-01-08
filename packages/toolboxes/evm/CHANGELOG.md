@@ -1,5 +1,12 @@
 # @swapkit/toolbox-evm
 
+## 1.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+
 ## 1.8.0
 
 ### Minor Changes
