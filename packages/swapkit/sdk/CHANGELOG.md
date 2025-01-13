@@ -1,5 +1,19 @@
 # @swapkit/sdk
 
+## 2.2.9
+
+### Patch Changes
+
+- Updated dependencies [[`c900df6`](https://github.com/thorswap/SwapKit/commit/c900df616fdd357609c719410bd7302ff3fabba4)]:
+  - @swapkit/plugin-thorchain@2.3.0
+  - @swapkit/plugin-chainflip@2.0.6
+  - @swapkit/plugin-evm@1.3.16
+  - @swapkit/plugin-kado@0.2.10
+  - @swapkit/plugin-radix@1.3.12
+  - @swapkit/api@2.3.4
+  - @swapkit/core@3.2.12
+  - @swapkit/wallets@2.0.12
+
 ## 2.2.8
 
 ### Patch Changes

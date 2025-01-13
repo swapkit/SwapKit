@@ -1,5 +1,11 @@
 # @swapkit/contracts
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1157](https://github.com/thorswap/SwapKit/pull/1157) [`c900df6`](https://github.com/thorswap/SwapKit/commit/c900df616fdd357609c719410bd7302ff3fabba4) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for Base Chain on TC
+
 ## 1.0.6
 
 ### Patch Changes

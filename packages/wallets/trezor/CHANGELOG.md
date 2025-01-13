@@ -1,5 +1,14 @@
 # @swapkit/wallet-trezor
 
+## 1.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-utxo@1.2.16
+
 ## 1.3.3
 
 ### Patch Changes

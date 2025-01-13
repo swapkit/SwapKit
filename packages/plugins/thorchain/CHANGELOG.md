@@ -1,5 +1,21 @@
 # @swapkit/plugin-thorchain
 
+## 2.3.0
+
+### Minor Changes
+
+- [#1157](https://github.com/thorswap/SwapKit/pull/1157) [`c900df6`](https://github.com/thorswap/SwapKit/commit/c900df616fdd357609c719410bd7302ff3fabba4) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for Base Chain on TC
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/api@2.3.4
+  - @swapkit/toolbox-cosmos@1.8.4
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-substrate@1.3.16
+  - @swapkit/toolbox-utxo@1.2.16
+
 ## 2.2.9
 
 ### Patch Changes

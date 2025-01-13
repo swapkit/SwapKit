@@ -1,5 +1,12 @@
 # @swapkit/helpers
 
+## 2.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`c900df6`](https://github.com/thorswap/SwapKit/commit/c900df616fdd357609c719410bd7302ff3fabba4)]:
+  - @swapkit/contracts@1.1.0
+
 ## 2.4.1
 
 ### Patch Changes

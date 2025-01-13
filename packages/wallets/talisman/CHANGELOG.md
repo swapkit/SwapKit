@@ -1,5 +1,14 @@
 # @swapkit/wallet-talisman
 
+## 1.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-substrate@1.3.16
+
 ## 1.4.3
 
 ### Patch Changes

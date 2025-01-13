@@ -1,5 +1,12 @@
 # @swapkit/wallet-radix
 
+## 1.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
 ## 1.3.3
 
 ### Patch Changes

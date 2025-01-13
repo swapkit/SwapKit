@@ -1,5 +1,13 @@
 # @swapkit/plugin-kado
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/api@2.3.4
+
 ## 0.2.9
 
 ### Patch Changes
