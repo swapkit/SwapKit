@@ -1,31 +1,33 @@
-import type { Keplr } from "@keplr-wallet/types";
 import {
-  type AssetValue,
   Chain,
-  type ChainApi,
-  ChainId,
   ChainToChainId,
   ChainToHexChainId,
-  type EVMChain,
   SwapKitError,
   WalletOption,
-  type WalletTxParams,
   addEVMWalletNetwork,
-  getRPCUrl,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
-import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
-import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 
-type TransactionMethod = "transfer" | "deposit";
+import type { AssetValue, ChainApi, EVMChain, FeeOption } from "@swapkit/helpers";
+import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import type { VultisigProvider } from ".";
+
+type TransactionMethod = "eth_sendTransaction" | "send_transaction" | "deposit_transaction";
+
+export type WalletTxParams = {
+  feeOptionKey?: FeeOption;
+  from?: string;
+  memo?: string;
+  recipient: string;
+  assetValue: AssetValue;
+  gasLimit?: string | bigint | undefined;
+};
 
 type TransactionParams = {
-  asset: string | { chain: string; symbol: string; ticker: string };
-  amount: number | string | { amount: number; decimals?: number };
-  decimal?: number;
-  recipient: string;
+  value: string;
   memo?: string;
+  from: string | string[];
+  to: string;
 };
 
 const ChainToVultisigWallet: Partial<Record<Chain, string>> = {
@@ -39,52 +41,37 @@ const ChainToVultisigWallet: Partial<Record<Chain, string>> = {
   [Chain.Kujira]: "cosmos",
 };
 
-export function getVultisigProvider<T extends Chain>(
-  chain: T,
-): T extends Chain.Cosmos | Chain.Kujira
-  ? Keplr
-  : T extends EVMChain
-    ? Eip1193Provider
-    : undefined {
-  if (!window.vultisig) throw new SwapKitError("wallet_vultisig_not_found");
+export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider | undefined {
+  if (!window.vultisig) {
+    throw new SwapKitError("wallet_vultisig_not_found");
+  }
 
   switch (chain) {
     case Chain.Ethereum:
-      // @ts-expect-error
       return window.vultisig.ethereum;
 
     case Chain.Kujira:
-      // @ts-expect-error
-      return window.vultisig.cosmos;
-
     case Chain.Cosmos:
-      // @ts-expect-error
       return window.vultisig.cosmos;
 
     case Chain.Bitcoin:
-      // @ts-expect-error
       return window.vultisig.bitcoin;
     case Chain.BitcoinCash:
-      // @ts-expect-error
       return window.vultisig.bitcoincash;
     case Chain.Dogecoin:
-      // @ts-expect-error
       return window.vultisig.dogecoin;
     case Chain.Litecoin:
-      // @ts-expect-error
       return window.vultisig.litecoin;
     case Chain.THORChain:
-      // @ts-expect-error
       return window.vultisig.thorchain;
+
     case Chain.Maya:
-      // @ts-expect-error
       return window.vultisig.mayachain;
     case Chain.Solana:
-      // @ts-expect-error
       return window.vultisig.solana;
 
     default:
-      // @ts-expect-error
+      console.warn(`No provider found for chain: ${chain}. Returning undefined.`);
       return undefined;
   }
 }
@@ -99,130 +86,73 @@ async function transaction({
   chain: Chain;
 }): Promise<string> {
   const client = getVultisigProvider(chain);
-
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
       // @ts-ignore
       client.request({ method, params }, (err: string, tx: string) => {
-        err ? reject(err) : resolve(tx);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(tx);
+        }
       });
     }
   });
 }
 
 export async function getVultisigAddress(chain: Chain) {
-  console.log(chain, "chain");
-  const eipProvider = getVultisigProvider(chain) as Eip1193Provider;
-  console.log(eipProvider, "eipProvider");
-  if (!eipProvider) {
+  const provider = getVultisigProvider(chain) as VultisigProvider;
+
+  if (!provider) {
     throw new SwapKitError({
       errorKey: "wallet_provider_not_found",
       info: { wallet: WalletOption.VULTISIG, chain },
     });
   }
 
-  if ([Chain.Cosmos, Chain.Kujira].includes(chain)) {
-    const provider = getVultisigProvider(Chain.Cosmos);
-    if (!provider || "request" in provider) {
-      throw new SwapKitError({
-        errorKey: "wallet_provider_not_found",
-        info: { wallet: WalletOption.VULTISIG, chain },
-      });
-    }
-
-    // Enabling before using the Keplr is recommended.
-    // This method will ask the user whether to allow access if they haven't visited this website.
-    // Also, it will request that the user unlock the wallet if the wallet is locked.
-    const chainId = ChainToChainId[chain];
-    await provider.enable(chainId);
-
-    const offlineSigner = provider.getOfflineSigner(chainId);
-
-    const [item] = await offlineSigner.getAccounts();
-    return item?.address;
-  }
-
   if (chain === Chain.Ethereum) {
-    const [response] = await eipProvider.request({ method: "eth_requestAccounts" });
-
-    return response;
+    const response = await provider.request({ method: "eth_requestAccounts" });
+    if (!response) throw new SwapKitError("wallet_vultisig_no_account_found");
+    return Array.isArray(response) ? response[0] : response;
+  }
+  if (chain === Chain.Cosmos || chain === Chain.Kujira) {
+    await provider.request({
+      method: "wallet_switch_chain",
+      params: [{ chainId: ChainToChainId[chain] }],
+    });
   }
 
-  return new Promise((resolve, reject) =>
-    eipProvider.request(
-      { method: "request_accounts" },
-      // @ts-expect-error
-      (error: any, [response]: string[]) => (error ? reject(error) : resolve(response)),
-    ),
-  );
+  const response = await provider.request({ method: "request_accounts" });
+  if (!response) throw new SwapKitError("wallet_vultisig_no_account_found");
+  return Array.isArray(response) ? response[0] : response;
 }
 
 export async function walletTransfer(
-  { assetValue, recipient, memo, gasLimit }: WalletTxParams & { assetValue: AssetValue },
-  method: TransactionMethod = "transfer",
+  {
+    assetValue,
+    to,
+    memo,
+  }: Omit<WalletTxParams, "recipient"> & { assetValue: AssetValue; to: string },
+  method: TransactionMethod,
 ) {
   if (!assetValue) {
     throw new SwapKitError("wallet_vultisig_asset_not_defined");
   }
 
-  /**
-   * EVM requires amount to be hex string
-   * UTXO/Cosmos requires amount to be number
-   */
+  const from = (await getVultisigAddress(assetValue.chain)) as string;
 
-  const from = await getVultisigAddress(assetValue.chain);
   const params = [
     {
-      amount: {
-        amount: assetValue.getBaseValue("number"),
-        decimals: assetValue.decimal,
-      },
-      asset: {
-        chain: assetValue.chain,
-        symbol: assetValue.symbol.toUpperCase(),
-        ticker: assetValue.symbol.toUpperCase(),
-      },
-      memo,
+      value: `0x${assetValue.getBaseValue("number").toString(16)}`,
+      data: memo,
       from,
-      recipient,
-      gasLimit,
+      to,
     },
   ];
 
-  return transaction({ method, params, chain: assetValue.chain });
-}
+  const transactionResult = await transaction({ method, params, chain: assetValue.chain });
 
-export function cosmosTransfer(rpcUrl?: string) {
-  return async ({ from, recipient, assetValue, memo }: TransferParams) => {
-    const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolbox-cosmos"
-    );
-    if (!(window.vultisig && "keplr" in window.vultisig)) {
-      throw new SwapKitError("wallet_vultisig_not_found");
-    }
-
-    const { keplr: wallet } = window.vultisig;
-
-    const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
-    const cosmJS = await createSigningStargateClient(
-      rpcUrl || getRPCUrl(Chain.Cosmos),
-      offlineSigner,
-    );
-
-    const coins = [
-      {
-        denom: getMsgSendDenom(assetValue.symbol).toLowerCase(),
-        amount: assetValue.getBaseValue("string"),
-      },
-    ];
-
-    try {
-      const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 2, memo);
-      return transactionHash;
-    } catch (error) {
-      throw new SwapKitError("core_transaction_failed", { error });
-    }
-  };
+  return transactionResult;
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
@@ -231,7 +161,6 @@ export async function getWalletForChain({
   ethplorerApiKey,
   covalentApiKey,
   blockchairApiKey,
-  rpcUrl,
   api,
 }: {
   chain: Chain;
@@ -262,9 +191,7 @@ export async function getWalletForChain({
         ethereumWindowProvider: wallet,
       });
 
-      const [address]: [string, ...string[]] = await wallet.request({
-        method: "eth_requestAccounts",
-      });
+      const address = (await getVultisigAddress(chain)) as string;
 
       const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
         evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
@@ -274,17 +201,13 @@ export async function getWalletForChain({
 
     case Chain.Maya:
     case Chain.THORChain: {
-      const { getToolboxByChain, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolbox-cosmos"
-      );
+      const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
 
-      const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
       const toolbox = getToolboxByChain(chain);
-
       return {
         ...toolbox(),
-        deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
-        transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
+        deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, to: "" }, "deposit_transaction"),
+        transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, to: "" }, "send_transaction"),
       };
     }
 
@@ -293,49 +216,31 @@ export async function getWalletForChain({
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      console.log(chain, vultisig, vultiProvider in vultisig);
-      if (!(vultisig && vultiProvider in vultisig)) {
-        throw new SwapKitError("wallet_vultisig_not_found");
-      }
-      const wallet = vultisig[vultiProvider];
+      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const toolbox = getToolboxByChain(chain)({ apiKey: blockchairApiKey });
 
-      const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
-
-      const [address] = await wallet.request({ method: "request_accounts" });
-      console.log(address);
-      const apiClient = typeof api === "object" && "getConfirmedBalance" in api ? api : undefined;
-
-      const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient });
-      const signTransaction = async (psbt: Psbt) => {
-        const signedPsbt = await wallet.request({ method: "sign_psbt", params: [psbt] });
-        console.log(`${chain} Transaction Hash:`, signedPsbt);
-        return Psbt.fromHex(signedPsbt);
+      return {
+        ...toolbox,
+        transfer: (tx: WalletTxParams) =>
+          walletTransfer({ ...tx, to: tx.recipient }, "send_transaction"),
       };
-
-      const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({ ...transferParams, signTransaction });
-      };
-
-      return { ...toolbox, transfer, address };
     }
     case Chain.Kujira:
     case Chain.Cosmos: {
       if (!(vultisig && vultiProvider in vultisig)) {
         throw new SwapKitError("wallet_vultisig_not_found");
       }
-      const wallet = vultisig[vultiProvider];
 
-      const accounts = await wallet.request({ method: "request_accounts" });
-      console.log(accounts);
-      if (!accounts?.[0]) throw new Error("No cosmos account found");
+      const address = await getVultisigAddress(chain);
 
       const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
-      const [{ address }] = accounts;
 
       return {
         address,
         ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
-        transfer: cosmosTransfer(rpcUrl),
+        transfer: (tx: WalletTxParams) => {
+          return walletTransfer({ ...tx, to: "" }, "send_transaction");
+        },
       };
     }
 

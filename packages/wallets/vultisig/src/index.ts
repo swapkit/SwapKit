@@ -1,58 +1,43 @@
-import type { StdSignDoc, StdSignature } from "@cosmjs/amino";
-import type { AminoSignResponse, OfflineAminoSigner } from "@cosmjs/amino";
-import type { EthereumWindowProvider } from "@swapkit/helpers";
-
 export { vultisigWallet, VULTISIG_SUPPORTED_CHAINS } from "./vultisigWallet";
 
-type UnisatToSignInputs = {
-  index: number;
-  sighashTypes?: number[];
-  disableTweakSigner?: boolean;
-} & (
-  | {
-      address: string;
-    }
-  | {
-      publicKey: string;
-    }
-);
+type RequestArguments = {
+  method: string;
+  params?: Record<string, any>[];
+};
+
+interface BaseProvider {
+  isVultiConnect: boolean;
+  request(args: RequestArguments): Promise<string | string[]>;
+  on(event: string, callback: (data: any) => void): void;
+  removeListener(event: string, callback: Function): void;
+  _emit(event: string, data: any): void;
+  connect(): void;
+  disconnect(error?: { code: number; message: string }): void;
+  addListener(event: string, callback: (data: any) => void): void;
+}
+
+export interface VultisigProvider extends BaseProvider {
+  isMetaMask: boolean;
+  networkVersion: string;
+  enable(): Promise<string[]>;
+  isConnected(): boolean;
+  _events: Record<string, Function[]>;
+}
 
 declare global {
   interface Window {
     vultisig?: {
-      unisat: {
-        requestAccounts: () => Promise<[string, ...string[]]>;
-        signMessage: (message: string, type?: "ecdsa" | "bip322-simple") => Promise<string>;
-        signPsbt: (
-          psbtHex: string,
-          {
-            autoFinalized,
-            toSignInputs,
-          }: { autoFinalized?: boolean; toSignInputs?: UnisatToSignInputs[] },
-        ) => Promise<string>;
-      };
-      keplr: {
-        enable: (chainId: string | string[]) => Promise<void>;
-        signAmino: (
-          chainId: string,
-          signer: string,
-          signDoc: StdSignDoc,
-          signOptions: any,
-        ) => Promise<AminoSignResponse>;
-        signArbitrary: (
-          chainId: string,
-          signer: string,
-          data: string | Uint8Array,
-        ) => Promise<StdSignature>;
-        verifyArbitrary: (
-          chainId: string,
-          signer: string,
-          data: string | Uint8Array,
-          signature: StdSignature,
-        ) => Promise<boolean>;
-        getOfflineSignerOnlyAmino: (chainId: string) => OfflineAminoSigner;
-      };
-      ethereum: EthereumWindowProvider;
+      binance: VultisigProvider;
+      bitcoin: VultisigProvider;
+      bitcoincash: VultisigProvider;
+      dogecoin: VultisigProvider;
+      ethereum: VultisigProvider;
+      litecoin: VultisigProvider;
+      thorchain: VultisigProvider;
+      mayachain: VultisigProvider;
+      solana: VultisigProvider;
+      cosmos: VultisigProvider;
+      kujira: VultisigProvider;
     };
   }
 }

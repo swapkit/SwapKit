@@ -98,6 +98,7 @@ const errorCodes = {
   wallet_vultisig_asset_not_defined: 21101,
   wallet_vultisig_contract_address_not_provided: 21102,
   wallet_vultisig_send_transaction_no_address: 21103,
+  wallet_vultisig_no_account_found: 21104,
   /**
    * Chainflip
    */

@@ -207,8 +207,14 @@ export function getEIP6963Wallets() {
   const providers: EIP6963Provider[] = [];
 
   function onAnnouncement(event: EIP6963AnnounceProviderEvent) {
-    // FIXME: vultisig gives new UUID each time, so we should either find and replace or ignore new entries
-    if (providers.map((p) => p.info.name).includes(event.detail.info.name)) return;
+    // FIXME: vultisig announces provider with new UUID each time, so this is workaround to replace entries
+
+    const existingIndex = providers.findIndex((p) => p.info.name === event.detail.info.name);
+
+    if (existingIndex !== -1) {
+      providers.splice(existingIndex, 1);
+    }
+
     providers.push(event.detail);
   }
 

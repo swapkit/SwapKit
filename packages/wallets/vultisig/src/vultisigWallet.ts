@@ -26,13 +26,12 @@ function connectVultisig({
 }: ConnectWalletParams) {
   return async function connectVultisig(chains: (typeof VULTISIG_SUPPORTED_CHAINS)[number][]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const promises = chains.map(async (chain) => {
       let address = "";
       try {
-        address = await getVultisigAddress(chain);
+        address = (await getVultisigAddress(chain)) as string;
       } catch (error) {
-        console.log(error, "error");
+        console.error(`Error retrieving address for chain: ${chain}`, error);
       }
       const walletMethods = await getWalletForChain({
         chain,
@@ -40,7 +39,6 @@ function connectVultisig({
         ethplorerApiKey,
         blockchairApiKey,
       });
-      console.log(address, "address");
       addChain({
         ...walletMethods,
         chain,
