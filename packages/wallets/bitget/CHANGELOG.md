@@ -1,5 +1,16 @@
 # @swapkit/wallet-bitget
 
+## 1.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/toolbox-cosmos@1.8.3
+  - @swapkit/toolbox-evm@1.8.3
+  - @swapkit/toolbox-solana@1.4.3
+  - @swapkit/toolbox-utxo@1.2.15
+
 ## 1.1.2
 
 ### Patch Changes

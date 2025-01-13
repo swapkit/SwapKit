@@ -1,5 +1,22 @@
 # @swapkit/sdk
 
+## 2.2.8
+
+### Patch Changes
+
+- [#1152](https://github.com/thorswap/SwapKit/pull/1152) [`912b8fe`](https://github.com/thorswap/SwapKit/commit/912b8fe2a8b2b02fc5a6497a8d77ffdc4d8ec6d2) Thanks [@towanTG](https://github.com/towanTG)! - Adapt tokens export in sdk
+
+- Updated dependencies [[`6baf5f7`](https://github.com/thorswap/SwapKit/commit/6baf5f708a99822517ac15514eb8e894cad35ff1), [`0d4fb6c`](https://github.com/thorswap/SwapKit/commit/0d4fb6c3bdf52f06135abd22eb4f4d252f5b6747), [`912b8fe`](https://github.com/thorswap/SwapKit/commit/912b8fe2a8b2b02fc5a6497a8d77ffdc4d8ec6d2)]:
+  - @swapkit/core@3.2.11
+  - @swapkit/tokens@2.2.1
+  - @swapkit/plugin-chainflip@2.0.5
+  - @swapkit/plugin-evm@1.3.15
+  - @swapkit/plugin-kado@0.2.9
+  - @swapkit/plugin-radix@1.3.11
+  - @swapkit/plugin-thorchain@2.2.9
+  - @swapkit/api@2.3.3
+  - @swapkit/wallets@2.0.11
+
 ## 2.2.7
 
 ### Patch Changes

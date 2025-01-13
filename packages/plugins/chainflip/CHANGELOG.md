@@ -1,5 +1,16 @@
 # @swapkit/plugin-chainflip
 
+## 2.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/api@2.3.3
+  - @swapkit/toolbox-evm@1.8.3
+  - @swapkit/toolbox-substrate@1.3.15
+  - @swapkit/toolbox-utxo@1.2.15
+
 ## 2.0.4
 
 ### Patch Changes

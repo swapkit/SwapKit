@@ -1,5 +1,13 @@
 # @swapkit/tokens
 
+## 2.2.1
+
+### Patch Changes
+
+- [#1154](https://github.com/thorswap/SwapKit/pull/1154) [`0d4fb6c`](https://github.com/thorswap/SwapKit/commit/0d4fb6c3bdf52f06135abd22eb4f4d252f5b6747) Thanks [@towanTG](https://github.com/towanTG)! - Removes duplicated btc.b and fixed uppercase symbol
+
+- [#1152](https://github.com/thorswap/SwapKit/pull/1152) [`912b8fe`](https://github.com/thorswap/SwapKit/commit/912b8fe2a8b2b02fc5a6497a8d77ffdc4d8ec6d2) Thanks [@towanTG](https://github.com/towanTG)! - Cleaning up export code. Each list can be imported individually or all at once via tokenLists
+
 ## 2.2.0
 
 ### Minor Changes
