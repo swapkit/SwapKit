@@ -39,6 +39,7 @@ const ChainToVultisigWallet: Partial<Record<Chain, string>> = {
   [Chain.Dash]: "dash",
   [Chain.Cosmos]: "cosmos",
   [Chain.Kujira]: "cosmos",
+  [Chain.Solana]: "solana",
 };
 
 export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider | undefined {
@@ -49,11 +50,9 @@ export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider
   switch (chain) {
     case Chain.Ethereum:
       return window.vultisig.ethereum;
-
     case Chain.Kujira:
     case Chain.Cosmos:
       return window.vultisig.cosmos;
-
     case Chain.Bitcoin:
       return window.vultisig.bitcoin;
     case Chain.BitcoinCash:
@@ -64,11 +63,12 @@ export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider
       return window.vultisig.litecoin;
     case Chain.THORChain:
       return window.vultisig.thorchain;
-
     case Chain.Maya:
-      return window.vultisig.mayachain;
+      return window.vultisig.maya;
     case Chain.Solana:
       return window.vultisig.solana;
+    case Chain.Dash:
+      return window.vultisig.dash;
 
     default:
       console.warn(`No provider found for chain: ${chain}. Returning undefined.`);
@@ -102,7 +102,6 @@ async function transaction({
 
 export async function getVultisigAddress(chain: Chain) {
   const provider = getVultisigProvider(chain) as VultisigProvider;
-
   if (!provider) {
     throw new SwapKitError({
       errorKey: "wallet_provider_not_found",
@@ -242,6 +241,10 @@ export async function getWalletForChain({
           return walletTransfer({ ...tx, to: "" }, "send_transaction");
         },
       };
+    }
+    // TODO: Implement Solana support
+    case Chain.Solana: {
+      throw new Error("TO BE IMPLEMENTED");
     }
 
     default:

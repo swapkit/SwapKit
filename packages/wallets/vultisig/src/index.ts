@@ -34,10 +34,11 @@ declare global {
       ethereum: VultisigProvider;
       litecoin: VultisigProvider;
       thorchain: VultisigProvider;
-      mayachain: VultisigProvider;
+      maya: VultisigProvider;
       solana: VultisigProvider;
       cosmos: VultisigProvider;
       kujira: VultisigProvider;
+      dash: VultisigProvider;
     };
   }
 }

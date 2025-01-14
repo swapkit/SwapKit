@@ -157,6 +157,7 @@ export const availableChainsByWallet = {
     Chain.Dogecoin,
     Chain.Litecoin,
     Chain.Bitcoin,
+    Chain.Solana,
   ]
 };
 
