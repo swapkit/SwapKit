@@ -134,7 +134,7 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
                       )?.price || 0,
                     )
                     .toFixed(4)}
-                  )
+                  ) ({route.providers.join(",")})
                 </button>
                 {/* {feeBestRoute && <div>{feeBestRoute.toString()}</div>} */}
               </div>

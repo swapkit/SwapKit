@@ -5,7 +5,7 @@ import {
   setRequestClientConfig,
 } from "@swapkit/helpers";
 
-import { getVultisigAddress, getWalletForChain } from "./helpers";
+import { getWalletForChain } from "./helpers";
 
 export const VULTISIG_SUPPORTED_CHAINS = [
   Chain.Ethereum,
@@ -27,24 +27,21 @@ function connectVultisig({
   return async function connectVultisig(chains: (typeof VULTISIG_SUPPORTED_CHAINS)[number][]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
     const promises = chains.map(async (chain) => {
-      let address = "";
-      try {
-        address = (await getVultisigAddress(chain)) as string;
-      } catch (error) {
-        console.error(`Error retrieving address for chain: ${chain}`, error);
-      }
       const walletMethods = await getWalletForChain({
         chain,
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,
       });
+
       addChain({
         ...walletMethods,
         chain,
         balance: [],
         walletType: WalletOption.VULTISIG,
-        address,
+        // FIXME: address is available on walletmethods but for some reason it's not being recognized as a property
+        // @ts-expect-error
+        address: walletMethods.address,
       });
     });
 

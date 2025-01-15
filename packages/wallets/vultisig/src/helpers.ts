@@ -40,6 +40,7 @@ const ChainToVultisigWallet: Partial<Record<Chain, string>> = {
   [Chain.Cosmos]: "cosmos",
   [Chain.Kujira]: "cosmos",
   [Chain.Solana]: "solana",
+  [Chain.Ethereum]: "ethereum",
 };
 
 export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider | undefined {
@@ -173,12 +174,16 @@ export async function getWalletForChain({
   if (!vultisig) throw new SwapKitError("wallet_vultisig_not_found");
   const vultiProvider = ChainToVultisigWallet[chain] as string;
 
+  if (vultiProvider in vultisig) {
+    throw new SwapKitError("wallet_vultisig_not_found");
+  }
+
+  const address = await getVultisigAddress(chain);
+
+  if (!address) throw new SwapKitError("wallet_vultisig_no_account_found");
+
   switch (chain) {
     case Chain.Ethereum: {
-      if (!(vultisig && "ethereum" in vultisig)) {
-        throw new SwapKitError("wallet_vultisig_not_found");
-      }
-
       const wallet = vultisig.ethereum;
 
       const { getProvider } = await import("@swapkit/toolbox-evm");
@@ -189,8 +194,6 @@ export async function getWalletForChain({
         covalentApiKey,
         ethereumWindowProvider: wallet,
       });
-
-      const address = (await getVultisigAddress(chain)) as string;
 
       const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
         evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
@@ -204,12 +207,13 @@ export async function getWalletForChain({
 
       const toolbox = getToolboxByChain(chain);
       return {
+        address,
         ...toolbox(),
         deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, to: "" }, "deposit_transaction"),
-        transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, to: "" }, "send_transaction"),
+        transfer: (tx: WalletTxParams) =>
+          walletTransfer({ ...tx, to: tx.recipient }, "send_transaction"),
       };
     }
-
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
     case Chain.Dash:
@@ -224,21 +228,23 @@ export async function getWalletForChain({
           walletTransfer({ ...tx, to: tx.recipient }, "send_transaction"),
       };
     }
-    case Chain.Kujira:
+    case Chain.Kujira: {
+      const { KujiraToolbox } = await import("@swapkit/toolbox-cosmos");
+      return {
+        address,
+        ...KujiraToolbox({ server: typeof api === "string" ? api : undefined }),
+        transfer: (tx: WalletTxParams) => {
+          return walletTransfer({ ...tx, to: tx.recipient }, "send_transaction");
+        },
+      };
+    }
     case Chain.Cosmos: {
-      if (!(vultisig && vultiProvider in vultisig)) {
-        throw new SwapKitError("wallet_vultisig_not_found");
-      }
-
-      const address = await getVultisigAddress(chain);
-
       const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
-
       return {
         address,
         ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
         transfer: (tx: WalletTxParams) => {
-          return walletTransfer({ ...tx, to: "" }, "send_transaction");
+          return walletTransfer({ ...tx, to: tx.recipient }, "send_transaction");
         },
       };
     }
