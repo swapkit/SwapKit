@@ -641,7 +641,6 @@ export const EVMToolbox = ({
   createTransferTx: (params: TransferParams) => createTransferTx(provider, params, signer),
   createApprovalTx: (params: ApproveParams) => createApprovalTx(provider, params, signer),
   signMessage: signMessage(signer),
-  signer,
 });
 
 /**
