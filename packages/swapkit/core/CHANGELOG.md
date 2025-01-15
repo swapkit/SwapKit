@@ -1,5 +1,14 @@
 # @swapkit/core
 
+## 3.2.13
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/plugin-evm@1.3.17
+  - @swapkit/helpers@2.4.2
+
 ## 3.2.12
 
 ### Patch Changes

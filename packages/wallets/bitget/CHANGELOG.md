@@ -1,5 +1,13 @@
 # @swapkit/wallet-bitget
 
+## 1.1.5
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/helpers@2.4.2
+
 ## 1.1.4
 
 ### Patch Changes

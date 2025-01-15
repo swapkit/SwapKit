@@ -1,5 +1,14 @@
 # @swapkit/toolbox-evm
 
+## 1.8.5
+
+### Patch Changes
+
+- [#1160](https://github.com/thorswap/SwapKit/pull/1160) [`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getTokenAddress for Base
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
 ## 1.8.4
 
 ### Patch Changes
