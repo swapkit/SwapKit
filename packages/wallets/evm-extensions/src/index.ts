@@ -12,7 +12,7 @@ import {
   setRequestClientConfig,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { AVAXToolbox } from "@swapkit/toolbox-evm";
+import type { NonETHToolbox } from "@swapkit/toolbox-evm";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 declare const window: {
@@ -78,7 +78,7 @@ export const getWeb3WalletMethods = async ({
         await switchEVMWalletNetwork(
           provider,
           ChainToHexChainId[chain],
-          (toolbox as ReturnType<typeof AVAXToolbox>).getNetworkParams(),
+          (toolbox as NonETHToolbox).getNetworkParams(),
         );
       } catch (_error) {
         throw new Error(`Failed to add/switch ${chain} network: ${chain}`);

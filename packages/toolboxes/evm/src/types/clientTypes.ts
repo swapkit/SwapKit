@@ -108,3 +108,11 @@ export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & {
 };
 
 export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
+
+export type NonETHToolbox =
+  | ReturnType<typeof ARBToolbox>
+  | ReturnType<typeof AVAXToolbox>
+  | ReturnType<typeof BSCToolbox>
+  | ReturnType<typeof MATICToolbox>
+  | ReturnType<typeof OPToolbox>
+  | ReturnType<typeof BASEToolbox>;

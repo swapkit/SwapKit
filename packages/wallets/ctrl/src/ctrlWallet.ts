@@ -11,7 +11,7 @@ import {
   filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
-import type { ARBToolbox, AVAXToolbox, BSCToolbox } from "@swapkit/toolbox-evm";
+import type { NonETHToolbox } from "@swapkit/toolbox-evm";
 
 import type { WalletTxParams } from "./walletHelpers";
 import {
@@ -139,15 +139,9 @@ async function getWalletMethodsForChain({
       try {
         chain !== Chain.Ethereum &&
           (await switchEVMWalletNetwork(
-            //@ts-expect-error
-            ethereumWindowProvider,
+            provider,
             ChainToHexChainId[chain],
-            (
-              toolbox as
-                | ReturnType<typeof AVAXToolbox>
-                | ReturnType<typeof BSCToolbox>
-                | ReturnType<typeof ARBToolbox>
-            ).getNetworkParams(),
+            (toolbox as NonETHToolbox).getNetworkParams(),
           ));
       } catch (_error) {
         throw new SwapKitError({
