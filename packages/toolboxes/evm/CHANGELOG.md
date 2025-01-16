@@ -1,5 +1,14 @@
 # @swapkit/toolbox-evm
 
+## 1.8.6
+
+### Patch Changes
+
+- [#1162](https://github.com/thorswap/SwapKit/pull/1162) [`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed) Thanks [@towanTG](https://github.com/towanTG)! - Reduces duplicated code and use ethers.BrowserProvider for ctrl
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
 ## 1.8.5
 
 ### Patch Changes
