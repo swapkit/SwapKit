@@ -10,17 +10,17 @@ export default function Send({
   inputAsset?: AssetValue;
 }) {
   const [inputAssetValue, setInput] = useState(inputAsset?.mul(0));
-  const [inputString, setInputString] = useState('');
+  const [inputString, setInputString] = useState("");
   const [recipient, setRecipient] = useState("");
 
   const handleInputChange = useCallback(
     (value: string) => {
-        if (!Number(value)) {
-            setInputString(value)
-            return
-        };
-        setInputString(value)
-        setInput(inputAssetValue ? inputAssetValue.set(value) : inputAsset?.set(value));
+      if (!Number(value)) {
+        setInputString(value);
+        return;
+      }
+      setInputString(value);
+      setInput(inputAssetValue ? inputAssetValue.set(value) : inputAsset?.set(value));
     },
     [inputAssetValue, inputAsset],
   );
@@ -61,10 +61,10 @@ export default function Send({
             <span>Input Amount:</span>
             <input
               onChange={(e) => {
-                handleInputChange(e.target.value)
-            }}
+                handleInputChange(e.target.value);
+              }}
               placeholder=""
-              value={!Number(inputString) ? inputString : inputAssetValue?.getValue('string')}
+              value={Number(inputString) ? inputAssetValue?.getValue("string") : inputString}
             />
           </div>
 
