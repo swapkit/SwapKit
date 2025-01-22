@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2025-01-08T11:01:22.840Z",
+  timestamp: "2025-01-22T13:31:15.921Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 99,
+  count: 95,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -200,16 +200,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.crv-0xd533a949740bb3306d119cc777fa900ba034cd52.png",
       ticker: "CRV",
-    },
-    {
-      address: "0xE97e496E8494232ee128c1a8cAe0b2B7936f3CaA",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.CURIO-0XE97E496E8494232EE128C1A8CAE0B2B7936F3CAA",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.curio-0xe97e496e8494232ee128c1a8cae0b2b7936f3caa.png",
-      ticker: "CURIO",
     },
     {
       address: "0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B",
@@ -432,16 +422,6 @@ export const list = {
       ticker: "INJ",
     },
     {
-      address: "0x6fB3e0A217407EFFf7Ca062D46c26E5d60a14d69",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.IOTX-0X6FB3E0A217407EFFF7CA062D46C26E5D60A14D69",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.iotx-0x6fb3e0a217407efff7ca062d46c26e5d60a14d69.png",
-      ticker: "IOTX",
-    },
-    {
       address: "0x579CEa1889991f68aCc35Ff5c3dd0621fF29b0C9",
       chain: "ETH",
       chainId: "1",
@@ -582,16 +562,6 @@ export const list = {
       ticker: "OCEAN",
     },
     {
-      address: "0x9e20461bc2c4c980f62f1B279D71734207a6A356",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.OMNI-0X9E20461BC2C4C980F62F1B279D71734207A6A356",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.omni-0x9e20461bc2c4c980f62f1b279d71734207a6a356.png",
-      ticker: "OMNI",
-    },
-    {
       address: "0xC88F47067dB2E25851317A2FDaE73a22c0777c37",
       chain: "ETH",
       chainId: "1",
@@ -730,16 +700,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.sil-0xbcda9e0658f4eecf56a0bd099e6dbc0c91f6a8c2.png",
       ticker: "SIL",
-    },
-    {
-      address: "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SNX-0XC011A73EE8576FB46F5E1C5751CA3B9FE0AF2A6F",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.snx-0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png",
-      ticker: "SNX",
     },
     {
       address: "0x090185f2135308BaD17527004364eBcC2D37e5F6",

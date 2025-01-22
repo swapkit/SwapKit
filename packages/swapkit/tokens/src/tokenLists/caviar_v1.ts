@@ -2,25 +2,15 @@ export const list = {
   provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
   name: "CAVIAR_V1",
-  timestamp: "2025-01-08T11:01:45.683Z",
+  timestamp: "2025-01-22T13:31:45.456Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 166,
+  count: 168,
   tokens: [
-    {
-      address: "resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
-      chain: "XRD",
-      chainId: "radix-mainnet",
-      decimals: 18,
-      identifier: "XRD.$CVX-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/xrd.$cvx-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9.png",
-      ticker: "$CVX",
-    },
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
       chain: "XRD",
@@ -230,6 +220,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.ctb-resource_rdx1thpjseu2zjy2cldlyxqckrj7nmgj6yhlaxvwa5s8m0fsu7ss9g7d27.png",
       ticker: "CTB",
+    },
+    {
+      address: "resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.CVX-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.cvx-resource_rdx1th04p2c55884yytgj0e8nq79ze9wjnvu4rpg9d7nh3t698cxdt0cr9.png",
+      ticker: "CVX",
     },
     {
       address: "resource_rdx1tk4y4ct50fzgyjygm7j3y6r3cw5rgsatyfnwdz64yp5t388v0atw8w",
@@ -1591,6 +1591,16 @@ export const list = {
       ticker: "xSHIB",
     },
     {
+      address: "resource_rdx1thkhj9gzgkd97m0fk79x0pd4y6qqhw60v6frh3nrhllxp83ma666jn",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 6,
+      identifier: "XRD.xTRX-resource_rdx1thkhj9gzgkd97m0fk79x0pd4y6qqhw60v6frh3nrhllxp83ma666jn",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xtrx-resource_rdx1thkhj9gzgkd97m0fk79x0pd4y6qqhw60v6frh3nrhllxp83ma666jn.png",
+      ticker: "xTRX",
+    },
+    {
       address: "resource_rdx1t5ytfqwtqjfyq2ku0n5r4d275h2uc9cx0s4l6fghaffgnvsatjw6hk",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -1639,6 +1649,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/xrd.xwld-resource_rdx1t5jlk3wlxrvml2a0aa59h8cjt59utuku8qt5mlt8s8590qt024km3y.png",
       ticker: "xWLD",
+    },
+    {
+      address: "resource_rdx1thc7rlr7hc9xh57q4slysppznam3py9h5spjm0jfu7x7t578gd6duk",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 7,
+      identifier: "XRD.xXLM-resource_rdx1thc7rlr7hc9xh57q4slysppznam3py9h5spjm0jfu7x7t578gd6duk",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/xrd.xxlm-resource_rdx1thc7rlr7hc9xh57q4slysppznam3py9h5spjm0jfu7x7t578gd6duk.png",
+      ticker: "xXLM",
     },
     {
       address: "resource_rdx1tk35r6nlyjnt0aqjv7re27gu72ly7d3dwehe9e5k2nwjaue8fxtpkv",

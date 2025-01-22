@@ -30,7 +30,7 @@ import {
   getNetwork,
   standardFeeRates,
 } from "../utils/index";
-import { validateAddress as validateBCHAddress } from "./bitcoinCash";
+import { validateAddress as validateBchAddress } from "./bitcoinCash";
 import type { BCHToolbox, BTCToolbox, DASHToolbox, DOGEToolbox, LTCToolbox } from "./index";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
@@ -118,8 +118,9 @@ const getBalance = async ({
   apiClient,
 }: { address: string } & UTXOBaseToolboxParams) => {
   const baseBalance = (await apiClient.getBalance(address)) || 0;
-
-  const balance = baseBalance / 10 ** BaseDecimal[chain];
+  const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
+    "string",
+  );
   const asset = await AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
 
   return [asset];
@@ -370,18 +371,18 @@ export const utxoValidateAddress = ({
   address: string;
 }) =>
   chain === Chain.BitcoinCash
-    ? validateBCHAddress(address)
+    ? validateBchAddress(address)
     : validateAddress({
         address,
         chain,
       });
 
 export type BaseUTXOWallet = ReturnType<typeof BaseUTXOToolbox>;
-type UTXOWalletType = {
+type UtxoWalletType = {
   [Chain.Bitcoin]: ReturnType<typeof BTCToolbox>;
   [Chain.BitcoinCash]: ReturnType<typeof BCHToolbox>;
   [Chain.Dogecoin]: ReturnType<typeof DOGEToolbox>;
   [Chain.Litecoin]: ReturnType<typeof LTCToolbox>;
   [Chain.Dash]: ReturnType<typeof DASHToolbox>;
 };
-export type UTXOWallets = { [chain in UTXOChain]: BaseUTXOWallet & UTXOWalletType[chain] };
+export type UTXOWallets = { [chain in UTXOChain]: BaseUTXOWallet & UtxoWalletType[chain] };
