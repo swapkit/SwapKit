@@ -1,5 +1,13 @@
 # @swapkit/plugin-radix
 
+## 1.3.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+  - @swapkit/api@2.3.5
+
 ## 1.3.12
 
 ### Patch Changes

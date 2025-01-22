@@ -1,5 +1,14 @@
 # @swapkit/plugin-evm
 
+## 1.3.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+  - @swapkit/api@2.3.5
+  - @swapkit/toolbox-evm@1.8.7
+
 ## 1.3.18
 
 ### Patch Changes

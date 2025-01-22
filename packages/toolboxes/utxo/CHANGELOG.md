@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.2.17
+
+### Patch Changes
+
+- [#1164](https://github.com/thorswap/SwapKit/pull/1164) [`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49) Thanks [@towanTG](https://github.com/towanTG)! - Adds safe conversion of blance from int number to string decimal
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 1.2.16
 
 ### Patch Changes
