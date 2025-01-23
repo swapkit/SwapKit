@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.2.18
+
+### Patch Changes
+
+- [#1167](https://github.com/thorswap/SwapKit/pull/1167) [`35dfd61`](https://github.com/thorswap/SwapKit/commit/35dfd61bd5daa724581fa0d82b484337d86b0848) Thanks [@towanTG](https://github.com/towanTG)! - Fixes offset calculation for UTXO unspent tx
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 1.2.17
 
 ### Patch Changes
