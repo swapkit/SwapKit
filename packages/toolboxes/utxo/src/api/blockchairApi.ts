@@ -146,39 +146,48 @@ const getUnspentTxs = async ({
   address,
   apiKey,
   offset = 0,
-}: BlockchairParams<{ offset?: number; address: string }>): Promise<
+  limit = 100,
+}: BlockchairParams<{ offset?: number; limit?: number; address: string }>): Promise<
   (UTXOType & { script_hex: string; is_confirmed: boolean })[]
 > => {
   if (!address) throw new Error("address is required");
   try {
-    const response = await blockchairRequest<BlockchairOutputsResponse[]>(
-      `${baseUrl(
-        chain,
-      )}/outputs?q=is_spent(false),recipient(${address})&limit=100&offset=${offset}`,
-      apiKey,
-    );
+    let allTxs: (UTXOType & { script_hex: string; is_confirmed: boolean })[] = [];
+    let hasMore = true;
+    let currentOffset = offset;
 
-    const txs = response
-      .filter(({ is_spent }) => !is_spent)
-      .map(({ script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
-        hash: transaction_hash,
-        index,
-        value,
-        txHex: spending_signature_hex,
-        script_hex,
-        is_confirmed: block_id !== -1,
-      })) as (UTXOType & { script_hex: string; is_confirmed: boolean })[];
+    while (hasMore) {
+      const response = await blockchairRequest<BlockchairOutputsResponse[]>(
+        `${baseUrl(
+          chain,
+        )}/outputs?q=is_spent(false),recipient(${address})&limit=${limit}&offset=${currentOffset}`,
+        apiKey,
+      );
 
-    if (response.length !== 100) return txs;
+      const txs = response
+        .filter(({ is_spent }) => !is_spent)
+        .map(
+          ({ script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
+            hash: transaction_hash,
+            index,
+            value,
+            txHex: spending_signature_hex,
+            script_hex,
+            is_confirmed: block_id !== -1,
+          }),
+        ) as (UTXOType & { script_hex: string; is_confirmed: boolean })[];
 
-    const nextBatch = await getUnspentTxs({
-      address,
-      chain,
-      apiKey,
-      offset: response?.[99]?.transaction_id,
-    });
+      allTxs = allTxs.concat(txs);
 
-    return txs.concat(nextBatch);
+      // If we got less than the limit, we've reached the end
+      if (response.length < limit) {
+        hasMore = false;
+      } else {
+        currentOffset += limit;
+      }
+    }
+
+    return allTxs;
   } catch (error) {
     console.error(error);
     return [];
