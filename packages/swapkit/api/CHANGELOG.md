@@ -1,5 +1,14 @@
 # @swapkit/api
 
+## 2.3.6
+
+### Patch Changes
+
+- [#1169](https://github.com/thorswap/SwapKit/pull/1169) [`c200679`](https://github.com/thorswap/SwapKit/commit/c200679267dfd42841e79f10e04a7add7dab5e10) Thanks [@towanTG](https://github.com/towanTG)! - Fixes usage of broker url for openening deposit channels
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 2.3.5
 
 ### Patch Changes
