@@ -348,9 +348,11 @@ export async function getTokenTradingPairs(
 
 export async function getChainflipDepositChannel({
   isDev = false,
+  baseUrl,
   body,
 }: {
   isDev?: boolean;
+  baseUrl?: string;
   body: BrokerDepositChannelParams;
 }) {
   const { destinationAddress } = body;
@@ -358,7 +360,7 @@ export async function getChainflipDepositChannel({
   if (!destinationAddress) {
     throw new SwapKitError("chainflip_broker_invalid_params");
   }
-  const url = `${getBaseUrl(isDev)}/channel`;
+  const url = `${baseUrl || getBaseUrl(isDev)}/channel`;
 
   const response = await RequestClient.post<DepositChannelResponse>(url, {
     json: body,
