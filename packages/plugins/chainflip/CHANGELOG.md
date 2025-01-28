@@ -1,5 +1,15 @@
 # @swapkit/plugin-chainflip
 
+## 2.0.12
+
+### Patch Changes
+
+- [#1172](https://github.com/thorswap/SwapKit/pull/1172) [`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for Chainflip DCA
+
+- Updated dependencies [[`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197)]:
+  - @swapkit/api@2.3.7
+  - @swapkit/helpers@2.4.3
+
 ## 2.0.11
 
 ### Patch Changes
