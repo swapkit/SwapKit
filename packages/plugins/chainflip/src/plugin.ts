@@ -80,7 +80,7 @@ function plugin({
 
   return {
     swap,
-    supportedSwapkitProviders: [ProviderName.CHAINFLIP],
+    supportedSwapkitProviders: [ProviderName.CHAINFLIP, ProviderName.CHAINFLIP_STREAMING],
   };
 }
 

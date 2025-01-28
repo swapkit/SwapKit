@@ -296,6 +296,7 @@ export async function getTokenTradingPairs(
   const UNCHAINABLE_PROVIDERS = [
     ProviderName.CAVIAR_V1,
     ProviderName.CHAINFLIP,
+    ProviderName.CHAINFLIP_STREAMING,
     ProviderName.MAYACHAIN,
     ProviderName.MAYACHAIN_STREAMING,
   ];

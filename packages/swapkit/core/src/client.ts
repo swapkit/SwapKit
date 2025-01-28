@@ -353,7 +353,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
 
         if (type === "swap") {
           const plugin = params.route.providers[0] as PluginNameEnum;
-          if (plugin === PluginNameEnum.CHAINFLIP) {
+          if ([PluginNameEnum.CHAINFLIP, PluginNameEnum.CHAINFLIP_STREAMING].includes(plugin)) {
             const txObject = await wallet.createTransferTx({
               from: wallet.address,
               recipient: wallet.address,
