@@ -1,5 +1,14 @@
 # @swapkit/toolbox-cosmos
 
+## 1.8.8
+
+### Patch Changes
+
+- [#1174](https://github.com/thorswap/SwapKit/pull/1174) [`0cc3d4a`](https://github.com/thorswap/SwapKit/commit/0cc3d4a2aff405b88417168925aa032b107328d4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes multisig signing and improves typing
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 1.8.7
 
 ### Patch Changes
