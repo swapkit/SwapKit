@@ -1,5 +1,14 @@
 # @swapkit/toolbox-cosmos
 
+## 1.8.9
+
+### Patch Changes
+
+- [#1176](https://github.com/thorswap/SwapKit/pull/1176) [`4afada5`](https://github.com/thorswap/SwapKit/commit/4afada5d5cf0073f7ec189614519d0c506874234) Thanks [@towanTG](https://github.com/towanTG)! - Fixes return type of tx creation if not signable
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 1.8.8
 
 ### Patch Changes

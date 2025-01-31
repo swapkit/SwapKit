@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 3.2.20
+
+### Patch Changes
+
+- Updated dependencies [[`4afada5`](https://github.com/thorswap/SwapKit/commit/4afada5d5cf0073f7ec189614519d0c506874234)]:
+  - @swapkit/toolbox-cosmos@1.8.9
+  - @swapkit/helpers@2.4.3
+
 ## 3.2.19
 
 ### Patch Changes
