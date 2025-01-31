@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.2.2
+
+### Patch Changes
+
+- [#1164](https://github.com/thorswap/SwapKit/pull/1164) [`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49) Thanks [@towanTG](https://github.com/towanTG)! - Removes broken kado tokenlist
+
 ## 2.2.1
 
 ### Patch Changes

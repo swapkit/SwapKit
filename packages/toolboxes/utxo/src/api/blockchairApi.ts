@@ -6,9 +6,13 @@ import type {
   BlockchairOutputsResponse,
   BlockchairRawTransactionResponse,
   BlockchairResponse,
-  UTXOType,
 } from "../types/index";
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
+type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
+  offset?: number;
+  limit?: number;
+  address: string;
+}>;
 
 const baseUrl = (chain: Chain) => `https://api.blockchair.com/${mapChainToBlockchairChain(chain)}`;
 
@@ -141,44 +145,57 @@ const getRawTx = async ({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
   }
 };
 
-const getUnspentTxs = async ({
+const fetchUnspentUtxoBatch = async ({
   chain,
   address,
   apiKey,
   offset = 0,
-}: BlockchairParams<{ offset?: number; address: string }>): Promise<
-  (UTXOType & { script_hex: string; is_confirmed: boolean })[]
+  limit = 100,
+}: BlockchairFetchUnspentUtxoParams) => {
+  const response = await blockchairRequest<BlockchairOutputsResponse[]>(
+    `${baseUrl(chain)}/outputs?q=is_spent(false),recipient(${address})&limit=${limit}&offset=${offset}`,
+    apiKey,
+  );
+
+  const txs = response
+    .filter(({ is_spent }) => !is_spent)
+    .map(({ script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
+      hash: transaction_hash,
+      index,
+      value,
+      txHex: spending_signature_hex,
+      script_hex,
+      is_confirmed: block_id !== -1,
+    }));
+
+  return txs;
+};
+
+const getUnspentUtxos = async ({
+  chain,
+  address,
+  apiKey,
+  offset = 0,
+  limit = 100,
+}: BlockchairFetchUnspentUtxoParams): Promise<
+  Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>
 > => {
   if (!address) throw new Error("address is required");
+
   try {
-    const response = await blockchairRequest<BlockchairOutputsResponse[]>(
-      `${baseUrl(
-        chain,
-      )}/outputs?q=is_spent(false),recipient(${address})&limit=100&offset=${offset}`,
-      apiKey,
-    );
+    const txs = await fetchUnspentUtxoBatch({ chain, address, apiKey, offset, limit });
 
-    const txs = response
-      .filter(({ is_spent }) => !is_spent)
-      .map(({ script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
-        hash: transaction_hash,
-        index,
-        value,
-        txHex: spending_signature_hex,
-        script_hex,
-        is_confirmed: block_id !== -1,
-      })) as (UTXOType & { script_hex: string; is_confirmed: boolean })[];
+    if (txs.length <= limit) return txs;
 
-    if (response.length !== 100) return txs;
-
-    const nextBatch = await getUnspentTxs({
-      address,
+    const nextBatch = await getUnspentUtxos({
       chain,
+      address,
       apiKey,
-      offset: response?.[99]?.transaction_id,
+      offset: offset + limit,
+      limit,
     });
 
-    return txs.concat(nextBatch);
+    return [...txs, ...nextBatch];
   } catch (error) {
     console.error(error);
     return [];
@@ -191,7 +208,7 @@ const scanUTXOs = async ({
   apiKey,
   fetchTxHex = true,
 }: BlockchairParams<{ address: string; fetchTxHex?: boolean }>) => {
-  const utxos = await getUnspentTxs({ chain, address, apiKey });
+  const utxos = await getUnspentUtxos({ chain, address, apiKey });
   const results = [];
 
   for (const { hash, index, script_hex, value } of utxos) {

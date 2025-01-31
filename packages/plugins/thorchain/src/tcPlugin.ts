@@ -10,6 +10,7 @@ import {
   type SwapKitPluginParams,
   type SwapParams,
   TCAvalancheDepositABI,
+  TCBaseDepositABI,
   TCBscDepositABI,
   TCEthereumVaultAbi,
   type UTXOChain,
@@ -74,16 +75,19 @@ function plugin({ getWallet, stagenet = false }: SwapKitPluginParams) {
 
         case Chain.Ethereum:
         case Chain.BinanceSmartChain:
+        case Chain.Base:
         case Chain.Avalanche: {
           const wallet = getWallet(chain);
           const { getChecksumAddressFromAsset } = await import("@swapkit/toolbox-evm");
 
-          const abi =
-            chain === Chain.Avalanche
-              ? TCAvalancheDepositABI
-              : chain === Chain.BinanceSmartChain
-                ? TCBscDepositABI
-                : TCEthereumVaultAbi;
+          const ChainSpecificAbi = {
+            [Chain.Avalanche]: TCAvalancheDepositABI,
+            [Chain.Base]: TCBaseDepositABI,
+            [Chain.BinanceSmartChain]: TCBscDepositABI,
+            [Chain.Ethereum]: TCEthereumVaultAbi,
+          };
+
+          const abi = ChainSpecificAbi[chain];
 
           return wallet.call<string>({
             abi,

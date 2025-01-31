@@ -61,7 +61,9 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
   const swap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
     if (!(inputAsset && outputAsset && inputAssetValue && skClient)) return;
-    const isChainFlip = route?.providers?.includes(ProviderName.CHAINFLIP);
+    const isChainFlip =
+      route?.providers?.includes(ProviderName.CHAINFLIP) ||
+      route?.providers?.includes(ProviderName.CHAINFLIP_STREAMING);
     if (isChainFlip) {
       await handleSwap(route, useChainflipBoost);
       return;

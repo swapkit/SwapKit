@@ -1,5 +1,37 @@
 # @swapkit/toolbox-evm
 
+## 1.8.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.8.6
+
+### Patch Changes
+
+- [#1162](https://github.com/thorswap/SwapKit/pull/1162) [`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed) Thanks [@towanTG](https://github.com/towanTG)! - Reduces duplicated code and use ethers.BrowserProvider for ctrl
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.8.5
+
+### Patch Changes
+
+- [#1160](https://github.com/thorswap/SwapKit/pull/1160) [`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getTokenAddress for Base
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
 ## 1.8.3
 
 ### Patch Changes

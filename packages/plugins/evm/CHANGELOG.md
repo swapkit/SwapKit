@@ -1,5 +1,55 @@
 # @swapkit/plugin-evm
 
+## 1.3.21
+
+### Patch Changes
+
+- Updated dependencies [[`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197)]:
+  - @swapkit/api@2.3.7
+  - @swapkit/helpers@2.4.3
+
+## 1.3.20
+
+### Patch Changes
+
+- Updated dependencies [[`c200679`](https://github.com/thorswap/SwapKit/commit/c200679267dfd42841e79f10e04a7add7dab5e10)]:
+  - @swapkit/api@2.3.6
+  - @swapkit/helpers@2.4.3
+
+## 1.3.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+  - @swapkit/api@2.3.5
+  - @swapkit/toolbox-evm@1.8.7
+
+## 1.3.18
+
+### Patch Changes
+
+- Updated dependencies [[`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed)]:
+  - @swapkit/toolbox-evm@1.8.6
+  - @swapkit/helpers@2.4.2
+
+## 1.3.17
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/helpers@2.4.2
+
+## 1.3.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/api@2.3.4
+  - @swapkit/toolbox-evm@1.8.4
+
 ## 1.3.15
 
 ### Patch Changes

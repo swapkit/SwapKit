@@ -1,5 +1,99 @@
 # @swapkit/core
 
+## 3.2.20
+
+### Patch Changes
+
+- Updated dependencies [[`4afada5`](https://github.com/thorswap/SwapKit/commit/4afada5d5cf0073f7ec189614519d0c506874234)]:
+  - @swapkit/toolbox-cosmos@1.8.9
+  - @swapkit/helpers@2.4.3
+
+## 3.2.19
+
+### Patch Changes
+
+- Updated dependencies [[`0cc3d4a`](https://github.com/thorswap/SwapKit/commit/0cc3d4a2aff405b88417168925aa032b107328d4)]:
+  - @swapkit/toolbox-cosmos@1.8.8
+  - @swapkit/helpers@2.4.3
+
+## 3.2.18
+
+### Patch Changes
+
+- [#1172](https://github.com/thorswap/SwapKit/pull/1172) [`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for Chainflip DCA
+
+- Updated dependencies [[`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197)]:
+  - @swapkit/api@2.3.7
+  - @swapkit/plugin-evm@1.3.21
+  - @swapkit/toolbox-cosmos@1.8.7
+  - @swapkit/helpers@2.4.3
+
+## 3.2.17
+
+### Patch Changes
+
+- Updated dependencies [[`c200679`](https://github.com/thorswap/SwapKit/commit/c200679267dfd42841e79f10e04a7add7dab5e10)]:
+  - @swapkit/api@2.3.6
+  - @swapkit/plugin-evm@1.3.20
+  - @swapkit/toolbox-cosmos@1.8.6
+  - @swapkit/helpers@2.4.3
+
+## 3.2.16
+
+### Patch Changes
+
+- Updated dependencies [[`35dfd61`](https://github.com/thorswap/SwapKit/commit/35dfd61bd5daa724581fa0d82b484337d86b0848)]:
+  - @swapkit/toolbox-utxo@1.2.18
+  - @swapkit/helpers@2.4.3
+
+## 3.2.15
+
+### Patch Changes
+
+- Updated dependencies [[`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49)]:
+  - @swapkit/toolbox-utxo@1.2.17
+  - @swapkit/helpers@2.4.3
+  - @swapkit/plugin-evm@1.3.19
+  - @swapkit/api@2.3.5
+  - @swapkit/toolbox-cosmos@1.8.5
+  - @swapkit/toolbox-evm@1.8.7
+  - @swapkit/toolbox-radix@1.2.33
+  - @swapkit/toolbox-solana@1.4.5
+  - @swapkit/toolbox-substrate@1.3.17
+
+## 3.2.14
+
+### Patch Changes
+
+- Updated dependencies [[`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed)]:
+  - @swapkit/toolbox-evm@1.8.6
+  - @swapkit/plugin-evm@1.3.18
+  - @swapkit/helpers@2.4.2
+
+## 3.2.13
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/plugin-evm@1.3.17
+  - @swapkit/helpers@2.4.2
+
+## 3.2.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/plugin-evm@1.3.16
+  - @swapkit/api@2.3.4
+  - @swapkit/toolbox-cosmos@1.8.4
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-radix@1.2.32
+  - @swapkit/toolbox-solana@1.4.4
+  - @swapkit/toolbox-substrate@1.3.16
+  - @swapkit/toolbox-utxo@1.2.16
+
 ## 3.2.11
 
 ### Patch Changes

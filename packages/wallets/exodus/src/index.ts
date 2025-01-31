@@ -11,7 +11,7 @@ import {
   setRequestClientConfig,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import { type AVAXToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
+import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
 import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import { BrowserProvider, type Eip1193Provider } from "ethers";
 import {
@@ -136,7 +136,7 @@ export const getWalletMethods = async ({
           (await switchEVMWalletNetwork(
             browserProvider,
             ChainToHexChainId[chain],
-            (toolbox as ReturnType<typeof AVAXToolbox>).getNetworkParams(),
+            (toolbox as NonETHToolbox).getNetworkParams(),
           ));
       } catch (_error) {
         throw new Error(`Failed to add/switch ${chain} network: ${chain}`);

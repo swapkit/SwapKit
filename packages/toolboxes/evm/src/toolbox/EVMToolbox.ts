@@ -514,9 +514,10 @@ export const getChecksumAddressFromAsset = (asset: Asset, chain: EVMChain) => {
 export const getTokenAddress = ({ chain, symbol, ticker }: Asset, baseAssetChain: EVMChain) => {
   try {
     if (
+      // TODO: refactor this to use simplify the logic
       (chain === baseAssetChain && symbol === baseAssetChain && ticker === baseAssetChain) ||
       (chain === Chain.BinanceSmartChain && symbol === "BNB" && ticker === "BNB") ||
-      (chain === Chain.Arbitrum && symbol === "ETH" && ticker === "ETH")
+      ([Chain.Arbitrum, Chain.Base].includes(chain) && symbol === "ETH" && ticker === "ETH")
     ) {
       return baseAssetAddress[baseAssetChain];
     }

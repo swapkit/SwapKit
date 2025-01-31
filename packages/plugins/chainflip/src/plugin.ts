@@ -60,6 +60,7 @@ function plugin({
     }
 
     const { depositAddress } = await swapkitApiEndpoints.getChainflipDepositChannel({
+      baseUrl: brokerUrl,
       body: {
         ...chainflip,
         destinationAddress: recipient || chainflip.destinationAddress,
@@ -79,7 +80,7 @@ function plugin({
 
   return {
     swap,
-    supportedSwapkitProviders: [ProviderName.CHAINFLIP],
+    supportedSwapkitProviders: [ProviderName.CHAINFLIP, ProviderName.CHAINFLIP_STREAMING],
   };
 }
 

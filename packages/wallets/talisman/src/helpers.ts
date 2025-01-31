@@ -10,13 +10,7 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type {
-  ARBToolbox,
-  BASEToolbox,
-  BSCToolbox,
-  MATICToolbox,
-  OPToolbox,
-} from "@swapkit/toolbox-evm";
+import type { NonETHToolbox } from "@swapkit/toolbox-evm";
 import type { InjectedWindow } from "@swapkit/toolbox-substrate";
 import type { Eip1193Provider } from "ethers";
 
@@ -63,14 +57,7 @@ export const getWeb3WalletMethods = async ({
       (await switchEVMWalletNetwork(
         provider,
         ChainToHexChainId[chain],
-        (
-          toolbox as
-            | ReturnType<typeof ARBToolbox>
-            | ReturnType<typeof BASEToolbox>
-            | ReturnType<typeof BSCToolbox>
-            | ReturnType<typeof MATICToolbox>
-            | ReturnType<typeof OPToolbox>
-        ).getNetworkParams(),
+        (toolbox as NonETHToolbox).getNetworkParams(),
       ));
   } catch (_error) {
     throw new SwapKitError({

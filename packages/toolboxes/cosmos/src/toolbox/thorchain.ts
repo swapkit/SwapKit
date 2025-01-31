@@ -65,7 +65,21 @@ const signMultisigTx = async (
   tx: string,
   chain: Chain.THORChain | Chain.Maya,
 ) => {
-  const { msgs, accountNumber, sequence, chainId, fee, memo } = JSON.parse(tx);
+  const {
+    msgs,
+    accountNumber,
+    sequence,
+    chainId,
+    fee,
+    memo,
+  }: {
+    msgs: ReturnType<typeof buildAminoMsg>[];
+    accountNumber: number;
+    sequence: number;
+    chainId: ChainId;
+    fee: ReturnType<typeof getDefaultChainFee>;
+    memo: string;
+  } = JSON.parse(tx);
 
   const address = (await wallet.getAccounts())?.[0]?.address || "";
   const aminoTypes = await createDefaultAminoTypes(chain);
@@ -78,6 +92,7 @@ const signMultisigTx = async (
   const msgForSigning = [];
 
   for (const msg of msgs) {
+    // @ts-expect-error wrong typing of convertToSignable - investigation needed
     const signMsg = await convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
@@ -92,7 +107,7 @@ const signMultisigTx = async (
 
   const bodyBytes = await buildEncodedTxBody({
     chain,
-    msgs: msgs.map((msg: any) => prepareMessageForBroadcast(msg)),
+    msgs: msgs.map(prepareMessageForBroadcast),
     memo,
   });
 
