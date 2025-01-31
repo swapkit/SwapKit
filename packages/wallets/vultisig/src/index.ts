@@ -35,7 +35,6 @@ declare global {
       litecoin: VultisigProvider;
       thorchain: VultisigProvider;
       maya: VultisigProvider;
-      solana: VultisigProvider;
       cosmos: VultisigProvider;
       kujira: VultisigProvider;
       dash: VultisigProvider;

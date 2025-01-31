@@ -39,7 +39,6 @@ const ChainToVultisigWallet: Partial<Record<Chain, string>> = {
   [Chain.Dash]: "dash",
   [Chain.Cosmos]: "cosmos",
   [Chain.Kujira]: "cosmos",
-  [Chain.Solana]: "solana",
   [Chain.Ethereum]: "ethereum",
 };
 
@@ -66,8 +65,7 @@ export function getVultisigProvider<T extends Chain>(chain: T): VultisigProvider
       return window.vultisig.thorchain;
     case Chain.Maya:
       return window.vultisig.maya;
-    case Chain.Solana:
-      return window.vultisig.solana;
+
     case Chain.Dash:
       return window.vultisig.dash;
 
@@ -247,10 +245,6 @@ export async function getWalletForChain({
           return walletTransfer({ ...tx, to: tx.recipient }, "send_transaction");
         },
       };
-    }
-    // TODO: Implement Solana support
-    case Chain.Solana: {
-      throw new Error("TO BE IMPLEMENTED");
     }
 
     default:
