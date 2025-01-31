@@ -90,6 +90,7 @@ export const buildAminoMsg = ({
   return msg;
 };
 
+// TODO I think the msg typing is wrong it should be not prepared for broadcast
 export const convertToSignable = (
   msg: MsgDepositForBroadcast | MsgSendForBroadcast,
   chain: Chain.THORChain | Chain.Maya,
@@ -128,16 +129,17 @@ export const buildTransferTx =
     asSignable = true,
   }: ThorchainTransferTxParams) => {
     const account = await getAccount({ rpcUrl, from });
-    const preparedMessage = prepareMessageForBroadcast(
-      transferMsgAmino({
-        from,
-        recipient,
-        assetValue,
-        chain,
-      }),
-    );
 
-    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
+    const transferMsg = transferMsgAmino({
+      from,
+      recipient,
+      assetValue,
+      chain,
+    });
+
+    const msg = asSignable
+      ? convertToSignable(prepareMessageForBroadcast(transferMsg), chain)
+      : transferMsg;
 
     const transaction = {
       chainId: ChainToChainId[chain],
@@ -156,11 +158,11 @@ export const buildDepositTx =
   async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorcahinDepositTxParams) => {
     const account = await getAccount({ rpcUrl, from });
 
-    const preparedMessage = prepareMessageForBroadcast<MsgDeposit>(
-      depositMsgAmino({ from, assetValue, memo, chain }),
-    );
+    const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
 
-    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
+    const msg = asSignable
+      ? convertToSignable(prepareMessageForBroadcast<MsgDeposit>(depositMsg), chain)
+      : depositMsg;
 
     const transaction = {
       chainId: ChainToChainId[chain],

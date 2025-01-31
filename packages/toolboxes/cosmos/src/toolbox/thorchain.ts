@@ -73,7 +73,7 @@ const signMultisigTx = async (
     fee,
     memo,
   }: {
-    msgs: ReturnType<typeof prepareMessageForBroadcast>[];
+    msgs: ReturnType<typeof buildAminoMsg>[];
     accountNumber: number;
     sequence: number;
     chainId: ChainId;
@@ -92,6 +92,7 @@ const signMultisigTx = async (
   const msgForSigning = [];
 
   for (const msg of msgs) {
+    // @ts-expect-error wrong typing of convertToSignable - investigation needed
     const signMsg = await convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
@@ -106,7 +107,7 @@ const signMultisigTx = async (
 
   const bodyBytes = await buildEncodedTxBody({
     chain,
-    msgs,
+    msgs: msgs.map(prepareMessageForBroadcast),
     memo,
   });
 
