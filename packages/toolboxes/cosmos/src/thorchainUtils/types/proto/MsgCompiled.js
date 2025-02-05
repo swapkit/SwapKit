@@ -449,7 +449,7 @@ $root.common = (() => {
       if (object.decimals != null)
         if ($util.Long) (message.decimals = $util.Long.fromValue(object.decimals)).unsigned = false;
         else if (typeof object.decimals === "string")
-          message.decimals = parseInt(object.decimals, 10);
+          message.decimals = Number.parseInt(object.decimals, 10);
         else if (typeof object.decimals === "number") message.decimals = object.decimals;
         else if (typeof object.decimals === "object")
           message.decimals = new $util.LongBits(

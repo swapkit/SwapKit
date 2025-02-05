@@ -32,49 +32,21 @@ const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
 
 export const computeHash = (
   hashParams:
-    | {
-        apiKey: string;
-        method: "POST";
-        payload: any;
-      }
-    | {
-        apiKey: string;
-        method: "GET";
-        url: string;
-      },
+    | { apiKey: string; method: "POST"; payload: any }
+    | { apiKey: string; method: "GET"; url: string },
 ): string => {
-  const { method } = hashParams;
-  switch (method) {
-    case "POST":
-      return computeHashForPost(hashParams);
-    case "GET":
-      return computeHashForGet(hashParams);
-    default:
-      throw new SwapKitError("api_v2_invalid_method_key_hash", {
-        message: `Invalid method: ${method}`,
-      });
+  if (!["POST", "GET"].includes(hashParams.method)) {
+    throw new SwapKitError("api_v2_invalid_method_key_hash", {
+      message: `Invalid method for params: ${JSON.stringify(hashParams)}`,
+    });
   }
-};
 
-export const computeHashForGet = ({
-  url,
-  apiKey,
-}: {
-  url: string;
-  apiKey: string;
-}): string => {
-  return crypto.createHash("sha256").update(`${url}${apiKey}`, "utf8").digest("hex");
-};
+  const data =
+    hashParams.method === "POST"
+      ? JSON.stringify(hashParams.payload)
+      : `${hashParams.url}${hashParams.apiKey}`;
 
-export const computeHashForPost = ({
-  apiKey,
-  payload,
-}: {
-  apiKey: string;
-  payload: any;
-}): string => {
-  const normalizedBody = JSON.stringify(payload);
-  return crypto.createHash("sha256").update(`${normalizedBody}${apiKey}`, "utf8").digest("hex");
+  return crypto.createHash("sha256").update(data, "utf8").digest("hex");
 };
 
 export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
@@ -91,18 +63,6 @@ export function getTrackerDetails(payload: TrackerParams, apiKey?: string, refer
     json: payload,
     headers: getAuthHeaders(hash, apiKey, referer),
   });
-}
-
-/**
- * @deprecated Use getSwapQuote instead
- */
-export function getSwapQuoteV2<T extends boolean>(
-  searchParams: QuoteRequest,
-  isDev?: T,
-  apiKey?: string,
-  referer?: string,
-) {
-  return getSwapQuote(searchParams, isDev, apiKey, referer);
 }
 
 export async function getSwapQuote<T extends boolean>(
@@ -157,18 +117,6 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
   return RequestClient.get<TokenListProvidersResponse>(url, {
     headers: getAuthHeaders(hash, apiKey, referer),
   });
-}
-
-/**
- * @deprecated Use getTokenList instead
- */
-export function getTokenListV2(
-  provider: ProviderName,
-  isDev = false,
-  apiKey?: string,
-  referer?: string,
-) {
-  return getTokenList(provider, isDev, apiKey, referer);
 }
 
 export function getTokenList(
@@ -270,7 +218,7 @@ export async function getTokenTradingPairs(
   if (!providers.length) return tradingPairs;
 
   const providerRequests = providers.map(async (provider) => {
-    const tokenList = await getTokenListV2(provider, isDev, apiKey, referer);
+    const tokenList = await getTokenList(provider, isDev, apiKey, referer);
     return tokenList;
   });
 
@@ -309,6 +257,11 @@ export async function getTokenTradingPairs(
       (acc, { data }) => (data?.tokens ? acc.concat(data.tokens) : acc),
       [] as TokensResponseV2["tokens"],
     );
+
+  /**
+   * The motherfucking mess there is
+   */
+
   for (const { data } of providersData) {
     if (!data?.tokens) return;
     const isProviderChainable =

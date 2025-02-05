@@ -213,16 +213,6 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  /**
-   * @deprecated - use toolbox directly or use getAddressValidator() function
-   */
-  function validateAddress(_: { address: string; chain: Chain }) {
-    throw new SwapKitError("not_implemented", {
-      message:
-        "validateAddress is deprecated - use toolbox directly or import { getAddressValidator } from '@swapkit/core'",
-    });
-  }
-
   async function getWalletWithBalance<T extends Chain>(chain: T, potentialScamFilter = true) {
     if (chain === Chain.Fiat || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
@@ -450,7 +440,6 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     signMessage,
     swap,
     transfer,
-    validateAddress,
     verifyMessage,
     api,
   };
