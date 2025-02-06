@@ -1,14 +1,5 @@
-import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
-import type { Account } from "@cosmjs/stargate";
-import {
-  type AssetValue,
-  BaseDecimal,
-  ChainId,
-  DerivationPath,
-  SwapKitNumber,
-} from "@swapkit/helpers";
+import { BaseDecimal, Chain, ChainId, DerivationPath, SwapKitNumber } from "@swapkit/helpers";
 
-import { CosmosClient } from "../cosmosClient";
 import {
   type KujiraToolboxType,
   type ToolboxParams,
@@ -30,27 +21,12 @@ async function getFees() {
   };
 }
 
-export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType => {
-  const client = new CosmosClient({
-    server: server || "https://lcd-kujira.synergynodes.com/",
-    chainId: ChainId.Kujira,
-    prefix: "kujira",
-  });
-
-  const cosmosToolbox: {
-    validateAddress: (address: string) => boolean;
-    getAddressFromMnemonic: (phrase: string) => Promise<string>;
-    getAccount: (address: string) => Promise<Account | null>;
-    getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
-    transfer: (params: TransferParams) => Promise<string>;
-    getSigner: (phrase: string) => Promise<OfflineDirectSigner>;
-    getSignerFromPrivateKey: (privateKey: Uint8Array) => Promise<OfflineDirectSigner>;
-    getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
-    createPrivateKeyFromPhrase: (phrase: string) => Promise<Uint8Array>;
-  } = BaseCosmosToolbox({
-    decimal: BaseDecimal.KUJI,
+export const KujiraToolbox = ({ rpcUrl, prefix }: ToolboxParams = {}): KujiraToolboxType => {
+  const cosmosToolbox = BaseCosmosToolbox({
     derivationPath: DerivationPath.KUJI,
-    client,
+    chain: Chain.Kujira,
+    rpcUrl,
+    prefix,
   });
 
   return {
@@ -58,8 +34,9 @@ export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType
     getFees,
     buildTransferTx: buildNativeTransferTx,
     getBalance: async (address: string, _potentialScamFilter?: boolean) => {
-      const denomBalances = await client.getBalance(address);
-      return await Promise.all(
+      const denomBalances = await cosmosToolbox.getBalanceAsDenoms(address);
+
+      const balances = await Promise.all(
         denomBalances
           .filter(({ denom }) => {
             if (!denom || denom.includes("IBC/")) return false;
@@ -71,6 +48,8 @@ export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType
           })
           .map(({ denom, amount }) => getAssetFromDenom(denom, amount)),
       );
+
+      return balances;
     },
     transfer: async (params: TransferParams) => {
       const gasFees = await getFees();
@@ -78,13 +57,13 @@ export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType
       return cosmosToolbox.transfer({
         ...params,
         fee: params.fee || {
+          gas: "200000",
           amount: [
             {
               denom: "ukuji",
               amount: gasFees[params.feeOptionKey || "fast"].getBaseValue("string") || "1000",
             },
           ],
-          gas: "200000",
         },
       });
     },

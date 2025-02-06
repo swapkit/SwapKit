@@ -9,7 +9,7 @@ import {
 } from "../util";
 
 import { createDefaultAminoTypes, createDefaultRegistry } from "./registry";
-import type { ThorcahinDepositTxParams, ThorchainTransferTxParams } from "./types/client-types";
+import type { ThorchainDepositTxParams, ThorchainTransferTxParams } from "./types/client-types";
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
@@ -155,7 +155,7 @@ export const buildTransferTx =
 
 export const buildDepositTx =
   (rpcUrl: string) =>
-  async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorcahinDepositTxParams) => {
+  async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorchainDepositTxParams) => {
     const account = await getAccount({ rpcUrl, from });
 
     const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });

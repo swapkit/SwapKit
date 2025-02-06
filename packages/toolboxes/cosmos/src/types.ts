@@ -28,8 +28,8 @@ export type TransferParams = {
 };
 
 export type ToolboxParams = {
-  server?: string;
-  stagenet?: boolean;
+  rpcUrl?: string;
+  prefix?: string;
 };
 
 export type Signer = {

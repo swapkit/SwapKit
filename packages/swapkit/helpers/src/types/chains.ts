@@ -182,6 +182,12 @@ export const UTXOChains = [
 
 export type CosmosChain = Chain.Cosmos | Chain.THORChain | Chain.Maya | Chain.Kujira;
 export const CosmosChains = [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira] as const;
+export const CosmosChainPrefixes = {
+  [Chain.Cosmos]: "cosmos",
+  [Chain.THORChain]: "thor",
+  [Chain.Maya]: "maya",
+  [Chain.Kujira]: "kujira",
+} as Record<CosmosChain, string>;
 
 export const TCSupportedChains = [
   Chain.Avalanche,
@@ -230,6 +236,13 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
 };
 
+export const NODE_URLS = {
+  [Chain.THORChain]: "https://thornode.thorswap.net",
+  [Chain.Maya]: "https://mayanode.mayachain.info",
+  [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
+  [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",
+} as const;
+
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: [
     "https://arb-mainnet.g.alchemy.com/v2/demo",
@@ -266,7 +279,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   ],
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
-  [Chain.THORChain]: ["https://thornode.ninerealms.com", "https://thornode.thorswap.net"],
+  [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
 };

@@ -6,22 +6,23 @@ import {
   pubkeyToAddress,
 } from "@cosmjs/amino";
 import { Secp256k1, Secp256k1Signature, stringToPath } from "@cosmjs/crypto";
-import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import { type Account, makeMultisignedTxBytes } from "@cosmjs/stargate";
 import { base64 } from "@scure/base";
 import {
   type AssetValue,
   BaseDecimal,
   Chain,
-  ChainId,
+  type ChainId,
+  CosmosChainPrefixes,
   DerivationPath,
   FeeOption,
+  NODE_URLS,
+  RPC_URLS,
   RequestClient,
   SwapKitError,
   SwapKitNumber,
 } from "@swapkit/helpers";
 
-import { CosmosClient } from "../cosmosClient";
 import {
   buildAminoMsg,
   buildDepositTx,
@@ -93,7 +94,7 @@ const signMultisigTx = async (
 
   for (const msg of msgs) {
     // @ts-expect-error wrong typing of convertToSignable - investigation needed
-    const signMsg = await convertToSignable(msg, chain);
+    const signMsg = convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
 
@@ -191,59 +192,30 @@ function verifySignature(getAccount: (address: string) => Promise<Account | null
 
 export const BaseThorchainToolbox = ({
   chain,
-  stagenet,
+  prefix,
+  nodeUrl,
+  rpcUrl,
 }: ToolboxParams & {
   chain: Chain.THORChain | Chain.Maya;
+  nodeUrl: string;
+  rpcUrl: string;
 }): ThorchainToolboxType => {
   const isThorchain = chain === Chain.THORChain;
-  const isMaya = chain === Chain.Maya;
-  const chainId = isThorchain ? ChainId.THORChain : ChainId.Maya;
-
-  const prefix = `${stagenet ? "s" : ""}${chain.toLowerCase()}`;
+  const chainPrefix = prefix || CosmosChainPrefixes[chain];
   const derivationPath = DerivationPath[chain];
-  const rpcUrl = getRPC(chainId, stagenet);
-  const nodeUrl = stagenet
-    ? isMaya
-      ? "https://stagenet.mayanode.mayachain.info"
-      : "https://stagenet-thornode.ninerealms.com"
-    : isMaya
-      ? "https://mayanode.mayachain.info"
-      : "https://thornode.thorswap.net";
 
-  const client = new CosmosClient({
-    server: nodeUrl,
-    chainId,
-    prefix,
-    stagenet,
-  });
+  const cosmosToolbox = BaseCosmosToolbox({ chain, derivationPath, prefix: chainPrefix, rpcUrl });
   const defaultFee = getDefaultChainFee(chain);
 
-  const cosmosToolbox: {
-    createPrivateKeyFromPhrase: (phrase: string) => Promise<Uint8Array>;
-    getAccount: (address: string) => Promise<Account | null>;
-    validateAddress: (address: string) => boolean;
-    getAddressFromMnemonic: (phrase: string) => Promise<string>;
-    getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
-    getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
-    getSigner: (phrase: string) => Promise<OfflineDirectSigner>;
-    getSignerFromPrivateKey: (privateKey: Uint8Array) => Promise<OfflineDirectSigner>;
-  } = BaseCosmosToolbox({
-    client,
-    derivationPath,
-    decimal: BaseDecimal[chain],
-  });
-
-  const loadAddressBalances = async (address: string) => {
+  function loadAddressBalances(address: string) {
     try {
-      const balances: AssetValue[] = await cosmosToolbox.getBalance(address);
-
-      return balances;
+      return cosmosToolbox.getBalance(address);
     } catch (error) {
       return Promise.reject(error);
     }
-  };
+  }
 
-  const getFees = async () => {
+  async function getFees() {
     let fee: SwapKitNumber;
 
     const constantsUrl = `${nodeUrl}/${isThorchain ? "thorchain" : "mayachain"}/constants}`;
@@ -253,24 +225,17 @@ export const BaseThorchainToolbox = ({
         int_64_values: { NativeTransactionFee: nativeFee },
       } = await RequestClient.get<ThorchainConstantsResponse>(constantsUrl);
 
-      // validate data
-      if (!nativeFee || Number.isNaN(nativeFee) || nativeFee < 0)
+      if (!nativeFee || Number.isNaN(nativeFee) || nativeFee < 0) {
         throw Error(`Invalid nativeFee: ${nativeFee.toString()}`);
+      }
 
       fee = new SwapKitNumber(nativeFee);
     } catch {
-      fee = new SwapKitNumber({
-        value: isThorchain ? 0.02 : 1,
-        decimal: BaseDecimal[chain],
-      });
+      fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal[chain] });
     }
 
-    return {
-      [FeeOption.Average]: fee,
-      [FeeOption.Fast]: fee,
-      [FeeOption.Fastest]: fee,
-    };
-  };
+    return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
+  }
 
   const transfer = async ({
     from,
@@ -313,25 +278,47 @@ export const BaseThorchainToolbox = ({
     createDefaultRegistry,
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({
       derivationPath,
-      prefix,
+      prefix: chainPrefix,
     }),
     signMultisigTx: (wallet: Secp256k1HdWallet, tx: string) => signMultisigTx(wallet, tx, chain),
-    broadcastMultisigTx: broadcastMultisigTx({ prefix, rpcUrl }),
+    broadcastMultisigTx: broadcastMultisigTx({ prefix: chainPrefix, rpcUrl }),
     createMultisig,
     importSignature,
     loadAddressBalances,
-    pubkeyToAddress: __REEXPORT__pubkeyToAddress(prefix),
+    pubkeyToAddress: __REEXPORT__pubkeyToAddress(chainPrefix),
     signWithPrivateKey,
     verifySignature: verifySignature(cosmosToolbox.getAccount),
   };
 };
 
-export const ThorchainToolbox = ({ stagenet }: ToolboxParams = {}): ThorchainToolboxType => {
-  return BaseThorchainToolbox({ chain: Chain.THORChain, stagenet });
+export const ThorchainToolbox = ({
+  prefix,
+  rpcUrl,
+  nodeUrl,
+}: ToolboxParams & { nodeUrl?: string } = {}): ThorchainToolboxType => {
+  const chain = Chain.THORChain;
+
+  return BaseThorchainToolbox({
+    chain,
+    prefix,
+    rpcUrl: rpcUrl || RPC_URLS[chain],
+    nodeUrl: nodeUrl || NODE_URLS[chain],
+  });
 };
 
-export const MayaToolbox = ({ stagenet }: ToolboxParams = {}): MayaToolboxType => {
-  return BaseThorchainToolbox({ chain: Chain.Maya, stagenet });
+export const MayaToolbox = ({
+  prefix,
+  rpcUrl,
+  nodeUrl,
+}: ToolboxParams & { nodeUrl?: string } = {}): MayaToolboxType => {
+  const chain = Chain.Maya;
+
+  return BaseThorchainToolbox({
+    chain,
+    prefix,
+    rpcUrl: rpcUrl || RPC_URLS[chain],
+    nodeUrl: nodeUrl || NODE_URLS[chain],
+  });
 };
 
 export type ThorchainWallet = Omit<ReturnType<typeof BaseThorchainToolbox>, "signMessage">;

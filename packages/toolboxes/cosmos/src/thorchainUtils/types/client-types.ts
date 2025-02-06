@@ -94,7 +94,7 @@ export type ThorchainTransferTxParams = {
   asSignable?: boolean;
 };
 
-export type ThorcahinDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
+export type ThorchainDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
 
 export type BaseCosmosToolboxType = {
   getAccount: (address: string) => Promise<CosmosAccount | null>;
@@ -104,6 +104,7 @@ export type BaseCosmosToolboxType = {
   getAddressFromMnemonic: (phrase: string) => Promise<string>;
   getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
   getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
+  getBalanceAsDenoms: (address: string) => Promise<{ denom: string; amount: string }[]>;
   transfer: (params: TransferParams) => Promise<string>;
   getFeeRateFromThorswap?: (chainId: ChainId, safeDefault: number) => Promise<number>;
   createPrivateKeyFromPhrase: (phrase: string) => Promise<Uint8Array>;
@@ -120,7 +121,7 @@ export type ThorchainToolboxType = BaseCosmosToolboxType & {
     params: ThorchainTransferTxParams,
   ) => ReturnType<ReturnType<typeof buildTransferTx>>;
   buildDepositTx: (
-    params: ThorcahinDepositTxParams,
+    params: ThorchainDepositTxParams,
   ) => ReturnType<ReturnType<typeof buildDepositTx>>;
   buildEncodedTxBody: typeof buildEncodedTxBody;
   prepareMessageForBroadcast: typeof prepareMessageForBroadcast;

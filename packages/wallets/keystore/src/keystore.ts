@@ -42,7 +42,6 @@ type KeystoreOptions = {
 };
 
 type Params = KeystoreOptions & {
-  api?: any;
   rpcUrl?: string;
   chain: Chain;
   phrase: string;
@@ -50,7 +49,6 @@ type Params = KeystoreOptions & {
 };
 
 const getWalletMethodsForChain = async ({
-  api,
   rpcUrl,
   chain,
   phrase,
@@ -58,7 +56,6 @@ const getWalletMethodsForChain = async ({
   covalentApiKey,
   blockchairApiKey,
   derivationPath,
-  stagenet,
 }: Params) => {
   switch (chain) {
     case Chain.Arbitrum:
@@ -74,14 +71,14 @@ const getWalletMethodsForChain = async ({
       const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
       const provider = getProvider(chain, rpcUrl);
       const wallet = HDNodeWallet.fromPhrase(phrase).connect(provider);
-      const params = { ...keys, api, provider, signer: wallet };
+      const params = { ...keys, provider, signer: wallet };
 
       return { address: wallet.address, walletMethods: getToolboxByChain(chain)(params) };
     }
 
     case Chain.BitcoinCash: {
       const { BCHToolbox } = await import("@swapkit/toolbox-utxo");
-      const toolbox = BCHToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient: api });
+      const toolbox = BCHToolbox({ rpcUrl, apiKey: blockchairApiKey });
       const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);
 
@@ -112,11 +109,7 @@ const getWalletMethodsForChain = async ({
     case Chain.Litecoin: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
 
-      const toolbox = getToolboxByChain(chain)({
-        rpcUrl,
-        apiKey: blockchairApiKey,
-        apiClient: api,
-      });
+      const toolbox = getToolboxByChain(chain)({ rpcUrl, apiKey: blockchairApiKey });
 
       const keys = toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);
@@ -138,7 +131,7 @@ const getWalletMethodsForChain = async ({
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
-      const toolbox = getToolboxByChain(chain)({ server: api, stagenet });
+      const toolbox = getToolboxByChain(chain)({ rpcUrl });
       const address = await toolbox.getAddressFromMnemonic(phrase);
       const signer = await toolbox.getSigner(phrase);
 
@@ -151,7 +144,7 @@ const getWalletMethodsForChain = async ({
     case Chain.THORChain: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
 
-      const toolbox = getToolboxByChain(chain)({ server: api, stagenet });
+      const toolbox = getToolboxByChain(chain)({ rpcUrl, nodeUrl });
       const signer = await toolbox.getSigner(phrase);
       const address = await toolbox.getAddressFromMnemonic(phrase);
 
@@ -209,9 +202,8 @@ const getWalletMethodsForChain = async ({
 
 function connectKeystore({
   addChain,
-  apis,
+  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
   rpcUrls,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
 }: ConnectWalletParams) {
   return async function connectKeystore(
     chains: Chain[],
@@ -251,13 +243,11 @@ function connectKeystore({
       const { address, walletMethods } = await getWalletMethodsForChain({
         derivationPath,
         chain,
-        api: apis[chain],
         rpcUrl: rpcUrls[chain],
         covalentApiKey,
         ethplorerApiKey,
         phrase,
         blockchairApiKey,
-        stagenet,
       });
 
       addChain({

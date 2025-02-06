@@ -124,8 +124,8 @@ export const getWalletForChain = async ({
       const [{ address }] = accounts;
 
       return {
-        address,
         ...GaiaToolbox({ server: api }),
+        address,
         transfer: cosmosTransfer(rpcUrl),
       };
     }
