@@ -174,26 +174,12 @@ async function getWalletMethodsForChain({
         });
       }
 
-      const apiWithFallback =
-        api || chain === Chain.Ethereum
-          ? ethplorerApi(apiKey)
-          : covalentApi({ apiKey: apiKey as string, chainId: ChainToChainId[chain] });
-
       return prepareNetworkSwitch({
         provider: window.xfi?.ethereum,
         chainId: ChainToHexChainId[chain],
         toolbox: {
           ...toolbox,
           ...ctrlMethods,
-          // Overwrite ctrl getBalance due to race condition in their app when connecting multiple evm wallets
-          getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({
-              chain,
-              provider: getProvider(chain),
-              api: apiWithFallback,
-              address,
-              potentialScamFilter,
-            }),
         },
       });
     }
