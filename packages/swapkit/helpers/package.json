@@ -3,7 +3,8 @@
   "description": "SwapKit - Helpers",
   "dependencies": {
     "@swapkit/contracts": "workspace:*",
-    "@swapkit/tokens": "workspace:*"
+    "@swapkit/tokens": "workspace:*",
+    "zustand": "5.0.3"
   },
   "devDependencies": {
     "@swapkit/toolbox-cosmos": "workspace:*",
@@ -13,10 +14,7 @@
     "@swapkit/toolbox-substrate": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*"
   },
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",

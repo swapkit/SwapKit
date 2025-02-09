@@ -1,7 +1,7 @@
 import {
+  type AddChainType,
   type AssetValue,
   Chain,
-  type ConnectWalletParams,
   CosmosChains,
   type DerivationPathArray,
   EVMChains,
@@ -204,7 +204,7 @@ function connectKeystore({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
   rpcUrls,
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectKeystore(
     chains: Chain[],
     phrase: string,

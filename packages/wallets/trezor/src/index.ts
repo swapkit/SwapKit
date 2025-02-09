@@ -1,6 +1,6 @@
 import {
+  type AddChainType,
   Chain,
-  type ConnectWalletParams,
   type DerivationPathArray,
   FeeOption,
   SwapKitError,
@@ -262,7 +262,7 @@ function connectTrezor({
     trezorManifest = { appUrl: "", email: "" },
     thorswapApiKey,
   },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
     const supportedChains = filterSupportedChains(
       chains,

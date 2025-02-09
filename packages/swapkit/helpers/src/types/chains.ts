@@ -236,12 +236,15 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
 };
 
-export const NODE_URLS = {
+export const NODE_URLS: Record<
+  Chain.THORChain | Chain.Maya | StagenetChain.THORChain | StagenetChain.Maya,
+  string
+> = {
   [Chain.THORChain]: "https://thornode.thorswap.net",
   [Chain.Maya]: "https://mayanode.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
   [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",
-} as const;
+};
 
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: [

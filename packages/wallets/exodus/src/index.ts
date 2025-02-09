@@ -1,8 +1,8 @@
 import type { Wallet } from "@passkeys/core";
 import {
+  type AddChainType,
   Chain,
   ChainToHexChainId,
-  type ConnectWalletParams,
   EVMChains,
   WalletOption,
   ensureEVMApiKeys,
@@ -159,7 +159,7 @@ export const getWalletMethods = async ({
 function connectExodusWallet({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
     if (!wallet) throw new Error("Missing Exodus Wallet instance");
     setRequestClientConfig({ apiKey: thorswapApiKey });

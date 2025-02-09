@@ -1,27 +1,20 @@
-import type {
-  EVMTransaction,
-  PriceRequest,
-  QuoteRequest,
-  QuoteResponseRoute,
-  TrackerParams,
-} from "@swapkit/api";
-import { SwapKitApi } from "@swapkit/api";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
 
 import {
   ApproveMode,
   type ApproveReturnType,
   AssetValue,
   Chain,
-  type ChainApis,
   type ChainWallet,
   type ConditionalAssetValueReturn,
-  type ConnectConfig,
   type CryptoChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
   type FullWallet,
   ProviderName as PluginNameEnum,
+  SKConfig,
+  type SKConfigState,
   SwapKitError,
   type SwapKitPluginParams,
   type SwapKitWallet,
@@ -48,28 +41,26 @@ export type WalletsType = {
 };
 
 export type SwapKitParams<P, W> = {
-  apis?: ChainApis;
-  config?: ConnectConfig;
+  config?: SKConfigState;
   plugins?: P;
-  rpcUrls?: { [key in CryptoChain]?: string };
   wallets?: W;
 };
 
 export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType>({
-  apis = {},
-  config = {},
+  config,
   plugins,
-  rpcUrls = {},
   wallets = {} as Wallets,
 }: SwapKitParams<Plugins, Wallets> = {}) {
-  const stagenet = config.stagenet;
-  const isDev = config.swapkitConfig?.isDev;
+  if (config) {
+    SKConfig.set(config);
+  }
+
   type PluginName = keyof Plugins;
   const connectedWallets = {} as FullWallet;
 
   const availablePlugins = Object.entries(plugins || {}).reduce(
     (acc, [pluginName, { plugin, config: pluginConfig }]) => {
-      const methods = plugin({ getWallet, stagenet, config: pluginConfig ?? config });
+      const methods = plugin({ getWallet, config: pluginConfig });
 
       // @ts-expect-error key is generic and cannot be indexed
       acc[pluginName] = methods;
@@ -80,7 +71,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
 
   const connectWalletMethods = Object.entries(wallets).reduce(
     (acc, [walletName, wallet]) => {
-      const connectWallet = wallet({ addChain, config, apis, rpcUrls });
+      const connectWallet = wallet(addChain);
 
       // @ts-expect-error walletName is generic and cannot be indexed
       acc[walletName] = connectWallet;
@@ -330,15 +321,14 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
         }
 
         if (type === "approve" && !assetValue.isGasAsset) {
-          return wallet.estimateTransactionFee(
-            await wallet.createApprovalTx({
-              assetAddress: assetValue.address as string,
-              spenderAddress: params.contractAddress as string,
-              amount: assetValue.getBaseValue("bigint"),
-              from: wallet.address,
-            }),
-            feeOptionKey,
-          );
+          const approvalTx = await wallet.createApprovalTx({
+            assetAddress: assetValue.address as string,
+            spenderAddress: params.contractAddress as string,
+            amount: assetValue.getBaseValue("bigint"),
+            from: wallet.address,
+          });
+
+          return wallet.estimateTransactionFee(approvalTx, feeOptionKey);
         }
 
         if (type === "swap") {
@@ -349,6 +339,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
               recipient: wallet.address,
               assetValue,
             });
+
             return wallet.estimateTransactionFee(txObject, feeOptionKey);
           }
 
@@ -400,25 +391,26 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     }
   }
 
-  const swapkitConfig = config.swapkitConfig || {};
-  const swapkitApiKey = swapkitConfig?.swapkitApiKey || config?.swapkitApiKey;
-  const referer = swapkitConfig.useHashedApiKey ? swapkitConfig.referer : undefined;
+  // TODO: REMOVE THAT:
+  // const swapkitConfig = config.swapkitConfig || {};
+  // const swapkitApiKey = swapkitConfig?.swapkitApiKey || config?.swapkitApiKey;
+  // const referer = swapkitConfig.useHashedApiKey ? swapkitConfig.referer : undefined;
 
-  const api = swapkitApiKey
-    ? {
-        getGasRate: () => SwapKitApi.getGasRate(isDev, swapkitApiKey, referer),
-        getPrice: (body: PriceRequest) => SwapKitApi.getPrice(body, isDev, swapkitApiKey, referer),
-        getSwapQuote: (params: QuoteRequest) =>
-          SwapKitApi.getSwapQuote(params, isDev, swapkitApiKey, referer),
-        getTokenList: (provider: string) => SwapKitApi.getTokenList(provider),
-        getTokenListProviders: () =>
-          SwapKitApi.getTokenListProvidersV2(isDev, swapkitApiKey, referer),
-        getTokenTradingPairs: (providers: PluginNameEnum[]) =>
-          SwapKitApi.getTokenTradingPairs(providers, isDev, swapkitApiKey, referer),
-        getTrackerDetails: (payload: TrackerParams) =>
-          SwapKitApi.getTrackerDetails(payload, swapkitApiKey, referer),
-      }
-    : { undefined };
+  // const api = swapkitApiKey
+  //   ? {
+  //       getGasRate: () => SwapKitApi.getGasRate(isDev, swapkitApiKey, referer),
+  //       getPrice: (body: PriceRequest) => SwapKitApi.getPrice(body, isDev, swapkitApiKey, referer),
+  //       getSwapQuote: (params: QuoteRequest) =>
+  //         SwapKitApi.getSwapQuote(params, isDev, swapkitApiKey, referer),
+  //       getTokenList: (provider: string) => SwapKitApi.getTokenList(provider),
+  //       getTokenListProviders: () =>
+  //         SwapKitApi.getTokenListProvidersV2(isDev, swapkitApiKey, referer),
+  //       getTokenTradingPairs: (providers: PluginNameEnum[]) =>
+  //         SwapKitApi.getTokenTradingPairs(providers, isDev, swapkitApiKey, referer),
+  //       getTrackerDetails: (payload: TrackerParams) =>
+  //         SwapKitApi.getTrackerDetails(payload, swapkitApiKey, referer),
+  //     }
+  //   : { undefined };
 
   return {
     ...availablePlugins,
@@ -441,6 +433,5 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     swap,
     transfer,
     verifyMessage,
-    api,
   };
 }

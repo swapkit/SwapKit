@@ -1,6 +1,6 @@
 import {
+  type AddChainType,
   Chain,
-  type ConnectWalletParams,
   type DerivationPathArray,
   type EVMChain,
   WalletOption,
@@ -161,7 +161,7 @@ function connectKeepkey({
     keepkeyConfig,
     thorswapApiKey,
   },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectKeepkey(
     chains: Chain[],
     // @deprecated - use derivationPathMap instead

@@ -1,6 +1,6 @@
 import {
+  type AddChainType,
   Chain,
-  type ConnectWalletParams,
   WalletOption,
   filterSupportedChains,
   setRequestClientConfig,
@@ -22,7 +22,7 @@ const TALISMAN_SUPPORTED_CHAINS = [
 function connectTalisman({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectTalisman(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 

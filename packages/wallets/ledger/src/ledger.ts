@@ -1,7 +1,7 @@
 import {
+  type AddChainType,
   Chain,
   ChainId,
-  type ConnectWalletParams,
   type DerivationPathArray,
   FeeOption,
   StagenetChain,
@@ -62,8 +62,8 @@ const getToolbox = async ({
   ethplorerApiKey,
   rpcUrl,
   stagenet,
-}: ConnectWalletParams["config"] & {
-  apis: ConnectWalletParams["apis"];
+}: AddChainType["config"] & {
+  apis: AddChainType["apis"];
   chain: LedgerSupportedChain;
   derivationPath?: DerivationPathArray;
   rpcUrl?: string;
@@ -260,7 +260,7 @@ function connectLedger({
   apis,
   rpcUrls,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectLedger(chains: Chain[], derivationPath?: DerivationPathArray) {
     const supportedChains = filterSupportedChains(
       chains,

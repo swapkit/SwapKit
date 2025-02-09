@@ -1,4 +1,5 @@
 import {
+  type AddChainType,
   AssetValue,
   Chain,
   type ChainId,
@@ -6,7 +7,6 @@ import {
   ChainToHexChainId,
   ChainToRPC,
   type ConnectConfig,
-  type ConnectWalletParams,
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
@@ -177,7 +177,7 @@ async function getWalletMethodsForChain({
 function connectKeepkeyBex({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async (chains: Chain[]) => {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 

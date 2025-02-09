@@ -9,7 +9,6 @@ import { Secp256k1, Secp256k1Signature, stringToPath } from "@cosmjs/crypto";
 import { type Account, makeMultisignedTxBytes } from "@cosmjs/stargate";
 import { base64 } from "@scure/base";
 import {
-  type AssetValue,
   BaseDecimal,
   Chain,
   type ChainId,
@@ -45,7 +44,6 @@ import {
   createSigningStargateClient,
   createStargateClient,
   getDefaultChainFee,
-  getRPC,
 } from "../util";
 
 import { BaseCosmosToolbox } from "./BaseCosmosToolbox";

@@ -1,6 +1,6 @@
 import {
+  type AddChainType,
   Chain,
-  type ConnectWalletParams,
   EVMChains,
   WalletOption,
   filterSupportedChains,
@@ -19,7 +19,7 @@ export const BITGET_SUPPORTED_CHAINS = [
 function connectBitget({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectBitget(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 

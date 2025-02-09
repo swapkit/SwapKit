@@ -1,8 +1,8 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 import {
+  type AddChainType,
   Chain,
   ChainId,
-  type ConnectWalletParams,
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
@@ -253,7 +253,7 @@ function connectWalletconnect({
     covalentApiKey,
     stagenet = false,
   },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectWallet(
     chains: Chain[],
     walletconnectOptions?: SignClientTypes.Options,

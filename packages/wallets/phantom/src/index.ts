@@ -1,8 +1,8 @@
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import {
+  type AddChainType,
   type AssetValue,
   Chain,
-  type ConnectWalletParams,
   SwapKitError,
   WalletOption,
   type WalletTxParams,
@@ -139,7 +139,7 @@ function connectPhantom({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
   rpcUrls,
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectPhantom(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 

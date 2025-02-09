@@ -1,6 +1,6 @@
 import {
+  type AddChainType,
   Chain,
-  type ConnectWalletParams,
   WalletOption,
   filterSupportedChains,
   setRequestClientConfig,
@@ -12,7 +12,7 @@ const POLKADOT_SUPPORTED_CHAINS = [Chain.Polkadot] as const;
 function connectPolkadotJs({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectPolkadotJs(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 

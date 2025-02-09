@@ -87,6 +87,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
+      // @ts-expect-error
       plugins: [nodePolyfills()],
     },
   },

@@ -1,96 +1,9 @@
-import type { RadixNetwork } from "@swapkit/toolbox-radix";
 import type { Chain } from "./chains";
-import type { ChainApis } from "./sdk";
 import type { ChainWallet, CryptoChain } from "./wallet";
 
-/**
- * @optional for swapkit API access
- */
-type SwapkitConfig = {
-  swapkitConfig?: {
-    isDev?: boolean;
-    swapkitApiKey?: string;
-    useHashedApiKey?: boolean;
-    referer?: string;
-  };
-  swapkitApiKey?: string;
-};
-
-export type ConnectConfig = SwapkitConfig & {
-  stagenet?: boolean;
-  /**
-   * @required for AVAX & BSC
-   */
-  thorswapApiKey?: string;
-  /**
-   * @required for AVAX & BSC
-   */
-  covalentApiKey?: string;
-  /**
-   * @required for ETH
-   */
-  ethplorerApiKey?: string;
-  /**
-   * @required for BTC, BCH, LTC, DOGE
-   */
-  blockchairApiKey?: string;
-  /**
-   * @required for Walletconnect
-   */
-  walletConnectProjectId?: string;
-  /**
-   * @optional for Trezor config
-   */
-  trezorManifest?: {
-    email: string;
-    appUrl: string;
-  };
-  /**
-   * @optional for KeepKey config
-   */
-  keepkeyConfig?: {
-    apiKey: string;
-    pairingInfo: {
-      name: string;
-      imageUrl: string;
-      basePath: string;
-      url: string;
-    };
-  };
-  /**
-   * @deprecated use chainflipBrokerConfig
-   * @optional for setting the chainflip broker url
-   */
-  chainflipBrokerUrl?: string;
-  /**
-   * @optional for setting the chainflip broker url
-   */
-  chainflipBrokerConfig?: {
-    useChainflipSDKBroker?: boolean;
-    chainflipBrokerUrl: string;
-  };
-  /**
-   * @optional for setting the radix wallet
-   */
-  radixDappConfig?: {
-    dAppDefinitionAddress: string;
-    applicationName: string;
-    applicationVersion: string;
-    network: RadixNetwork;
-  };
-
-  /**
-   * @optional for setting the kado api key
-   */
-  kadoApiKey?: string;
-};
-
-export type ConnectWalletParams<M = { [key in string]: any }> = {
-  addChain: <T extends CryptoChain>(params: ChainWallet<T> & M) => void;
-  apis: ChainApis;
-  config: ConnectConfig;
-  rpcUrls: { [chain in CryptoChain]?: string };
-};
+export type AddChainType<M = { [key in string]: any }> = <T extends CryptoChain>(
+  params: ChainWallet<T> & M,
+) => void;
 
 export type Witness = {
   value: number;

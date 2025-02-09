@@ -7,9 +7,9 @@ import {
 } from "@radixdlt/babylon-gateway-api-sdk";
 import { DataRequestBuilder, RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
 import {
+  type AddChainType,
   AssetValue,
   Chain,
-  type ConnectWalletParams,
   WalletOption,
   setRequestClientConfig,
 } from "@swapkit/helpers";
@@ -211,7 +211,7 @@ function connectRadixWallet({
       applicationVersion: "0.0.1",
     },
   },
-}: ConnectWalletParams & {
+}: AddChainType & {
   radixDappConfig?: RadixDappConfig;
 }) {
   return async function connectRadixWallet(_chains: Chain[]) {

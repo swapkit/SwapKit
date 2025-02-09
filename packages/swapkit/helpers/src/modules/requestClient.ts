@@ -1,3 +1,5 @@
+import { SKConfig } from "./swapKitConfig";
+
 type Options = Parameters<typeof fetch>[1] & {
   headers?: Record<string, string>;
   apiKey?: string;
@@ -14,8 +16,16 @@ export const defaultRequestHeaders =
     ? ({} as Record<string, string>)
     : { referrer: "https://sk.thorswap.net", referer: "https://sk.thorswap.net" };
 
+/**
+ * @deprecated use SKConfig.setApiKey instead
+ */
 export function setRequestClientConfig({ apiKey, ...config }: Options) {
-  clientConfig = { ...config, apiKey };
+  console.warn("Use SKConfig.setApiKey(apiKey) instead");
+  if (apiKey) {
+    SKConfig.setApiKey("swapKit", apiKey);
+  }
+
+  clientConfig = config;
 }
 
 async function fetchWithConfig(
@@ -36,8 +46,8 @@ async function fetchWithConfig(
   if (searchParams) {
     urlInstance.search = new URLSearchParams(searchParams).toString();
   }
-  if (clientConfig.apiKey) {
-    headers["x-api-key"] = clientConfig.apiKey;
+  if (SKConfig.get("apiKeys").swapKit) {
+    headers["x-api-key"] = SKConfig.get("apiKeys").swapKit;
   }
 
   try {

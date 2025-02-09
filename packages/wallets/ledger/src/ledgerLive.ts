@@ -7,10 +7,10 @@ import type {
 } from "@ledgerhq/wallet-api-client";
 import { FAMILIES, WalletAPIClient, WindowMessageTransport } from "@ledgerhq/wallet-api-client";
 import {
+  type AddChainType,
   AssetValue,
   BaseDecimal,
   Chain,
-  type ConnectWalletParams,
   FeeOption,
   SwapKitError,
   SwapKitNumber,
@@ -428,7 +428,7 @@ export const CosmosLedgerLive = () => {
 function connectLedgerLive({
   addChain,
   config: { thorswapApiKey, ethplorerApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectLedgerLive(
     chains: (typeof LEDGER_LIVE_SUPPORTED_CHAINS)[number][],
     ledgerLiveAccount: LedgerAccount,

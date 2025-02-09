@@ -1,7 +1,7 @@
 import {
+  type AddChainType,
   Chain,
   ChainToHexChainId,
-  type ConnectWalletParams,
   type EVMChain,
   EVMChains,
   type EthereumWindowProvider,
@@ -96,7 +96,7 @@ export const getWeb3WalletMethods = async ({
 function connectEVMWallet({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
-}: ConnectWalletParams) {
+}: AddChainType) {
   return async function connectEVMWallet(
     chains: Chain[],
     walletType: EVMWalletOptions = WalletOption.METAMASK,

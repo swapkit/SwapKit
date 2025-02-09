@@ -171,6 +171,13 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       (resolve, reject) => {
         try {
           import("@swapkit/tokens").then((tokenPackage) => {
+            if (!tokenPackage.tokenLists) {
+              console.warn(
+                "No token lists found in @swapkit/tokens package. Ensure you have installed it correctly.",
+              );
+              return;
+            }
+
             for (const tokenList of Object.values(tokenPackage.tokenLists)) {
               for (const { identifier, chain, ...rest } of tokenList.tokens) {
                 staticTokensMap.set(

@@ -1,10 +1,10 @@
 import type { Keplr } from "@keplr-wallet/types";
 import {
+  type AddChainType,
   type AssetValue,
   Chain,
   ChainId,
   ChainToChainId,
-  type ConnectWalletParams,
   WalletOption,
   type WalletTxParams,
   filterSupportedChains,
@@ -27,7 +27,7 @@ type TransferParams = WalletTxParams & { assetValue: AssetValue };
 function connectKeplr({
   addChain,
   config: { thorswapApiKey },
-}: ConnectWalletParams<{
+}: AddChainType<{
   transfer: (params: TransferParams) => Promise<string>;
 }>) {
   return async function connectKeplr(chains: Chain[], extensionKey: "keplr" | "leap" = "keplr") {
