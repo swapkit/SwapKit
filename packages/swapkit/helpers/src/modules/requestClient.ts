@@ -1,7 +1,6 @@
 type Options = Parameters<typeof fetch>[1] & {
   headers?: Record<string, string>;
   apiKey?: string;
-  method?: "GET" | "POST";
   onError?: (error: any) => any;
   responseHandler?: (response: any) => any;
   searchParams?: Record<string, string>;
@@ -19,57 +18,54 @@ export function setRequestClientConfig({ apiKey, ...config }: Options) {
   clientConfig = { ...config, apiKey };
 }
 
-async function fetchWithConfig(url: string, options: Options) {
-  const { apiKey, ...config } = clientConfig;
+async function fetchWithConfig(
+  { url, method }: { url: string; method: "GET" | "POST" },
+  options: Options = {},
+) {
   const { searchParams, json, body } = options;
+  const urlInstance = new URL(url);
+  const bodyToSend = json ? JSON.stringify(json) : body;
+
   const headers = {
     ...defaultRequestHeaders,
-    ...config.headers,
+    ...clientConfig.headers,
     ...options.headers,
     ...(json ? { "Content-Type": "application/json" } : {}),
   } as Record<string, string>;
 
-  const bodyToSend = json ? JSON.stringify(json) : body;
-
-  const urlInstance = new URL(url);
   if (searchParams) {
     urlInstance.search = new URLSearchParams(searchParams).toString();
   }
-
-  if (apiKey) headers["x-api-key"] = apiKey;
+  if (clientConfig.apiKey) {
+    headers["x-api-key"] = clientConfig.apiKey;
+  }
 
   try {
     const response = await fetch(urlInstance.toString(), {
-      ...config,
+      ...clientConfig,
       ...options,
+      method,
       body: bodyToSend,
       headers,
     });
     const body = await response.json();
 
-    if (options.responseHandler) return options.responseHandler(body);
-
-    return body;
+    return options.responseHandler?.(body) || body;
   } catch (error) {
-    if (options.onError) return options.onError(error);
-
-    console.error(error);
+    return options.onError?.(error) || console.error(error);
   }
 }
 
 export const RequestClient = {
   get: async <T>(url: string, options?: Options): Promise<T> =>
-    fetchWithConfig(url, { ...options, method: "GET" }),
+    fetchWithConfig({ url, method: "GET" }, options),
   post: async <T>(url: string, options?: Options): Promise<T> =>
-    fetchWithConfig(url, { ...options, method: "POST" }),
-  extend: (options: Options) => {
-    const extendedConfig = { ...clientConfig, ...options };
-    return {
-      get: async <T>(url: string, options?: Options): Promise<T> =>
-        fetchWithConfig(url, { ...extendedConfig, ...options, method: "GET" }),
-      post: async <T>(url: string, options?: Options): Promise<T> =>
-        fetchWithConfig(url, { ...extendedConfig, ...options, method: "POST" }),
-      extend: (newOptions: Options) => RequestClient.extend({ ...extendedConfig, ...newOptions }),
-    };
-  },
+    fetchWithConfig({ url, method: "POST" }, options),
+  extend: (extendOptions: Options) => ({
+    get: async <T>(url: string, options?: Options): Promise<T> =>
+      fetchWithConfig({ url, method: "GET" }, { ...extendOptions, ...options }),
+    post: async <T>(url: string, options?: Options): Promise<T> =>
+      fetchWithConfig({ url, method: "POST" }, { ...extendOptions, ...options }),
+    extend: (newOptions: Options) => RequestClient.extend({ ...extendOptions, ...newOptions }),
+  }),
 };
