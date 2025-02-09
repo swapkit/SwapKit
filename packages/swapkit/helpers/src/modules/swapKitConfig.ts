@@ -14,7 +14,6 @@ type Integrations = {
 };
 
 const initialState = {
-  envs: { isDev: false, isStagenet: false },
   explorerUrls: EXPLORER_URLS,
   integrations: {} as Integrations,
   nodeUrls: NODE_URLS,
@@ -27,6 +26,13 @@ const initialState = {
     keepKey: "",
     swapKit: "",
     walletConnectProjectId: "",
+  },
+  envs: {
+    apiUrl: "https://api.swapkit.dev",
+    devApiUrl: "https://dev-api.swapkit.dev",
+    isDev: false,
+    isStagenet: false,
+    referer: "https://swapkit.dev",
   },
 };
 type SKState = typeof initialState;

@@ -7,6 +7,9 @@ import {
 } from "@swapkit/helpers";
 import type { LiquidityPositionRaw, PoolDetail, PoolPeriod, THORNameDetails } from "./types";
 
+/**
+ * TODO: Move to SKConfig under midgardUrls.microgard
+ */
 const baseUrl = "https://mu.thorswap.net";
 
 export function getTHORNameDetails(thorname: string) {
@@ -40,41 +43,41 @@ export async function getTNSChainAddress({ chain, tns }: { chain: Chain; tns: st
 export async function getLiquidityPositions(addresses: string[]) {
   const rawLiquidityPositions = await getLiquidityPositionsRaw(addresses);
 
-  return rawLiquidityPositions.map((rawPosition) => ({
-    assetRegisteredAddress: rawPosition.assetAddress,
+  return rawLiquidityPositions.map((p) => ({
+    assetRegisteredAddress: p.assetAddress,
     asset: AssetValue.from({
-      asset: rawPosition.pool,
-      value: rawPosition.assetAdded,
+      asset: p.pool,
+      value: p.assetAdded,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
     assetPending: AssetValue.from({
-      asset: rawPosition.pool,
-      value: rawPosition.assetPending,
+      asset: p.pool,
+      value: p.assetPending,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
     assetWithdrawn: AssetValue.from({
-      asset: rawPosition.pool,
-      value: rawPosition.assetWithdrawn,
+      asset: p.pool,
+      value: p.assetWithdrawn,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
-    runeRegisteredAddress: rawPosition.runeAddress,
+    runeRegisteredAddress: p.runeAddress,
     rune: AssetValue.from({
       asset: "THOR.RUNE",
-      value: rawPosition.runeAdded,
+      value: p.runeAdded,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
     runePending: AssetValue.from({
       asset: "THOR.RUNE",
-      value: rawPosition.runePending,
+      value: p.runePending,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
     runeWithdrawn: AssetValue.from({
       asset: "THOR.RUNE",
-      value: rawPosition.runeWithdrawn,
+      value: p.runeWithdrawn,
       fromBaseDecimal: BaseDecimal.THOR,
     }),
-    poolShare: new SwapKitNumber(rawPosition.sharedUnits).div(rawPosition.poolUnits),
-    dateLastAdded: rawPosition.dateLastAdded,
-    dateFirstAdded: rawPosition.dateFirstAdded,
+    poolShare: new SwapKitNumber(p.sharedUnits).div(p.poolUnits),
+    dateLastAdded: p.dateLastAdded,
+    dateFirstAdded: p.dateFirstAdded,
   }));
 }

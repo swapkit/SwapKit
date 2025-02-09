@@ -1,7 +1,4 @@
-export type ThornodeEndpointParams = {
-  type?: "thorchain" | "mayachain";
-  stagenet?: boolean;
-};
+export type THORNodeType = "thorchain" | "mayachain";
 
 export type THORNodeTNSDetails = {
   name: string;

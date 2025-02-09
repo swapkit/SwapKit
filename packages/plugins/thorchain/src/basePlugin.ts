@@ -1,4 +1,4 @@
-import { SwapKitApi, type ThornodeEndpointParams } from "@swapkit/api";
+import { SwapKitApi, type THORNodeType } from "@swapkit/api";
 import {
   ApproveMode,
   type ApproveReturnType,
@@ -41,16 +41,16 @@ const gasFeeMultiplier: Record<FeeOption, number> = {
   [FeeOption.Fastest]: 2,
 };
 
-function getInboundDataFunction(params: ThornodeEndpointParams) {
+function getInboundDataFunction(type?: THORNodeType) {
   return async function getInboundDataByChain<T extends Chain>(chain: T) {
     if (
-      (params.type === "thorchain" && chain === Chain.THORChain) ||
-      (params.type === "mayachain" && chain === Chain.Maya)
+      (type === "thorchain" && chain === Chain.THORChain) ||
+      (type === "mayachain" && chain === Chain.Maya)
     ) {
       return { gas_rate: "0", router: "", address: "", halted: false, chain };
     }
 
-    const inboundData = await SwapKitApi.getInboundAddresses(params);
+    const inboundData = await SwapKitApi.getInboundAddresses(type);
     const chainAddressData = inboundData.find((item) => item.chain === chain);
 
     if (!chainAddressData) throw new SwapKitError("core_inbound_data_not_found");
@@ -61,18 +61,16 @@ function getInboundDataFunction(params: ThornodeEndpointParams) {
 }
 
 export function basePlugin({
-  stagenet,
   deposit,
   pluginChain,
   getWallet,
 }: {
   deposit: (params: CoreTxParams & { router?: string }) => Promise<string>;
   pluginChain: Chain.Maya | Chain.THORChain;
-  stagenet: boolean;
   getWallet: <T extends SupportedChain>(chain: T) => FullWallet[T];
 }) {
   const type = pluginChain === Chain.Maya ? "mayachain" : "thorchain";
-  const getInboundDataByChain = getInboundDataFunction({ stagenet, type });
+  const getInboundDataByChain = getInboundDataFunction(type);
 
   async function approve<T extends ApproveMode>({
     assetValue,
@@ -110,7 +108,7 @@ export function basePlugin({
   }
 
   async function depositToProtocol({ memo, assetValue }: { assetValue: AssetValue; memo: string }) {
-    const mimir = await SwapKitApi.getMimirInfo({ stagenet, type });
+    const mimir = await SwapKitApi.getMimirInfo(type);
 
     // check if trading is halted or not
     if (mimir.HALTCHAINGLOBAL >= 1 || mimir.HALTTHORCHAIN >= 1) {

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
+import { ProviderName, RequestClient, SKConfig, SwapKitError } from "@swapkit/helpers";
 
 import {
   type BrokerDepositChannelParams,
@@ -18,23 +18,32 @@ import {
   type TrackerParams,
   type TrackerResponse,
 } from "./types";
-const baseUrl = "https://api.swapkit.dev";
-const baseUrlDev = "https://dev-api.swapkit.dev";
 
-function getBaseUrl(isDev?: boolean) {
-  return isDev ? baseUrlDev : baseUrl;
+function getApiUrl(path?: `/${string}`) {
+  const { isDev, apiUrl, devApiUrl } = SKConfig.get("envs");
+
+  return `${isDev ? devApiUrl : apiUrl}${path}`;
 }
 
-const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
-  ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
-  ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
-});
+// TODO: refactor to use apiKey
+function getAuthHeaders(hash?: string) {
+  const { swapKit } = SKConfig.get("apiKeys");
+  const { referer } = SKConfig.get("envs");
+
+  return {
+    ...(swapKit && !hash ? { "x-api-key": swapKit } : {}),
+    ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
+  };
+}
 
 export const computeHash = (
-  hashParams:
-    | { apiKey: string; method: "POST"; payload: any }
-    | { apiKey: string; method: "GET"; url: string },
-): string => {
+  hashParams: { method: "POST"; payload: any } | { method: "GET"; url: string },
+) => {
+  const { swapKit } = SKConfig.get("apiKeys");
+  const { referer } = SKConfig.get("envs");
+
+  if (!(referer && swapKit)) return;
+
   if (!["POST", "GET"].includes(hashParams.method)) {
     throw new SwapKitError("api_v2_invalid_method_key_hash", {
       message: `Invalid method for params: ${JSON.stringify(hashParams)}`,
@@ -44,45 +53,23 @@ export const computeHash = (
   const data =
     hashParams.method === "POST"
       ? JSON.stringify(hashParams.payload)
-      : `${hashParams.url}${hashParams.apiKey}`;
+      : `${hashParams.url}${swapKit}`;
 
   return crypto.createHash("sha256").update(data, "utf8").digest("hex");
 };
 
-export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {
-  const url = `${getBaseUrl()}/track`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "POST",
-          apiKey,
-          payload,
-        })
-      : undefined;
-  return RequestClient.post<TrackerResponse>(url, {
+// TODO: refactor to use apiKey
+export function getTrackerDetails(payload: TrackerParams) {
+  return RequestClient.post<TrackerResponse>(getApiUrl("/track"), {
     json: payload,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "POST", payload })),
   });
 }
 
-export async function getSwapQuote<T extends boolean>(
-  searchParams: QuoteRequest,
-  isDev?: T,
-  apiKey?: string,
-  referer?: string,
-) {
-  const url = `${getBaseUrl(isDev)}/quote`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "POST",
-          apiKey: apiKey,
-          payload: searchParams,
-        })
-      : undefined;
-  const response = await RequestClient.post<QuoteResponse>(url, {
+export async function getSwapQuote(searchParams: QuoteRequest) {
+  const response = await RequestClient.post<QuoteResponse>(getApiUrl("/quote"), {
     json: searchParams,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "POST", payload: searchParams })),
   });
 
   if (response.error) {
@@ -104,59 +91,33 @@ export async function getSwapQuote<T extends boolean>(
   }
 }
 
-export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?: string) {
-  const url = `${getBaseUrl(isDev)}/providers`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "GET",
-          apiKey,
-          url,
-        })
-      : undefined;
+/**
+ * @deprecated use getTokenListProviders instead
+ */
+export function getTokenListProvidersV2() {
+  console.warn("getTokenListProvidersV2 is deprecated, use getTokenListProviders instead");
+  return getTokenListProviders();
+}
+
+export function getTokenListProviders() {
+  const url = getApiUrl("/providers");
   return RequestClient.get<TokenListProvidersResponse>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "GET", url })),
   });
 }
 
-export function getTokenList(
-  provider: ProviderName,
-  isDev = false,
-  apiKey?: string,
-  referer?: string,
-) {
-  const url = `${getBaseUrl(isDev)}/tokens?provider=${provider}`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "GET",
-          apiKey,
-          url,
-        })
-      : undefined;
+export function getTokenList(provider: ProviderName) {
+  const url = getApiUrl(`/tokens?provider=${provider}`);
   return RequestClient.get<TokensResponseV2>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "GET", url })),
   });
 }
 
-export async function getPrice(
-  body: PriceRequest,
-  isDev = false,
-  apiKey?: string,
-  referer?: string,
-) {
-  const url = `${getBaseUrl(isDev)}/price`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "POST",
-          apiKey,
-          payload: body,
-        })
-      : undefined;
+export async function getPrice(body: PriceRequest) {
+  const url = getApiUrl("/price");
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "POST", payload: body })),
   });
 
   try {
@@ -172,19 +133,11 @@ export async function getPrice(
   }
 }
 
-export async function getGasRate(isDev = false, apiKey?: string, referer?: string) {
-  const url = `${getBaseUrl(isDev)}/gas`;
-  const hash =
-    referer && apiKey
-      ? computeHash({
-          method: "GET",
-          apiKey,
-          url,
-        })
-      : undefined;
+export async function getGasRate() {
+  const url = getApiUrl("/gas");
 
   const response = await RequestClient.get<GasResponse>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders(computeHash({ method: "GET", url })),
   });
 
   try {
@@ -200,13 +153,28 @@ export async function getGasRate(isDev = false, apiKey?: string, referer?: strin
   }
 }
 
+const UNCHAINABLE_PROVIDERS = [
+  ProviderName.CAVIAR_V1,
+  ProviderName.CHAINFLIP,
+  ProviderName.CHAINFLIP_STREAMING,
+  ProviderName.MAYACHAIN,
+  ProviderName.MAYACHAIN_STREAMING,
+];
+
+const CHAINABLE_PROVIDERS = [
+  ProviderName.ONEINCH,
+  ProviderName.PANCAKESWAP,
+  ProviderName.PANGOLIN_V1,
+  ProviderName.SUSHISWAP_V2,
+  ProviderName.THORCHAIN,
+  ProviderName.THORCHAIN_STREAMING,
+  ProviderName.TRADERJOE_V2,
+  ProviderName.UNISWAP_V2,
+  ProviderName.UNISWAP_V3,
+];
+
 // TODO update this once the trading pairs are supported by BE api
-export async function getTokenTradingPairs(
-  providers: ProviderName[],
-  isDev = false,
-  apiKey?: string,
-  referer?: string,
-) {
+export async function getTokenTradingPairs(providers: ProviderName[]) {
   const tradingPairs = new Map<
     string,
     {
@@ -218,7 +186,7 @@ export async function getTokenTradingPairs(
   if (!providers.length) return tradingPairs;
 
   const providerRequests = providers.map(async (provider) => {
-    const tokenList = await getTokenList(provider, isDev, apiKey, referer);
+    const tokenList = await getTokenList(provider);
     return tokenList;
   });
 
@@ -241,14 +209,6 @@ export async function getTokenTradingPairs(
       ...rest,
     }));
 
-  const UNCHAINABLE_PROVIDERS = [
-    ProviderName.CAVIAR_V1,
-    ProviderName.CHAINFLIP,
-    ProviderName.CHAINFLIP_STREAMING,
-    ProviderName.MAYACHAIN,
-    ProviderName.MAYACHAIN_STREAMING,
-  ];
-
   const chainableTokens = providersData
     .filter(({ data }) => {
       return !UNCHAINABLE_PROVIDERS.includes((data?.provider || "") as ProviderName);
@@ -258,12 +218,9 @@ export async function getTokenTradingPairs(
       [] as TokensResponseV2["tokens"],
     );
 
-  /**
-   * The motherfucking mess there is
-   */
-
   for (const { data } of providersData) {
     if (!data?.tokens) return;
+
     const isProviderChainable =
       data.provider && !UNCHAINABLE_PROVIDERS.includes(data.provider as ProviderName);
 
@@ -274,20 +231,7 @@ export async function getTokenTradingPairs(
       };
 
       const tradingPairsForToken = isProviderChainable
-        ? {
-            tokens: chainableTokens,
-            providers: [
-              ProviderName.THORCHAIN,
-              ProviderName.THORCHAIN_STREAMING,
-              ProviderName.PANCAKESWAP,
-              ProviderName.ONEINCH,
-              ProviderName.PANGOLIN_V1,
-              ProviderName.SUSHISWAP_V2,
-              ProviderName.TRADERJOE_V2,
-              ProviderName.UNISWAP_V3,
-              ProviderName.UNISWAP_V2,
-            ],
-          }
+        ? { tokens: chainableTokens, providers: CHAINABLE_PROVIDERS }
         : { tokens: data.tokens, providers: data.provider };
 
       tradingPairs.set(token.identifier.toLowerCase(), {
@@ -300,25 +244,15 @@ export async function getTokenTradingPairs(
   return tradingPairs;
 }
 
-export async function getChainflipDepositChannel({
-  isDev = false,
-  baseUrl,
-  body,
-}: {
-  isDev?: boolean;
-  baseUrl?: string;
-  body: BrokerDepositChannelParams;
-}) {
+export async function getChainflipDepositChannel(body: BrokerDepositChannelParams) {
   const { destinationAddress } = body;
 
   if (!destinationAddress) {
     throw new SwapKitError("chainflip_broker_invalid_params");
   }
-  const url = `${baseUrl || getBaseUrl(isDev)}/channel`;
+  const url = SKConfig.get("integrations").chainflip?.brokerUrl || getApiUrl("/channel");
 
-  const response = await RequestClient.post<DepositChannelResponse>(url, {
-    json: body,
-  });
+  const response = await RequestClient.post<DepositChannelResponse>(url, { json: body });
 
   try {
     const parsedResponse = DepositChannelResponseSchema.safeParse(response);

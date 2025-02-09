@@ -1,6 +1,6 @@
 import { AssetValue, type ProviderName, RequestClient, getChainIdentifier } from "@swapkit/helpers";
 
-import { getTokenListProvidersV2 } from "../swapkitApi/endpoints";
+import { getTokenListProviders } from "../swapkitApi/endpoints";
 import type { TokenListProvidersResponse } from "../swapkitApi/types";
 import type { TokensResponse } from "./types";
 
@@ -24,7 +24,7 @@ export function getChainLogoForAsset(assetString: string) {
 let providerData: TokenListProvidersResponse;
 
 export async function getProviderLogo(providerName: ProviderName | string) {
-  providerData ||= await getTokenListProvidersV2();
+  providerData ||= await getTokenListProviders();
 
   return providerData.find((p) => p.name === providerName)?.url;
 }

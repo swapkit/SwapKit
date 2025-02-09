@@ -1,4 +1,4 @@
-import { AssetValue, RequestClient } from "@swapkit/helpers";
+import { AssetValue, Chain, RequestClient, SKConfig, StagenetChain } from "@swapkit/helpers";
 import type {
   InboundAddressesItem,
   LastBlockItem,
@@ -7,69 +7,72 @@ import type {
   RunePoolInfo,
   RunePoolProviderInfo,
   THORNodeTNSDetails,
-  ThornodeEndpointParams,
+  THORNodeType,
 } from "./types";
 
-function baseUrl({ type = "thorchain", stagenet = false }: ThornodeEndpointParams = {}) {
+function baseUrl(type?: THORNodeType) {
+  const { isStagenet } = SKConfig.get("envs");
+  const nodeUrls = SKConfig.get("nodeUrls");
+
   switch (type) {
-    case "mayachain":
-      return stagenet
-        ? "https://stagenet.mayanode.mayachain.info/mayachain"
-        : "https://mayanode.mayachain.info/mayachain";
-    default:
-      return stagenet
-        ? "https://stagenet-thornode.ninerealms.com/thorchain"
-        : "https://thornode.thorswap.net/thorchain";
+    case "mayachain": {
+      const mayaNodeUrl = nodeUrls[isStagenet ? StagenetChain.Maya : Chain.Maya];
+
+      return `${mayaNodeUrl}/mayachain`;
+    }
+    default: {
+      const thorNodeUrl = nodeUrls[isStagenet ? StagenetChain.THORChain : Chain.THORChain];
+
+      return `${thorNodeUrl}/thorchain`;
+    }
   }
 }
 
-function getNameServiceBaseUrl({
-  type = "thorchain",
-  stagenet = false,
-}: ThornodeEndpointParams = {}) {
+function getNameServiceBaseUrl(type?: THORNodeType) {
   const nsType = type === "mayachain" ? "mayaname" : "thorname";
 
-  return `${baseUrl({ type, stagenet })}/${nsType}`;
+  return `${baseUrl(type)}/${nsType}`;
 }
 
-export function getLastBlock(params?: ThornodeEndpointParams) {
-  return RequestClient.get<LastBlockItem[]>(`${baseUrl(params)}/lastblock`);
+export function getLastBlock(type?: THORNodeType) {
+  return RequestClient.get<LastBlockItem[]>(`${baseUrl(type)}/lastblock`);
 }
 
-export function getThorchainQueue(params?: ThornodeEndpointParams) {
-  return RequestClient.get(`${baseUrl(params)}/queue`);
+export function getThorchainQueue(type?: THORNodeType) {
+  return RequestClient.get(`${baseUrl(type)}/queue`);
 }
 
-export function getNodes(params?: ThornodeEndpointParams) {
-  return RequestClient.get<NodeItem[]>(`${baseUrl(params)}/nodes`);
+export function getNodes(type?: THORNodeType) {
+  return RequestClient.get<NodeItem[]>(`${baseUrl(type)}/nodes`);
 }
 
-export function getMimirInfo(params?: ThornodeEndpointParams) {
-  return RequestClient.get<MimirData>(`${baseUrl(params)}/mimir`);
+export function getMimirInfo(type?: THORNodeType) {
+  return RequestClient.get<MimirData>(`${baseUrl(type)}/mimir`);
 }
 
-export function getInboundAddresses(params?: ThornodeEndpointParams) {
-  return RequestClient.get<InboundAddressesItem[]>(`${baseUrl(params)}/inbound_addresses`);
+export function getInboundAddresses(type?: THORNodeType) {
+  return RequestClient.get<InboundAddressesItem[]>(`${baseUrl(type)}/inbound_addresses`);
 }
 
-export function getTHORNodeTNSDetails(params: ThornodeEndpointParams & { name: string }) {
-  return RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(params)}/${params.name}`);
+export function getTHORNodeTNSDetails({ type, name }: { type?: THORNodeType; name: string }) {
+  return RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(type)}/${name}`);
 }
 
-export async function getTNSPreferredAsset(tns: string) {
-  const tnsDetails = await getTHORNodeTNSDetails({ name: tns });
+export async function getTNSPreferredAsset({ type, tns }: { type?: THORNodeType; tns: string }) {
+  const tnsDetails = await getTHORNodeTNSDetails({ name: tns, type });
 
   if (!tnsDetails.preferred_asset || tnsDetails.preferred_asset === ".") return undefined;
 
   return AssetValue.from({ asyncTokenLookup: true, asset: tnsDetails.preferred_asset });
 }
 
-export function getRunePoolInfo(params?: ThornodeEndpointParams) {
-  return RequestClient.get<RunePoolInfo>(`${baseUrl(params)}/runepool`);
+export function getRunePoolInfo(type?: THORNodeType) {
+  return RequestClient.get<RunePoolInfo>(`${baseUrl(type)}/runepool`);
 }
 
-export function getRunePoolProviderInfo(params: ThornodeEndpointParams & { thorAddress: string }) {
-  return RequestClient.get<RunePoolProviderInfo>(
-    `${baseUrl(params)}/rune_provider/${params.thorAddress}`,
-  );
+export function getRunePoolProviderInfo({
+  type,
+  thorAddress,
+}: { type?: THORNodeType; thorAddress: string }) {
+  return RequestClient.get<RunePoolProviderInfo>(`${baseUrl(type)}/rune_provider/${thorAddress}`);
 }
