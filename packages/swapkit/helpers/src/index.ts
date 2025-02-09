@@ -10,7 +10,7 @@ export * from "./helpers/liquidity";
 export * from "./helpers/memo";
 export * from "./helpers/others";
 export * from "./helpers/validators";
-export * from "./helpers/web3wallets";
+export * from "./helpers/wallets";
 
 /**
  * Modules
@@ -20,4 +20,3 @@ export * from "./modules/bigIntArithmetics";
 export * from "./modules/requestClient";
 export * from "./modules/swapKitError";
 export * from "./modules/swapKitNumber";
-export * from "./modules/walletUtils";

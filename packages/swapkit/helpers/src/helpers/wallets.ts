@@ -1,0 +1,270 @@
+import type { BrowserProvider } from "ethers";
+import { SwapKitError } from "../modules/swapKitError";
+import {
+  Chain,
+  ChainId,
+  type EIP6963AnnounceProviderEvent,
+  type EIP6963Provider,
+  WalletOption,
+} from "../types";
+
+export type EthereumWindowProvider = BrowserProvider & {
+  __XDEFI?: boolean;
+  isBraveWallet?: boolean;
+  isCoinbaseWallet?: boolean;
+  isMetaMask?: boolean;
+  isOkxWallet?: boolean;
+  isKeepKeyWallet?: boolean;
+  isTrust?: boolean;
+  isTalisman?: boolean;
+  on: (event: string, callback?: () => void) => void;
+  overrideIsMetaMask?: boolean;
+  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>;
+  selectedProvider?: EthereumWindowProvider;
+};
+
+type NetworkParams = {
+  chainId: ChainId;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls: string[];
+};
+
+declare const window: {
+  ethereum: EthereumWindowProvider;
+  trustwallet: EthereumWindowProvider;
+  coinbaseWalletExtension: EthereumWindowProvider;
+  braveSolana: any;
+  bitkeep?: { ethereum: EthereumWindowProvider };
+  xfi?: { ethereum: EthereumWindowProvider };
+} & Window;
+
+export function isWeb3Detected() {
+  return typeof window.ethereum !== "undefined";
+}
+
+export function isDetected(walletOption: WalletOption) {
+  return listWeb3EVMWallets().includes(walletOption);
+}
+
+export function listWeb3EVMWallets() {
+  const metamaskEnabled = window?.ethereum && !window.ethereum?.isBraveWallet;
+  // @ts-ignore that should be implemented in ctrl and hooked up via swapkit core
+  const ctrlEnabled = window?.xfi || window?.ethereum?.__XDEFI;
+  const braveEnabled = window?.ethereum?.isBraveWallet;
+  const trustEnabled = window?.ethereum?.isTrust || window?.trustwallet;
+  const coinbaseEnabled =
+    (window?.ethereum?.overrideIsMetaMask &&
+      window?.ethereum?.selectedProvider?.isCoinbaseWallet) ||
+    window?.coinbaseWalletExtension;
+  const bitgetEnabled = window?.bitkeep?.ethereum;
+
+  const wallets = [];
+  if (metamaskEnabled) wallets.push(WalletOption.METAMASK);
+  if (ctrlEnabled) wallets.push(WalletOption.CTRL);
+  if (braveEnabled) wallets.push(WalletOption.BRAVE);
+  if (trustEnabled) wallets.push(WalletOption.TRUSTWALLET_WEB);
+  if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);
+  if (okxMobileEnabled()) wallets.push(WalletOption.OKX_MOBILE);
+  if (bitgetEnabled) wallets.push(WalletOption.BITGET);
+
+  return wallets;
+}
+
+export async function switchEVMWalletNetwork(
+  provider: BrowserProvider,
+  chainId = ChainId.EthereumHex,
+  networkParams?: NetworkParams,
+) {
+  try {
+    await providerRequest({
+      provider,
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId }],
+    });
+  } catch (_error) {
+    if (!networkParams) {
+      throw new Error("Failed to switch network, networkParams not provided");
+    }
+    await addEVMWalletNetwork(provider, networkParams);
+  }
+}
+
+export function filterSupportedChains<T extends Chain>(
+  chains: Chain[],
+  supportedChains: readonly T[],
+  walletOption: WalletOption,
+) {
+  const supported = chains.filter((chain): chain is T => supportedChains.includes(chain as T));
+
+  if (supported.length === 0) {
+    throw new SwapKitError("wallet_chain_not_supported", {
+      wallet: walletOption,
+      chain: chains.join(", "),
+    });
+  }
+
+  const unsupported = chains.filter((chain) => !supportedChains.includes(chain as T));
+
+  if (unsupported.length > 0) {
+    console.warn(
+      `${walletOption} wallet does not support the following chains: ${unsupported.join(
+        ", ",
+      )}. These chains will be ignored.`,
+    );
+  }
+
+  return supported;
+}
+
+export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
+  func: T,
+  provider: BrowserProvider,
+  chainId: ChainId,
+) {
+  (async (...args: any[]) => {
+    try {
+      await switchEVMWalletNetwork(provider, chainId);
+    } catch (error) {
+      throw new SwapKitError({
+        errorKey: "helpers_failed_to_switch_network",
+        info: { error },
+      });
+    }
+    return func(...args);
+  }) as unknown as T;
+}
+
+const methodsToWrap = [
+  "approve",
+  "approvedAmount",
+  "call",
+  "sendTransaction",
+  "transfer",
+  "isApproved",
+  "approvedAmount",
+  "EIP1193SendTransaction",
+  "getFeeData",
+  "broadcastTransaction",
+  "estimateCall",
+  "estimateGasLimit",
+  "estimateGasPrices",
+  "createContractTxObject",
+];
+export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[]) => any }>({
+  toolbox,
+  chainId,
+  provider = window.ethereum,
+}: {
+  toolbox: T;
+  chainId: ChainId;
+  provider?: BrowserProvider;
+}) {
+  const wrappedMethods = methodsToWrap.reduce((object, methodName) => {
+    if (!toolbox[methodName]) return object;
+    const method = toolbox[methodName];
+
+    if (typeof method !== "function") return object;
+
+    return {
+      // biome-ignore lint/performance/noAccumulatingSpread: This is a valid use case
+      ...object,
+      [methodName]: wrapMethodWithNetworkSwitch<typeof method>(method, provider, chainId),
+    };
+  }, {});
+
+  return { ...toolbox, ...wrappedMethods };
+}
+
+export function addEVMWalletNetwork(provider: BrowserProvider, networkParams: NetworkParams) {
+  return providerRequest({ provider, method: "wallet_addEthereumChain", params: [networkParams] });
+}
+
+export function addAccountsChangedCallback(callback: () => void) {
+  window.ethereum?.on("accountsChanged", () => callback());
+  window.xfi?.ethereum.on("accountsChanged", () => callback());
+}
+
+export function getETHDefaultWallet() {
+  const { isTrust, isBraveWallet, __XDEFI, overrideIsMetaMask, selectedProvider } =
+    window?.ethereum || {};
+  if (isTrust) return WalletOption.TRUSTWALLET_WEB;
+  if (isBraveWallet) return WalletOption.BRAVE;
+  if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;
+  if (__XDEFI) WalletOption.CTRL;
+  return WalletOption.METAMASK;
+}
+
+export function ensureEVMApiKeys({
+  chain,
+  covalentApiKey,
+  ethplorerApiKey,
+}: { chain: Chain; covalentApiKey?: string; ethplorerApiKey?: string }) {
+  const missingKey =
+    chain !== Chain.Ethereum && !covalentApiKey
+      ? "covalentApiKey"
+      : ethplorerApiKey
+        ? undefined
+        : "ethplorerApiKey";
+
+  if (missingKey) {
+    throw new SwapKitError({ errorKey: "wallet_missing_api_key", info: { missingKey } });
+  }
+
+  return { covalentApiKey: covalentApiKey as string, ethplorerApiKey: ethplorerApiKey as string };
+}
+
+export function getEIP6963Wallets() {
+  const providers: EIP6963Provider[] = [];
+
+  function onAnnouncement(event: EIP6963AnnounceProviderEvent) {
+    if (providers.map((p) => p.info.uuid).includes(event.detail.info.uuid)) return;
+    providers.push(event.detail);
+  }
+
+  window.addEventListener("eip6963:announceProvider", onAnnouncement);
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+  function removeEIP6963EventListener() {
+    window.removeEventListener("eip6963:announceProvider", onAnnouncement);
+  }
+
+  return { providers, removeEIP6963EventListener };
+}
+
+export function okxMobileEnabled() {
+  const ua = navigator.userAgent;
+  const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
+  const isAndroid = /android|XiaoMi|MiuiBrowser/i.test(ua);
+  const isMobile = isIOS || isAndroid;
+  const isOKApp = /OKApp/i.test(ua);
+
+  return isMobile && isOKApp;
+}
+
+function providerRequest({
+  provider,
+  params,
+  method,
+}: {
+  provider?: BrowserProvider;
+  params?: any;
+  method:
+    | "wallet_addEthereumChain"
+    | "wallet_switchEthereumChain"
+    | "eth_requestAccounts"
+    | "eth_sendTransaction"
+    | "eth_signTransaction";
+}) {
+  if (!provider?.send) {
+    throw new SwapKitError("helpers_not_found_provider");
+  }
+
+  const providerParams = params ? (Array.isArray(params) ? params : [params]) : [];
+  return provider.send(method, providerParams);
+}
