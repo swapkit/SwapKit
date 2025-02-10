@@ -9,7 +9,7 @@ type Options = Parameters<typeof fetch>[1] & {
   json?: unknown;
 };
 
-let clientConfig: Options = {};
+const clientConfig: Options = {};
 
 export const defaultRequestHeaders =
   typeof window !== "undefined"

@@ -25,10 +25,5 @@ export function prepareTxParams({
   memo = "",
   ...restTxParams
 }: CoreTxParams & { from: string; router?: string }) {
-  return {
-    ...restTxParams,
-    memo,
-    from,
-    assetValue,
-  };
+  return { ...restTxParams, memo, from, assetValue };
 }

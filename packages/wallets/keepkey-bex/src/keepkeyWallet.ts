@@ -107,8 +107,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
     case Chain.Polygon:
     case Chain.Avalanche: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
-      const { getToolboxByChain, getBalance, covalentApi, ethplorerApi, getProvider } =
-        await import("@swapkit/toolbox-evm");
+      const { getToolboxByChain, getBalance, getProvider } = await import("@swapkit/toolbox-evm");
       const { BrowserProvider } = await import("ethers");
       const ethereumWindowProvider = getKEEPKEYProvider(chain) as Eip1193Provider;
 

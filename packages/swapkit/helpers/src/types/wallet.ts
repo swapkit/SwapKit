@@ -93,10 +93,8 @@ export type SwapKitWallet<ConnectParams extends any[]> = (
   params: AddChainType,
 ) => (...connectParams: ConnectParams) => boolean | Promise<boolean>;
 
-export type SwapKitPluginParams<Config = {}> = {
+export type SwapKitPluginParams = {
   getWallet: <T extends CryptoChain>(chain: T) => FullWallet[T];
-  stagenet?: boolean;
-  config: Config;
 };
 
 export type EIP6963ProviderInfo = {

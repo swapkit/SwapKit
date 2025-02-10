@@ -5,6 +5,7 @@ import {
   FeeTypeEnum,
   ProviderName,
   RequestClient,
+  SKConfig,
   blockTimes,
 } from "@swapkit/helpers";
 import type { SwapKitPluginParams, SwapParams } from "@swapkit/helpers";
@@ -120,9 +121,7 @@ function mapKadoQuoteToQuoteResponse({
   };
 }
 
-function plugin({
-  config: { kadoApiKey },
-}: Omit<SwapKitPluginParams<{ kadoApiKey: string }>, "getWallet">) {
+function plugin(_params: SwapKitPluginParams) {
   async function fetchProviderQuote({
     sellAsset,
     buyAsset,
@@ -134,31 +133,28 @@ function plugin({
   }): Promise<QuoteResponse> {
     try {
       const isOnRamp = sellAsset.chain === Chain.Fiat;
-
-      const transactionType = isOnRamp ? "buy" : "sell";
-
       const currency = (isOnRamp ? sellAsset.symbol : buyAsset.symbol) as KadoFiatCurrency;
-
-      const asset = isOnRamp ? buyAsset : sellAsset;
+      const { chain, symbol } = isOnRamp ? buyAsset : sellAsset;
 
       const quoteRequest: KadoQuoteRequest = {
-        transactionType,
+        transactionType: isOnRamp ? "buy" : "sell",
         fiatMethod,
         partner: "fortress",
         amount: sellAsset.getValue("string"),
-        asset: asset.symbol,
-        blockchain: ChainToKadoChain(asset.chain),
+        asset: symbol,
+        blockchain: ChainToKadoChain(chain),
         currency,
       };
 
+      const kadoApiKey = SKConfig.get("apiKeys").kado;
+
+      if (!kadoApiKey) {
+        console.warn("plugin(kado): No Kado API key found");
+      }
+
       const quote = await RequestClient.get<KadoQuoteResponse>(
         "https://api.kado.money/v2/ramp/quote",
-        {
-          searchParams: quoteRequest,
-          headers: {
-            "X-Widget-Id": kadoApiKey,
-          },
-        },
+        { searchParams: quoteRequest, headers: { "X-Widget-Id": kadoApiKey } },
       );
 
       if (!quote.success) {
@@ -213,20 +209,19 @@ function plugin({
   }
 
   async function getOrderStatus(orderId: string) {
+    const kadoApiKey = SKConfig.get("apiKeys").kado;
+
+    if (!kadoApiKey) {
+      console.warn("plugin(kado): No Kado API key found");
+    }
+
     try {
       const response = await RequestClient.get<{
         success: boolean;
         message: string;
-        data: {
-          order: {
-            status: string;
-            // Add other relevant fields from the API response
-          };
-        };
+        data: { order: { status: string } };
       }>(`https://api.kado.money/v2/public/orders/${orderId}`, {
-        headers: {
-          "X-Widget-Id": kadoApiKey,
-        },
+        headers: { "X-Widget-Id": kadoApiKey },
       });
 
       if (!response.success) {
@@ -254,6 +249,12 @@ function plugin({
     type: "buy" | "sell";
     widgetMode: "minimal" | "full";
   }) {
+    const kadoApiKey = SKConfig.get("apiKeys").kado;
+
+    if (!kadoApiKey) {
+      console.warn("plugin(kado): No Kado API key found");
+    }
+
     const urlParams = new URLSearchParams({
       apiKey: kadoApiKey,
       ...(type === "buy"

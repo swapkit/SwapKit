@@ -3,6 +3,7 @@ import {
   AssetValue,
   type EVMWallets,
   ProviderName,
+  SKConfig,
   type SolanaWallets,
   type SubstrateWallets,
   SwapKitError,
@@ -13,17 +14,9 @@ import type { RequestSwapDepositAddressParams } from "./types";
 
 type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & SolanaWallets);
 
-function plugin({
-  getWallet,
-  config: { chainflipBrokerUrl: legacyChainflipBrokerUrl, chainflipBrokerConfig },
-}: SwapKitPluginParams<{
-  chainflipBrokerUrl?: string;
-  chainflipBrokerConfig?: { chainflipBrokerUrl: string };
-}>) {
+function plugin({ getWallet }: SwapKitPluginParams) {
   async function swap(swapParams: RequestSwapDepositAddressParams) {
-    const { chainflipBrokerUrl } = chainflipBrokerConfig || {};
-
-    const brokerUrl = chainflipBrokerUrl || legacyChainflipBrokerUrl;
+    const brokerUrl = SKConfig.get("integrations").chainflip?.brokerUrl;
 
     if (!(swapParams?.route?.buyAsset && brokerUrl && swapParams.route.meta.chainflip)) {
       throw new SwapKitError("core_swap_invalid_params", {
@@ -60,12 +53,9 @@ function plugin({
     }
 
     const { depositAddress } = await swapkitApiEndpoints.getChainflipDepositChannel({
-      baseUrl: brokerUrl,
-      body: {
-        ...chainflip,
-        destinationAddress: recipient || chainflip.destinationAddress,
-        maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
-      },
+      ...chainflip,
+      destinationAddress: recipient || chainflip.destinationAddress,
+      maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
     });
 
     const tx = await wallet.transfer({
