@@ -1,5 +1,14 @@
 # @swapkit/toolbox-substrate
 
+## 1.3.18
+
+### Patch Changes
+
+- [#1179](https://github.com/thorswap/SwapKit/pull/1179) [`e6005d5`](https://github.com/thorswap/SwapKit/commit/e6005d5f8f94e0dad75aa3e5378a38dfdd80d46e) Thanks [@0xepicode](https://github.com/0xepicode)! - Support chainflip with talisman
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
 ## 1.3.17
 
 ### Patch Changes

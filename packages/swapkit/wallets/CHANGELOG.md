@@ -1,5 +1,14 @@
 # @swapkit/wallets
 
+## 2.0.21
+
+### Patch Changes
+
+- Updated dependencies [[`e6005d5`](https://github.com/thorswap/SwapKit/commit/e6005d5f8f94e0dad75aa3e5378a38dfdd80d46e)]:
+  - @swapkit/wallet-talisman@1.4.8
+  - @swapkit/wallet-keystore@1.5.13
+  - @swapkit/wallet-polkadotjs@1.1.6
+
 ## 2.0.20
 
 ### Patch Changes
