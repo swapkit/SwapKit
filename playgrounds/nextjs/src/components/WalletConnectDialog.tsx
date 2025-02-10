@@ -172,6 +172,7 @@ export const availableChainsByWallet = {
     Chain.BinanceSmartChain,
     Chain.Optimism,
     Chain.Polkadot,
+    Chain.Chainflip,
   ],
   [WalletOption.EXODUS]: [Chain.Ethereum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Bitcoin],
   [WalletOption.LEDGER_LIVE]: [],

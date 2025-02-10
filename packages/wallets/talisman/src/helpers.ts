@@ -11,7 +11,7 @@ import {
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolbox-evm";
-import type { InjectedWindow } from "@swapkit/toolbox-substrate";
+import { type InjectedWindow, Network } from "@swapkit/toolbox-substrate";
 import type { Eip1193Provider } from "ethers";
 
 declare const window: {
@@ -111,7 +111,8 @@ export const getWalletForChain = async ({
       return { walletMethods: { ...evmWallet, getBalance }, address };
     }
 
-    case Chain.Polkadot: {
+    case Chain.Polkadot:
+    case Chain.Chainflip: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-substrate");
 
       const injectedWindow = window as Window & InjectedWindow;
@@ -136,7 +137,7 @@ export const getWalletForChain = async ({
       }
       const [{ address }] = accounts;
 
-      return { walletMethods: toolbox, address: convertAddress(address, 0) };
+      return { walletMethods: toolbox, address: convertAddress(address, Network[chain].prefix) };
     }
 
     default:

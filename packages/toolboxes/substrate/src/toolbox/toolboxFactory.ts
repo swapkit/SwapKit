@@ -41,7 +41,8 @@ export const PolkadotToolbox = ({ providerUrl, signer, generic = false }: Toolbo
 };
 
 export const ChainflipToolbox = async ({ providerUrl, signer, generic = false }: ToolboxParams) => {
-  const provider = new WsProvider(providerUrl);
+  const providerUrlWithFallback = providerUrl || getRPCUrl(Chain.Chainflip);
+  const provider = new WsProvider(providerUrlWithFallback);
   const api = await ApiPromise.create({ provider });
   const gasAsset = AssetValue.from({ chain: Chain.Chainflip });
 
@@ -60,7 +61,7 @@ export const ChainflipToolbox = async ({ providerUrl, signer, generic = false }:
   const evmToolbox = await ToolboxFactory({
     chain: Chain.Chainflip,
     signer,
-    providerUrl,
+    providerUrl: providerUrlWithFallback,
     generic,
   });
 

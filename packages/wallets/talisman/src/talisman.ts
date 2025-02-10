@@ -16,6 +16,7 @@ const TALISMAN_SUPPORTED_CHAINS = [
   Chain.BinanceSmartChain,
   Chain.Optimism,
   Chain.Polkadot,
+  Chain.Chainflip,
 ] as const;
 
 function connectTalisman({
