@@ -22,4 +22,7 @@
 - `validateAddress` -> use `getAddressValidator` directly
 - `api` -> use `SwapKitApi` directly. For configuration use `SKConfig`
 
+#### @swapkit/helpers
 
+- `ensureEVMApiKeys` -> removed
+- `setRequestClientConfig` -> removed - use `SKConfig` directly

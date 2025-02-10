@@ -15,7 +15,6 @@ import {
   SwapKitError,
   SwapKitNumber,
   WalletOption,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 import { ETHToolbox, getProvider } from "@swapkit/toolbox-evm";
 import type { UTXOTransferParams } from "@swapkit/toolbox-utxo";
@@ -76,7 +75,7 @@ export const LedgerCurrencyToAsset = {
   litecoin: AssetValue.from({ chain: Chain.Litecoin }),
 };
 
-export const isLedgerLiveSupportedOutputAsset = (assetInput: AssetValue) =>
+export const isLedgerLiveSupportedOutputAsset = ({ chain }: AssetValue) =>
   [
     Chain.Arbitrum,
     Chain.Bitcoin,
@@ -85,7 +84,7 @@ export const isLedgerLiveSupportedOutputAsset = (assetInput: AssetValue) =>
     Chain.Dogecoin,
     Chain.Ethereum,
     Chain.Litecoin,
-  ].includes(assetInput.chain);
+  ].includes(chain);
 
 export const isLedgerLiveSupportedInputAsset = (assetInput: AssetValue) =>
   [
@@ -117,18 +116,18 @@ export const LedgerLive = () => {
   }
 
   function listAccounts(chain: Chain) {
-    if (!ChainToLedgerLiveChain[chain])
+    if (!ChainToLedgerLiveChain[chain]) {
       throw new Error(`Ledger connect is not supported for ${chain} chain`);
-    return apiClient.account.list({
-      currencyIds: [ChainToLedgerLiveChain[chain]],
-    });
+    }
+
+    return apiClient.account.list({ currencyIds: [ChainToLedgerLiveChain[chain]] });
   }
 
   function requestAccounts(chains?: Chain[]) {
-    const filterdChains = chains?.filter((chain) => chain in LEDGER_LIVE_SUPPORTED_CHAINS);
-    if (filterdChains?.length === 0) return Promise.resolve([]);
+    const filteredChains = chains?.filter((chain) => chain in LEDGER_LIVE_SUPPORTED_CHAINS);
+    if (filteredChains?.length === 0) return Promise.resolve([]);
     return apiClient.account.request({
-      currencyIds: (filterdChains || LEDGER_LIVE_SUPPORTED_CHAINS).map(
+      currencyIds: (filteredChains || LEDGER_LIVE_SUPPORTED_CHAINS).map(
         (chain) => ChainToLedgerLiveChain[chain] as string,
       ),
     });
@@ -160,22 +159,17 @@ export const LedgerLive = () => {
 export const getLedgerLiveWallet = async ({
   chain,
   ledgerLiveAccount,
-  ethplorerApiKey,
-}: { chain: Chain; ledgerLiveAccount: LedgerAccount; ethplorerApiKey?: string }) => {
+}: { chain: Chain; ledgerLiveAccount: LedgerAccount }) => {
   switch (chain) {
     case Chain.Arbitrum:
     case Chain.Ethereum: {
       const getAddress = () => ledgerLiveAccount.address;
 
       const ledgerLiveClient = EthereumLedgerLive();
-
       const provider = getProvider(Chain.Ethereum);
+      const signer = new VoidSigner(ledgerLiveAccount.address, provider);
 
-      const toolbox = ETHToolbox({
-        provider,
-        signer: new VoidSigner(ledgerLiveAccount.address, provider),
-        ethplorerApiKey,
-      });
+      const toolbox = ETHToolbox({ provider, signer });
 
       const sendTransaction = async (unsignedTx: any) => {
         const signedTx = await ledgerLiveClient?.signTransaction(ledgerLiveAccount.id, {
@@ -291,17 +285,8 @@ export const getLedgerLiveWallet = async ({
     case Chain.Dogecoin:
     case Chain.Bitcoin: {
       const ledgerLiveClient = BitcoinLedgerLive();
-      const { BTCToolbox, LTCToolbox, BCHToolbox, DOGEToolbox } = await import(
-        "@swapkit/toolbox-utxo"
-      );
-      const toolbox =
-        chain === Chain.Bitcoin
-          ? BTCToolbox({})
-          : chain === Chain.Litecoin
-            ? LTCToolbox({})
-            : chain === Chain.BitcoinCash
-              ? BCHToolbox({})
-              : DOGEToolbox({});
+      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const toolbox = getToolboxByChain(chain)();
 
       const getAddress = () => ledgerLiveAccount.address;
 
@@ -377,10 +362,7 @@ export const EthereumLedgerLive = () => {
     );
   }
 
-  return {
-    ...baseLedgerLiveClient,
-    signTransaction,
-  };
+  return { ...baseLedgerLiveClient, signTransaction };
 };
 
 export const BitcoinLedgerLive = () => {
@@ -425,10 +407,7 @@ export const CosmosLedgerLive = () => {
   };
 };
 
-function connectLedgerLive({
-  addChain,
-  config: { thorswapApiKey, ethplorerApiKey },
-}: AddChainType) {
+function connectLedgerLive(addChain: AddChainType) {
   return async function connectLedgerLive(
     chains: (typeof LEDGER_LIVE_SUPPORTED_CHAINS)[number][],
     ledgerLiveAccount: LedgerAccount,
@@ -436,9 +415,7 @@ function connectLedgerLive({
     const [chain] = chains;
     if (!chain) return false;
 
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
-    const toolbox = await getLedgerLiveWallet({ chain, ledgerLiveAccount, ethplorerApiKey });
+    const toolbox = await getLedgerLiveWallet({ chain, ledgerLiveAccount });
 
     addChain({ ...toolbox, chain, balance: [], walletType: WalletOption.LEDGER_LIVE });
 

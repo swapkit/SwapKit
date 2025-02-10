@@ -3,12 +3,11 @@ import {
   Chain,
   type DerivationPathArray,
   FeeOption,
+  SKConfig,
   SwapKitError,
   WalletOption,
   derivationPathToString,
-  ensureEVMApiKeys,
   filterSupportedChains,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolbox-utxo";
 
@@ -27,21 +26,6 @@ export const TREZOR_SUPPORTED_CHAINS = [
   Chain.Polygon,
 ] as const;
 
-type TrezorOptions = {
-  ethplorerApiKey?: string;
-  blockchairApiKey?: string;
-  covalentApiKey?: string;
-  trezorManifest?: { appUrl: string; email: string };
-};
-
-type Params = TrezorOptions & {
-  // TODO improve api typing
-  api?: any;
-  chain: Chain;
-  derivationPath: DerivationPathArray;
-  rpcUrl?: string;
-};
-
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {
     case 84:
@@ -56,14 +40,9 @@ function getScriptType(derivationPath: DerivationPathArray) {
 }
 
 async function getToolbox({
-  api,
-  rpcUrl,
   chain,
   derivationPath,
-  blockchairApiKey,
-  ethplorerApiKey,
-  covalentApiKey,
-}: Params) {
+}: { chain: Chain; derivationPath: DerivationPathArray }) {
   switch (chain) {
     case Chain.BinanceSmartChain:
     case Chain.Avalanche:
@@ -75,14 +54,12 @@ async function getToolbox({
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
       const { getEVMSigner } = await import("./evmSigner");
 
-      const keys = ensureEVMApiKeys({ chain, ethplorerApiKey, covalentApiKey });
-      const provider = getProvider(chain, rpcUrl);
-      const toolbox = getToolboxByChain(chain);
-
+      const provider = getProvider(chain);
       const signer = await getEVMSigner({ chain, derivationPath, provider });
       const address = await signer.getAddress();
+      const toolbox = getToolboxByChain(chain)({ provider, signer });
 
-      return { address, walletMethods: toolbox({ ...keys, api, provider, signer }) };
+      return { address, walletMethods: toolbox };
     }
 
     case Chain.Bitcoin:
@@ -94,13 +71,6 @@ async function getToolbox({
         "@swapkit/toolbox-utxo"
       );
 
-      if (!(blockchairApiKey || api)) {
-        throw new SwapKitError({
-          errorKey: "wallet_missing_api_key",
-          info: { missingKey: "blockchairApiKey" },
-        });
-      }
-
       const scriptType = getScriptType(derivationPath);
 
       if (!scriptType) {
@@ -111,8 +81,7 @@ async function getToolbox({
       }
 
       const coin = chain.toLowerCase();
-      const params = { apiClient: api, apiKey: blockchairApiKey, rpcUrl };
-      const toolbox = getToolboxByChain(chain)(params);
+      const toolbox = getToolboxByChain(chain)();
 
       const getAddress = async (path: DerivationPathArray = derivationPath) => {
         const { default: TrezorConnect } = await import("@trezor/connect-web");
@@ -189,7 +158,7 @@ async function getToolbox({
           }),
         });
 
-        if (result.success) {
+        if (result.success && result.payload?.serializedTx) {
           return result.payload.serializedTx;
         }
 
@@ -206,43 +175,38 @@ async function getToolbox({
         from,
         recipient,
         feeOptionKey,
-        feeRate,
+        feeRate: paramFeeRate,
         memo,
         ...rest
       }: UTXOTransferParams) => {
-        if (!from)
+        if (!(from && recipient)) {
           throw new SwapKitError({
             errorKey: "wallet_missing_params",
-            info: { wallet: WalletOption.TREZOR, memo, from },
+            info: { wallet: WalletOption.TREZOR, memo, from, recipient },
           });
-        if (!recipient)
-          throw new SwapKitError({
-            errorKey: "wallet_missing_params",
-            info: { wallet: WalletOption.TREZOR, memo, recipient },
-          });
+        }
+
+        const feeRate =
+          paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
 
         const { psbt, inputs } = await toolbox.buildTx({
           ...rest,
           memo,
           recipient,
-          feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
+          feeRate,
           sender: from,
           fetchTxHex: chain === Chain.Dogecoin,
         });
 
         const txHex = await signTransaction(psbt, inputs, memo);
-        return toolbox.broadcastTx(txHex);
+        const tx = await toolbox.broadcastTx(txHex);
+
+        return tx;
       };
 
-      return {
-        address,
-        walletMethods: {
-          ...toolbox,
-          transfer,
-          signTransaction,
-        },
-      };
+      return { address, walletMethods: { ...toolbox, transfer, signTransaction } };
     }
+
     default:
       throw new SwapKitError({
         errorKey: "wallet_chain_not_supported",
@@ -251,54 +215,23 @@ async function getToolbox({
   }
 }
 
-function connectTrezor({
-  apis,
-  rpcUrls,
-  addChain,
-  config: {
-    covalentApiKey,
-    ethplorerApiKey,
-    blockchairApiKey,
-    trezorManifest = { appUrl: "", email: "" },
-    thorswapApiKey,
-  },
-}: AddChainType) {
+function connectTrezor(addChain: AddChainType) {
   return async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
-    const supportedChains = filterSupportedChains(
-      chains,
-      TREZOR_SUPPORTED_CHAINS,
-      WalletOption.TREZOR,
-    );
-
-    const chain = supportedChains[0];
+    // TODO: filterSupportedChains should return a single chain there?
+    const [chain] = filterSupportedChains(chains, TREZOR_SUPPORTED_CHAINS, WalletOption.TREZOR);
     if (!chain) return false;
-
-    setRequestClientConfig({ apiKey: thorswapApiKey });
 
     const { default: TrezorConnect } = await import("@trezor/connect-web");
     const { success } = await TrezorConnect.getDeviceState();
 
     if (!success) {
-      TrezorConnect.init({ lazyLoad: true, manifest: trezorManifest });
+      const manifest = SKConfig.get("integrations").trezor || { appUrl: "", email: "" };
+      TrezorConnect.init({ lazyLoad: true, manifest });
     }
 
-    const { address, walletMethods } = await getToolbox({
-      api: apis[chain],
-      rpcUrl: rpcUrls[chain],
-      chain,
-      covalentApiKey,
-      ethplorerApiKey,
-      blockchairApiKey,
-      derivationPath,
-    });
+    const { address, walletMethods } = await getToolbox({ chain, derivationPath });
 
-    addChain({
-      chain,
-      ...walletMethods,
-      address,
-      balance: [],
-      walletType: WalletOption.TREZOR,
-    });
+    addChain({ ...walletMethods, address, balance: [], chain, walletType: WalletOption.TREZOR });
 
     return true;
   };

@@ -1,6 +1,5 @@
 import { type CoinbaseWalletProvider, CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
-import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
-import { Chain, ChainToRPC } from "@swapkit/helpers";
+import { Chain, ChainToRPC, SKConfig } from "@swapkit/helpers";
 import type { getToolboxByChain } from "@swapkit/toolbox-evm";
 import { AbstractSigner, type Provider } from "ethers";
 
@@ -44,21 +43,9 @@ class CoinbaseMobileSigner extends AbstractSigner {
   }
 }
 
-export const getWalletForChain = async ({
-  chain,
-  ethplorerApiKey,
-  covalentApiKey,
-  api,
-  coinbaseWalletSettings = {
-    appName: "Developer App",
-  } as CoinbaseWalletSDKOptions,
-}: {
-  chain: Chain;
-  ethplorerApiKey?: string;
-  covalentApiKey?: string;
-  api?: any;
-  coinbaseWalletSettings?: CoinbaseWalletSDKOptions;
-}): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
+export const getWalletMethods = async (
+  chain: Chain,
+): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
   switch (chain) {
     case Chain.Ethereum:
     case Chain.Avalanche:
@@ -66,7 +53,10 @@ export const getWalletForChain = async ({
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
-      const coinbaseWallet = new CoinbaseWalletSDK(coinbaseWalletSettings);
+      const coinbaseConfig = SKConfig.get("integrations").coinbase || {
+        appName: "Swapkit Playground",
+      };
+      const coinbaseWallet = new CoinbaseWalletSDK(coinbaseConfig);
 
       const walletProvider = coinbaseWallet.makeWeb3Provider(ChainToRPC[chain]);
 
@@ -76,20 +66,8 @@ export const getWalletForChain = async ({
       const { getToolboxByChain, getProvider } = await import("@swapkit/toolbox-evm");
 
       const provider = getProvider(chain);
-
       const signer = new CoinbaseMobileSigner(walletProvider, provider);
-
-      const params = {
-        api,
-        provider,
-        signer,
-      };
-
-      const toolbox = getToolboxByChain(chain)({
-        ...params,
-        covalentApiKey: covalentApiKey as string,
-        ethplorerApiKey: ethplorerApiKey as string,
-      });
+      const toolbox = getToolboxByChain(chain)({ provider, signer });
 
       return {
         address: await signer.getAddress(),

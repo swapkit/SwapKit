@@ -8,7 +8,6 @@ import {
   WalletOption,
   type WalletTxParams,
   filterSupportedChains,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 import { chainRegistry } from "./chainRegistry";
 
@@ -24,17 +23,12 @@ const KEPLR_SUPPORTED_CHAINS = [Chain.Cosmos, Chain.Kujira, Chain.THORChain] as 
 
 type TransferParams = WalletTxParams & { assetValue: AssetValue };
 
-function connectKeplr({
-  addChain,
-  config: { thorswapApiKey },
-}: AddChainType<{
-  transfer: (params: TransferParams) => Promise<string>;
-}>) {
+function connectKeplr(
+  addChain: AddChainType<{ transfer: (params: TransferParams) => Promise<string> }>,
+) {
   return async function connectKeplr(chains: Chain[], extensionKey: "keplr" | "leap" = "keplr") {
     const walletType = extensionKey === "keplr" ? WalletOption.KEPLR : WalletOption.LEAP;
     const supportedChains = filterSupportedChains(chains, KEPLR_SUPPORTED_CHAINS, walletType);
-
-    setRequestClientConfig({ apiKey: thorswapApiKey });
     const keplrClient = window[extensionKey];
 
     const toolboxPromises = supportedChains.map(async (chain) => {
@@ -43,19 +37,20 @@ function connectKeplr({
       if (!keplrSupportedChainIds.includes(chainId)) {
         const chainConfig = chainRegistry.get(chainId);
         if (!chainConfig) throw new Error(`Unsupported chain ${chain}`);
+
         await keplrClient.experimentalSuggestChain(chainConfig);
       }
 
       keplrClient?.enable(chainId);
       const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
       if (!offlineSigner) throw new Error("Could not load offlineSigner");
+
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
 
       const accounts = await offlineSigner.getAccounts();
-
       if (!accounts?.[0]?.address) throw new Error("No accounts found");
-      const [{ address }] = accounts;
 
+      const [{ address }] = accounts;
       const toolbox = getToolboxByChain(chain)();
 
       const transfer = (params: {

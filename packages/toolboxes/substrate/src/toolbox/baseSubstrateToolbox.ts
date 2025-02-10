@@ -143,6 +143,12 @@ const signAndBroadcast = (
   return hash.toString();
 };
 
+function convertAddress(address: string, newPrefix: number) {
+  const decodedAddress = decodePolkadotAddress(address);
+  const convertedAddress = encodePolkadotAddress(decodedAddress, newPrefix);
+  return convertedAddress;
+}
+
 function decodeAddress(address: string, networkPrefix?: number) {
   return isHex(address)
     ? hexToU8a(address)
@@ -176,6 +182,7 @@ export const BaseSubstrateToolbox = ({
   network,
   decodeAddress,
   encodeAddress,
+  convertAddress,
   createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
   getAddress: (keyring: IKeyringPair | Signer = signer) =>
     isKeyringPair(keyring) ? keyring.address : undefined,

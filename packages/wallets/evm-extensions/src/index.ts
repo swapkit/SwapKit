@@ -6,10 +6,8 @@ import {
   EVMChains,
   type EthereumWindowProvider,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
   prepareNetworkSwitch,
-  setRequestClientConfig,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolbox-evm";
@@ -51,59 +49,38 @@ const getWalletForType = (
 };
 
 export const getWeb3WalletMethods = async ({
-  ethereumWindowProvider,
+  walletProvider,
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
   provider,
-}: {
-  ethereumWindowProvider: Eip1193Provider | undefined;
-  chain: EVMChain;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
-  provider: BrowserProvider;
-}) => {
-  if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
+}: { walletProvider?: Eip1193Provider; chain: EVMChain; provider: BrowserProvider }) => {
+  if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
 
-  const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
   const signer = await provider.getSigner();
 
-  const toolbox = getToolboxByChain(chain)({ ...keys, provider, signer });
+  const toolbox = getToolboxByChain(chain)({ provider, signer });
 
   if (chain !== Chain.Ethereum) {
     const currentNetwork = await provider.getNetwork();
     if (currentNetwork.chainId.toString() !== ChainToHexChainId[chain]) {
       try {
-        await switchEVMWalletNetwork(
-          provider,
-          ChainToHexChainId[chain],
-          (toolbox as NonETHToolbox).getNetworkParams(),
-        );
+        const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
+        await switchEVMWalletNetwork(provider, chain, networkParams);
       } catch (_error) {
         throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
       }
     }
   }
 
-  return prepareNetworkSwitch<typeof toolbox>({
-    toolbox: { ...toolbox },
-    chainId: ChainToHexChainId[chain],
-    provider,
-  });
+  return prepareNetworkSwitch<typeof toolbox>({ toolbox, chain, provider });
 };
 
-function connectEVMWallet({
-  addChain,
-  config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
-}: AddChainType) {
+function connectEVMWallet(addChain: AddChainType) {
   return async function connectEVMWallet(
     chains: Chain[],
     walletType: EVMWalletOptions = WalletOption.METAMASK,
     eip1193Provider?: Eip1193Provider,
   ) {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(chains, EVMChains, walletType);
 
     const promises = supportedChains.map(async (chain) => {
@@ -119,10 +96,8 @@ function connectEVMWallet({
 
         const walletMethods = await getWeb3WalletMethods({
           chain,
-          ethplorerApiKey,
-          covalentApiKey,
-          ethereumWindowProvider: eip1193Provider,
           provider,
+          walletProvider: eip1193Provider,
         });
 
         const getBalance = async (potentialScamFilter = true) =>
@@ -130,10 +105,10 @@ function connectEVMWallet({
 
         addChain({
           ...walletMethods,
-          chain,
           address,
-          getBalance,
           balance: [],
+          chain,
+          getBalance,
           walletType,
         });
         return;
@@ -146,9 +121,7 @@ function connectEVMWallet({
 
       const walletMethods = await getWeb3WalletMethods({
         chain,
-        ethplorerApiKey,
-        covalentApiKey,
-        ethereumWindowProvider: getWalletForType(walletType),
+        walletProvider: getWalletForType(walletType),
         provider: web3provider,
       });
 

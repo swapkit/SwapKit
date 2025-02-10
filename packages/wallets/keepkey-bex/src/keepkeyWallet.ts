@@ -4,14 +4,10 @@ import {
   Chain,
   type ChainId,
   ChainToChainId,
-  ChainToHexChainId,
   ChainToRPC,
-  type ConnectConfig,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolbox-evm";
 import type { Eip1193Provider } from "ethers";
@@ -45,12 +41,7 @@ const KEEPKEY_SUPPORTED_CHAINS = [
   Chain.THORChain,
 ] as const;
 
-async function getWalletMethodsForChain({
-  chain,
-  blockchairApiKey,
-  covalentApiKey,
-  ethplorerApiKey,
-}: ConnectConfig & { chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number] }) {
+async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]) {
   switch (chain) {
     case Chain.Maya:
     case Chain.THORChain: {
@@ -88,7 +79,7 @@ async function getWalletMethodsForChain({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
-      const toolbox = getToolboxByChain(chain)({ apiKey: blockchairApiKey });
+      const toolbox = getToolboxByChain(chain)();
 
       const getBalance = async () => {
         try {
@@ -125,19 +116,16 @@ async function getWalletMethodsForChain({
         throw new SwapKitError("wallet_keepkey_not_found");
       }
 
-      const apiKeys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
-      const toolbox = getToolboxByChain(chain)({ ...apiKeys, provider, signer });
+      const toolbox = getToolboxByChain(chain)({ provider, signer });
       const keepkeyMethods = getKEEPKEYMethods(provider);
 
       try {
-        chain !== Chain.Ethereum &&
-          (await switchEVMWalletNetwork(
-            provider,
-            ChainToHexChainId[chain],
-            (toolbox as NonETHToolbox).getNetworkParams(),
-          ));
+        if (chain !== Chain.Ethereum) {
+          const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
+          await switchEVMWalletNetwork(provider, chain, networkParams);
+        }
       } catch (_error) {
         throw new SwapKitError({
           errorKey: "wallet_failed_to_add_or_switch_network",
@@ -145,26 +133,15 @@ async function getWalletMethodsForChain({
         });
       }
 
-      const api =
-        chain === Chain.Ethereum
-          ? ethplorerApi(apiKeys.ethplorerApiKey)
-          : covalentApi({ apiKey: apiKeys.covalentApiKey, chainId: ChainToChainId[chain] });
-
       return prepareNetworkSwitch({
         provider,
-        chainId: ChainToHexChainId[chain],
+        chain,
         toolbox: {
           ...toolbox,
           ...keepkeyMethods,
           // Overwrite getBalance due to race conditions
           getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({
-              chain,
-              provider: getProvider(chain),
-              api,
-              address,
-              potentialScamFilter,
-            }),
+            getBalance({ chain, provider: getProvider(chain), address, potentialScamFilter }),
         },
       });
     }
@@ -174,13 +151,8 @@ async function getWalletMethodsForChain({
   }
 }
 
-function connectKeepkeyBex({
-  addChain,
-  config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
-}: AddChainType) {
+function connectKeepkeyBex(addChain: AddChainType) {
   return async (chains: Chain[]) => {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(
       chains,
       KEEPKEY_SUPPORTED_CHAINS,
@@ -189,12 +161,7 @@ function connectKeepkeyBex({
 
     const promises = supportedChains.map(async (chain) => {
       const address = await getKEEPKEYAddress(chain);
-      const walletMethods = await getWalletMethodsForChain({
-        chain,
-        blockchairApiKey,
-        covalentApiKey,
-        ethplorerApiKey,
-      });
+      const walletMethods = await getWalletMethods(chain);
 
       addChain({
         ...walletMethods,

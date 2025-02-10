@@ -6,6 +6,7 @@ import {
   type StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
 import { RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
+import { AssetValue, Chain, type SKConfigIntegrations } from "@swapkit/helpers";
 
 // import {
 //   Convert,
@@ -28,8 +29,6 @@ import { RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
 //   enumeration,
 //   generateRandomNonce,
 // } from "@radixdlt/radix-engine-toolkit";
-import { AssetValue, Chain } from "@swapkit/helpers";
-import type { RadixNetwork } from "./types";
 
 type RadixGetBalanceParams = {
   address: string;
@@ -656,14 +655,7 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
 
 export const RadixToolbox = async ({
   dappConfig,
-}: {
-  dappConfig: {
-    network?: RadixNetwork;
-    dAppDefinitionAddress: string;
-    applicationName: string;
-    applicationVersion: string;
-  };
-}) => {
+}: { dappConfig: SKConfigIntegrations["radix"] }) => {
   const radixToolkit = RadixDappToolkit({
     ...dappConfig,
     networkId: dappConfig.network?.networkId || 1,

@@ -16,18 +16,6 @@ export const defaultRequestHeaders =
     ? ({} as Record<string, string>)
     : { referrer: "https://sk.thorswap.net", referer: "https://sk.thorswap.net" };
 
-/**
- * @deprecated use SKConfig.setApiKey instead
- */
-export function setRequestClientConfig({ apiKey, ...config }: Options) {
-  console.warn("Use SKConfig.setApiKey(apiKey) instead");
-  if (apiKey) {
-    SKConfig.setApiKey("swapKit", apiKey);
-  }
-
-  clientConfig = config;
-}
-
 async function fetchWithConfig(
   { url, method }: { url: string; method: "GET" | "POST" },
   options: Options = {},

@@ -77,7 +77,6 @@ export type TransferTransaction = {
 };
 
 export type CosmosNativeTransferTxParams = {
-  isStagenet?: boolean;
   fromAddress: string;
   toAddress: string;
   assetValue: AssetValue;
@@ -138,26 +137,18 @@ export type ThorchainToolboxType = BaseCosmosToolboxType & {
     membersPubKeys: string[],
     threshold: number,
     bodyBytes: Uint8Array,
-    isStagenet?: boolean,
   ) => Promise<string>;
   pubkeyToAddress: (pubkey: Pubkey, prefix: string) => string;
   loadAddressBalances: (address: string) => Promise<AssetValue[]>;
   signWithPrivateKey: ({
     privateKey,
     message,
-  }: {
-    privateKey: Uint8Array;
-    message: string;
-  }) => Promise<string>;
+  }: { privateKey: Uint8Array; message: string }) => Promise<string>;
   verifySignature: ({
     signature,
     message,
     address,
-  }: {
-    signature: string;
-    message: string;
-    address: string;
-  }) => Promise<boolean>;
+  }: { signature: string; message: string; address: string }) => Promise<boolean>;
 };
 
 export type MayaToolboxType = ThorchainToolboxType;

@@ -1,12 +1,9 @@
-import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
 import {
   Chain,
-  ChainToHexChainId,
   type EVMChain,
   type EthereumWindowProvider,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -19,46 +16,30 @@ declare const window: {
 } & Window &
   InjectedWindow;
 
-export const convertAddress = (inputAddress: string, newPrefix: number): string => {
-  const decodedAddress = decodeAddress(inputAddress);
-  const convertedAddress = encodeAddress(decodedAddress, newPrefix);
-  return convertedAddress;
-};
-
-export const getWeb3WalletMethods = async ({
-  ethereumWindowProvider,
+async function getWeb3WalletMethods({
+  walletProvider,
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
-}: {
-  ethereumWindowProvider: Eip1193Provider | undefined;
-  chain: EVMChain;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
-}) => {
+}: { walletProvider: Eip1193Provider | undefined; chain: EVMChain }) {
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
   const { BrowserProvider } = await import("ethers");
 
-  if (!ethereumWindowProvider) {
+  if (!walletProvider) {
     throw new SwapKitError({
       errorKey: "wallet_provider_not_found",
       info: { wallet: WalletOption.TALISMAN, chain },
     });
   }
 
-  const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
-  const provider = new BrowserProvider(ethereumWindowProvider, "any");
+  const provider = new BrowserProvider(walletProvider, "any");
   const signer = await provider.getSigner();
 
-  const toolbox = getToolboxByChain(chain)({ ...keys, provider, signer });
+  const toolbox = getToolboxByChain(chain)({ provider, signer });
 
   try {
-    chain !== Chain.Ethereum &&
-      (await switchEVMWalletNetwork(
-        provider,
-        ChainToHexChainId[chain],
-        (toolbox as NonETHToolbox).getNetworkParams(),
-      ));
+    if (chain !== Chain.Ethereum) {
+      const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
+      await switchEVMWalletNetwork(provider, chain, networkParams);
+    }
   } catch (_error) {
     throw new SwapKitError({
       errorKey: "wallet_failed_to_add_or_switch_network",
@@ -66,22 +47,10 @@ export const getWeb3WalletMethods = async ({
     });
   }
 
-  return prepareNetworkSwitch<typeof toolbox>({
-    toolbox: { ...toolbox },
-    chainId: ChainToHexChainId[chain],
-    provider,
-  });
-};
+  return prepareNetworkSwitch<typeof toolbox>({ toolbox, chain, provider });
+}
 
-export const getWalletForChain = async ({
-  chain,
-  ethplorerApiKey,
-  covalentApiKey,
-}: {
-  chain: Chain;
-  ethplorerApiKey?: string;
-  covalentApiKey?: string;
-}) => {
+export async function getWalletMethods(chain: Chain) {
   switch (chain) {
     case Chain.Ethereum:
     case Chain.Arbitrum:
@@ -93,16 +62,9 @@ export const getWalletForChain = async ({
       if (!(window.talismanEth && "send" in window.talismanEth)) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_found", info: { chain } });
       }
-
       const { getProvider } = await import("@swapkit/toolbox-evm");
 
-      const evmWallet = await getWeb3WalletMethods({
-        chain,
-        ethereumWindowProvider: window.talismanEth,
-        covalentApiKey,
-        ethplorerApiKey,
-      });
-
+      const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.talismanEth });
       const address: string = (await window.talismanEth.send("eth_requestAccounts", []))[0];
 
       const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
@@ -120,10 +82,7 @@ export const getWalletForChain = async ({
       const rawExtension = await injectedExtension?.enable?.("talisman");
 
       if (!rawExtension) {
-        throw new SwapKitError({
-          errorKey: "wallet_talisman_not_enabled",
-          info: { chain },
-        });
+        throw new SwapKitError({ errorKey: "wallet_talisman_not_enabled", info: { chain } });
       }
 
       const toolbox = await getToolboxByChain(chain, { signer: rawExtension.signer });
@@ -137,7 +96,10 @@ export const getWalletForChain = async ({
       }
       const [{ address }] = accounts;
 
-      return { walletMethods: toolbox, address: convertAddress(address, Network[chain].prefix) };
+      return {
+        walletMethods: toolbox,
+        address: toolbox.convertAddress(address, Network[chain].prefix),
+      };
     }
 
     default:
@@ -146,4 +108,4 @@ export const getWalletForChain = async ({
         info: { chain, wallet: WalletOption.TALISMAN },
       });
   }
-};
+}

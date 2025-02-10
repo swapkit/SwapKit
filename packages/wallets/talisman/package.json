@@ -1,16 +1,11 @@
 {
   "description": "SwapKit Wallet - Talisman",
   "dependencies": {
-    "@polkadot/util": "12.6.2",
-    "@polkadot/util-crypto": "12.6.2",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
     "@swapkit/toolbox-substrate": "workspace:*"
   },
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",

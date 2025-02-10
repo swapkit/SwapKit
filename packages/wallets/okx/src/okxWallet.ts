@@ -1,12 +1,6 @@
-import {
-  type AddChainType,
-  Chain,
-  WalletOption,
-  filterSupportedChains,
-  setRequestClientConfig,
-} from "@swapkit/helpers";
+import { type AddChainType, Chain, WalletOption, filterSupportedChains } from "@swapkit/helpers";
 
-import { getWalletForChain } from "./helpers";
+import { getWalletMethods } from "./helpers";
 
 export const OKX_SUPPORTED_CHAINS = [
   Chain.Arbitrum,
@@ -20,22 +14,12 @@ export const OKX_SUPPORTED_CHAINS = [
   Chain.Polygon,
 ] as const;
 
-function connectOkx({
-  addChain,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
-}: AddChainType) {
+function connectOkx(addChain: AddChainType) {
   return async function connectOkx(chains: Chain[]) {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(chains, OKX_SUPPORTED_CHAINS, WalletOption.OKX);
 
     const promises = supportedChains.map(async (chain) => {
-      const walletMethods = await getWalletForChain({
-        chain,
-        covalentApiKey,
-        ethplorerApiKey,
-        blockchairApiKey,
-      });
+      const walletMethods = await getWalletMethods(chain);
 
       addChain({
         ...walletMethods,

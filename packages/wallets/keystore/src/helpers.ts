@@ -4,23 +4,16 @@ import { wordlist } from "@scure/bip39/wordlists/english";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
 
 export type Keystore = {
-  crypto: {
-    cipher: string;
-    ciphertext: string;
-    cipherparams: {
-      iv: string;
-    };
-    kdf: string;
-    kdfparams: {
-      prf: string;
-      dklen: number;
-      salt: string;
-      c: number;
-    };
-    mac: string;
-  };
   version: number;
   meta: string;
+  crypto: {
+    cipher: string;
+    cipherparams: { iv: string };
+    ciphertext: string;
+    kdf: string;
+    kdfparams: { prf: string; dklen: number; salt: string; c: number };
+    mac: string;
+  };
 };
 
 /**

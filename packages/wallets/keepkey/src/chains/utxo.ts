@@ -6,13 +6,7 @@ import {
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type {
-  BCHToolbox,
-  BaseUTXOToolbox,
-  Psbt,
-  UTXOToolbox,
-  UTXOTransferParams,
-} from "@swapkit/toolbox-utxo";
+import type { BCHToolbox, Psbt, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../helpers/coins";
 
@@ -20,8 +14,6 @@ type KKUtxoWalletParams = {
   sdk: any;
   chain: UTXOChain;
   derivationPath?: DerivationPathArray;
-  apiKey?: string;
-  apiClient?: ReturnType<typeof BaseUTXOToolbox>["apiClient"];
 };
 
 interface psbtTxOutput {
@@ -46,8 +38,6 @@ export const utxoWalletMethods = async ({
   sdk,
   chain,
   derivationPath,
-  apiKey,
-  apiClient,
 }: KKUtxoWalletParams): Promise<
   UTXOToolbox & {
     address: string;
@@ -59,10 +49,9 @@ export const utxoWalletMethods = async ({
     transfer: (params: UTXOTransferParams) => Promise<string>;
   }
 > => {
-  if (!(apiKey || apiClient)) throw new Error("UTXO API key not found");
   const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
 
-  const toolbox = getToolboxByChain(chain)({ apiClient, apiKey });
+  const toolbox = getToolboxByChain(chain)();
   const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain) ? "p2wpkh" : "p2pkh";
 
   const derivationPathString = derivationPath

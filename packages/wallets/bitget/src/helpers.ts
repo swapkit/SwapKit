@@ -2,13 +2,11 @@ import { PublicKey } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
-  type ChainApi,
   ChainId,
-  ChainToHexChainId,
   type EVMChain,
+  SKConfig,
   SwapKitError,
   type WalletTxParams,
-  getRPCUrl,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -16,7 +14,7 @@ import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
-export function cosmosTransfer(rpcUrl?: string) {
+export function cosmosTransfer() {
   return async ({ from, recipient, assetValue, memo }: TransferParams) => {
     const { getMsgSendDenom, createSigningStargateClient } = await import(
       "@swapkit/toolbox-cosmos"
@@ -28,10 +26,7 @@ export function cosmosTransfer(rpcUrl?: string) {
     const { keplr: wallet } = window.bitkeep;
 
     const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
-    const cosmJS = await createSigningStargateClient(
-      rpcUrl || getRPCUrl(Chain.Cosmos),
-      offlineSigner,
-    );
+    const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls").GAIA, offlineSigner);
 
     const coins = [
       {
@@ -49,22 +44,7 @@ export function cosmosTransfer(rpcUrl?: string) {
   };
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
-export async function getWalletForChain({
-  chain,
-  ethplorerApiKey,
-  covalentApiKey,
-  blockchairApiKey,
-  rpcUrl,
-  api,
-}: {
-  chain: Chain;
-  ethplorerApiKey?: string;
-  covalentApiKey?: string;
-  blockchairApiKey?: string;
-  rpcUrl?: string;
-  api?: ChainApi;
-}) {
+export async function getWalletMethods(chain: Chain) {
   const bitget = window.bitkeep;
 
   switch (chain) {
@@ -83,12 +63,7 @@ export async function getWalletForChain({
 
       const { getProvider } = await import("@swapkit/toolbox-evm");
 
-      const evmWallet = await getWeb3WalletMethods({
-        chain,
-        ethplorerApiKey,
-        covalentApiKey,
-        ethereumWindowProvider: wallet,
-      });
+      const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
 
       const [address]: [string, ...string[]] = await wallet.send("eth_requestAccounts", []);
 
@@ -107,9 +82,8 @@ export async function getWalletForChain({
       const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
 
       const [address] = await wallet.requestAccounts();
-      const apiClient = typeof api === "object" && "getConfirmedBalance" in api ? api : undefined;
 
-      const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient });
+      const toolbox = BTCToolbox();
       const signTransaction = async (psbt: Psbt) => {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });
 
@@ -134,13 +108,10 @@ export async function getWalletForChain({
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
       const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
+      const toolbox = GaiaToolbox();
       const [{ address }] = accounts;
 
-      return {
-        address,
-        ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
-        transfer: cosmosTransfer(rpcUrl),
-      };
+      return { ...toolbox, address, transfer: cosmosTransfer() };
     }
 
     case Chain.Solana: {
@@ -154,7 +125,7 @@ export async function getWalletForChain({
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
 
-      const toolbox = SOLToolbox({ rpcUrl });
+      const toolbox = SOLToolbox();
 
       const transfer = async ({
         recipient,
@@ -193,49 +164,24 @@ export async function getWalletForChain({
 }
 
 export const getWeb3WalletMethods = async ({
-  ethereumWindowProvider,
+  walletProvider,
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
-}: {
-  ethereumWindowProvider: Eip1193Provider | undefined;
-  chain: EVMChain;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
-}) => {
+}: { walletProvider?: Eip1193Provider; chain: EVMChain }) => {
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
   const { BrowserProvider } = await import("ethers");
-  if (!ethereumWindowProvider) throw new SwapKitError("wallet_provider_not_found");
+  if (!walletProvider) throw new SwapKitError("wallet_provider_not_found");
 
-  if (
-    (chain !== Chain.Ethereum && !covalentApiKey) ||
-    (chain === Chain.Ethereum && !ethplorerApiKey)
-  ) {
-    throw new SwapKitError({
-      errorKey: "wallet_missing_api_key",
-      info: {
-        missingKey: chain === Chain.Ethereum ? "ethplorerApiKey" : "covalentApiKey",
-        chain,
-      },
-    });
-  }
-
-  const provider = new BrowserProvider(ethereumWindowProvider, "any");
-
-  const toolbox = getToolboxByChain(chain)({
-    provider,
-    signer: await provider.getSigner(),
-    ethplorerApiKey: ethplorerApiKey as string,
-    covalentApiKey: covalentApiKey as string,
-  });
+  const provider = new BrowserProvider(walletProvider, "any");
+  const signer = await provider.getSigner();
+  const toolbox = getToolboxByChain(chain)({ provider, signer });
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
-      await switchEVMWalletNetwork(provider, ChainToHexChainId[chain], toolbox.getNetworkParams());
+      await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
   } catch (_error) {
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
   }
 
-  return prepareNetworkSwitch({ toolbox, provider, chainId: ChainToHexChainId[chain] });
+  return prepareNetworkSwitch({ toolbox, provider, chain });
 };

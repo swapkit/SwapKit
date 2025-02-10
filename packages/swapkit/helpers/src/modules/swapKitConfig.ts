@@ -1,11 +1,22 @@
 import { createStore } from "zustand/vanilla";
 import { EXPLORER_URLS, NODE_URLS, RPC_URLS } from "../types";
 
-type Integrations = {
+export type SKConfigIntegrations = {
   chainflip?: { useSDKBroker?: boolean; brokerUrl: string };
+  coinbase?: {
+    appName: string;
+    appLogoUrl?: string | null;
+    darkMode?: boolean;
+    linkAPIUrl?: string;
+    overrideIsMetaMask?: boolean;
+    overrideIsCoinbaseWallet?: boolean;
+    overrideIsCoinbaseBrowser?: boolean;
+    headlessMode?: boolean;
+    reloadOnDisconnect?: boolean;
+  };
   trezor?: { email: string; appUrl: string };
-  keepkey?: { name: string; imageUrl: string; basePath: string; url: string };
-  radix?: {
+  keepKey?: { name: string; imageUrl: string; basePath: string; url: string };
+  radix: {
     dAppDefinitionAddress: string;
     applicationName: string;
     applicationVersion: string;
@@ -15,7 +26,18 @@ type Integrations = {
 
 const initialState = {
   explorerUrls: EXPLORER_URLS,
-  integrations: {} as Integrations,
+  integrations: {
+    radix: {
+      applicationName: "Swapkit Playground",
+      applicationVersion: "0.0.1",
+      dAppDefinitionAddress: "account_rdx128r289p58222hcvev7frs6kue76pl7pdcnw8725aw658v0zggkh9ws",
+      network: {
+        dashboardBase: "https://dashboard.radixdlt.com",
+        networkId: 1,
+        networkName: "mainnet",
+      },
+    },
+  } as SKConfigIntegrations,
   nodeUrls: NODE_URLS,
   rpcUrls: RPC_URLS,
   apiKeys: {
@@ -41,7 +63,7 @@ export type SKConfigState = {
   apiKeys?: Partial<SKState["apiKeys"]>;
   envs?: Partial<SKState["envs"]>;
   explorerUrls?: Partial<SKState["explorerUrls"]>;
-  integrations?: Partial<Integrations>;
+  integrations?: Partial<SKConfigIntegrations>;
   nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
 };
@@ -54,7 +76,7 @@ type SwapKitConfigStore = SKState & {
   setRpcUrl: (chain: keyof SKState["rpcUrls"], url: string) => void;
   setIntegrationConfig: (
     integration: keyof SKState["integrations"],
-    config: Integrations[keyof Integrations],
+    config: SKConfigIntegrations[keyof SKConfigIntegrations],
   ) => void;
 };
 
@@ -94,6 +116,6 @@ export const SKConfig = {
     swapKitState.getState().setRpcUrl(chain, url),
   setIntegrationConfig: <T extends keyof SKState["integrations"]>(
     integration: T,
-    config: Integrations[T],
+    config: SKConfigIntegrations[T],
   ) => swapKitState.getState().setIntegrationConfig(integration, config),
 };

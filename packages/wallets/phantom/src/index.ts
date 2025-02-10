@@ -6,9 +6,7 @@ import {
   SwapKitError,
   WalletOption,
   type WalletTxParams,
-  ensureEVMApiKeys,
   filterSupportedChains,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolbox-solana";
 
@@ -23,17 +21,7 @@ declare global {
   }
 }
 
-async function getWalletMethods<T extends PhantomSupportedChains>({
-  chain,
-  rpcUrl,
-  covalentApiKey,
-  ethplorerApiKey,
-}: {
-  rpcUrl?: string;
-  chain: T;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
-}) {
+async function getWalletMethods<T extends PhantomSupportedChains>(chain: T) {
   const phantom: any = window?.phantom;
 
   switch (chain) {
@@ -42,12 +30,13 @@ async function getWalletMethods<T extends PhantomSupportedChains>({
       if (!provider?.isPhantom) {
         throw new SwapKitError("wallet_phantom_not_found");
       }
-      const [{ address }] = await provider.requestAccounts();
 
       const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
-      const toolbox = getToolboxByChain(chain);
+      const [{ address }] = await provider.requestAccounts();
 
-      return { ...toolbox({ rpcUrl }), address };
+      const toolbox = getToolboxByChain(chain)();
+
+      return { ...toolbox, address };
     }
 
     case Chain.Ethereum: {
@@ -57,11 +46,10 @@ async function getWalletMethods<T extends PhantomSupportedChains>({
       const provider = new BrowserProvider(phantom?.ethereum, "any");
       const [address] = await provider.send("eth_requestAccounts", []);
 
-      const toolbox = getToolboxByChain(chain);
-      const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
       const signer = await provider.getSigner();
+      const toolbox = getToolboxByChain(chain)({ signer, provider });
 
-      return { ...toolbox({ ...keys, signer, provider }), address };
+      return { ...toolbox, address };
     }
 
     case Chain.Solana: {
@@ -73,8 +61,7 @@ async function getWalletMethods<T extends PhantomSupportedChains>({
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-
-      const toolbox = SOLToolbox({ rpcUrl });
+      const toolbox = SOLToolbox();
 
       const transfer = async ({
         recipient,
@@ -135,14 +122,8 @@ async function getWalletMethods<T extends PhantomSupportedChains>({
   }
 }
 
-function connectPhantom({
-  addChain,
-  config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
-  rpcUrls,
-}: AddChainType) {
+function connectPhantom(addChain: AddChainType) {
   return async function connectPhantom(chains: Chain[]) {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(
       chains,
       PHANTOM_SUPPORTED_CHAINS,
@@ -150,13 +131,7 @@ function connectPhantom({
     );
 
     async function connectChain(chain: PhantomSupportedChains) {
-      const rpcUrl = rpcUrls[chain];
-      const { address, ...methods } = await getWalletMethods({
-        chain,
-        covalentApiKey,
-        ethplorerApiKey,
-        rpcUrl,
-      });
+      const { address, ...methods } = await getWalletMethods(chain);
 
       addChain({
         ...methods,

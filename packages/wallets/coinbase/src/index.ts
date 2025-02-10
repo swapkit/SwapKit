@@ -1,8 +1,7 @@
-import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
-import { filterSupportedChains, setRequestClientConfig } from "@swapkit/helpers";
+import { filterSupportedChains } from "@swapkit/helpers";
 import { type AddChainType, Chain, WalletOption } from "@swapkit/helpers";
 
-import { getWalletForChain } from "./signer.js";
+import { getWalletMethods } from "./signer";
 
 export const COINBASE_SUPPORTED_CHAINS = [
   Chain.Arbitrum,
@@ -14,14 +13,8 @@ export const COINBASE_SUPPORTED_CHAINS = [
   Chain.Polygon,
 ] as const;
 
-function connectCoinbaseWallet({
-  addChain,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
-  coinbaseWalletSettings,
-}: AddChainType & { coinbaseWalletSettings?: CoinbaseWalletSDKOptions }) {
+function connectCoinbaseWallet(addChain: AddChainType) {
   return async function connectCoinbaseWallet(chains: Chain[]) {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(
       chains,
       COINBASE_SUPPORTED_CHAINS,
@@ -29,12 +22,7 @@ function connectCoinbaseWallet({
     );
 
     const promises = supportedChains.map(async (chain) => {
-      const walletMethods = await getWalletForChain({
-        chain,
-        covalentApiKey,
-        ethplorerApiKey,
-        coinbaseWalletSettings,
-      });
+      const walletMethods = await getWalletMethods(chain);
 
       addChain({ ...walletMethods, balance: [], chain, walletType: WalletOption.COINBASE_MOBILE });
     });

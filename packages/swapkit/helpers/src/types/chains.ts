@@ -215,8 +215,8 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
   [Chain.Base]: "https://base-rpc.publicnode.com",
   [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
-  [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
   [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",
+  [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
   [Chain.Chainflip]: "wss://mainnet-archive.chainflip.io",
   [Chain.Cosmos]: "https://node-router.thorswap.net/cosmos/rpc",
   [Chain.Dash]: "https://dash-rpc.publicnode.com",
@@ -230,10 +230,10 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Polkadot]: "wss://rpc.polkadot.io",
   [Chain.Polygon]: "https://polygon-rpc.com",
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
-  [Chain.THORChain]: "https://rpc.thorswap.net",
-  [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
-  [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
+  [Chain.THORChain]: "https://rpc.thorswap.net",
+  [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
+  [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
 
 export const NODE_URLS: Record<
@@ -326,50 +326,26 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon:
-      return {
-        jsonrpc: "2.0",
-        method: "eth_blockNumber",
-        params: [],
-        id: 1,
-      };
+      return { id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] };
     case Chain.Bitcoin:
     case Chain.Dogecoin:
     case Chain.BitcoinCash:
     case Chain.Dash:
     case Chain.Litecoin:
-      return {
-        jsonrpc: "1.0",
-        id: "test",
-        method: "getblockchaininfo",
-        params: [],
-      };
+      return { id: "test", jsonrpc: "1.0", method: "getblockchaininfo", params: [] };
     case Chain.Cosmos:
     case Chain.Kujira:
     case Chain.Maya:
     case Chain.THORChain:
     case StagenetChain.Maya:
     case StagenetChain.THORChain:
-      return {
-        id: 1,
-        jsonrpc: "2.0",
-        method: "status",
-        params: {},
-      };
+      return { id: 1, jsonrpc: "2.0", method: "status", params: {} };
     case Chain.Polkadot:
-      return {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "system_health",
-        params: [],
-      };
+      return { id: 1, jsonrpc: "2.0", method: "system_health", params: [] };
+    case Chain.Solana:
+      return { id: 1, jsonrpc: "2.0", method: "getHealth" };
     case Chain.Radix:
       return "";
-    case Chain.Solana:
-      return {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "getHealth",
-      };
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }

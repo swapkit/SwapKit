@@ -1,8 +1,9 @@
 import type { BrowserProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
-  Chain,
-  ChainId,
+  type Chain,
+  type ChainId,
+  ChainToHexChainId,
   type EIP6963AnnounceProviderEvent,
   type EIP6963Provider,
   WalletOption,
@@ -78,14 +79,14 @@ export function listWeb3EVMWallets() {
 
 export async function switchEVMWalletNetwork(
   provider: BrowserProvider,
-  chainId = ChainId.EthereumHex,
+  chain: Chain,
   networkParams?: NetworkParams,
 ) {
   try {
     await providerRequest({
       provider,
       method: "wallet_switchEthereumChain",
-      params: [{ chainId }],
+      params: [{ chainId: ChainToHexChainId[chain] }],
     });
   } catch (_error) {
     if (!networkParams) {
@@ -125,11 +126,11 @@ export function filterSupportedChains<T extends Chain>(
 export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   func: T,
   provider: BrowserProvider,
-  chainId: ChainId,
+  chain: Chain,
 ) {
   (async (...args: any[]) => {
     try {
-      await switchEVMWalletNetwork(provider, chainId);
+      await switchEVMWalletNetwork(provider, chain);
     } catch (error) {
       throw new SwapKitError({
         errorKey: "helpers_failed_to_switch_network",
@@ -158,11 +159,11 @@ const methodsToWrap = [
 ];
 export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[]) => any }>({
   toolbox,
-  chainId,
+  chain,
   provider = window.ethereum,
 }: {
   toolbox: T;
-  chainId: ChainId;
+  chain: Chain;
   provider?: BrowserProvider;
 }) {
   const wrappedMethods = methodsToWrap.reduce((object, methodName) => {
@@ -174,7 +175,7 @@ export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[])
     return {
       // biome-ignore lint/performance/noAccumulatingSpread: This is a valid use case
       ...object,
-      [methodName]: wrapMethodWithNetworkSwitch<typeof method>(method, provider, chainId),
+      [methodName]: wrapMethodWithNetworkSwitch<typeof method>(method, provider, chain),
     };
   }, {});
 
@@ -198,25 +199,6 @@ export function getETHDefaultWallet() {
   if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;
   if (__XDEFI) WalletOption.CTRL;
   return WalletOption.METAMASK;
-}
-
-export function ensureEVMApiKeys({
-  chain,
-  covalentApiKey,
-  ethplorerApiKey,
-}: { chain: Chain; covalentApiKey?: string; ethplorerApiKey?: string }) {
-  const missingKey =
-    chain !== Chain.Ethereum && !covalentApiKey
-      ? "covalentApiKey"
-      : ethplorerApiKey
-        ? undefined
-        : "ethplorerApiKey";
-
-  if (missingKey) {
-    throw new SwapKitError({ errorKey: "wallet_missing_api_key", info: { missingKey } });
-  }
-
-  return { covalentApiKey: covalentApiKey as string, ethplorerApiKey: ethplorerApiKey as string };
 }
 
 export function getEIP6963Wallets() {

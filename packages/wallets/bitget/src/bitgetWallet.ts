@@ -4,10 +4,9 @@ import {
   EVMChains,
   WalletOption,
   filterSupportedChains,
-  setRequestClientConfig,
 } from "@swapkit/helpers";
 
-import { getWalletForChain } from "./helpers";
+import { getWalletMethods } from "./helpers";
 
 export const BITGET_SUPPORTED_CHAINS = [
   ...EVMChains,
@@ -16,13 +15,8 @@ export const BITGET_SUPPORTED_CHAINS = [
   Chain.Solana,
 ] as const;
 
-function connectBitget({
-  addChain,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
-}: AddChainType) {
+function connectBitget(addChain: AddChainType) {
   return async function connectBitget(chains: Chain[]) {
-    setRequestClientConfig({ apiKey: thorswapApiKey });
-
     const supportedChains = filterSupportedChains(
       chains,
       BITGET_SUPPORTED_CHAINS,
@@ -30,12 +24,7 @@ function connectBitget({
     );
 
     const promises = supportedChains.map(async (chain) => {
-      const walletMethods = await getWalletForChain({
-        chain,
-        covalentApiKey,
-        ethplorerApiKey,
-        blockchairApiKey,
-      });
+      const walletMethods = await getWalletMethods(chain);
 
       addChain({
         ...walletMethods,

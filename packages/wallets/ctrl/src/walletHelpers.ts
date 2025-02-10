@@ -33,7 +33,7 @@ export type WalletTxParams = {
   memo?: string;
   recipient: string;
   assetValue: AssetValue;
-  gasLimit?: string | bigint | undefined;
+  gasLimit?: string | bigint;
 };
 
 export function getCtrlProvider<T extends Chain>(

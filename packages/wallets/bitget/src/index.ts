@@ -9,14 +9,7 @@ type UnisatToSignInputs = {
   index: number;
   sighashTypes?: number[];
   disableTweakSigner?: boolean;
-} & (
-  | {
-      address: string;
-    }
-  | {
-      publicKey: string;
-    }
-);
+} & ({ address: string } | { publicKey: string });
 
 declare global {
   interface Window {
