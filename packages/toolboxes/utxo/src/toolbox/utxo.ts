@@ -40,12 +40,7 @@ const createKeysForPath = ({
   wif,
   derivationPath,
   chain,
-}: {
-  phrase?: string;
-  wif?: string;
-  derivationPath: string;
-  chain: Chain;
-}) => {
+}: { phrase?: string; wif?: string; derivationPath: string; chain: Chain }) => {
   if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
 
   const factory = ECPairFactory(secp256k1);
@@ -106,7 +101,7 @@ const transfer = async ({
     assetValue,
     memo,
   });
-  const signedPsbt = await signTransaction(psbt);
+  const signedPsbt = signTransaction(psbt);
   signedPsbt.finalizeAllInputs(); // Finalise inputs
   // TX extracted and formatted to hex
   return broadcastTx(signedPsbt.extractTransaction().toHex());
@@ -121,7 +116,7 @@ const getBalance = async ({
   const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
     "string",
   );
-  const asset = await AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
+  const asset = AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
 
   return [asset];
 };
@@ -135,14 +130,12 @@ const getInputsAndTargetOutputs = async ({
   memo,
   sender,
   fetchTxHex = false,
-  apiClient,
 }: {
   assetValue: AssetValue;
   recipient: string;
   memo?: string;
   sender: string;
   fetchTxHex?: boolean;
-  apiClient: BlockchairApiType;
 }) => {
   const inputs = await apiClient.scanUTXOs({
     address: sender,
@@ -168,7 +161,6 @@ const buildTx = async ({
   feeRate,
   sender,
   fetchTxHex = false,
-  apiClient,
   chain,
 }: UTXOBuildTxParams): Promise<{
   psbt: Psbt;
@@ -184,14 +176,13 @@ const buildTx = async ({
     memo,
     sender,
     fetchTxHex,
-    apiClient,
   });
 
   const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!(inputs && outputs)) throw new Error("Insufficient Balance for transaction");
-  const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
+  const psbt = new Psbt({ network: getNetwork(chain) });
 
   if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
 

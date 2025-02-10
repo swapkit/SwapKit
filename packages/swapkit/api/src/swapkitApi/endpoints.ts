@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { ProviderName, RequestClient, SKConfig, SwapKitError } from "@swapkit/helpers";
+import { ProviderName, RequestClient, SKConfig, SwapKitError, warnOnce } from "@swapkit/helpers";
 
 import {
   type BrokerDepositChannelParams,
@@ -95,7 +95,7 @@ export async function getSwapQuote(searchParams: QuoteRequest) {
  * @deprecated use getTokenListProviders instead
  */
 export function getTokenListProvidersV2() {
-  console.warn("getTokenListProvidersV2 is deprecated, use getTokenListProviders instead");
+  warnOnce(true, "getTokenListProvidersV2 is deprecated, use getTokenListProviders instead");
   return getTokenListProviders();
 }
 

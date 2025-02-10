@@ -8,6 +8,7 @@ import {
   type EIP6963Provider,
   WalletOption,
 } from "../types";
+import { warnOnce } from "./others";
 
 export type EthereumWindowProvider = BrowserProvider & {
   __XDEFI?: boolean;
@@ -112,13 +113,12 @@ export function filterSupportedChains<T extends Chain>(
 
   const unsupported = chains.filter((chain) => !supportedChains.includes(chain as T));
 
-  if (unsupported.length > 0) {
-    console.warn(
-      `${walletOption} wallet does not support the following chains: ${unsupported.join(
-        ", ",
-      )}. These chains will be ignored.`,
-    );
-  }
+  warnOnce(
+    unsupported.length > 0,
+    `${walletOption} wallet does not support the following chains: ${unsupported.join(
+      ", ",
+    )}. These chains will be ignored.`,
+  );
 
   return supported;
 }

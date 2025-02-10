@@ -4,7 +4,7 @@ import { AbstractSigner } from "ethers";
 
 import { DEFAULT_EIP155_METHODS } from "./constants";
 import { chainToChainId, getAddressByChain } from "./helpers";
-import type { Walletconnect } from "./walletconnect";
+import type { Walletconnect } from "./index";
 
 interface WalletconnectEVMSignerParams {
   chain: EVMChain;

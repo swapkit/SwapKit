@@ -1,4 +1,4 @@
-import { Chain, RequestClient, type UTXOChain } from "@swapkit/helpers";
+import { Chain, RequestClient, SKConfig, type UTXOChain } from "@swapkit/helpers";
 
 import type {
   BlockchairAddressResponse,
@@ -228,14 +228,18 @@ const scanUTXOs = async ({
   return results;
 };
 
-export const blockchairApi = ({ apiKey, chain }: { apiKey?: string; chain: UTXOChain }) => ({
-  getConfirmedBalance: (address: string) => getConfirmedBalance({ chain, address, apiKey }),
-  getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
-  getSuggestedTxFee: () => getSuggestedTxFee(chain),
-  getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
-  getAddressData: (address: string) => getAddressData({ address, chain, apiKey }),
-  scanUTXOs: (params: { address: string; fetchTxHex?: boolean }) =>
-    scanUTXOs({ ...params, chain, apiKey }),
-});
+export const blockchairApi = ({ chain }: { chain: UTXOChain }) => {
+  const apiKey = SKConfig.get("apiKeys").blockchair;
+
+  return {
+    getConfirmedBalance: (address: string) => getConfirmedBalance({ chain, address, apiKey }),
+    getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
+    getSuggestedTxFee: () => getSuggestedTxFee(chain),
+    getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
+    getAddressData: (address: string) => getAddressData({ address, chain, apiKey }),
+    scanUTXOs: (params: { address: string; fetchTxHex?: boolean }) =>
+      scanUTXOs({ ...params, chain, apiKey }),
+  };
+};
 
 export type BlockchairApiType = ReturnType<typeof blockchairApi>;

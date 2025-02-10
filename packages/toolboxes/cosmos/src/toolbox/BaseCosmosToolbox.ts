@@ -9,8 +9,8 @@ import {
   type ChainId,
   type CosmosChain,
   CosmosChainPrefixes,
-  type DerivationPath,
-  RPC_URLS,
+  DerivationPath,
+  SKConfig,
   SwapKitError,
 } from "@swapkit/helpers";
 
@@ -26,9 +26,9 @@ import {
 
 type Params = {
   chain: CosmosChain;
-  derivationPath: DerivationPath;
+  derivationPath?: DerivationPath;
   prefix?: string;
-  rpcUrl?: string;
+  index?: number;
 };
 
 export async function getFeeRateFromThorswap(chainId: ChainId, safeDefault: number) {
@@ -45,30 +45,34 @@ export async function getFeeRateFromThorswap(chainId: ChainId, safeDefault: numb
 
 export function BaseCosmosToolbox({
   chain,
-  derivationPath,
+  derivationPath: paramsDerivationPath,
+  index = 0,
   prefix,
-  rpcUrl,
 }: Params): BaseCosmosToolboxType {
+  const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const chainPrefix = prefix || CosmosChainPrefixes[chain];
-  const chainRpcUrl = rpcUrl || RPC_URLS[chain];
+  const derivationPath = paramsDerivationPath
+    ? `${paramsDerivationPath}/${index}`
+    : `${DerivationPath[chain]}/${index}`;
+
+  const derivationPathString = stringToPath(derivationPath);
 
   const getCosmosAccount = cosmosAccountGetter(chainPrefix);
-  const getCosmosBalance = cosmosBalanceGetter({ chain, rpcUrl: chainRpcUrl });
-  const getCosmosBalanceAsDenoms = cosmosBalanceDenomsGetter(chainRpcUrl);
+  const getCosmosBalance = cosmosBalanceGetter({ chain, rpcUrl });
+  const getCosmosBalanceAsDenoms = cosmosBalanceDenomsGetter(rpcUrl);
 
   return {
-    transfer: cosmosTransfer(chainRpcUrl),
+    transfer: cosmosTransfer(rpcUrl),
     getSigner: (phrase: string) => {
       return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
         prefix,
-        hdPaths: [stringToPath(`${derivationPath}/0`)],
+        hdPaths: [derivationPathString],
       });
     },
     getSignerFromPrivateKey: (privateKey: Uint8Array) => {
       return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
     },
     createPrivateKeyFromPhrase: async (phrase: string) => {
-      const derivationPathString = stringToPath(`${derivationPath}/0`);
       const mnemonicChecked = new EnglishMnemonic(phrase);
       const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
 
@@ -77,7 +81,7 @@ export function BaseCosmosToolbox({
       return privkey;
     },
     getAccount: async (address) => {
-      const client = await createStargateClient(chainRpcUrl);
+      const client = await createStargateClient(rpcUrl);
       return client.getAccount(address);
     },
     validateAddress: (address) => validateCosmosAddress({ prefix: chainPrefix, address }),
@@ -96,23 +100,31 @@ export function BaseCosmosToolbox({
   };
 }
 
+function getPrefix(chain?: CosmosChain) {
+  const { isStagenet } = SKConfig.get("envs");
+  const useStagenetPrefix = chain
+    ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet
+    : false;
+  const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
+
+  return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
+}
+
 export function cosmosValidateAddress({
   address,
   chain,
-  prefix,
+  prefix: chainPrefix,
 }: { address: string } & (
   | { prefix: string; chain?: undefined }
   | { chain: CosmosChain; prefix?: undefined }
 )) {
-  const chainPrefix = prefix || (chain ? CosmosChainPrefixes[chain] : undefined);
+  const prefix = chainPrefix || getPrefix(chain);
 
-  if (!(chainPrefix && address)) {
+  if (!(prefix && address)) {
     throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
   }
 
-  const valid = validateCosmosAddress({ prefix: chainPrefix, address });
-
-  return valid;
+  return validateCosmosAddress({ prefix, address });
 }
 
 export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: AssetValue }) {

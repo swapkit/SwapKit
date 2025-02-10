@@ -1,18 +1,13 @@
-import { BaseDecimal, Chain, ChainId, DerivationPath, SwapKitNumber } from "@swapkit/helpers";
+import { BaseDecimal, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
 
-import type { ToolboxParams, TransferParams } from "../types";
+import type { TransferParams } from "../types";
 
 import type { GaiaToolboxType } from "../thorchainUtils/types/client-types";
 import { buildNativeTransferTx } from "../util";
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from "./BaseCosmosToolbox";
 
-export const GaiaToolbox = ({ rpcUrl, prefix }: ToolboxParams = {}): GaiaToolboxType => {
-  const cosmosToolbox = BaseCosmosToolbox({
-    chain: Chain.Cosmos,
-    derivationPath: DerivationPath.GAIA,
-    prefix,
-    rpcUrl,
-  });
+export function GaiaToolbox(): GaiaToolboxType {
+  const cosmosToolbox = BaseCosmosToolbox({ chain: Chain.Cosmos });
 
   async function getFees() {
     const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 500);
@@ -42,4 +37,4 @@ export const GaiaToolbox = ({ rpcUrl, prefix }: ToolboxParams = {}): GaiaToolbox
   }
 
   return { ...cosmosToolbox, getFees, transfer, buildTransferTx: buildNativeTransferTx };
-};
+}

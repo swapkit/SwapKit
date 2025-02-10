@@ -7,6 +7,7 @@ import {
   RequestClient,
   SKConfig,
   blockTimes,
+  warnOnce,
 } from "@swapkit/helpers";
 import type { SwapKitPluginParams, SwapParams } from "@swapkit/helpers";
 import { ChainToKadoChain } from "./helpers";
@@ -147,10 +148,7 @@ function plugin(_params: SwapKitPluginParams) {
       };
 
       const kadoApiKey = SKConfig.get("apiKeys").kado;
-
-      if (!kadoApiKey) {
-        console.warn("plugin(kado): No Kado API key found");
-      }
+      warnOnce(!kadoApiKey, "plugin(kado): No Kado API key found");
 
       const quote = await RequestClient.get<KadoQuoteResponse>(
         "https://api.kado.money/v2/ramp/quote",
@@ -210,10 +208,7 @@ function plugin(_params: SwapKitPluginParams) {
 
   async function getOrderStatus(orderId: string) {
     const kadoApiKey = SKConfig.get("apiKeys").kado;
-
-    if (!kadoApiKey) {
-      console.warn("plugin(kado): No Kado API key found");
-    }
+    warnOnce(!kadoApiKey, "plugin(kado): No Kado API key found");
 
     try {
       const response = await RequestClient.get<{
@@ -250,10 +245,7 @@ function plugin(_params: SwapKitPluginParams) {
     widgetMode: "minimal" | "full";
   }) {
     const kadoApiKey = SKConfig.get("apiKeys").kado;
-
-    if (!kadoApiKey) {
-      console.warn("plugin(kado): No Kado API key found");
-    }
+    warnOnce(!kadoApiKey, "plugin(kado): No Kado API key found");
 
     const urlParams = new URLSearchParams({
       apiKey: kadoApiKey,

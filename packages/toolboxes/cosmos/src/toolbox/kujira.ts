@@ -1,8 +1,7 @@
-import { BaseDecimal, Chain, ChainId, DerivationPath, SwapKitNumber } from "@swapkit/helpers";
+import { BaseDecimal, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
 
 import {
   type KujiraToolboxType,
-  type ToolboxParams,
   USK_KUJIRA_FACTORY_DENOM,
   YUM_KUJIRA_FACTORY_DENOM,
 } from "../index";
@@ -21,13 +20,8 @@ async function getFees() {
   };
 }
 
-export const KujiraToolbox = ({ rpcUrl, prefix }: ToolboxParams = {}): KujiraToolboxType => {
-  const cosmosToolbox = BaseCosmosToolbox({
-    derivationPath: DerivationPath.KUJI,
-    chain: Chain.Kujira,
-    rpcUrl,
-    prefix,
-  });
+export const KujiraToolbox = (): KujiraToolboxType => {
+  const cosmosToolbox = BaseCosmosToolbox({ chain: Chain.Kujira });
 
   return {
     ...cosmosToolbox,

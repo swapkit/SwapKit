@@ -1,4 +1,5 @@
 import { RequestClient } from "../modules/requestClient";
+import { SKConfig } from "../modules/swapKitConfig";
 import { type ErrorKeys, SwapKitError } from "../modules/swapKitError";
 import { Chain, ChainId, StagenetChain, getRPCUrl } from "../types";
 
@@ -53,10 +54,9 @@ export function getChainIdentifier<T extends Chain>(chain: T) {
   }
 }
 
-const skipWarnings = ["production", "test"].includes(process.env.NODE_ENV || "");
 const warnings = new Set();
 export function warnOnce(condition: boolean, warning: string) {
-  if (!skipWarnings && condition) {
+  if (condition) {
     if (warnings.has(warning)) {
       return;
     }
@@ -67,11 +67,18 @@ export function warnOnce(condition: boolean, warning: string) {
 }
 
 export async function getDynamicChainId(chainId: ChainId = ChainId.THORChain) {
-  if (![ChainId.THORChainStagenet, ChainId.THORChain, "thorchain-mainnet-v1"].includes(chainId))
+  if (![ChainId.THORChainStagenet, ChainId.THORChain, "thorchain-mainnet-v1"].includes(chainId)) {
     return chainId;
+  }
+
   try {
+    const rpcUrl =
+      SKConfig.get("rpcUrls")[
+        chainId !== ChainId.THORChain ? StagenetChain.THORChain : Chain.THORChain
+      ];
+
     const response = await RequestClient.get<{ result: { node_info: { network: string } } }>(
-      `${chainId !== ChainId.THORChain ? getRPCUrl(StagenetChain.THORChain) : getRPCUrl(Chain.THORChain)}/status`,
+      `${rpcUrl}/status`,
     );
     return response.result.node_info.network as ChainId;
   } catch (_error) {
