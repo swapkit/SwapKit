@@ -1,28 +1,4 @@
-import type { CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
-import type { BlockchairApiType } from "@swapkit/toolbox-utxo";
-
 import type { AssetValue } from "../modules/assetValue";
-import type { Chain, CosmosChain, UTXOChain } from "./chains";
-
-type CovalentChains =
-  | Chain.Base
-  | Chain.BinanceSmartChain
-  | Chain.Polygon
-  | Chain.Avalanche
-  | Chain.Arbitrum
-  | Chain.Optimism;
-
-export type ChainApis = { [key in CovalentChains]?: CovalentApiType } & {
-  [key in Chain.Ethereum]?: EthplorerApiType;
-} & {
-  [key in UTXOChain]?: BlockchairApiType;
-} & {
-  [key in CosmosChain | Chain.Solana | Chain.Radix | Chain.Polkadot | Chain.Chainflip]?: string;
-} & {
-  [key in Chain.Fiat]?: undefined;
-};
-
-export type ChainApi = EthplorerApiType | CovalentApiType | BlockchairApiType | string;
 
 export type GenericSwapParams<T = unknown> = {
   buyAsset?: AssetValue;

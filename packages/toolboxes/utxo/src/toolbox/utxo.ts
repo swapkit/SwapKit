@@ -23,12 +23,7 @@ import {
   getUtxoApi,
   standardFeeRates,
 } from "../helpers";
-import type {
-  TargetOutput,
-  UTXOBuildTxParams,
-  UTXOType,
-  UTXOWalletTransferParams,
-} from "../types/common";
+import type { TargetOutput, UTXOBuildTxParams, UTXOType, UTXOWalletTransferParams } from "../types";
 import { validateAddress as validateBCHAddress } from "./bitcoinCash";
 import type { BCHToolbox, BTCToolbox, DASHToolbox, DOGEToolbox, LTCToolbox } from "./index";
 

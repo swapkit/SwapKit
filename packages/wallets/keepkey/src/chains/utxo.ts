@@ -124,11 +124,10 @@ export const utxoWalletMethods = async ({
     const { psbt, inputs: rawInputs } = await toolbox.buildTx({
       ...rest,
       memo,
-      feeOptionKey,
       recipient,
       feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
       sender: from,
-      fetchTxHex: chain,
+      fetchTxHex: chain === Chain.BitcoinCash,
     });
 
     const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({

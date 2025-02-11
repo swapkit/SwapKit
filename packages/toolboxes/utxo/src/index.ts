@@ -6,4 +6,4 @@ export { type Network, networks, Psbt, Transaction } from "bitcoinjs-lib";
 export * from "./toolbox/index";
 export * from "./toolbox/utxo";
 export * from "./helpers/index";
-export * from "./types/index";
+export * from "./types";

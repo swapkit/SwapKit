@@ -273,13 +273,11 @@ export function getUtxoApi(chain: UTXOChain) {
 
   if (customUtxoApi) {
     warnOnce(true, "Using custom UTXO API. Be sure to implement all methods to avoid issues.");
-    return customUtxoApi as UTXOApiType;
+    return customUtxoApi as ReturnType<typeof utxoApi>;
   }
 
   return utxoApi(chain);
 }
-
-export type UTXOApiType = ReturnType<typeof utxoApi>;
 
 interface BlockchairMultipleBalancesResponse {
   [key: string]: number;

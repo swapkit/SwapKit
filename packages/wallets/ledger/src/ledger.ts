@@ -8,7 +8,6 @@ import {
   StagenetChain,
   WalletOption,
   filterSupportedChains,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolbox-utxo";
@@ -127,7 +126,7 @@ const getWalletMethods = async ({
         };
 
         const signingClient = await createSigningStargateClient(
-          getRPCUrl(Chain.Cosmos),
+          SKConfig.get("rpcUrls")[chain],
           signer,
           "0.007uatom",
         );
