@@ -7,13 +7,14 @@ import {
   StagenetChain,
   WalletOption,
   ensureEVMApiKeys,
+  filterSupportedChains,
   getRPCUrl,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolbox-utxo";
 
-import type { LEDGER_SUPPORTED_CHAINS } from "./helpers/index";
+import { LEDGER_SUPPORTED_CHAINS } from "./helpers/index";
 import { getLedgerAddress, getLedgerClient } from "./helpers/index";
 import type { LedgerSupportedChain } from "./helpers/ledgerSupportedChains";
 
@@ -260,11 +261,14 @@ function connectLedger({
   rpcUrls,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
 }: ConnectWalletParams) {
-  return async function connectLedger(
-    chains: (typeof LEDGER_SUPPORTED_CHAINS)[number][],
-    derivationPath?: DerivationPathArray,
-  ) {
-    const [chain] = chains;
+  return async function connectLedger(chains: Chain[], derivationPath?: DerivationPathArray) {
+    const supportedChains = filterSupportedChains(
+      chains,
+      LEDGER_SUPPORTED_CHAINS,
+      WalletOption.LEDGER,
+    );
+
+    const [chain] = supportedChains;
     if (!chain) return false;
 
     setRequestClientConfig({ apiKey: thorswapApiKey });

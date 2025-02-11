@@ -4,10 +4,8 @@ import { AssetValue, Chain, getMAYANameCost } from "@swapkit/helpers";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { useSwapKit } from "~/lib/swapKit";
-// import { useSwapKit } from "~/lib/swapKit";
 
 export default function Send() {
-  // const { swapKit } = useSwapKit();
   const { swapKit, checkIfChainConnected } = useSwapKit();
   const name = "TEST_OF_SWAPKIT";
 
@@ -33,7 +31,7 @@ export default function Send() {
                 return;
               }
 
-              swapKit.registerMayaname({
+              swapKit.mayachain.registerMAYAName({
                 name,
                 chain: Chain.Maya,
                 address: swapKit.getAddress(Chain.Maya),

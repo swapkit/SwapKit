@@ -7,12 +7,7 @@ import {
   WalletOption,
   derivationPathToString,
 } from "@swapkit/helpers";
-import {
-  type JsonRpcProvider,
-  type Provider,
-  Signature,
-  type TransactionRequest,
-} from "@swapkit/toolbox-evm";
+import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 
 type TrezorEVMSignerParams = {
   chain: Chain;
@@ -21,7 +16,7 @@ type TrezorEVMSignerParams = {
 };
 
 export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEVMSignerParams) {
-  const { AbstractSigner } = await import("@swapkit/toolbox-evm");
+  const { AbstractSigner, Signature } = await import("ethers");
 
   class TrezorSigner extends AbstractSigner {
     address: string;
@@ -113,7 +108,8 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       }
 
       const { default: TrezorConnect } = await import("@trezor/connect-web");
-      const { Transaction, toHexString } = await import("@swapkit/toolbox-evm");
+      const { toHexString } = await import("@swapkit/toolbox-evm");
+      const { Transaction } = await import("ethers");
 
       const additionalFields = isEIP1559
         ? {

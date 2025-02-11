@@ -118,8 +118,9 @@ const getBalance = async ({
   apiClient,
 }: { address: string } & UTXOBaseToolboxParams) => {
   const baseBalance = (await apiClient.getBalance(address)) || 0;
-
-  const balance = baseBalance / 10 ** BaseDecimal[chain];
+  const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
+    "string",
+  );
   const asset = await AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
 
   return [asset];

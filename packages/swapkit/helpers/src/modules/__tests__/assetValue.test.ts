@@ -557,8 +557,8 @@ describe("AssetValue", () => {
           decimal: 8,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "BTC.B-0x152b9d0fdc40c096757f570a51e494bd4b943e50",
-          ticker: "BTC.B",
+          symbol: "BTC.b-0x152b9d0fdc40c096757f570a51e494bd4b943e50",
+          ticker: "BTC.b",
         }),
       );
     });

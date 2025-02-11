@@ -7,7 +7,12 @@ import { MayaArbitrumVaultAbi, MayaEthereumVaultAbi } from "./abis/mayaEvmVaults
 import { pancakeV2 } from "./abis/pancakeV2";
 import { pangolin } from "./abis/pangolin";
 import { sushiswap } from "./abis/sushiswap";
-import { TCAvalancheDepositABI, TCBscDepositABI, TCEthereumVaultAbi } from "./abis/tcEthVault";
+import {
+  TCAvalancheDepositABI,
+  TCBaseDepositABI,
+  TCBscDepositABI,
+  TCEthereumVaultAbi,
+} from "./abis/tcEthVault";
 import { traderJoe } from "./abis/traderJoe";
 import { uniswapV2 } from "./abis/uniswapV2";
 import { uniswapV2Leg } from "./abis/uniswapV2Leg";
@@ -58,6 +63,7 @@ export {
   TCEthereumVaultAbi,
   TCAvalancheDepositABI,
   TCBscDepositABI,
+  TCBaseDepositABI,
   MayaArbitrumVaultAbi,
   MayaEthereumVaultAbi,
 };

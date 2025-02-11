@@ -1,5 +1,109 @@
 # @swapkit/wallet-talisman
 
+## 1.4.8
+
+### Patch Changes
+
+- [#1179](https://github.com/thorswap/SwapKit/pull/1179) [`e6005d5`](https://github.com/thorswap/SwapKit/commit/e6005d5f8f94e0dad75aa3e5378a38dfdd80d46e) Thanks [@0xepicode](https://github.com/0xepicode)! - Support chainflip with talisman
+
+- Updated dependencies [[`e6005d5`](https://github.com/thorswap/SwapKit/commit/e6005d5f8f94e0dad75aa3e5378a38dfdd80d46e)]:
+  - @swapkit/toolbox-substrate@1.3.18
+  - @swapkit/helpers@2.4.3
+
+## 1.4.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+  - @swapkit/toolbox-evm@1.8.7
+  - @swapkit/toolbox-substrate@1.3.17
+
+## 1.4.6
+
+### Patch Changes
+
+- [#1162](https://github.com/thorswap/SwapKit/pull/1162) [`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed) Thanks [@towanTG](https://github.com/towanTG)! - Reduces duplicated code and use ethers.BrowserProvider for ctrl
+
+- Updated dependencies [[`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed)]:
+  - @swapkit/toolbox-evm@1.8.6
+  - @swapkit/helpers@2.4.2
+
+## 1.4.5
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/helpers@2.4.2
+
+## 1.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-substrate@1.3.16
+
+## 1.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/toolbox-evm@1.8.3
+  - @swapkit/toolbox-substrate@1.3.15
+
+## 1.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+  - @swapkit/toolbox-evm@1.8.2
+  - @swapkit/toolbox-substrate@1.3.14
+
+## 1.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+  - @swapkit/toolbox-evm@1.8.1
+  - @swapkit/toolbox-substrate@1.3.13
+
+## 1.4.0
+
+### Minor Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Uses addEVMNetwork only as fallback if the network is not yet known to the wallet
+
+### Patch Changes
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/helpers@2.3.0
+  - @swapkit/toolbox-evm@1.8.0
+  - @swapkit/toolbox-substrate@1.3.12
+
 ## 1.3.18
 
 ### Patch Changes

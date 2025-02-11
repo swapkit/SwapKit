@@ -3,6 +3,7 @@ import {
   type ConnectWalletParams,
   EVMChains,
   WalletOption,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 
@@ -19,10 +20,16 @@ function connectBitget({
   addChain,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
-  return async function connectBitget(chains: (typeof BITGET_SUPPORTED_CHAINS)[number][]) {
+  return async function connectBitget(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const promises = chains.map(async (chain) => {
+    const supportedChains = filterSupportedChains(
+      chains,
+      BITGET_SUPPORTED_CHAINS,
+      WalletOption.BITGET,
+    );
+
+    const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
         chain,
         covalentApiKey,

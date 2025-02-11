@@ -30,6 +30,7 @@ const blake256 = (initData: Buffer | string): string => {
   let data = initData;
 
   if (!(data instanceof Buffer)) {
+    // @ts-ignore
     data = Buffer.from(data, "hex");
   }
 

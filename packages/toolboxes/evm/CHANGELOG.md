@@ -1,5 +1,85 @@
 # @swapkit/toolbox-evm
 
+## 1.8.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.8.6
+
+### Patch Changes
+
+- [#1162](https://github.com/thorswap/SwapKit/pull/1162) [`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed) Thanks [@towanTG](https://github.com/towanTG)! - Reduces duplicated code and use ethers.BrowserProvider for ctrl
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.8.5
+
+### Patch Changes
+
+- [#1160](https://github.com/thorswap/SwapKit/pull/1160) [`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getTokenAddress for Base
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.8.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+
+## 1.8.2
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+
+## 1.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+
+## 1.8.0
+
+### Minor Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
+### Patch Changes
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/helpers@2.3.0
+
 ## 1.7.11
 
 ### Patch Changes

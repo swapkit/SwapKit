@@ -6,19 +6,13 @@ import {
   type EthereumWindowProvider,
   SwapKitError,
   WalletOption,
-  addEVMWalletNetwork,
   ensureEVMApiKeys,
   prepareNetworkSwitch,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type {
-  ARBToolbox,
-  BASEToolbox,
-  BSCToolbox,
-  Eip1193Provider,
-  MATICToolbox,
-  OPToolbox,
-} from "@swapkit/toolbox-evm";
-import type { InjectedWindow } from "@swapkit/toolbox-substrate";
+import type { NonETHToolbox } from "@swapkit/toolbox-evm";
+import { type InjectedWindow, Network } from "@swapkit/toolbox-substrate";
+import type { Eip1193Provider } from "ethers";
 
 declare const window: {
   talismanEth: EthereumWindowProvider;
@@ -42,7 +36,8 @@ export const getWeb3WalletMethods = async ({
   covalentApiKey?: string;
   ethplorerApiKey?: string;
 }) => {
-  const { BrowserProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { BrowserProvider } = await import("ethers");
 
   if (!ethereumWindowProvider) {
     throw new SwapKitError({
@@ -59,16 +54,10 @@ export const getWeb3WalletMethods = async ({
 
   try {
     chain !== Chain.Ethereum &&
-      (await addEVMWalletNetwork(
+      (await switchEVMWalletNetwork(
         provider,
-        (
-          toolbox as
-            | ReturnType<typeof ARBToolbox>
-            | ReturnType<typeof BASEToolbox>
-            | ReturnType<typeof BSCToolbox>
-            | ReturnType<typeof MATICToolbox>
-            | ReturnType<typeof OPToolbox>
-        ).getNetworkParams(),
+        ChainToHexChainId[chain],
+        (toolbox as NonETHToolbox).getNetworkParams(),
       ));
   } catch (_error) {
     throw new SwapKitError({
@@ -122,7 +111,8 @@ export const getWalletForChain = async ({
       return { walletMethods: { ...evmWallet, getBalance }, address };
     }
 
-    case Chain.Polkadot: {
+    case Chain.Polkadot:
+    case Chain.Chainflip: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-substrate");
 
       const injectedWindow = window as Window & InjectedWindow;
@@ -147,7 +137,7 @@ export const getWalletForChain = async ({
       }
       const [{ address }] = accounts;
 
-      return { walletMethods: toolbox, address: convertAddress(address, 0) };
+      return { walletMethods: toolbox, address: convertAddress(address, Network[chain].prefix) };
     }
 
     default:

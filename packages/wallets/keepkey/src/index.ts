@@ -4,6 +4,7 @@ import {
   type DerivationPathArray,
   type EVMChain,
   WalletOption,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 
@@ -162,7 +163,7 @@ function connectKeepkey({
   },
 }: ConnectWalletParams) {
   return async function connectKeepkey(
-    chains: (typeof KEEPKEY_SUPPORTED_CHAINS)[number][],
+    chains: Chain[],
     // @deprecated - use derivationPathMap instead
     derivationPaths?: DerivationPathArray[],
     derivationPathMap?: Record<Chain, DerivationPathArray>,
@@ -170,12 +171,18 @@ function connectKeepkey({
     setRequestClientConfig({ apiKey: thorswapApiKey });
     if (!keepkeyConfig) throw new Error("KeepKey config not found");
 
+    const supportedChains = filterSupportedChains(
+      chains,
+      KEEPKEY_SUPPORTED_CHAINS,
+      WalletOption.KEEPKEY,
+    );
+
     await checkAndLaunch(3);
 
     // Only build this once for all assets
     const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
 
-    const toolboxPromises = chains.map(async (chain, i) => {
+    const toolboxPromises = supportedChains.map(async (chain, i) => {
       const derivationPath = Array.isArray(derivationPaths)
         ? derivationPaths[i]
         : derivationPathMap?.[chain];

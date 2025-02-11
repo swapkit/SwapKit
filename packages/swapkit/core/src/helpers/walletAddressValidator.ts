@@ -14,6 +14,7 @@ export async function getAddressValidator() {
       case Chain.Avalanche:
       case Chain.Optimism:
       case Chain.BinanceSmartChain:
+      case Chain.Base:
       case Chain.Polygon:
       case Chain.Ethereum:
         return evmValidateAddress({ address });

@@ -170,8 +170,8 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
     return new Promise<{ ok: true } | { ok: false; message: string; error: any }>(
       (resolve, reject) => {
         try {
-          import("@swapkit/tokens").then((tokenPackages) => {
-            for (const tokenList of Object.values(tokenPackages)) {
+          import("@swapkit/tokens").then((tokenPackage) => {
+            for (const tokenList of Object.values(tokenPackage.tokenLists)) {
               for (const { identifier, chain, ...rest } of tokenList.tokens) {
                 staticTokensMap.set(
                   chain !== "SOL" ? (identifier.toUpperCase() as TokenNames) : identifier,

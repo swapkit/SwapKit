@@ -29,6 +29,7 @@ declare const window: {
   coinbaseWalletExtension: EthereumWindowProvider;
   braveSolana: any;
   bitkeep?: { ethereum: EthereumWindowProvider };
+  xfi?: { ethereum: EthereumWindowProvider };
 } & Window;
 
 type NetworkParams = {
@@ -125,12 +126,23 @@ export const prepareNetworkSwitch = <T extends { [key: string]: (...args: any[])
 export const addEVMWalletNetwork = (provider: BrowserProvider, networkParams: NetworkParams) =>
   providerRequest({ provider, method: "wallet_addEthereumChain", params: [networkParams] });
 
-export const switchEVMWalletNetwork = (provider: BrowserProvider, chainId = ChainId.EthereumHex) =>
-  providerRequest({ provider, method: "wallet_switchEthereumChain", params: [{ chainId }] });
+export const switchEVMWalletNetwork = (
+  provider: BrowserProvider,
+  chainId = ChainId.EthereumHex,
+  networkParams?: NetworkParams,
+) => {
+  try {
+    providerRequest({ provider, method: "wallet_switchEthereumChain", params: [{ chainId }] });
+  } catch (_error) {
+    if (!networkParams) {
+      throw new Error("Failed to switch network, networkParams not provided");
+    }
+    addEVMWalletNetwork(provider, networkParams);
+  }
+};
 
 export const addAccountsChangedCallback = (callback: () => void) => {
   window.ethereum?.on("accountsChanged", () => callback());
-  // @ts-expect-error that should be implemented in ctrl and hooked up via swapkit core
   window.xfi?.ethereum.on("accountsChanged", () => callback());
 };
 

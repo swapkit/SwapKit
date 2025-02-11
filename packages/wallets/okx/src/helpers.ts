@@ -4,13 +4,13 @@ import {
   ChainToHexChainId,
   type EVMChain,
   SwapKitError,
-  addEVMWalletNetwork,
   getRPCUrl,
   prepareNetworkSwitch,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
 import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { Eip1193Provider } from "ethers";
 
 const cosmosTransfer =
   (rpcUrl?: string) =>
@@ -146,7 +146,8 @@ export const getWeb3WalletMethods = async ({
   covalentApiKey?: string;
   ethplorerApiKey?: string;
 }) => {
-  const { getToolboxByChain, BrowserProvider } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { BrowserProvider } = await import("ethers");
   if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
 
   if (
@@ -173,7 +174,7 @@ export const getWeb3WalletMethods = async ({
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
-      await addEVMWalletNetwork(provider, toolbox.getNetworkParams());
+      await switchEVMWalletNetwork(provider, ChainToHexChainId[chain], toolbox.getNetworkParams());
     }
   } catch (_error) {
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);

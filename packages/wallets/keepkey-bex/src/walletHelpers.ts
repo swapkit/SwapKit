@@ -11,13 +11,8 @@ import {
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type {
-  ApproveParams,
-  BrowserProvider,
-  CallParams,
-  EVMTxParams,
-  Eip1193Provider,
-} from "@swapkit/toolbox-evm";
+import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolbox-evm";
+import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 interface UTXOProvider {
   request: (

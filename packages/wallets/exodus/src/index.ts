@@ -3,21 +3,17 @@ import {
   Chain,
   ChainToHexChainId,
   type ConnectWalletParams,
-  type EVMChain,
+  EVMChains,
   WalletOption,
-  addEVMWalletNetwork,
   ensureEVMApiKeys,
+  filterSupportedChains,
   prepareNetworkSwitch,
   setRequestClientConfig,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import {
-  type AVAXToolbox,
-  BrowserProvider,
-  type Eip1193Provider,
-  getProvider,
-  getToolboxByChain,
-} from "@swapkit/toolbox-evm";
+import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
 import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import { BrowserProvider, type Eip1193Provider } from "ethers";
 import {
   AddressPurpose,
   BitcoinNetworkType,
@@ -28,6 +24,8 @@ import {
   getAddress,
   signTransaction as satsSignTransaction,
 } from "sats-connect";
+
+export const EXODUS_SUPPORTED_CHAINS = [...EVMChains, Chain.Bitcoin] as const;
 
 export const getWalletMethods = async ({
   ethereumWindowProvider,
@@ -135,9 +133,10 @@ export const getWalletMethods = async ({
 
       try {
         chain !== Chain.Ethereum &&
-          (await addEVMWalletNetwork(
+          (await switchEVMWalletNetwork(
             browserProvider,
-            (toolbox as ReturnType<typeof AVAXToolbox>).getNetworkParams(),
+            ChainToHexChainId[chain],
+            (toolbox as NonETHToolbox).getNetworkParams(),
           ));
       } catch (_error) {
         throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
@@ -161,13 +160,19 @@ function connectExodusWallet({
   addChain,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
-  return async function connectExodusWallet(chains: (EVMChain | Chain.Bitcoin)[], wallet: Wallet) {
+  return async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
     if (!wallet) throw new Error("Missing Exodus Wallet instance");
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
+    const supportedChains = filterSupportedChains(
+      chains,
+      EXODUS_SUPPORTED_CHAINS,
+      WalletOption.EXODUS,
+    );
+
     const { providers } = wallet;
 
-    const promises = chains.map(async (chain) => {
+    const promises = supportedChains.map(async (chain) => {
       const walletProvider =
         chain === Chain.Bitcoin
           ? providers.bitcoin

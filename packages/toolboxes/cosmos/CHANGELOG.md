@@ -1,5 +1,107 @@
 # @swapkit/toolbox-cosmos
 
+## 1.8.9
+
+### Patch Changes
+
+- [#1176](https://github.com/thorswap/SwapKit/pull/1176) [`4afada5`](https://github.com/thorswap/SwapKit/commit/4afada5d5cf0073f7ec189614519d0c506874234) Thanks [@towanTG](https://github.com/towanTG)! - Fixes return type of tx creation if not signable
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.8.8
+
+### Patch Changes
+
+- [#1174](https://github.com/thorswap/SwapKit/pull/1174) [`0cc3d4a`](https://github.com/thorswap/SwapKit/commit/0cc3d4a2aff405b88417168925aa032b107328d4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes multisig signing and improves typing
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.8.7
+
+### Patch Changes
+
+- Updated dependencies [[`87419ab`](https://github.com/thorswap/SwapKit/commit/87419ab07484f1249eb73074d37d9da734228197)]:
+  - @swapkit/api@2.3.7
+  - @swapkit/helpers@2.4.3
+
+## 1.8.6
+
+### Patch Changes
+
+- Updated dependencies [[`c200679`](https://github.com/thorswap/SwapKit/commit/c200679267dfd42841e79f10e04a7add7dab5e10)]:
+  - @swapkit/api@2.3.6
+  - @swapkit/helpers@2.4.3
+
+## 1.8.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+  - @swapkit/api@2.3.5
+
+## 1.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/api@2.3.4
+
+## 1.8.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/api@2.3.3
+
+## 1.8.2
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+  - @swapkit/api@2.3.2
+
+## 1.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+  - @swapkit/api@2.3.1
+
+## 1.8.0
+
+### Minor Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
+### Patch Changes
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/helpers@2.3.0
+  - @swapkit/api@2.3.0
+
 ## 1.7.3
 
 ### Patch Changes

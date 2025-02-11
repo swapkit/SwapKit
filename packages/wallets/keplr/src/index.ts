@@ -1,12 +1,13 @@
 import type { Keplr } from "@keplr-wallet/types";
 import {
   type AssetValue,
-  type Chain,
+  Chain,
   ChainId,
   ChainToChainId,
   type ConnectWalletParams,
   WalletOption,
   type WalletTxParams,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import { chainRegistry } from "./chainRegistry";
@@ -18,7 +19,8 @@ declare global {
   }
 }
 
-const keplrSupportedChainIds = [ChainId.Cosmos];
+const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
+const KEPLR_SUPPORTED_CHAINS = [Chain.Cosmos, Chain.Kujira, Chain.THORChain] as const;
 
 type TransferParams = WalletTxParams & { assetValue: AssetValue };
 
@@ -28,16 +30,15 @@ function connectKeplr({
 }: ConnectWalletParams<{
   transfer: (params: TransferParams) => Promise<string>;
 }>) {
-  return async function connectKeplr(
-    chains: (Chain.Cosmos | Chain.Kujira)[],
-    extensionKey: "keplr" | "leap" = "keplr",
-  ) {
+  return async function connectKeplr(chains: Chain[], extensionKey: "keplr" | "leap" = "keplr") {
     const walletType = extensionKey === "keplr" ? WalletOption.KEPLR : WalletOption.LEAP;
+    const supportedChains = filterSupportedChains(chains, KEPLR_SUPPORTED_CHAINS, walletType);
+
     setRequestClientConfig({ apiKey: thorswapApiKey });
     const keplrClient = window[extensionKey];
 
-    const toolboxPromises = chains.map(async (chain) => {
-      const chainId = ChainToChainId[chain];
+    const toolboxPromises = supportedChains.map(async (chain) => {
+      const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
 
       if (!keplrSupportedChainIds.includes(chainId)) {
         const chainConfig = chainRegistry.get(chainId);

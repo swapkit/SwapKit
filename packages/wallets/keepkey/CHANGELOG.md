@@ -1,5 +1,141 @@
 # @swapkit/wallet-keepkey
 
+## 1.5.12
+
+### Patch Changes
+
+- Updated dependencies [[`4afada5`](https://github.com/thorswap/SwapKit/commit/4afada5d5cf0073f7ec189614519d0c506874234)]:
+  - @swapkit/toolbox-cosmos@1.8.9
+  - @swapkit/helpers@2.4.3
+
+## 1.5.11
+
+### Patch Changes
+
+- Updated dependencies [[`0cc3d4a`](https://github.com/thorswap/SwapKit/commit/0cc3d4a2aff405b88417168925aa032b107328d4)]:
+  - @swapkit/toolbox-cosmos@1.8.8
+  - @swapkit/helpers@2.4.3
+
+## 1.5.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/toolbox-cosmos@1.8.7
+  - @swapkit/helpers@2.4.3
+
+## 1.5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/toolbox-cosmos@1.8.6
+  - @swapkit/helpers@2.4.3
+
+## 1.5.8
+
+### Patch Changes
+
+- Updated dependencies [[`35dfd61`](https://github.com/thorswap/SwapKit/commit/35dfd61bd5daa724581fa0d82b484337d86b0848)]:
+  - @swapkit/toolbox-utxo@1.2.18
+  - @swapkit/helpers@2.4.3
+
+## 1.5.7
+
+### Patch Changes
+
+- Updated dependencies [[`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49)]:
+  - @swapkit/toolbox-utxo@1.2.17
+  - @swapkit/helpers@2.4.3
+  - @swapkit/toolbox-cosmos@1.8.5
+  - @swapkit/toolbox-evm@1.8.7
+
+## 1.5.6
+
+### Patch Changes
+
+- Updated dependencies [[`e6942d7`](https://github.com/thorswap/SwapKit/commit/e6942d7b9e8ca6f115480398be9cd99ef53b5eed)]:
+  - @swapkit/toolbox-evm@1.8.6
+  - @swapkit/helpers@2.4.2
+
+## 1.5.5
+
+### Patch Changes
+
+- Updated dependencies [[`fed32e2`](https://github.com/thorswap/SwapKit/commit/fed32e2a3cff4e5282d5dfaebe66e9234f6b6149)]:
+  - @swapkit/toolbox-evm@1.8.5
+  - @swapkit/helpers@2.4.2
+
+## 1.5.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+  - @swapkit/toolbox-cosmos@1.8.4
+  - @swapkit/toolbox-evm@1.8.4
+  - @swapkit/toolbox-utxo@1.2.16
+
+## 1.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+  - @swapkit/toolbox-cosmos@1.8.3
+  - @swapkit/toolbox-evm@1.8.3
+  - @swapkit/toolbox-utxo@1.2.15
+
+## 1.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+  - @swapkit/toolbox-cosmos@1.8.2
+  - @swapkit/toolbox-evm@1.8.2
+  - @swapkit/toolbox-utxo@1.2.14
+
+## 1.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+  - @swapkit/toolbox-cosmos@1.8.1
+  - @swapkit/toolbox-evm@1.8.1
+  - @swapkit/toolbox-utxo@1.2.13
+
+## 1.5.0
+
+### Minor Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
+### Patch Changes
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/toolbox-cosmos@1.8.0
+  - @swapkit/helpers@2.3.0
+  - @swapkit/toolbox-evm@1.8.0
+  - @swapkit/toolbox-utxo@1.2.12
+
 ## 1.4.14
 
 ### Patch Changes

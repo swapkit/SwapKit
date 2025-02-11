@@ -1,5 +1,53 @@
 # @swapkit/tokens
 
+## 2.2.2
+
+### Patch Changes
+
+- [#1164](https://github.com/thorswap/SwapKit/pull/1164) [`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49) Thanks [@towanTG](https://github.com/towanTG)! - Removes broken kado tokenlist
+
+## 2.2.1
+
+### Patch Changes
+
+- [#1154](https://github.com/thorswap/SwapKit/pull/1154) [`0d4fb6c`](https://github.com/thorswap/SwapKit/commit/0d4fb6c3bdf52f06135abd22eb4f4d252f5b6747) Thanks [@towanTG](https://github.com/towanTG)! - Removes duplicated btc.b and fixed uppercase symbol
+
+- [#1152](https://github.com/thorswap/SwapKit/pull/1152) [`912b8fe`](https://github.com/thorswap/SwapKit/commit/912b8fe2a8b2b02fc5a6497a8d77ffdc4d8ec6d2) Thanks [@towanTG](https://github.com/towanTG)! - Cleaning up export code. Each list can be imported individually or all at once via tokenLists
+
+## 2.2.0
+
+### Minor Changes
+
+- [#1150](https://github.com/thorswap/SwapKit/pull/1150) [`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836) Thanks [@towanTG](https://github.com/towanTG)! - Changes tokenlist exports
+
+## 2.1.0
+
+### Minor Changes
+
+- [#1148](https://github.com/thorswap/SwapKit/pull/1148) [`3c684e5`](https://github.com/thorswap/SwapKit/commit/3c684e5f09c62b0b5d37d2a2c0fffacaf93f3c4e) Thanks [@towanTG](https://github.com/towanTG)! - Updated tokenlists
+
+## 2.0.0
+
+### Major Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
 ## 1.11.0
 
 ### Minor Changes

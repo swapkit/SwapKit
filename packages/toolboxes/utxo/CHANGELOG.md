@@ -1,5 +1,58 @@
 # @swapkit/toolbox-utxo
 
+## 1.2.18
+
+### Patch Changes
+
+- [#1167](https://github.com/thorswap/SwapKit/pull/1167) [`35dfd61`](https://github.com/thorswap/SwapKit/commit/35dfd61bd5daa724581fa0d82b484337d86b0848) Thanks [@towanTG](https://github.com/towanTG)! - Fixes offset calculation for UTXO unspent tx
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.2.17
+
+### Patch Changes
+
+- [#1164](https://github.com/thorswap/SwapKit/pull/1164) [`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49) Thanks [@towanTG](https://github.com/towanTG)! - Adds safe conversion of blance from int number to string decimal
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.3
+
+## 1.2.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.2
+
+## 1.2.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.4.1
+
+## 1.2.14
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/helpers@2.4.0
+
+## 1.2.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.3.1
+
+## 1.2.12
+
+### Patch Changes
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232), [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/helpers@2.3.0
+
 ## 1.2.11
 
 ### Patch Changes

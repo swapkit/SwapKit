@@ -12,9 +12,9 @@ import type { FullWallet } from "@swapkit/sdk";
 import { decryptFromKeystore } from "@swapkit/wallet-keystore";
 import { useCallback, useState } from "react";
 
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallet-bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
+import type { Eip1193Provider } from "ethers";
 import type { SwapKitClient } from "./swapKitClient";
 
 type Props = {
@@ -52,7 +52,7 @@ export const availableChainsByWallet = {
   [WalletOption.COINBASE_MOBILE]: EVMChains,
   [WalletOption.COINBASE_WEB]: EVMChains,
   [WalletOption.EIP6963]: EVMChains,
-  [WalletOption.KEPLR]: [Chain.Cosmos, Chain.Kujira],
+  [WalletOption.KEPLR]: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
   [WalletOption.LEAP]: [Chain.Cosmos, Chain.Kujira],
   [WalletOption.LEDGER]: AllChainsSupported,
   [WalletOption.METAMASK]: EVMChains,

@@ -1,3 +1,4 @@
+// TODO remove with next major
 export {
   AbstractSigner,
   BrowserProvider,

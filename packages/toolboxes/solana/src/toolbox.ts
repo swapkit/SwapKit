@@ -67,29 +67,37 @@ async function getTokenBalances({
   const tokenListContainer = await tokenListProvider.resolve();
   const tokenList = tokenListContainer.filterByChainId(101).getList();
 
-  const tokenBalances: AssetValue[] = [];
+  // Group token balances by mint address
+  const tokenBalanceMap = new Map<string, { amount: bigint; decimal: number; symbol: string }>();
 
   for await (const tokenAccountInfo of tokenAccounts.value) {
     const accountInfo = tokenAccountInfo.account.data.parsed.info;
-    const tokenAmount = accountInfo.tokenAmount.uiAmount;
     const mintAddress = accountInfo.mint;
     const decimal = accountInfo.tokenAmount.decimals;
+    const amount = BigInt(accountInfo.tokenAmount.amount);
 
-    // Find the token info from the token list
+    if (amount <= BigInt(0)) continue;
+
     const tokenInfo = tokenList.find((token: TokenInfo) => token.address === mintAddress);
+    const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
+    const existing = tokenBalanceMap.get(mintAddress);
 
-    const tokenSymbol = tokenInfo ? tokenInfo.symbol : "UNKNOWN";
-
-    if (tokenAmount > BigInt(0)) {
-      tokenBalances.push(
-        new AssetValue({
-          value: SwapKitNumber.fromBigInt(accountInfo.tokenAmount.amount, decimal),
-          decimal,
-          identifier: `${Chain.Solana}.${tokenSymbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
-        }),
-      );
-    }
+    tokenBalanceMap.set(mintAddress, {
+      amount: existing ? existing.amount + amount : amount,
+      decimal,
+      symbol: tokenSymbol,
+    });
   }
+
+  // Convert grouped balances to AssetValue array
+  const tokenBalances: AssetValue[] = Array.from(tokenBalanceMap.entries()).map(
+    ([mintAddress, { amount, decimal, symbol }]) =>
+      new AssetValue({
+        value: SwapKitNumber.fromBigInt(amount, decimal),
+        decimal,
+        identifier: `${Chain.Solana}.${symbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
+      }),
+  );
 
   return tokenBalances;
 }

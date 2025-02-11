@@ -1,5 +1,75 @@
 # @swapkit/helpers
 
+## 2.4.3
+
+### Patch Changes
+
+- Updated dependencies [[`36a65e1`](https://github.com/thorswap/SwapKit/commit/36a65e1873eb74d77651f40ae73e067d8317fe49)]:
+  - @swapkit/tokens@2.2.2
+
+## 2.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`c900df6`](https://github.com/thorswap/SwapKit/commit/c900df616fdd357609c719410bd7302ff3fabba4)]:
+  - @swapkit/contracts@1.1.0
+
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`0d4fb6c`](https://github.com/thorswap/SwapKit/commit/0d4fb6c3bdf52f06135abd22eb4f4d252f5b6747), [`912b8fe`](https://github.com/thorswap/SwapKit/commit/912b8fe2a8b2b02fc5a6497a8d77ffdc4d8ec6d2)]:
+  - @swapkit/tokens@2.2.1
+
+## 2.4.0
+
+### Minor Changes
+
+- [#1150](https://github.com/thorswap/SwapKit/pull/1150) [`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836) Thanks [@towanTG](https://github.com/towanTG)! - Changes tokenlist exports
+
+### Patch Changes
+
+- Updated dependencies [[`e83f766`](https://github.com/thorswap/SwapKit/commit/e83f766be9e7fc632aef1d68ea22bf7a0656c836)]:
+  - @swapkit/tokens@2.2.0
+
+## 2.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`3c684e5`](https://github.com/thorswap/SwapKit/commit/3c684e5f09c62b0b5d37d2a2c0fffacaf93f3c4e)]:
+  - @swapkit/tokens@2.1.0
+
+## 2.3.0
+
+### Minor Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Breaking Change in @swapkit/tokens:
+
+  **What:**
+
+  - Moved the tokenlists exports from into a new subobject `tokenLists` within the same module
+  - added getTokenIcon that returns the Icon url for a given identifier
+
+  **How to adept code:**
+  Use new way of importing the lists
+
+  ```
+
+  import {tokenLists, getTokenIcon} from '@swapkit/tokens'
+
+  ```
+
+  Other packages just got some typing updates - no code changes needed
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Uses addEVMNetwork only as fallback if the network is not yet known to the wallet
+
+### Patch Changes
+
+- [#1145](https://github.com/thorswap/SwapKit/pull/1145) [`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232) Thanks [@towanTG](https://github.com/towanTG)! - Fixes base rpc url
+
+- Updated dependencies [[`d05a9c7`](https://github.com/thorswap/SwapKit/commit/d05a9c749b24ea466c9afaeebd8eff6334ad8232)]:
+  - @swapkit/tokens@2.0.0
+
 ## 2.2.1
 
 ### Patch Changes

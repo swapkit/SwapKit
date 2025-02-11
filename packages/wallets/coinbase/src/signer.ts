@@ -1,7 +1,8 @@
 import { type CoinbaseWalletProvider, CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
 import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
 import { Chain, ChainToRPC } from "@swapkit/helpers";
-import { AbstractSigner, type Provider, type getToolboxByChain } from "@swapkit/toolbox-evm";
+import type { getToolboxByChain } from "@swapkit/toolbox-evm";
+import { AbstractSigner, type Provider } from "ethers";
 
 class CoinbaseMobileSigner extends AbstractSigner {
   #coinbaseProvider: CoinbaseWalletProvider;

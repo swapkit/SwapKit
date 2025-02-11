@@ -7,6 +7,7 @@ import {
   WalletOption,
   derivationPathToString,
   ensureEVMApiKeys,
+  filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolbox-utxo";
@@ -262,11 +263,14 @@ function connectTrezor({
     thorswapApiKey,
   },
 }: ConnectWalletParams) {
-  return async function connectTrezor(
-    chains: (typeof TREZOR_SUPPORTED_CHAINS)[number][],
-    derivationPath: DerivationPathArray,
-  ) {
-    const chain = chains[0];
+  return async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
+    const supportedChains = filterSupportedChains(
+      chains,
+      TREZOR_SUPPORTED_CHAINS,
+      WalletOption.TREZOR,
+    );
+
+    const chain = supportedChains[0];
     if (!chain) return false;
 
     setRequestClientConfig({ apiKey: thorswapApiKey });

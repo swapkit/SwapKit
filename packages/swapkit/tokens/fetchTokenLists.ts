@@ -16,6 +16,7 @@ function parseIdentifier(identifier: string) {
 const providers = (await SwapKitApi.getTokenListProvidersV2(true)).filter(
   (provider) =>
     ![
+      ProviderName.CHAINFLIP_STREAMING,
       ProviderName.THORCHAIN_STREAMING,
       ProviderName.MAYACHAIN_STREAMING,
       ProviderName.OCISWAP_V1,

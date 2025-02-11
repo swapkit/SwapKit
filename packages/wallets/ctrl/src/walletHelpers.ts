@@ -13,14 +13,9 @@ import {
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type {
-  ApproveParams,
-  BrowserProvider,
-  CallParams,
-  EVMTxParams,
-  Eip1193Provider,
-} from "@swapkit/toolbox-evm";
+import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolbox-evm";
 import type { PublicKey, SOLToolbox, SolanaProvider } from "@swapkit/toolbox-solana";
+import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -170,7 +165,7 @@ export async function getCtrlAddress(chain: Chain) {
 }
 
 export async function walletTransfer(
-  { assetValue, recipient, memo, gasLimit }: WalletTxParams & { assetValue: AssetValue },
+  { assetValue, recipient, memo, gasLimit }: WalletTxParams,
   method: TransactionMethod = "transfer",
 ) {
   if (!assetValue) {
@@ -194,7 +189,7 @@ export async function walletTransfer(
         symbol: assetValue.symbol.toUpperCase(),
         ticker: assetValue.symbol.toUpperCase(),
       },
-      memo,
+      memo: memo || "",
       from,
       recipient,
       gasLimit,

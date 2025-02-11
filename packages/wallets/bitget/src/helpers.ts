@@ -8,13 +8,13 @@ import {
   type EVMChain,
   SwapKitError,
   type WalletTxParams,
-  addEVMWalletNetwork,
   getRPCUrl,
   prepareNetworkSwitch,
+  switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { Eip1193Provider } from "ethers";
 
 export function cosmosTransfer(rpcUrl?: string) {
   return async ({ from, recipient, assetValue, memo }: TransferParams) => {
@@ -203,7 +203,8 @@ export const getWeb3WalletMethods = async ({
   covalentApiKey?: string;
   ethplorerApiKey?: string;
 }) => {
-  const { getToolboxByChain, BrowserProvider } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { BrowserProvider } = await import("ethers");
   if (!ethereumWindowProvider) throw new SwapKitError("wallet_provider_not_found");
 
   if (
@@ -230,7 +231,7 @@ export const getWeb3WalletMethods = async ({
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
-      await addEVMWalletNetwork(provider, toolbox.getNetworkParams());
+      await switchEVMWalletNetwork(provider, ChainToHexChainId[chain], toolbox.getNetworkParams());
     }
   } catch (_error) {
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);

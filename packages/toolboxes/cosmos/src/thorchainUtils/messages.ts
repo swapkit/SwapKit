@@ -13,8 +13,8 @@ import type { ThorcahinDepositTxParams, ThorchainTransferTxParams } from "./type
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
-type MsgSendForBroadcast = ReturnType<typeof prepareMessageForBroadcast>;
-type MsgDepositForBroadcast = ReturnType<typeof prepareMessageForBroadcast>;
+type MsgSendForBroadcast = ReturnType<typeof prepareMessageForBroadcast<MsgSend>>;
+type MsgDepositForBroadcast = ReturnType<typeof prepareMessageForBroadcast<MsgDeposit>>;
 
 export const THORCHAIN_GAS_VALUE = getDefaultChainFee(Chain.THORChain).gas;
 export const MAYA_GAS_VALUE = getDefaultChainFee(Chain.Maya).gas;
@@ -30,7 +30,7 @@ export const transferMsgAmino = ({
   assetValue: AssetValue;
   chain: Chain.THORChain | Chain.Maya;
 }) => ({
-  type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend`,
+  type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend` as const,
   value: {
     from_address: from,
     to_address: recipient,
@@ -55,7 +55,7 @@ export const depositMsgAmino = ({
   chain: Chain.THORChain | Chain.Maya;
 }) => {
   return {
-    type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgDeposit`,
+    type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgDeposit` as const,
     value: {
       coins: [
         {
@@ -90,6 +90,7 @@ export const buildAminoMsg = ({
   return msg;
 };
 
+// TODO I think the msg typing is wrong it should be not prepared for broadcast
 export const convertToSignable = (
   msg: MsgDepositForBroadcast | MsgSendForBroadcast,
   chain: Chain.THORChain | Chain.Maya,
@@ -128,16 +129,17 @@ export const buildTransferTx =
     asSignable = true,
   }: ThorchainTransferTxParams) => {
     const account = await getAccount({ rpcUrl, from });
-    const preparedMessage = prepareMessageForBroadcast(
-      transferMsgAmino({
-        from,
-        recipient,
-        assetValue,
-        chain,
-      }),
-    );
 
-    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
+    const transferMsg = transferMsgAmino({
+      from,
+      recipient,
+      assetValue,
+      chain,
+    });
+
+    const msg = asSignable
+      ? convertToSignable(prepareMessageForBroadcast(transferMsg), chain)
+      : transferMsg;
 
     const transaction = {
       chainId: ChainToChainId[chain],
@@ -156,11 +158,11 @@ export const buildDepositTx =
   async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorcahinDepositTxParams) => {
     const account = await getAccount({ rpcUrl, from });
 
-    const preparedMessage = prepareMessageForBroadcast(
-      depositMsgAmino({ from, assetValue, memo, chain }),
-    );
+    const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
 
-    const msg = asSignable ? convertToSignable(preparedMessage, chain) : preparedMessage;
+    const msg = asSignable
+      ? convertToSignable(prepareMessageForBroadcast<MsgDeposit>(depositMsg), chain)
+      : depositMsg;
 
     const transaction = {
       chainId: ChainToChainId[chain],
@@ -174,8 +176,8 @@ export const buildDepositTx =
     return transaction;
   };
 
-export const prepareMessageForBroadcast = (msg: MsgDeposit | MsgSend) => {
-  if (msg.type === "thorchain/MsgSend" || msg.type === "mayachain/MsgSend") return msg;
+export function prepareMessageForBroadcast<T extends MsgDeposit | MsgSend>(msg: T) {
+  if (msg.type === "thorchain/MsgSend" || msg.type === "mayachain/MsgSend") return msg as MsgSend;
 
   return {
     ...msg,
@@ -203,7 +205,7 @@ export const prepareMessageForBroadcast = (msg: MsgDeposit | MsgSend) => {
       }),
     },
   };
-};
+}
 
 export const buildEncodedTxBody = ({
   chain,

@@ -6,6 +6,7 @@ import {
   SwapKitError,
   WalletOption,
   ensureEVMApiKeys,
+  filterSupportedChains,
   getRPCUrl,
   setRequestClientConfig,
 } from "@swapkit/helpers";
@@ -254,12 +255,18 @@ function connectWalletconnect({
   },
 }: ConnectWalletParams) {
   return async function connectWallet(
-    chains: (typeof WC_SUPPORTED_CHAINS)[number][],
+    chains: Chain[],
     walletconnectOptions?: SignClientTypes.Options,
   ) {
+    const supportedChains = filterSupportedChains(
+      chains,
+      WC_SUPPORTED_CHAINS,
+      WalletOption.WALLETCONNECT,
+    );
+
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
-    const chainsToConnect = chains.filter((chain) => WC_SUPPORTED_CHAINS.includes(chain));
+    const chainsToConnect = supportedChains.filter((chain) => WC_SUPPORTED_CHAINS.includes(chain));
     const walletconnect = await getWalletconnect(
       chainsToConnect,
       walletConnectProjectId,

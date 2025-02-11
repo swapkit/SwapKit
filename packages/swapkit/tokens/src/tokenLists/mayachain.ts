@@ -2,7 +2,7 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2024-12-10T12:00:49.420Z",
+  timestamp: "2025-01-22T13:30:52.014Z",
   version: {
     major: 1,
     minor: 0,
@@ -212,14 +212,6 @@ export const list = {
       ticker: "KUJI",
     },
     {
-      chain: "KUJI",
-      chainId: "kaiyo-1",
-      decimals: 6,
-      identifier: "KUJI.USK",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.usk.png",
-      ticker: "USK",
-    },
-    {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
@@ -418,6 +410,16 @@ export const list = {
       identifier: "MAYA.ETH/ETH",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/eth.eth.png",
       ticker: "ETH",
+    },
+    {
+      address: "0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      chain: "MAYA",
+      chainId: "mayachain-mainnet-v1",
+      decimals: 8,
+      identifier: "MAYA.ETH/LLD-0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
+      ticker: "LLD",
     },
     {
       address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",

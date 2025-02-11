@@ -6,8 +6,8 @@ import {
   NetworkDerivationPath,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { JsonRpcProvider, Provider, TransactionRequest } from "@swapkit/toolbox-evm";
-import { AbstractSigner } from "@swapkit/toolbox-evm";
+import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
+import { AbstractSigner } from "ethers";
 
 import { bip32ToAddressNList } from "../helpers/coins";
 
