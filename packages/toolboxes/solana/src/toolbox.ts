@@ -20,10 +20,10 @@ import {
   AssetValue,
   Chain,
   DerivationPath,
+  SKConfig,
   SwapKitError,
   SwapKitNumber,
   type WalletTxParams,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import { HDKey } from "micro-key-producer/slip10.js";
 
@@ -39,10 +39,7 @@ export function validateAddress(address: string) {
 function createKeysForPath({
   phrase,
   derivationPath = DerivationPath.SOL,
-}: {
-  phrase: string;
-  derivationPath?: string;
-}) {
+}: { phrase: string; derivationPath?: string }) {
   const seed = mnemonicToSeedSync(phrase);
   const hdKey = HDKey.fromMasterSeed(seed);
 
@@ -56,10 +53,7 @@ function getAddressFromKeys(keypair: Keypair) {
 async function getTokenBalances({
   connection,
   address,
-}: {
-  connection: Connection;
-  address: string;
-}) {
+}: { connection: Connection; address: string }) {
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
     programId: TOKEN_PROGRAM_ID,
   });
@@ -245,8 +239,8 @@ function broadcastTransaction(connection: Connection) {
   };
 }
 
-export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: string } = {}) => {
-  const connection = new Connection(rpcUrl, "confirmed");
+export const SOLToolbox = () => {
+  const connection = new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
 
   return {
     connection,

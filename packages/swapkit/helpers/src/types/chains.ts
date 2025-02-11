@@ -1,3 +1,5 @@
+import { SKConfig } from "../modules/swapKitConfig";
+
 export enum Chain {
   Arbitrum = "ARB",
   Avalanche = "AVAX",
@@ -313,10 +315,6 @@ export const EXPLORER_URLS: Record<Chain, string> = {
 
 let RPCUrlsMerged = RPC_URLS;
 
-export const getRPCUrl = (chain: Chain | StagenetChain) => {
-  return RPCUrlsMerged[chain];
-};
-
 const getRpcBody = (chain: Chain | StagenetChain) => {
   switch (chain) {
     case Chain.Arbitrum:
@@ -431,7 +429,7 @@ export const ChainToChainId = chains.reduce(
 
 export const ChainToRPC = chains.reduce(
   (acc, chain) => {
-    acc[chain] = getRPCUrl(chain);
+    acc[chain] = SKConfig.get("rpcUrls")[chain];
     return acc;
   },
   {} as { [key in Chain]: string },

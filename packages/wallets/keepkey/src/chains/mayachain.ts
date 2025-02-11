@@ -5,8 +5,8 @@ import {
   ChainId,
   DerivationPath,
   type DerivationPathArray,
+  SKConfig,
   derivationPathToString,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { DepositParam, ThorchainToolboxType, TransferParams } from "@swapkit/toolbox-cosmos";
 
@@ -93,7 +93,7 @@ export const mayachainWalletMethods = async ({
   };
 
   const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
-    const stargateClient = await createStargateClient(getRPCUrl(Chain.Maya));
+    const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.Maya]);
     const signedTransaction = await signTransaction({
       assetValue,
       recipient,
@@ -106,7 +106,7 @@ export const mayachainWalletMethods = async ({
   };
 
   const deposit = async ({ assetValue, memo }: DepositParam) => {
-    const stargateClient = await createStargateClient(getRPCUrl(Chain.THORChain));
+    const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.Maya]);
     const signedTransaction = await signTransaction({
       assetValue,
       memo,

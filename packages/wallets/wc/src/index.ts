@@ -7,7 +7,6 @@ import {
   SwapKitError,
   WalletOption,
   filterSupportedChains,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BaseCosmosToolboxType, DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
@@ -159,7 +158,7 @@ async function getToolbox({
         });
         const txBytes = TxRaw.encode(txRaw).finish();
 
-        const broadcaster = await createStargateClient(getRPCUrl(Chain.THORChain));
+        const broadcaster = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
         const result = await broadcaster.broadcastTx(txBytes);
         return result.transactionHash;
       }

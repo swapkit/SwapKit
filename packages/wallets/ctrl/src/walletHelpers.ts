@@ -2,7 +2,6 @@ import type { Keplr } from "@keplr-wallet/types";
 import {
   type AssetValue,
   Chain,
-  ChainId,
   ChainToChainId,
   type EVMChain,
   EVMChains,
@@ -10,7 +9,6 @@ import {
   SwapKitError,
   WalletOption,
   erc20ABI,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolbox-evm";
@@ -197,42 +195,6 @@ export async function walletTransfer(
   ];
 
   return transaction({ method, params, chain: assetValue.chain });
-}
-
-export function cosmosTransfer({
-  chainId,
-  rpcUrl,
-}: {
-  chainId: ChainId.Cosmos | ChainId.Kujira;
-  rpcUrl?: string;
-}) {
-  return async ({ from, recipient, assetValue, memo }: TransferParams) => {
-    const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolbox-cosmos"
-    );
-    await window.xfi?.keplr?.enable(chainId);
-    // @ts-ignore
-    const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
-    const cosmJS = await createSigningStargateClient(
-      rpcUrl || getRPCUrl(Chain.Cosmos),
-      offlineSigner,
-      chainId === ChainId.Kujira ? "0.0003ukuji" : undefined,
-    );
-
-    const coins = [
-      {
-        denom: getMsgSendDenom(assetValue.symbol).toLowerCase(),
-        amount: assetValue.getBaseValue("string"),
-      },
-    ];
-
-    try {
-      const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 2, memo);
-      return transactionHash;
-    } catch (error) {
-      throw new SwapKitError("core_transaction_failed", { error });
-    }
-  };
 }
 
 export function solanaTransfer(

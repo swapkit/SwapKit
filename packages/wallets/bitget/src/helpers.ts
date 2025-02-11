@@ -14,7 +14,7 @@ import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
-export function cosmosTransfer() {
+function cosmosTransfer() {
   return async ({ from, recipient, assetValue, memo }: TransferParams) => {
     const { getMsgSendDenom, createSigningStargateClient } = await import(
       "@swapkit/toolbox-cosmos"

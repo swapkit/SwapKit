@@ -1,12 +1,4 @@
 import { Chain, RequestClient, SKConfig, type UTXOChain, warnOnce } from "@swapkit/helpers";
-
-import type {
-  BlockchairAddressResponse,
-  BlockchairMultipleBalancesResponse,
-  BlockchairOutputsResponse,
-  BlockchairRawTransactionResponse,
-  BlockchairResponse,
-} from "../types/index";
 import { uniqid } from "./utils";
 
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
@@ -288,3 +280,154 @@ export function getUtxoApi(chain: UTXOChain) {
 }
 
 export type UTXOApiType = ReturnType<typeof utxoApi>;
+
+interface BlockchairMultipleBalancesResponse {
+  [key: string]: number;
+}
+
+interface BlockchairVin {
+  txid: string;
+  vout: number;
+  scriptSig: {
+    asm: string;
+    hex: string;
+  };
+  sequence: number;
+}
+
+interface BlockchairVout {
+  value: number;
+  n: number;
+  scriptPubKey: {
+    asm: string;
+    hex: string;
+    address: string;
+    type: string;
+    addresses: string[];
+    reqSigs: number;
+  };
+}
+
+interface BlockchairTransaction {
+  block_id: number;
+  hash: string;
+  time: string;
+  balance_change: number;
+}
+
+interface BlockchairUtxo {
+  block_id: number;
+  transaction_hash: string;
+  index: number;
+  value: number;
+}
+
+interface BlockchairAddressCoreData {
+  type: string;
+  script_hex: string;
+  balance: number;
+  balance_usd: number;
+  received: number;
+  received_usd: number;
+  spent: number;
+  spent_usd: number;
+  output_count: number;
+  unspent_output_count: number;
+  first_seen_receiving: string;
+  last_seen_receiving: string;
+  first_seen_spending: null | string;
+  last_seen_spending: null | string;
+  transaction_count: number;
+  scripthash_type: null | string;
+}
+
+interface BlockchairInputOutputCommonData {
+  block_id: number;
+  transaction_id: number;
+  index: number;
+  transaction_hash: string;
+  date: string;
+  time: string;
+  value: number;
+  value_usd: number;
+  recipient: string;
+  type: string;
+  script_hex: string;
+  is_from_coinbase: boolean;
+  is_spendable: boolean | null;
+  is_spent: boolean;
+  lifespan: number | null;
+  cdd: number | null;
+}
+
+interface BlockchairSpendingBlockData {
+  spending_block_id: number | null;
+  spending_transaction_id: number | null;
+  spending_index: number | null;
+  spending_transaction_hash: string | null;
+  spending_date: string | null;
+  spending_time: string | null;
+  spending_value_usd: number | null;
+  spending_sequence: number | null;
+  spending_signature_hex: string | null;
+  spending_witness: string | null;
+}
+
+interface BlockchairAddressResponse {
+  [key: string]: {
+    address: BlockchairAddressCoreData;
+    transactions: BlockchairTransaction[];
+    utxo: BlockchairUtxo[];
+  };
+}
+
+interface BlockchairOutputsResponse
+  extends BlockchairSpendingBlockData,
+    BlockchairInputOutputCommonData {}
+
+interface BlockchairRawTransactionResponse {
+  [key: string]: {
+    raw_transaction: string;
+    decoded_raw_transaction: {
+      txid: string;
+      hash: string;
+      version: number;
+      size: number;
+      vsize: number;
+      weight: number;
+      locktime: number;
+      vin: BlockchairVin[];
+      vout: BlockchairVout[];
+    };
+  };
+}
+
+interface BlockchairResponse<T> {
+  data: T;
+  context: {
+    code: number;
+    source: string;
+    results: number;
+    state: number;
+    market_price_usd: number;
+    cache: {
+      live: boolean;
+      duration: number;
+      since: string;
+      until: string;
+      time: any;
+    };
+    api: {
+      version: string;
+      last_major_update: string;
+      next_major_update: null | string;
+      documentation: string;
+      notice: string;
+    };
+    servers: string;
+    time: number;
+    render_time: number;
+    full_time: number;
+    request_cost: number;
+  };
+}

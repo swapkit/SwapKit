@@ -48,7 +48,7 @@ import type {
   IsApprovedParams,
   LegacyEVMTxParams,
   TransferParams,
-} from "../types/clientTypes";
+} from "../types";
 
 export const MAX_APPROVAL = MaxInt256;
 

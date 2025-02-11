@@ -14,13 +14,11 @@ export {
 /**
  * Package
  */
-export * from "./api/covalentApi";
-export * from "./api/ethplorerApi";
+export * from "./api";
 export * from "./helpers";
 export * from "./provider";
 export * from "./toolbox/EVMToolbox";
-export * from "./types/clientTypes";
-export * from "./types/ethplorer-api-types";
+export * from "./types";
 
 /**
  * Toolboxes

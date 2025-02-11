@@ -4,8 +4,8 @@ import {
   ChainId,
   DerivationPath,
   type DerivationPathArray,
+  SKConfig,
   derivationPathToString,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BaseCosmosToolboxType, TransferParams } from "@swapkit/toolbox-cosmos";
 
@@ -69,7 +69,7 @@ export const cosmosWalletMethods = async ({
         decodedBytes.charCodeAt(i),
       );
 
-      const client = await createStargateClient(getRPCUrl(Chain.Cosmos));
+      const client = await createStargateClient(SKConfig.get("rpcUrls")[Chain.Cosmos]);
       const response = await client.broadcastTx(uint8Array);
 
       return response.transactionHash;

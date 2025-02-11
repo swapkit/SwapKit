@@ -4,12 +4,10 @@ import {
   ChainId,
   ChainToExplorerUrl,
   FeeOption,
-  getRPCUrl,
+  SKConfig,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Provider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
 import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
@@ -18,7 +16,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.ArbitrumHex,
   chainName: "Arbitrum One",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [getRPCUrl(Chain.Arbitrum)],
+  rpcUrls: [SKConfig.get("rpcUrls")[Chain.Arbitrum]],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Arbitrum]],
 });
 
@@ -41,17 +39,9 @@ const estimateGasPrices = async (provider: Provider) => {
 };
 
 export const ARBToolbox = ({
-  api,
   provider,
   signer,
-  covalentApiKey,
-}: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
-  signer?: Signer;
-  provider: JsonRpcProvider | BrowserProvider;
-}) => {
-  const arbApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Arbitrum });
+}: { signer?: Signer; provider: JsonRpcProvider | BrowserProvider }) => {
   const evmToolbox = EVMToolbox({ provider, signer, isEIP1559Compatible: false });
   const chain = Chain.Arbitrum;
 
@@ -66,12 +56,6 @@ export const ARBToolbox = ({
       potentialScamFilter = true,
       overwriteProvider?: JsonRpcProvider | BrowserProvider,
     ) =>
-      getBalance({
-        provider: overwriteProvider || provider,
-        api: arbApi,
-        address,
-        chain,
-        potentialScamFilter,
-      }),
+      getBalance({ provider: overwriteProvider || provider, address, chain, potentialScamFilter }),
   };
 };

@@ -4,12 +4,10 @@ import {
   ChainId,
   ChainToExplorerUrl,
   type FeeOption,
-  getRPCUrl,
+  SKConfig,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
 import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
@@ -18,22 +16,14 @@ const getNetworkParams = () => ({
   chainId: ChainId.PolygonHex,
   chainName: "Polygon Mainnet",
   nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals: BaseDecimal.MATIC },
-  rpcUrls: [getRPCUrl(Chain.Polygon)],
+  rpcUrls: [SKConfig.get("rpcUrls")[Chain.Polygon]],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Polygon]],
 });
 
 export const MATICToolbox = ({
-  api,
   provider,
   signer,
-  covalentApiKey,
-}: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
-  signer?: Signer;
-  provider: JsonRpcProvider | BrowserProvider;
-}) => {
-  const maticApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Polygon });
+}: { signer?: Signer; provider: JsonRpcProvider | BrowserProvider }) => {
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Polygon;
 
@@ -47,12 +37,6 @@ export const MATICToolbox = ({
       potentialScamFilter = true,
       overwriteProvider?: JsonRpcProvider | BrowserProvider,
     ) =>
-      getBalance({
-        provider: overwriteProvider || provider,
-        api: maticApi,
-        address,
-        chain,
-        potentialScamFilter,
-      }),
+      getBalance({ provider: overwriteProvider || provider, address, chain, potentialScamFilter }),
   };
 };

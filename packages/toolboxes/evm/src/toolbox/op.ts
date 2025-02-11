@@ -4,13 +4,11 @@ import {
   ChainId,
   ChainToExplorerUrl,
   FeeOption,
-  getRPCUrl,
+  SKConfig,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
 import { Contract, Transaction } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
 import { getBalance } from "../index";
 
@@ -94,7 +92,7 @@ const getNetworkParams = () => ({
   chainId: ChainId.OptimismHex,
   chainName: "Optimism",
   nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
-  rpcUrls: [getRPCUrl(Chain.Optimism)],
+  rpcUrls: [SKConfig.get("rpcUrls")[Chain.Optimism]],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
 });
 
@@ -136,17 +134,9 @@ const estimateGasPrices = async (provider: JsonRpcProvider | BrowserProvider) =>
 };
 
 export const OPToolbox = ({
-  api,
   provider,
   signer,
-  covalentApiKey,
-}: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
-  signer?: Signer;
-  provider: JsonRpcProvider | BrowserProvider;
-}) => {
-  const opApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Optimism });
+}: { signer?: Signer; provider: JsonRpcProvider | BrowserProvider }) => {
   const evmToolbox = EVMToolbox({ provider, signer });
 
   return {
@@ -165,7 +155,6 @@ export const OPToolbox = ({
     ) =>
       getBalance({
         provider: overwriteProvider || provider,
-        api: opApi,
         address,
         chain: Chain.Optimism,
         potentialScamFilter,

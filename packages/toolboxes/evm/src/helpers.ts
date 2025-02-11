@@ -10,13 +10,8 @@ import {
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Provider } from "ethers";
 
-import {
-  type CovalentApiType,
-  type EIP1559TxParams,
-  type EVMMaxSendableAmountsParams,
-  type EthplorerApiType,
-  estimateGasPrices,
-} from "./index";
+import { getEvmApi } from "./api";
+import { type EIP1559TxParams, type EVMMaxSendableAmountsParams, estimateGasPrices } from "./index";
 
 export const estimateMaxSendableAmount = async ({
   toolbox,
@@ -81,19 +76,18 @@ export const toHexString = (value: bigint) => (value > 0n ? `0x${value.toString(
 
 export const getBalance = async ({
   provider,
-  api,
   address,
   chain,
   potentialScamFilter,
 }: {
   provider: JsonRpcProvider | BrowserProvider;
-  api: CovalentApiType | EthplorerApiType;
   address: string;
   chain: EVMChain;
   potentialScamFilter?: boolean;
 }) => {
-  const tokenBalances = await api.getBalance(address);
+  const tokenBalances = await getEvmApi(chain).getBalance(address);
   const evmGasTokenBalance = await provider.getBalance(address);
+
   const balances = [
     {
       chain,

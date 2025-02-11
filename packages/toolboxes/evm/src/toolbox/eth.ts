@@ -1,25 +1,15 @@
 import { Chain, FeeOption } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, JsonRpcSigner, Signer } from "ethers";
 
-import type { EthplorerApiType } from "../api/ethplorerApi";
-import { ethplorerApi } from "../api/ethplorerApi";
 import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
 
 import { multicallAbi } from "../contracts/eth/multicall";
 import { EVMToolbox } from "./EVMToolbox";
 
 export const ETHToolbox = ({
-  api,
-  ethplorerApiKey,
   signer,
   provider,
-}: {
-  api?: EthplorerApiType;
-  ethplorerApiKey?: string;
-  signer?: Signer | JsonRpcSigner;
-  provider: JsonRpcProvider | BrowserProvider;
-}) => {
-  const ethApi = api || ethplorerApi(ethplorerApiKey);
+}: { signer?: Signer | JsonRpcSigner; provider: JsonRpcProvider | BrowserProvider }) => {
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Ethereum;
 
@@ -41,6 +31,7 @@ export const ETHToolbox = ({
 
   return {
     ...evmToolbox,
+    multicall,
     estimateTransactionFee: (txObject: EVMTxBaseParams, feeOptionKey?: FeeOption) =>
       estimateTransactionFee(txObject, feeOptionKey, chain, provider),
     getBalance: (
@@ -48,13 +39,6 @@ export const ETHToolbox = ({
       potentialScamFilter = true,
       overwriteProvider?: JsonRpcProvider | BrowserProvider,
     ) =>
-      getBalance({
-        provider: overwriteProvider || provider,
-        api: ethApi,
-        address,
-        chain,
-        potentialScamFilter,
-      }),
-    multicall,
+      getBalance({ provider: overwriteProvider || provider, address, chain, potentialScamFilter }),
   };
 };

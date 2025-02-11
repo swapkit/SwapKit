@@ -1,8 +1,6 @@
 import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, type FeeOption } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
 import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
@@ -17,17 +15,9 @@ const getNetworkParams = () => ({
 });
 
 export const AVAXToolbox = ({
-  api,
   provider,
   signer,
-  covalentApiKey,
-}: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
-  signer?: Signer;
-  provider: JsonRpcProvider | BrowserProvider;
-}) => {
-  const avaxApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Avalanche });
+}: { signer?: Signer; provider: JsonRpcProvider | BrowserProvider }) => {
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Avalanche;
 
@@ -41,12 +31,6 @@ export const AVAXToolbox = ({
       potentialScamFilter = true,
       overwriteProvider?: JsonRpcProvider | BrowserProvider,
     ) =>
-      getBalance({
-        provider: overwriteProvider || provider,
-        api: avaxApi,
-        address,
-        chain,
-        potentialScamFilter,
-      }),
+      getBalance({ provider: overwriteProvider || provider, address, chain, potentialScamFilter }),
   };
 };

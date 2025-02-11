@@ -2,9 +2,6 @@ import {
   type AddChainType,
   AssetValue,
   Chain,
-  type ChainId,
-  ChainToChainId,
-  ChainToRPC,
   SwapKitError,
   WalletOption,
   filterSupportedChains,
@@ -62,15 +59,9 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
-      const toolbox = getToolboxByChain(chain);
+      const toolbox = getToolboxByChain(chain)();
 
-      return {
-        ...toolbox(),
-        transfer: cosmosTransfer({
-          chainId: ChainToChainId[chain] as ChainId.Cosmos,
-          rpcUrl: ChainToRPC[chain],
-        }),
-      };
+      return { ...toolbox, transfer: cosmosTransfer(chain) };
     }
 
     case Chain.Dash:

@@ -1,13 +1,8 @@
 import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
 
-import type { InjectedWindow, PolkadotToolbox } from "@swapkit/toolbox-substrate";
+import type { InjectedWindow } from "@swapkit/toolbox-substrate";
 
-export const getWallet = async (
-  chain: Chain,
-): Promise<{
-  walletMethods: Awaited<ReturnType<typeof PolkadotToolbox>>;
-  address: string;
-}> => {
+export const getWalletMethods = async (chain: Chain) => {
   switch (chain) {
     case Chain.Polkadot: {
       const { getToolboxByChain } = await import("@swapkit/toolbox-substrate");
@@ -30,7 +25,7 @@ export const getWallet = async (
       }
 
       const address = toolbox.convertAddress(account.address, 0);
-      return { walletMethods: toolbox, address };
+      return { ...toolbox, address };
     }
 
     default:

@@ -1,5 +1,5 @@
 import { type AddChainType, Chain, WalletOption, filterSupportedChains } from "@swapkit/helpers";
-import { getWallet } from "./helpers";
+import { getWalletMethods } from "./helpers";
 
 const POLKADOT_SUPPORTED_CHAINS = [Chain.Polkadot] as const;
 
@@ -12,7 +12,7 @@ function connectPolkadotJs(addChain: AddChainType) {
     );
 
     const promises = supportedChains.map(async (chain) => {
-      const { address, walletMethods } = await getWallet(chain);
+      const { address, ...walletMethods } = await getWalletMethods(chain);
 
       addChain({
         ...walletMethods,
