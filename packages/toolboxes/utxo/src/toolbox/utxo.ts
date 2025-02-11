@@ -82,6 +82,7 @@ function transfer(chain: UTXOChain) {
   }: UTXOWalletTransferParams<Psbt, Psbt>) {
     if (!from) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
+    if (!signTransaction) throw new Error("Sign transaction must be provided");
     const txFeeRate = feeRate || (await getFeeRates(chain))[feeOptionKey || FeeOption.Fast];
 
     const { psbt } = await buildTx(chain)({

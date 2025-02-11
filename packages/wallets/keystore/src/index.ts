@@ -159,7 +159,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
 
     case Chain.Solana: {
       const { SOLToolbox } = await import("@swapkit/toolbox-solana");
-      const toolbox = SOLToolbox({ rpcUrl });
+      const toolbox = SOLToolbox();
       const keypair = toolbox.createKeysForPath({ phrase, derivationPath });
 
       return {

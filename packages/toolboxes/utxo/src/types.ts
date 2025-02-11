@@ -66,5 +66,5 @@ export type UTXOTransferParams = {
 };
 
 export type UTXOWalletTransferParams<T, U> = UTXOTransferParams & {
-  signTransaction: (params: T) => U | Promise<U>;
+  signTransaction?: (params: T) => U | Promise<U>;
 };

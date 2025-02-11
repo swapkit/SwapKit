@@ -31,7 +31,7 @@ import {
 
 export type PluginsType = {
   [key in string]: {
-    plugin: (params: SwapKitPluginParams<any>) => any;
+    plugin: (params: SwapKitPluginParams) => any;
     config?: any;
   };
 };
@@ -59,8 +59,8 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
   const connectedWallets = {} as FullWallet;
 
   const availablePlugins = Object.entries(plugins || {}).reduce(
-    (acc, [pluginName, { plugin, config: pluginConfig }]) => {
-      const methods = plugin({ getWallet, config: pluginConfig });
+    (acc, [pluginName, { plugin }]) => {
+      const methods = plugin({ getWallet });
 
       // @ts-expect-error key is generic and cannot be indexed
       acc[pluginName] = methods;
@@ -247,6 +247,8 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     }
     const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix>);
 
+    // @ts-expect-error TODO: right now it's inferred from toolboxes
+    // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });
   }
 

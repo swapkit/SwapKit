@@ -95,6 +95,8 @@ function plugin({ getWallet }: SwapKitPluginParams) {
 
         default: {
           if (wallet) {
+            // @ts-expect-error TODO: right now it's inferred from toolboxes
+            // we need to simplify this to one object params
             return wallet.transfer(params);
           }
 
