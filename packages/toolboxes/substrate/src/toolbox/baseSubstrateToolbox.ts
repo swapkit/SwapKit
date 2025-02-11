@@ -219,11 +219,15 @@ export const BaseSubstrateToolbox = ({
   },
   broadcast: (tx: SubmittableExtrinsic<"promise">, callback?: Callback<ISubmittableResult>) =>
     broadcast(tx, callback),
-  signAndBroadcast: (
-    tx: SubmittableExtrinsic<"promise">,
-    callback?: Callback<ISubmittableResult>,
-    address?: string,
-  ) => {
+  signAndBroadcast: ({
+    tx,
+    callback,
+    address,
+  }: {
+    tx: SubmittableExtrinsic<"promise">;
+    callback?: Callback<ISubmittableResult>;
+    address?: string;
+  }) => {
     if (isKeyringPair(signer)) {
       return signAndBroadcast(signer, tx, callback);
     }
