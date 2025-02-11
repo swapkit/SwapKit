@@ -1,8 +1,7 @@
 import type { AssetValue, FeeOption, UTXOChain, Witness } from "@swapkit/helpers";
 
-import type { BlockchairApiType } from "../api/blockchairApi";
+import type { UTXOScriptType } from "../helpers";
 import type { BCHToolbox, BTCToolbox, DOGEToolbox, LTCToolbox } from "../index";
-import type { UTXOScriptType } from "../utils/index";
 
 export type TransactionType = {
   toHex(): string;
@@ -24,11 +23,6 @@ export type TransactionBuilderType = {
     signatureAlgorithm?: string,
   ): void;
   build(): TransactionType;
-};
-
-export type UTXOBaseToolboxParams = {
-  apiClient: BlockchairApiType;
-  chain: UTXOChain;
 };
 
 export type UTXOToolbox = ReturnType<
@@ -58,12 +52,9 @@ export type UTXOBuildTxParams = {
   feeRate: number;
   sender: string;
   fetchTxHex?: boolean;
-  apiClient: BlockchairApiType;
-  chain: UTXOChain;
 };
 
 export type UTXOTransferParams = {
-  apiClient: BlockchairApiType;
   broadcastTx: (txHex: string) => Promise<string>;
   chain: UTXOChain;
   feeOptionKey?: FeeOption;
@@ -75,5 +66,5 @@ export type UTXOTransferParams = {
 };
 
 export type UTXOWalletTransferParams<T, U> = UTXOTransferParams & {
-  signTransaction: (params: T) => U;
+  signTransaction: (params: T) => U | Promise<U>;
 };

@@ -6,31 +6,30 @@ import {
   address as bchAddress,
   // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
 } from "@psf/bitcoincashjs-lib";
-
 import { mnemonicToSeedSync } from "@scure/bip39";
-import { Chain, DerivationPath, FeeOption, type UTXOChain, getRPCUrl } from "@swapkit/helpers";
+import { Chain, DerivationPath, FeeOption, type UTXOChain } from "@swapkit/helpers";
 import { Psbt } from "bitcoinjs-lib";
 import { ECPairFactory } from "ecpair";
 
-import type { BlockchairApiType } from "../api/blockchairApi";
-import { blockchairApi } from "../api/blockchairApi";
-import { broadcastUTXOTx } from "../api/rpcApi";
+import {
+  accumulative,
+  Network as bchNetwork,
+  compileMemo,
+  detectAddressNetwork,
+  getNetwork,
+  getUtxoApi,
+  isValidAddress,
+  toCashAddress,
+  toLegacyAddress,
+} from "../helpers";
 import type {
   TargetOutput,
   TransactionBuilderType,
   TransactionType,
   UTXOBuildTxParams,
+  UTXOType,
   UTXOWalletTransferParams,
-} from "../types/common";
-import type { UTXOType } from "../types/index";
-import {
-  Network as bchNetwork,
-  detectAddressNetwork,
-  isValidAddress,
-  toCashAddress,
-  toLegacyAddress,
-} from "../utils/bchaddrjs";
-import { accumulative, compileMemo, getNetwork } from "../utils/index";
+} from "../types";
 
 import { BaseUTXOToolbox } from "./utxo";
 
@@ -46,7 +45,7 @@ type BCHMethods = {
   }) => Promise<{ getAddress: (index?: number) => string }>;
   getAddressFromKeys: (keys: { getAddress: (index?: number) => string }) => string;
   buildBCHTx: (
-    params: UTXOBuildTxParams & { apiClient: BlockchairApiType },
+    params: UTXOBuildTxParams,
   ) => Promise<{ builder: TransactionBuilderType; utxos: UTXOType[] }>;
   buildTx: (params: UTXOBuildTxParams) => Promise<{ psbt: Psbt }>;
   transfer: (
@@ -67,10 +66,9 @@ const buildBCHTx: BCHMethods["buildBCHTx"] = async ({
   memo,
   feeRate,
   sender,
-  apiClient,
 }) => {
   if (!validateAddress(recipient)) throw new Error("Invalid address");
-  const utxos = await apiClient.scanUTXOs({
+  const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
     fetchTxHex: true,
   });
@@ -94,7 +92,7 @@ const buildBCHTx: BCHMethods["buildBCHTx"] = async ({
 
   await Promise.all(
     inputs.map(async (utxo: UTXOType) => {
-      const txHex = (await apiClient.getRawTx(utxo.hash)) as string;
+      const txHex = await getUtxoApi(chain).getRawTx(utxo.hash);
 
       builder.addInput(Transaction.fromBuffer(Buffer.from(txHex, "hex")), utxo.index);
     }),
@@ -121,7 +119,6 @@ const transfer = async ({
   from,
   recipient,
   assetValue,
-  apiClient,
   broadcastTx,
   getFeeRates,
   ...rest
@@ -129,7 +126,6 @@ const transfer = async ({
   { builder: TransactionBuilderType; utxos: UTXOType[] },
   TransactionType
 > & {
-  apiClient: BlockchairApiType;
   broadcastTx: (txHash: string) => Promise<string>;
   getFeeRates: () => Promise<Record<FeeOption, number>>;
 }) => {
@@ -146,10 +142,9 @@ const transfer = async ({
     feeRate,
     recipient,
     sender: from,
-    apiClient,
   });
 
-  const tx = signTransaction({ builder, utxos });
+  const tx = await signTransaction({ builder, utxos });
   const txHex = tx.toHex();
 
   return broadcastTx(txHex);
@@ -161,13 +156,12 @@ const buildTx = async ({
   memo,
   feeRate,
   sender,
-  apiClient,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
-}: UTXOBuildTxParams & { apiClient: BlockchairApiType }) => {
+}: UTXOBuildTxParams) => {
   const recipientCashAddress = toCashAddress(recipient);
   if (!validateAddress(recipientCashAddress)) throw new Error("Invalid address");
 
-  const utxos = await apiClient.scanUTXOs({
+  const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
     fetchTxHex: true,
   });
@@ -257,25 +251,12 @@ const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) =>
   return stripToCashAddress(address);
 };
 
-export const createBCHToolbox = ({
-  apiKey,
-  rpcUrl = getRPCUrl(Chain.BitcoinCash),
-  apiClient: client,
-}: {
-  apiKey?: string;
-  rpcUrl?: string;
-  apiClient?: BlockchairApiType;
-}): Omit<
+export const createBCHToolbox = (): Omit<
   ReturnType<typeof BaseUTXOToolbox>,
   "getAddressFromKeys" | "transfer" | "createKeysForPath"
 > &
   BCHMethods => {
-  const apiClient = client || blockchairApi({ apiKey, chain });
-  const { getBalance, ...toolbox } = BaseUTXOToolbox({
-    chain,
-    apiClient,
-    broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, rpcUrl }),
-  });
+  const { getBalance, ...toolbox } = BaseUTXOToolbox(Chain.BitcoinCash);
 
   return {
     ...toolbox,
@@ -284,21 +265,16 @@ export const createBCHToolbox = ({
     validateAddress,
     createKeysForPath,
     getAddressFromKeys,
-    buildBCHTx: (params: UTXOBuildTxParams) => buildBCHTx({ ...params, apiClient }),
+    buildBCHTx,
+    buildTx,
     getBalance: (address: string, _potentialScamFilter?: boolean) =>
       getBalance(stripPrefix(toCashAddress(address))),
-    buildTx: (params: UTXOBuildTxParams) => buildTx({ ...params, apiClient }),
     transfer: (
       params: UTXOWalletTransferParams<
         { builder: TransactionBuilderType; utxos: UTXOType[] },
         TransactionType
       >,
     ) =>
-      transfer({
-        ...params,
-        getFeeRates: toolbox.getFeeRates,
-        broadcastTx: toolbox.broadcastTx,
-        apiClient,
-      }),
+      transfer({ ...params, getFeeRates: toolbox.getFeeRates, broadcastTx: toolbox.broadcastTx }),
   };
 };

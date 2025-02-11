@@ -1,5 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import { EXPLORER_URLS, NODE_URLS, RPC_URLS } from "../types";
+import { type Chain, EXPLORER_URLS, NODE_URLS, RPC_URLS } from "../types";
 
 export type SKConfigIntegrations = {
   chainflip?: { useSDKBroker?: boolean; brokerUrl: string };
@@ -25,7 +25,31 @@ export type SKConfigIntegrations = {
 };
 
 const initialState = {
+  // TODO: figure out how to type apis without using toolbox directly
+  // Maybe move rpc/toolbox apis to helpers?
+  apis: {} as { [key in Chain]: any },
   explorerUrls: EXPLORER_URLS,
+  nodeUrls: NODE_URLS,
+  rpcUrls: RPC_URLS,
+
+  apiKeys: {
+    blockchair: "",
+    covalent: "",
+    ethplorer: "freekey",
+    kado: "",
+    keepKey: "",
+    swapKit: "",
+    walletConnectProjectId: "",
+  },
+
+  envs: {
+    apiUrl: "https://api.swapkit.dev",
+    devApiUrl: "https://dev-api.swapkit.dev",
+    isDev: false,
+    isStagenet: false,
+    referer: "https://swapkit.dev",
+  },
+
   integrations: {
     radix: {
       applicationName: "Swapkit Playground",
@@ -38,24 +62,6 @@ const initialState = {
       },
     },
   } as SKConfigIntegrations,
-  nodeUrls: NODE_URLS,
-  rpcUrls: RPC_URLS,
-  apiKeys: {
-    blockchair: "",
-    covalent: "",
-    ethplorer: "freekey",
-    kado: "",
-    keepKey: "",
-    swapKit: "",
-    walletConnectProjectId: "",
-  },
-  envs: {
-    apiUrl: "https://api.swapkit.dev",
-    devApiUrl: "https://dev-api.swapkit.dev",
-    isDev: false,
-    isStagenet: false,
-    referer: "https://swapkit.dev",
-  },
 };
 type SKState = typeof initialState;
 

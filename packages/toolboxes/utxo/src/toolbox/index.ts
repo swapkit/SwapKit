@@ -1,17 +1,7 @@
-import { Chain, ChainToRPC, type UTXOChain } from "@swapkit/helpers";
-
-import type { BlockchairApiType } from "../api/blockchairApi";
-import { blockchairApi } from "../api/blockchairApi";
-import { broadcastUTXOTx } from "../api/rpcApi";
+import { Chain } from "@swapkit/helpers";
 
 import { createBCHToolbox } from "./bitcoinCash";
 import { BaseUTXOToolbox } from "./utxo";
-
-type ToolboxFactory = (params: {
-  apiKey?: string;
-  rpcUrl?: string;
-  apiClient?: BlockchairApiType;
-}) => ReturnType<typeof BaseUTXOToolbox>;
 
 type ToolboxType = {
   BCH: typeof BCHToolbox;
@@ -21,21 +11,11 @@ type ToolboxType = {
   DASH: typeof DASHToolbox;
 };
 
-const createToolbox =
-  (chain: UTXOChain): ToolboxFactory =>
-  ({ apiKey, rpcUrl = ChainToRPC[chain], apiClient }) => {
-    return BaseUTXOToolbox({
-      chain,
-      broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, rpcUrl }),
-      apiClient: apiClient || blockchairApi({ apiKey, chain }),
-    });
-  };
-
 export const BCHToolbox = createBCHToolbox;
-export const BTCToolbox = createToolbox(Chain.Bitcoin);
-export const DASHToolbox = createToolbox(Chain.Dash);
-export const DOGEToolbox = createToolbox(Chain.Dogecoin);
-export const LTCToolbox = createToolbox(Chain.Litecoin);
+export const BTCToolbox = () => BaseUTXOToolbox(Chain.Bitcoin);
+export const DASHToolbox = () => BaseUTXOToolbox(Chain.Dash);
+export const DOGEToolbox = () => BaseUTXOToolbox(Chain.Dogecoin);
+export const LTCToolbox = () => BaseUTXOToolbox(Chain.Litecoin);
 
 export const getToolboxByChain = <T extends keyof ToolboxType>(chain: T): ToolboxType[T] => {
   switch (chain) {

@@ -80,19 +80,18 @@ export async function getWalletMethods(chain: Chain) {
       const { unisat: wallet } = bitget;
 
       const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
-
       const [address] = await wallet.requestAccounts();
-
       const toolbox = BTCToolbox();
-      const signTransaction = async (psbt: Psbt) => {
+
+      async function signTransaction(psbt: Psbt) {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });
 
         return Psbt.fromHex(signedPsbt);
-      };
+      }
 
-      const transfer = (transferParams: UTXOTransferParams) => {
+      function transfer(transferParams: UTXOTransferParams) {
         return toolbox.transfer({ ...transferParams, signTransaction });
-      };
+      }
 
       return { ...toolbox, transfer, address };
     }

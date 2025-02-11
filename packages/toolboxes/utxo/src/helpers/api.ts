@@ -1,4 +1,4 @@
-import { Chain, RequestClient, SKConfig, type UTXOChain } from "@swapkit/helpers";
+import { Chain, RequestClient, SKConfig, type UTXOChain, warnOnce } from "@swapkit/helpers";
 
 import type {
   BlockchairAddressResponse,
@@ -7,6 +7,8 @@ import type {
   BlockchairRawTransactionResponse,
   BlockchairResponse,
 } from "../types/index";
+import { uniqid } from "./utils";
+
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
 type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
   offset?: number;
@@ -14,9 +16,37 @@ type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
   address: string;
 }>;
 
-const baseUrl = (chain: Chain) => `https://api.blockchair.com/${mapChainToBlockchairChain(chain)}`;
+async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string }) {
+  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const body = JSON.stringify({
+    jsonrpc: "2.0",
+    method: "sendrawtransaction",
+    params: [txHash],
+    id: uniqid(),
+  });
 
-const getDefaultTxFeeByChain = (chain: Chain) => {
+  const response = await RequestClient.post<{
+    id: string;
+    result: string;
+    error: { message: string; code?: number } | null;
+  }>(rpcUrl, { headers: { "Content-Type": "application/json" }, body });
+
+  if (response.error) {
+    throw new Error(`failed to broadcast a transaction: ${response.error?.message}`);
+  }
+
+  if (response.result.includes('"code":-26')) {
+    throw new Error("Invalid transaction: the transaction amount was too low");
+  }
+
+  return response.result;
+}
+
+function baseUrl(chain: Chain) {
+  return `https://api.blockchair.com/${mapChainToBlockchairChain(chain)}`;
+}
+
+function getDefaultTxFeeByChain(chain: Chain) {
   switch (chain) {
     case Chain.Bitcoin:
       return 5;
@@ -27,9 +57,9 @@ const getDefaultTxFeeByChain = (chain: Chain) => {
     default:
       return 2;
   }
-};
+}
 
-const mapChainToBlockchairChain = (chain: Chain) => {
+function mapChainToBlockchairChain(chain: Chain) {
   switch (chain) {
     case Chain.BitcoinCash:
       return "bitcoin-cash";
@@ -44,9 +74,9 @@ const mapChainToBlockchairChain = (chain: Chain) => {
     default:
       return "bitcoin";
   }
-};
+}
 
-const getSuggestedTxFee = async (chain: Chain) => {
+async function getSuggestedTxFee(chain: Chain) {
   try {
     //Use Bitgo API for fee estimation
     //Refer: https://app.bitgo.com/docs/#operation/v2.tx.getfeeestimate
@@ -62,9 +92,9 @@ const getSuggestedTxFee = async (chain: Chain) => {
   } catch (_error) {
     return getDefaultTxFeeByChain(chain);
   }
-};
+}
 
-const blockchairRequest = async <T>(url: string, apiKey?: string): Promise<T> => {
+async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
   try {
     const response = await RequestClient.get<BlockchairResponse<T>>(url);
     if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
@@ -80,14 +110,9 @@ const blockchairRequest = async <T>(url: string, apiKey?: string): Promise<T> =>
 
     return response.data as T;
   }
-};
+}
 
-const baseAddressData = { utxo: [], address: { balance: 0, transaction_count: 0 } };
-const getAddressData = async ({
-  address,
-  chain,
-  apiKey,
-}: BlockchairParams<{ address?: string }>) => {
+async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
   if (!address) throw new Error("address is required");
 
   try {
@@ -98,26 +123,27 @@ const getAddressData = async ({
 
     return response[address];
   } catch (_error) {
-    return baseAddressData;
+    return { utxo: [], address: { balance: 0, transaction_count: 0 } };
   }
-};
+}
 
-const getUnconfirmedBalance = async ({
+async function getUnconfirmedBalance({
   address,
   chain,
   apiKey,
-}: BlockchairParams<{ address?: string }>) => {
+}: BlockchairParams<{ address?: string }>) {
   const response = await getAddressData({ address, chain, apiKey });
 
-  return response?.address.balance;
-};
+  return response?.address.balance || 0;
+}
 
-const getConfirmedBalance = async ({
+async function getConfirmedBalance({
   chain,
   address,
   apiKey,
-}: BlockchairParams<{ address?: string }>) => {
+}: BlockchairParams<{ address?: string }>) {
   if (!address) throw new Error("address is required");
+
   try {
     const response = await blockchairRequest<BlockchairMultipleBalancesResponse>(
       `${baseUrl(chain)}/addresses/balances?addresses=${address}`,
@@ -128,9 +154,9 @@ const getConfirmedBalance = async ({
   } catch (_error) {
     return 0;
   }
-};
+}
 
-const getRawTx = async ({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) => {
+async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
   if (!txHash) throw new Error("txHash is required");
 
   try {
@@ -138,20 +164,20 @@ const getRawTx = async ({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
       `${baseUrl(chain)}/raw/transaction/${txHash}`,
       apiKey,
     );
-    return rawTxResponse?.[txHash]?.raw_transaction;
+    return rawTxResponse?.[txHash]?.raw_transaction || "";
   } catch (error) {
     console.error(error);
     return "";
   }
-};
+}
 
-const fetchUnspentUtxoBatch = async ({
+async function fetchUnspentUtxoBatch({
   chain,
   address,
   apiKey,
   offset = 0,
   limit = 100,
-}: BlockchairFetchUnspentUtxoParams) => {
+}: BlockchairFetchUnspentUtxoParams) {
   const response = await blockchairRequest<BlockchairOutputsResponse[]>(
     `${baseUrl(chain)}/outputs?q=is_spent(false),recipient(${address})&limit=${limit}&offset=${offset}`,
     apiKey,
@@ -169,17 +195,15 @@ const fetchUnspentUtxoBatch = async ({
     }));
 
   return txs;
-};
+}
 
-const getUnspentUtxos = async ({
+async function getUnspentUtxos({
   chain,
   address,
   apiKey,
   offset = 0,
   limit = 100,
-}: BlockchairFetchUnspentUtxoParams): Promise<
-  Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>
-> => {
+}: BlockchairFetchUnspentUtxoParams): Promise<Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>> {
   if (!address) throw new Error("address is required");
 
   try {
@@ -200,14 +224,14 @@ const getUnspentUtxos = async ({
     console.error(error);
     return [];
   }
-};
+}
 
-const scanUTXOs = async ({
+async function scanUTXOs({
   address,
   chain,
   apiKey,
   fetchTxHex = true,
-}: BlockchairParams<{ address: string; fetchTxHex?: boolean }>) => {
+}: BlockchairParams<{ address: string; fetchTxHex?: boolean }>) {
   const utxos = await getUnspentUtxos({ chain, address, apiKey });
   const results = [];
 
@@ -226,12 +250,15 @@ const scanUTXOs = async ({
     });
   }
   return results;
-};
+}
 
-export const blockchairApi = ({ chain }: { chain: UTXOChain }) => {
-  const apiKey = SKConfig.get("apiKeys").blockchair;
+function utxoApi(chain: UTXOChain) {
+  const apiKey = SKConfig.get("apiKeys").blockchair || "";
+
+  warnOnce(!apiKey, "No Blockchair API key found. Functionality will be limited.");
 
   return {
+    broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, chain }),
     getConfirmedBalance: (address: string) => getConfirmedBalance({ chain, address, apiKey }),
     getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
     getSuggestedTxFee: () => getSuggestedTxFee(chain),
@@ -240,6 +267,24 @@ export const blockchairApi = ({ chain }: { chain: UTXOChain }) => {
     scanUTXOs: (params: { address: string; fetchTxHex?: boolean }) =>
       scanUTXOs({ ...params, chain, apiKey }),
   };
-};
+}
 
-export type BlockchairApiType = ReturnType<typeof blockchairApi>;
+/**
+ * "Factory" to ensure typing for custom UTXO APIs
+ */
+export function createCustomUtxoApi(methods: ReturnType<typeof utxoApi>) {
+  return methods;
+}
+
+export function getUtxoApi(chain: UTXOChain) {
+  const customUtxoApi = SKConfig.get("apis")[chain];
+
+  if (customUtxoApi) {
+    warnOnce(true, "Using custom UTXO API. Be sure to implement all methods to avoid issues.");
+    return customUtxoApi as UTXOApiType;
+  }
+
+  return utxoApi(chain);
+}
+
+export type UTXOApiType = ReturnType<typeof utxoApi>;

@@ -1,7 +1,7 @@
 import { RequestClient } from "../modules/requestClient";
 import { SKConfig } from "../modules/swapKitConfig";
 import { type ErrorKeys, SwapKitError } from "../modules/swapKitError";
-import { Chain, ChainId, StagenetChain, getRPCUrl } from "../types";
+import { Chain, ChainId, StagenetChain } from "../types";
 
 // 10 rune for register, 1 rune per year
 // MINIMUM_REGISTRATION_FEE = 11
