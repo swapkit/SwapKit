@@ -18,7 +18,7 @@
     "typescript": "5.7.2"
   },
   "name": "swapkit-monorepo",
-  "packageManager": "bun@^1.1.42",
+  "packageManager": "bun@^1.2.2",
   "private": true,
   "scripts": {
     "bootstrap": "bun clean; bun install --force; bun run build",
@@ -42,12 +42,16 @@
   },
   "trustedDependencies": [
     "@biomejs/biome",
+    "bigint-buffer",
     "blake-hash",
+    "bufferutil",
     "core-js-pure",
     "esbuild",
     "lefthook",
     "protobufjs",
+    "keccak",
     "secp256k1",
+    "tiny-secp256k1",
     "usb"
   ],
   "workspaces": [

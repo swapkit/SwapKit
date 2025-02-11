@@ -37,3 +37,5 @@ export const getSwapKitClient = ({
     },
   });
 };
+
+export type SwapKitClient = ReturnType<typeof getSwapKitClient>;

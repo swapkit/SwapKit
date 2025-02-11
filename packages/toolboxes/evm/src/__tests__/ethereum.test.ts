@@ -28,7 +28,7 @@ beforeEach(async () => {
   const provider = getProvider(Chain.Ethereum, "http://127.0.0.1:8545/");
   const signer = (await hre.ethers.getImpersonatedSigner(testAddress)) as unknown as JsonRpcSigner;
   context.provider = provider;
-  context.toolbox = ETHToolbox({ ethplorerApiKey: "freekey", provider, signer });
+  context.toolbox = ETHToolbox({ provider, signer });
 });
 
 afterEach(async () => {
