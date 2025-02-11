@@ -2,6 +2,7 @@ import {
   type AddChainType,
   Chain,
   type DerivationPathArray,
+  NetworkDerivationPath,
   SKConfig,
   WalletOption,
   filterSupportedChains,
@@ -122,7 +123,7 @@ const checkAndLaunch = async (attempts = 0) => {
 function connectKeepkey(addChain: AddChainType) {
   return async function connectKeepkey(
     chains: Chain[],
-    derivationPathMap: Record<Chain, DerivationPathArray>,
+    derivationPathMap?: Record<Chain, DerivationPathArray>,
   ) {
     const supportedChains = filterSupportedChains(
       chains,
@@ -141,7 +142,7 @@ function connectKeepkey(addChain: AddChainType) {
     const toolboxPromises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletMethods({
         chain,
-        derivationPath: derivationPathMap[chain],
+        derivationPath: derivationPathMap?.[chain] || NetworkDerivationPath[chain],
         sdk: keepKeySdk,
       });
 

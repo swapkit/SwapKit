@@ -47,15 +47,17 @@ export const useSwapKit = () => {
 
       const swapKitClient = SwapKit({
         config: {
-          blockchairApiKey:
-            process.env.NEXT_PUBLIC_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",
-          covalentApiKey:
-            process.env.NEXT_PUBLIC_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
-          ethplorerApiKey: process.env.NEXT_PUBLIC_ETHPLORER_API_KEY || "freekey",
-          walletConnectProjectId: "",
-          keepkeyConfig: {
-            apiKey: localStorage.getItem("keepkeyApiKey") || "",
-            pairingInfo: {
+          apiKeys: {
+            blockchair:
+              process.env.NEXT_PUBLIC_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",
+            covalent:
+              process.env.NEXT_PUBLIC_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
+            ethplorer: process.env.NEXT_PUBLIC_ETHPLORER_API_KEY || "freekey",
+            walletConnectProjectId: "",
+            keepKey: localStorage.getItem("keepkeyApiKey") || "",
+          },
+          integrations: {
+            keepKey: {
               name: "THORSwap",
               imageUrl: "https://www.thorswap.finance/logo.png",
               basePath: "swap",

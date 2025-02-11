@@ -64,7 +64,10 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
       const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);
 
-      function signTransaction({ builder, utxos }: Awaited<ReturnType<typeof toolbox.buildBCHTx>>) {
+      async function signTransaction({
+        builder,
+        utxos,
+      }: Awaited<ReturnType<typeof toolbox.buildBCHTx>>) {
         utxos.forEach((utxo, index) => {
           builder.sign(index, keys, undefined, 0x41, utxo.witnessUtxo?.value);
         });
@@ -104,7 +107,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
             toolbox.transfer({
               ...params,
               from: address,
-              signTransaction: (psbt: Psbt) => psbt.signAllInputs(keys),
+              signTransaction: async (psbt: Psbt) => psbt.signAllInputs(keys),
             }),
         },
       };

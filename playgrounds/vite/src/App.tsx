@@ -1,4 +1,4 @@
-import { AssetValue, type Chain, type FullWallet } from "@swapkit/core";
+import { AssetValue, type Chain, type FullWallet, SKConfig } from "@swapkit/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { WalletWidget } from "@swapkit/wallet-exodus";
@@ -27,9 +27,11 @@ const App = () => {
    * NOTE: Test API keys - please use your own API keys in app as those will timeout, reach limits, etc.
    */
   const [keys, setKeys] = useState({
-    blockchairApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",
-    covalentApiKey: import.meta.env.VITE_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
-    ethplorerApiKey: import.meta.env.VITE_ETHPLORER_API_KEY || "freekey",
+    blockchair: (import.meta.env.VITE_BLOCKCHAIR_API_KEY ||
+      "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf") as string,
+    covalent: (import.meta.env.VITE_COVALENT_API_KEY ||
+      "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q") as string,
+    ethplorer: (import.meta.env.VITE_ETHPLORER_API_KEY || "freekey") as string,
     walletConnectProjectId: "",
     brokerEndpoint: "https://dev-api.swapkit.dev/channel",
   });
@@ -39,7 +41,15 @@ const App = () => {
     outputAsset?: AssetValue;
   }>({});
 
-  const skClient = getSwapKitClient({ ...keys, stagenet });
+  const skClient = getSwapKitClient(keys);
+
+  const toggleStagenet = useCallback(() => {
+    setStagenet((v) => {
+      const next = !v;
+      SKConfig.setEnv("isStagenet", next);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     AssetValue.loadStaticAssets().then(({ ok }) => {
@@ -86,13 +96,13 @@ const App = () => {
       send: skClient ? <Send inputAsset={inputAsset} skClient={skClient} /> : null,
       earn: <div>Earn</div>,
       multisig: skClient ? (
-        <Multisig inputAsset={inputAsset} phrase={phrase} skClient={skClient} stagenet={stagenet} />
+        <Multisig inputAsset={inputAsset} phrase={phrase} skClient={skClient} />
       ) : null,
       liquidity: skClient ? (
         <Liquidity otherAsset={outputAsset} nativeAsset={inputAsset} skClient={skClient} />
       ) : null,
     }),
-    [skClient, inputAsset, outputAsset, phrase, stagenet],
+    [skClient, inputAsset, outputAsset, phrase],
   );
 
   return (
@@ -110,7 +120,7 @@ const App = () => {
             />
           ))}
         </div>
-        <button onClick={() => setStagenet((v) => !v)} type="button">
+        <button onClick={toggleStagenet} type="button">
           Toggle Stagenet - Currently = {`${stagenet}`.toUpperCase()}
         </button>
       </h3>

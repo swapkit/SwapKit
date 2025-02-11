@@ -77,6 +77,7 @@ export type SKConfigState = {
 type SwapKitConfigStore = SKState & {
   setApiKey: (key: keyof SKState["apiKeys"], apiKey: string) => void;
   setConfig: (config: SKConfigState) => void;
+  setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) => void;
   setExplorerUrl: (chain: keyof SKState["explorerUrls"], url: string) => void;
   setNodeUrl: (chain: keyof SKState["nodeUrls"], url: string) => void;
   setRpcUrl: (chain: keyof SKState["rpcUrls"], url: string) => void;
@@ -90,6 +91,7 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   ...initialState,
 
   setApiKey: (key, apiKey) => set((s) => ({ apiKeys: { ...s.apiKeys, [key]: apiKey } })),
+  setEnv: (key, value) => set((s) => ({ envs: { ...s.envs, [key]: value } })),
   setExplorerUrl: (chain, url) =>
     set((s) => ({ explorerUrls: { ...s.explorerUrls, [chain]: url } })),
   setNodeUrl: (chain, url) => set((s) => ({ nodeUrls: { ...s.nodeUrls, [chain]: url } })),
@@ -108,12 +110,14 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
 }));
 
 export const SKConfig = {
+  getState: swapKitState.getState,
   get: <T extends keyof SKState>(key: T) => swapKitState.getState()[key],
   set: <T extends SKConfigState>(config: T) => swapKitState.getState().setConfig(config),
 
-  getState: () => swapKitState.getState(),
   setApiKey: <T extends keyof SKState["apiKeys"]>(key: T, apiKey: string) =>
     swapKitState.getState().setApiKey(key, apiKey),
+  setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) =>
+    swapKitState.getState().setEnv(key, value),
   setExplorerUrl: <T extends keyof SKState["explorerUrls"]>(chain: T, url: string) =>
     swapKitState.getState().setExplorerUrl(chain, url),
   setNodeUrl: <T extends keyof SKState["nodeUrls"]>(chain: T, url: string) =>

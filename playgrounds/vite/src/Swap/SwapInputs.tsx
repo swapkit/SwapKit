@@ -38,20 +38,17 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
     // const providers = Object.values(ProviderName);
 
     try {
-      const { routes } = await SwapKitApi.getSwapQuoteV2(
-        {
-          sellAsset: inputAsset.toString(),
-          sellAmount: inputAssetValue.getValue("string"),
-          buyAsset: outputAsset.toString(),
-          sourceAddress,
-          destinationAddress,
-          slippage: 3,
-          affiliate: "t",
-          affiliateFee: 0,
-          includeTx: true,
-        },
-        true,
-      );
+      const { routes } = await SwapKitApi.getSwapQuote({
+        sellAsset: inputAsset.toString(),
+        sellAmount: inputAssetValue.getValue("string"),
+        buyAsset: outputAsset.toString(),
+        sourceAddress,
+        destinationAddress,
+        slippage: 3,
+        affiliate: "t",
+        affiliateFee: 0,
+        includeTx: true,
+      });
 
       setRoutes(routes || []);
     } finally {

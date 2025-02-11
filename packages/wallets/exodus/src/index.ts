@@ -3,6 +3,7 @@ import {
   type AddChainType,
   Chain,
   EVMChains,
+  SwapKitError,
   WalletOption,
   filterSupportedChains,
   prepareNetworkSwitch,
@@ -84,6 +85,7 @@ export const getWalletMethods = async ({
         };
 
         await satsSignTransaction(signPsbtOptions);
+        if (!signedPsbt) throw new SwapKitError("wallet_exodus_sign_transaction_error");
         return signedPsbt;
       }
 

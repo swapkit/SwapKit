@@ -58,6 +58,8 @@ function plugin({ getWallet }: SwapKitPluginParams) {
       maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
     });
 
+    // @ts-expect-error TODO: right now it's inferred from toolboxes
+    // we need to simplify this to one object params
     const tx = await wallet.transfer({
       assetValue: sellAsset,
       from: wallet.address,

@@ -7,15 +7,13 @@ import type { SwapKitClient } from "../swapKitClient";
 export default function Multisig({
   inputAsset,
   skClient,
-  stagenet,
   phrase,
 }: {
   skClient?: SwapKitClient;
   inputAsset?: AssetValue;
-  stagenet?: boolean;
   phrase: string;
 }) {
-  const toolbox = useMemo(() => ThorchainToolbox({ stagenet }), [stagenet]);
+  const toolbox = useMemo(() => ThorchainToolbox(), []);
   const [pubkeys, setPubkeys] = useState({ 0: "", 1: "" });
   const [threshold, setThreshold] = useState(2);
   const [recipient, setRecipient] = useState("");
