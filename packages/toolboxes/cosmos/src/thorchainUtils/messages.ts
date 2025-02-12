@@ -13,8 +13,10 @@ import type { ThorcahinDepositTxParams, ThorchainTransferTxParams } from "./type
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
-type MsgSendForBroadcast = ReturnType<typeof prepareMessageForBroadcast<MsgSend>>;
-type MsgDepositForBroadcast = ReturnType<typeof prepareMessageForBroadcast<MsgDeposit>>;
+type DirectMsgSendForBroadcast = ReturnType<typeof parseAminoMessageForDirectSigning<MsgSend>>;
+type DirectMsgDepositForBroadcast = ReturnType<
+  typeof parseAminoMessageForDirectSigning<MsgDeposit>
+>;
 
 export const THORCHAIN_GAS_VALUE = getDefaultChainFee(Chain.THORChain).gas;
 export const MAYA_GAS_VALUE = getDefaultChainFee(Chain.Maya).gas;
@@ -90,9 +92,8 @@ export const buildAminoMsg = ({
   return msg;
 };
 
-// TODO I think the msg typing is wrong it should be not prepared for broadcast
 export const convertToSignable = (
-  msg: MsgDepositForBroadcast | MsgSendForBroadcast,
+  msg: DirectMsgDepositForBroadcast | DirectMsgSendForBroadcast | MsgSend | MsgDeposit,
   chain: Chain.THORChain | Chain.Maya,
 ) => {
   const aminoTypes = createDefaultAminoTypes(chain);
@@ -127,6 +128,7 @@ export const buildTransferTx =
     memo = "",
     chain,
     asSignable = true,
+    asAminoMessage = false,
   }: ThorchainTransferTxParams) => {
     const account = await getAccount({ rpcUrl, from });
 
@@ -138,7 +140,10 @@ export const buildTransferTx =
     });
 
     const msg = asSignable
-      ? convertToSignable(prepareMessageForBroadcast(transferMsg), chain)
+      ? convertToSignable(
+          asAminoMessage ? transferMsg : parseAminoMessageForDirectSigning(transferMsg),
+          chain,
+        )
       : transferMsg;
 
     const transaction = {
@@ -155,13 +160,23 @@ export const buildTransferTx =
 
 export const buildDepositTx =
   (rpcUrl: string) =>
-  async ({ from, assetValue, memo = "", chain, asSignable = true }: ThorcahinDepositTxParams) => {
+  async ({
+    from,
+    assetValue,
+    memo = "",
+    chain,
+    asSignable = true,
+    asAminoMessage = false,
+  }: ThorcahinDepositTxParams) => {
     const account = await getAccount({ rpcUrl, from });
 
     const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
 
     const msg = asSignable
-      ? convertToSignable(prepareMessageForBroadcast<MsgDeposit>(depositMsg), chain)
+      ? convertToSignable(
+          asAminoMessage ? depositMsg : parseAminoMessageForDirectSigning<MsgDeposit>(depositMsg),
+          chain,
+        )
       : depositMsg;
 
     const transaction = {
@@ -176,7 +191,7 @@ export const buildDepositTx =
     return transaction;
   };
 
-export function prepareMessageForBroadcast<T extends MsgDeposit | MsgSend>(msg: T) {
+export function parseAminoMessageForDirectSigning<T extends MsgDeposit | MsgSend>(msg: T) {
   if (msg.type === "thorchain/MsgSend" || msg.type === "mayachain/MsgSend") return msg as MsgSend;
 
   return {
@@ -212,7 +227,7 @@ export const buildEncodedTxBody = ({
   memo,
   msgs,
 }: {
-  msgs: MsgSendForBroadcast[] | MsgDepositForBroadcast[];
+  msgs: DirectMsgSendForBroadcast[] | DirectMsgDepositForBroadcast[];
   memo: string;
   chain: Chain.THORChain | Chain.Maya;
 }) => {
