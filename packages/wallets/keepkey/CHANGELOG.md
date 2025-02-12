@@ -1,5 +1,15 @@
 # @swapkit/wallet-keepkey
 
+## 1.5.13
+
+### Patch Changes
+
+- Updated dependencies [[`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951)]:
+  - @swapkit/toolbox-cosmos@1.9.0
+  - @swapkit/helpers@2.5.0
+  - @swapkit/toolbox-utxo@1.3.0
+  - @swapkit/toolbox-evm@1.9.0
+
 ## 1.5.12
 
 ### Patch Changes
