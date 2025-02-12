@@ -18,7 +18,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
     const address = skClient.getAddress(selectedChain);
 
     try {
-      const txHash = await skClient.thorchain.registerTHORName({
+      const txHash = await skClient.thorchain.registerName({
         assetValue: AssetValue.from({ chain: Chain.THORChain, value: 1 }),
         address,
         name,

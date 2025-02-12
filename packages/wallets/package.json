@@ -1,0 +1,158 @@
+{
+  "description": "SwapKit - Wallets",
+  "files": ["src/", "dist/"],
+  "dependencies": {
+    "@coinbase/wallet-sdk": "3.7.2",
+    "@cosmjs/amino": "0.32.4",
+    "@cosmjs/crypto": "0.32.4",
+    "@cosmjs/proto-signing": "0.32.4",
+    "@keepkey/keepkey-sdk": "0.2.62",
+    "@keplr-wallet/types": "0.12.110",
+    "@ledgerhq/devices": "8.4.0",
+    "@ledgerhq/errors": "6.17.0",
+    "@ledgerhq/hw-app-btc": "10.3.0",
+    "@ledgerhq/hw-app-cosmos": "6.30.0",
+    "@ledgerhq/hw-app-eth": "6.37.1",
+    "@ledgerhq/hw-transport": "6.31.0",
+    "@ledgerhq/hw-transport-webusb": "6.29.0",
+    "@ledgerhq/wallet-api-client": "1.5.10",
+    "@passkeys/core": "3.2.0",
+    "@passkeys/react": "2.3.3",
+    "@radixdlt/babylon-gateway-api-sdk": "1.6.1",
+    "@radixdlt/radix-dapp-toolkit": "2.0.3",
+    "@radixdlt/wallet-sdk": "1.0.1",
+    "@scure/base": "1.1.7",
+    "@scure/bip39": "1.3.0",
+    "@solana/web3.js": "1.95.8",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolbox-cosmos": "workspace:*",
+    "@swapkit/toolbox-evm": "workspace:*",
+    "@swapkit/toolbox-radix": "workspace:*",
+    "@swapkit/toolbox-solana": "workspace:*",
+    "@swapkit/toolbox-substrate": "workspace:*",
+    "@swapkit/toolbox-utxo": "workspace:*",
+    "@trezor/connect-web": "9.4.0",
+    "@walletconnect/modal-sign-html": "2.6.2",
+    "blakejs": "1.2.1",
+    "cosmjs-types": "0.9.0",
+    "micro-key-producer": "0.7.1",
+    "pino": "9.2.0",
+    "pino-pretty": "11.2.1",
+    "ripemd160": "2.0.2",
+    "sats-connect": "2.4.1"
+  },
+  "devDependencies": {
+    "@types/ripemd160": "2.0.3",
+    "@walletconnect/logger": "2.1.2",
+    "@walletconnect/types": "2.13.3"
+  },
+  "exports": {
+    ".": {
+      "default": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
+      "types": "./src/index.ts"
+    },
+    "./bitget": {
+      "default": "./dist/src/bitget.js",
+      "require": "./dist/src/bitget.cjs",
+      "types": "./src/bitget/index.ts"
+    },
+    "./coinbase": {
+      "default": "./dist/src/coinbase.js",
+      "require": "./dist/src/coinbase.cjs",
+      "types": "./src/coinbase/index.ts"
+    },
+    "./ctrl": {
+      "default": "./dist/src/ctrl.js",
+      "require": "./dist/src/ctrl.cjs",
+      "types": "./src/ctrl/index.ts"
+    },
+    "./evm-extensions": {
+      "default": "./dist/src/evm-extensions.js",
+      "require": "./dist/src/evm-extensions.cjs",
+      "types": "./src/evm-extensions/index.ts"
+    },
+    "./exodus": {
+      "default": "./dist/src/exodus.js",
+      "require": "./dist/src/exodus.cjs",
+      "types": "./src/exodus/index.ts"
+    },
+    "./keepkey": {
+      "default": "./dist/src/keepkey.js",
+      "require": "./dist/src/keepkey.cjs",
+      "types": "./src/keepkey/index.ts"
+    },
+    "./keepkey-bex": {
+      "default": "./dist/src/keepkey-bex.js",
+      "require": "./dist/src/keepkey-bex.cjs",
+      "types": "./src/keepkey-bex/index.ts"
+    },
+    "./keplr": {
+      "default": "./dist/src/keplr.js",
+      "require": "./dist/src/keplr.cjs",
+      "types": "./src/keplr/index.ts"
+    },
+    "./keystore": {
+      "default": "./dist/src/keystore.js",
+      "require": "./dist/src/keystore.cjs",
+      "types": "./src/keystore/index.ts"
+    },
+    "./ledger": {
+      "default": "./dist/src/ledger.js",
+      "require": "./dist/src/ledger.cjs",
+      "types": "./src/ledger/index.ts"
+    },
+    "./okx": {
+      "default": "./dist/src/okx.js",
+      "require": "./dist/src/okx.cjs",
+      "types": "./src/okx/index.ts"
+    },
+    "./phantom": {
+      "default": "./dist/src/phantom.js",
+      "require": "./dist/src/phantom.cjs",
+      "types": "./src/phantom/index.ts"
+    },
+    "./polkadotjs": {
+      "default": "./dist/src/polkadotjs.js",
+      "require": "./dist/src/polkadotjs.cjs",
+      "types": "./src/polkadotjs/index.ts"
+    },
+    "./radix": {
+      "default": "./dist/src/radix.js",
+      "require": "./dist/src/radix.cjs",
+      "types": "./src/radix/index.ts"
+    },
+    "./talisman": {
+      "default": "./dist/src/talisman.js",
+      "require": "./dist/src/talisman.cjs",
+      "types": "./src/talisman/index.ts"
+    },
+    "./trezor": {
+      "default": "./dist/src/trezor.js",
+      "require": "./dist/src/trezor.cjs",
+      "types": "./src/trezor/index.ts"
+    },
+    "./walletconnect": {
+      "default": "./dist/src/walletconnect.js",
+      "require": "./dist/src/walletconnect.cjs",
+      "types": "./src/walletconnect/index.ts"
+    }
+  },
+  "homepage": "https://github.com/thorswap/SwapKit",
+  "license": "Apache-2.0",
+  "name": "@swapkit/wallets",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorswap/SwapKit.git"
+  },
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "lint": "biome check --diagnostic-level=error --write ./src",
+    "test": "echo 'bun test'",
+    "test:coverage": "bun test --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "2.0.20"
+}

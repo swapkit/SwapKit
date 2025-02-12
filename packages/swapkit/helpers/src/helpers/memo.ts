@@ -1,4 +1,3 @@
-import { SwapKitError } from "../modules/swapKitError";
 import { Chain } from "../types/chains";
 import { MemoType } from "../types/sdk";
 
@@ -161,68 +160,4 @@ type WithdrawParams = {
   ticker: string;
   basisPoints: number;
   targetAsset?: string;
-};
-
-/**
- * @deprecated - Use separate functions per each memo type like getMemoForDeposit, getMemoForWithdraw, etc.
- */
-export const getMemoFor = <T extends MemoType>(memoType: T, options: any) => {
-  switch (memoType) {
-    case MemoType.LEAVE:
-    case MemoType.BOND: {
-      return getMemoForLeaveAndBond({ type: memoType, address: options?.address });
-    }
-
-    case MemoType.UNBOND: {
-      return getMemoForUnbond({ address: options?.address, unbondAmount: options?.unbondAmount });
-    }
-
-    case MemoType.NAME_REGISTER: {
-      return getMemoForNameRegister(options);
-    }
-
-    case MemoType.OPEN_LOAN:
-    case MemoType.CLOSE_LOAN: {
-      return getMemoForLoan(memoType, options);
-    }
-
-    case MemoType.DEPOSIT: {
-      const { chain, symbol, address, singleSide } = options;
-
-      if (singleSide) {
-        return getMemoForSaverDeposit({ chain, symbol });
-      }
-
-      return getMemoForDeposit({ chain, symbol, address });
-    }
-
-    case MemoType.WITHDRAW: {
-      const {
-        chain,
-        ticker,
-        symbol,
-        basisPoints,
-        targetAssetString: targetAsset,
-        singleSide,
-      } = options;
-
-      if (singleSide) {
-        return getMemoForSaverWithdraw({ chain, symbol, basisPoints });
-      }
-
-      return getMemoForWithdraw({
-        chain,
-        ticker,
-        symbol,
-        basisPoints,
-        targetAsset,
-      });
-    }
-
-    default:
-      throw new SwapKitError({
-        errorKey: "helpers_invalid_memo_type",
-        info: { memoType },
-      });
-  }
 };

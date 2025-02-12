@@ -3,16 +3,16 @@
 import type { SwapKit } from "@swapkit/core";
 import type { AssetValue, Chain, EVMChain } from "@swapkit/helpers";
 import { NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
-import type { ChainflipPlugin } from "@swapkit/plugin-chainflip";
-import type { KadoPlugin } from "@swapkit/plugin-kado";
-import type { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugin-thorchain";
+import type { ChainflipPlugin } from "@swapkit/plugins/chainflip";
+import type { KadoPlugin } from "@swapkit/plugins/kado";
+import type { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
 import type { wallets } from "@swapkit/wallets";
 
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 
 type KeystoreFile = {
-  keystore: import("@swapkit/wallet-keystore").Keystore;
+  keystore: import("@swapkit/wallets/keystore").Keystore;
   file: File;
   chains: Chain[];
 } | null;
@@ -40,9 +40,9 @@ export const useSwapKit = () => {
   useEffect(() => {
     const loadSwapKit = async () => {
       const { SwapKit } = await import("@swapkit/core");
-      const { ChainflipPlugin } = await import("@swapkit/plugin-chainflip");
-      const { KadoPlugin } = await import("@swapkit/plugin-kado");
-      const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugin-thorchain");
+      const { ChainflipPlugin } = await import("@swapkit/plugins/chainflip");
+      const { KadoPlugin } = await import("@swapkit/plugins/kado");
+      const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugins/thorchain");
       const { wallets } = await import("@swapkit/wallets");
 
       const swapKitClient = SwapKit({
@@ -213,7 +213,7 @@ export const useSwapKit = () => {
 
       try {
         setIsKeystoreDecrypting(true);
-        const { decryptFromKeystore } = await import("@swapkit/wallet-keystore");
+        const { decryptFromKeystore } = await import("@swapkit/wallets/keystore");
         const phrase = await decryptFromKeystore(keystoreFile.keystore, password);
         if (!phrase) throw new Error("Failed to decrypt keystore");
 

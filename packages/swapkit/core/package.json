@@ -3,7 +3,6 @@
   "dependencies": {
     "@swapkit/api": "workspace:*",
     "@swapkit/helpers": "workspace:*",
-    "@swapkit/plugin-evm": "workspace:*",
     "@swapkit/toolbox-cosmos": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
     "@swapkit/toolbox-radix": "workspace:*",
@@ -12,10 +11,7 @@
     "@swapkit/toolbox-utxo": "workspace:*"
   },
   "description": "SwapKit - Core",
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",

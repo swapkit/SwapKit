@@ -643,12 +643,6 @@ export const EVMToolbox = ({
   signMessage: signMessage(signer),
 });
 
-/**
- * @deprecated
- * Use EVMToolbox instead
- */
-export const BaseEVMToolbox = EVMToolbox;
-
 export const evmValidateAddress = ({ address }: { address: string }) => validateAddress(address);
 
 export type EVMWallet = ReturnType<typeof EVMToolbox>;

@@ -22,6 +22,8 @@ import { uniswapV3_3000 } from "./abis/uniswapV3_3000";
 import { uniswapV3_10000 } from "./abis/uniswapV3_10000";
 import { lowercasedRouterAbiMapping } from "./routers/index";
 
+export { chainflipGateway } from "./abis/chainflipGateway";
+
 type AbiTypes =
   | typeof avaxGeneric
   | typeof avaxWoofi

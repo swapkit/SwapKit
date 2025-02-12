@@ -1,8 +1,8 @@
 "use client";
 
 import { Chain, EVMChains, WalletOption } from "@swapkit/helpers";
-import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallet-bitget";
-import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
+import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
+import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";

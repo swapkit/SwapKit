@@ -1,6 +1,6 @@
 import { AssetValue, Chain, SwapKit } from "@swapkit/core";
-import { ThorchainPlugin } from "@swapkit/plugin-thorchain";
-import { keystoreWallet } from "@swapkit/wallet-keystore";
+import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
 const phrase = process.env.PHRASES;
 
 if (!phrase) throw new Error("No phrase found");

@@ -9,12 +9,11 @@ import {
   getEIP6963Wallets,
 } from "@swapkit/helpers";
 import type { FullWallet } from "@swapkit/sdk";
-import { decryptFromKeystore } from "@swapkit/wallet-keystore";
+import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
+import { decryptFromKeystore } from "@swapkit/wallets/keystore";
+import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { useCallback, useState } from "react";
-
-import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallet-bitget";
-import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallet-phantom";
-import type { Eip1193Provider } from "ethers";
 import type { SwapKitClient } from "./swapKitClient";
 
 type Props = {

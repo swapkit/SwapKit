@@ -1,0 +1,70 @@
+{
+  "author": "swapkit-oss",
+  "dependencies": {
+    "@chainflip/sdk": "1.6.7-rc.5",
+    "@polkadot/keyring": "12.6.2",
+    "@polkadot/util": "12.6.2",
+    "@swapkit/api": "workspace:*",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolbox-cosmos": "workspace:*",
+    "@swapkit/toolbox-evm": "workspace:*",
+    "@swapkit/toolbox-substrate": "workspace:*",
+    "@swapkit/toolbox-utxo": "workspace:*",
+    "bs58": "6.0.0"
+  },
+  "description": "SwapKit Plugin - ChainFlip",
+  "devDependencies": {
+    "@types/bs58": "4.0.4"
+  },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./src/index.ts"
+    },
+    "./chainflip": {
+      "default": "./dist/chainflip.js",
+      "require": "./dist/chainflip.cjs",
+      "types": "./src/chainflip/index.ts"
+    },
+    "./evm": {
+      "default": "./dist/evm.js",
+      "require": "./dist/evm.cjs",
+      "types": "./src/evm/index.ts"
+    },
+    "./kado": {
+      "default": "./dist/kado.js",
+      "require": "./dist/kado.cjs",
+      "types": "./src/kado/index.ts"
+    },
+    "./radix": {
+      "default": "./dist/radix.js",
+      "require": "./dist/radix.cjs",
+      "types": "./src/radix/index.ts"
+    },
+    "./thorchain": {
+      "default": "./dist/thorchain.js",
+      "require": "./dist/thorchain.cjs",
+      "types": "./src/thorchain/index.ts"
+    }
+  },
+  "files": ["src/", "dist/"],
+  "homepage": "https://github.com/thorswap/SwapKit",
+  "license": "Apache-2.0",
+  "name": "@swapkit/plugins",
+  "repository": {
+    "directory": "packages/plugins",
+    "type": "git",
+    "url": "git+https://github.com/thorswap/SwapKit.git"
+  },
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "lint": "biome check --diagnostic-level=error --write ./src",
+    "test": "echo 'bun test'",
+    "test:coverage": "bun test --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

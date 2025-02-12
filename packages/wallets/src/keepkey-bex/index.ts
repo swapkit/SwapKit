@@ -1,0 +1,1 @@
+export { keepkeyBexWallet } from "./keepkeyWallet";

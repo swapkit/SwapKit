@@ -204,63 +204,6 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       },
     );
   }
-
-  /**
-   * @deprecated use AssetValue.from({ asset, value, asyncTokenLookup: true })
-   */
-  static fromString(asset: string, value: NumberPrimitives = 0) {
-    return AssetValue.from({ asset, value, asyncTokenLookup: true });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value, asyncTokenLookup: true })
-   */
-  static fromIdentifier(
-    asset: `${Chain}.${string}` | `${Chain}/${string}` | TokenNames,
-    value: NumberPrimitives = 0,
-  ) {
-    return AssetValue.from({ asset: asset as TokenNames, value, asyncTokenLookup: true });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value })
-   */
-  static fromStringSync(asset: string, value: NumberPrimitives = 0) {
-    return AssetValue.from({ asset, value });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value, fromBaseDecimal, asyncTokenLookup: true })
-   */
-  static fromStringWithBase(
-    asset: string,
-    value: string | bigint = 0n,
-    fromBaseDecimal: number = BaseDecimal.THOR,
-  ) {
-    return AssetValue.from({ asyncTokenLookup: true, asset, value, fromBaseDecimal });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value, fromBaseDecimal, asyncTokenLookup: true })
-   */
-  static fromStringWithBaseSync(
-    asset: string,
-    value: string | bigint = 0n,
-    fromBaseDecimal: number = BaseDecimal.THOR,
-  ) {
-    return AssetValue.from({ asset, value, fromBaseDecimal });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value })
-   */
-  static fromIdentifierSync(asset: TokenNames, value: NumberPrimitives = 0) {
-    return AssetValue.from({ asset, value });
-  }
-  /**
-   * @deprecated use AssetValue.from({ asset, value }) or AssetValue.from({ chain, value })
-   */
-  static fromChainOrSignature(assetOrChain: CommonAssetString, value: NumberPrimitives = 0) {
-    if (Object.values(Chain).includes(assetOrChain as Chain)) {
-      return AssetValue.from({ chain: assetOrChain as Chain, value });
-    }
-    return AssetValue.from({ asset: assetOrChain, value });
-  }
 }
 
 export function getMinAmountByChain(chain: Chain) {

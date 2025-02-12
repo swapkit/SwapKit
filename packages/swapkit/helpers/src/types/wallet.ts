@@ -84,11 +84,6 @@ export type FullWallet = BaseWallet<
     RadixWallets
 >;
 
-/**
- * @deprecated use FullWallet instead
- */
-export type Wallet = FullWallet;
-
 export type SwapKitWallet<ConnectParams extends any[]> = (
   params: AddChainType,
 ) => (...connectParams: ConnectParams) => boolean | Promise<boolean>;

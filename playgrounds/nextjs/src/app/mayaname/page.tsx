@@ -31,7 +31,7 @@ export default function Send() {
                 return;
               }
 
-              swapKit.mayachain.registerMAYAName({
+              swapKit.mayachain.registerName({
                 name,
                 chain: Chain.Maya,
                 address: swapKit.getAddress(Chain.Maya),

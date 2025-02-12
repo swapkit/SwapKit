@@ -56,10 +56,10 @@
     "usb"
   ],
   "workspaces": [
-    "packages/plugins/*",
+    "packages/plugins",
+    "packages/wallets",
     "packages/swapkit/*",
     "packages/toolboxes/*",
-    "packages/wallets/*",
     "playgrounds/*",
     "tools/*"
   ]
