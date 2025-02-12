@@ -30,7 +30,7 @@ import {
   convertToSignable,
   createDefaultAminoTypes,
   createDefaultRegistry,
-  prepareMessageForBroadcast,
+  parseAminoMessageForDirectSigning,
 } from "../thorchainUtils/index";
 import type {
   DepositParam,
@@ -92,7 +92,6 @@ const signMultisigTx = async (
   const msgForSigning = [];
 
   for (const msg of msgs) {
-    // @ts-expect-error wrong typing of convertToSignable - investigation needed
     const signMsg = await convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
@@ -107,7 +106,7 @@ const signMultisigTx = async (
 
   const bodyBytes = await buildEncodedTxBody({
     chain,
-    msgs: msgs.map(prepareMessageForBroadcast),
+    msgs: msgs.map(parseAminoMessageForDirectSigning),
     memo,
   });
 
@@ -281,6 +280,7 @@ export const BaseThorchainToolbox = ({
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) => {
     if (!signer) throw new Error("Signer not defined");
 
+    const isAminoSigner = "signAmino" in signer;
     const registry = createDefaultRegistry();
     const aminoTypes = createDefaultAminoTypes(chain);
     const signingClient = await createSigningStargateClient(rpcUrl, signer, {
@@ -288,10 +288,13 @@ export const BaseThorchainToolbox = ({
       aminoTypes,
     });
 
-    const msgSign = convertToSignable(
-      prepareMessageForBroadcast(buildAminoMsg({ assetValue, from, recipient, memo, chain })),
-      chain,
-    );
+    const aminoMessage = buildAminoMsg({ assetValue, from, recipient, memo, chain });
+
+    const preparedMessage = isAminoSigner
+      ? aminoMessage
+      : parseAminoMessageForDirectSigning(aminoMessage);
+
+    const msgSign = convertToSignable(preparedMessage, chain);
 
     const txResponse = await signingClient.signAndBroadcast(from, [msgSign], defaultFee, memo);
 
@@ -308,7 +311,8 @@ export const BaseThorchainToolbox = ({
     buildDepositTx: buildDepositTx(rpcUrl),
     buildTransferTx: buildTransferTx(rpcUrl),
     buildEncodedTxBody,
-    prepareMessageForBroadcast,
+    prepareMessageForBroadcast: parseAminoMessageForDirectSigning,
+    parseAminoMessageForDirectSigning,
     createDefaultAminoTypes: () => createDefaultAminoTypes(chain),
     createDefaultRegistry,
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({

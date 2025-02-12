@@ -29,6 +29,7 @@ const App = () => {
   const [keys, setKeys] = useState({
     blockchairApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",
     covalentApiKey: import.meta.env.VITE_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
+    alchemyApiKey: import.meta.env.VITE_ALCHEMY_API_KEY || import.meta.env.ALCHEMY_API_KEY || "",
     ethplorerApiKey: import.meta.env.VITE_ETHPLORER_API_KEY || "freekey",
     walletConnectProjectId: "",
     brokerEndpoint: "https://dev-api.swapkit.dev/channel",

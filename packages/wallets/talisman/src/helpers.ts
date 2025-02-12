@@ -1,12 +1,13 @@
 import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
 import {
   Chain,
+  type ChainApis,
   ChainToHexChainId,
   type EVMChain,
   type EthereumWindowProvider,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
+  pickEvmApiKey,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -26,11 +27,13 @@ export const convertAddress = (inputAddress: string, newPrefix: number): string 
 };
 
 export const getWeb3WalletMethods = async ({
+  apis,
   ethereumWindowProvider,
   chain,
   covalentApiKey,
   ethplorerApiKey,
 }: {
+  apis?: ChainApis;
   ethereumWindowProvider: Eip1193Provider | undefined;
   chain: EVMChain;
   covalentApiKey?: string;
@@ -46,11 +49,13 @@ export const getWeb3WalletMethods = async ({
     });
   }
 
-  const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+  const api = apis?.[chain];
+
+  const apiKey = pickEvmApiKey({ chain, nonEthApiKey: covalentApiKey, ethApiKey: ethplorerApiKey });
   const provider = new BrowserProvider(ethereumWindowProvider, "any");
   const signer = await provider.getSigner();
 
-  const toolbox = getToolboxByChain(chain)({ ...keys, provider, signer });
+  const toolbox = getToolboxByChain(chain)({ api, apiKey, provider, signer });
 
   try {
     chain !== Chain.Ethereum &&
@@ -74,10 +79,12 @@ export const getWeb3WalletMethods = async ({
 };
 
 export const getWalletForChain = async ({
+  apis,
   chain,
   ethplorerApiKey,
   covalentApiKey,
 }: {
+  apis?: ChainApis;
   chain: Chain;
   ethplorerApiKey?: string;
   covalentApiKey?: string;
@@ -97,6 +104,7 @@ export const getWalletForChain = async ({
       const { getProvider } = await import("@swapkit/toolbox-evm");
 
       const evmWallet = await getWeb3WalletMethods({
+        apis,
         chain,
         ethereumWindowProvider: window.talismanEth,
         covalentApiKey,
@@ -135,9 +143,13 @@ export const getWalletForChain = async ({
           info: { wallet: WalletOption.TALISMAN, accounts, address: accounts[0]?.address },
         });
       }
-      const [{ address }] = accounts;
 
-      return { walletMethods: toolbox, address: convertAddress(address, Network[chain].prefix) };
+      const address = convertAddress(accounts[0].address, Network[chain].prefix);
+
+      return {
+        walletMethods: { ...toolbox, getAddress: () => address },
+        address,
+      };
     }
 
     default:

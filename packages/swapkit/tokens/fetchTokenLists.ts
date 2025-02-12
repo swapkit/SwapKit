@@ -13,7 +13,7 @@ function parseIdentifier(identifier: string) {
   return identifier;
 }
 
-const providers = (await SwapKitApi.getTokenListProvidersV2(true)).filter(
+const providers = (await SwapKitApi.getTokenListProvidersV2(false)).filter(
   (provider) =>
     ![
       ProviderName.CHAINFLIP_STREAMING,

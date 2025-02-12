@@ -1,14 +1,15 @@
 import {
   type AssetValue,
   Chain,
+  type ChainApis,
   ChainToChainId,
   ChainToHexChainId,
   type ConnectConfig,
   type ConnectWalletParams,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolbox-evm";
@@ -41,12 +42,14 @@ export const CTRL_SUPPORTED_CHAINS = [
   Chain.THORChain,
 ] as const;
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor
 async function getWalletMethodsForChain({
   chain,
   blockchairApiKey,
   covalentApiKey,
   ethplorerApiKey,
-}: ConnectConfig & { chain: (typeof CTRL_SUPPORTED_CHAINS)[number] }) {
+  apis,
+}: ConnectConfig & { chain: (typeof CTRL_SUPPORTED_CHAINS)[number]; apis: ChainApis }) {
   switch (chain) {
     case Chain.Solana: {
       const { SOLToolbox } = await import("@swapkit/toolbox-solana");
@@ -121,8 +124,7 @@ async function getWalletMethodsForChain({
     case Chain.Optimism:
     case Chain.Polygon: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
-      const { getProvider, getToolboxByChain, covalentApi, ethplorerApi, getBalance } =
-        await import("@swapkit/toolbox-evm");
+      const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
       const { BrowserProvider } = await import("ethers");
       const ethereumWindowProvider = getCtrlProvider(chain);
 
@@ -130,10 +132,22 @@ async function getWalletMethodsForChain({
         throw new SwapKitError("wallet_ctrl_not_found");
       }
 
-      const apiKeys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
+
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
-      const toolbox = getToolboxByChain(chain)({ ...apiKeys, provider, signer });
+      const toolbox = getToolboxByChain(chain)({
+        api,
+        apiKey,
+        provider,
+        signer,
+      });
       const ctrlMethods = getCtrlMethods(provider);
 
       try {
@@ -150,10 +164,14 @@ async function getWalletMethodsForChain({
         });
       }
 
-      const api =
-        chain === Chain.Ethereum
-          ? ethplorerApi(apiKeys.ethplorerApiKey)
-          : covalentApi({ apiKey: apiKeys.covalentApiKey, chainId: ChainToChainId[chain] });
+      if (!((chain === Chain.Ethereum ? ethplorerApiKey : covalentApiKey) || api)) {
+        throw new SwapKitError({
+          errorKey: "wallet_missing_api_key",
+          info: {
+            chain,
+          },
+        });
+      }
 
       return prepareNetworkSwitch({
         provider: window.xfi?.ethereum,
@@ -161,15 +179,6 @@ async function getWalletMethodsForChain({
         toolbox: {
           ...toolbox,
           ...ctrlMethods,
-          // Overwrite ctrl getBalance due to race condition in their app when connecting multiple evm wallets
-          getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({
-              chain,
-              provider: getProvider(chain),
-              api,
-              address,
-              potentialScamFilter,
-            }),
         },
       });
     }
@@ -181,6 +190,7 @@ async function getWalletMethodsForChain({
 
 function connectCtrl({
   addChain,
+  apis,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
   return async (chains: Chain[]) => {
@@ -195,6 +205,7 @@ function connectCtrl({
         blockchairApiKey,
         covalentApiKey,
         ethplorerApiKey,
+        apis,
       });
 
       addChain({

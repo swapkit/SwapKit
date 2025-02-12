@@ -143,6 +143,28 @@ const signAndBroadcast = (
   return hash.toString();
 };
 
+const signAndBroadcastSigner = async ({
+  signer,
+  address,
+  tx,
+  callback,
+  api,
+}: {
+  signer: Signer;
+  address: string;
+  tx: SubmittableExtrinsic<"promise">;
+  api: ApiPromise;
+  callback?: Callback<ISubmittableResult>;
+}) => {
+  const nonce = await getNonce(api, address);
+  if (callback) {
+    tx.signAndSend(address, { nonce, signer }, callback);
+  }
+  const hash = tx.signAndSend(address, { nonce, signer });
+
+  return hash.toString();
+};
+
 function decodeAddress(address: string, networkPrefix?: number) {
   return isHex(address)
     ? hexToU8a(address)
@@ -197,12 +219,21 @@ export const BaseSubstrateToolbox = ({
   },
   broadcast: (tx: SubmittableExtrinsic<"promise">, callback?: Callback<ISubmittableResult>) =>
     broadcast(tx, callback),
-  signAndBroadcast: (
-    tx: SubmittableExtrinsic<"promise">,
-    callback?: Callback<ISubmittableResult>,
-  ) => {
+  signAndBroadcast: ({
+    tx,
+    callback,
+    address,
+  }: {
+    tx: SubmittableExtrinsic<"promise">;
+    callback?: Callback<ISubmittableResult>;
+    address?: string;
+  }) => {
     if (isKeyringPair(signer)) {
       return signAndBroadcast(signer, tx, callback);
+    }
+
+    if (address) {
+      return signAndBroadcastSigner({ signer, address, tx, callback, api });
     }
 
     throw new SwapKitError(

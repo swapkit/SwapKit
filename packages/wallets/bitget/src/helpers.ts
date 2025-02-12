@@ -2,17 +2,19 @@ import { PublicKey } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
-  type ChainApi,
+  type ChainApis,
   ChainId,
   ChainToHexChainId,
   type EVMChain,
   SwapKitError,
   type WalletTxParams,
   getRPCUrl,
+  pickEvmApiKey,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
+import type { AlchemyApiType, CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
@@ -56,14 +58,14 @@ export async function getWalletForChain({
   covalentApiKey,
   blockchairApiKey,
   rpcUrl,
-  api,
+  apis,
 }: {
   chain: Chain;
   ethplorerApiKey?: string;
   covalentApiKey?: string;
   blockchairApiKey?: string;
   rpcUrl?: string;
-  api?: ChainApi;
+  apis?: ChainApis;
 }) {
   const bitget = window.bitkeep;
 
@@ -79,15 +81,23 @@ export async function getWalletForChain({
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
 
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
+
       const wallet = bitget.ethereum;
 
       const { getProvider } = await import("@swapkit/toolbox-evm");
 
       const evmWallet = await getWeb3WalletMethods({
         chain,
-        ethplorerApiKey,
-        covalentApiKey,
+        apiKey,
         ethereumWindowProvider: wallet,
+        api,
       });
 
       const [address]: [string, ...string[]] = await wallet.send("eth_requestAccounts", []);
@@ -102,6 +112,9 @@ export async function getWalletForChain({
       if (!(bitget && "unisat" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
+
+      const api = apis?.[chain];
+
       const { unisat: wallet } = bitget;
 
       const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
@@ -127,6 +140,9 @@ export async function getWalletForChain({
       if (!(bitget && "keplr" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
+
+      const api = apis?.[chain];
+
       const { keplr: wallet } = bitget;
 
       await wallet.enable(ChainId.Cosmos);
@@ -195,38 +211,25 @@ export async function getWalletForChain({
 export const getWeb3WalletMethods = async ({
   ethereumWindowProvider,
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
+  apiKey,
+  api,
 }: {
   ethereumWindowProvider: Eip1193Provider | undefined;
   chain: EVMChain;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
+  apiKey?: string;
+  api?: EthplorerApiType | CovalentApiType | AlchemyApiType;
 }) => {
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
   const { BrowserProvider } = await import("ethers");
   if (!ethereumWindowProvider) throw new SwapKitError("wallet_provider_not_found");
-
-  if (
-    (chain !== Chain.Ethereum && !covalentApiKey) ||
-    (chain === Chain.Ethereum && !ethplorerApiKey)
-  ) {
-    throw new SwapKitError({
-      errorKey: "wallet_missing_api_key",
-      info: {
-        missingKey: chain === Chain.Ethereum ? "ethplorerApiKey" : "covalentApiKey",
-        chain,
-      },
-    });
-  }
 
   const provider = new BrowserProvider(ethereumWindowProvider, "any");
 
   const toolbox = getToolboxByChain(chain)({
     provider,
     signer: await provider.getSigner(),
-    ethplorerApiKey: ethplorerApiKey as string,
-    covalentApiKey: covalentApiKey as string,
+    apiKey,
+    api,
   });
 
   try {

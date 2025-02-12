@@ -16,6 +16,7 @@ export const COINBASE_SUPPORTED_CHAINS = [
 
 function connectCoinbaseWallet({
   addChain,
+  apis,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
   coinbaseWalletSettings,
 }: ConnectWalletParams & { coinbaseWalletSettings?: CoinbaseWalletSDKOptions }) {
@@ -30,6 +31,7 @@ function connectCoinbaseWallet({
 
     const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
+        apis,
         chain,
         covalentApiKey,
         ethplorerApiKey,

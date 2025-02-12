@@ -2,12 +2,13 @@ import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
+  type ChainApis,
   type ConnectWalletParams,
   SwapKitError,
   WalletOption,
   type WalletTxParams,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolbox-solana";
@@ -23,14 +24,16 @@ declare global {
   }
 }
 
-async function getWalletMethods<T extends PhantomSupportedChains>({
+async function getWalletMethods({
+  apis,
   chain,
   rpcUrl,
   covalentApiKey,
   ethplorerApiKey,
 }: {
+  apis?: ChainApis;
   rpcUrl?: string;
-  chain: T;
+  chain: (typeof PHANTOM_SUPPORTED_CHAINS)[number];
   covalentApiKey?: string;
   ethplorerApiKey?: string;
 }) {
@@ -54,14 +57,21 @@ async function getWalletMethods<T extends PhantomSupportedChains>({
       const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
       const { BrowserProvider } = await import("ethers");
 
+      const api = apis?.[chain];
+
       const provider = new BrowserProvider(phantom?.ethereum, "any");
       const [address] = await provider.send("eth_requestAccounts", []);
 
-      const toolbox = getToolboxByChain(chain);
-      const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
       const signer = await provider.getSigner();
 
-      return { ...toolbox({ ...keys, signer, provider }), address };
+      const toolbox = getToolboxByChain(chain)({ api, apiKey, signer, provider });
+
+      return { ...toolbox, address };
     }
 
     case Chain.Solana: {

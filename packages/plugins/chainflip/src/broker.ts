@@ -48,7 +48,7 @@ const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>)
     throw new SwapKitError("chainflip_broker_register");
   }
 
-  return toolbox.signAndBroadcast(extrinsic);
+  return toolbox.signAndBroadcast({ tx: extrinsic, address: toolbox.getAddress() });
 };
 
 const withdrawFee =
@@ -71,35 +71,38 @@ const withdrawFee =
         throw new SwapKitError("chainflip_broker_withdraw");
       }
 
-      toolbox.signAndBroadcast(extrinsic, async (result) => {
-        if (!result.status?.isFinalized) {
-          return;
-        }
+      toolbox.signAndBroadcast({
+        tx: extrinsic,
+        callback: async (result) => {
+          if (!result.status?.isFinalized) {
+            return;
+          }
 
-        const withdrawEvent = result.events.find(
-          (event) => event.event.method === "WithdrawalRequested",
-        );
-
-        if (!withdrawEvent) {
-          throw new SwapKitError(
-            "chainflip_channel_error",
-            "Could not find 'WithdrawalRequested' event",
+          const withdrawEvent = result.events.find(
+            (event) => event.event.method === "WithdrawalRequested",
           );
-        }
 
-        const {
-          event: {
-            data: { egressId, egressAsset, egressAmount, egressFee, destinationAddress },
-          },
-        } = withdrawEvent.toHuman() as any;
+          if (!withdrawEvent) {
+            throw new SwapKitError(
+              "chainflip_channel_error",
+              "Could not find 'WithdrawalRequested' event",
+            );
+          }
 
-        resolve({
-          egressId,
-          egressAsset,
-          egressAmount,
-          egressFee,
-          destinationAddress,
-        });
+          const {
+            event: {
+              data: { egressId, egressAsset, egressAmount, egressFee, destinationAddress },
+            },
+          } = withdrawEvent.toHuman() as any;
+
+          resolve({
+            egressId,
+            egressAsset,
+            egressAmount,
+            egressFee,
+            destinationAddress,
+          });
+        },
       });
     });
   };

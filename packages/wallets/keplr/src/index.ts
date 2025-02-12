@@ -47,7 +47,9 @@ function connectKeplr({
       }
 
       keplrClient?.enable(chainId);
-      const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
+      const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId, {
+        preferNoSetFee: chain === Chain.THORChain,
+      });
       if (!offlineSigner) throw new Error("Could not load offlineSigner");
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
 

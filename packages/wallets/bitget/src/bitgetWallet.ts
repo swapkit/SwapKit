@@ -18,6 +18,7 @@ export const BITGET_SUPPORTED_CHAINS = [
 
 function connectBitget({
   addChain,
+  apis,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
   return async function connectBitget(chains: Chain[]) {
@@ -32,6 +33,7 @@ function connectBitget({
     const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
         chain,
+        apis,
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,

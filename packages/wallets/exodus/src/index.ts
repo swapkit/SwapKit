@@ -1,12 +1,13 @@
 import type { Wallet } from "@passkeys/core";
 import {
   Chain,
+  type ChainApis,
   ChainToHexChainId,
   type ConnectWalletParams,
   EVMChains,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   prepareNetworkSwitch,
   setRequestClientConfig,
   switchEVMWalletNetwork,
@@ -35,7 +36,7 @@ export const getWalletMethods = async ({
   covalentApiKey,
   blockchairApiKey,
   rpcUrl,
-  api,
+  apis,
 }: {
   ethereumWindowProvider: Eip1193Provider | undefined;
   walletProvider: BrowserProvider | BitcoinProvider;
@@ -44,10 +45,12 @@ export const getWalletMethods = async ({
   ethplorerApiKey?: string;
   blockchairApiKey?: string;
   rpcUrl?: string;
-  api?: any;
+  apis?: ChainApis;
 }) => {
   switch (chain) {
     case Chain.Bitcoin: {
+      const api = apis?.[chain];
+
       const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient: api });
 
       let address = "";
@@ -121,7 +124,13 @@ export const getWalletMethods = async ({
     case Chain.Polygon: {
       if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
 
-      const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
       const provider = getProvider(chain);
       const browserProvider = walletProvider as BrowserProvider;
 
@@ -129,7 +138,7 @@ export const getWalletMethods = async ({
 
       const signer = await browserProvider.getSigner();
       const address = await signer.getAddress();
-      const toolbox = getToolboxByChain(chain)({ ...keys, provider, signer });
+      const toolbox = getToolboxByChain(chain)({ api, apiKey, provider, signer });
 
       try {
         chain !== Chain.Ethereum &&

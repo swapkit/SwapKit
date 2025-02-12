@@ -1,5 +1,14 @@
 # @swapkit/toolbox-substrate
 
+## 1.3.19
+
+### Patch Changes
+
+- [#1182](https://github.com/thorswap/SwapKit/pull/1182) [`61058d8`](https://github.com/thorswap/SwapKit/commit/61058d8a1d39e1e9d77dab0f62b3883b41d970d4) Thanks [@0xepicode](https://github.com/0xepicode)! - Fix substrate signAndBroadcast and getAddress
+
+- Updated dependencies [[`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951)]:
+  - @swapkit/helpers@2.5.0
+
 ## 1.3.18
 
 ### Patch Changes

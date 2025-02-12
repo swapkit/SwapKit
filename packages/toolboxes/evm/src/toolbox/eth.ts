@@ -10,16 +10,16 @@ import { EVMToolbox } from "./EVMToolbox";
 
 export const ETHToolbox = ({
   api,
-  ethplorerApiKey,
+  apiKey,
   signer,
   provider,
 }: {
   api?: EthplorerApiType;
-  ethplorerApiKey?: string;
+  apiKey?: string;
   signer?: Signer | JsonRpcSigner;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const ethApi = api || ethplorerApi(ethplorerApiKey);
+  const ethApi = api || ethplorerApi(apiKey);
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Ethereum;
 

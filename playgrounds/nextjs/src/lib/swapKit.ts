@@ -1,11 +1,18 @@
 "use client";
 
 import type { SwapKit } from "@swapkit/core";
-import type { AssetValue, Chain, EVMChain } from "@swapkit/helpers";
-import { NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
+import type { AssetValue, ChainApis, EVMChain } from "@swapkit/helpers";
+import {
+  Chain,
+  ChainToChainId,
+  EVMChains,
+  NetworkDerivationPath,
+  WalletOption,
+} from "@swapkit/helpers";
 import type { ChainflipPlugin } from "@swapkit/plugin-chainflip";
 import type { KadoPlugin } from "@swapkit/plugin-kado";
 import type { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugin-thorchain";
+import { alchemyApi } from "@swapkit/toolbox-evm";
 import type { wallets } from "@swapkit/wallets";
 
 import { atom, useAtom } from "jotai";
@@ -45,7 +52,21 @@ export const useSwapKit = () => {
       const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugin-thorchain");
       const { wallets } = await import("@swapkit/wallets");
 
+      const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
+
+      const apis: ChainApis = {};
+
+      for (const chain of EVMChains) {
+        if (alchemyApiKey) {
+          apis[chain] = alchemyApi({
+            apiKey: alchemyApiKey,
+            chainId: ChainToChainId[Chain.Arbitrum],
+          });
+        }
+      }
+
       const swapKitClient = SwapKit({
+        apis,
         config: {
           blockchairApiKey:
             process.env.NEXT_PUBLIC_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",

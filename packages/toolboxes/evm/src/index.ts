@@ -14,6 +14,7 @@ export {
 /**
  * Package
  */
+export * from "./api/alchemyApi";
 export * from "./api/covalentApi";
 export * from "./api/ethplorerApi";
 export * from "./helpers";

@@ -2,8 +2,8 @@ export const list = {
   provider: "CAMELOT_V3",
   chainId: "42161",
   name: "Camelot V3",
-  timestamp: "1737552726554",
-  count: 1591,
+  timestamp: "1738954930065",
+  count: 1593,
   tokens: [
     {
       address: "0xda39A32c9c5Bb2C9E99d4e2a24bc55A418599F90",
@@ -2074,6 +2074,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.anima-0xccd05a0fcfc1380e9da27862adb2198e58e0d66f.png",
       ticker: "ANIMA",
+    },
+    {
+      address: "0x37a645648dF29205C6261289983FB04ECD70b4B3",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.ANIME-0x37a645648dF29205C6261289983FB04ECD70b4B3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.anime-0x37a645648df29205c6261289983fb04ecd70b4b3.png",
+      ticker: "ANIME",
     },
     {
       address: "0xBb97CCB699dfC1aF2e05ea68b547505A9D5450C3",
@@ -11426,6 +11436,16 @@ export const list = {
       ticker: "plsDPX",
     },
     {
+      address: "0x9e6B748d25Ed2600Aa0ce7Cbb42267adCF21Fd9B",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.plsGRAIL-0x9e6B748d25Ed2600Aa0ce7Cbb42267adCF21Fd9B",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.plsgrail-0x9e6b748d25ed2600aa0ce7cbb42267adcf21fd9b.png",
+      ticker: "plsGRAIL",
+    },
+    {
       address: "0xe7f6C3c1F0018E4C08aCC52965e5cbfF99e34A44",
       chain: "ARB",
       chainId: "42161",
@@ -13587,11 +13607,11 @@ export const list = {
       ticker: "SUPR",
     },
     {
-      address: "0x7788a3538c5fc7f9c7c8a74eac4c898fc8d87d92",
+      address: "0x7788A3538C5fc7F9c7C8A74EAC4c898fC8d87d92",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.sUSDX-0x7788a3538c5fc7f9c7c8a74eac4c898fc8d87d92",
+      identifier: "ARB.sUSDX-0x7788A3538C5fc7F9c7C8A74EAC4c898fC8d87d92",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.susdx-0x7788a3538c5fc7f9c7c8a74eac4c898fc8d87d92.png",
       ticker: "sUSDX",
