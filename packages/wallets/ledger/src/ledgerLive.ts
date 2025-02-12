@@ -174,7 +174,7 @@ export const getLedgerLiveWallet = async ({
       const toolbox = ETHToolbox({
         provider,
         signer: new VoidSigner(ledgerLiveAccount.address, provider),
-        ethplorerApiKey,
+        apiKey: ethplorerApiKey,
       });
 
       const sendTransaction = async (unsignedTx: any) => {

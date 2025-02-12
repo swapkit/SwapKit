@@ -2,14 +2,14 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-01-22T13:30:52.014Z",
+  timestamp: "2025-02-07T19:01:41.239Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 53,
+  count: 54,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -210,6 +210,14 @@ export const list = {
       identifier: "KUJI.KUJI",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.kuji.png",
       ticker: "KUJI",
+    },
+    {
+      chain: "KUJI",
+      chainId: "kaiyo-1",
+      decimals: 6,
+      identifier: "KUJI.USK",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.usk.png",
+      ticker: "USK",
     },
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",

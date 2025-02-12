@@ -161,7 +161,7 @@ const getInputsAndTargetOutputs = async ({
   };
 };
 
-const buildTx = async ({
+export const buildTx = async ({
   assetValue,
   recipient,
   memo,

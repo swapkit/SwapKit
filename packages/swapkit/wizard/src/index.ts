@@ -184,6 +184,12 @@ export async function swapkitWizard() {
           message: "What is your Covalent API key?",
         });
       },
+      alchemyApiKey: ({ results: { setupApiKeys } }) => {
+        if (!setupApiKeys) return;
+        return text({
+          message: "What is your Alchemy API key?",
+        });
+      },
     },
     { onCancel: handleCancel },
   );
@@ -192,6 +198,7 @@ export async function swapkitWizard() {
     ethplorerApiKey,
     blockchairApiKey,
     covalentApiKey,
+    alchemyApiKey,
     enableTokens,
     variant,
     plugins,
@@ -204,6 +211,7 @@ export async function swapkitWizard() {
     ethplorerApiKey: string().optional(),
     blockchairApiKey: string().optional(),
     covalentApiKey: string().optional(),
+    alchemyApiKey: string().optional(),
   }).parse(answers);
   const wizardSpinner = spinner();
   wizardSpinner.start("Initializing...");
@@ -250,6 +258,7 @@ export async function swapkitWizard() {
           ethplorerApiKey: `'${ethplorerApiKey || "freekey"}'`,
           blockchairApiKey: `'${blockchairApiKey || ""}'`,
           covalentApiKey: `'${covalentApiKey || ""}'`,
+          alchemyApiKey: `'${alchemyApiKey || ""}'`,
           walletConnectProjectId: "''",
         },
         config: {

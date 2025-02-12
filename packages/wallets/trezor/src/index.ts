@@ -1,13 +1,14 @@
 import {
   Chain,
+  type ChainApis,
   type ConnectWalletParams,
   type DerivationPathArray,
   FeeOption,
   SwapKitError,
   WalletOption,
   derivationPathToString,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolbox-utxo";
@@ -35,8 +36,7 @@ type TrezorOptions = {
 };
 
 type Params = TrezorOptions & {
-  // TODO improve api typing
-  api?: any;
+  apis?: ChainApis;
   chain: Chain;
   derivationPath: DerivationPathArray;
   rpcUrl?: string;
@@ -56,7 +56,7 @@ function getScriptType(derivationPath: DerivationPathArray) {
 }
 
 async function getToolbox({
-  api,
+  apis,
   rpcUrl,
   chain,
   derivationPath,
@@ -75,14 +75,20 @@ async function getToolbox({
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
       const { getEVMSigner } = await import("./evmSigner");
 
-      const keys = ensureEVMApiKeys({ chain, ethplorerApiKey, covalentApiKey });
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        ethApiKey: ethplorerApiKey,
+        nonEthApiKey: covalentApiKey,
+      });
       const provider = getProvider(chain, rpcUrl);
       const toolbox = getToolboxByChain(chain);
 
       const signer = await getEVMSigner({ chain, derivationPath, provider });
       const address = await signer.getAddress();
 
-      return { address, walletMethods: toolbox({ ...keys, api, provider, signer }) };
+      return { address, walletMethods: toolbox({ api, apiKey, provider, signer }) };
     }
 
     case Chain.Bitcoin:
@@ -93,6 +99,8 @@ async function getToolbox({
       const { toCashAddress, getToolboxByChain, BCHToolbox } = await import(
         "@swapkit/toolbox-utxo"
       );
+
+      const api = apis?.[chain];
 
       if (!(blockchairApiKey || api)) {
         throw new SwapKitError({
@@ -283,7 +291,7 @@ function connectTrezor({
     }
 
     const { address, walletMethods } = await getToolbox({
-      api: apis[chain],
+      apis,
       rpcUrl: rpcUrls[chain],
       chain,
       covalentApiKey,

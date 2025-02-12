@@ -1,4 +1,5 @@
-import { createSwapKit } from "@swapkit/sdk";
+import { Chain, type ChainApis, ChainToChainId, EVMChains, createSwapKit } from "@swapkit/sdk";
+import { alchemyApi } from "@swapkit/toolbox-evm";
 
 export type SwapKitClient = ReturnType<typeof createSwapKit>;
 
@@ -9,6 +10,7 @@ export const getSwapKitClient = (
   params: {
     ethplorerApiKey?: string;
     covalentApiKey?: string;
+    alchemyApiKey?: string;
     blockchairApiKey?: string;
     walletConnectProjectId?: string;
     stagenet?: boolean;
@@ -22,6 +24,17 @@ export const getSwapKitClient = (
   }
 
   oldKey = key;
+
+  const apis: ChainApis = {};
+
+  for (const chain of EVMChains) {
+    if (params.alchemyApiKey) {
+      apis[chain] = alchemyApi({
+        apiKey: params.alchemyApiKey,
+        chainId: ChainToChainId[Chain.Arbitrum],
+      });
+    }
+  }
 
   client = createSwapKit({
     config: {
@@ -38,6 +51,7 @@ export const getSwapKitClient = (
       },
       chainflipBrokerUrl: params.brokerEndpoint,
     },
+    apis,
   });
 
   return client;

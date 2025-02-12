@@ -4,15 +4,14 @@ import {
   ChainId,
   ChainToExplorerUrl,
   FeeOption,
+  SwapKitError,
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
 import { Contract, Transaction } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
-import { getBalance } from "../index";
+import { type AlchemyApiType, type CovalentApiType, covalentApi, getBalance } from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
 
@@ -139,14 +138,23 @@ export const OPToolbox = ({
   api,
   provider,
   signer,
-  covalentApiKey,
+  apiKey,
 }: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
+  api?: CovalentApiType | AlchemyApiType;
+  apiKey?: string;
   signer?: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const opApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Optimism });
+  if (!(api || apiKey)) {
+    throw new SwapKitError({
+      errorKey: "wallet_missing_api_key",
+      info: {
+        chain: Chain.Optimism,
+      },
+    });
+  }
+
+  const opApi = api || covalentApi({ apiKey: apiKey as string, chainId: ChainId.Optimism });
   const evmToolbox = EVMToolbox({ provider, signer });
 
   return {

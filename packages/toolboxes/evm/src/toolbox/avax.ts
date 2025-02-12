@@ -1,9 +1,21 @@
-import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, type FeeOption } from "@swapkit/helpers";
+import {
+  BaseDecimal,
+  Chain,
+  ChainId,
+  ChainToExplorerUrl,
+  type FeeOption,
+  SwapKitError,
+} from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
-import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
+import {
+  type AlchemyApiType,
+  type CovalentApiType,
+  type EVMTxBaseParams,
+  covalentApi,
+  estimateTransactionFee,
+  getBalance,
+} from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
 
@@ -20,14 +32,23 @@ export const AVAXToolbox = ({
   api,
   provider,
   signer,
-  covalentApiKey,
+  apiKey,
 }: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
+  api?: CovalentApiType | AlchemyApiType;
+  apiKey?: string;
   signer?: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const avaxApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Avalanche });
+  if (!(api || apiKey)) {
+    throw new SwapKitError({
+      errorKey: "wallet_missing_api_key",
+      info: {
+        chain: Chain.Avalanche,
+      },
+    });
+  }
+
+  const avaxApi = api || covalentApi({ apiKey: apiKey as string, chainId: ChainId.Avalanche });
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Avalanche;
 

@@ -1,9 +1,21 @@
-import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, type FeeOption } from "@swapkit/helpers";
+import {
+  BaseDecimal,
+  Chain,
+  ChainId,
+  ChainToExplorerUrl,
+  type FeeOption,
+  SwapKitError,
+} from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
-import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
+import {
+  type AlchemyApiType,
+  type CovalentApiType,
+  type EVMTxBaseParams,
+  covalentApi,
+  estimateTransactionFee,
+  getBalance,
+} from "../index";
 import { EVMToolbox } from "./EVMToolbox";
 
 const getNetworkParams = () => ({
@@ -18,14 +30,24 @@ export const BSCToolbox = ({
   api,
   provider,
   signer,
-  covalentApiKey,
+  apiKey,
 }: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
+  api?: CovalentApiType | AlchemyApiType;
+  apiKey?: string;
   signer?: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const bscApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.BinanceSmartChain });
+  if (!(api || apiKey)) {
+    throw new SwapKitError({
+      errorKey: "wallet_missing_api_key",
+      info: {
+        chain: Chain.BinanceSmartChain,
+      },
+    });
+  }
+
+  const bscApi =
+    api || covalentApi({ apiKey: apiKey as string, chainId: ChainId.BinanceSmartChain });
   const evmToolbox = EVMToolbox({ provider, signer, isEIP1559Compatible: false });
   const chain = Chain.BinanceSmartChain;
 

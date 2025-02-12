@@ -1,13 +1,14 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
+  type ChainApis,
   ChainId,
   type ConnectWalletParams,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
   getRPCUrl,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { BaseCosmosToolboxType, DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
@@ -40,6 +41,7 @@ export const WC_SUPPORTED_CHAINS = [
 ] as const;
 
 async function getToolbox({
+  apis,
   chain,
   walletconnect,
   address,
@@ -47,6 +49,7 @@ async function getToolbox({
   ethplorerApiKey,
   covalentApiKey,
 }: {
+  apis: ChainApis;
   walletconnect: Walletconnect;
   session: SessionTypes.Struct;
   chain: (typeof WC_SUPPORTED_CHAINS)[number];
@@ -65,13 +68,19 @@ async function getToolbox({
     case Chain.Polygon: {
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
 
-      const keys = ensureEVMApiKeys({ chain, ethplorerApiKey, covalentApiKey });
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        ethApiKey: ethplorerApiKey,
+        nonEthApiKey: covalentApiKey,
+      });
       const provider = getProvider(chain);
       const signer = await getEVMSigner({ walletconnect, chain, provider });
-      const toolbox = getToolboxByChain(chain);
-
       // @ts-expect-error TODO: fix this
-      return toolbox({ ...keys, provider, signer });
+      const toolbox = getToolboxByChain(chain)({ api, apiKey, provider, signer });
+
+      return toolbox;
     }
 
     case Chain.THORChain: {
@@ -246,6 +255,7 @@ export type Walletconnect = Awaited<ReturnType<typeof getWalletconnect>>;
 
 function connectWalletconnect({
   addChain,
+  apis,
   config: {
     thorswapApiKey,
     ethplorerApiKey,
@@ -283,6 +293,7 @@ function connectWalletconnect({
       const address = getAddressByChain(chain, accounts);
 
       const toolbox = await getToolbox({
+        apis,
         session,
         address,
         chain,

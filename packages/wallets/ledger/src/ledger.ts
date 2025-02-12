@@ -6,9 +6,9 @@ import {
   FeeOption,
   StagenetChain,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
   getRPCUrl,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
@@ -111,14 +111,18 @@ const getToolbox = async ({
     case Chain.Polygon:
     case Chain.BinanceSmartChain:
     case Chain.Base: {
-      const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
       const { getToolboxByChain, getProvider } = await import("@swapkit/toolbox-evm");
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
       const provider = getProvider(chain, rpcUrl);
       const toolbox = getToolboxByChain(chain);
 
-      return { ...toolbox({ ...keys, api: apis[chain], signer, provider }), address };
+      return { ...toolbox({ api: apis[chain], apiKey, signer, provider }), address };
     }
 
     case Chain.Cosmos: {
