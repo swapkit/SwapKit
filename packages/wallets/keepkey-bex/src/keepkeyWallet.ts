@@ -1,6 +1,7 @@
 import {
   AssetValue,
   Chain,
+  type ChainApis,
   type ChainId,
   ChainToChainId,
   ChainToHexChainId,
@@ -9,8 +10,8 @@ import {
   type ConnectWalletParams,
   SwapKitError,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolbox-evm";
@@ -45,12 +46,14 @@ const KEEPKEY_SUPPORTED_CHAINS = [
   Chain.THORChain,
 ] as const;
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor
 async function getWalletMethodsForChain({
+  apis,
   chain,
   blockchairApiKey,
   covalentApiKey,
   ethplorerApiKey,
-}: ConnectConfig & { chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number] }) {
+}: ConnectConfig & { chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]; apis: ChainApis }) {
   switch (chain) {
     case Chain.Maya:
     case Chain.THORChain: {
@@ -125,10 +128,17 @@ async function getWalletMethodsForChain({
         throw new SwapKitError("wallet_keepkey_not_found");
       }
 
-      const apiKeys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
+
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
-      const toolbox = getToolboxByChain(chain)({ ...apiKeys, provider, signer });
+      const toolbox = getToolboxByChain(chain)({ api, apiKey, provider, signer });
       const keepkeyMethods = getKEEPKEYMethods(provider);
 
       try {
@@ -145,10 +155,19 @@ async function getWalletMethodsForChain({
         });
       }
 
-      const api =
-        chain === Chain.Ethereum
-          ? ethplorerApi(apiKeys.ethplorerApiKey)
-          : covalentApi({ apiKey: apiKeys.covalentApiKey, chainId: ChainToChainId[chain] });
+      if (!((chain === Chain.Ethereum ? ethplorerApiKey : covalentApiKey) || api)) {
+        throw new SwapKitError({
+          errorKey: "wallet_missing_api_key",
+          info: {
+            chain,
+          },
+        });
+      }
+
+      const apiWithFallback =
+        api || chain === Chain.Ethereum
+          ? ethplorerApi(apiKey)
+          : covalentApi({ apiKey: apiKey as string, chainId: ChainToChainId[chain] });
 
       return prepareNetworkSwitch({
         provider,
@@ -161,7 +180,7 @@ async function getWalletMethodsForChain({
             getBalance({
               chain,
               provider: getProvider(chain),
-              api,
+              api: apiWithFallback,
               address,
               potentialScamFilter,
             }),
@@ -176,6 +195,7 @@ async function getWalletMethodsForChain({
 
 function connectKeepkeyBex({
   addChain,
+  apis,
   config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
   return async (chains: Chain[]) => {
@@ -194,6 +214,7 @@ function connectKeepkeyBex({
         blockchairApiKey,
         covalentApiKey,
         ethplorerApiKey,
+        apis,
       });
 
       addChain({

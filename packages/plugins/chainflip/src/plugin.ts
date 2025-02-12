@@ -1,6 +1,7 @@
 import { swapkitApiEndpoints } from "@swapkit/api";
 import {
   AssetValue,
+  type ConnectConfig,
   type EVMWallets,
   ProviderName,
   type SolanaWallets,
@@ -15,11 +16,13 @@ type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & Solan
 
 function plugin({
   getWallet,
-  config: { chainflipBrokerUrl: legacyChainflipBrokerUrl, chainflipBrokerConfig },
-}: SwapKitPluginParams<{
-  chainflipBrokerUrl?: string;
-  chainflipBrokerConfig?: { chainflipBrokerUrl: string };
-}>) {
+  config: {
+    chainflipBrokerUrl: legacyChainflipBrokerUrl,
+    chainflipBrokerConfig,
+    swapkitConfig,
+    swapkitApiKey,
+  },
+}: SwapKitPluginParams<ConnectConfig>) {
   async function swap(swapParams: RequestSwapDepositAddressParams) {
     const { chainflipBrokerUrl } = chainflipBrokerConfig || {};
 
@@ -66,6 +69,7 @@ function plugin({
         destinationAddress: recipient || chainflip.destinationAddress,
         maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
       },
+      apiKey: swapkitApiKey || swapkitConfig?.swapkitApiKey,
     });
 
     const tx = await wallet.transfer({

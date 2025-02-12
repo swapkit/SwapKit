@@ -6,7 +6,7 @@ import type { ChainWallet, CryptoChain } from "./wallet";
 /**
  * @optional for swapkit API access
  */
-type SwapkitConfig = {
+export type SwapkitConfig = {
   swapkitConfig?: {
     isDev?: boolean;
     swapkitApiKey?: string;
@@ -19,11 +19,11 @@ type SwapkitConfig = {
 export type ConnectConfig = SwapkitConfig & {
   stagenet?: boolean;
   /**
-   * @required for AVAX & BSC
+   * @required
    */
   thorswapApiKey?: string;
   /**
-   * @required for AVAX & BSC
+   * @optional for non ETH EVM chains - if not set you must use alchemyApi
    */
   covalentApiKey?: string;
   /**

@@ -4,13 +4,19 @@ import {
   ChainId,
   ChainToExplorerUrl,
   type FeeOption,
+  SwapKitError,
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
-import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
+import {
+  type AlchemyApiType,
+  type CovalentApiType,
+  type EVMTxBaseParams,
+  covalentApi,
+  estimateTransactionFee,
+  getBalance,
+} from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
 
@@ -26,13 +32,22 @@ export const BASEToolbox = ({
   api,
   provider,
   signer,
-  covalentApiKey,
+  apiKey,
 }: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
+  api?: CovalentApiType | AlchemyApiType;
+  apiKey?: string;
   signer?: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
+  if (!(api || apiKey)) {
+    throw new SwapKitError({
+      errorKey: "wallet_missing_api_key",
+      info: {
+        chain: Chain.Base,
+      },
+    });
+  }
+
   const evmToolbox = EVMToolbox({ provider, signer });
   const chain = Chain.Base;
 
@@ -48,7 +63,7 @@ export const BASEToolbox = ({
     ) => {
       const balance = await getBalance({
         provider: overwriteProvider || provider,
-        api: api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Base }),
+        api: api || covalentApi({ apiKey: apiKey as string, chainId: ChainId.Base }),
         address,
         chain,
         potentialScamFilter,

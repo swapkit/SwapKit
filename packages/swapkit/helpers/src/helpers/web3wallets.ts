@@ -184,23 +184,14 @@ export const listWeb3EVMWallets = () => {
   return wallets;
 };
 
-export function ensureEVMApiKeys({
+export function pickEvmApiKey({
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
-}: { chain: Chain; covalentApiKey?: string; ethplorerApiKey?: string }) {
-  const missingKey =
-    chain !== Chain.Ethereum && !covalentApiKey
-      ? "covalentApiKey"
-      : ethplorerApiKey
-        ? undefined
-        : "ethplorerApiKey";
+  nonEthApiKey,
+  ethApiKey,
+}: { chain: Chain; nonEthApiKey?: string; ethApiKey?: string }) {
+  const apiKey = chain === Chain.Ethereum ? ethApiKey : nonEthApiKey;
 
-  if (missingKey) {
-    throw new SwapKitError({ errorKey: "wallet_missing_api_key", info: { missingKey } });
-  }
-
-  return { covalentApiKey: covalentApiKey as string, ethplorerApiKey: ethplorerApiKey as string };
+  return apiKey;
 }
 
 export function getEIP6963Wallets() {

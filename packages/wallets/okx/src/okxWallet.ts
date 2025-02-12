@@ -22,6 +22,7 @@ export const OKX_SUPPORTED_CHAINS = [
 
 function connectOkx({
   addChain,
+  apis,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
   return async function connectOkx(chains: Chain[]) {
@@ -31,6 +32,7 @@ function connectOkx({
 
     const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
+        apis,
         chain,
         covalentApiKey,
         ethplorerApiKey,

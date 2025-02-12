@@ -1,4 +1,9 @@
-import type { MultisigThresholdPubkey, Pubkey, Secp256k1HdWallet } from "@cosmjs/amino";
+import type {
+  MultisigThresholdPubkey,
+  OfflineAminoSigner,
+  Pubkey,
+  Secp256k1HdWallet,
+} from "@cosmjs/amino";
 import type { EncodeObject, OfflineDirectSigner, Registry } from "@cosmjs/proto-signing";
 import type { AminoTypes, Account as CosmosAccount } from "@cosmjs/stargate";
 import type { Asset, AssetValue, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
@@ -33,7 +38,7 @@ export type NodeUrl = {
 };
 
 export type DepositParam = {
-  signer?: OfflineDirectSigner;
+  signer?: OfflineDirectSigner | OfflineAminoSigner;
   walletIndex?: number;
   assetValue: AssetValue;
   memo: string;

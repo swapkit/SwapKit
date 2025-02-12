@@ -1,14 +1,16 @@
 import {
   Chain,
+  type ChainApis,
   ChainId,
   ChainToHexChainId,
   type EVMChain,
-  SwapKitError,
   getRPCUrl,
+  pickEvmApiKey,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
+import type { AlchemyApiType, CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
 import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
@@ -37,19 +39,19 @@ const cosmosTransfer =
   };
 
 export const getWalletForChain = async ({
+  apis,
   chain,
   ethplorerApiKey,
   covalentApiKey,
   blockchairApiKey,
   rpcUrl,
-  api,
 }: {
+  apis?: ChainApis;
   chain: Chain;
   ethplorerApiKey?: string;
   covalentApiKey?: string;
   blockchairApiKey?: string;
   rpcUrl?: string;
-  api?: any;
 }): Promise<
   (
     | ReturnType<typeof GaiaToolbox>
@@ -71,10 +73,18 @@ export const getWalletForChain = async ({
 
       const { getProvider } = await import("@swapkit/toolbox-evm");
 
+      const api = apis?.[chain];
+
+      const apiKey = pickEvmApiKey({
+        chain,
+        nonEthApiKey: covalentApiKey,
+        ethApiKey: ethplorerApiKey,
+      });
+
       const evmWallet = await getWeb3WalletMethods({
         chain,
-        ethplorerApiKey,
-        covalentApiKey,
+        api,
+        apiKey,
         ethereumWindowProvider: window.okxwallet,
       });
 
@@ -93,6 +103,8 @@ export const getWalletForChain = async ({
       const { bitcoin: wallet } = window.okxwallet;
 
       const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
+
+      const api = apis?.[chain];
 
       const address = (await wallet.connect()).address;
 
@@ -116,6 +128,8 @@ export const getWalletForChain = async ({
       }
       const { keplr: wallet } = window.okxwallet;
 
+      const api = apis?.[chain];
+
       await wallet.enable(ChainId.Cosmos);
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
@@ -138,38 +152,25 @@ export const getWalletForChain = async ({
 export const getWeb3WalletMethods = async ({
   ethereumWindowProvider,
   chain,
-  covalentApiKey,
-  ethplorerApiKey,
+  api,
+  apiKey,
 }: {
   ethereumWindowProvider: Eip1193Provider | undefined;
   chain: EVMChain;
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
+  api?: EthplorerApiType | CovalentApiType | AlchemyApiType;
+  apiKey?: string;
 }) => {
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
   const { BrowserProvider } = await import("ethers");
   if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
 
-  if (
-    (chain !== Chain.Ethereum && !covalentApiKey) ||
-    (chain === Chain.Ethereum && !ethplorerApiKey)
-  ) {
-    throw new SwapKitError({
-      errorKey: "wallet_missing_api_key",
-      info: {
-        missingKey: chain === Chain.Ethereum ? "ethplorerApiKey" : "covalentApiKey",
-        chain,
-      },
-    });
-  }
-
   const provider = new BrowserProvider(ethereumWindowProvider, "any");
 
   const toolbox = getToolboxByChain(chain)({
+    api,
+    apiKey,
     provider,
     signer: await provider.getSigner(),
-    ethplorerApiKey: ethplorerApiKey as string,
-    covalentApiKey: covalentApiKey as string,
   });
 
   try {

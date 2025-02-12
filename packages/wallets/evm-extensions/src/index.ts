@@ -1,13 +1,14 @@
 import {
   Chain,
+  type ChainApis,
   ChainToHexChainId,
   type ConnectWalletParams,
   type EVMChain,
   EVMChains,
   type EthereumWindowProvider,
   WalletOption,
-  ensureEVMApiKeys,
   filterSupportedChains,
+  pickEvmApiKey,
   prepareNetworkSwitch,
   setRequestClientConfig,
   switchEVMWalletNetwork,
@@ -56,20 +57,33 @@ export const getWeb3WalletMethods = async ({
   covalentApiKey,
   ethplorerApiKey,
   provider,
+  apis,
 }: {
   ethereumWindowProvider: Eip1193Provider | undefined;
   chain: EVMChain;
   covalentApiKey?: string;
   ethplorerApiKey?: string;
   provider: BrowserProvider;
+  apis: ChainApis;
 }) => {
   if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
   const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
 
-  const keys = ensureEVMApiKeys({ chain, covalentApiKey, ethplorerApiKey });
+  const api = apis?.[chain];
+
+  const apiKey = pickEvmApiKey({
+    chain,
+    nonEthApiKey: covalentApiKey,
+    ethApiKey: ethplorerApiKey,
+  });
   const signer = await provider.getSigner();
 
-  const toolbox = getToolboxByChain(chain)({ ...keys, provider, signer });
+  const toolbox = getToolboxByChain(chain)({
+    api,
+    apiKey,
+    provider,
+    signer,
+  });
 
   if (chain !== Chain.Ethereum) {
     const currentNetwork = await provider.getNetwork();
@@ -95,6 +109,7 @@ export const getWeb3WalletMethods = async ({
 
 function connectEVMWallet({
   addChain,
+  apis,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
 }: ConnectWalletParams) {
   return async function connectEVMWallet(
@@ -118,6 +133,7 @@ function connectEVMWallet({
         const address = await signer.getAddress();
 
         const walletMethods = await getWeb3WalletMethods({
+          apis,
           chain,
           ethplorerApiKey,
           covalentApiKey,
@@ -145,6 +161,7 @@ function connectEVMWallet({
       const address = await signer.getAddress();
 
       const walletMethods = await getWeb3WalletMethods({
+        apis,
         chain,
         ethplorerApiKey,
         covalentApiKey,

@@ -1,6 +1,7 @@
 import {
   AssetValue,
   BaseDecimal,
+  ChainToChainId,
   type EVMChain,
   FeeOption,
   SwapKitNumber,
@@ -11,6 +12,7 @@ import {
 import type { BrowserProvider, JsonRpcProvider, Provider } from "ethers";
 
 import {
+  type AlchemyApiType,
   type CovalentApiType,
   type EIP1559TxParams,
   type EVMMaxSendableAmountsParams,
@@ -87,12 +89,12 @@ export const getBalance = async ({
   potentialScamFilter,
 }: {
   provider: JsonRpcProvider | BrowserProvider;
-  api: CovalentApiType | EthplorerApiType;
+  api: CovalentApiType | EthplorerApiType | AlchemyApiType;
   address: string;
   chain: EVMChain;
   potentialScamFilter?: boolean;
 }) => {
-  const tokenBalances = await api.getBalance(address);
+  const tokenBalances = await api.getBalance(address, ChainToChainId[chain]);
   const evmGasTokenBalance = await provider.getBalance(address);
   const balances = [
     {

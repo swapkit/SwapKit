@@ -1,6 +1,6 @@
 import { type CoinbaseWalletProvider, CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
 import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
-import { Chain, ChainToRPC } from "@swapkit/helpers";
+import { Chain, type ChainApis, ChainToRPC, pickEvmApiKey } from "@swapkit/helpers";
 import type { getToolboxByChain } from "@swapkit/toolbox-evm";
 import { AbstractSigner, type Provider } from "ethers";
 
@@ -48,7 +48,7 @@ export const getWalletForChain = async ({
   chain,
   ethplorerApiKey,
   covalentApiKey,
-  api,
+  apis,
   coinbaseWalletSettings = {
     appName: "Developer App",
   } as CoinbaseWalletSDKOptions,
@@ -56,7 +56,7 @@ export const getWalletForChain = async ({
   chain: Chain;
   ethplorerApiKey?: string;
   covalentApiKey?: string;
-  api?: any;
+  apis?: ChainApis;
   coinbaseWalletSettings?: CoinbaseWalletSDKOptions;
 }): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
   switch (chain) {
@@ -67,6 +67,16 @@ export const getWalletForChain = async ({
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
       const coinbaseWallet = new CoinbaseWalletSDK(coinbaseWalletSettings);
+
+      const api = apis?.[chain];
+
+      const apiKey = api
+        ? undefined
+        : pickEvmApiKey({
+            chain,
+            nonEthApiKey: covalentApiKey,
+            ethApiKey: ethplorerApiKey,
+          });
 
       const walletProvider = coinbaseWallet.makeWeb3Provider(ChainToRPC[chain]);
 
@@ -87,8 +97,8 @@ export const getWalletForChain = async ({
 
       const toolbox = getToolboxByChain(chain)({
         ...params,
-        covalentApiKey: covalentApiKey as string,
-        ethplorerApiKey: ethplorerApiKey as string,
+        api,
+        apiKey,
       });
 
       return {

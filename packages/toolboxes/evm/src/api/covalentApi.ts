@@ -30,7 +30,7 @@ type CovalentBalanceResponse = {
 };
 
 export const covalentApi = ({ apiKey, chainId }: { apiKey: string; chainId: ChainId }) => ({
-  getBalance: async (address: string) => {
+  getBalance: async (address: string, _chainId: ChainId) => {
     const { data } = await RequestClient.get<{ data: CovalentBalanceResponse }>(
       `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/`,
       { searchParams: { key: apiKey } },

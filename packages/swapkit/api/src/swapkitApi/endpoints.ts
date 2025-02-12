@@ -25,7 +25,11 @@ function getBaseUrl(isDev?: boolean) {
   return isDev ? baseUrlDev : baseUrl;
 }
 
-const getAuthHeaders = (hash?: string, apiKey?: string, referer?: string) => ({
+const getAuthHeaders = ({
+  hash,
+  apiKey,
+  referer,
+}: { hash?: string; apiKey?: string; referer?: string }) => ({
   ...(apiKey && !hash ? { "x-api-key": apiKey } : {}),
   ...(hash && referer ? { "x-payload-hash": hash, referer } : {}),
 });
@@ -89,7 +93,7 @@ export function getTrackerDetails(payload: TrackerParams, apiKey?: string, refer
       : undefined;
   return RequestClient.post<TrackerResponse>(url, {
     json: payload,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 }
 
@@ -122,7 +126,7 @@ export async function getSwapQuote<T extends boolean>(
       : undefined;
   const response = await RequestClient.post<QuoteResponse>(url, {
     json: searchParams,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 
   if (response.error) {
@@ -155,7 +159,7 @@ export function getTokenListProvidersV2(isDev = false, apiKey?: string, referer?
         })
       : undefined;
   return RequestClient.get<TokenListProvidersResponse>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 }
 
@@ -187,7 +191,7 @@ export function getTokenList(
         })
       : undefined;
   return RequestClient.get<TokensResponseV2>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 }
 
@@ -208,7 +212,7 @@ export async function getPrice(
       : undefined;
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 
   try {
@@ -236,7 +240,7 @@ export async function getGasRate(isDev = false, apiKey?: string, referer?: strin
       : undefined;
 
   const response = await RequestClient.get<GasResponse>(url, {
-    headers: getAuthHeaders(hash, apiKey, referer),
+    headers: getAuthHeaders({ hash, apiKey, referer }),
   });
 
   try {
@@ -351,9 +355,11 @@ export async function getChainflipDepositChannel({
   isDev = false,
   baseUrl,
   body,
+  apiKey,
 }: {
   isDev?: boolean;
   baseUrl?: string;
+  apiKey?: string;
   body: BrokerDepositChannelParams;
 }) {
   const { destinationAddress } = body;
@@ -365,6 +371,7 @@ export async function getChainflipDepositChannel({
 
   const response = await RequestClient.post<DepositChannelResponse>(url, {
     json: body,
+    headers: getAuthHeaders({ apiKey }),
   });
 
   try {

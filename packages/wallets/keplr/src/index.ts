@@ -10,6 +10,7 @@ import {
   filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
+import type { ThorchainToolboxType } from "@swapkit/toolbox-cosmos";
 import { chainRegistry } from "./chainRegistry";
 
 declare global {
@@ -47,7 +48,9 @@ function connectKeplr({
       }
 
       keplrClient?.enable(chainId);
-      const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
+      const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId, {
+        preferNoSetFee: chain === Chain.THORChain,
+      });
       if (!offlineSigner) throw new Error("Could not load offlineSigner");
       const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
 
@@ -71,8 +74,26 @@ function connectKeplr({
           from: params.from || address,
         });
 
+      const deposit =
+        chain === Chain.THORChain
+          ? {
+              deposit: (params: {
+                from?: string;
+                assetValue: AssetValue;
+                memo?: string;
+              }) =>
+                (toolbox as ThorchainToolboxType).deposit({
+                  ...params,
+                  signer: offlineSigner,
+                  from: params.from || address,
+                  memo: params.memo || "",
+                }),
+            }
+          : {};
+
       addChain({
         ...toolbox,
+        ...deposit,
         chain,
         transfer,
         address,

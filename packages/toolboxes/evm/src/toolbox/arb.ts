@@ -4,13 +4,19 @@ import {
   ChainId,
   ChainToExplorerUrl,
   FeeOption,
+  SwapKitError,
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Provider, Signer } from "ethers";
 
-import type { CovalentApiType } from "../api/covalentApi";
-import { covalentApi } from "../api/covalentApi";
-import { type EVMTxBaseParams, estimateTransactionFee, getBalance } from "../index";
+import {
+  type AlchemyApiType,
+  type CovalentApiType,
+  type EVMTxBaseParams,
+  covalentApi,
+  estimateTransactionFee,
+  getBalance,
+} from "../index";
 
 import { EVMToolbox } from "./EVMToolbox";
 
@@ -44,14 +50,23 @@ export const ARBToolbox = ({
   api,
   provider,
   signer,
-  covalentApiKey,
+  apiKey,
 }: {
-  api?: CovalentApiType;
-  covalentApiKey: string;
+  api?: CovalentApiType | AlchemyApiType;
+  apiKey?: string;
   signer?: Signer;
   provider: JsonRpcProvider | BrowserProvider;
 }) => {
-  const arbApi = api || covalentApi({ apiKey: covalentApiKey, chainId: ChainId.Arbitrum });
+  if (!(api || apiKey)) {
+    throw new SwapKitError({
+      errorKey: "wallet_missing_api_key",
+      info: {
+        chain: Chain.Arbitrum,
+      },
+    });
+  }
+
+  const arbApi = api || covalentApi({ apiKey: apiKey as string, chainId: ChainId.Arbitrum });
   const evmToolbox = EVMToolbox({ provider, signer, isEIP1559Compatible: false });
   const chain = Chain.Arbitrum;
 
