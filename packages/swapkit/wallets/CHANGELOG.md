@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.0.24
+
+### Patch Changes
+
+- Updated dependencies [[`e6a17eb`](https://github.com/thorswap/SwapKit/commit/e6a17eb1ff5d3e44ecf456195824d6199412e408)]:
+  - @swapkit/wallet-keplr@1.4.1
+
 ## 2.0.23
 
 ### Patch Changes

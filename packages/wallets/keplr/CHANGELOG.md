@@ -1,5 +1,11 @@
 # @swapkit/wallet-keplr
 
+## 1.4.1
+
+### Patch Changes
+
+- [#1189](https://github.com/thorswap/SwapKit/pull/1189) [`e6a17eb`](https://github.com/thorswap/SwapKit/commit/e6a17eb1ff5d3e44ecf456195824d6199412e408) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Keplr THORChain deposit signer
+
 ## 1.4.0
 
 ### Minor Changes
