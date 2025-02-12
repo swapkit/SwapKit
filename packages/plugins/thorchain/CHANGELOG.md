@@ -1,5 +1,17 @@
 # @swapkit/plugin-thorchain
 
+## 2.3.10
+
+### Patch Changes
+
+- Updated dependencies [[`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951), [`61058d8`](https://github.com/thorswap/SwapKit/commit/61058d8a1d39e1e9d77dab0f62b3883b41d970d4)]:
+  - @swapkit/toolbox-cosmos@1.9.0
+  - @swapkit/helpers@2.5.0
+  - @swapkit/toolbox-utxo@1.3.0
+  - @swapkit/toolbox-evm@1.9.0
+  - @swapkit/api@2.4.0
+  - @swapkit/toolbox-substrate@1.3.19
+
 ## 2.3.9
 
 ### Patch Changes

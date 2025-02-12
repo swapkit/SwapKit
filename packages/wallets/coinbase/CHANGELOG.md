@@ -1,5 +1,17 @@
 # @swapkit/wallet-coinbase
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1185](https://github.com/thorswap/SwapKit/pull/1185) [`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951) Thanks [@towanTG](https://github.com/towanTG)! - Adds alchemy api and refactors wallets api handling internally
+
+### Patch Changes
+
+- Updated dependencies [[`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951)]:
+  - @swapkit/helpers@2.5.0
+  - @swapkit/toolbox-evm@1.9.0
+
 ## 1.2.7
 
 ### Patch Changes
