@@ -1,5 +1,20 @@
 # @swapkit/wallets
 
+## 2.0.23
+
+### Patch Changes
+
+- Updated dependencies [[`5e765df`](https://github.com/thorswap/SwapKit/commit/5e765dfff7105d2b30c589d0825652957a321203)]:
+  - @swapkit/wallet-ledger@1.12.0
+  - @swapkit/wallet-keplr@1.4.0
+  - @swapkit/wallet-wc@1.8.0
+  - @swapkit/wallet-bitget@1.2.1
+  - @swapkit/wallet-ctrl@2.2.1
+  - @swapkit/wallet-keepkey@1.5.14
+  - @swapkit/wallet-keepkey-bex@1.3.1
+  - @swapkit/wallet-keystore@1.6.1
+  - @swapkit/wallet-okx@1.5.1
+
 ## 2.0.22
 
 ### Patch Changes

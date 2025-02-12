@@ -1,5 +1,17 @@
 # @swapkit/wallet-wc
 
+## 1.8.0
+
+### Minor Changes
+
+- [#1187](https://github.com/thorswap/SwapKit/pull/1187) [`5e765df`](https://github.com/thorswap/SwapKit/commit/5e765dfff7105d2b30c589d0825652957a321203) Thanks [@towanTG](https://github.com/towanTG)! - Improves message formatting for amino and direct signer for TC like messages and fixes keplr tc implementation
+
+### Patch Changes
+
+- Updated dependencies [[`5e765df`](https://github.com/thorswap/SwapKit/commit/5e765dfff7105d2b30c589d0825652957a321203)]:
+  - @swapkit/toolbox-cosmos@1.10.0
+  - @swapkit/helpers@2.5.0
+
 ## 1.7.0
 
 ### Minor Changes

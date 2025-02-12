@@ -1,5 +1,13 @@
 # @swapkit/wallet-okx
 
+## 1.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`5e765df`](https://github.com/thorswap/SwapKit/commit/5e765dfff7105d2b30c589d0825652957a321203)]:
+  - @swapkit/toolbox-cosmos@1.10.0
+  - @swapkit/helpers@2.5.0
+
 ## 1.5.0
 
 ### Minor Changes
