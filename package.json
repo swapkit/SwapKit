@@ -23,6 +23,7 @@
   "scripts": {
     "bootstrap": "bun clean; bun install --force; bun run build",
     "build": "bun --filter '*' build",
+    "build:debug": "DEBUG=true bun --filter '*' build",
     "clean": "bun --filter '*' clean && rm -rf node_modules; bun install",
     "deps": "bun ncu --root -u -i -ws",
     "generate:tokens": "bun --filter '@swapkit/api' build; bun --cwd packages/swapkit/tokens generate-tokens; bun --filter '@swapkit/tokens' lint",

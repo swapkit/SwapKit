@@ -10,7 +10,7 @@ export async function buildPackage({
   const result = await Bun.build({
     entrypoints,
     outdir: "./dist",
-    minify: true,
+    minify: process.env.DEBUG !== "true",
     packages: "external",
     sourcemap: "linked",
     splitting: false,
