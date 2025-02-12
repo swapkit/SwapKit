@@ -14,7 +14,7 @@ import type {
   buildEncodedTxBody,
   buildTransferTx,
   convertToSignable,
-  prepareMessageForBroadcast,
+  parseAminoMessageForDirectSigning,
 } from "../../index";
 import type { Signer, TransferParams } from "../../types";
 
@@ -97,6 +97,7 @@ export type ThorchainTransferTxParams = {
   memo?: string;
   chain: Chain.THORChain | Chain.Maya;
   asSignable?: boolean;
+  asAminoMessage?: boolean;
 };
 
 export type ThorcahinDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
@@ -128,7 +129,9 @@ export type ThorchainToolboxType = BaseCosmosToolboxType & {
     params: ThorcahinDepositTxParams,
   ) => ReturnType<ReturnType<typeof buildDepositTx>>;
   buildEncodedTxBody: typeof buildEncodedTxBody;
-  prepareMessageForBroadcast: typeof prepareMessageForBroadcast;
+  // @deprecated - use `parseAminoMessageForDirectSigning` instead
+  prepareMessageForBroadcast: typeof parseAminoMessageForDirectSigning;
+  parseAminoMessageForDirectSigning: typeof parseAminoMessageForDirectSigning;
   createMultisig: (pubKeys: string[], threshold: number) => Promise<MultisigThresholdPubkey>;
   importSignature: (signature: string) => Uint8Array;
   secp256k1HdWalletFromMnemonic: (mnemonic: string, index?: number) => Promise<Secp256k1HdWallet>;

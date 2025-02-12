@@ -10,7 +10,6 @@ import {
   filterSupportedChains,
   setRequestClientConfig,
 } from "@swapkit/helpers";
-import type { ThorchainToolboxType } from "@swapkit/toolbox-cosmos";
 import { chainRegistry } from "./chainRegistry";
 
 declare global {
@@ -74,26 +73,8 @@ function connectKeplr({
           from: params.from || address,
         });
 
-      const deposit =
-        chain === Chain.THORChain
-          ? {
-              deposit: (params: {
-                from?: string;
-                assetValue: AssetValue;
-                memo?: string;
-              }) =>
-                (toolbox as ThorchainToolboxType).deposit({
-                  ...params,
-                  signer: offlineSigner,
-                  from: params.from || address,
-                  memo: params.memo || "",
-                }),
-            }
-          : {};
-
       addChain({
         ...toolbox,
-        ...deposit,
         chain,
         transfer,
         address,
