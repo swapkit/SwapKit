@@ -7,7 +7,7 @@ export async function buildPackage({
 }: Omit<BuildConfig, "entrypoints"> & {
   entrypoints?: string[];
 } = {}) {
-  const result = await Bun.build({
+  const buildOptions: BuildConfig = {
     entrypoints,
     outdir: "./dist",
     minify: process.env.DEBUG !== "true",
@@ -16,7 +16,13 @@ export async function buildPackage({
     splitting: true,
     plugins: [...(plugins || [])],
     ...rest,
-  });
+  };
+
+  const result = await Bun.build(buildOptions);
+  // const resultCJS = await Bun.build({
+  //   ...buildOptions,
+  //   format: "cjs",
+  // });
 
   if (!result.success) {
     throw new AggregateError(result.logs, "Build failed");
