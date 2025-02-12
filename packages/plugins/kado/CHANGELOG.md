@@ -1,5 +1,13 @@
 # @swapkit/plugin-kado
 
+## 0.2.14
+
+### Patch Changes
+
+- Updated dependencies [[`6b9a5d7`](https://github.com/thorswap/SwapKit/commit/6b9a5d7dc2dad7d74052ce8308d91bf1da8eb951)]:
+  - @swapkit/helpers@2.5.0
+  - @swapkit/api@2.4.0
+
 ## 0.2.13
 
 ### Patch Changes
