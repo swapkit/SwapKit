@@ -135,9 +135,13 @@ export const getWalletForChain = async ({
           info: { wallet: WalletOption.TALISMAN, accounts, address: accounts[0]?.address },
         });
       }
-      const [{ address }] = accounts;
 
-      return { walletMethods: toolbox, address: convertAddress(address, Network[chain].prefix) };
+      const address = convertAddress(accounts[0].address, Network[chain].prefix);
+
+      return {
+        walletMethods: { ...toolbox, getAddress: () => address },
+        address,
+      };
     }
 
     default:

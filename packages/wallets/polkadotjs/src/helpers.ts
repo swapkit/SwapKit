@@ -45,7 +45,10 @@ export const getWalletForChain = async ({
       const subAddress: string = accounts[0].address;
       const newPrefix = 0;
       const address = convertAddress(subAddress, newPrefix);
-      return { walletMethods: toolbox, address };
+      return {
+        walletMethods: { ...toolbox, getAddress: () => address },
+        address,
+      };
     }
 
     default:

@@ -41,17 +41,15 @@ export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["SOL.USDC-EPJFWDD5AUFQSSQEM2QN1XZYBAPC8G4WEGGKZWYTDT1V", "SolUsdc"],
 ]);
 
-const registerAsBroker =
-  (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) => (address?: string) => {
-    const extrinsic = toolbox.api.tx.swapping?.registerAsBroker?.();
-    const registerAddress = address ?? toolbox.getAddress();
+const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) => () => {
+  const extrinsic = toolbox.api.tx.swapping?.registerAsBroker?.();
 
-    if (!(extrinsic && registerAddress)) {
-      throw new SwapKitError("chainflip_broker_register");
-    }
+  if (!extrinsic) {
+    throw new SwapKitError("chainflip_broker_register");
+  }
 
-    return toolbox.signAndBroadcast({ tx: extrinsic, address: registerAddress });
-  };
+  return toolbox.signAndBroadcast({ tx: extrinsic, address: toolbox.getAddress() });
+};
 
 const withdrawFee =
   (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
