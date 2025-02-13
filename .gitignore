@@ -13,5 +13,4 @@ coverage/
 .DS_Store
 *.log
 .npmrc
-bunfig.toml
 .aider*

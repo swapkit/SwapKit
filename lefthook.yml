@@ -3,8 +3,6 @@ pre-commit:
     check:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: |
-        bun --filter='./packages/toolboxes' lint && bun --filter='./packages/toolboxes' type-check
-        bun --filter='./packages/wallets' lint && bun --filter='./packages/wallets' type-check
-        bun --filter='./packages/plugins' lint && bun --filter='./packages/plugins' type-check
-        bun --filter='./packages/swapkit' lint && bun --filter='./packages/swapkit/**' type-check
+        bun lint
+        bun type-check
         git update-index --again

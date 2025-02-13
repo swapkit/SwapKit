@@ -1,4 +1,4 @@
-import type { BuildConfig } from "bun";
+import type { BuildArtifact, BuildConfig } from "bun";
 
 export async function buildPackage({
   entrypoints = ["./src/index.ts"],
@@ -48,30 +48,54 @@ export async function buildPackage({
     );
   }
 
-  const esmFiles = buildESM.outputs
-    .filter((file) => file.path.endsWith(".js"))
-    .map(({ size, path }) => {
-      const [name, fileName] = path.split("/").slice(-2);
-      const exportName = name === "dist" ? (fileName === "index.js" ? "" : "shared-chunk") : name;
-      return { size, path, exportName };
-    });
-  const cjsFiles = buildCJS.outputs
-    .filter((file) => file.path.endsWith(".cjs"))
-    .map(({ size, path }) => {
-      const [name, fileName] = path.split("/").slice(-2);
-      const exportName = name === "dist" ? (fileName === "index.cjs" ? "" : "shared-chunk") : name;
-      return { size, path, exportName };
-    });
+  function mapFiles({ files, type }: { files: BuildArtifact[]; type: "esm" | "cjs" }) {
+    const ext = type === "esm" ? "js" : "cjs";
+    return files
+      .filter((file) => file.path.endsWith(`.${ext}`))
+      .sort((a, b) => {
+        const fileNameA = a.path.split("/").pop() || "";
+        const fileNameB = b.path.split("/").pop() || "";
+        return fileNameA.startsWith("chunk")
+          ? 1
+          : fileNameB.startsWith("chunk")
+            ? -1
+            : a.path.localeCompare(b.path);
+      })
+      .map(({ size, path }) => {
+        const [name, fileName] = path.split("/").slice(-2);
+        const params =
+          name === "dist"
+            ? fileName === `index.${ext}`
+              ? { exportName: "", type: "root" }
+              : { exportName: fileName, type: "chunk" }
+            : { exportName: name, type: "package" };
+        return { size, path, ...params };
+      });
+  }
+
+  const esmFiles = mapFiles({ files: buildESM.outputs, type: "esm" });
+  const cjsFiles = mapFiles({ files: buildCJS.outputs, type: "cjs" });
 
   console.info(`✅ Build successful: ${buildESM.outputs.length} files`);
   console.info("📦 ESM Import Sizes:");
-  for (const { size, exportName } of esmFiles) {
-    console.info(`  ${pkgJson.name}${exportName ? `/${exportName}` : ""}: ${formatBytes(size)}`);
+  for (const { size, exportName, type } of esmFiles) {
+    console.info(`${importName({ pkgName: pkgJson.name, exportName, type })}${formatBytes(size)}`);
   }
   console.info("📦 CJS Import Sizes:");
-  for (const { size, exportName } of cjsFiles) {
-    console.info(`  ${pkgJson.name}${exportName ? `/${exportName}` : ""}: ${formatBytes(size)}`);
+  for (const { size, exportName, type } of cjsFiles) {
+    console.info(`${importName({ pkgName: pkgJson.name, exportName, type })}${formatBytes(size)}`);
   }
+}
+
+function importName({
+  pkgName,
+  exportName,
+  type,
+}: { pkgName: string; exportName?: string; type: string }) {
+  const base =
+    type === "package" ? `${pkgName}/${exportName}` : type === "chunk" ? `  ${exportName}` : "";
+
+  return `  ${base}: `;
 }
 
 function formatBytes(bytes: number) {
