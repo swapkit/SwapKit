@@ -24,7 +24,6 @@
     "@solana/spl-token": "0.4.9",
     "@solana/spl-token-registry": "0.2.4574",
     "@solana/web3.js": "1.95.8",
-    "@swapkit/api": "workspace:*",
     "@swapkit/helpers": "workspace:*",
     "base64-js": "1.5.1",
     "bitcoinjs-lib": "6.1.6",

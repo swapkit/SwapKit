@@ -1,3 +1,5 @@
+import { BaseDecimal, Chain, type ChainId, ChainToChainId } from "../types/chains";
+import type { TokenNames, TokenTax } from "../types/tokens";
 import {
   type CommonAssetString,
   CommonAssetStrings,
@@ -5,11 +7,9 @@ import {
   getCommonAssetInfo,
   getDecimal,
   isGasAsset,
-} from "../helpers/asset";
-import { warnOnce } from "../helpers/others";
-import { validateIdentifier } from "../helpers/validators";
-import { BaseDecimal, Chain, type ChainId, ChainToChainId } from "../types/chains";
-import type { TokenNames, TokenTax } from "../types/tokens";
+} from "../utils/asset";
+import { warnOnce } from "../utils/others";
+import { validateIdentifier } from "../utils/validators";
 
 import type { NumberPrimitives } from "./bigIntArithmetics";
 import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics";

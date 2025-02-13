@@ -31,21 +31,11 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@swapkit/api": resolve("../../packages/swapkit/api/src"),
       "@swapkit/core": resolve("../../packages/swapkit/core/src"),
-      "@swapkit/contracts": resolve("../../packages/swapkit/contracts/src"),
       "@swapkit/helpers": resolve("../../packages/swapkit/helpers/src"),
-      "@swapkit/sdk": resolve("../../packages/swapkit/sdk/src"),
-      "@swapkit/types": resolve("../../packages/swapkit/types/src"),
-
-      "@swapkit/toolboxes/cosmos": resolve("../../packages/toolboxes/cosmos/src"),
-      "@swapkit/toolboxes/evm": resolve("../../packages/toolboxes/evm/src"),
-      "@swapkit/toolboxes/radix": resolve("../../packages/toolboxes/radix/src"),
-      "@swapkit/toolboxes/solana": resolve("../../packages/toolboxes/solana/src"),
-      "@swapkit/toolboxes/substrate": resolve("../../packages/toolboxes/substrate/src"),
-      "@swapkit/toolboxes/utxo": resolve("../../packages/toolboxes/utxo/src"),
-
       "@swapkit/plugins": resolve("../../packages/plugins/src"),
+      "@swapkit/sdk": resolve("../../packages/swapkit/sdk/src"),
+      "@swapkit/toolboxes": resolve("../../packages/toolboxes/src"),
       "@swapkit/wallets": resolve("../../packages/wallets/src"),
 
       crypto: "crypto-browserify",

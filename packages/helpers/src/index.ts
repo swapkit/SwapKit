@@ -1,16 +1,15 @@
-export * from "@swapkit/contracts";
 export * from "./types/index";
 
 /**
  * Helpers
  */
-export * from "./helpers/asset";
-export * from "./helpers/derivationPath";
-export * from "./helpers/liquidity";
-export * from "./helpers/memo";
-export * from "./helpers/others";
-export * from "./helpers/validators";
-export * from "./helpers/wallets";
+export * from "./utils/asset";
+export * from "./utils/derivationPath";
+export * from "./utils/liquidity";
+export * from "./utils/memo";
+export * from "./utils/others";
+export * from "./utils/validators";
+export * from "./utils/wallets";
 
 /**
  * Modules

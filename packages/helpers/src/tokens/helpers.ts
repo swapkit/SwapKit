@@ -1,4 +1,4 @@
-import * as tokenLists from "./tokenLists";
+import * as tokenLists from "./lists";
 
 export function getTokenIcon(identifier: string): string | undefined {
   // Search through all lists for a matching token

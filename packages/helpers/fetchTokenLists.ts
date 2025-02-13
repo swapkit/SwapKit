@@ -1,5 +1,5 @@
-import { SwapKitApi } from "@swapkit/api";
 import { Chain, ChainId, ProviderName } from "@swapkit/helpers";
+import { SwapKitApi } from "./src/api";
 
 function parseChain(chain: string) {
   if (chain === "ARBITRUM") return Chain.Arbitrum;
@@ -58,7 +58,7 @@ for (const { provider } of providers) {
     const tokenListWithTokens = { ...tokenList, tokens };
 
     await Bun.write(
-      `src/tokenLists/${provider.toLowerCase()}.ts`,
+      `src/tokens/lists/${provider.toLowerCase()}.ts`,
       `export const list = ${JSON.stringify(tokenListWithTokens, null, 2)} as const;`,
     );
   } catch (_error) {

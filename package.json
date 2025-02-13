@@ -26,7 +26,7 @@
     "build:debug": "DEBUG=true bun --filter '*' build",
     "clean": "bun --filter '*' clean && rm -rf node_modules; bun install",
     "deps": "bun ncu --root -u -i -ws",
-    "generate:tokens": "bun --filter '@swapkit/api' build; bun --cwd packages/swapkit/tokens generate-tokens; bun --filter '@swapkit/tokens' lint",
+    "generate:tokens": "bun --filter '@swapkit/helpers' build; bun --cwd packages/helpers generate-tokens; bun lint",
     "lint": "bun --filter '*' lint",
     "lint:ci": "bun lint && bun type-check",
     "lint:ws": "bun x sherif@latest",
@@ -55,12 +55,5 @@
     "tiny-secp256k1",
     "usb"
   ],
-  "workspaces": [
-    "packages/plugins",
-    "packages/toolboxes",
-    "packages/wallets",
-    "packages/swapkit/*",
-    "playgrounds/*",
-    "tools/*"
-  ]
+  "workspaces": ["packages/*", "playgrounds/*", "tools/*"]
 }

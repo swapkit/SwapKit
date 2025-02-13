@@ -4,7 +4,6 @@
     "@chainflip/sdk": "1.6.7-rc.5",
     "@polkadot/keyring": "12.6.2",
     "@polkadot/util": "12.6.2",
-    "@swapkit/api": "workspace:*",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "bs58": "6.0.0"

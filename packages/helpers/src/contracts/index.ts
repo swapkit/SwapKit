@@ -22,8 +22,6 @@ import { uniswapV3_3000 } from "./abis/uniswapV3_3000";
 import { uniswapV3_10000 } from "./abis/uniswapV3_10000";
 import { lowercasedRouterAbiMapping } from "./routers/index";
 
-export { chainflipGateway } from "./abis/chainflipGateway";
-
 type AbiTypes =
   | typeof avaxGeneric
   | typeof avaxWoofi
@@ -60,6 +58,7 @@ export enum AGG_CONTRACT_ADDRESS {
   UNISWAP_V2_LEG = "0x3660dE6C56cFD31998397652941ECe42118375DA",
 }
 
+export { chainflipGateway } from "./abis/chainflipGateway";
 export {
   erc20ABI,
   TCEthereumVaultAbi,

@@ -1,13 +1,17 @@
 {
-  "description": "SwapKit - Contracts",
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "author": "swapkit-oss",
+  "dependencies": {
+    "@swapkit/core": "workspace:*",
+    "@swapkit/plugins": "workspace:*",
+    "@swapkit/tokens": "workspace:*",
+    "@swapkit/wallets": "workspace:*"
+  },
+  "description": "SwapKit - SDK",
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
-  "name": "@swapkit/contracts",
+  "name": "@swapkit/sdk",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorswap/SwapKit.git"
@@ -16,11 +20,9 @@
     "build": "bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "lint": "biome check --diagnostic-level=error --write ./src",
-    "test": "echo 'bun test'",
-    "test:coverage": "bun test --coverage",
     "type-check": "tsc --noEmit"
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "1.1.0"
+  "version": "2.2.17"
 }
