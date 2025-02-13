@@ -1,4 +1,3 @@
-import { type QuoteResponseRoute, SwapKitApi, type THORNodeType } from "@swapkit/api";
 import {
   ApproveMode,
   type ApproveReturnType,
@@ -9,17 +8,11 @@ import {
   type ErrorKeys,
   FeeOption,
   type FullWallet,
-  MayaArbitrumVaultAbi,
-  MayaEthereumVaultAbi,
   MemoType,
   ProviderName,
   SwapKitError,
   type SwapKitPluginParams,
   type SwapParams,
-  TCAvalancheDepositABI,
-  TCBaseDepositABI,
-  TCBscDepositABI,
-  TCEthereumVaultAbi,
   getMemoForDeposit,
   getMemoForLeaveAndBond,
   getMemoForNamePreferredAssetRegister,
@@ -31,6 +24,15 @@ import {
   getMinAmountByChain,
   wrapWithThrow,
 } from "@swapkit/helpers";
+import { type QuoteResponseRoute, SwapKitApi, type THORNodeType } from "@swapkit/helpers/api";
+import {
+  MayaArbitrumVaultAbi,
+  MayaEthereumVaultAbi,
+  TCAvalancheDepositABI,
+  TCBaseDepositABI,
+  TCBscDepositABI,
+  TCEthereumVaultAbi,
+} from "@swapkit/helpers/contracts";
 
 import { prepareTxParams, validateAddressType } from "./shared";
 import type {

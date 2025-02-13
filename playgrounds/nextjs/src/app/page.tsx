@@ -1,7 +1,7 @@
 "use client";
 
-import type { QuoteResponseRoute } from "@swapkit/api";
 import { AssetValue, type Chain } from "@swapkit/helpers";
+import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import { ProviderName, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUp, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -254,7 +254,11 @@ export default function SwapPage() {
           onClick={async () => {
             if (!(routes.length && inputAsset)) return;
             try {
-              const assetValue = await AssetValue.fromString(inputAsset);
+              const assetValue = await AssetValue.from({
+                asyncTokenLookup: true,
+                asset: inputAsset,
+                amount,
+              });
               const amountValue = assetValue.set(amount);
               await swap(routes[0], amountValue);
             } catch (error) {

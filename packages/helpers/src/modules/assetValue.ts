@@ -170,7 +170,7 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
     return new Promise<{ ok: true } | { ok: false; message: string; error: any }>(
       (resolve, reject) => {
         try {
-          import("@swapkit/tokens").then((tokenPackage) => {
+          import("@swapkit/helpers/tokens").then((tokenPackage) => {
             if (!tokenPackage.tokenLists) {
               console.warn(
                 "No token lists found in @swapkit/tokens package. Ensure you have installed it correctly.",

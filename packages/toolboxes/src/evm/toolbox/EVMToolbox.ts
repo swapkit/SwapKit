@@ -8,9 +8,9 @@ import {
   SwapKitError,
   SwapKitNumber,
   type WalletTxParams,
-  erc20ABI,
   isGasAsset,
 } from "@swapkit/helpers";
+import { erc20ABI } from "@swapkit/helpers/contracts";
 import {
   BrowserProvider,
   Contract,

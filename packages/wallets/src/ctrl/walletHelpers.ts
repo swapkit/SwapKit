@@ -8,8 +8,8 @@ import {
   type FeeOption,
   SwapKitError,
   WalletOption,
-  erc20ABI,
 } from "@swapkit/helpers";
+import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { PublicKey, SOLToolbox, SolanaProvider } from "@swapkit/toolboxes/solana";

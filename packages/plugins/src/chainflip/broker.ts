@@ -1,7 +1,8 @@
 import { Assets, Chains } from "@chainflip/sdk/swap";
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
-import { AssetValue, Chain, SwapKitError, chainflipGateway, wrapWithThrow } from "@swapkit/helpers";
+import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
+import { chainflipGateway } from "@swapkit/helpers/contracts";
 import type { ETHToolbox } from "@swapkit/toolboxes/evm";
 import type { ChainflipToolbox } from "@swapkit/toolboxes/substrate";
 

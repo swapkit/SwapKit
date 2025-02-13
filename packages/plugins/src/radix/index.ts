@@ -1,4 +1,3 @@
-import type { QuoteResponseRoute } from "@swapkit/api";
 import {
   AssetValue,
   Chain,
@@ -7,6 +6,7 @@ import {
   type SwapKitPluginParams,
   type SwapParams,
 } from "@swapkit/helpers";
+import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 
 function plugin({ getWallet }: SwapKitPluginParams) {
   async function swap({

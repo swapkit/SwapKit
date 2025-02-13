@@ -1,15 +1,16 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type ethers from "@nomicfoundation/hardhat-ethers";
-import { AssetValue, Chain, FeeOption, erc20ABI } from "@swapkit/helpers";
+import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
+import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { JsonRpcProvider } from "ethers";
-import hre from "hardhat";
+// import hre from "hardhat";
 
 import type { ETHToolbox } from "../index";
 const testAddress = "0x6d6e022eE439C8aB8B7a7dBb0576f8090319CDc6";
 const emptyRecipient = "0xE29E61479420Dd1029A9946710Ac31A0d140e77F";
 const USDCAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 // Get latest block to use as base for reset fork after test
-const block = await hre.ethers.provider.getBlock("latest");
+// const _block = await hre.ethers.provider.getBlock("latest");
 
 beforeAll(() => {
   // hre.run("node");

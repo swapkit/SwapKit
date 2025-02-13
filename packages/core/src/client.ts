@@ -1,4 +1,4 @@
-import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/api";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 
 import {
   ApproveMode,

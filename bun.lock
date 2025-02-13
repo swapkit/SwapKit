@@ -17,6 +17,25 @@
         "typescript": "5.7.2",
       },
     },
+    "packages/core": {
+      "name": "@swapkit/core",
+      "version": "3.2.20",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/helpers": {
+      "name": "@swapkit/helpers",
+      "version": "2.4.3",
+      "dependencies": {
+        "zod": "3.24.1",
+        "zustand": "5.0.3",
+      },
+      "devDependencies": {
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
     "packages/plugins": {
       "name": "@swapkit/plugins",
       "version": "0.1.0",
@@ -24,7 +43,6 @@
         "@chainflip/sdk": "1.6.7-rc.5",
         "@polkadot/keyring": "12.6.2",
         "@polkadot/util": "12.6.2",
-        "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
         "bs58": "6.0.0",
@@ -33,69 +51,14 @@
         "@types/bs58": "4.0.4",
       },
     },
-    "packages/swapkit/api": {
-      "name": "@swapkit/api",
-      "version": "2.3.7",
-      "dependencies": {
-        "@swapkit/helpers": "workspace:*",
-        "zod": "3.24.1",
-      },
-    },
-    "packages/swapkit/contracts": {
-      "name": "@swapkit/contracts",
-      "version": "1.1.0",
-    },
-    "packages/swapkit/core": {
-      "name": "@swapkit/core",
-      "version": "3.2.20",
-      "dependencies": {
-        "@swapkit/api": "workspace:*",
-        "@swapkit/helpers": "workspace:*",
-        "@swapkit/toolboxes": "workspace:*",
-      },
-    },
-    "packages/swapkit/helpers": {
-      "name": "@swapkit/helpers",
-      "version": "2.4.3",
-      "dependencies": {
-        "@swapkit/contracts": "workspace:*",
-        "@swapkit/tokens": "workspace:*",
-        "zustand": "5.0.3",
-      },
-      "devDependencies": {
-        "@swapkit/toolboxes": "workspace:*",
-      },
-    },
-    "packages/swapkit/sdk": {
+    "packages/sdk": {
       "name": "@swapkit/sdk",
       "version": "2.2.17",
       "dependencies": {
-        "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
-        "@swapkit/plugins": "workspace:*",
-        "@swapkit/tokens": "workspace:*",
-        "@swapkit/wallets": "workspace:*",
-      },
-    },
-    "packages/swapkit/tokens": {
-      "name": "@swapkit/tokens",
-      "version": "2.2.2",
-      "dependencies": {
         "@swapkit/helpers": "workspace:*",
-      },
-    },
-    "packages/swapkit/wizard": {
-      "name": "@swapkit/wizard",
-      "version": "2.1.0",
-      "bin": "./dist/cli.js",
-      "dependencies": {
-        "@clack/prompts": "0.7.0",
-        "ejs": "3.1.10",
-        "picocolors": "1.0.1",
-        "zod": "3.24.1",
-      },
-      "devDependencies": {
-        "@types/ejs": "3.1.5",
+        "@swapkit/plugins": "workspace:*",
+        "@swapkit/wallets": "workspace:*",
       },
     },
     "packages/toolboxes": {
@@ -124,7 +87,6 @@
         "@solana/spl-token": "0.4.9",
         "@solana/spl-token-registry": "0.2.4574",
         "@solana/web3.js": "1.95.8",
-        "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
         "base64-js": "1.5.1",
         "bitcoinjs-lib": "6.1.6",
@@ -189,6 +151,20 @@
         "@types/ripemd160": "2.0.3",
         "@walletconnect/logger": "2.1.2",
         "@walletconnect/types": "2.13.3",
+      },
+    },
+    "packages/wizard": {
+      "name": "@swapkit/wizard",
+      "version": "2.1.0",
+      "bin": "./dist/cli.js",
+      "dependencies": {
+        "@clack/prompts": "0.7.0",
+        "ejs": "3.1.10",
+        "picocolors": "1.0.1",
+        "zod": "3.24.1",
+      },
+      "devDependencies": {
+        "@types/ejs": "3.1.5",
       },
     },
     "playgrounds/nextjs": {
@@ -265,7 +241,6 @@
         "@esbuild-plugins/node-globals-polyfill": "0.2.3",
         "@esbuild-plugins/node-modules-polyfill": "0.2.2",
         "@swapkit/sdk": "workspace:*",
-        "@swapkit/tokens": "workspace:*",
         "base64-js": "1.5.1",
         "buffer": "6.0.3",
         "crypto-browserify": "3.12.1",
@@ -1200,25 +1175,19 @@
 
     "@substrate/ss58-registry": ["@substrate/ss58-registry@1.51.0", "", {}, "sha512-TWDurLiPxndFgKjVavCniytBIw+t4ViOi7TYp9h/D0NMmkEc9klFTo+827eyEJ0lELpqO207Ey7uGxUa+BS1jQ=="],
 
-    "@swapkit/api": ["@swapkit/api@workspace:packages/swapkit/api"],
+    "@swapkit/core": ["@swapkit/core@workspace:packages/core"],
 
-    "@swapkit/contracts": ["@swapkit/contracts@workspace:packages/swapkit/contracts"],
-
-    "@swapkit/core": ["@swapkit/core@workspace:packages/swapkit/core"],
-
-    "@swapkit/helpers": ["@swapkit/helpers@workspace:packages/swapkit/helpers"],
+    "@swapkit/helpers": ["@swapkit/helpers@workspace:packages/helpers"],
 
     "@swapkit/plugins": ["@swapkit/plugins@workspace:packages/plugins"],
 
-    "@swapkit/sdk": ["@swapkit/sdk@workspace:packages/swapkit/sdk"],
-
-    "@swapkit/tokens": ["@swapkit/tokens@workspace:packages/swapkit/tokens"],
+    "@swapkit/sdk": ["@swapkit/sdk@workspace:packages/sdk"],
 
     "@swapkit/toolboxes": ["@swapkit/toolboxes@workspace:packages/toolboxes"],
 
     "@swapkit/wallets": ["@swapkit/wallets@workspace:packages/wallets"],
 
-    "@swapkit/wizard": ["@swapkit/wizard@workspace:packages/swapkit/wizard"],
+    "@swapkit/wizard": ["@swapkit/wizard@workspace:packages/wizard"],
 
     "@swc-jotai/debug-label": ["@swc-jotai/debug-label@0.2.0", "", {}, "sha512-vlHfGuN+w3TMb8UUGFEoWWuC3a8xTz/cJWI/58gTwF7R0p8Z75fwiZpi62Sq8JhCYRGHnXCzJxaA1Oszdev3Xg=="],
 

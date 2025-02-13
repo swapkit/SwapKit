@@ -7,7 +7,7 @@ import { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
 import { wallets as defaultWallets } from "@swapkit/wallets";
 
 export * from "@swapkit/core";
-export { getTokenIcon, tokenLists } from "@swapkit/tokens";
+export { getTokenIcon, tokenLists } from "@swapkit/helpers/tokens";
 
 export const defaultPlugins = {
   ...ChainflipPlugin,
@@ -33,4 +33,4 @@ export const createSwapKit = <
   });
 };
 
-export { SwapKitApi } from "@swapkit/api";
+export { SwapKitApi } from "@swapkit/helpers/api";

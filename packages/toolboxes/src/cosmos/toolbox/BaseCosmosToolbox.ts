@@ -2,7 +2,6 @@ import { Secp256k1HdWallet } from "@cosmjs/amino";
 import { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } from "@cosmjs/crypto";
 import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { base64, bech32 } from "@scure/base";
-import { SwapKitApi } from "@swapkit/api";
 import {
   AssetValue,
   Chain,
@@ -13,6 +12,7 @@ import {
   SKConfig,
   SwapKitError,
 } from "@swapkit/helpers";
+import { SwapKitApi } from "@swapkit/helpers/api";
 
 import type { BaseCosmosToolboxType } from "../thorchainUtils/types/client-types";
 import type { TransferParams } from "../types";

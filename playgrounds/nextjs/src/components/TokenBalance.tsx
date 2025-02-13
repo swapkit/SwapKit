@@ -1,7 +1,7 @@
 "use client";
 
 import type { AssetValue } from "@swapkit/helpers";
-import { getTokenIcon } from "@swapkit/tokens";
+import { getTokenIcon } from "@swapkit/helpers/tokens";
 import Image from "next/image";
 
 interface TokenBalanceProps {

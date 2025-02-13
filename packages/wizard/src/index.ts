@@ -225,7 +225,7 @@ export async function swapkitWizard() {
   }
 
   if (enableTokens) {
-    packageNames.push("@swapkit/tokens");
+    packageNames.push("@swapkit/helpers/tokens");
   }
 
   wizardSpinner.message("Copying template files");
