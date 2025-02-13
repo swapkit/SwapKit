@@ -124,7 +124,7 @@ describe("Ethereum toolkit", () => {
   test.todo(
     "Create contract tx object and sendTransaction",
     async () => {
-      const USDC = await context.toolbox.createContract(USDCAddress, erc20ABI, context.provider);
+      const USDC = context.toolbox.createContract(USDCAddress, erc20ABI, context.provider);
       const balance = await USDC.balanceOf?.(emptyRecipient);
       expect(balance.toString()).toBe("0");
 

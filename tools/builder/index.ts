@@ -7,7 +7,7 @@ export async function buildPackage({
 }: Omit<BuildConfig, "entrypoints"> & {
   entrypoints?: string[];
 } = {}) {
-  const pkgJson = await Bun.file("package.json").json();
+  const { name: pkgName } = await Bun.file("package.json").json();
   const buildOptions: BuildConfig = {
     entrypoints,
     outdir: "./dist",
@@ -20,15 +20,9 @@ export async function buildPackage({
   };
 
   const buildESM = await Bun.build(buildOptions);
-  const buildCJS = await Bun.build({
-    ...buildOptions,
-    format: "cjs",
-    naming: "[dir]/[name].cjs",
-  });
+  const buildCJS = await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
 
-  const success = buildESM.success && buildCJS.success;
-
-  if (!success) {
+  if (!(buildESM.success || buildCJS.success)) {
     throw new AggregateError(buildESM.logs.concat(buildCJS.logs), "Build failed");
   }
 
@@ -40,51 +34,68 @@ export async function buildPackage({
       .filter((file) => file.path.endsWith(".cjs"))
       .reduce((acc, file) => acc + file.size, 0);
 
-    const esmSize = formatBytes(esmBytesize);
-    const cjsSize = formatBytes(cjsBytesize);
-
     return console.info(
-      `✅ Build successful: ${buildESM.outputs.length} files (${esmSize} ESM, ${cjsSize} CJS)`,
+      `✅ Build successful: ${buildESM.outputs.length} files
+${"ESM: ".padStart(21)}${formatBytes(esmBytesize)}
+${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
     );
   }
 
-  function mapFiles({ files, type }: { files: BuildArtifact[]; type: "esm" | "cjs" }) {
-    const ext = type === "esm" ? "js" : "cjs";
-    return files
-      .filter((file) => file.path.endsWith(`.${ext}`))
-      .sort((a, b) => {
-        const fileNameA = a.path.split("/").pop() || "";
-        const fileNameB = b.path.split("/").pop() || "";
-        return fileNameA.startsWith("chunk")
-          ? 1
-          : fileNameB.startsWith("chunk")
-            ? -1
-            : a.path.localeCompare(b.path);
-      })
-      .map(({ size, path }) => {
-        const [name, fileName] = path.split("/").slice(-2);
-        const params =
-          name === "dist"
-            ? fileName === `index.${ext}`
-              ? { exportName: "", type: "root" }
-              : { exportName: fileName, type: "chunk" }
-            : { exportName: name, type: "package" };
-        return { size, path, ...params };
-      });
-  }
-
-  const esmFiles = mapFiles({ files: buildESM.outputs, type: "esm" });
-  const cjsFiles = mapFiles({ files: buildCJS.outputs, type: "cjs" });
-
-  console.info(`✅ Build successful: ${buildESM.outputs.length} files`);
+  const { files: esmFiles, maxLength: esmMaxLength } = mapFiles({
+    pkgName,
+    files: buildESM.outputs,
+    type: "esm",
+  });
   console.info("📦 ESM Import Sizes:");
-  for (const { size, exportName, type } of esmFiles) {
-    console.info(`${importName({ pkgName: pkgJson.name, exportName, type })}${formatBytes(size)}`);
+  for (const { size, pathImportName } of esmFiles) {
+    console.info(`${pathImportName.padEnd(esmMaxLength)}${formatBytes(size)}`);
   }
+
+  const { files: cjsFiles, maxLength: cjsMaxLength } = mapFiles({
+    pkgName,
+    files: buildCJS.outputs,
+    type: "cjs",
+  });
   console.info("📦 CJS Import Sizes:");
-  for (const { size, exportName, type } of cjsFiles) {
-    console.info(`${importName({ pkgName: pkgJson.name, exportName, type })}${formatBytes(size)}`);
+  for (const { size, pathImportName } of cjsFiles) {
+    console.info(`${pathImportName.padEnd(cjsMaxLength)}${formatBytes(size)}`);
   }
+}
+
+function mapFiles({
+  pkgName,
+  files,
+  type,
+}: { pkgName: string; files: BuildArtifact[]; type: "esm" | "cjs" }) {
+  const ext = type === "esm" ? "js" : "cjs";
+  let maxLength = 0;
+  const mappedFiles = files
+    .filter((file) => file.path.endsWith(`.${ext}`))
+    .map(({ size, path }) => {
+      const [name, fileName] = path.split("/").slice(-2);
+      const params =
+        name === "dist" || name === "src"
+          ? fileName === `index.${ext}`
+            ? { type: "root", exportName: "" }
+            : { type: "chunk", exportName: fileName }
+          : { type: "package", exportName: name };
+
+      const pathImportName = importName({ pkgName, ...params });
+
+      maxLength = Math.max(maxLength, pathImportName.length + 1);
+      return { size, path, pathImportName };
+    })
+    .sort((a, b) => {
+      const fileNameA = a.path.split("/").pop() || "";
+      const fileNameB = b.path.split("/").pop() || "";
+      return fileNameA.startsWith("chunk")
+        ? 1
+        : fileNameB.startsWith("chunk")
+          ? -1
+          : a.pathImportName.localeCompare(b.pathImportName);
+    });
+
+  return { files: mappedFiles, maxLength };
 }
 
 function importName({
@@ -92,10 +103,11 @@ function importName({
   exportName,
   type,
 }: { pkgName: string; exportName?: string; type: string }) {
+  const prefix = `  ${pkgName}`;
   const base =
-    type === "package" ? `${pkgName}/${exportName}` : type === "chunk" ? `  ${exportName}` : "";
+    type === "package" ? `${prefix}/${exportName}` : type === "chunk" ? `${exportName}` : "";
 
-  return `  ${base}: `;
+  return `${base || prefix}: `;
 }
 
 function formatBytes(bytes: number) {

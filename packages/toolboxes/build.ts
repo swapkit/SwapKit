@@ -1,13 +1,7 @@
 import { buildPackage } from "../../tools/builder";
 
+const toolboxes = ["evm", "cosmos", "radix", "solana", "substrate", "utxo"];
+
 buildPackage({
-  entrypoints: [
-    "./src/index.ts",
-    "./src/evm/index.ts",
-    "./src/cosmos/index.ts",
-    "./src/radix/index.ts",
-    "./src/solana/index.ts",
-    "./src/substrate/index.ts",
-    "./src/utxo/index.ts",
-  ],
+  entrypoints: ["./src/index.ts", ...toolboxes.map((toolbox) => `./src/${toolbox}/index.ts`)],
 });

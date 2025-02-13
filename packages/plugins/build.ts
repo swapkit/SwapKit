@@ -1,12 +1,7 @@
 import { buildPackage } from "../../tools/builder";
 
+const plugins = ["chainflip", "evm", "kado", "radix", "thorchain"];
+
 buildPackage({
-  entrypoints: [
-    "./src/index.ts",
-    "./src/chainflip/index.ts",
-    "./src/evm/index.ts",
-    "./src/kado/index.ts",
-    "./src/radix/index.ts",
-    "./src/thorchain/index.ts",
-  ],
+  entrypoints: ["./src/index.ts", ...plugins.map((plugin) => `./src/${plugin}/index.ts`)],
 });
