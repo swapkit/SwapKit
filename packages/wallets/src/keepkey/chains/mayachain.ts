@@ -8,7 +8,7 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { DepositParam, ThorchainToolboxType, TransferParams } from "@swapkit/toolbox-cosmos";
+import type { DepositParam, ThorchainToolboxType, TransferParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
@@ -26,7 +26,7 @@ export const mayachainWalletMethods = async ({
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
 }): Promise<ThorchainToolboxType & { address: string }> => {
-  const { createStargateClient, getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+  const { createStargateClient, getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
 
   const toolbox = getToolboxByChain(Chain.Maya)();
   const derivationPathString = derivationPath
@@ -39,7 +39,7 @@ export const mayachainWalletMethods = async ({
 
   const signTransaction = async ({ assetValue, recipient, from, memo }: SignTransactionParams) => {
     const { makeSignDoc } = await import("@cosmjs/amino");
-    const { getDenomWithChain } = await import("@swapkit/toolbox-cosmos");
+    const { getDenomWithChain } = await import("@swapkit/toolboxes/cosmos");
 
     const account = await toolbox.getAccount(from);
     if (!account) throw new Error("Account not found");

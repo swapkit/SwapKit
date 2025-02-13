@@ -6,10 +6,7 @@
     "@polkadot/util": "12.6.2",
     "@swapkit/api": "workspace:*",
     "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolbox-cosmos": "workspace:*",
-    "@swapkit/toolbox-evm": "workspace:*",
-    "@swapkit/toolbox-substrate": "workspace:*",
-    "@swapkit/toolbox-utxo": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
     "bs58": "6.0.0"
   },
   "description": "SwapKit Plugin - ChainFlip",
@@ -23,28 +20,28 @@
       "types": "./src/index.ts"
     },
     "./chainflip": {
-      "default": "./dist/chainflip.js",
-      "require": "./dist/chainflip.cjs",
+      "default": "./dist/chainflip/index.js",
+      "require": "./dist/chainflip/index.cjs",
       "types": "./src/chainflip/index.ts"
     },
     "./evm": {
-      "default": "./dist/evm.js",
-      "require": "./dist/evm.cjs",
+      "default": "./dist/evm/index.js",
+      "require": "./dist/evm/index.cjs",
       "types": "./src/evm/index.ts"
     },
     "./kado": {
-      "default": "./dist/kado.js",
-      "require": "./dist/kado.cjs",
+      "default": "./dist/kado/index.js",
+      "require": "./dist/kado/index.cjs",
       "types": "./src/kado/index.ts"
     },
     "./radix": {
-      "default": "./dist/radix.js",
-      "require": "./dist/radix.cjs",
+      "default": "./dist/radix/index.js",
+      "require": "./dist/radix/index.cjs",
       "types": "./src/radix/index.ts"
     },
     "./thorchain": {
-      "default": "./dist/thorchain.js",
-      "require": "./dist/thorchain.cjs",
+      "default": "./dist/thorchain/index.js",
+      "require": "./dist/thorchain/index.cjs",
       "types": "./src/thorchain/index.ts"
     }
   },

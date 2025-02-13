@@ -38,12 +38,12 @@ export default defineConfig({
       "@swapkit/sdk": resolve("../../packages/swapkit/sdk/src"),
       "@swapkit/types": resolve("../../packages/swapkit/types/src"),
 
-      "@swapkit/toolbox-cosmos": resolve("../../packages/toolboxes/cosmos/src"),
-      "@swapkit/toolbox-evm": resolve("../../packages/toolboxes/evm/src"),
-      "@swapkit/toolbox-radix": resolve("../../packages/toolboxes/radix/src"),
-      "@swapkit/toolbox-solana": resolve("../../packages/toolboxes/solana/src"),
-      "@swapkit/toolbox-substrate": resolve("../../packages/toolboxes/substrate/src"),
-      "@swapkit/toolbox-utxo": resolve("../../packages/toolboxes/utxo/src"),
+      "@swapkit/toolboxes/cosmos": resolve("../../packages/toolboxes/cosmos/src"),
+      "@swapkit/toolboxes/evm": resolve("../../packages/toolboxes/evm/src"),
+      "@swapkit/toolboxes/radix": resolve("../../packages/toolboxes/radix/src"),
+      "@swapkit/toolboxes/solana": resolve("../../packages/toolboxes/solana/src"),
+      "@swapkit/toolboxes/substrate": resolve("../../packages/toolboxes/substrate/src"),
+      "@swapkit/toolboxes/utxo": resolve("../../packages/toolboxes/utxo/src"),
 
       "@swapkit/plugins": resolve("../../packages/plugins/src"),
       "@swapkit/wallets": resolve("../../packages/wallets/src"),

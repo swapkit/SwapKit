@@ -14,13 +14,13 @@ import {
   filterSupportedChains,
   updatedLastIndex,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
+import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 import type {
   Psbt,
   TransactionType,
   UTXOTransferParams,
   UTXOWalletTransferParams,
-} from "@swapkit/toolbox-utxo";
+} from "@swapkit/toolboxes/utxo";
 
 const KEYSTORE_SUPPORTED_CHAINS = [
   ...EVMChains,
@@ -48,7 +48,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
+      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { HDNodeWallet } = await import("ethers");
 
       const provider = getProvider(chain, rpcUrl);
@@ -59,7 +59,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.BitcoinCash: {
-      const { BCHToolbox } = await import("@swapkit/toolbox-utxo");
+      const { BCHToolbox } = await import("@swapkit/toolboxes/utxo");
       const toolbox = BCHToolbox();
       const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);
@@ -92,7 +92,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
 
       const toolbox = getToolboxByChain(chain)();
 
@@ -115,7 +115,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
 
     case Chain.Cosmos:
     case Chain.Kujira: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = getToolboxByChain(chain)();
       const address = await toolbox.getAddressFromMnemonic(phrase);
       const signer = await toolbox.getSigner(phrase);
@@ -127,7 +127,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
 
     case Chain.Maya:
     case Chain.THORChain: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
 
       const toolbox = getToolboxByChain(chain)();
       const signer = await toolbox.getSigner(phrase);
@@ -151,7 +151,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Polkadot:
     case Chain.Chainflip: {
       const { Network, getToolboxByChain, createKeyring } = await import(
-        "@swapkit/toolbox-substrate"
+        "@swapkit/toolboxes/substrate"
       );
 
       const signer = await createKeyring(phrase, Network[chain].prefix);
@@ -161,7 +161,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.Solana: {
-      const { SOLToolbox } = await import("@swapkit/toolbox-solana");
+      const { SOLToolbox } = await import("@swapkit/toolboxes/solana");
       const toolbox = SOLToolbox();
       const keypair = toolbox.createKeysForPath({ phrase, derivationPath });
 

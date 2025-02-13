@@ -20,9 +20,9 @@ import {
   type SwapKitWallet,
   type SwapParams,
 } from "@swapkit/helpers";
-import type { TransferParams as CosmosTransferParams } from "@swapkit/toolbox-cosmos";
-import type { TransferParams as EVMTransferParams } from "@swapkit/toolbox-evm";
-import type { UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { TransferParams as CosmosTransferParams } from "@swapkit/toolboxes/cosmos";
+import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 
 import {
   getExplorerAddressUrl as getAddressUrl,
@@ -274,7 +274,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
   }: { chain: Chain; signature: string; message: string; address: string }) {
     switch (chain) {
       case Chain.THORChain: {
-        const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+        const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
         const toolbox = getToolboxByChain(chain);
         return toolbox().verifySignature({ signature, message, address });
       }
@@ -378,7 +378,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
       case Chain.Maya:
       case Chain.Kujira:
       case Chain.Cosmos: {
-        const { estimateTransactionFee } = await import("@swapkit/toolbox-cosmos");
+        const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
         return estimateTransactionFee(params);
       }
 

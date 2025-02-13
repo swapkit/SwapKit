@@ -6,8 +6,8 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
-import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { GaiaToolbox } from "@swapkit/toolboxes/cosmos";
+import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Eip1193Provider } from "ethers";
 
 const cosmosTransfer =
@@ -16,7 +16,7 @@ const cosmosTransfer =
     if (!(window.okxwallet && "keplr" in window.okxwallet)) {
       throw new Error("No cosmos okxwallet found");
     }
-    const { createSigningStargateClient } = await import("@swapkit/toolbox-cosmos");
+    const { createSigningStargateClient } = await import("@swapkit/toolboxes/cosmos");
 
     const { keplr: wallet } = window.okxwallet;
     const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
@@ -35,7 +35,7 @@ async function getWeb3WalletMethods({
   walletProvider,
   chain,
 }: { walletProvider: Eip1193Provider | undefined; chain: EVMChain }) {
-  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
   if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
 
@@ -76,7 +76,7 @@ export async function getWalletMethods(
         throw new Error("No okxwallet found");
       }
 
-      const { getProvider } = await import("@swapkit/toolbox-evm");
+      const { getProvider } = await import("@swapkit/toolboxes/evm");
 
       const evmWallet = await getWeb3WalletMethods({
         chain,
@@ -95,7 +95,7 @@ export async function getWalletMethods(
       if (!(window.okxwallet && "bitcoin" in window.okxwallet)) {
         throw new Error("No bitcoin okxwallet found");
       }
-      const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
+      const { Psbt, BTCToolbox } = await import("@swapkit/toolboxes/utxo");
 
       const { bitcoin: wallet } = window.okxwallet;
       const address = (await wallet.connect()).address;
@@ -124,7 +124,7 @@ export async function getWalletMethods(
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
-      const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
+      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
       const [{ address }] = accounts;
       const toolbox = GaiaToolbox();
 

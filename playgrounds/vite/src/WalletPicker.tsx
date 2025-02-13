@@ -9,7 +9,7 @@ import {
   getEIP6963Wallets,
 } from "@swapkit/helpers";
 import type { FullWallet } from "@swapkit/sdk";
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import type { Eip1193Provider } from "@swapkit/toolboxes/evm";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { decryptFromKeystore } from "@swapkit/wallets/keystore";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";

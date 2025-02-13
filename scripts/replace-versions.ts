@@ -8,24 +8,11 @@ const onlyPackageJson = files.filter(
 
 const versions = {};
 
-function getPackagePrefix(type: string) {
-  switch (type) {
-    case "wallets":
-      return "wallet-";
-    case "toolboxes":
-      return "toolbox-";
-    case "plugins":
-      return "plugin-";
-    default:
-      return "";
-  }
-}
-
 for (const file of onlyPackageJson) {
   const { version } = await import(`../packages/${file}`);
-  const [type, name] = file.split("/");
+  const [, name] = file.split("/");
 
-  const packageName = `@swapkit/${getPackagePrefix(type)}${name}`;
+  const packageName = `@swapkit/${name}`;
 
   versions[packageName] = version;
 }

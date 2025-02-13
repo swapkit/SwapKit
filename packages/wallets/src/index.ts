@@ -1,4 +1,4 @@
-import type { Eip1193Provider } from "@swapkit/toolbox-evm";
+import type { Eip1193Provider } from "@swapkit/toolboxes/evm";
 import { bitgetWallet } from "./bitget";
 import { coinbaseWallet } from "./coinbase";
 import { ctrlWallet } from "./ctrl";

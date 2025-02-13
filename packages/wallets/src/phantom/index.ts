@@ -8,7 +8,7 @@ import {
   type WalletTxParams,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { SolanaProvider } from "@swapkit/toolbox-solana";
+import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 
 export const PHANTOM_SUPPORTED_CHAINS = [Chain.Bitcoin, Chain.Ethereum, Chain.Solana] as const;
 export type PhantomSupportedChains = (typeof PHANTOM_SUPPORTED_CHAINS)[number];
@@ -31,7 +31,7 @@ async function getWalletMethods<T extends PhantomSupportedChains>(chain: T) {
         throw new SwapKitError("wallet_phantom_not_found");
       }
 
-      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const [{ address }] = await provider.requestAccounts();
 
       const toolbox = getToolboxByChain(chain)();
@@ -40,7 +40,7 @@ async function getWalletMethods<T extends PhantomSupportedChains>(chain: T) {
     }
 
     case Chain.Ethereum: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
 
       const provider = new BrowserProvider(phantom?.ethereum, "any");
@@ -53,7 +53,9 @@ async function getWalletMethods<T extends PhantomSupportedChains>(chain: T) {
     }
 
     case Chain.Solana: {
-      const { createSolanaTokenTransaction, SOLToolbox } = await import("@swapkit/toolbox-solana");
+      const { createSolanaTokenTransaction, SOLToolbox } = await import(
+        "@swapkit/toolboxes/solana"
+      );
       const provider = phantom?.solana;
       if (!provider?.isPhantom) {
         throw new SwapKitError("wallet_phantom_not_found");

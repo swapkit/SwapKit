@@ -25,12 +25,7 @@
     "@scure/bip39": "1.3.0",
     "@solana/web3.js": "1.95.8",
     "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolbox-cosmos": "workspace:*",
-    "@swapkit/toolbox-evm": "workspace:*",
-    "@swapkit/toolbox-radix": "workspace:*",
-    "@swapkit/toolbox-solana": "workspace:*",
-    "@swapkit/toolbox-substrate": "workspace:*",
-    "@swapkit/toolbox-utxo": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
     "@trezor/connect-web": "9.4.0",
     "@walletconnect/modal-sign-html": "2.6.2",
     "blakejs": "1.2.1",
@@ -53,88 +48,88 @@
       "types": "./src/index.ts"
     },
     "./bitget": {
-      "default": "./dist/src/bitget.js",
-      "require": "./dist/src/bitget.cjs",
+      "default": "./dist/src/bitget/index.js",
+      "require": "./dist/src/bitget/index.cjs",
       "types": "./src/bitget/index.ts"
     },
     "./coinbase": {
-      "default": "./dist/src/coinbase.js",
-      "require": "./dist/src/coinbase.cjs",
+      "default": "./dist/src/coinbase/index.js",
+      "require": "./dist/src/coinbase/index.cjs",
       "types": "./src/coinbase/index.ts"
     },
     "./ctrl": {
-      "default": "./dist/src/ctrl.js",
-      "require": "./dist/src/ctrl.cjs",
+      "default": "./dist/src/ctrl/index.js",
+      "require": "./dist/src/ctrl/index.cjs",
       "types": "./src/ctrl/index.ts"
     },
     "./evm-extensions": {
-      "default": "./dist/src/evm-extensions.js",
-      "require": "./dist/src/evm-extensions.cjs",
+      "default": "./dist/src/evm-extensions/index.js",
+      "require": "./dist/src/evm-extensions/index.cjs",
       "types": "./src/evm-extensions/index.ts"
     },
     "./exodus": {
-      "default": "./dist/src/exodus.js",
-      "require": "./dist/src/exodus.cjs",
+      "default": "./dist/src/exodus/index.js",
+      "require": "./dist/src/exodus/index.cjs",
       "types": "./src/exodus/index.ts"
     },
     "./keepkey": {
-      "default": "./dist/src/keepkey.js",
-      "require": "./dist/src/keepkey.cjs",
+      "default": "./dist/src/keepkey/index.js",
+      "require": "./dist/src/keepkey/index.cjs",
       "types": "./src/keepkey/index.ts"
     },
     "./keepkey-bex": {
-      "default": "./dist/src/keepkey-bex.js",
-      "require": "./dist/src/keepkey-bex.cjs",
+      "default": "./dist/src/keepkey-bex/index.js",
+      "require": "./dist/src/keepkey-bex/index.cjs",
       "types": "./src/keepkey-bex/index.ts"
     },
     "./keplr": {
-      "default": "./dist/src/keplr.js",
-      "require": "./dist/src/keplr.cjs",
+      "default": "./dist/src/keplr/index.js",
+      "require": "./dist/src/keplr/index.cjs",
       "types": "./src/keplr/index.ts"
     },
     "./keystore": {
-      "default": "./dist/src/keystore.js",
-      "require": "./dist/src/keystore.cjs",
+      "default": "./dist/src/keystore/index.js",
+      "require": "./dist/src/keystore/index.cjs",
       "types": "./src/keystore/index.ts"
     },
     "./ledger": {
-      "default": "./dist/src/ledger.js",
-      "require": "./dist/src/ledger.cjs",
+      "default": "./dist/src/ledger/index.js",
+      "require": "./dist/src/ledger/index.cjs",
       "types": "./src/ledger/index.ts"
     },
     "./okx": {
-      "default": "./dist/src/okx.js",
-      "require": "./dist/src/okx.cjs",
+      "default": "./dist/src/okx/index.js",
+      "require": "./dist/src/okx/index.cjs",
       "types": "./src/okx/index.ts"
     },
     "./phantom": {
-      "default": "./dist/src/phantom.js",
-      "require": "./dist/src/phantom.cjs",
+      "default": "./dist/src/phantom/index.js",
+      "require": "./dist/src/phantom/index.cjs",
       "types": "./src/phantom/index.ts"
     },
     "./polkadotjs": {
-      "default": "./dist/src/polkadotjs.js",
-      "require": "./dist/src/polkadotjs.cjs",
+      "default": "./dist/src/polkadotjs/index.js",
+      "require": "./dist/src/polkadotjs/index.cjs",
       "types": "./src/polkadotjs/index.ts"
     },
     "./radix": {
-      "default": "./dist/src/radix.js",
-      "require": "./dist/src/radix.cjs",
+      "default": "./dist/src/radix/index.js",
+      "require": "./dist/src/radix/index.cjs",
       "types": "./src/radix/index.ts"
     },
     "./talisman": {
-      "default": "./dist/src/talisman.js",
-      "require": "./dist/src/talisman.cjs",
+      "default": "./dist/src/talisman/index.js",
+      "require": "./dist/src/talisman/index.cjs",
       "types": "./src/talisman/index.ts"
     },
     "./trezor": {
-      "default": "./dist/src/trezor.js",
-      "require": "./dist/src/trezor.cjs",
+      "default": "./dist/src/trezor/index.js",
+      "require": "./dist/src/trezor/index.cjs",
       "types": "./src/trezor/index.ts"
     },
     "./walletconnect": {
-      "default": "./dist/src/walletconnect.js",
-      "require": "./dist/src/walletconnect.cjs",
+      "default": "./dist/src/walletconnect/index.js",
+      "require": "./dist/src/walletconnect/index.cjs",
       "types": "./src/walletconnect/index.ts"
     }
   },

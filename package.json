@@ -57,9 +57,9 @@
   ],
   "workspaces": [
     "packages/plugins",
+    "packages/toolboxes",
     "packages/wallets",
     "packages/swapkit/*",
-    "packages/toolboxes/*",
     "playgrounds/*",
     "tools/*"
   ]

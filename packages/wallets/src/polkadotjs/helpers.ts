@@ -1,11 +1,11 @@
 import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
 
-import type { InjectedWindow } from "@swapkit/toolbox-substrate";
+import type { InjectedWindow } from "@swapkit/toolboxes/substrate";
 
 export const getWalletMethods = async (chain: Chain) => {
   switch (chain) {
     case Chain.Polkadot: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-substrate");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/substrate");
       const injectedWindow = window as Window & InjectedWindow;
       const injectedExtension = injectedWindow?.injectedWeb3?.["polkadot-js"];
 

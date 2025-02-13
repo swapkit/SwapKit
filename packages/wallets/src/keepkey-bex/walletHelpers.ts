@@ -11,8 +11,8 @@ import {
   WalletOption,
   erc20ABI,
 } from "@swapkit/helpers";
-import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolbox-evm";
+import type { TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 interface UTXOProvider {
@@ -177,7 +177,7 @@ export function cosmosTransfer(chain: CosmosChain) {
   const chainId = ChainToChainId[chain];
   return async ({ from, recipient, assetValue }: TransferParams) => {
     const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolbox-cosmos"
+      "@swapkit/toolboxes/cosmos"
     );
     // @ts-expect-error assumed available connection
     const offlineSigner = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(chainId);
@@ -212,7 +212,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider) {
         throw new SwapKitError("wallet_keepkey_contract_address_not_provided");
       }
       const { createContract, createContractTxObject, isStateChangingCall, toHexString } =
-        await import("@swapkit/toolbox-evm");
+        await import("@swapkit/toolboxes/evm");
 
       const isStateChanging = isStateChangingCall(abi, funcName);
 
@@ -237,7 +237,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider) {
     },
     approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
       const { MAX_APPROVAL, createContractTxObject, toHexString } = await import(
-        "@swapkit/toolbox-evm"
+        "@swapkit/toolboxes/evm"
       );
 
       const { value, to, data } = await createContractTxObject(provider, {
@@ -258,7 +258,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider) {
         throw new SwapKitError("wallet_keepkey_send_transaction_no_address");
       }
 
-      const { toHexString } = await import("@swapkit/toolbox-evm");
+      const { toHexString } = await import("@swapkit/toolboxes/evm");
 
       return provider.send("eth_sendTransaction", [
         { value: toHexString(BigInt(value || 0)), from, to, data: data || "0x" },

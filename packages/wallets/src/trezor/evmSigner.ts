@@ -108,7 +108,7 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       }
 
       const { default: TrezorConnect } = await import("@trezor/connect-web");
-      const { toHexString } = await import("@swapkit/toolbox-evm");
+      const { toHexString } = await import("@swapkit/toolboxes/evm");
       const { Transaction } = await import("ethers");
 
       const additionalFields = isEIP1559

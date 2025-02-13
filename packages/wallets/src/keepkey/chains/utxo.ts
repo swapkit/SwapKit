@@ -6,7 +6,7 @@ import {
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { BCHToolbox, Psbt, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { BCHToolbox, Psbt, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
 
@@ -49,7 +49,7 @@ export const utxoWalletMethods = async ({
     transfer: (params: UTXOTransferParams) => Promise<string>;
   }
 > => {
-  const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+  const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
 
   const toolbox = getToolboxByChain(chain)();
   const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain) ? "p2wpkh" : "p2pkh";

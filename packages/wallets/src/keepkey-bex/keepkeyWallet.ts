@@ -6,7 +6,7 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { NonETHToolbox } from "@swapkit/toolbox-evm";
+import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
 import type { Eip1193Provider } from "ethers";
 import {
   type WalletTxParams,
@@ -43,7 +43,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
     case Chain.Maya:
     case Chain.THORChain: {
       const { getToolboxByChain, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolbox-cosmos"
+        "@swapkit/toolboxes/cosmos"
       );
 
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
@@ -58,7 +58,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
 
     case Chain.Cosmos:
     case Chain.Kujira: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = getToolboxByChain(chain)();
 
       return { ...toolbox, transfer: cosmosTransfer(chain) };
@@ -69,7 +69,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
     case Chain.BitcoinCash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const toolbox = getToolboxByChain(chain)();
 
       const getBalance = async () => {
@@ -98,7 +98,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_SUPPORTED_CHAINS)[number]
     case Chain.Polygon:
     case Chain.Avalanche: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
-      const { getToolboxByChain, getBalance, getProvider } = await import("@swapkit/toolbox-evm");
+      const { getToolboxByChain, getBalance, getProvider } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
       const ethereumWindowProvider = getKEEPKEYProvider(chain) as Eip1193Provider;
 

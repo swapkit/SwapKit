@@ -45,7 +45,7 @@ type KeepKeyOptions = {
 };
 
 const getWalletMethods = async ({ sdk, chain, derivationPath }: KeepKeyOptions) => {
-  const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
   switch (chain) {
     case Chain.BinanceSmartChain:

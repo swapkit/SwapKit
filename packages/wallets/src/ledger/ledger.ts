@@ -9,8 +9,8 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
-import type { UTXOBuildTxParams } from "@swapkit/toolbox-utxo";
+import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
 import { LEDGER_SUPPORTED_CHAINS } from "./helpers/index";
 import { getLedgerAddress, getLedgerClient } from "./helpers/index";
@@ -60,7 +60,7 @@ const getWalletMethods = async ({
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
 
       const toolbox = getToolboxByChain(chain)();
 
@@ -94,7 +94,7 @@ const getWalletMethods = async ({
     case Chain.Polygon:
     case Chain.BinanceSmartChain:
     case Chain.Base: {
-      const { getToolboxByChain, getProvider } = await import("@swapkit/toolbox-evm");
+      const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
       const provider = getProvider(chain);
@@ -105,7 +105,7 @@ const getWalletMethods = async ({
 
     case Chain.Cosmos: {
       const { createSigningStargateClient, getMsgSendDenom, GaiaToolbox } = await import(
-        "@swapkit/toolbox-cosmos"
+        "@swapkit/toolboxes/cosmos"
       );
       const toolbox = GaiaToolbox();
       const signer = await getLedgerClient({ chain, derivationPath });
@@ -156,7 +156,7 @@ const getWalletMethods = async ({
         getDefaultChainFee,
         fromBase64,
         prepareMessageForBroadcast,
-      } = await import("@swapkit/toolbox-cosmos");
+      } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = ThorchainToolbox();
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });

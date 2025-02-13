@@ -7,8 +7,8 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { NonETHToolbox } from "@swapkit/toolbox-evm";
-import { type InjectedWindow, Network } from "@swapkit/toolbox-substrate";
+import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
+import { type InjectedWindow, Network } from "@swapkit/toolboxes/substrate";
 import type { Eip1193Provider } from "ethers";
 
 declare const window: {
@@ -20,7 +20,7 @@ async function getWeb3WalletMethods({
   walletProvider,
   chain,
 }: { walletProvider: Eip1193Provider | undefined; chain: EVMChain }) {
-  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
 
   if (!walletProvider) {
@@ -62,7 +62,7 @@ export async function getWalletMethods(chain: Chain) {
       if (!(window.talismanEth && "send" in window.talismanEth)) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_found", info: { chain } });
       }
-      const { getProvider } = await import("@swapkit/toolbox-evm");
+      const { getProvider } = await import("@swapkit/toolboxes/evm");
 
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.talismanEth });
       const address: string = (await window.talismanEth.send("eth_requestAccounts", []))[0];
@@ -75,7 +75,7 @@ export async function getWalletMethods(chain: Chain) {
 
     case Chain.Polkadot:
     case Chain.Chainflip: {
-      const { getToolboxByChain } = await import("@swapkit/toolbox-substrate");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/substrate");
 
       const injectedWindow = window as Window & InjectedWindow;
       const injectedExtension = injectedWindow?.injectedWeb3?.talisman;

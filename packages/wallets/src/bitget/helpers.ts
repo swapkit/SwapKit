@@ -9,14 +9,14 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { Psbt, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Eip1193Provider } from "ethers";
 
 function cosmosTransfer() {
   return async ({ from, recipient, assetValue, memo }: TransferParams) => {
     const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolbox-cosmos"
+      "@swapkit/toolboxes/cosmos"
     );
     if (!(window.bitkeep && "keplr" in window.bitkeep)) {
       throw new SwapKitError("wallet_bitkeep_not_found");
@@ -60,7 +60,7 @@ export async function getWalletMethods(chain: Chain) {
 
       const wallet = bitget.ethereum;
 
-      const { getProvider } = await import("@swapkit/toolbox-evm");
+      const { getProvider } = await import("@swapkit/toolboxes/evm");
 
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
 
@@ -78,7 +78,7 @@ export async function getWalletMethods(chain: Chain) {
       }
       const { unisat: wallet } = bitget;
 
-      const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
+      const { Psbt, BTCToolbox } = await import("@swapkit/toolboxes/utxo");
       const [address] = await wallet.requestAccounts();
       const toolbox = BTCToolbox();
 
@@ -105,7 +105,7 @@ export async function getWalletMethods(chain: Chain) {
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
-      const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
+      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = GaiaToolbox();
       const [{ address }] = accounts;
 
@@ -117,7 +117,7 @@ export async function getWalletMethods(chain: Chain) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
 
-      const { SOLToolbox } = await import("@swapkit/toolbox-solana");
+      const { SOLToolbox } = await import("@swapkit/toolboxes/solana");
       const provider = bitget?.solana;
 
       const providerConnection = await provider.connect();
@@ -166,7 +166,7 @@ export const getWeb3WalletMethods = async ({
   walletProvider,
   chain,
 }: { walletProvider?: Eip1193Provider; chain: EVMChain }) => {
-  const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+  const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
   if (!walletProvider) throw new SwapKitError("wallet_provider_not_found");
 

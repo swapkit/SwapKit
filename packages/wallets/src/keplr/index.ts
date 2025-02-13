@@ -45,7 +45,7 @@ function connectKeplr(
       const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
       if (!offlineSigner) throw new Error("Could not load offlineSigner");
 
-      const { getToolboxByChain } = await import("@swapkit/toolbox-cosmos");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
 
       const accounts = await offlineSigner.getAccounts();
       if (!accounts?.[0]?.address) throw new Error("No accounts found");

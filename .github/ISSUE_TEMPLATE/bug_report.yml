@@ -9,9 +9,6 @@ body:
 
         If this is not a bug report, please use other relevant channels:
 
-        - [Ask questions on #swapkit-dev channel on Discord](https://discord.com/invite/thorswap)
-        - [Propose integrations on #partners-integrations on Discord](https://discord.com/invite/thorswap)
-
         Before you proceed:
 
         - Make sure you are on latest versions of SwapKit packages.
@@ -40,14 +37,12 @@ body:
       description: |
         What functionality is affected by the issue?
       options:
-        - label: Swap
-        - label: Liquidity
-        - label: Savers
-        - label: Loan
-        - label: Wallet
-        - label: Transactions
         - label: Api
+        - label: Liquidity
         - label: Other
+        - label: Swap
+        - label: Transactions
+        - label: Wallet
 
   - type: checkboxes
     attributes:
@@ -57,23 +52,10 @@ body:
       options:
         - label: "@swapkit/sdk"
         - label: "@swapkit/core"
-        - label: "@swapkit/api"
         - label: "@swapkit/helpers"
-        - label: "@swapkit/tokens"
-
-        - label: "@swapkit/toolbox-cosmos"
-        - label: "@swapkit/toolbox-evm"
-        - label: "@swapkit/toolbox-utxo"
-
-        - label: "@swapkit/wallet-evm-extensions"
-        - label: "@swapkit/wallet-keepkey"
-        - label: "@swapkit/wallet-keplr"
-        - label: "@swapkit/wallet-keystore"
-        - label: "@swapkit/wallet-ledger"
-        - label: "@swapkit/wallet-okx"
-        - label: "@swapkit/wallet-trezor"
-        - label: "@swapkit/wallet-wc"
-        - label: "@swapkit/wallet-ctrl"
+        - label: "@swapkit/wallets"
+        - label: "@swapkit/toolboxes"
+        - label: "@swapkit/plugins"
 
   - type: textarea
     attributes:

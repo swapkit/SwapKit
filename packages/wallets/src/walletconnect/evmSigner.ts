@@ -79,7 +79,7 @@ class WalletconnectSigner extends AbstractSigner {
   signTypedData = () => {
     throw new Error("Not implemented: signTypedData");
 
-    // const { toHexString } = await import('@swapkit/toolbox-evm');
+    // const { toHexString } = await import('@swapkit/toolboxes/evm');
 
     // const baseTx = {
     //   from,
@@ -102,7 +102,7 @@ class WalletconnectSigner extends AbstractSigner {
 
   // @ts-expect-error TODO: fix this
   sendTransaction = async ({ from, to, value, data }: TransactionRequest) => {
-    const { toHexString } = await import("@swapkit/toolbox-evm");
+    const { toHexString } = await import("@swapkit/toolboxes/evm");
 
     const baseTx = {
       from,

@@ -9,7 +9,7 @@ import {
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolbox-utxo";
+import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolboxes/utxo";
 
 export const TREZOR_SUPPORTED_CHAINS = [
   Chain.Arbitrum,
@@ -51,7 +51,7 @@ async function getToolbox({
     case Chain.Polygon:
     case Chain.Base:
     case Chain.Ethereum: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
+      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { getEVMSigner } = await import("./evmSigner");
 
       const provider = getProvider(chain);
@@ -68,7 +68,7 @@ async function getToolbox({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { toCashAddress, getToolboxByChain, BCHToolbox } = await import(
-        "@swapkit/toolbox-utxo"
+        "@swapkit/toolboxes/utxo"
       );
 
       const scriptType = getScriptType(derivationPath);

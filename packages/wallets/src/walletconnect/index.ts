@@ -8,7 +8,11 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { BaseCosmosToolboxType, DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
+import type {
+  BaseCosmosToolboxType,
+  DepositParam,
+  TransferParams,
+} from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
@@ -56,7 +60,7 @@ async function getToolbox({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
+      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
       const provider = getProvider(chain);
       const signer = await getEVMSigner({ walletconnect, chain, provider });
@@ -79,7 +83,7 @@ async function getToolbox({
         fromBase64,
         getDefaultChainFee,
         prepareMessageForBroadcast,
-      } = await import("@swapkit/toolbox-cosmos");
+      } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = ThorchainToolbox();
 
       const fee = getDefaultChainFee(chain);

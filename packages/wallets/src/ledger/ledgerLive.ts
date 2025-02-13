@@ -16,8 +16,8 @@ import {
   SwapKitNumber,
   WalletOption,
 } from "@swapkit/helpers";
-import { ETHToolbox, getProvider } from "@swapkit/toolbox-evm";
-import type { UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import { ETHToolbox, getProvider } from "@swapkit/toolboxes/evm";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import { BigNumber as BigNumberJS } from "bignumber.js";
 import { VoidSigner } from "ethers";
 
@@ -214,7 +214,7 @@ export const getLedgerLiveWallet = async ({
     }
 
     case Chain.Cosmos: {
-      const { GaiaToolbox } = await import("@swapkit/toolbox-cosmos");
+      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
       const ledgerLiveClient = CosmosLedgerLive();
       const toolbox = GaiaToolbox();
 
@@ -285,7 +285,7 @@ export const getLedgerLiveWallet = async ({
     case Chain.Dogecoin:
     case Chain.Bitcoin: {
       const ledgerLiveClient = BitcoinLedgerLive();
-      const { getToolboxByChain } = await import("@swapkit/toolbox-utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const toolbox = getToolboxByChain(chain)();
 
       const getAddress = () => ledgerLiveAccount.address;

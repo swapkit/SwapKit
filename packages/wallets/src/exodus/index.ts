@@ -9,8 +9,8 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
-import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import { BrowserProvider, type Eip1193Provider } from "ethers";
 import {
   AddressPurpose,

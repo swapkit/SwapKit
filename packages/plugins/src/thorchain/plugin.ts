@@ -158,7 +158,7 @@ function createTCBasedPlugin<T extends PluginChain>({
         return shouldDeposit ? wallet.deposit(params) : wallet.transfer(params);
       }
 
-      const { getChecksumAddressFromAsset } = await import("@swapkit/toolbox-evm");
+      const { getChecksumAddressFromAsset } = await import("@swapkit/toolboxes/evm");
       const wallet = getWallet(chain as EVMChain);
 
       return wallet.call<string>({

@@ -18,20 +18,42 @@ export async function buildPackage({
     ...rest,
   };
 
-  const result = await Bun.build(buildOptions);
-  // const resultCJS = await Bun.build({
-  //   ...buildOptions,
-  //   format: "cjs",
-  // });
+  const buildESM = await Bun.build(buildOptions);
+  const buildCJS = await Bun.build({
+    ...buildOptions,
+    format: "cjs",
+    naming: "[dir]/[name].cjs",
+  });
 
-  if (!result.success) {
-    throw new AggregateError(result.logs, "Build failed");
+  const success = buildESM.success && buildCJS.success;
+
+  if (!success) {
+    throw new AggregateError(buildESM.logs.concat(buildCJS.logs), "Build failed");
   }
 
-  const items = result.outputs.filter(
-    (file) => file.path.endsWith(".js") || file.path.endsWith(".cjs"),
-  );
-  // const size = items.reduce((acc, file) => acc + file.size, 0);
+  const esmBytesize = buildESM.outputs
+    .filter((file) => file.path.endsWith(".js"))
+    .reduce((acc, file) => acc + file.size, 0);
+  const cjsBytesize = buildCJS.outputs
+    .filter((file) => file.path.endsWith(".cjs"))
+    .reduce((acc, file) => acc + file.size, 0);
 
-  console.info(`✅ Build successful: ${items.length} files`);
+  const esmSize = formatBytes(esmBytesize);
+  const cjsSize = formatBytes(cjsBytesize);
+
+  console.info(
+    `✅ Build successful: ${buildESM.outputs.length} files (${esmSize} ESM, ${cjsSize} CJS)`,
+  );
+}
+
+function formatBytes(bytes: number) {
+  const units = ["B", "KB", "MB"];
+  let index = 0;
+  let size = bytes;
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024;
+    index++;
+  }
+
+  return `${size.toFixed(2)} ${units[index]}`;
 }
