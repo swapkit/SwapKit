@@ -7,6 +7,7 @@ export async function buildPackage({
 }: Omit<BuildConfig, "entrypoints"> & {
   entrypoints?: string[];
 } = {}) {
+  const pkgJson = await Bun.file("package.json").json();
   const buildOptions: BuildConfig = {
     entrypoints,
     outdir: "./dist",
@@ -31,19 +32,46 @@ export async function buildPackage({
     throw new AggregateError(buildESM.logs.concat(buildCJS.logs), "Build failed");
   }
 
-  const esmBytesize = buildESM.outputs
+  if (entrypoints.length === 1) {
+    const esmBytesize = buildESM.outputs
+      .filter((file) => file.path.endsWith(".js"))
+      .reduce((acc, file) => acc + file.size, 0);
+    const cjsBytesize = buildCJS.outputs
+      .filter((file) => file.path.endsWith(".cjs"))
+      .reduce((acc, file) => acc + file.size, 0);
+
+    const esmSize = formatBytes(esmBytesize);
+    const cjsSize = formatBytes(cjsBytesize);
+
+    return console.info(
+      `✅ Build successful: ${buildESM.outputs.length} files (${esmSize} ESM, ${cjsSize} CJS)`,
+    );
+  }
+
+  const esmFiles = buildESM.outputs
     .filter((file) => file.path.endsWith(".js"))
-    .reduce((acc, file) => acc + file.size, 0);
-  const cjsBytesize = buildCJS.outputs
+    .map(({ size, path }) => {
+      const [name, fileName] = path.split("/").slice(-2);
+      const exportName = name === "dist" ? (fileName === "index.js" ? "" : "shared-chunk") : name;
+      return { size, path, exportName };
+    });
+  const cjsFiles = buildCJS.outputs
     .filter((file) => file.path.endsWith(".cjs"))
-    .reduce((acc, file) => acc + file.size, 0);
+    .map(({ size, path }) => {
+      const [name, fileName] = path.split("/").slice(-2);
+      const exportName = name === "dist" ? (fileName === "index.cjs" ? "" : "shared-chunk") : name;
+      return { size, path, exportName };
+    });
 
-  const esmSize = formatBytes(esmBytesize);
-  const cjsSize = formatBytes(cjsBytesize);
-
-  console.info(
-    `✅ Build successful: ${buildESM.outputs.length} files (${esmSize} ESM, ${cjsSize} CJS)`,
-  );
+  console.info(`✅ Build successful: ${buildESM.outputs.length} files`);
+  console.info("📦 ESM Import Sizes:");
+  for (const { size, exportName } of esmFiles) {
+    console.info(`  ${pkgJson.name}${exportName ? `/${exportName}` : ""}: ${formatBytes(size)}`);
+  }
+  console.info("📦 CJS Import Sizes:");
+  for (const { size, exportName } of cjsFiles) {
+    console.info(`  ${pkgJson.name}${exportName ? `/${exportName}` : ""}: ${formatBytes(size)}`);
+  }
 }
 
 function formatBytes(bytes: number) {
@@ -55,5 +83,5 @@ function formatBytes(bytes: number) {
     index++;
   }
 
-  return `${size.toFixed(2)} ${units[index]}`;
+  return `${Number.parseFloat(size.toFixed(2))} ${units[index]}`;
 }
