@@ -47,6 +47,7 @@ import {
   getRPC,
 } from "../util";
 
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { BaseCosmosToolbox } from "./BaseCosmosToolbox";
 
 const secp256k1HdWalletFromMnemonic =
@@ -290,9 +291,32 @@ export const BaseThorchainToolbox = ({
 
     const aminoMessage = buildAminoMsg({ assetValue, from, recipient, memo, chain });
 
-    const preparedMessage = isAminoSigner
-      ? aminoMessage
-      : parseAminoMessageForDirectSigning(aminoMessage);
+    if (isAminoSigner) {
+      const msgSign = [convertToSignable(aminoMessage, chain)];
+
+      const { signatures, authInfoBytes } = await signingClient.sign(
+        from,
+        msgSign,
+        defaultFee,
+        memo,
+      );
+
+      const tx = TxRaw.encode({
+        signatures,
+        authInfoBytes,
+        bodyBytes: await buildEncodedTxBody({
+          chain,
+          msgs: [aminoMessage].map(parseAminoMessageForDirectSigning),
+          memo,
+        }),
+      }).finish();
+
+      const txResponse = await signingClient.broadcastTx(tx);
+
+      return txResponse.transactionHash;
+    }
+
+    const preparedMessage = parseAminoMessageForDirectSigning(aminoMessage);
 
     const msgSign = convertToSignable(preparedMessage, chain);
 
