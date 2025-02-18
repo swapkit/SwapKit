@@ -1,5 +1,14 @@
 # @swapkit/sdk
 
+## 2.2.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/plugin-thorchain@2.3.12
+  - @swapkit/core@3.2.24
+  - @swapkit/wallets@2.0.25
+
 ## 2.2.21
 
 ### Patch Changes

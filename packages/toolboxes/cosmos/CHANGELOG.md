@@ -1,5 +1,14 @@
 # @swapkit/toolbox-cosmos
 
+## 1.10.1
+
+### Patch Changes
+
+- [#1193](https://github.com/thorswap/SwapKit/pull/1193) [`79d10f0`](https://github.com/thorswap/SwapKit/commit/79d10f043ec1600a7d00d4223b4b70c3ac6430bd) Thanks [@towanTG](https://github.com/towanTG)! - Fixes deposit signing for THORChain in keplr
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.0
+
 ## 1.10.0
 
 ### Minor Changes
