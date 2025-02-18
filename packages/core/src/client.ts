@@ -393,27 +393,6 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     }
   }
 
-  // TODO: REMOVE THAT:
-  // const swapkitConfig = config.swapkitConfig || {};
-  // const swapkitApiKey = swapkitConfig?.swapkitApiKey || config?.swapkitApiKey;
-  // const referer = swapkitConfig.useHashedApiKey ? swapkitConfig.referer : undefined;
-
-  // const api = swapkitApiKey
-  //   ? {
-  //       getGasRate: () => SwapKitApi.getGasRate(isDev, swapkitApiKey, referer),
-  //       getPrice: (body: PriceRequest) => SwapKitApi.getPrice(body, isDev, swapkitApiKey, referer),
-  //       getSwapQuote: (params: QuoteRequest) =>
-  //         SwapKitApi.getSwapQuote(params, isDev, swapkitApiKey, referer),
-  //       getTokenList: (provider: string) => SwapKitApi.getTokenList(provider),
-  //       getTokenListProviders: () =>
-  //         SwapKitApi.getTokenListProvidersV2(isDev, swapkitApiKey, referer),
-  //       getTokenTradingPairs: (providers: PluginNameEnum[]) =>
-  //         SwapKitApi.getTokenTradingPairs(providers, isDev, swapkitApiKey, referer),
-  //       getTrackerDetails: (payload: TrackerParams) =>
-  //         SwapKitApi.getTrackerDetails(payload, swapkitApiKey, referer),
-  //     }
-  //   : { undefined };
-
   return {
     ...availablePlugins,
     ...connectWalletMethods,

@@ -9,7 +9,7 @@ import {
   type SwapKitPluginParams,
   type UTXOWallets,
 } from "@swapkit/helpers";
-import { swapkitApiEndpoints } from "@swapkit/helpers/api";
+import { SwapKitApi } from "@swapkit/helpers/api";
 import type { RequestSwapDepositAddressParams } from "./types";
 
 type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & SolanaWallets);
@@ -52,7 +52,7 @@ function plugin({ getWallet }: SwapKitPluginParams) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const { depositAddress } = await swapkitApiEndpoints.getChainflipDepositChannel({
+    const { depositAddress } = await SwapKitApi.getChainflipDepositChannel({
       ...chainflip,
       destinationAddress: recipient || chainflip.destinationAddress,
       maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,

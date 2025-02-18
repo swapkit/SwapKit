@@ -6,7 +6,7 @@ import type { TokensResponse } from "./types";
 
 const baseUrl = "https://static.thorswap.net";
 
-export function getTokenList(tokenListName: string) {
+export function getStaticTokenList(tokenListName: string) {
   return RequestClient.get<TokensResponse>(`${baseUrl}/token-list/${tokenListName}.json`);
 }
 

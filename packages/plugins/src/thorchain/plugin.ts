@@ -75,7 +75,7 @@ function getInboundDataFunction(type?: THORNodeType) {
       return { gas_rate: "0", router: "", address: "", halted: false, chain };
     }
 
-    const inboundData = await SwapKitApi.getInboundAddresses(type);
+    const inboundData = await SwapKitApi.thornode.getInboundAddresses(type);
     const chainAddressData = inboundData.find((item) => item.chain === chain);
 
     if (!chainAddressData) throw new SwapKitError("core_inbound_data_not_found");
@@ -202,7 +202,7 @@ function createTCBasedPlugin<T extends PluginChain>({
   }
 
   async function depositToProtocol({ memo, assetValue }: { assetValue: AssetValue; memo: string }) {
-    const mimir = await SwapKitApi.getMimirInfo(pluginType);
+    const mimir = await SwapKitApi.thornode.getMimirInfo(pluginType);
 
     // check if trading is halted or not
     if (mimir.HALTCHAINGLOBAL >= 1 || mimir.HALTTHORCHAIN >= 1) {

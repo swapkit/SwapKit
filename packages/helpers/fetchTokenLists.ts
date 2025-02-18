@@ -1,17 +1,5 @@
-import { Chain, ChainId, ProviderName } from "@swapkit/helpers";
+import { Chain, ChainId, ProviderName } from "./src";
 import { SwapKitApi } from "./src/api";
-
-function parseChain(chain: string) {
-  if (chain === "ARBITRUM") return Chain.Arbitrum;
-  return chain;
-}
-
-function parseIdentifier(identifier: string) {
-  if (identifier.startsWith("ARBITRUM.")) {
-    return identifier.replace("ARBITRUM.", `${Chain.Arbitrum}.`);
-  }
-  return identifier;
-}
 
 const providers = (await SwapKitApi.getTokenListProviders()).filter(
   (provider) =>
@@ -23,11 +11,9 @@ const providers = (await SwapKitApi.getTokenListProviders()).filter(
     ].includes(provider.provider),
 );
 
-console.info(providers);
-
 console.info(
   `🚀 Fetching token lists from ${providers.length} providers:\n${providers
-    .map(({ provider }) => provider)
+    .map(({ provider, count }) => ` ${provider}: ${count} tokens`)
     .join("\n-")}`,
 );
 
@@ -48,8 +34,7 @@ for (const { provider } of providers) {
         chainId: token.chainId === "thorchain-mainnet-v1" ? thorchainChainId : token.chainId,
         decimals: token.decimals,
         identifier: parseIdentifier(token.identifier),
-        logoURI: token.logoURL,
-        // @ts-expect-error ?
+        logoURI: token.logoURI,
         shortCode: token.shortCode,
         ticker: token.ticker,
       }))
@@ -61,7 +46,19 @@ for (const { provider } of providers) {
       `src/tokens/lists/${provider.toLowerCase()}.ts`,
       `export const list = ${JSON.stringify(tokenListWithTokens, null, 2)} as const;`,
     );
-  } catch (_error) {
-    console.error(provider);
+  } catch (error) {
+    console.error(provider, error);
   }
+}
+
+function parseChain(chain: string) {
+  if (chain === "ARBITRUM") return Chain.Arbitrum;
+  return chain;
+}
+
+function parseIdentifier(identifier: string) {
+  if (identifier.startsWith("ARBITRUM.")) {
+    return identifier.replace("ARBITRUM.", `${Chain.Arbitrum}.`);
+  }
+  return identifier;
 }

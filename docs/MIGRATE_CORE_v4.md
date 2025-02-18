@@ -74,10 +74,17 @@ $ bun install @swapkit/helpers
 
 #### @swapkit/api => @swapkit/helpers/api
 
+Methods were scoped under `SwapKitApi` object and split into related api endpoints.
+
 - `computeHashForGet` -> use `computeHash` directly
 - `computeHashForPost` -> use `computeHash` directly
 - `getSwapQuoteV2` -> use `getSwapQuote` directly
 - `getTokenListV2` -> use `getTokenList` directly
+- for thornode requests use `SwapKitApi.thornode`
+- for mayachain midgard requests use `SwapKitApi.mayachainMidgard`
+- for thorchain midgard requests use `SwapKitApi.thorchainMidgard`
+- for microgard requests use `SwapKitApi.microgard`
+
 
 #### @swapkit/core
 

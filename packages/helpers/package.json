@@ -42,6 +42,7 @@
     "build": "bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "lint": "biome check --diagnostic-level=error --write ./src",
+    "generate-tokens": "bun --bun ./fetchTokenLists.ts",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "type-check": "tsc --noEmit"

@@ -9,7 +9,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
   const [tnsDetail, setTnsDetail] = useState<THORNameDetails>();
 
   const checkTns = useCallback(async () => {
-    const tnsDetail = await SwapKitApi.getTHORNameDetails(tnsSearch);
+    const tnsDetail = await SwapKitApi.microgard.getTHORNameDetails(tnsSearch);
     setTnsDetail(tnsDetail);
   }, [tnsSearch]);
 

@@ -9,8 +9,6 @@ type Options = Parameters<typeof fetch>[1] & {
   json?: unknown;
 };
 
-const clientConfig: Options = {};
-
 export const defaultRequestHeaders =
   typeof window !== "undefined"
     ? ({} as Record<string, string>)
@@ -22,13 +20,13 @@ async function fetchWithConfig(
 ) {
   const { searchParams, json, body } = options;
   const urlInstance = new URL(url);
-  const bodyToSend = json ? JSON.stringify(json) : body;
+  const isJson = json || url.endsWith(".json");
+  const bodyToSend = isJson ? JSON.stringify(json) : body;
 
   const headers = {
     ...defaultRequestHeaders,
-    ...clientConfig.headers,
     ...options.headers,
-    ...(json ? { "Content-Type": "application/json" } : {}),
+    ...(isJson ? { "Content-Type": "application/json" } : {}),
   } as Record<string, string>;
 
   if (searchParams) {
@@ -40,7 +38,6 @@ async function fetchWithConfig(
 
   try {
     const response = await fetch(urlInstance.toString(), {
-      ...clientConfig,
       ...options,
       method,
       body: bodyToSend,
