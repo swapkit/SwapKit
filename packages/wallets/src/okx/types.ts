@@ -1,11 +1,5 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 
-export type OKXConfig = {
-  covalentApiKey?: string;
-  ethplorerApiKey?: string;
-  blockchairApiKey?: string;
-};
-
 export enum BroadcastMode {
   /** Return after tx commit */
   Block = "block",

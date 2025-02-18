@@ -94,11 +94,12 @@ export async function getWalletMethods(chain: Chain) {
           info: { wallet: WalletOption.TALISMAN, accounts, address: accounts[0]?.address },
         });
       }
-      const [{ address }] = accounts;
+      const address = toolbox.convertAddress(accounts[0].address, Network[chain].prefix);
 
       return {
-        walletMethods: toolbox,
-        address: toolbox.convertAddress(address, Network[chain].prefix),
+        ...toolbox,
+        getAddress: () => address,
+        address,
       };
     }
 

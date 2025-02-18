@@ -143,9 +143,6 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
         toolbox: {
           ...toolbox,
           ...ctrlMethods,
-          // Overwrite ctrl getBalance due to race condition in their app when connecting multiple evm wallets
-          getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({ chain, provider: getProvider(chain), address, potentialScamFilter }),
         },
       });
     }

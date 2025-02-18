@@ -82,7 +82,7 @@ async function getToolbox({
         createStargateClient,
         fromBase64,
         getDefaultChainFee,
-        prepareMessageForBroadcast,
+        parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = ThorchainToolbox();
 
@@ -136,7 +136,7 @@ async function getToolbox({
 
         const bodyBytes = buildEncodedTxBody({
           chain: Chain.THORChain,
-          msgs: msgs.map(prepareMessageForBroadcast),
+          msgs: msgs.map(parseAminoMessageForDirectSigning),
           memo: memo || "",
         });
         const pubkey = encodePubkey(account.pubkey);
