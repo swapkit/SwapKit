@@ -90,15 +90,19 @@ $ bun install @swapkit/helpers
 - `setRequestClientConfig` -> removed - use `SKConfig` directly
 
 
-#### @swapkit/toolbox-cosmos => @swapkit/toolboxes/cosmos
-#### @swapkit/toolbox-evm => @swapkit/toolboxes/evm
-#### @swapkit/toolbox-radix => @swapkit/toolboxes/radix
-#### @swapkit/toolbox-solana => @swapkit/toolboxes/solana
-#### @swapkit/toolbox-substrate => @swapkit/toolboxes/substrate
-#### @swapkit/toolbox-utxo => @swapkit/toolboxes/utxo
-#### @swapkit/plugin-chainflip => @swapkit/plugins/chainflip
-#### @swapkit/plugin-evm => @swapkit/plugins/evm
-#### @swapkit/plugin-kado => @swapkit/plugins/kado
-#### @swapkit/plugin-radix => @swapkit/plugins/radix
-#### @swapkit/plugin-thorchain => @swapkit/plugins/thorchain
+#### @swapkit/wallet-bitget => @swapkit/wallets/bitget
+#### @swapkit/wallet-coinbase => @swapkit/wallets/coinbase
+#### @swapkit/wallet-ctrl => @swapkit/wallets/ctrl
+#### @swapkit/wallet-evm-extensions => @swapkit/wallets/evm-extensions
+#### @swapkit/wallet-exodus => @swapkit/wallets/exodus
+#### @swapkit/wallet-keepkey => @swapkit/wallets/keepkey
+#### @swapkit/wallet-keepkey-bex => @swapkit/wallets/keepkey-bex
+#### @swapkit/wallet-ledger => @swapkit/wallets/ledger
+#### @swapkit/wallet-okx => @swapkit/wallets/okx
+#### @swapkit/wallet-phantom => @swapkit/wallets/phantom
+#### @swapkit/wallet-polkadotjs => @swapkit/wallets/polkadotjs
+#### @swapkit/wallet-radix => @swapkit/wallets/radix
+#### @swapkit/wallet-tailsman => @swapkit/wallets/tailsman
+#### @swapkit/wallet-trezor => @swapkit/wallets/trezor
+#### @swapkit/wallet-wc => @swapkit/wallets/walletconnect
 
