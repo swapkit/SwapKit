@@ -155,7 +155,7 @@ const getWalletMethods = async ({
         buildAminoMsg,
         getDefaultChainFee,
         fromBase64,
-        prepareMessageForBroadcast,
+        parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
       const toolbox = ThorchainToolbox();
       const signer = await getLedgerClient({ chain, derivationPath });
@@ -197,7 +197,7 @@ const getWalletMethods = async ({
         if (!signatures) throw new Error("tx signing failed");
 
         const pubkey = encodePubkey({ type: "tendermint/PubKeySecp256k1", value });
-        const msgs = orderedMessages.map(prepareMessageForBroadcast);
+        const msgs = orderedMessages.map(parseAminoMessageForDirectSigning);
         const bodyBytes = buildEncodedTxBody({ msgs, chain, memo });
 
         const authInfoBytes = makeAuthInfoBytes(

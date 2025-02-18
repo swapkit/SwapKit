@@ -1,4 +1,9 @@
-import type { MultisigThresholdPubkey, Pubkey, Secp256k1HdWallet } from "@cosmjs/amino";
+import type {
+  MultisigThresholdPubkey,
+  OfflineAminoSigner,
+  Pubkey,
+  Secp256k1HdWallet,
+} from "@cosmjs/amino";
 import type { EncodeObject, OfflineDirectSigner, Registry } from "@cosmjs/proto-signing";
 import type { AminoTypes, Account as CosmosAccount } from "@cosmjs/stargate";
 import type { Asset, AssetValue, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
@@ -9,7 +14,7 @@ import type {
   buildEncodedTxBody,
   buildTransferTx,
   convertToSignable,
-  prepareMessageForBroadcast,
+  parseAminoMessageForDirectSigning,
 } from "../../index";
 import type { Signer, TransferParams } from "../../types";
 
@@ -33,7 +38,7 @@ export type NodeUrl = {
 };
 
 export type DepositParam = {
-  signer?: OfflineDirectSigner;
+  signer?: OfflineDirectSigner | OfflineAminoSigner;
   walletIndex?: number;
   assetValue: AssetValue;
   memo: string;
@@ -91,6 +96,7 @@ export type ThorchainTransferTxParams = {
   memo?: string;
   chain: Chain.THORChain | Chain.Maya;
   asSignable?: boolean;
+  asAminoMessage?: boolean;
 };
 
 export type ThorchainDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
@@ -123,7 +129,7 @@ export type ThorchainToolboxType = BaseCosmosToolboxType & {
     params: ThorchainDepositTxParams,
   ) => ReturnType<ReturnType<typeof buildDepositTx>>;
   buildEncodedTxBody: typeof buildEncodedTxBody;
-  prepareMessageForBroadcast: typeof prepareMessageForBroadcast;
+  parseAminoMessageForDirectSigning: typeof parseAminoMessageForDirectSigning;
   createMultisig: (pubKeys: string[], threshold: number) => Promise<MultisigThresholdPubkey>;
   importSignature: (signature: string) => Uint8Array;
   secp256k1HdWalletFromMnemonic: (mnemonic: string, index?: number) => Promise<Secp256k1HdWallet>;

@@ -135,13 +135,34 @@ const sign = async (signer: IKeyringPair, tx: SubmittableExtrinsic<"promise">) =
   return signedTx;
 };
 
-const signAndBroadcast = (
+const signAndBroadcastKeyring = (
   signer: IKeyringPair,
   tx: SubmittableExtrinsic<"promise">,
   callback?: Callback<ISubmittableResult>,
 ) => {
   if (callback) return tx.signAndSend(signer, callback);
   const hash = tx.signAndSend(signer);
+  return hash.toString();
+};
+
+const signAndBroadcast = async ({
+  signer,
+  address,
+  tx,
+  callback,
+  api,
+}: {
+  signer: Signer;
+  address: string;
+  tx: SubmittableExtrinsic<"promise">;
+  api: ApiPromise;
+  callback?: Callback<ISubmittableResult>;
+}) => {
+  const nonce = await getNonce(api, address);
+  if (callback) {
+    tx.signAndSend(address, { nonce, signer }, callback);
+  }
+  const hash = tx.signAndSend(address, { nonce, signer });
   return hash.toString();
 };
 
@@ -207,12 +228,21 @@ export const BaseSubstrateToolbox = ({
   },
   broadcast: (tx: SubmittableExtrinsic<"promise">, callback?: Callback<ISubmittableResult>) =>
     broadcast(tx, callback),
-  signAndBroadcast: (
-    tx: SubmittableExtrinsic<"promise">,
-    callback?: Callback<ISubmittableResult>,
-  ) => {
+  signAndBroadcast: ({
+    tx,
+    callback,
+    address,
+  }: {
+    tx: SubmittableExtrinsic<"promise">;
+    callback?: Callback<ISubmittableResult>;
+    address?: string;
+  }) => {
     if (isKeyringPair(signer)) {
-      return signAndBroadcast(signer, tx, callback);
+      return signAndBroadcastKeyring(signer, tx, callback);
+    }
+
+    if (address) {
+      return signAndBroadcast({ signer, address, tx, callback, api });
     }
 
     throw new SwapKitError(

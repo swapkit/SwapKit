@@ -145,7 +145,7 @@ function getInputsAndTargetOutputs(chain: UTXOChain) {
   };
 }
 
-function buildTx(chain: UTXOChain) {
+export function buildTx(chain: UTXOChain) {
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
   return async function buildTx({
     assetValue,

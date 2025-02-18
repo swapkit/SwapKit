@@ -112,7 +112,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Optimism:
     case Chain.Polygon: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
-      const { getProvider, getToolboxByChain, getBalance } = await import("@swapkit/toolboxes/evm");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
       const ethereumWindowProvider = getCtrlProvider(chain);
 
@@ -143,9 +143,6 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
         toolbox: {
           ...toolbox,
           ...ctrlMethods,
-          // Overwrite ctrl getBalance due to race condition in their app when connecting multiple evm wallets
-          getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({ chain, provider: getProvider(chain), address, potentialScamFilter }),
         },
       });
     }

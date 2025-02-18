@@ -25,7 +25,11 @@ export const getWalletMethods = async (chain: Chain) => {
       }
 
       const address = toolbox.convertAddress(account.address, 0);
-      return { ...toolbox, address };
+      return {
+        ...toolbox,
+        getAddress: () => address,
+        address,
+      };
     }
 
     default:

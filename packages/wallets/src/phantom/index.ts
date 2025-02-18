@@ -11,7 +11,7 @@ import {
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 
 export const PHANTOM_SUPPORTED_CHAINS = [Chain.Bitcoin, Chain.Ethereum, Chain.Solana] as const;
-export type PhantomSupportedChains = (typeof PHANTOM_SUPPORTED_CHAINS)[number];
+export type PhantomSupportedChain = (typeof PHANTOM_SUPPORTED_CHAINS)[number];
 
 declare global {
   interface Window {
@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-async function getWalletMethods<T extends PhantomSupportedChains>(chain: T) {
+async function getWalletMethods(chain: PhantomSupportedChain) {
   const phantom: any = window?.phantom;
 
   switch (chain) {
@@ -132,7 +132,7 @@ function connectPhantom(addChain: AddChainType) {
       WalletOption.PHANTOM,
     );
 
-    async function connectChain(chain: PhantomSupportedChains) {
+    async function connectChain(chain: PhantomSupportedChain) {
       const { address, ...methods } = await getWalletMethods(chain);
 
       addChain({

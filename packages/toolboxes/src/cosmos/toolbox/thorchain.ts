@@ -29,7 +29,7 @@ import {
   convertToSignable,
   createDefaultAminoTypes,
   createDefaultRegistry,
-  prepareMessageForBroadcast,
+  parseAminoMessageForDirectSigning,
 } from "../thorchainUtils/index";
 import type {
   DepositParam,
@@ -45,6 +45,7 @@ import {
   getDefaultChainFee,
 } from "../util";
 
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { BaseCosmosToolbox } from "./BaseCosmosToolbox";
 
 function secp256k1HdWalletFromMnemonic({
@@ -91,7 +92,6 @@ async function signMultisigTx(
   const msgForSigning = [];
 
   for (const msg of msgs) {
-    // @ts-expect-error wrong typing of convertToSignable - investigation needed
     const signMsg = convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
@@ -104,7 +104,11 @@ async function signMultisigTx(
     chainId,
   });
 
-  const bodyBytes = buildEncodedTxBody({ chain, memo, msgs: msgs.map(prepareMessageForBroadcast) });
+  const bodyBytes = buildEncodedTxBody({
+    chain,
+    memo,
+    msgs: msgs.map(parseAminoMessageForDirectSigning),
+  });
 
   return { signature: exportSignature(signature as Uint8Array), bodyBytes };
 }
@@ -236,6 +240,7 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
     if (!signer) throw new Error("Signer not defined");
 
+    const isAminoSigner = "signAmino" in signer;
     const registry = createDefaultRegistry();
     const aminoTypes = createDefaultAminoTypes(chain);
     const signingClient = await createSigningStargateClient(rpcUrl, signer, {
@@ -243,10 +248,36 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
       aminoTypes,
     });
 
-    const msgSign = convertToSignable(
-      prepareMessageForBroadcast(buildAminoMsg({ assetValue, from, recipient, memo, chain })),
-      chain,
-    );
+    const aminoMessage = buildAminoMsg({ assetValue, from, recipient, memo, chain });
+
+    if (isAminoSigner) {
+      const msgSign = [convertToSignable(aminoMessage, chain)];
+
+      const { signatures, authInfoBytes } = await signingClient.sign(
+        from,
+        msgSign,
+        defaultFee,
+        memo,
+      );
+
+      const tx = TxRaw.encode({
+        signatures,
+        authInfoBytes,
+        bodyBytes: await buildEncodedTxBody({
+          chain,
+          msgs: [aminoMessage].map(parseAminoMessageForDirectSigning),
+          memo,
+        }),
+      }).finish();
+
+      const txResponse = await signingClient.broadcastTx(tx);
+
+      return txResponse.transactionHash;
+    }
+
+    const preparedMessage = parseAminoMessageForDirectSigning(aminoMessage);
+
+    const msgSign = convertToSignable(preparedMessage, chain);
 
     const txResponse = await signingClient.signAndBroadcast(from, [msgSign], defaultFee, memo);
 
@@ -263,7 +294,7 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
     buildDepositTx: buildDepositTx(rpcUrl),
     buildTransferTx: buildTransferTx(rpcUrl),
     buildEncodedTxBody,
-    prepareMessageForBroadcast,
+    parseAminoMessageForDirectSigning,
     createDefaultAminoTypes: () => createDefaultAminoTypes(chain),
     createDefaultRegistry,
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({

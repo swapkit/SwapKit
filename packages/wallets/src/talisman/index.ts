@@ -22,7 +22,7 @@ function connectTalisman(addChain: AddChainType) {
     );
 
     const promises = supportedChains.map(async (chain) => {
-      const { address, walletMethods } = await getWalletMethods(chain);
+      const { address, ...walletMethods } = await getWalletMethods(chain);
 
       addChain({
         ...walletMethods,
