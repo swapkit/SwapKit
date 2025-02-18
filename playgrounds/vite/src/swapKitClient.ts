@@ -1,4 +1,4 @@
-import { SwapKit } from "@swapkit/sdk";
+import { createSwapKit } from "@swapkit/sdk";
 
 export const getSwapKitClient = ({
   ethplorer,
@@ -13,7 +13,7 @@ export const getSwapKitClient = ({
   walletConnectProjectId?: string;
   brokerEndpoint?: string;
 } = {}) => {
-  return SwapKit({
+  const skClient = createSwapKit({
     config: {
       apiKeys: {
         ethplorer,
@@ -36,6 +36,8 @@ export const getSwapKitClient = ({
       },
     },
   });
+
+  return skClient;
 };
 
 export type SwapKitClient = ReturnType<typeof getSwapKitClient>;

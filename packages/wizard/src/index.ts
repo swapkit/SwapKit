@@ -79,7 +79,7 @@ const pluginOptions = [
   {
     value: Plugin.THORCHAIN,
     label: "THORChain & MAYAProtocol",
-    hint: "Provides THORChain and MAYA Protocol fully-featured functionality like swaps, savers, loans (TC only), Name Service and more",
+    hint: "Provides THORChain and MAYA Protocol fully-featured functionality, name service and more",
   },
   {
     value: Plugin.EVM,

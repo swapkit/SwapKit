@@ -47,7 +47,6 @@ export default function Liquidity({
 
   const handleAddLiquidity = useCallback(async () => {
     if (!(nativeAssetValue && otherAssetValue)) return;
-
     const plugin = pluginMode === "mayaplugin" ? skClient.mayachain : skClient.thorchain;
 
     const result = await plugin.addLiquidity({

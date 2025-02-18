@@ -8,9 +8,9 @@ export * from "./utils/derivationPath";
 export * from "./utils/liquidity";
 export * from "./utils/memo";
 export * from "./utils/others";
+export * from "./utils/plugin";
 export * from "./utils/validators";
 export * from "./utils/wallets";
-
 /**
  * Modules
  */

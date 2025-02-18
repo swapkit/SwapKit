@@ -1,4 +1,4 @@
-import { type PluginsType, SwapKit, type SwapKitParams, type WalletsType } from "@swapkit/core";
+import { SwapKit } from "@swapkit/core";
 import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 import { EVMPlugin } from "@swapkit/plugins/evm";
 import { KadoPlugin } from "@swapkit/plugins/kado";
@@ -18,19 +18,12 @@ export const defaultPlugins = {
   ...RadixPlugin,
 };
 
-export const createSwapKit = <
-  P extends PluginsType = typeof defaultPlugins,
-  W extends WalletsType = typeof defaultWallets,
->({
-  plugins,
-  wallets,
-  ...extendParams
-}: SwapKitParams<P, W> = {}) => {
-  return SwapKit<P, W>({
-    ...extendParams,
-    wallets: (wallets || defaultWallets) as W,
-    plugins: (plugins || defaultPlugins) as P,
+export function createSwapKit(config: Parameters<typeof SwapKit>[0]) {
+  return SwapKit({
+    ...config,
+    wallets: defaultWallets,
+    plugins: defaultPlugins,
   });
-};
+}
 
 export { SwapKitApi } from "@swapkit/helpers/api";

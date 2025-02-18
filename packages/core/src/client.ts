@@ -16,9 +16,9 @@ import {
   SKConfig,
   type SKConfigState,
   SwapKitError,
-  type SwapKitPluginParams,
   type SwapKitWallet,
   type SwapParams,
+  type createPlugin,
 } from "@swapkit/helpers";
 import type { TransferParams as CosmosTransferParams } from "@swapkit/toolboxes/cosmos";
 import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
@@ -28,13 +28,6 @@ import {
   getExplorerAddressUrl as getAddressUrl,
   getExplorerTxUrl as getTxUrl,
 } from "./helpers/explorerUrls";
-
-export type PluginsType = {
-  [key in string]: {
-    plugin: (params: SwapKitPluginParams) => any;
-    config?: any;
-  };
-};
 
 export type WalletsType = {
   [key in string]: SwapKitWallet<any[]>;
@@ -46,11 +39,10 @@ export type SwapKitParams<P, W> = {
   wallets?: W;
 };
 
-export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType>({
-  config,
-  plugins,
-  wallets = {} as Wallets,
-}: SwapKitParams<Plugins, Wallets> = {}) {
+export function SwapKit<
+  Plugins extends ReturnType<typeof createPlugin>,
+  Wallets extends WalletsType,
+>({ config, plugins, wallets = {} as Wallets }: SwapKitParams<Plugins, Wallets> = {}) {
   if (config) {
     SKConfig.set(config);
   }
@@ -59,14 +51,14 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
   const connectedWallets = {} as FullWallet;
 
   const availablePlugins = Object.entries(plugins || {}).reduce(
-    (acc, [pluginName, { plugin }]) => {
+    (acc, [pluginName, plugin]) => {
       const methods = plugin({ getWallet });
 
       // @ts-expect-error key is generic and cannot be indexed
       acc[pluginName] = methods;
       return acc;
     },
-    {} as { [key in PluginName]: ReturnType<Plugins[key]["plugin"]> },
+    {} as { [key in PluginName]: ReturnType<Plugins[key]> },
   );
 
   const connectWalletMethods = Object.entries(wallets).reduce(
@@ -90,7 +82,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     return plugin;
   }
 
-  function getSwapKitPluginForSKProvider(pluginName: PluginNameEnum): Plugins[keyof Plugins] {
+  function getSwapKitPluginForSKProvider(pluginName: PluginNameEnum) {
     const plugin = Object.values(availablePlugins).find((plugin) =>
       plugin.supportedSwapkitProviders?.includes(pluginName),
     );
@@ -122,9 +114,11 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
 
     if (plugin) {
       if (type === ApproveMode.CheckOnly && "isAssetValueApproved" in plugin) {
+        // @ts-expect-error TODO: add optional approve for plugin
         return plugin.isAssetValueApproved({ assetValue }) as ApproveReturnType<T>;
       }
       if (type === ApproveMode.Approve && "approveAssetValue" in plugin) {
+        // @ts-expect-error TODO: add optional approve for plugin
         return plugin.approveAssetValue({ assetValue }) as ApproveReturnType<T>;
       }
 

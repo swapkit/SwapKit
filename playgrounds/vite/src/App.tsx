@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { WalletWidget } from "@swapkit/wallets/exodus";
 import Liquidity from "./Liquidity";
-import Loan from "./Loan";
 import Multisig from "./Multisig";
 import Send from "./Send";
 import Swap from "./Swap";
@@ -17,7 +16,7 @@ const apiKeys = ["walletConnectProjectId"] as const;
 type WalletDataType = FullWallet[Chain] | FullWallet[Chain][] | null;
 
 const App = () => {
-  const [widgetType, setWidgetType] = useState<"swap" | "loan" | "earn">("swap");
+  const [widgetType, setWidgetType] = useState<"swap" | "earn">("swap");
   const [wallet, setWallet] = useState<WalletDataType>(null);
   const [phrase, setPhrase] = useState("");
   const [stagenet, setStagenet] = useState(false);
@@ -90,9 +89,6 @@ const App = () => {
         <Swap inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} />
       ) : null,
       tns: skClient ? <TNS skClient={skClient} /> : null,
-      loan: skClient ? (
-        <Loan inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} />
-      ) : null,
       send: skClient ? <Send inputAsset={inputAsset} skClient={skClient} /> : null,
       earn: <div>Earn</div>,
       multisig: skClient ? (
@@ -139,7 +135,7 @@ const App = () => {
 
             <div>
               <select
-                onChange={(e) => setWidgetType(e.target.value as "loan")}
+                onChange={(e) => setWidgetType(e.target.value as "swap")}
                 style={{ marginBottom: 10 }}
               >
                 {Object.keys(Widgets).map((widget) => (

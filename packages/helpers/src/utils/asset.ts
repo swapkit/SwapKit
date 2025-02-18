@@ -18,6 +18,8 @@ export const CommonAssetStrings = [
   `${Chain.Ethereum}.THOR`,
   `${Chain.Ethereum}.vTHOR`,
   `${Chain.Kujira}.USK`,
+  `${Chain.Ethereum}.FLIP`,
+  `${Chain.Radix}.XRD`,
 ] as const;
 
 const getContractDecimals = async ({ chain, to }: { chain: EVMChain; to: string }) => {
@@ -165,10 +167,29 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     case Chain.Optimism:
       return { identifier: `${assetString}.ETH`, decimal: BaseDecimal[assetString] };
 
+    case `${Chain.Radix}.XRD`:
+    case Chain.Radix:
+      return {
+        identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
+        decimal: BaseDecimal.XRD,
+      };
+
+    case `${Chain.Ethereum}.FLIP`:
+      return {
+        identifier: "ETH.FLIP-0x826180541412D574cf1336d22c0C0a287822678A",
+        decimal: BaseDecimal.ETH,
+      };
     case `${Chain.Ethereum}.THOR`:
-      return { identifier: "ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044", decimal: 18 };
+      return {
+        identifier: "ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
+        decimal: BaseDecimal.ETH,
+      };
     case `${Chain.Ethereum}.vTHOR`:
-      return { identifier: "ETH.vTHOR-0x815c23eca83261b6ec689b60cc4a58b54bc24d8d", decimal: 18 };
+      return {
+        identifier: "ETH.vTHOR-0x815c23eca83261b6ec689b60cc4a58b54bc24d8d",
+        decimal: BaseDecimal.ETH,
+      };
+
     case Chain.Cosmos:
       return { identifier: `${assetString}.ATOM`, decimal: BaseDecimal[assetString] };
     case Chain.THORChain:
@@ -177,8 +198,6 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       return { identifier: `${assetString}.BNB`, decimal: BaseDecimal[assetString] };
     case Chain.Maya:
       return { identifier: `${assetString}.CACAO`, decimal: 10 };
-    case Chain.Radix:
-      return { identifier: `${Chain.Radix}.XRD`, decimal: BaseDecimal[assetString] };
 
     case `${Chain.Maya}.MAYA`:
       return { identifier: assetString, decimal: 4 };

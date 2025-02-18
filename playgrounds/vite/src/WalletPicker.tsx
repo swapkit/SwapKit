@@ -8,7 +8,7 @@ import {
   getDerivationPathFor,
   getEIP6963Wallets,
 } from "@swapkit/helpers";
-import type { FullWallet } from "@swapkit/sdk";
+import type { DerivationPathArray, FullWallet } from "@swapkit/sdk";
 import type { Eip1193Provider } from "@swapkit/toolboxes/evm";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { decryptFromKeystore } from "@swapkit/wallets/keystore";
@@ -148,7 +148,7 @@ export const availableChainsByWallet = {
 
 export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
   const [loading, setLoading] = useState(false);
-  const [chains, setChains] = useState([]);
+  const [chains, setChains] = useState<Chain[]>([]);
 
   const connectWallet = useCallback(
     async (option: WalletOption, provider?: Eip1193Provider) => {
@@ -170,7 +170,13 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           // @ts-ignore
           return skClient.connectKeplr(chains, option.toLowerCase());
         case WalletOption.KEEPKEY: {
-          const derivationPaths = chains.map((chain) => getDerivationPathFor({ chain, index: 0 }));
+          const derivationPaths = chains.reduce(
+            (acc, chain) => {
+              acc[chain] = getDerivationPathFor({ chain, index: 0 });
+              return acc;
+            },
+            {} as Record<Chain, DerivationPathArray>,
+          );
 
           await skClient.connectKeepkey?.(chains, derivationPaths);
           localStorage.setItem("keepkeyApiKey", "1234");

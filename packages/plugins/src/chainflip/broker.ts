@@ -115,9 +115,7 @@ const fundStateChainAccount =
     stateChainAccount: string;
     assetValue: AssetValue;
   }) => {
-    const flipAssetValue = AssetValue.from({
-      asset: "ETH.FLIP-0x826180541412D574cf1336d22c0C0a287822678A",
-    });
+    const flipAssetValue = AssetValue.from({ asset: "ETH.FLIP" });
 
     if (!assetValue.eqAsset(flipAssetValue)) {
       throw new SwapKitError("chainflip_broker_fund_only_flip_supported");

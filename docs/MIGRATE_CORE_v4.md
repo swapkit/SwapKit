@@ -20,6 +20,9 @@ $ bun install @swapkit/toolbox-cosmos @swapkit/toolbox-evm @swapkit/toolbox-radi
 # Plugins
 $ bun install @swapkit/plugin-chainflip @swapkit/plugin-evm @swapkit/plugin-kado @swapkit/plugin-radix @swapkit/plugin-thorchain
 
+# Wallets
+$ bun install @swapkit/wallet-bitget @swapkit/wallet-coinbase @swapkit/wallet-ctrl @swapkit/wallet-evm-extensions @swapkit/wallet-exodus @swapkit/wallet-keepkey @swapkit/wallet-keepkey-bex @swapkit/wallet-ledger @swapkit/wallet-okx @swapkit/wallet-phantom @swapkit/wallet-polkadotjs @swapkit/wallet-radix @swapkit/wallet-tailsman @swapkit/wallet-trezor @swapkit/wallet-wc
+
 # Helpers and others
 $ bun install @swapkit/helpers @swapkit/api @swapkit/contracts @swapkit/tokens
 ```
@@ -31,40 +34,58 @@ $ bun install @swapkit/toolboxes
 # Plugins
 $ bun install @swapkit/plugins
 
+# Wallets
+$ bun install @swapkit/wallets
+
 # Helpers and others
 $ bun install @swapkit/helpers
 ```
 
 #### Imports
-| Old                        | New                          |
-| -------------------------- | ---------------------------- |
-| @swapkit/api               | @swapkit/helpers/api         |
-| @swapkit/contracts         | @swapkit/helpers/contracts   |
-| @swapkit/tokens            | @swapkit/helpers/tokens      |
-| @swapkit/plugin-chainflip  | @swapkit/plugins/chainflip   |
-| @swapkit/plugin-evm        | @swapkit/plugins/evm         |
-| @swapkit/plugin-kado       | @swapkit/plugins/kado        |
-| @swapkit/plugin-radix      | @swapkit/plugins/radix       |
-| @swapkit/plugin-thorchain  | @swapkit/plugins/thorchain   |
-| @swapkit/toolbox-cosmos    | @swapkit/toolboxes/cosmos    |
-| @swapkit/toolbox-evm       | @swapkit/toolboxes/evm       |
-| @swapkit/toolbox-radix     | @swapkit/toolboxes/radix     |
-| @swapkit/toolbox-solana    | @swapkit/toolboxes/solana    |
-| @swapkit/toolbox-substrate | @swapkit/toolboxes/substrate |
-| @swapkit/toolbox-utxo      | @swapkit/toolboxes/utxo      |
-
+| Old                            | New                             |
+| ------------------------------ | ------------------------------- |
+| @swapkit/api                   | @swapkit/helpers/api            |
+| @swapkit/contracts             | @swapkit/helpers/contracts      |
+| @swapkit/tokens                | @swapkit/helpers/tokens         |
+| @swapkit/plugin-chainflip      | @swapkit/plugins/chainflip      |
+| @swapkit/plugin-evm            | @swapkit/plugins/evm            |
+| @swapkit/plugin-kado           | @swapkit/plugins/kado           |
+| @swapkit/plugin-radix          | @swapkit/plugins/radix          |
+| @swapkit/plugin-thorchain      | @swapkit/plugins/thorchain      |
+| @swapkit/toolbox-cosmos        | @swapkit/toolboxes/cosmos       |
+| @swapkit/toolbox-evm           | @swapkit/toolboxes/evm          |
+| @swapkit/toolbox-radix         | @swapkit/toolboxes/radix        |
+| @swapkit/toolbox-solana        | @swapkit/toolboxes/solana       |
+| @swapkit/toolbox-substrate     | @swapkit/toolboxes/substrate    |
+| @swapkit/toolbox-utxo          | @swapkit/toolboxes/utxo         |
+| @swapkit/wallet-bitget         | @swapkit/wallets/bitget         |
+| @swapkit/wallet-coinbase       | @swapkit/wallets/coinbase       |
+| @swapkit/wallet-ctrl           | @swapkit/wallets/ctrl           |
+| @swapkit/wallet-evm-extensions | @swapkit/wallets/evm-extensions |
+| @swapkit/wallet-exodus         | @swapkit/wallets/exodus         |
+| @swapkit/wallet-keepkey        | @swapkit/wallets/keepkey        |
+| @swapkit/wallet-keepkey-bex    | @swapkit/wallets/keepkey-bex    |
+| @swapkit/wallet-ledger         | @swapkit/wallets/ledger         |
+| @swapkit/wallet-okx            | @swapkit/wallets/okx            |
+| @swapkit/wallet-phantom        | @swapkit/wallets/phantom        |
+| @swapkit/wallet-polkadotjs     | @swapkit/wallets/polkadotjs     |
+| @swapkit/wallet-radix          | @swapkit/wallets/radix          |
+| @swapkit/wallet-tailsman       | @swapkit/wallets/tailsman       |
+| @swapkit/wallet-trezor         | @swapkit/wallets/trezor         |
+| @swapkit/wallet-wc             | @swapkit/wallets/walletconnect  |
 
 ### <font color="lightGreen">Added</font>
 
 #### @swapkit/helpers
 
 - `SKConfig` - configuration module for handling api keys and other configuration options
+- `createPlugin` - factory function to create a new plugin
 - Now combines `@swapkit/api`, `@swapkit/contracts`, `@swapkit/tokens` under a single package
 
 #### @swapkit/plugins
 
-- `createPlugin` - factory function to create a new plugin
-- Now combines `@swapkit/plugin-evm`, `@swapkit/plugin-cosmos`, `@swapkit/plugin-solana`, `@swapkit/plugin-substrate`, `@swapkit/plugin-utxo` under a single package
+- Now combines `@swapkit/plugin-chainflip`, `@swapkit/plugin-evm`, `@swapkit/plugin-kado`, `@swapkit/plugin-radix`, `@swapkit/plugin-thorchain` under a single package
+
 
 #### @swapkit/toolboxes
 
@@ -95,21 +116,3 @@ Methods were scoped under `SwapKitApi` object and split into related api endpoin
 
 - `ensureEVMApiKeys` -> removed
 - `setRequestClientConfig` -> removed - use `SKConfig` directly
-
-
-#### @swapkit/wallet-bitget => @swapkit/wallets/bitget
-#### @swapkit/wallet-coinbase => @swapkit/wallets/coinbase
-#### @swapkit/wallet-ctrl => @swapkit/wallets/ctrl
-#### @swapkit/wallet-evm-extensions => @swapkit/wallets/evm-extensions
-#### @swapkit/wallet-exodus => @swapkit/wallets/exodus
-#### @swapkit/wallet-keepkey => @swapkit/wallets/keepkey
-#### @swapkit/wallet-keepkey-bex => @swapkit/wallets/keepkey-bex
-#### @swapkit/wallet-ledger => @swapkit/wallets/ledger
-#### @swapkit/wallet-okx => @swapkit/wallets/okx
-#### @swapkit/wallet-phantom => @swapkit/wallets/phantom
-#### @swapkit/wallet-polkadotjs => @swapkit/wallets/polkadotjs
-#### @swapkit/wallet-radix => @swapkit/wallets/radix
-#### @swapkit/wallet-tailsman => @swapkit/wallets/tailsman
-#### @swapkit/wallet-trezor => @swapkit/wallets/trezor
-#### @swapkit/wallet-wc => @swapkit/wallets/walletconnect
-

@@ -118,11 +118,24 @@ export type KadoBlockchainsResponse = {
   };
 };
 
-export type KadoSupportedAssetsResponse = {
+export type KadoAssetsResponse = {
   success: boolean;
   message: string;
   data: {
-    assets: KadoAsset[];
+    assets: {
+      _id: string;
+      name: string;
+      description: string;
+      label: string;
+      symbol: string;
+      supportedProviders: string[];
+      stablecoin: boolean;
+      liveOnRamp: boolean;
+      createdAt: string;
+      updatedAt: string;
+      __v: number;
+      priority: number;
+    }[];
   };
 };
 
