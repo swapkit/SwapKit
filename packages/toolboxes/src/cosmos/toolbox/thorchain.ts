@@ -92,7 +92,6 @@ async function signMultisigTx(
   const msgForSigning = [];
 
   for (const msg of msgs) {
-    // @ts-expect-error wrong typing of convertToSignable - investigation needed
     const signMsg = convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }

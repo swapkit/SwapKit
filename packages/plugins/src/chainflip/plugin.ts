@@ -16,7 +16,7 @@ type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & Solan
 
 function plugin({ getWallet }: SwapKitPluginParams) {
   async function swap(swapParams: RequestSwapDepositAddressParams) {
-    const { brokerUrl, brokerConfig } = SKConfig.get("integrations").chainflip || {};
+    const brokerUrl = SKConfig.get("integrations").chainflip?.brokerUrl;
 
     if (!(swapParams?.route?.buyAsset && brokerUrl && swapParams.route.meta.chainflip)) {
       throw new SwapKitError("core_swap_invalid_params", {
