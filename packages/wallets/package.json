@@ -36,7 +36,7 @@
   "devDependencies": {
     "@types/ripemd160": "2.0.3",
     "@walletconnect/logger": "2.1.2",
-    "@walletconnect/types": "2.13.3"
+    "@walletconnect/types": "2.18.1"
   },
   "exports": {
     ".": {

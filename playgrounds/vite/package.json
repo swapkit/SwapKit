@@ -19,7 +19,10 @@
     "vite-plugin-node-polyfills": "0.23.0"
   },
   "devDependencies": {
+    "@react-scan/vite-plugin-react-scan": "0.1.3",
     "@vitejs/plugin-react": "4.3.4",
+    "react-scan": "0.1.3",
+    "rollup-plugin-visualizer": "5.14.0",
     "typescript": "5.7.3",
     "vite-plugin-top-level-await": "1.5.0",
     "vite-plugin-wasm": "3.4.1"
@@ -29,7 +32,7 @@
   "type": "module",
   "scripts": {
     "build-playground": "NODE_OPTIONS=--max_old_space_size=65536 vite build",
-    "bundle": "bunx vite-bundle-visualizer",
+    "visualise": "VISUALISE=true bun build-playground",
     "dev": "vite",
     "lint": "biome check --write ./src",
     "type-check": "tsc --noEmit",

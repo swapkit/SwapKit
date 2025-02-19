@@ -1,12 +1,5 @@
-import {
-  type Pubkey,
-  Secp256k1HdWallet,
-  createMultisigThresholdPubkey,
-  encodeSecp256k1Pubkey,
-  pubkeyToAddress,
-} from "@cosmjs/amino";
-import { Secp256k1, Secp256k1Signature, stringToPath } from "@cosmjs/crypto";
-import { type Account, makeMultisignedTxBytes } from "@cosmjs/stargate";
+import type { Pubkey, Secp256k1HdWallet } from "@cosmjs/amino";
+import type { Account } from "@cosmjs/stargate";
 import { base64 } from "@scure/base";
 import {
   BaseDecimal,
@@ -42,14 +35,16 @@ import {
   createStargateClient,
   getDefaultChainFee,
 } from "../util";
-
 import { BaseCosmosToolbox } from "./BaseCosmosToolbox";
 
 function secp256k1HdWalletFromMnemonic({
   prefix,
   derivationPath,
 }: { prefix: string; derivationPath: string }) {
-  return function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
+  return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
+    const { Secp256k1HdWallet } = await import("@cosmjs/amino");
+    const { stringToPath } = await import("@cosmjs/crypto");
+
     return Secp256k1HdWallet.fromMnemonic(mnemonic, {
       hdPaths: [stringToPath(`${derivationPath}/${index}`)],
       prefix,
@@ -83,13 +78,13 @@ async function signMultisigTx(
   } = JSON.parse(tx);
 
   const address = (await wallet.getAccounts())?.[0]?.address || "";
-  const aminoTypes = createDefaultAminoTypes(chain);
-  const registry = createDefaultRegistry();
+  const aminoTypes = await createDefaultAminoTypes(chain);
+  const registry = await createDefaultRegistry();
   const signingClient = await createOfflineStargateClient(wallet, { registry, aminoTypes });
   const msgForSigning = [];
 
   for (const msg of msgs) {
-    const signMsg = convertToSignable(msg, chain);
+    const signMsg = await convertToSignable(msg, chain);
     msgForSigning.push(signMsg);
   }
 
@@ -101,7 +96,7 @@ async function signMultisigTx(
     chainId,
   });
 
-  const bodyBytes = buildEncodedTxBody({
+  const bodyBytes = await buildEncodedTxBody({
     chain,
     memo,
     msgs: msgs.map(parseAminoMessageForDirectSigning),
@@ -118,6 +113,9 @@ function broadcastMultisigTx({ prefix, rpcUrl }: { prefix: string; rpcUrl: strin
     threshold: number,
     bodyBytes: Uint8Array,
   ) {
+    const { encodeSecp256k1Pubkey, pubkeyToAddress } = await import("@cosmjs/amino");
+    const { makeMultisignedTxBytes } = await import("@cosmjs/stargate");
+
     const { sequence, fee } = JSON.parse(tx);
     const multisigPubkey = await createMultisig(membersPubKeys, threshold);
 
@@ -143,6 +141,7 @@ function broadcastMultisigTx({ prefix, rpcUrl }: { prefix: string; rpcUrl: strin
 }
 
 async function createMultisig(pubKeys: string[], threshold: number, noSortPubKeys = true) {
+  const { createMultisigThresholdPubkey, encodeSecp256k1Pubkey } = await import("@cosmjs/amino");
   return createMultisigThresholdPubkey(
     pubKeys.map((pubKey) => encodeSecp256k1Pubkey(base64.decode(pubKey))),
     threshold,
@@ -154,16 +153,12 @@ function importSignature(signature: string) {
   return base64.decode(signature);
 }
 
-function __REEXPORT__pubkeyToAddress(prefix: string) {
-  return function __pubkeyToAddress(pubkey: Pubkey) {
-    return pubkeyToAddress(pubkey, prefix);
-  };
-}
-
 async function signWithPrivateKey({
   privateKey,
   message,
 }: { privateKey: Uint8Array; message: string }) {
+  const { Secp256k1 } = await import("@cosmjs/crypto");
+
   const signature = await Secp256k1.createSignature(base64.decode(message), privateKey);
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
@@ -180,6 +175,7 @@ function verifySignature(getAccount: (address: string) => Promise<Account | null
   }) {
     const account = await getAccount(address);
     if (!account?.pubkey) throw new SwapKitError("toolbox_cosmos_verify_signature_no_pubkey");
+    const { Secp256k1Signature, Secp256k1 } = await import("@cosmjs/crypto");
 
     const secpSignature = Secp256k1Signature.fromFixedLength(base64.decode(signature));
     return Secp256k1.verifySignature(secpSignature, base64.decode(message), account.pubkey.value);
@@ -239,8 +235,8 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     if (!signer) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;
-    const registry = createDefaultRegistry();
-    const aminoTypes = createDefaultAminoTypes(chain);
+    const registry = await createDefaultRegistry();
+    const aminoTypes = await createDefaultAminoTypes(chain);
     const signingClient = await createSigningStargateClient(rpcUrl, signer, {
       registry,
       aminoTypes,
@@ -249,11 +245,11 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     const aminoMessage = buildAminoMsg({ assetValue, from, recipient, memo, chain });
 
     if (isAminoSigner) {
-      const msgSign = [convertToSignable(aminoMessage, chain)];
+      const msgSign = await convertToSignable(aminoMessage, chain);
 
       const { signatures, authInfoBytes } = await signingClient.sign(
         from,
-        msgSign,
+        [msgSign],
         defaultFee,
         memo,
       );
@@ -274,9 +270,7 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     }
 
     const preparedMessage = parseAminoMessageForDirectSigning(aminoMessage);
-
-    const msgSign = convertToSignable(preparedMessage, chain);
-
+    const msgSign = await convertToSignable(preparedMessage, chain);
     const txResponse = await signingClient.signAndBroadcast(from, [msgSign], defaultFee, memo);
 
     return txResponse.transactionHash;
@@ -285,6 +279,10 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
   return {
     ...cosmosToolbox,
     deposit: (params: DepositParam & { from: string }) => transfer(params),
+    pubkeyToAddress: async (pubkey: Pubkey) => {
+      const { pubkeyToAddress } = await import("@cosmjs/amino");
+      return pubkeyToAddress(pubkey, chainPrefix);
+    },
     transfer,
     getFees,
     buildAminoMsg,
@@ -304,7 +302,6 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     createMultisig,
     importSignature,
     loadAddressBalances,
-    pubkeyToAddress: __REEXPORT__pubkeyToAddress(chainPrefix),
     signWithPrivateKey,
     verifySignature: verifySignature(cosmosToolbox.getAccount),
   };

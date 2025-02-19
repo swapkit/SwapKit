@@ -1,5 +1,7 @@
 import { resolve } from "path";
+import reactScan from "@react-scan/vite-plugin-react-scan";
 import react from "@vitejs/plugin-react";
+import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import topLevelAwait from "vite-plugin-top-level-await";
@@ -26,9 +28,21 @@ export default defineConfig({
       },
     }),
     react(),
+    reactScan({ autoDisplayNames: true, debug: true }),
     wasm(),
     topLevelAwait(),
-  ],
+  ].concat(
+    process.env.VISUALISE === "true"
+      ? [
+          visualizer({
+            gzipSize: true,
+            open: true,
+            sourcemap: true,
+            filename: "dist/stats.html",
+          }),
+        ]
+      : [],
+  ),
   resolve: {
     alias: {
       "@swapkit/core": resolve("../../packages/core/src"),

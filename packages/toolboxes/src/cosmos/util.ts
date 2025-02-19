@@ -1,10 +1,5 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
-import {
-  GasPrice,
-  SigningStargateClient,
-  type SigningStargateClientOptions,
-  StargateClient,
-} from "@cosmjs/stargate";
+import type { SigningStargateClientOptions } from "@cosmjs/stargate";
 import {
   AssetValue,
   Chain,
@@ -126,15 +121,18 @@ export const getAssetFromDenom = (denom: string, amount: string) => {
   }
 };
 
-export const createStargateClient = (url: string) => {
-  return StargateClient.connect({ url, headers: defaultRequestHeaders });
-};
+export async function createStargateClient(url: string) {
+  const { StargateClient } = await import("@cosmjs/stargate");
 
-export const createSigningStargateClient = (
+  return StargateClient.connect({ url, headers: defaultRequestHeaders });
+}
+
+export async function createSigningStargateClient(
   url: string,
   signer: any,
   optionsOrBaseGas: string | SigningStargateClientOptions = {},
-) => {
+) {
+  const { SigningStargateClient, GasPrice } = await import("@cosmjs/stargate");
   const gasPrice = typeof optionsOrBaseGas === "string" ? optionsOrBaseGas : "0.0003uatom";
   const options = typeof optionsOrBaseGas === "string" ? {} : optionsOrBaseGas;
 
@@ -142,14 +140,16 @@ export const createSigningStargateClient = (
     gasPrice: GasPrice.fromString(gasPrice),
     ...options,
   });
-};
+}
 
-export const createOfflineStargateClient = (
+export async function createOfflineStargateClient(
   wallet: OfflineSigner,
   registry?: SigningStargateClientOptions,
-) => {
+) {
+  const { SigningStargateClient } = await import("@cosmjs/stargate");
+
   return SigningStargateClient.offline(wallet, registry);
-};
+}
 
 export const getRPC = (chainId: ChainId) => {
   const { isStagenet } = SKConfig.get("envs");

@@ -204,7 +204,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const signature: any = await signRequest(signDoc);
 
-        const bodyBytes = buildEncodedTxBody({
+        const bodyBytes = await buildEncodedTxBody({
           chain: Chain.THORChain,
           msgs: msgs.map(parseAminoMessageForDirectSigning),
           memo: memo || "",

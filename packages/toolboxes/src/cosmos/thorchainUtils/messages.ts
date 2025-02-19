@@ -93,11 +93,11 @@ export const buildAminoMsg = ({
 };
 
 // TODO I think the msg typing is wrong it should be not prepared for broadcast
-export const convertToSignable = (
+export const convertToSignable = async (
   msg: DirectMsgDepositForBroadcast | DirectMsgSendForBroadcast | MsgSend | MsgDeposit,
   chain: Chain.THORChain | Chain.Maya,
 ) => {
-  const aminoTypes = createDefaultAminoTypes(chain);
+  const aminoTypes = await createDefaultAminoTypes(chain);
 
   return aminoTypes.fromAmino(msg);
 };
@@ -141,7 +141,7 @@ export const buildTransferTx =
     });
 
     const msg = asSignable
-      ? convertToSignable(
+      ? await convertToSignable(
           asAminoMessage ? transferMsg : parseAminoMessageForDirectSigning(transferMsg),
           chain,
         )
@@ -174,7 +174,7 @@ export const buildDepositTx =
     const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
 
     const msg = asSignable
-      ? convertToSignable(
+      ? await convertToSignable(
           asAminoMessage ? depositMsg : parseAminoMessageForDirectSigning<MsgDeposit>(depositMsg),
           chain,
         )
@@ -223,7 +223,7 @@ export function parseAminoMessageForDirectSigning<T extends MsgDeposit | MsgSend
   };
 }
 
-export const buildEncodedTxBody = ({
+export async function buildEncodedTxBody({
   chain,
   memo,
   msgs,
@@ -231,9 +231,9 @@ export const buildEncodedTxBody = ({
   msgs: DirectMsgDepositForBroadcast[] | DirectMsgSendForBroadcast[];
   memo: string;
   chain: Chain.THORChain | Chain.Maya;
-}) => {
-  const registry = createDefaultRegistry();
-  const aminoTypes = createDefaultAminoTypes(chain);
+}) {
+  const registry = await createDefaultRegistry();
+  const aminoTypes = await createDefaultAminoTypes(chain);
 
   const signedTxBody: TxBodyEncodeObject = {
     typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -241,4 +241,4 @@ export const buildEncodedTxBody = ({
   };
 
   return registry.encode(signedTxBody);
-};
+}

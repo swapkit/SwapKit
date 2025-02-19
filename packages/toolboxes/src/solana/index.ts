@@ -20,13 +20,11 @@ interface ConnectOpts {
   onlyIfTrusted: boolean;
 }
 
-export { SOLToolbox, validateAddress, createSolanaTokenTransaction } from "./toolbox";
+export * from "./toolbox";
 
 export type SolanaWallets = {
   [Chain.Solana]: ReturnType<typeof SOLToolbox>;
 };
-
-export type { PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
 
 export interface SolanaProvider {
   connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;

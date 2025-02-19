@@ -235,7 +235,7 @@ async function getWalletMethods({
 
         const pubkey = encodePubkey({ type: "tendermint/PubKeySecp256k1", value });
         const msgs = orderedMessages.map(parseAminoMessageForDirectSigning);
-        const bodyBytes = buildEncodedTxBody({ msgs, chain, memo });
+        const bodyBytes = await buildEncodedTxBody({ msgs, chain, memo });
 
         const authInfoBytes = makeAuthInfoBytes(
           [{ pubkey, sequence: Number(sequence) }],

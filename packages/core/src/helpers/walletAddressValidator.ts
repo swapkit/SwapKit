@@ -5,8 +5,10 @@ export async function getAddressValidator() {
   const { evmValidateAddress } = await import("@swapkit/toolboxes/evm");
   const { substrateValidateAddress } = await import("@swapkit/toolboxes/substrate");
   const { utxoValidateAddress } = await import("@swapkit/toolboxes/utxo");
-  const { validateAddress: solanaValidateAddress } = await import("@swapkit/toolboxes/solana");
+  const { getAddressValidator: getSolValidator } = await import("@swapkit/toolboxes/solana");
   const { validateAddress: validateRadixAddress } = await import("@swapkit/toolboxes/radix");
+
+  const solanaValidateAddress = await getSolValidator();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     switch (chain) {

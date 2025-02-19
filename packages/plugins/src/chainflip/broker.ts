@@ -1,4 +1,3 @@
-import { Assets, Chains } from "@chainflip/sdk/swap";
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
@@ -7,25 +6,6 @@ import type { ETHToolbox } from "@swapkit/toolboxes/evm";
 import type { ChainflipToolbox } from "@swapkit/toolboxes/substrate";
 
 import type { WithdrawFeeResponse } from "./types";
-
-export const chainToChainflipChain = new Map<Chain, keyof typeof Chains>([
-  [Chain.Arbitrum, Chains.Arbitrum],
-  [Chain.Bitcoin, Chains.Bitcoin],
-  [Chain.Ethereum, Chains.Ethereum],
-  [Chain.Polkadot, Chains.Polkadot],
-  [Chain.Solana, Chains.Solana],
-  [Chain.Polkadot, Chains.Polkadot],
-]);
-
-export const assetTickerToChainflipAsset = new Map<string, keyof typeof Assets>([
-  ["FLIP", Assets.FLIP],
-  ["BTC", Assets.BTC],
-  ["ETH", Assets.ETH],
-  ["USDC", Assets.USDC],
-  ["USDT", Assets.USDT],
-  ["DOT", Assets.DOT],
-  ["SOL", Assets.SOL],
-]);
 
 export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["ARB.ETH", "ArbEth"],

@@ -1,5 +1,5 @@
 import type { TokenInfo } from "@solana/spl-token-registry";
-import { Connection, type Keypair, PublicKey, type Transaction } from "@solana/web3.js";
+import type { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
   AssetValue,
   Chain,
@@ -10,86 +10,16 @@ import {
   type WalletTxParams,
 } from "@swapkit/helpers";
 
-export function validateAddress(address: string) {
-  try {
-    const pubkey = new PublicKey(address);
-    return PublicKey.isOnCurve(pubkey.toBytes());
-  } catch (_) {
-    return false;
-  }
-}
+export async function getAddressValidator() {
+  const { PublicKey } = await import("@solana/web3.js");
 
-async function createKeysForPath({
-  phrase,
-  derivationPath = DerivationPath.SOL,
-}: { phrase: string; derivationPath?: string }) {
-  const { HDKey } = await import("micro-key-producer/slip10.js");
-  const { mnemonicToSeedSync } = await import("@scure/bip39");
-  const { Keypair } = await import("@solana/web3.js");
-  const seed = mnemonicToSeedSync(phrase);
-  const hdKey = HDKey.fromMasterSeed(seed);
-
-  return Keypair.fromSeed(hdKey.derive(derivationPath, true).privateKey);
-}
-
-function getAddressFromKeys(keypair: Keypair) {
-  return keypair.publicKey.toString();
-}
-
-async function getTokenBalances({
-  connection,
-  address,
-}: { connection: Connection; address: string }) {
-  const { TOKEN_PROGRAM_ID } = await import("@solana/spl-token");
-  const { TokenListProvider } = await import("@solana/spl-token-registry");
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
-    programId: TOKEN_PROGRAM_ID,
-  });
-  const tokenListProvider = new TokenListProvider();
-  const tokenListContainer = await tokenListProvider.resolve();
-  const tokenList = tokenListContainer.filterByChainId(101).getList();
-
-  // Group token balances by mint address
-  const tokenBalanceMap = new Map<string, { amount: bigint; decimal: number; symbol: string }>();
-
-  for await (const tokenAccountInfo of tokenAccounts.value) {
-    const accountInfo = tokenAccountInfo.account.data.parsed.info;
-    const mintAddress = accountInfo.mint;
-    const decimal = accountInfo.tokenAmount.decimals;
-    const amount = BigInt(accountInfo.tokenAmount.amount);
-
-    if (amount <= BigInt(0)) continue;
-
-    const tokenInfo = tokenList.find((token: TokenInfo) => token.address === mintAddress);
-    const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
-    const existing = tokenBalanceMap.get(mintAddress);
-
-    tokenBalanceMap.set(mintAddress, {
-      amount: existing ? existing.amount + amount : amount,
-      decimal,
-      symbol: tokenSymbol,
-    });
-  }
-
-  // Convert grouped balances to AssetValue array
-  const tokenBalances: AssetValue[] = Array.from(tokenBalanceMap.entries()).map(
-    ([mintAddress, { amount, decimal, symbol }]) =>
-      new AssetValue({
-        value: SwapKitNumber.fromBigInt(amount, decimal),
-        decimal,
-        identifier: `${Chain.Solana}.${symbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
-      }),
-  );
-
-  return tokenBalances;
-}
-
-function getBalance(connection: Connection) {
-  return async (address: string) => {
-    const SOLBalance = await connection.getBalance(new PublicKey(address));
-    const tokenBalances = await getTokenBalances({ connection, address });
-
-    return [AssetValue.from({ chain: Chain.Solana, value: BigInt(SOLBalance) }), ...tokenBalances];
+  return (address: string) => {
+    try {
+      const pubkey = new PublicKey(address);
+      return PublicKey.isOnCurve(pubkey.toBytes());
+    } catch (_) {
+      return false;
+    }
   };
 }
 
@@ -156,7 +86,25 @@ export async function createSolanaTokenTransaction({
   return transaction;
 }
 
-function createSolanaTransaction(connection: Connection) {
+export const SOLToolbox = () => {
+  async function getConnection() {
+    const { Connection } = await import("@solana/web3.js");
+    return new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
+  }
+
+  return {
+    getConnection,
+    createKeysForPath,
+    getAddressFromKeys,
+    createSolanaTransaction: createSolanaTransaction(getConnection),
+    getBalance: getBalance(getConnection),
+    transfer: transfer(getConnection),
+    broadcastTransaction: broadcastTransaction(getConnection),
+    getAddressValidator
+  };
+};
+
+function createSolanaTransaction(getConnection: () => Promise<Connection>) {
   return async ({
     recipient,
     assetValue,
@@ -169,11 +117,14 @@ function createSolanaTransaction(connection: Connection) {
     isProgramDerivedAddress?: boolean;
   }) => {
     const { createMemoInstruction } = await import("@solana/spl-memo");
-    const { Transaction, SystemProgram } = await import("@solana/web3.js");
+    const { Transaction, PublicKey, SystemProgram } = await import("@solana/web3.js");
+    const validateAddress = await getAddressValidator();
 
     if (!(isProgramDerivedAddress || validateAddress(recipient))) {
       throw new SwapKitError("core_transaction_invalid_recipient_address");
     }
+
+    const connection = await getConnection();
 
     const transaction = assetValue.isGasAsset
       ? new Transaction().add(
@@ -208,7 +159,7 @@ function createSolanaTransaction(connection: Connection) {
   };
 }
 
-function transfer(connection: Connection) {
+function transfer(getConnection: () => Promise<Connection>) {
   return async ({
     recipient,
     assetValue,
@@ -221,8 +172,9 @@ function transfer(connection: Connection) {
     isProgramDerivedAddress?: boolean;
   }) => {
     const { sendAndConfirmTransaction } = await import("@solana/web3.js");
+    const connection = await getConnection();
 
-    const transaction = await createSolanaTransaction(connection)({
+    const transaction = await createSolanaTransaction(getConnection)({
       recipient,
       assetValue,
       memo,
@@ -234,23 +186,87 @@ function transfer(connection: Connection) {
   };
 }
 
-function broadcastTransaction(connection: Connection) {
-  return (transaction: Transaction) => {
+function broadcastTransaction(getConnection: () => Promise<Connection>) {
+  return async (transaction: Transaction) => {
+    const connection = await getConnection();
     return connection.sendRawTransaction(transaction.serialize());
   };
 }
 
-export const SOLToolbox = () => {
-  const connection = new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
+async function createKeysForPath({
+  phrase,
+  derivationPath = DerivationPath.SOL,
+}: { phrase: string; derivationPath?: string }) {
+  const { HDKey } = await import("micro-key-producer/slip10.js");
+  const { mnemonicToSeedSync } = await import("@scure/bip39");
+  const { Keypair } = await import("@solana/web3.js");
+  const seed = mnemonicToSeedSync(phrase);
+  const hdKey = HDKey.fromMasterSeed(seed);
 
-  return {
-    connection,
-    createKeysForPath,
-    getAddressFromKeys,
-    createSolanaTransaction: createSolanaTransaction(connection),
-    getBalance: getBalance(connection),
-    transfer: transfer(connection),
-    broadcastTransaction: broadcastTransaction(connection),
-    validateAddress,
+  return Keypair.fromSeed(hdKey.derive(derivationPath, true).privateKey);
+}
+
+function getAddressFromKeys(keypair: Keypair) {
+  return keypair.publicKey.toString();
+}
+
+async function getTokenBalances({
+  connection,
+  address,
+}: { connection: Connection; address: string }) {
+  const { PublicKey } = await import("@solana/web3.js");
+  const { TOKEN_PROGRAM_ID } = await import("@solana/spl-token");
+  const { TokenListProvider } = await import("@solana/spl-token-registry");
+
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
+    programId: TOKEN_PROGRAM_ID,
+  });
+  const tokenListProvider = new TokenListProvider();
+  const tokenListContainer = await tokenListProvider.resolve();
+  const tokenList = tokenListContainer.filterByChainId(101).getList();
+
+  // Group token balances by mint address
+  const tokenBalanceMap = new Map<string, { amount: bigint; decimal: number; symbol: string }>();
+
+  for await (const tokenAccountInfo of tokenAccounts.value) {
+    const accountInfo = tokenAccountInfo.account.data.parsed.info;
+    const mintAddress = accountInfo.mint;
+    const decimal = accountInfo.tokenAmount.decimals;
+    const amount = BigInt(accountInfo.tokenAmount.amount);
+
+    if (amount <= BigInt(0)) continue;
+
+    const tokenInfo = tokenList.find((token: TokenInfo) => token.address === mintAddress);
+    const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
+    const existing = tokenBalanceMap.get(mintAddress);
+
+    tokenBalanceMap.set(mintAddress, {
+      amount: existing ? existing.amount + amount : amount,
+      decimal,
+      symbol: tokenSymbol,
+    });
+  }
+
+  // Convert grouped balances to AssetValue array
+  const tokenBalances: AssetValue[] = Array.from(tokenBalanceMap.entries()).map(
+    ([mintAddress, { amount, decimal, symbol }]) =>
+      new AssetValue({
+        value: SwapKitNumber.fromBigInt(amount, decimal),
+        decimal,
+        identifier: `${Chain.Solana}.${symbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
+      }),
+  );
+
+  return tokenBalances;
+}
+
+function getBalance(getConnection: () => Promise<Connection>) {
+  return async (address: string) => {
+    const { PublicKey } = await import("@solana/web3.js");
+    const connection = await getConnection();
+    const SOLBalance = await connection.getBalance(new PublicKey(address));
+    const tokenBalances = await getTokenBalances({ connection, address });
+
+    return [AssetValue.from({ chain: Chain.Solana, value: BigInt(SOLBalance) }), ...tokenBalances];
   };
-};
+}

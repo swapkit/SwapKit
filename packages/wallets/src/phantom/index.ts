@@ -103,6 +103,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
 
         const fromPubkey = new PublicKey(address);
         const amount = assetValue.getBaseValue("number");
+        const connection = await toolbox.getConnection();
 
         const transaction = assetValue.isGasAsset
           ? new Transaction().add(
@@ -115,7 +116,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
           : assetValue.address
             ? await createSolanaTokenTransaction({
                 amount,
-                connection: toolbox.connection,
+                connection,
                 decimals: assetValue.decimal as number,
                 from: fromPubkey,
                 recipient,
@@ -127,13 +128,13 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
           throw new SwapKitError("core_transaction_invalid_sender_address");
         }
 
-        const blockHash = await toolbox.connection.getLatestBlockhash();
+        const blockHash = await connection.getLatestBlockhash();
         transaction.recentBlockhash = blockHash.blockhash;
         transaction.feePayer = fromPubkey;
 
         const signedTransaction = await provider.signTransaction(transaction);
 
-        const txid = await toolbox.connection.sendRawTransaction(signedTransaction.serialize());
+        const txid = await connection.sendRawTransaction(signedTransaction.serialize());
 
         return txid;
       };

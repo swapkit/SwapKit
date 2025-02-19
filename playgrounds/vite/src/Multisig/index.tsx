@@ -45,7 +45,8 @@ export default function Multisig({
 
   const handleLoadMultisig = useCallback(async () => {
     const pubkey = await toolbox.createMultisig(Object.values(pubkeys), threshold);
-    const address = toolbox.pubkeyToAddress(pubkey);
+    const address = await toolbox.pubkeyToAddress(pubkey);
+
     setAddress(address);
   }, [toolbox, pubkeys, threshold]);
 

@@ -1,5 +1,5 @@
-import { AssetValue, type Chain, type FullWallet, SKConfig } from "@swapkit/core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type AssetValue, type Chain, type FullWallet, SKConfig } from "@swapkit/core";
+import { useCallback, useMemo, useState } from "react";
 
 import { WalletWidget } from "@swapkit/wallets/exodus";
 import Liquidity from "./Liquidity";
@@ -20,8 +20,6 @@ const App = () => {
   const [wallet, setWallet] = useState<WalletDataType>(null);
   const [phrase, setPhrase] = useState("");
   const [stagenet, setStagenet] = useState(false);
-  const [assetListLoaded, setAssetListLoaded] = useState(false);
-
   /**
    * NOTE: Test API keys - please use your own API keys in app as those will timeout, reach limits, etc.
    */
@@ -47,12 +45,6 @@ const App = () => {
       const next = !v;
       SKConfig.setEnv("isStagenet", next);
       return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    AssetValue.loadStaticAssets().then((ok) => {
-      setAssetListLoaded(ok);
     });
   }, []);
 
@@ -105,7 +97,6 @@ const App = () => {
     <div>
       <h3>
         SwapKit Playground -{" "}
-        {assetListLoaded ? "🚀 Asset List Loaded 🚀" : "🔄 Loading Asset List..."}
         <div>
           {apiKeys.map((key) => (
             <input

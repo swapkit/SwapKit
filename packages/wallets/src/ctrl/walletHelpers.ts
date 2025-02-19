@@ -1,4 +1,5 @@
 import type { Keplr } from "@keplr-wallet/types";
+import type { PublicKey } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
@@ -12,7 +13,7 @@ import {
 import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
-import type { PublicKey, SOLToolbox, SolanaProvider } from "@swapkit/toolboxes/solana";
+import type { SOLToolbox, SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 type TransactionMethod = "transfer" | "deposit";
