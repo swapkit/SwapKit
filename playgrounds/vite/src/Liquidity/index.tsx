@@ -132,20 +132,18 @@ export default function Liquidity({
           )}
 
           {mode === "withdraw" && (
-            <>
+            <div>
+              <span>Withdraw Asset:</span>
+              {nativeAsset?.toSignificant(6)} {nativeAsset?.ticker}
               <div>
-                <span>Withdraw Asset:</span>
-                {nativeAsset?.toSignificant(6)} {nativeAsset?.ticker}
-                <div>
-                  <span>Withdraw Percent:</span>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    onChange={(e) => setWithdrawPercent(Number.parseInt(e.target.value))}
-                  />
-                </div>
+                <span>Withdraw Percent:</span>
+                <input
+                  type="number"
+                  placeholder="0"
+                  onChange={(e) => setWithdrawPercent(Number.parseInt(e.target.value))}
+                />
               </div>
-            </>
+            </div>
           )}
         </div>
 

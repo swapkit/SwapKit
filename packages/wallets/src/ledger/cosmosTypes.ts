@@ -50,11 +50,11 @@ export class AminoTypes {
   // there is no overlap when fromAmino is called.
   private readonly register: Record<string, AminoConverter | "not_supported_by_chain">;
 
-  public constructor(types: AminoConverters) {
+  constructor(types: AminoConverters) {
     this.register = types;
   }
 
-  public toAmino({ typeUrl, value }: EncodeObject): AminoMsg {
+  toAmino({ typeUrl, value }: EncodeObject): AminoMsg {
     const converter = this.register[typeUrl];
     if (converter === "not_supported_by_chain") {
       throw new Error(
@@ -70,7 +70,7 @@ export class AminoTypes {
     };
   }
 
-  public fromAmino({ type, value }: AminoMsg): EncodeObject {
+  fromAmino({ type, value }: AminoMsg): EncodeObject {
     const matches = Object.entries(this.register)
       .filter(isAminoConverter)
       .filter(([_typeUrl, { aminoType }]) => aminoType === type);

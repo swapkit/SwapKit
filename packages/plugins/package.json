@@ -1,9 +1,9 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@chainflip/sdk": "1.6.7-rc.5",
-    "@polkadot/keyring": "12.6.2",
-    "@polkadot/util": "12.6.2",
+    "@chainflip/sdk": "1.7.0",
+    "@polkadot/keyring": "13.4.3",
+    "@polkadot/util": "13.4.3",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*"
   },

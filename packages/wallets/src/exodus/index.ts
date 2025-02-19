@@ -50,11 +50,11 @@ export const getWalletMethods = async ({
           network: { type: BitcoinNetworkType.Mainnet },
         },
         onFinish: (response: GetAddressResponse) => {
-          if (!response.addresses[0]) throw Error("No address found");
+          if (!response.addresses[0]) throw new Error("No address found");
           address = response.addresses[0].address;
         },
         onCancel: () => {
-          throw Error("Request canceled");
+          throw new Error("Request canceled");
         },
       };
 
@@ -79,7 +79,7 @@ export const getWalletMethods = async ({
             signedPsbt = Psbt.fromBase64(response.psbtBase64);
           },
           onCancel: () => {
-            throw Error("Signature canceled");
+            throw new Error("Signature canceled");
           },
         };
 

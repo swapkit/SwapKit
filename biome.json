@@ -36,6 +36,7 @@
         "useBlockStatements": "off",
         "useNamingConvention": "off",
         "noNamespaceImport": "off",
+        "useExplicitLengthCheck": "off",
         "useFilenamingConvention": "off",
         "useNodejsImportProtocol": "off"
       },
@@ -43,13 +44,18 @@
       "correctness": {
         "all": true,
         "noNodejsModules": "off",
-        "noUndeclaredVariables": "error"
+        "noUndeclaredVariables": "error",
+        "noUndeclaredDependencies": "off",
+        "useImportExtensions": "off"
       },
       "security": { "all": true },
       "suspicious": {
+        "noEvolvingTypes": "off",
+        "noConsole": { "level": "warn", "options": { "allow": ["info", "warn", "error"] } },
         "all": true,
         "useAwait": "error",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noReactSpecificProps": "off"
       },
       "nursery": { "recommended": true }
     }

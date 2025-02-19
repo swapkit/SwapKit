@@ -131,7 +131,6 @@ export class BigIntArithmetics {
     return this.#comparison("eqValue", value);
   }
 
-  // @ts-expect-error False positive
   getValue<T extends AllowedNumberTypes>(type: T, decimal?: number): NumberPrimitivesType[T] {
     const value = this.formatBigIntToSafeValue(
       this.bigIntValue,
@@ -146,10 +145,11 @@ export class BigIntArithmetics {
       case "bigint":
         return ((this.bigIntValue * 10n ** BigInt(this.decimal || 8n)) /
           this.decimalMultiplier) as NumberPrimitivesType[T];
+      default:
+        return value as NumberPrimitivesType[T];
     }
   }
 
-  // @ts-expect-error
   getBaseValue<T extends AllowedNumberTypes>(type: T, decimal?: number): NumberPrimitivesType[T] {
     const divisor =
       this.decimalMultiplier / toMultiplier(decimal || this.decimal || BaseDecimal.THOR);
@@ -161,6 +161,8 @@ export class BigIntArithmetics {
       case "string":
         return baseValue.toString() as NumberPrimitivesType[T];
       case "bigint":
+        return baseValue as NumberPrimitivesType[T];
+      default:
         return baseValue as NumberPrimitivesType[T];
     }
   }
@@ -360,6 +362,8 @@ export class BigIntArithmetics {
         return compareToValue <= value;
       case "eqValue":
         return compareToValue === value;
+      default:
+        return false;
     }
   }
 
