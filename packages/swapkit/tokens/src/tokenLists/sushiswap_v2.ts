@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2025-02-07T19:02:12.428Z",
+  timestamp: "2025-02-19T12:05:00.980Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 83,
+  count: 84,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -740,6 +740,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
+    },
+    {
+      address: "0x135B810e48e4307AB2a59ea294A6f1724781bD3C",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.WAN-0X135B810E48E4307AB2A59EA294A6F1724781BD3C",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.wan-0x135b810e48e4307ab2a59ea294a6f1724781bd3c.png",
+      ticker: "WAN",
     },
     {
       address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",

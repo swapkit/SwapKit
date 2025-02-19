@@ -2,7 +2,7 @@ export const list = {
   provider: "THORCHAIN",
   chainId: "thorchain-1",
   name: "THORCHAIN",
-  timestamp: "2025-02-07T19:02:14.131Z",
+  timestamp: "2025-02-19T12:05:02.161Z",
   version: {
     major: 1,
     minor: 0,
@@ -45,10 +45,10 @@ export const list = {
       chain: "AVAX",
       chainId: "43114",
       decimals: 6,
-      identifier: "AVAX.USDT-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+      identifier: "AVAX.USDt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
-      ticker: "USDT",
+      ticker: "USDt",
     },
     {
       address: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
@@ -375,7 +375,7 @@ export const list = {
       chain: "THOR",
       chainId: "thorchain-1",
       decimals: 8,
-      identifier: "THOR.AVAX/USDT-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+      identifier: "THOR.AVAX/USDt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
       ticker: "USDT",
