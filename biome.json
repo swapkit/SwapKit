@@ -43,13 +43,16 @@
       "correctness": {
         "all": true,
         "noNodejsModules": "off",
-        "noUndeclaredVariables": "error"
+        "noUndeclaredVariables": "error",
+        "noUndeclaredDependencies": "off",
+        "useImportExtensions": "off"
       },
       "security": { "all": true },
       "suspicious": {
         "all": true,
         "useAwait": "error",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noReactSpecificProps": "off"
       },
       "nursery": { "recommended": true }
     }

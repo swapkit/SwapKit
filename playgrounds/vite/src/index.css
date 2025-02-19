@@ -11,10 +11,9 @@ label.label input[type="file"] {
   display: inline-block;
 }
 
-.label:invalid+span {
+.label:invalid + span {
   color: #f00;
 }
-.label:valid+span {
+.label:valid + span {
   color: #0f0;
 }
-

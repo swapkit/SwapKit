@@ -126,6 +126,7 @@ export async function swapkitWizard() {
             // { value: Variant.CUSTOM, label: "Custom" },
           ],
         }),
+      // @ts-expect-error TODO @Chillios
       wallets: ({ results }) => {
         if (results.variant !== Variant.FULL) {
           return multiselect({
@@ -136,9 +137,10 @@ export async function swapkitWizard() {
 
         return note("Full variant does not require wallets setup.");
       },
+      // @ts-expect-error TODO @Chillios
       plugins: ({ results }) => {
         if (results.variant !== Variant.FULL) {
-          return multiselect<any, Plugin>({
+          return multiselect<Plugin>({
             message: "What plugins do you want to support?",
             options: pluginOptions,
           });
@@ -147,6 +149,7 @@ export async function swapkitWizard() {
         return note("Full variant does not require plugins setup.");
       },
       enableTokens: () =>
+        // @ts-expect-error TODO @Chillios
         select<any, boolean>({
           message:
             "Do you want to integrate static token lists? (Helps with token selections and provides token data like decimals, address and more)",
@@ -156,6 +159,7 @@ export async function swapkitWizard() {
           ],
         }),
       setupApiKeys: () =>
+        // @ts-expect-error TODO @Chillios
         select<any, boolean>({
           initialValue: false,
           message:

@@ -16,10 +16,10 @@ import {
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
 class EVMLedgerInterface extends AbstractSigner {
-  public chainId: ChainId = ChainId.Ethereum;
-  public derivationPath = "";
-  public ledgerApp: InstanceType<typeof EthereumApp> | null = null;
-  public ledgerTimeout = 50000;
+  chainId: ChainId = ChainId.Ethereum;
+  derivationPath = "";
+  ledgerApp: InstanceType<typeof EthereumApp> | null = null;
+  ledgerTimeout = 50000;
 
   constructor({
     provider,

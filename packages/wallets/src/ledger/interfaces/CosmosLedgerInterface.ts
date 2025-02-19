@@ -9,19 +9,20 @@ import { THORChainApp } from "../clients/thorchain/lib";
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
 export abstract class CosmosLedgerInterface {
-  public ledgerTimeout = 50000;
-  public derivationPath: DerivationPathArray | string = NetworkDerivationPath.GAIA;
-  public transport: any;
-  public ledgerApp: any;
-  public chain: "thor" | "cosmos" = "thor";
+  ledgerTimeout = 50000;
+  derivationPath: DerivationPathArray | string = NetworkDerivationPath.GAIA;
+  transport: any;
+  ledgerApp: any;
+  chain: "thor" | "cosmos" = "thor";
 
-  public checkOrCreateTransportAndLedger = async (forceReconnect = false) => {
+  checkOrCreateTransportAndLedger = async (forceReconnect = false) => {
     if (!forceReconnect && this.transport && this.ledgerApp) return;
 
     try {
       this.transport =
         forceReconnect || !this.transport ? await getLedgerTransport() : this.transport;
 
+      // biome-ignore lint/style/useDefaultSwitchClause: default will never be hit
       switch (this.chain) {
         case "thor": {
           this.ledgerApp =
@@ -43,7 +44,7 @@ export abstract class CosmosLedgerInterface {
     }
   };
 
-  public validateResponse = (errorCode: LedgerErrorCode, message?: string) => {
+  validateResponse = (errorCode: LedgerErrorCode, message?: string) => {
     switch (errorCode) {
       case LedgerErrorCode.NoError:
         return;

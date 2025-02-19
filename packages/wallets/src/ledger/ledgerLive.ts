@@ -168,7 +168,7 @@ export const getLedgerLiveWallet = async ({
           recipient: unsignedTx.to,
           data: Buffer.from(unsignedTx.data?.substring(2) || "", "hex"),
           amount: new BigNumberJS(unsignedTx.value || 0),
-          family: LEDGER_LIVE_FAMILIES[1],
+          family: "ethereum",
         });
         if (!signedTx) throw new Error("Could not sign transaction");
         return signedTx;
@@ -188,7 +188,7 @@ export const getLedgerLiveWallet = async ({
           recipient,
           data: Buffer.from(memo || ""),
           amount: new BigNumberJS(assetValue.getBaseValue("string")),
-          family: LEDGER_LIVE_FAMILIES[1],
+          family: "ethereum",
         });
 
         if (!signedTx) throw new Error("Could not sign transaction");
@@ -230,7 +230,7 @@ export const getLedgerLiveWallet = async ({
 
       const sendTransaction = async (unsignedTx: any) => {
         const signedTx = await ledgerLiveClient?.signTransaction(ledgerLiveAccount.id, {
-          family: LEDGER_LIVE_FAMILIES[5],
+          family: "cosmos",
           recipient: unsignedTx.to,
           amount: new BigNumberJS(unsignedTx.value || 0),
           memo: unsignedTx.memo || "",
@@ -251,7 +251,7 @@ export const getLedgerLiveWallet = async ({
       }) => {
         if (!assetValue) throw new Error("invalid asset");
         const signedTx = await ledgerLiveClient?.signTransaction(ledgerLiveAccount.id, {
-          family: LEDGER_LIVE_FAMILIES[5],
+          family: "cosmos",
           recipient,
           amount: new BigNumberJS(assetValue.getBaseValue("string")),
           memo,
@@ -303,7 +303,7 @@ export const getLedgerLiveWallet = async ({
           recipient: unsignedTx.to,
           opReturnData: Buffer.from(unsignedTx.memo || ""),
           amount: new BigNumberJS(unsignedTx.value || 0),
-          family: LEDGER_LIVE_FAMILIES[0],
+          family: "bitcoin",
         });
         if (!signedTx) throw new Error("Could not sign transaction");
         return signedTx;
@@ -317,7 +317,7 @@ export const getLedgerLiveWallet = async ({
           opReturnData: Buffer.from(memo || ""),
           amount: new BigNumberJS(assetValue.getBaseValue("string")),
           feePerByte: feeRate ? new BigNumberJS(Math.max(feeRate, gasPrice)) : undefined,
-          family: LEDGER_LIVE_FAMILIES[0],
+          family: "bitcoin",
         });
 
         if (!signedTx) throw new Error("Could not sign transaction");

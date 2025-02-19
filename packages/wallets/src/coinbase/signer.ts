@@ -1,7 +1,9 @@
 import type { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
-import { Chain, SKConfig } from "@swapkit/helpers";
+import { Chain } from "@swapkit/helpers";
 import type { getToolboxByChain } from "@swapkit/toolboxes/evm";
 import { AbstractSigner, type Provider } from "ethers";
+
+import type { createCoinbaseWalletSDK } from "@coinbase/wallet-sdk/dist/createCoinbaseWalletSDK.js";
 
 class CoinbaseMobileSigner extends AbstractSigner {
   #coinbaseProvider: CoinbaseWalletProvider;
@@ -43,10 +45,13 @@ class CoinbaseMobileSigner extends AbstractSigner {
   }
 }
 
-export const getWalletMethods = async (
-  chain: Chain,
-): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
-  const { CoinbaseWalletSDK } = await import("@coinbase/wallet-sdk");
+export const getWalletMethods = async ({
+  chain,
+  coinbaseSdk,
+}: {
+  chain: Chain;
+  coinbaseSdk: ReturnType<typeof createCoinbaseWalletSDK>;
+}): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
   switch (chain) {
     case Chain.Ethereum:
     case Chain.Avalanche:
@@ -54,15 +59,7 @@ export const getWalletMethods = async (
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
-      const coinbaseConfig = SKConfig.get("integrations").coinbase || {
-        appName: "Swapkit Playground",
-      };
-      const coinbaseWallet = new CoinbaseWalletSDK(coinbaseConfig);
-
-      const walletProvider = coinbaseWallet.makeWeb3Provider(SKConfig.get("rpcUrls")[chain]);
-
-      // TODO fix error
-      if (!walletProvider) throw new Error("No wallet provider");
+      const walletProvider = coinbaseSdk.getProvider() as CoinbaseWalletProvider;
 
       const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
 

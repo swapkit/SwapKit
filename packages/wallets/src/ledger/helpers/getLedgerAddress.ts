@@ -1,4 +1,4 @@
-import { Chain } from "@swapkit/helpers";
+import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
 
 import type { LEDGER_SUPPORTED_CHAINS } from "../index";
 import type { CosmosLedgerClients, EVMLedgerClients, UTXOLedgerClients } from "../types";
@@ -40,5 +40,7 @@ export const getLedgerAddress = async ({
 
       return chain === Chain.BitcoinCash ? address.replace("bitcoincash:", "") : address;
     }
+    default:
+      throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.LEDGER, chain });
   }
 };

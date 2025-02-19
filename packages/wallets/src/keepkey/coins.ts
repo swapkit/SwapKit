@@ -54,7 +54,7 @@ export function bip32ToAddressNList(initPath: string): number[] {
 
       if (modifier === "h" || modifier === "H" || modifier === "'") {
         ret[i] += HARDENED;
-      } else if (modifier.length !== 0) {
+      } else if (modifier.length > 0) {
         throw new Error("Invalid modifier");
       }
     }

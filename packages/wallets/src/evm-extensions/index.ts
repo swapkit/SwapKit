@@ -38,14 +38,12 @@ const getWalletForType = (
     | WalletOption.COINBASE_WEB,
 ) => {
   switch (walletType) {
-    case WalletOption.BRAVE:
-    case WalletOption.METAMASK:
-    case WalletOption.OKX_MOBILE:
-      return window.ethereum;
     case WalletOption.COINBASE_WEB:
       return window.coinbaseWalletExtension;
     case WalletOption.TRUSTWALLET_WEB:
       return window.trustwallet;
+    default:
+      return window.ethereum;
   }
 };
 

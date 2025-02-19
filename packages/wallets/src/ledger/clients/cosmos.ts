@@ -8,7 +8,7 @@ import { CosmosLedgerInterface } from "../interfaces/CosmosLedgerInterface";
 export class CosmosLedger extends CosmosLedgerInterface {
   private pubKey: string | null = null;
 
-  public derivationPath: string;
+  derivationPath: string;
 
   constructor(derivationPath: DerivationPathArray = NetworkDerivationPath.GAIA) {
     super();

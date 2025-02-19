@@ -37,7 +37,7 @@ async function fetchFungibleResources({
   networkApi,
 }: RadixGetBalanceParams): Promise<FungibleResourcesCollectionItem[]> {
   let hasNextPage = true;
-  let nextCursor: string | undefined = undefined;
+  let nextCursor: string | undefined;
   let fungibleResources: FungibleResourcesCollectionItem[] = [];
   const stateVersion = await currentStateVersion(networkApi);
   while (hasNextPage) {

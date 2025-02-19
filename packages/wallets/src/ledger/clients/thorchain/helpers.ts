@@ -46,7 +46,7 @@ export async function signSendChunkv1(
         errorMessage = `${errorMessage} : ${response.slice(0, response.length - 2).toString("ascii")}`;
       }
 
-      let signature = null;
+      let signature: any = null;
       if (response.length > 2) {
         signature = response.slice(0, response.length - 2);
       }

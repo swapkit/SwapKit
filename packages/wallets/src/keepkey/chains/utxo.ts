@@ -95,7 +95,7 @@ export const utxoWalletMethods = async ({
 
     const removeNullAndEmptyObjectsFromArray = (arr: any[]) => {
       return arr.filter(
-        (item) => item !== null && typeof item === "object" && Object.keys(item).length !== 0,
+        (item) => item !== null && typeof item === "object" && Object.keys(item).length > 0,
       );
     };
 
