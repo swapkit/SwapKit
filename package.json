@@ -38,8 +38,7 @@
     "test": "bun --filter '*' --elide-lines=1000 test",
     "test:coverage": "bun --filter '*' test:coverage",
     "type-check": "bun --filter '*' --elide-lines=100 type-check",
-    "version-bump": "bun changeset version",
-    "wizard": "bun --cwd ./packages/swapkit/wizard"
+    "version-bump": "bun changeset version"
   },
   "trustedDependencies": [
     "@biomejs/biome",

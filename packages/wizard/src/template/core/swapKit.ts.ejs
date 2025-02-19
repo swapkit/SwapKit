@@ -1,8 +1,0 @@
-import { getSwapKitClient } from "./client";
-<%_ if (config.enableTokens) { _%>
-import { AssetValue } from "@swapkit/<%= config.clientType === 'sdk' ? 'sdk' : 'core' %>";
-
-AssetValue.loadStaticAssets()
-<%_ } _%>
-
-export const swapKit = getSwapKitClient();

@@ -44,20 +44,3 @@ jobs:
           title: "[Bot] Update Token List"
           label: token-list
           get_diff: true
-
-      # TODO: figure out how to create changeset from cli
-      # - name: Publish Token List
-      #   if: ${{ steps.commit.outputs.numberOfChangedFiles > 0 }}
-      #   run: |
-      #     git config --global user.email "swapkit-bot@thorswap.finance"
-      #     git config --global user.name "swapkit-bot"
-      #     cp .npmrc.prod ./packages/swapkit/tokens/.npmrc
-      #     bun changeset version --snapshot nightly
-      #     cd packages/swapkit/tokens
-      #     npm config list --no-workspaces
-      #     npm publish --no-workspaces
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-

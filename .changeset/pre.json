@@ -8,7 +8,6 @@
     "@swapkit/sdk": "2.2.17",
     "@swapkit/toolboxes": "0.1.0",
     "@swapkit/wallets": "2.0.20",
-    "@swapkit/wizard": "2.1.0",
     "@internal/playground-nextjs": "0.0.0",
     "@internal/playground-node": "0.0.0",
     "@internal/playground-vite": "0.0.0",

@@ -137,7 +137,6 @@ async function getToolbox({
       const signer = await getEVMSigner({ walletconnect, chain, provider });
       const toolbox = getToolboxByChain(chain);
 
-      // @ts-expect-error TODO: fix this signer issue
       return toolbox({ provider, signer });
     }
 
