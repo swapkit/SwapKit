@@ -78,7 +78,6 @@ export const getWeb3WalletMethods = async ({
 
 export const evmWallet = createWallet({
   name: "connectEVMWallet",
-  walletType: undefined,
   supportedChains: [...EVMChains] as EVMChain[],
   connect: ({ addChain, supportedChains }) =>
     async function connectEVMWallet(

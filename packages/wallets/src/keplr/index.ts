@@ -22,7 +22,6 @@ const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChai
 
 export const keplrWallet = createWallet({
   name: "connectKeplr",
-  walletType: undefined,
   supportedChains: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
   connect: ({ addChain, supportedChains }) =>
     async function connectKeplr(

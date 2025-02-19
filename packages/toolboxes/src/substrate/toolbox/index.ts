@@ -1,4 +1,4 @@
-import { Chain, SwapKitNumber } from "@swapkit/helpers";
+import { AssetValue, Chain } from "@swapkit/helpers";
 
 import { ToolboxFactory, type ToolboxParams } from "./baseSubstrateToolbox";
 
@@ -10,16 +10,11 @@ export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParam
   const toolbox = await ToolboxFactory({ chain: Chain.Chainflip, generic, signer });
 
   async function getBalance(address: string) {
-    const { api, gasAsset } = toolbox;
     // @ts-expect-error @Towan some parts of data missing?
     // biome-ignore lint/correctness/noUnsafeOptionalChaining: @Towan some parts of data missing?
-    const { balance } = await api.query.flip?.account?.(address);
+    const { balance } = await toolbox.api.query.flip?.account?.(address);
 
-    return [
-      toolbox.gasAsset.set(
-        SwapKitNumber.fromBigInt(BigInt(balance.toString()), gasAsset.decimal).getValue("string"),
-      ),
-    ];
+    return [AssetValue.from({ chain: Chain.Chainflip, value: BigInt(balance.toString()) })];
   }
 
   return { ...toolbox, getBalance };
