@@ -97,7 +97,8 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         isProgramDerivedAddress,
       }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
         const { PublicKey, Transaction, SystemProgram } = await import("@solana/web3.js");
-        if (!(isProgramDerivedAddress || toolbox.validateAddress(recipient))) {
+        const validateAddress = await toolbox.getAddressValidator();
+        if (!(isProgramDerivedAddress || validateAddress(recipient))) {
           throw new SwapKitError("core_transaction_invalid_recipient_address");
         }
 

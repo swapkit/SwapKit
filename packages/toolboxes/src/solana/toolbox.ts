@@ -100,7 +100,7 @@ export const SOLToolbox = () => {
     getBalance: getBalance(getConnection),
     transfer: transfer(getConnection),
     broadcastTransaction: broadcastTransaction(getConnection),
-    getAddressValidator
+    getAddressValidator,
   };
 };
 

@@ -21,7 +21,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
-    "preserveSymlinks": true,
+    "preserveSymlinks": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
