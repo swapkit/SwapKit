@@ -141,6 +141,5 @@ export const estimateTransactionFee = async (
     );
   }
 
-  // TODO:
   throw new Error("No gas price found");
 };

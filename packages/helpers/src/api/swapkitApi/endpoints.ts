@@ -25,7 +25,6 @@ function getApiUrl(path?: `/${string}`) {
   return `${isDev ? devApiUrl : apiUrl}${path}`;
 }
 
-// TODO: refactor to use apiKey
 function getAuthHeaders(hash?: string) {
   const { swapKit } = SKConfig.get("apiKeys");
   const { referer } = SKConfig.get("envs");
@@ -58,7 +57,6 @@ export const computeHash = (
   return crypto.createHash("sha256").update(data, "utf8").digest("hex");
 };
 
-// TODO: refactor to use apiKey
 export function getTrackerDetails(payload: TrackerParams) {
   return RequestClient.post<TrackerResponse>(getApiUrl("/track"), {
     json: payload,

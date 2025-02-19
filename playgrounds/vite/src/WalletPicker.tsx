@@ -9,10 +9,10 @@ import {
   getEIP6963Wallets,
 } from "@swapkit/helpers";
 import type { DerivationPathArray, FullWallet } from "@swapkit/sdk";
-import type { Eip1193Provider } from "@swapkit/toolboxes/evm";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { decryptFromKeystore } from "@swapkit/wallets/keystore";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
+import type { Eip1193Provider } from "ethers";
 import { useCallback, useState } from "react";
 import type { SwapKitClient } from "./swapKitClient";
 
@@ -160,15 +160,12 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         case WalletOption.METAMASK:
         case WalletOption.TRUSTWALLET_WEB:
         case WalletOption.EIP6963:
-          // @ts-ignore
           return skClient.connectEVMWallet(chains, option, provider);
         case WalletOption.TALISMAN:
-          // @ts-ignore
           return skClient.connectTalisman(chains);
         case WalletOption.KEPLR:
         case WalletOption.LEAP:
-          // @ts-ignore
-          return skClient.connectKeplr(chains, option.toLowerCase());
+          return skClient.connectKeplr(chains, option);
         case WalletOption.KEEPKEY: {
           const derivationPaths = chains.reduce(
             (acc, chain) => {

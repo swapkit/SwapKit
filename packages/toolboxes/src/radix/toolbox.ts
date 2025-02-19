@@ -110,7 +110,7 @@
 // //       tip_percentage: intent.header.tipPercentage,
 // //       nonce: intent.header.nonce,
 // //       signer_public_keys: [retPublicKeyToGatewayPublicKey(intent.header.notaryPublicKey)],
-// //       // TODO: Add message
+
 // //       flags: {
 // //         assume_all_signature_proofs: false,
 // //         skip_epoch_check: false,
@@ -680,7 +680,6 @@
 // //   return function signMessage(_message: string) {
 // //     throw new SwapKitError("not_implemented", { method: "signMessage", toolbox: "radix" });
 
-// //     // TODO: convert message to Uint8Array
 // //     // return signer.signToSignatureWithPublicKey(message);
 // //   };
 // // }
@@ -689,7 +688,6 @@
 // //   return function validateSignature(_signature: SignatureWithPublicKey) {
 // //     throw new SwapKitError("not_implemented", { method: "validateSignature", toolbox: "radix" });
 
-// //     // TODO: validate signature
 // //     // return
 // //   };
 // // }

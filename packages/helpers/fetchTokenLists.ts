@@ -1,4 +1,4 @@
-import { Chain, ChainId, ProviderName } from "./src";
+import { Chain, ProviderName } from "./src";
 import { SwapKitApi } from "./src/api";
 
 const providers = (await SwapKitApi.getTokenListProviders()).filter(
@@ -17,8 +17,6 @@ console.info(
     .join("\n-")}`,
 );
 
-const thorchainChainId = ChainId.THORChain;
-
 for (const { provider } of providers) {
   try {
     const tokenList = await SwapKitApi.getTokenList(provider);
@@ -30,8 +28,7 @@ for (const { provider } of providers) {
       .map((token) => ({
         address: token.address,
         chain: parseChain(token.chain),
-        // TODO remove after fork
-        chainId: token.chainId === "thorchain-mainnet-v1" ? thorchainChainId : token.chainId,
+        chainId: token.chainId,
         decimals: token.decimals,
         identifier: parseIdentifier(token.identifier),
         logoURI: token.logoURI,

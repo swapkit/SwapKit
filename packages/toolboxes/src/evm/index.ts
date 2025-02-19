@@ -1,16 +1,3 @@
-// TODO remove with next major
-export {
-  AbstractSigner,
-  BrowserProvider,
-  HDNodeWallet,
-  JsonRpcProvider,
-  Signature,
-  Transaction,
-  type Eip1193Provider,
-  type Provider,
-  type TransactionRequest,
-} from "ethers";
-
 /**
  * Package
  */

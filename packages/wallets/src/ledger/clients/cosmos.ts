@@ -54,7 +54,6 @@ export class CosmosLedger extends CosmosLedgerInterface {
     ];
   };
 
-  // TODO: Fix type inference
   signAmino = async (signerAddress: string, signDoc: any): Promise<any> => {
     await this.checkOrCreateTransportAndLedger(true);
 
