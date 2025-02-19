@@ -11,14 +11,14 @@ export const cliVersion = version;
 
 function packageExecutor(packageManager: PackageManager) {
   switch (packageManager) {
-    case "bun":
-      return "bun x";
     case "yarn":
       return "yarn dlx";
     case "pnpm":
       return "pnpx";
     case "npm":
       return "npx";
+    default:
+      return "bun x";
   }
 }
 

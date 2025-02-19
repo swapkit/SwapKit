@@ -145,9 +145,6 @@
         "@walletconnect/logger": "2.1.2",
         "@walletconnect/types": "2.13.3",
       },
-      "peerDependencies": {
-        "@solana/web3.js": "1.98.0",
-      },
     },
     "packages/wizard": {
       "name": "@swapkit/wizard",

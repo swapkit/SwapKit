@@ -187,7 +187,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
             getChecksumAddressFromAsset({ chain, symbol, ticker }, chain as EVMChain),
             assetValue.getBaseValue("string"),
             params.memo,
-            rest.expiration || Number.parseInt(`${(new Date().getTime() + 15 * 60 * 1000) / 1000}`),
+            rest.expiration || Number.parseInt(`${(Date.now() + 15 * 60 * 1000) / 1000}`),
           ],
           txOverrides: {
             from: params.from,

@@ -220,7 +220,7 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
       } = await RequestClient.get<ThorchainConstantsResponse>(constantsUrl);
 
       if (!nativeFee || Number.isNaN(nativeFee) || nativeFee < 0) {
-        throw Error(`Invalid nativeFee: ${nativeFee.toString()}`);
+        throw new Error(`Invalid nativeFee: ${nativeFee.toString()}`);
       }
 
       fee = new SwapKitNumber(nativeFee);
