@@ -7,16 +7,14 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { BaseCosmosToolboxType, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
 export const cosmosWalletMethods = async ({
   sdk,
   derivationPath,
-}: { sdk: KeepKeySdk; derivationPath?: DerivationPathArray }): Promise<
-  BaseCosmosToolboxType & { address: string }
-> => {
+}: { sdk: KeepKeySdk; derivationPath?: DerivationPathArray }) => {
   const { DEFAULT_COSMOS_FEE_MAINNET, GaiaToolbox, createStargateClient } = await import(
     "@swapkit/toolboxes/cosmos"
   );

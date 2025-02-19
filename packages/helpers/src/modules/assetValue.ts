@@ -167,44 +167,26 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
     return assetValue as ConditionalAssetValueReturn<T>;
   }
 
-  static loadStaticAssets() {
-    return new Promise<{ ok: true } | { ok: false; message: string; error: any }>(
-      (resolve, reject) => {
-        try {
-          // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
-          import("@swapkit/helpers/tokens").then((tokenPackage) => {
-            if (!tokenPackage.tokenLists) {
-              console.warn(
-                "No token lists found in @swapkit/tokens package. Ensure you have installed it correctly.",
-              );
-              return;
-            }
-
-            for (const tokenList of Object.values(tokenPackage.tokenLists)) {
-              for (const { identifier, chain, ...rest } of tokenList.tokens) {
-                staticTokensMap.set(
-                  chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames),
-                  {
-                    identifier,
-                    decimal: "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain],
-                  },
-                );
-              }
-            }
-
-            resolve({ ok: true });
-          });
-        } catch (error) {
-          console.error(error);
-          reject({
-            ok: false,
-            error,
-            message:
-              "Couldn't load static assets. Ensure you have installed @swapkit/tokens package",
-          });
+  static async loadStaticAssets() {
+    try {
+      await import("@swapkit/helpers/tokens").then(({ tokenLists }) => {
+        for (const { tokens } of Object.values(tokenLists)) {
+          for (const { identifier, chain, ...rest } of tokens) {
+            staticTokensMap.set(
+              chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames),
+              {
+                identifier,
+                decimal: "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain],
+              },
+            );
+          }
         }
-      },
-    );
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 }
 

@@ -9,9 +9,10 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolboxes/evm";
-import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolboxes/utxo";
-import { BrowserProvider, type Eip1193Provider } from "ethers";
+import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "@swapkit/toolboxes/utxo";
+import type { BrowserProvider, Eip1193Provider } from "ethers";
 import {
   AddressPurpose,
   BitcoinNetworkType,
@@ -35,6 +36,7 @@ export const getWalletMethods = async ({
 }) => {
   switch (chain) {
     case Chain.Bitcoin: {
+      const { BTCToolbox, Psbt } = await import("@swapkit/toolboxes/utxo");
       const toolbox = BTCToolbox();
 
       let address = "";
@@ -105,6 +107,7 @@ export const getWalletMethods = async ({
     case Chain.Optimism:
     case Chain.Polygon: {
       if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
+      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
       const jsonRpcProvider = getProvider(chain);
       const browserProvider = provider as BrowserProvider;
@@ -142,6 +145,7 @@ export const exodusWallet = createWallet({
     async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
       if (!wallet) throw new Error("Missing Exodus Wallet instance");
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+      const { BrowserProvider } = await import("ethers");
 
       const { providers } = wallet;
 

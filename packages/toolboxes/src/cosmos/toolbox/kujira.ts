@@ -1,10 +1,6 @@
 import { BaseDecimal, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
 
-import {
-  type KujiraToolboxType,
-  USK_KUJIRA_FACTORY_DENOM,
-  YUM_KUJIRA_FACTORY_DENOM,
-} from "../index";
+import { USK_KUJIRA_FACTORY_DENOM, YUM_KUJIRA_FACTORY_DENOM } from "../index";
 import type { TransferParams } from "../types";
 import { buildNativeTransferTx, getAssetFromDenom } from "../util";
 
@@ -20,7 +16,7 @@ async function getFees() {
   };
 }
 
-export const KujiraToolbox = (): KujiraToolboxType => {
+export const KujiraToolbox = () => {
   const cosmosToolbox = BaseCosmosToolbox({ chain: Chain.Kujira });
 
   return {

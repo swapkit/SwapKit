@@ -8,7 +8,7 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { DepositParam, ThorchainToolboxType, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
@@ -25,7 +25,7 @@ export const mayachainWalletMethods = async ({
 }: {
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
-}): Promise<ThorchainToolboxType & { address: string }> => {
+}) => {
   const { createStargateClient, getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
 
   const toolbox = getToolboxByChain(Chain.Maya)();

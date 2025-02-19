@@ -8,7 +8,7 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { ThorchainToolboxType } from "@swapkit/toolboxes/cosmos";
+import type { CosmosToolboxType } from "@swapkit/toolboxes/cosmos";
 import { chainRegistry } from "./chainRegistry";
 
 declare global {
@@ -76,7 +76,7 @@ export const keplrWallet = createWallet({
                   assetValue: AssetValue;
                   memo?: string;
                 }) =>
-                  (toolbox as ThorchainToolboxType).deposit({
+                  (toolbox as ReturnType<CosmosToolboxType["THOR"]>).deposit({
                     ...params,
                     signer: offlineSigner,
                     from: params.from || address,

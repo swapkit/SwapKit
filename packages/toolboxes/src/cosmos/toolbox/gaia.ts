@@ -2,11 +2,10 @@ import { BaseDecimal, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
 
 import type { TransferParams } from "../types";
 
-import type { GaiaToolboxType } from "../thorchainUtils/types/client-types";
 import { buildNativeTransferTx } from "../util";
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from "./BaseCosmosToolbox";
 
-export function GaiaToolbox(): GaiaToolboxType {
+export function GaiaToolbox() {
   const cosmosToolbox = BaseCosmosToolbox({ chain: Chain.Cosmos });
 
   async function getFees() {

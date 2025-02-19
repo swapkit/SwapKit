@@ -1,6 +1,3 @@
-import { Secp256k1HdWallet } from "@cosmjs/amino";
-import { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } from "@cosmjs/crypto";
-import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { base64, bech32 } from "@scure/base";
 import {
   AssetValue,
@@ -14,7 +11,6 @@ import {
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 
-import type { BaseCosmosToolboxType } from "../thorchainUtils/types/client-types";
 import type { TransferParams } from "../types";
 import {
   DEFAULT_COSMOS_FEE_MAINNET,
@@ -48,14 +44,12 @@ export function BaseCosmosToolbox({
   derivationPath: paramsDerivationPath,
   index = 0,
   prefix,
-}: Params): BaseCosmosToolboxType {
+}: Params) {
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const chainPrefix = prefix || CosmosChainPrefixes[chain];
   const derivationPath = paramsDerivationPath
     ? `${paramsDerivationPath}/${index}`
     : `${DerivationPath[chain]}/${index}`;
-
-  const derivationPathString = stringToPath(derivationPath);
 
   const getCosmosAccount = cosmosAccountGetter(chainPrefix);
   const getCosmosBalance = cosmosBalanceGetter({ chain, rpcUrl });
@@ -63,28 +57,41 @@ export function BaseCosmosToolbox({
 
   return {
     transfer: cosmosTransfer(rpcUrl),
-    getSigner: (phrase: string) => {
+    getSigner: async (phrase: string) => {
+      const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
+      const { stringToPath } = await import("@cosmjs/crypto");
+
       return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
         prefix,
-        hdPaths: [derivationPathString],
+        hdPaths: [stringToPath(derivationPath)],
       });
     },
-    getSignerFromPrivateKey: (privateKey: Uint8Array) => {
+    getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
+      const { DirectSecp256k1Wallet } = await import("@cosmjs/proto-signing");
+
       return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
     },
     createPrivateKeyFromPhrase: async (phrase: string) => {
+      const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = await import(
+        "@cosmjs/crypto"
+      );
+
       const mnemonicChecked = new EnglishMnemonic(phrase);
       const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
 
-      const { privkey } = Slip10.derivePath(Slip10Curve.Secp256k1, seed, derivationPathString);
+      const { privkey } = Slip10.derivePath(
+        Slip10Curve.Secp256k1,
+        seed,
+        stringToPath(derivationPath),
+      );
 
       return privkey;
     },
-    getAccount: async (address) => {
+    getAccount: async (address: string) => {
       const client = await createStargateClient(rpcUrl);
       return client.getAccount(address);
     },
-    validateAddress: (address) => validateCosmosAddress({ prefix: chainPrefix, address }),
+    validateAddress: (address: string) => validateCosmosAddress({ prefix: chainPrefix, address }),
     getAddressFromMnemonic: async (phrase: string) => {
       const walletAccount = await getCosmosAccount({ phrase, derivationPath });
 
@@ -100,15 +107,7 @@ export function BaseCosmosToolbox({
   };
 }
 
-function getPrefix(chain?: CosmosChain) {
-  const { isStagenet } = SKConfig.get("envs");
-  const useStagenetPrefix = chain
-    ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet
-    : false;
-  const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
-
-  return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
-}
+export type BaseCosmosToolboxType = ReturnType<typeof BaseCosmosToolbox>;
 
 export function cosmosValidateAddress({
   address,
@@ -135,6 +134,16 @@ export type BaseCosmosWallet = ReturnType<typeof BaseCosmosToolbox>;
 export type CosmosWallets = {
   [chain in Chain.Cosmos | Chain.Kujira]: BaseCosmosWallet;
 };
+
+function getPrefix(chain?: CosmosChain) {
+  const { isStagenet } = SKConfig.get("envs");
+  const useStagenetPrefix = chain
+    ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet
+    : false;
+  const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
+
+  return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
+}
 
 function getMinTransactionFee(chain: Chain) {
   return (
@@ -227,6 +236,8 @@ function cosmosAccountGetter(prefix: string) {
     phrase,
     derivationPath,
   }: { phrase: string; derivationPath: string }) {
+    const { Secp256k1HdWallet } = await import("@cosmjs/amino");
+    const { stringToPath } = await import("@cosmjs/crypto");
     const wallet = await Secp256k1HdWallet.fromMnemonic(phrase, {
       prefix,
       hdPaths: [stringToPath(derivationPath)],

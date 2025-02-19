@@ -31,10 +31,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@swapkit/core": resolve("../../packages/swapkit/core/src"),
-      "@swapkit/helpers": resolve("../../packages/swapkit/helpers/src"),
+      "@swapkit/core": resolve("../../packages/core/src"),
+      "@swapkit/helpers": resolve("../../packages/helpers/src"),
       "@swapkit/plugins": resolve("../../packages/plugins/src"),
-      "@swapkit/sdk": resolve("../../packages/swapkit/sdk/src"),
+      "@swapkit/sdk": resolve("../../packages/sdk/src"),
       "@swapkit/toolboxes": resolve("../../packages/toolboxes/src"),
       "@swapkit/wallets": resolve("../../packages/wallets/src"),
 
@@ -55,7 +55,6 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      // @ts-expect-error
       plugins: [nodePolyfills()],
     },
   },

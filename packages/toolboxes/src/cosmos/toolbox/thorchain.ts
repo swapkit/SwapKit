@@ -33,9 +33,7 @@ import {
 } from "../thorchainUtils/index";
 import type {
   DepositParam,
-  MayaToolboxType,
   ThorchainConstantsResponse,
-  ThorchainToolboxType,
 } from "../thorchainUtils/types/client-types";
 import type { Signer, TransferParams } from "../types";
 import {
@@ -45,7 +43,6 @@ import {
   getDefaultChainFee,
 } from "../util";
 
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { BaseCosmosToolbox } from "./BaseCosmosToolbox";
 
 function secp256k1HdWalletFromMnemonic({
@@ -189,7 +186,7 @@ function verifySignature(getAccount: (address: string) => Promise<Account | null
   };
 }
 
-export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): ThorchainToolboxType {
+export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const { isStagenet } = SKConfig.get("envs");
@@ -238,6 +235,7 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
     memo = "",
     signer,
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
+    const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
     if (!signer) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;
@@ -312,11 +310,11 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya): Thorc
   };
 }
 
-export function ThorchainToolbox(): ThorchainToolboxType {
+export function ThorchainToolbox() {
   return BaseThorchainToolbox(Chain.THORChain);
 }
 
-export function MayaToolbox(): MayaToolboxType {
+export function MayaToolbox() {
   return BaseThorchainToolbox(Chain.Maya);
 }
 

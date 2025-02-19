@@ -26,8 +26,10 @@
   },
   "name": "@internal/playground-vite",
   "private": true,
+  "type": "module",
   "scripts": {
     "build-playground": "NODE_OPTIONS=--max_old_space_size=65536 vite build",
+    "bundle": "bunx vite-bundle-visualizer",
     "dev": "vite",
     "lint": "biome check --write ./src",
     "type-check": "tsc --noEmit",

@@ -1,22 +1,6 @@
-import type {
-  MultisigThresholdPubkey,
-  OfflineAminoSigner,
-  Pubkey,
-  Secp256k1HdWallet,
-} from "@cosmjs/amino";
-import type { EncodeObject, OfflineDirectSigner, Registry } from "@cosmjs/proto-signing";
-import type { AminoTypes, Account as CosmosAccount } from "@cosmjs/stargate";
-import type { Asset, AssetValue, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
-
-import type {
-  buildAminoMsg,
-  buildDepositTx,
-  buildEncodedTxBody,
-  buildTransferTx,
-  convertToSignable,
-  parseAminoMessageForDirectSigning,
-} from "../../index";
-import type { Signer, TransferParams } from "../../types";
+import type { OfflineAminoSigner } from "@cosmjs/amino";
+import type { EncodeObject, OfflineDirectSigner } from "@cosmjs/proto-signing";
+import type { Asset, AssetValue, Chain, ChainId } from "@swapkit/helpers";
 
 enum TxType {
   Transfer = "transfer",
@@ -66,12 +50,6 @@ export type NodeInfoResponse = {
   };
 };
 
-type Fees = {
-  average: SwapKitNumber;
-  fast: SwapKitNumber;
-  fastest: SwapKitNumber;
-};
-
 export type TransferTransaction = {
   memo: string;
   accountNumber: number;
@@ -100,71 +78,3 @@ export type ThorchainTransferTxParams = {
 };
 
 export type ThorchainDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
-
-export type BaseCosmosToolboxType = {
-  getAccount: (address: string) => Promise<CosmosAccount | null>;
-  getSigner: (phrase: string) => Promise<OfflineDirectSigner>;
-  getSignerFromPrivateKey: (privateKey: Uint8Array) => Promise<OfflineDirectSigner>;
-  validateAddress: (address: string) => boolean;
-  getAddressFromMnemonic: (phrase: string) => Promise<string>;
-  getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
-  getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
-  getBalanceAsDenoms: (address: string) => Promise<{ denom: string; amount: string }[]>;
-  transfer: (params: TransferParams) => Promise<string>;
-  getFeeRateFromThorswap?: (chainId: ChainId, safeDefault: number) => Promise<number>;
-  createPrivateKeyFromPhrase: (phrase: string) => Promise<Uint8Array>;
-};
-
-export type ThorchainToolboxType = BaseCosmosToolboxType & {
-  getFees: () => Promise<Fees>;
-  deposit: (params: DepositParam & { from: string }) => Promise<string>;
-  createDefaultRegistry: () => Registry;
-  createDefaultAminoTypes: () => AminoTypes;
-  buildAminoMsg: typeof buildAminoMsg;
-  convertToSignable: typeof convertToSignable;
-  buildTransferTx: (
-    params: ThorchainTransferTxParams,
-  ) => ReturnType<ReturnType<typeof buildTransferTx>>;
-  buildDepositTx: (
-    params: ThorchainDepositTxParams,
-  ) => ReturnType<ReturnType<typeof buildDepositTx>>;
-  buildEncodedTxBody: typeof buildEncodedTxBody;
-  parseAminoMessageForDirectSigning: typeof parseAminoMessageForDirectSigning;
-  createMultisig: (pubKeys: string[], threshold: number) => Promise<MultisigThresholdPubkey>;
-  importSignature: (signature: string) => Uint8Array;
-  secp256k1HdWalletFromMnemonic: (mnemonic: string, index?: number) => Promise<Secp256k1HdWallet>;
-  signMultisigTx: (
-    wallet: Secp256k1HdWallet,
-    tx: string,
-  ) => Promise<{ signature: string; bodyBytes: Uint8Array }>;
-  broadcastMultisigTx: (
-    tx: string,
-    signers: Signer[],
-    membersPubKeys: string[],
-    threshold: number,
-    bodyBytes: Uint8Array,
-  ) => Promise<string>;
-  pubkeyToAddress: (pubkey: Pubkey, prefix: string) => string;
-  loadAddressBalances: (address: string) => Promise<AssetValue[]>;
-  signWithPrivateKey: ({
-    privateKey,
-    message,
-  }: { privateKey: Uint8Array; message: string }) => Promise<string>;
-  verifySignature: ({
-    signature,
-    message,
-    address,
-  }: { signature: string; message: string; address: string }) => Promise<boolean>;
-};
-
-export type MayaToolboxType = ThorchainToolboxType;
-
-export type GaiaToolboxType = BaseCosmosToolboxType & {
-  getFees: () => Promise<Fees>;
-  buildTransferTx: (params: CosmosNativeTransferTxParams) => Promise<TransferTransaction>;
-};
-
-export type KujiraToolboxType = BaseCosmosToolboxType & {
-  getFees: () => Promise<Fees>;
-  buildTransferTx: (params: CosmosNativeTransferTxParams) => Promise<TransferTransaction>;
-};

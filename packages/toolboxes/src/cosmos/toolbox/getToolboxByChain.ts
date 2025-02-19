@@ -4,23 +4,25 @@ import { GaiaToolbox } from "./gaia";
 import { KujiraToolbox } from "./kujira";
 import { MayaToolbox, ThorchainToolbox } from "./thorchain";
 
-type ToolboxType = {
+export type CosmosToolboxType = {
   THOR: typeof ThorchainToolbox;
   GAIA: typeof GaiaToolbox;
   KUJI: typeof KujiraToolbox;
   MAYA: typeof MayaToolbox;
 };
 
-export const getToolboxByChain = <T extends keyof ToolboxType>(chain: T): ToolboxType[T] => {
+export const getToolboxByChain = <T extends keyof CosmosToolboxType>(
+  chain: T,
+): CosmosToolboxType[T] => {
   switch (chain) {
     case Chain.Kujira:
-      return KujiraToolbox as ToolboxType[T];
+      return KujiraToolbox as CosmosToolboxType[T];
     case Chain.Maya:
-      return MayaToolbox as ToolboxType[T];
+      return MayaToolbox as CosmosToolboxType[T];
     case Chain.THORChain:
-      return ThorchainToolbox as ToolboxType[T];
+      return ThorchainToolbox as CosmosToolboxType[T];
     case Chain.Cosmos:
-      return GaiaToolbox as ToolboxType[T];
+      return GaiaToolbox as CosmosToolboxType[T];
     default:
       throw new Error(`Chain ${chain} is not supported`);
   }

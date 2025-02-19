@@ -2,13 +2,6 @@ import type { OfflineAminoSigner, StdFee } from "@cosmjs/amino";
 import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type { AssetValue, ChainId, FeeOption } from "@swapkit/helpers";
 
-import type {
-  GaiaToolboxType,
-  KujiraToolboxType,
-  MayaToolboxType,
-  ThorchainToolboxType,
-} from "./index";
-
 export type CosmosSDKClientParams = {
   server: string;
   chainId: ChainId;
@@ -35,17 +28,4 @@ export type ToolboxParams = {
 export type Signer = {
   pubKey: string;
   signature: string;
-};
-
-export type CosmosLikeToolbox =
-  | GaiaToolboxType
-  | ThorchainToolboxType
-  | MayaToolboxType
-  | KujiraToolboxType;
-
-export type CosmosMaxSendableAmountParams = {
-  toolbox: CosmosLikeToolbox;
-  from: string;
-  asset?: AssetValue | string;
-  feeOptionKey?: FeeOption;
 };

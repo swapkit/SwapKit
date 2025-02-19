@@ -112,7 +112,7 @@ export const walletconnectWallet = createWallet({
 export const WC_SUPPORTED_CHAINS = getWalletSupportedChains(walletconnectWallet);
 export type Walletconnect = Awaited<ReturnType<typeof getWalletconnect>>;
 
-async function getToolbox({
+async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
   chain,
   walletconnect,
   address,
@@ -120,7 +120,7 @@ async function getToolbox({
 }: {
   walletconnect: Walletconnect;
   session: SessionTypes.Struct;
-  chain: (typeof WC_SUPPORTED_CHAINS)[number];
+  chain: T;
   address: string;
 }) {
   switch (chain) {

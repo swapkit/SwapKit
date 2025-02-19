@@ -51,7 +51,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    AssetValue.loadStaticAssets().then(({ ok }) => {
+    AssetValue.loadStaticAssets().then((ok) => {
       setAssetListLoaded(ok);
     });
   }, []);

@@ -10,14 +10,12 @@ import {
   Chain,
   ChainId,
   type CosmosChain,
-  FeeOption,
   SKConfig,
   defaultRequestHeaders,
   getGasAsset,
 } from "@swapkit/helpers";
 
 import type { CosmosNativeTransferTxParams } from "./thorchainUtils";
-import type { CosmosMaxSendableAmountParams } from "./types";
 
 export const USK_KUJIRA_FACTORY_DENOM =
   "FACTORY/KUJIRA1QK00H5ATUTPSV900X202PXX42NPJR9THG58DNQPA72F2P7M2LUASE444A7/UUSK";
@@ -170,29 +168,6 @@ export const getRPC = (chainId: ChainId) => {
     default:
       return rpcUrls.GAIA;
   }
-};
-
-export const estimateMaxSendableAmount = async ({
-  from,
-  toolbox,
-  asset,
-  feeOptionKey = FeeOption.Fast,
-}: CosmosMaxSendableAmountParams): Promise<AssetValue> => {
-  const assetEntity =
-    typeof asset === "string" ? await AssetValue.from({ asyncTokenLookup: true, asset }) : asset;
-  const balances = await toolbox.getBalance(from);
-  const balance = balances.find(({ symbol, chain }) =>
-    asset ? symbol === assetEntity?.symbol : symbol === AssetValue.from({ chain }).symbol,
-  );
-
-  const fees = await toolbox.getFees();
-
-  if (!balance) {
-    const chain = assetEntity?.chain || balances[0]?.chain || Chain.Cosmos;
-    return AssetValue.from({ chain, value: 0 });
-  }
-
-  return balance.sub(fees[feeOptionKey]);
 };
 
 const getTransferMsgTypeByChain = (chain: CosmosChain) => {
