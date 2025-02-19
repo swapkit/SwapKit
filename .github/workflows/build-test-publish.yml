@@ -79,6 +79,15 @@ jobs:
           publish: bun publish-packages
           setupGitUser: false
 
+      - name: Publish Beta to npm
+        uses: changesets/action@v1
+        if: contains(github.ref_name, 'beta')
+        with:
+          title: ":tada: Publish Beta"
+          version: bun version-bump
+          publish: bun publish-packages --tag beta
+          setupGitUser: false
+
       - name: Publish Nightly to npm
         uses: changesets/action@v1
         if: contains(github.ref_name, 'nightly')

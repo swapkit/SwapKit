@@ -6,11 +6,11 @@ const onlyPackageJson = files.filter(
   (file) => !file.includes("node_modules") && file.endsWith("package.json"),
 );
 
-const versions = {};
+const versions: Record<string, string> = {};
 
 for (const file of onlyPackageJson) {
   const { version } = await import(`../packages/${file}`);
-  const [, name] = file.split("/");
+  const [name] = file.split("/");
 
   const packageName = `@swapkit/${name}`;
 
@@ -18,15 +18,17 @@ for (const file of onlyPackageJson) {
 }
 
 for (const file of onlyPackageJson) {
-  // @ts-expect-error
-  const packageJson = Bun.file(`./packages/${file}`);
-  const content = await packageJson.text();
+  const pkgContent = await Bun.file(`./packages/${file}`).json();
 
-  const replacedContent = content.replace(
-    /"(@swapkit\/[^"]+)": "[^"]+"/g,
-    (_, p1) => `"${p1}": "${versions[p1]}"`,
-  );
+  for (const [key, value] of Object.entries(versions)) {
+    if (pkgContent.dependencies?.[key]) {
+      pkgContent.dependencies[key] = value;
+    }
 
-  // @ts-expect-error
-  await Bun.write(`./packages/${file}`, replacedContent);
+    if (pkgContent.devDependencies?.[key]) {
+      pkgContent.devDependencies[key] = value;
+    }
+
+    await Bun.write(`./packages/${file}`, JSON.stringify(pkgContent, null, 2));
+  }
 }
