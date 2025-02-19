@@ -4,17 +4,44 @@ import type { RadixWallets } from "@swapkit/toolboxes/radix";
 import type { SolanaWallets } from "@swapkit/toolboxes/solana";
 import type { SubstrateWallets } from "@swapkit/toolboxes/substrate";
 import type { UTXOWallets } from "@swapkit/toolboxes/utxo";
+import type { BrowserProvider } from "ethers";
 import type { Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
-import type { Chain } from "./chains";
-import type { AddChainType } from "./commonTypes";
+import type { Chain, ChainId } from "./chains";
 
 declare global {
   interface WindowEventMap {
     "eip6963:announceProvider": CustomEvent;
   }
 }
+
+export type EthereumWindowProvider = BrowserProvider & {
+  __XDEFI?: boolean;
+  isBraveWallet?: boolean;
+  isCoinbaseWallet?: boolean;
+  isMetaMask?: boolean;
+  isOkxWallet?: boolean;
+  isKeepKeyWallet?: boolean;
+  isTrust?: boolean;
+  isTalisman?: boolean;
+  on: (event: string, callback?: () => void) => void;
+  overrideIsMetaMask?: boolean;
+  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>;
+  selectedProvider?: EthereumWindowProvider;
+};
+
+export type NetworkParams = {
+  chainId: ChainId;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls: string[];
+};
 
 export type {
   CosmosWallets,
@@ -64,7 +91,7 @@ export type ChainWallet<T extends Chain> = {
   chain: T;
   address: string;
   balance: AssetValue[];
-  walletType: WalletOption;
+  walletType: WalletOption | string;
   disconnect?: () => void;
   signMessage?: (message: string) => Promise<string>;
 };
@@ -83,10 +110,6 @@ export type FullWallet = BaseWallet<
     SolanaWallets &
     RadixWallets
 >;
-
-export type SwapKitWallet<ConnectParams extends any[]> = (
-  params: AddChainType,
-) => (...connectParams: ConnectParams) => boolean | Promise<boolean>;
 
 export type SwapKitPluginParams = {
   getWallet: <T extends CryptoChain>(chain: T) => FullWallet[T];

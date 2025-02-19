@@ -170,8 +170,8 @@ export class SwapKitError extends Error {
     sourceError?: any,
   ) {
     const isErrorString = typeof errorOrErrorKey === "string";
-
     const errorKey = isErrorString ? errorOrErrorKey : errorOrErrorKey.errorKey;
+    super(errorKey);
 
     if (sourceError) {
       console.error(sourceError, {
@@ -180,11 +180,9 @@ export class SwapKitError extends Error {
       });
     }
 
-    super(errorKey, {
-      cause: {
-        code: SwapKitError.ErrorCode[errorKey],
-        message: `${errorKey}${isErrorString ? "" : `: ${JSON.stringify(errorOrErrorKey.info)}`}`,
-      },
+    console.error(errorKey, {
+      code: SwapKitError.ErrorCode[errorKey],
+      message: `${errorKey}${isErrorString ? "" : `: ${JSON.stringify(errorOrErrorKey.info)}`}`,
     });
 
     Object.setPrototypeOf(this, SwapKitError.prototype);

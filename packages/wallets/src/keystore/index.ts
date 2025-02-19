@@ -1,5 +1,4 @@
 import {
-  type AddChainType,
   type AssetValue,
   Chain,
   CosmosChains,
@@ -10,6 +9,7 @@ import {
   UTXOChains,
   WalletOption,
   type WalletTxParams,
+  createWallet,
   derivationPathToString,
   filterSupportedChains,
   updatedLastIndex,
@@ -21,15 +21,7 @@ import type {
   UTXOTransferParams,
   UTXOWalletTransferParams,
 } from "@swapkit/toolboxes/utxo";
-
-const KEYSTORE_SUPPORTED_CHAINS = [
-  ...EVMChains,
-  ...UTXOChains,
-  ...CosmosChains,
-  Chain.Polkadot,
-  Chain.Chainflip,
-  Chain.Solana,
-] as const;
+import { getWalletSupportedChains } from "../helpers";
 
 type Params = {
   chain: Chain;
@@ -180,56 +172,68 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
   }
 };
 
-function connectKeystore(addChain: AddChainType) {
-  return async function connectKeystore(
-    chains: Chain[],
-    phrase: string,
-    derivationPathMapOrIndex?: { [chain in Chain]?: DerivationPathArray } | number,
-  ) {
-    const supportedChains = filterSupportedChains(
-      chains,
-      KEYSTORE_SUPPORTED_CHAINS,
-      WalletOption.KEYSTORE,
-    );
+export const keystoreWallet = createWallet({
+  name: "connectKeystore",
+  walletType: WalletOption.KEYSTORE,
+  supportedChains: [
+    ...EVMChains,
+    ...UTXOChains,
+    ...CosmosChains,
+    Chain.Polkadot,
+    Chain.Chainflip,
+    Chain.Solana,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectKeystore(
+      chains: Chain[],
+      phrase: string,
+      derivationPathMapOrIndex?: { [chain in Chain]?: DerivationPathArray } | number,
+    ) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
-    const promises = supportedChains.map(async (chain) => {
-      const derivationPathIndex =
-        typeof derivationPathMapOrIndex === "number" ? derivationPathMapOrIndex : 0;
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const derivationPathIndex =
+            typeof derivationPathMapOrIndex === "number" ? derivationPathMapOrIndex : 0;
 
-      const derivationPathFromMap =
-        derivationPathMapOrIndex && typeof derivationPathMapOrIndex === "object"
-          ? derivationPathMapOrIndex[chain]
-          : undefined;
+          const derivationPathFromMap =
+            derivationPathMapOrIndex && typeof derivationPathMapOrIndex === "object"
+              ? derivationPathMapOrIndex[chain]
+              : undefined;
 
-      const [first, second, third, fourth, fifth] = NetworkDerivationPath[chain];
+          const [first, second, third, fourth, fifth] = NetworkDerivationPath[chain];
 
-      const derivationPathArray: DerivationPathArray =
-        derivationPathFromMap ||
-        updatedLastIndex(
-          chain === Chain.Solana
-            ? [first, second, third, fourth]
-            : [first, second, third, fourth, fifth],
-          derivationPathIndex,
-        );
+          const derivationPathArray: DerivationPathArray =
+            derivationPathFromMap ||
+            updatedLastIndex(
+              chain === Chain.Solana
+                ? [first, second, third, fourth]
+                : [first, second, third, fourth, fifth],
+              derivationPathIndex,
+            );
 
-      const derivationPath = derivationPathToString(derivationPathArray);
+          const derivationPath = derivationPathToString(derivationPathArray);
 
-      const { address, walletMethods } = await getWalletMethods({ chain, derivationPath, phrase });
+          const { address, walletMethods } = await getWalletMethods({
+            chain,
+            derivationPath,
+            phrase,
+          });
 
-      addChain({
-        ...walletMethods,
-        chain,
-        address,
-        balance: [],
-        walletType: WalletOption.KEYSTORE,
-      });
-    });
+          addChain({
+            ...walletMethods,
+            address,
+            balance: [],
+            chain,
+            walletType: WalletOption.KEYSTORE,
+          });
+        }),
+      );
 
-    await Promise.all(promises);
+      return true;
+    },
+});
 
-    return true;
-  };
-}
+export const KEYSTORE_SUPPORTED_CHAINS = getWalletSupportedChains(keystoreWallet);
 
-export const keystoreWallet = { connectKeystore } as const;
 export * from "./helpers";

@@ -18,7 +18,6 @@ import {
   DogecoinLedger,
   LitecoinLedger,
 } from "../clients/utxo";
-import type { LedgerSupportedChain } from "./ledgerSupportedChains";
 
 type LedgerSignerMap = {
   [Chain.Arbitrum]: ReturnType<typeof ArbitrumLedger>;
@@ -36,6 +35,8 @@ type LedgerSignerMap = {
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
   [Chain.THORChain]: THORChainLedger;
 };
+
+type LedgerSupportedChain = keyof LedgerSignerMap;
 
 export const getLedgerClient = async <T extends LedgerSupportedChain>({
   chain,

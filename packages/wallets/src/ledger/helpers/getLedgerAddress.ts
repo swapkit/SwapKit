@@ -1,9 +1,8 @@
 import { Chain } from "@swapkit/helpers";
 
+import type { LEDGER_SUPPORTED_CHAINS } from "../index";
 import type { CosmosLedgerClients, EVMLedgerClients, UTXOLedgerClients } from "../types";
-
 import type { getLedgerClient } from "./getLedgerClient";
-import type { LEDGER_SUPPORTED_CHAINS } from "./ledgerSupportedChains";
 
 export const getLedgerAddress = async ({
   chain,

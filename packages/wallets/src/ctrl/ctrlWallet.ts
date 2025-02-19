@@ -1,14 +1,15 @@
 import {
-  type AddChainType,
   type AssetValue,
   Chain,
   ChainToChainId,
   SwapKitError,
   WalletOption,
+  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
 
+import { getWalletSupportedChains } from "../helpers";
 import {
   type WalletTxParams,
   getCtrlAddress,
@@ -18,24 +19,45 @@ import {
   walletTransfer,
 } from "./walletHelpers";
 
-export const CTRL_SUPPORTED_CHAINS = [
-  Chain.Arbitrum,
-  Chain.Avalanche,
-  Chain.Base,
-  Chain.BinanceSmartChain,
-  Chain.Bitcoin,
-  Chain.BitcoinCash,
-  Chain.Cosmos,
-  Chain.Dogecoin,
-  Chain.Ethereum,
-  Chain.Kujira,
-  Chain.Litecoin,
-  Chain.Maya,
-  Chain.Optimism,
-  Chain.Polygon,
-  Chain.Solana,
-  Chain.THORChain,
-] as const;
+export const ctrlWallet = createWallet({
+  name: "connectCtrl",
+  walletType: WalletOption.CTRL,
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Bitcoin,
+    Chain.BitcoinCash,
+    Chain.Cosmos,
+    Chain.Dogecoin,
+    Chain.Ethereum,
+    Chain.Kujira,
+    Chain.Litecoin,
+    Chain.Maya,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.Solana,
+    Chain.THORChain,
+  ],
+  connect: ({ addChain, walletType, supportedChains }) =>
+    async function connectCtrl(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+
+      const promises = filteredChains.map(async (chain) => {
+        const address = await getCtrlAddress(chain);
+        const walletMethods = await getWalletMethods(chain);
+
+        addChain({ ...walletMethods, address, balance: [], chain, walletType });
+      });
+
+      await Promise.all(promises);
+
+      return true;
+    },
+});
+
+export const CTRL_SUPPORTED_CHAINS = getWalletSupportedChains(ctrlWallet);
 
 async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
   switch (chain) {
@@ -151,28 +173,3 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       return null;
   }
 }
-
-function connectCtrl(addChain: AddChainType) {
-  return async (chains: Chain[]) => {
-    const supportedChains = filterSupportedChains(chains, CTRL_SUPPORTED_CHAINS, WalletOption.CTRL);
-
-    const promises = supportedChains.map(async (chain) => {
-      const address = await getCtrlAddress(chain);
-      const walletMethods = await getWalletMethods(chain);
-
-      addChain({
-        ...walletMethods,
-        address,
-        balance: [],
-        chain,
-        walletType: WalletOption.CTRL,
-      });
-    });
-
-    await Promise.all(promises);
-
-    return true;
-  };
-}
-
-export const ctrlWallet = { connectCtrl } as const;

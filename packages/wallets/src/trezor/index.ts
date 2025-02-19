@@ -1,30 +1,16 @@
 import {
-  type AddChainType,
   Chain,
   type DerivationPathArray,
   FeeOption,
   SKConfig,
   SwapKitError,
   WalletOption,
+  createWallet,
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolboxes/utxo";
-
-export const TREZOR_SUPPORTED_CHAINS = [
-  Chain.Arbitrum,
-  Chain.Avalanche,
-  Chain.Base,
-  Chain.BinanceSmartChain,
-  Chain.Bitcoin,
-  Chain.BitcoinCash,
-  Chain.Dash,
-  Chain.Dogecoin,
-  Chain.Ethereum,
-  Chain.Litecoin,
-  Chain.Optimism,
-  Chain.Polygon,
-] as const;
+import { getWalletSupportedChains } from "../helpers";
 
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {
@@ -215,26 +201,47 @@ async function getToolbox({
   }
 }
 
-function connectTrezor(addChain: AddChainType) {
-  return async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
-    // TODO: filterSupportedChains should return a single chain there?
-    const [chain] = filterSupportedChains(chains, TREZOR_SUPPORTED_CHAINS, WalletOption.TREZOR);
-    if (!chain) return false;
+export const trezorWallet = createWallet({
+  name: "connectTrezor",
+  walletType: WalletOption.TREZOR,
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Bitcoin,
+    Chain.BitcoinCash,
+    Chain.Dash,
+    Chain.Dogecoin,
+    Chain.Ethereum,
+    Chain.Litecoin,
+    Chain.Optimism,
+    Chain.Polygon,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
+      const [chain] = filterSupportedChains({ chains, supportedChains, walletType });
+      if (!chain) {
+        throw new SwapKitError({
+          errorKey: "wallet_chain_not_supported",
+          info: { chain, wallet: WalletOption.TREZOR },
+        });
+      }
 
-    const { default: TrezorConnect } = await import("@trezor/connect-web");
-    const { success } = await TrezorConnect.getDeviceState();
+      const { default: TrezorConnect } = await import("@trezor/connect-web");
+      const { success } = await TrezorConnect.getDeviceState();
 
-    if (!success) {
-      const manifest = SKConfig.get("integrations").trezor || { appUrl: "", email: "" };
-      TrezorConnect.init({ lazyLoad: true, manifest });
-    }
+      if (!success) {
+        const manifest = SKConfig.get("integrations").trezor || { appUrl: "", email: "" };
+        TrezorConnect.init({ lazyLoad: true, manifest });
+      }
 
-    const { address, walletMethods } = await getToolbox({ chain, derivationPath });
+      const { address, walletMethods } = await getToolbox({ chain, derivationPath });
 
-    addChain({ ...walletMethods, address, balance: [], chain, walletType: WalletOption.TREZOR });
+      addChain({ ...walletMethods, address, balance: [], chain, walletType });
 
-    return true;
-  };
-}
+      return true;
+    },
+});
 
-export const trezorWallet = { connectTrezor } as const;
+export const TREZOR_SUPPORTED_CHAINS = getWalletSupportedChains(trezorWallet);

@@ -7,13 +7,43 @@ import {
 } from "@radixdlt/babylon-gateway-api-sdk";
 import { DataRequestBuilder, RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
 import {
-  type AddChainType,
   AssetValue,
   Chain,
   SKConfig,
   type SKConfigIntegrations,
+  SwapKitError,
   WalletOption,
+  createWallet,
+  filterSupportedChains,
 } from "@swapkit/helpers";
+import { getWalletSupportedChains } from "../helpers";
+
+export const radixWallet = createWallet({
+  name: "connectRadixWallet",
+  walletType: WalletOption.RADIX_WALLET,
+  supportedChains: [Chain.Radix],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectRadixWallet(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+      const radixConfig = SKConfig.get("integrations").radix;
+
+      if (!radixConfig) {
+        throw new SwapKitError("wallet_radix_not_found");
+      }
+
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const walletMethods = await getWalletMethods(radixConfig);
+
+          addChain({ ...walletMethods, chain, balance: [], walletType });
+        }),
+      );
+
+      return true;
+    },
+});
+
+export const RADIX_SUPPORTED_CHAINS = getWalletSupportedChains(radixWallet);
 
 async function fetchFungibleResources({
   address,
@@ -186,21 +216,3 @@ const getWalletMethods = async (dappConfig: SKConfigIntegrations["radix"]) => {
     getAddress: getAddress,
   };
 };
-
-function connectRadixWallet(addChain: AddChainType) {
-  return async function connectRadixWallet(_chains: Chain[]) {
-    const radixConfig = SKConfig.get("integrations").radix;
-    const walletMethods = await getWalletMethods(radixConfig);
-
-    addChain({
-      chain: Chain.Radix,
-      balance: [],
-      walletType: WalletOption.RADIX_WALLET,
-      ...walletMethods,
-    });
-
-    return true;
-  };
-}
-
-export const radixWallet = { connectRadixWallet } as const;

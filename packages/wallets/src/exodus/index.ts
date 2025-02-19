@@ -1,10 +1,10 @@
 import type { Wallet } from "@passkeys/core";
 import {
-  type AddChainType,
   Chain,
   EVMChains,
   SwapKitError,
   WalletOption,
+  createWallet,
   filterSupportedChains,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
@@ -22,8 +22,7 @@ import {
   getAddress,
   signTransaction as satsSignTransaction,
 } from "sats-connect";
-
-export const EXODUS_SUPPORTED_CHAINS = [...EVMChains, Chain.Bitcoin] as const;
+import { getWalletSupportedChains } from "../helpers";
 
 export const getWalletMethods = async ({
   walletProvider,
@@ -135,53 +134,52 @@ export const getWalletMethods = async ({
   }
 };
 
-function connectExodusWallet(addChain: AddChainType) {
-  return async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
-    if (!wallet) throw new Error("Missing Exodus Wallet instance");
+export const exodusWallet = createWallet({
+  name: "connectExodusWallet",
+  walletType: WalletOption.EXODUS,
+  supportedChains: [...EVMChains, Chain.Bitcoin],
+  connect: ({ addChain, walletType, supportedChains }) =>
+    async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
+      if (!wallet) throw new Error("Missing Exodus Wallet instance");
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
-    const supportedChains = filterSupportedChains(
-      chains,
-      EXODUS_SUPPORTED_CHAINS,
-      WalletOption.EXODUS,
-    );
+      const { providers } = wallet;
 
-    const { providers } = wallet;
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const provider =
+            chain === Chain.Bitcoin
+              ? providers.bitcoin
+              : new BrowserProvider(providers.ethereum, "any");
 
-    const promises = supportedChains.map(async (chain) => {
-      const provider =
-        chain === Chain.Bitcoin
-          ? providers.bitcoin
-          : new BrowserProvider(providers.ethereum, "any");
+          const { address, ...walletMethods } = await getWalletMethods({
+            chain,
+            provider,
+            walletProvider: providers.ethereum,
+          });
 
-      const { address, ...walletMethods } = await getWalletMethods({
-        chain,
-        provider,
-        walletProvider: providers.ethereum,
-      });
+          const getBalance = async (potentialScamFilter = true) =>
+            walletMethods.getBalance(address, potentialScamFilter);
 
-      const getBalance = async (potentialScamFilter = true) =>
-        walletMethods.getBalance(address, potentialScamFilter);
+          const disconnect = () =>
+            provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
 
-      const disconnect = () => provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
+          addChain({
+            ...walletMethods,
+            disconnect,
+            chain,
+            address,
+            getBalance,
+            balance: [],
+            walletType: WalletOption.EXODUS,
+          });
+        }),
+      );
 
-      addChain({
-        ...walletMethods,
-        disconnect,
-        chain,
-        address,
-        getBalance,
-        balance: [],
-        walletType: WalletOption.EXODUS,
-      });
-    });
+      return true;
+    },
+});
 
-    await Promise.all(promises);
-
-    return true;
-  };
-}
-
-export const exodusWallet = { connectExodusWallet } as const;
-
+export const EXODUS_SUPPORTED_CHAINS = getWalletSupportedChains(exodusWallet);
 export * from "@passkeys/react";
 export * from "@passkeys/core";

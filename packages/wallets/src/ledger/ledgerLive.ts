@@ -7,7 +7,6 @@ import type {
 } from "@ledgerhq/wallet-api-client";
 import { FAMILIES, WalletAPIClient, WindowMessageTransport } from "@ledgerhq/wallet-api-client";
 import {
-  type AddChainType,
   AssetValue,
   BaseDecimal,
   Chain,
@@ -15,11 +14,13 @@ import {
   SwapKitError,
   SwapKitNumber,
   WalletOption,
+  createWallet,
 } from "@swapkit/helpers";
 import { ETHToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import { BigNumber as BigNumberJS } from "bignumber.js";
 import { VoidSigner } from "ethers";
+import { getWalletSupportedChains } from "../helpers";
 
 export type LedgerAccount = Account & { multichainBalance?: AssetValue[] };
 
@@ -35,15 +36,6 @@ export enum LedgerLiveChain {
   ARB = "arbitrum",
   ATOM = "cosmos",
 }
-
-export const LEDGER_LIVE_SUPPORTED_CHAINS = [
-  Chain.Bitcoin,
-  Chain.Ethereum,
-  Chain.Cosmos,
-  Chain.Litecoin,
-  Chain.Dogecoin,
-  Chain.BitcoinCash,
-] as const;
 
 export const ChainToLedgerLiveChain: Partial<Record<Chain, LedgerLiveChain>> = {
   [Chain.Arbitrum]: LedgerLiveChain.ARB,
@@ -407,20 +399,31 @@ export const CosmosLedgerLive = () => {
   };
 };
 
-function connectLedgerLive(addChain: AddChainType) {
-  return async function connectLedgerLive(
-    chains: (typeof LEDGER_LIVE_SUPPORTED_CHAINS)[number][],
-    ledgerLiveAccount: LedgerAccount,
-  ) {
-    const [chain] = chains;
-    if (!chain) return false;
+export const ledgerLiveWallet = createWallet({
+  name: "connectLedgerLive",
+  walletType: WalletOption.LEDGER_LIVE,
+  supportedChains: [
+    Chain.Bitcoin,
+    Chain.Ethereum,
+    Chain.Cosmos,
+    Chain.Litecoin,
+    Chain.Dogecoin,
+    Chain.BitcoinCash,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectLedgerLive(
+      chains: (typeof supportedChains)[number][],
+      ledgerLiveAccount: LedgerAccount,
+    ) {
+      const [chain] = chains;
+      if (!chain) return false;
 
-    const toolbox = await getLedgerLiveWallet({ chain, ledgerLiveAccount });
+      const toolbox = await getLedgerLiveWallet({ chain, ledgerLiveAccount });
 
-    addChain({ ...toolbox, chain, balance: [], walletType: WalletOption.LEDGER_LIVE });
+      addChain({ ...toolbox, chain, balance: [], walletType });
 
-    return true;
-  };
-}
+      return true;
+    },
+});
 
-export const ledgerLiveWallet = { connectLedgerLive } as const;
+export const LEDGER_LIVE_SUPPORTED_CHAINS = getWalletSupportedChains(ledgerLiveWallet);

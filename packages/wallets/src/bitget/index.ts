@@ -2,7 +2,6 @@ import type { StdSignDoc, StdSignature } from "@cosmjs/amino";
 import type { AminoSignResponse, OfflineAminoSigner } from "@cosmjs/amino";
 import type { Transaction } from "@solana/web3.js";
 import type { EthereumWindowProvider } from "@swapkit/helpers";
-
 export { bitgetWallet, BITGET_SUPPORTED_CHAINS } from "./bitgetWallet";
 
 type UnisatToSignInputs = {

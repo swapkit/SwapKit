@@ -169,7 +169,7 @@
     },
     "playgrounds/nextjs": {
       "name": "@internal/playground-nextjs",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@hookform/resolvers": "3.9.1",
         "@radix-ui/react-alert-dialog": "1.1.4",
@@ -264,18 +264,18 @@
     },
     "tools/builder": {
       "name": "@internal/tools-builder",
-      "version": "0.0.1",
+      "version": "0.0.0",
       "devDependencies": {
         "bun-types": "1.1.42",
       },
     },
     "tools/github": {
       "name": "@internal/tools-github",
-      "version": "0.1.0",
+      "version": "0.0.0",
     },
     "tools/typescript": {
       "name": "@internal/tools-typescript",
-      "version": "0.1.0",
+      "version": "0.0.0",
     },
   },
   "trustedDependencies": [

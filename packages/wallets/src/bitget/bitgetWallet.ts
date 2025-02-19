@@ -1,43 +1,32 @@
 import {
-  type AddChainType,
   Chain,
   EVMChains,
   WalletOption,
+  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 
+import { getWalletSupportedChains } from "../helpers";
 import { getWalletMethods } from "./helpers";
 
-export const BITGET_SUPPORTED_CHAINS = [
-  ...EVMChains,
-  Chain.Cosmos,
-  Chain.Bitcoin,
-  Chain.Solana,
-] as const;
+export const bitgetWallet = createWallet({
+  name: "connectBitget",
+  walletType: WalletOption.BITGET,
+  supportedChains: [...EVMChains, Chain.Cosmos, Chain.Bitcoin, Chain.Solana],
+  connect: ({ addChain, walletType, supportedChains }) =>
+    async function connectBitget(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
-function connectBitget(addChain: AddChainType) {
-  return async function connectBitget(chains: Chain[]) {
-    const supportedChains = filterSupportedChains(
-      chains,
-      BITGET_SUPPORTED_CHAINS,
-      WalletOption.BITGET,
-    );
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const walletMethods = await getWalletMethods(chain);
 
-    const promises = supportedChains.map(async (chain) => {
-      const walletMethods = await getWalletMethods(chain);
+          addChain({ ...walletMethods, chain, balance: [], walletType });
+        }),
+      );
 
-      addChain({
-        ...walletMethods,
-        chain,
-        balance: [],
-        walletType: WalletOption.BITGET,
-      });
-    });
+      return true;
+    },
+});
 
-    await Promise.all(promises);
-
-    return true;
-  };
-}
-
-export const bitgetWallet = { connectBitget } as const;
+export const BITGET_SUPPORTED_CHAINS = getWalletSupportedChains(bitgetWallet);

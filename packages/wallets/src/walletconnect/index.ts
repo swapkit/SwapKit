@@ -1,11 +1,11 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 import {
-  type AddChainType,
   Chain,
   ChainId,
   SKConfig,
   SwapKitError,
   WalletOption,
+  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type {
@@ -16,6 +16,7 @@ import type {
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
+import { getWalletSupportedChains } from "../helpers";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,
@@ -27,19 +28,89 @@ import { getEVMSigner } from "./evmSigner";
 import { chainToChainId, getAddressByChain } from "./helpers";
 import { getRequiredNamespaces } from "./namespaces";
 
-export const WC_SUPPORTED_CHAINS = [
-  Chain.Arbitrum,
-  Chain.Avalanche,
-  Chain.Base,
-  Chain.BinanceSmartChain,
-  Chain.Cosmos,
-  Chain.Ethereum,
-  Chain.Kujira,
-  Chain.Maya,
-  Chain.Optimism,
-  Chain.Polygon,
-  Chain.THORChain,
-] as const;
+export * from "./constants";
+export * from "./types";
+
+export const walletconnectWallet = createWallet({
+  name: "connectWalletconnect",
+  walletType: WalletOption.WALLETCONNECT,
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Cosmos,
+    Chain.Ethereum,
+    Chain.Kujira,
+    Chain.Maya,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.THORChain,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectWalletconnect(
+      chains: Chain[],
+      walletconnectOptions?: SignClientTypes.Options,
+    ) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+      const { walletConnectProjectId } = SKConfig.get("apiKeys");
+
+      if (!walletConnectProjectId) {
+        throw new SwapKitError("wallet_walletconnect_project_id_not_specified");
+      }
+
+      const walletconnect = await getWalletconnect(
+        filteredChains,
+        walletConnectProjectId,
+        walletconnectOptions,
+      );
+
+      if (!walletconnect) {
+        throw new SwapKitError("wallet_walletconnect_connection_not_established");
+      }
+
+      const { session, accounts } = walletconnect;
+
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const address = getAddressByChain(chain, accounts);
+          const toolbox = await getToolbox({ session, address, chain, walletconnect });
+
+          async function getAccount(accountAddress: string) {
+            const account = await (toolbox as BaseCosmosToolboxType).getAccount(accountAddress);
+            const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
+              chainId: THORCHAIN_MAINNET_ID,
+              topic: session.topic,
+              request: {
+                method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
+                params: {},
+              },
+            })) as [{ address: string; algo: string; pubkey: string }];
+
+            return { ...account, address, pubkey: { type: algo, value: pubkey } };
+          }
+
+          addChain({
+            ...toolbox,
+            address,
+            balance: [],
+            chain,
+            disconnect: walletconnect.disconnect,
+            walletType: WalletOption.WALLETCONNECT,
+            getAccount:
+              chain === Chain.THORChain
+                ? getAccount
+                : (toolbox as BaseCosmosToolboxType).getAccount,
+          });
+        }),
+      );
+
+      return true;
+    },
+});
+
+export const WC_SUPPORTED_CHAINS = getWalletSupportedChains(walletconnectWallet);
+export type Walletconnect = Awaited<ReturnType<typeof getWalletconnect>>;
 
 async function getToolbox({
   chain,
@@ -237,70 +308,3 @@ async function getWalletconnect(
   }
   return undefined;
 }
-
-export type Walletconnect = Awaited<ReturnType<typeof getWalletconnect>>;
-
-function connectWalletconnect(addChain: AddChainType) {
-  return async function connectWallet(
-    chains: Chain[],
-    walletconnectOptions?: SignClientTypes.Options,
-  ) {
-    const { walletConnectProjectId } = SKConfig.get("apiKeys");
-    const supportedChains = filterSupportedChains(
-      chains,
-      WC_SUPPORTED_CHAINS,
-      WalletOption.WALLETCONNECT,
-    );
-
-    const chainsToConnect = supportedChains.filter((chain) => WC_SUPPORTED_CHAINS.includes(chain));
-    const walletconnect = await getWalletconnect(
-      chainsToConnect,
-      walletConnectProjectId,
-      walletconnectOptions,
-    );
-
-    if (!walletconnect) {
-      throw new SwapKitError("wallet_walletconnect_connection_not_established");
-    }
-
-    const { session, accounts } = walletconnect;
-
-    const promises = chainsToConnect.map(async (chain) => {
-      const address = getAddressByChain(chain, accounts);
-      const toolbox = await getToolbox({ session, address, chain, walletconnect });
-
-      async function getAccount(accountAddress: string) {
-        const account = await (toolbox as BaseCosmosToolboxType).getAccount(accountAddress);
-        const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
-          chainId: THORCHAIN_MAINNET_ID,
-          topic: session.topic,
-          request: {
-            method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
-            params: {},
-          },
-        })) as [{ address: string; algo: string; pubkey: string }];
-
-        return { ...account, address, pubkey: { type: algo, value: pubkey } };
-      }
-
-      addChain({
-        ...toolbox,
-        address,
-        balance: [],
-        chain,
-        disconnect: walletconnect.disconnect,
-        walletType: WalletOption.WALLETCONNECT,
-        getAccount:
-          chain === Chain.THORChain ? getAccount : (toolbox as BaseCosmosToolboxType).getAccount,
-      });
-    });
-
-    await Promise.all(promises);
-
-    return true;
-  };
-}
-
-export const walletconnectWallet = { connectWalletconnect } as const;
-export * from "./constants";
-export * from "./types";

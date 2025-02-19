@@ -1,41 +1,16 @@
 import type { BrowserProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
+  type AddChainType,
   type Chain,
-  type ChainId,
   ChainToHexChainId,
   type EIP6963AnnounceProviderEvent,
   type EIP6963Provider,
+  type EthereumWindowProvider,
+  type NetworkParams,
   WalletOption,
 } from "../types";
 import { warnOnce } from "./others";
-
-export type EthereumWindowProvider = BrowserProvider & {
-  __XDEFI?: boolean;
-  isBraveWallet?: boolean;
-  isCoinbaseWallet?: boolean;
-  isMetaMask?: boolean;
-  isOkxWallet?: boolean;
-  isKeepKeyWallet?: boolean;
-  isTrust?: boolean;
-  isTalisman?: boolean;
-  on: (event: string, callback?: () => void) => void;
-  overrideIsMetaMask?: boolean;
-  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>;
-  selectedProvider?: EthereumWindowProvider;
-};
-
-type NetworkParams = {
-  chainId: ChainId;
-  chainName: string;
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-  rpcUrls: string[];
-  blockExplorerUrls: string[];
-};
 
 declare const window: {
   ethereum: EthereumWindowProvider;
@@ -97,30 +72,30 @@ export async function switchEVMWalletNetwork(
   }
 }
 
-export function filterSupportedChains<T extends Chain>(
-  chains: Chain[],
-  supportedChains: readonly T[],
-  walletOption: WalletOption,
-) {
-  const supported = chains.filter((chain): chain is T => supportedChains.includes(chain as T));
+export function filterSupportedChains<T extends string[]>({
+  chains,
+  supportedChains,
+  walletType,
+}: { chains: Chain[]; supportedChains: T; walletType?: WalletOption }) {
+  const supported = chains.filter((chain) => supportedChains.includes(chain));
 
   if (supported.length === 0) {
     throw new SwapKitError("wallet_chain_not_supported", {
-      wallet: walletOption,
+      wallet: walletType,
       chain: chains.join(", "),
     });
   }
 
-  const unsupported = chains.filter((chain) => !supportedChains.includes(chain as T));
+  const unsupported = chains.filter((chain) => !supportedChains.includes(chain));
 
   warnOnce(
     unsupported.length > 0,
-    `${walletOption} wallet does not support the following chains: ${unsupported.join(
+    `${walletType} wallet does not support the following chains: ${unsupported.join(
       ", ",
     )}. These chains will be ignored.`,
   );
 
-  return supported;
+  return supported as T;
 }
 
 export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
@@ -141,31 +116,29 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   }) as unknown as T;
 }
 
-const methodsToWrap = [
-  "approve",
-  "approvedAmount",
-  "call",
-  "sendTransaction",
-  "transfer",
-  "isApproved",
-  "approvedAmount",
-  "EIP1193SendTransaction",
-  "getFeeData",
-  "broadcastTransaction",
-  "estimateCall",
-  "estimateGasLimit",
-  "estimateGasPrices",
-  "createContractTxObject",
-];
 export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[]) => any }>({
   toolbox,
   chain,
   provider = window.ethereum,
-}: {
-  toolbox: T;
-  chain: Chain;
-  provider?: BrowserProvider;
-}) {
+  methodNames = [],
+}: { toolbox: T; chain: Chain; provider?: BrowserProvider; methodNames?: string[] }) {
+  const methodsToWrap = [
+    ...methodNames,
+    "approve",
+    "approvedAmount",
+    "call",
+    "sendTransaction",
+    "transfer",
+    "isApproved",
+    "approvedAmount",
+    "EIP1193SendTransaction",
+    "getFeeData",
+    "broadcastTransaction",
+    "estimateCall",
+    "estimateGasLimit",
+    "estimateGasPrices",
+    "createContractTxObject",
+  ];
   const wrappedMethods = methodsToWrap.reduce((object, methodName) => {
     if (!toolbox[methodName]) return object;
     const method = toolbox[methodName];
@@ -227,6 +200,42 @@ export function okxMobileEnabled() {
   const isOKApp = /OKApp/i.test(ua);
 
   return isMobile && isOKApp;
+}
+
+export function createWallet<
+  ConnectParams extends any[],
+  SupportedChains extends Chain[],
+  const Name extends string,
+  WalletType extends WalletOption,
+>({
+  connect,
+  name,
+  supportedChains,
+  walletType,
+}: {
+  connect: (connectParams: {
+    addChain: AddChainType;
+    walletType: WalletType;
+    supportedChains: SupportedChains;
+  }) => (...params: ConnectParams) => Promise<boolean>;
+  name: Name;
+  supportedChains: SupportedChains;
+  walletType?: WalletType;
+}) {
+  function connectWallet(connectParams: {
+    addChain: AddChainType;
+  }) {
+    return connect({ ...connectParams, walletType: walletType as WalletType, supportedChains });
+  }
+
+  return {
+    [name]: { supportedChains, connectWallet },
+  } as unknown as {
+    [key in Name]: {
+      connectWallet: typeof connectWallet;
+      supportedChains: SupportedChains;
+    };
+  };
 }
 
 function providerRequest({

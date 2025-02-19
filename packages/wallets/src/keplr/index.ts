@@ -1,12 +1,11 @@
 import type { Keplr } from "@keplr-wallet/types";
 import {
-  type AddChainType,
   type AssetValue,
   Chain,
   ChainId,
   ChainToChainId,
   WalletOption,
-  type WalletTxParams,
+  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { ThorchainToolboxType } from "@swapkit/toolboxes/cosmos";
@@ -20,85 +19,83 @@ declare global {
 }
 
 const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
-const KEPLR_SUPPORTED_CHAINS = [Chain.Cosmos, Chain.Kujira, Chain.THORChain] as const;
 
-type TransferParams = WalletTxParams & { assetValue: AssetValue };
+export const keplrWallet = createWallet({
+  name: "connectKeplr",
+  walletType: undefined,
+  supportedChains: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
+  connect: ({ addChain, supportedChains }) =>
+    async function connectKeplr(
+      chains: Chain[],
+      walletType: WalletOption.KEPLR | WalletOption.LEAP = WalletOption.KEPLR,
+    ) {
+      const extensionKey = walletType === WalletOption.LEAP ? "leap" : "keplr";
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+      const keplrClient = window[extensionKey];
 
-function connectKeplr(
-  addChain: AddChainType<{ transfer: (params: TransferParams) => Promise<string> }>,
-) {
-  return async function connectKeplr(chains: Chain[], extensionKey: "keplr" | "leap" = "keplr") {
-    const walletType = extensionKey === "keplr" ? WalletOption.KEPLR : WalletOption.LEAP;
-    const supportedChains = filterSupportedChains(chains, KEPLR_SUPPORTED_CHAINS, walletType);
-    const keplrClient = window[extensionKey];
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
 
-    const toolboxPromises = supportedChains.map(async (chain) => {
-      const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
+          if (!keplrSupportedChainIds.includes(chainId)) {
+            const chainConfig = chainRegistry.get(chainId);
+            if (!chainConfig) throw new Error(`Unsupported chain ${chain}`);
 
-      if (!keplrSupportedChainIds.includes(chainId)) {
-        const chainConfig = chainRegistry.get(chainId);
-        if (!chainConfig) throw new Error(`Unsupported chain ${chain}`);
+            await keplrClient.experimentalSuggestChain(chainConfig);
+          }
 
-        await keplrClient.experimentalSuggestChain(chainConfig);
-      }
+          keplrClient?.enable(chainId);
+          const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
+          if (!offlineSigner) throw new Error("Could not load offlineSigner");
 
-      keplrClient?.enable(chainId);
-      const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
-      if (!offlineSigner) throw new Error("Could not load offlineSigner");
+          const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
 
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
+          const accounts = await offlineSigner.getAccounts();
+          if (!accounts?.[0]?.address) throw new Error("No accounts found");
 
-      const accounts = await offlineSigner.getAccounts();
-      if (!accounts?.[0]?.address) throw new Error("No accounts found");
+          const [{ address }] = accounts;
+          const toolbox = getToolboxByChain(chain)();
 
-      const [{ address }] = accounts;
-      const toolbox = getToolboxByChain(chain)();
+          const transfer = (params: {
+            from?: string;
+            recipient: string;
+            assetValue: AssetValue;
+            memo?: string;
+          }) =>
+            toolbox.transfer({
+              ...params,
+              signer: offlineSigner,
+              fee: 2,
+              from: params.from || address,
+            });
 
-      const transfer = (params: {
-        from?: string;
-        recipient: string;
-        assetValue: AssetValue;
-        memo?: string;
-      }) =>
-        toolbox.transfer({
-          ...params,
-          signer: offlineSigner,
-          fee: 2,
-          from: params.from || address,
-        });
+          const deposit =
+            chain === Chain.THORChain
+              ? (params: {
+                  from?: string;
+                  assetValue: AssetValue;
+                  memo?: string;
+                }) =>
+                  (toolbox as ThorchainToolboxType).deposit({
+                    ...params,
+                    signer: offlineSigner,
+                    from: params.from || address,
+                    memo: params.memo || "",
+                  })
+              : undefined;
 
-      const deposit =
-        chain === Chain.THORChain
-          ? {
-              deposit: (params: {
-                from?: string;
-                assetValue: AssetValue;
-                memo?: string;
-              }) =>
-                (toolbox as ThorchainToolboxType).deposit({
-                  ...params,
-                  signer: offlineSigner,
-                  from: params.from || address,
-                  memo: params.memo || "",
-                }),
-            }
-          : {};
+          addChain({
+            ...toolbox,
+            deposit,
+            chain,
+            transfer,
+            address,
+            balance: [],
+            walletType,
+          });
+        }),
+      );
 
-      addChain({
-        ...toolbox,
-        ...deposit,
-        chain,
-        transfer,
-        address,
-        balance: [],
-        walletType,
-      });
-    });
-
-    await Promise.all(toolboxPromises);
-
-    return true;
-  };
-}
-
-export const keplrWallet = { connectKeplr } as const;
+      return true;
+    },
+});

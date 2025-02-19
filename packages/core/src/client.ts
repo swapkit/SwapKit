@@ -7,7 +7,6 @@ import {
   Chain,
   type ChainWallet,
   type ConditionalAssetValueReturn,
-  type CryptoChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
@@ -16,9 +15,9 @@ import {
   SKConfig,
   type SKConfigState,
   SwapKitError,
-  type SwapKitWallet,
   type SwapParams,
   type createPlugin,
+  type createWallet,
 } from "@swapkit/helpers";
 import type { TransferParams as CosmosTransferParams } from "@swapkit/toolboxes/cosmos";
 import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
@@ -29,10 +28,6 @@ import {
   getExplorerTxUrl as getTxUrl,
 } from "./helpers/explorerUrls";
 
-export type WalletsType = {
-  [key in string]: SwapKitWallet<any[]>;
-};
-
 export type SwapKitParams<P, W> = {
   config?: SKConfigState;
   plugins?: P;
@@ -41,7 +36,7 @@ export type SwapKitParams<P, W> = {
 
 export function SwapKit<
   Plugins extends ReturnType<typeof createPlugin>,
-  Wallets extends WalletsType,
+  Wallets extends ReturnType<typeof createWallet>,
 >({ config, plugins, wallets = {} as Wallets }: SwapKitParams<Plugins, Wallets> = {}) {
   if (config) {
     SKConfig.set(config);
@@ -61,15 +56,17 @@ export function SwapKit<
     {} as { [key in PluginName]: ReturnType<Plugins[key]> },
   );
 
-  const connectWalletMethods = Object.entries(wallets).reduce(
+  const connectWalletMethods = Object.entries(wallets || {}).reduce(
     (acc, [walletName, wallet]) => {
-      const connectWallet = wallet(addChain);
+      const connectWallet = wallet.connectWallet({ addChain });
 
-      // @ts-expect-error walletName is generic and cannot be indexed
+      // @ts-expect-error key is generic and cannot be indexed
       acc[walletName] = connectWallet;
       return acc;
     },
-    {} as { [key in keyof Wallets]: ReturnType<Wallets[key]> },
+    {} as {
+      [key in keyof typeof wallets]: ReturnType<(typeof wallets)[key]["connectWallet"]>;
+    },
   );
 
   function getSwapKitPlugin<T extends PluginName>(pluginName: T) {
@@ -94,7 +91,7 @@ export function SwapKit<
     return plugin;
   }
 
-  function addChain<T extends CryptoChain>(connectWallet: ChainWallet<T>) {
+  function addChain<T extends Chain>(connectWallet: ChainWallet<T>) {
     const currentWallet = getWallet(connectWallet.chain);
 
     connectedWallets[connectWallet.chain] = { ...currentWallet, ...connectWallet };

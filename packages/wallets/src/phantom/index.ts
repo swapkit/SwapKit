@@ -1,16 +1,42 @@
-import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import {
-  type AddChainType,
   type AssetValue,
   Chain,
   SwapKitError,
   WalletOption,
   type WalletTxParams,
+  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
+import { getWalletSupportedChains } from "../helpers";
 
-export const PHANTOM_SUPPORTED_CHAINS = [Chain.Bitcoin, Chain.Ethereum, Chain.Solana] as const;
+export const phantomWallet = createWallet({
+  name: "connectPhantom",
+  walletType: WalletOption.PHANTOM,
+  supportedChains: [Chain.Bitcoin, Chain.Ethereum, Chain.Solana],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectPhantom(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+
+      try {
+        await Promise.all(
+          filteredChains.map(async (chain) => {
+            const { address, ...methods } = await getWalletMethods(chain);
+
+            addChain({ ...methods, chain, address, walletType, balance: [] });
+          }),
+        );
+
+        return true;
+      } catch (error) {
+        if (error instanceof SwapKitError) throw error;
+
+        throw new SwapKitError("wallet_connection_rejected_by_user", error);
+      }
+    },
+});
+
+export const PHANTOM_SUPPORTED_CHAINS = getWalletSupportedChains(phantomWallet);
 export type PhantomSupportedChain = (typeof PHANTOM_SUPPORTED_CHAINS)[number];
 
 declare global {
@@ -70,12 +96,12 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         assetValue,
         isProgramDerivedAddress,
       }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
+        const { PublicKey, Transaction, SystemProgram } = await import("@solana/web3.js");
         if (!(isProgramDerivedAddress || toolbox.validateAddress(recipient))) {
           throw new SwapKitError("core_transaction_invalid_recipient_address");
         }
 
         const fromPubkey = new PublicKey(address);
-
         const amount = assetValue.getBaseValue("number");
 
         const transaction = assetValue.isGasAsset
@@ -116,46 +142,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
     }
 
     default: {
-      throw new SwapKitError("wallet_chain_not_supported", {
-        wallet: WalletOption.PHANTOM,
-        chain,
-      });
+      throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.PHANTOM, chain });
     }
   }
 }
-
-function connectPhantom(addChain: AddChainType) {
-  return async function connectPhantom(chains: Chain[]) {
-    const supportedChains = filterSupportedChains(
-      chains,
-      PHANTOM_SUPPORTED_CHAINS,
-      WalletOption.PHANTOM,
-    );
-
-    async function connectChain(chain: PhantomSupportedChain) {
-      const { address, ...methods } = await getWalletMethods(chain);
-
-      addChain({
-        ...methods,
-        chain,
-        address,
-        walletType: WalletOption.PHANTOM,
-        balance: [],
-      });
-    }
-
-    try {
-      for (const chain of supportedChains) {
-        await connectChain(chain);
-      }
-
-      return true;
-    } catch (error) {
-      if (error instanceof SwapKitError) throw error;
-
-      throw new SwapKitError("wallet_connection_rejected_by_user");
-    }
-  };
-}
-
-export const phantomWallet = { connectPhantom } as const;
