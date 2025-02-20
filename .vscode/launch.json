@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "bun --cwd ./docs dev",
+      "name": "Docs dev",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}

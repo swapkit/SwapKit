@@ -1,3 +1,8 @@
+---
+title: Migrate Core v3 to v4
+description: A guide to migrate from Core v3 to v4 and update your codebase.
+---
+
 # MIGRATE FROM CORE v3 to v4
 
 > [!IMPORTANT]Read before continue

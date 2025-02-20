@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "astro-build.astro-vscode",
     "antfu.file-nesting",
     "biomejs.biome",
     "bradlc.vscode-tailwindcss",

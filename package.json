@@ -56,5 +56,5 @@
     "tiny-secp256k1",
     "usb"
   ],
-  "workspaces": ["packages/*", "playgrounds/*", "tools/*"]
+  "workspaces": ["packages/*", "playgrounds/*", "tools/*", "docs"]
 }
