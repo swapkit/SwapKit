@@ -10,8 +10,17 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "4.2.0",
     "@astrojs/starlight": "0.32.1",
+    "@shikijs/twoslash": "3.0.0",
+    "@swapkit/core": "workspace:*",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/plugins": "workspace:*",
+    "@swapkit/sdk": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallets": "workspace:*",
     "astro": "5.3.0",
+    "expressive-code-twoslash": "0.4.0",
     "sharp": "0.32.6"
   }
 }

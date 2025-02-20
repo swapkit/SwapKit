@@ -26,6 +26,7 @@
     "build:ci": "bun --filter '*' build",
     "build:debug": "DEBUG=true bun --filter '*' build",
     "clean": "bun --filter '*' clean && rm -rf node_modules; bun install",
+    "docs": "bun --cwd ./docs",
     "deps": "bun ncu --root -u -i -ws",
     "generate:tokens": "bun --filter '@swapkit/helpers' build; bun --cwd packages/helpers generate-tokens; bun lint",
     "lint": "bun --filter '*' --elide-lines=0 lint",

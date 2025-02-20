@@ -1,9 +1,55 @@
 ---
-title: Migrate Core v3 to v4
-description: A guide to migrate from Core v3 to v4 and update your codebase.
+title: Migrate to v4
+description: A guide to migrate to v4 and update your codebase.
 ---
+import '@shikijs/twoslash/style-rich.css'
 
-# MIGRATE FROM CORE v3 to v4
+```ts twoslash
+import { createSwapKit, SwapKitApi } from "@swapkit/sdk"
+
+const s = SwapKitApi.getSwapQuote
+const client = createSwapKit()
+
+client.chainflip
+//     ^|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
 
 > [!IMPORTANT]Read before continue
 > We migrated to combined functionality packages to simplify developer experience. You will have to change imports to use the new version of the packages.
@@ -120,4 +166,4 @@ Methods were scoped under `SwapKitApi` object and split into related api endpoin
 #### @swapkit/helpers
 
 - `ensureEVMApiKeys` -> removed
-- `setRequestClientConfig` -> removed - use `SKConfig` directly
+- `setRequestClientConfig` -> removed - use `SKConfig` directly -->

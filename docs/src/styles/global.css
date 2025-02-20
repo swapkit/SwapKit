@@ -1,0 +1,5 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --twoslash-popup-bg: color-mix(in srgb, var(--astro-code-background) 80%, black) !important;
+  }
+}
