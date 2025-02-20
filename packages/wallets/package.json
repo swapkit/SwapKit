@@ -7,7 +7,7 @@
     "@cosmjs/crypto": "0.33.0",
     "@cosmjs/proto-signing": "0.33.0",
     "@keepkey/keepkey-sdk": "0.2.62",
-    "@keplr-wallet/types": "0.12.189",
+    "@keplr-wallet/types": "0.12.190",
     "@ledgerhq/devices": "8.4.4",
     "@ledgerhq/errors": "6.19.1",
     "@ledgerhq/hw-app-btc": "10.5.0",

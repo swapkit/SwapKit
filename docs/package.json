@@ -21,6 +21,9 @@
     "@swapkit/wallets": "workspace:*",
     "astro": "5.3.0",
     "expressive-code-twoslash": "0.4.0",
-    "sharp": "0.32.6"
+    "sharp": "0.33.5",
+    "starlight-typedoc": "0.19.0",
+    "typedoc": "0.27.7",
+    "typedoc-plugin-markdown": "4.4.2"
   }
 }
