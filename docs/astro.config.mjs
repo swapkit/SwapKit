@@ -31,9 +31,9 @@ function createTypeDoc(docs, nest = "") {
 }
 
 function createDocs() {
-  /**
-   * I recommend commenting out unnecessary entries in development as re-generating the docs is a bit slow.
-   */
+  if (!process.env.REFERENCES) {
+    return { plugins: [], items: [] };
+  }
 
   const base = createTypeDoc([
     { label: "/core", entrypoint: "core/src/index.ts" },
@@ -119,11 +119,15 @@ export default defineConfig({
       sidebar: [
         { label: "Guides", autogenerate: { directory: "guides" } },
         { label: "Others", autogenerate: { directory: "others" } },
-        {
-          label: "References",
-          collapsed: true,
-          items: [{ label: "@swapkit", items: docsSidebarItems }],
-        },
+        ...(process.env.REFERENCES
+          ? [
+              {
+                label: "References",
+                collapsed: true,
+                items: [{ label: "@swapkit", items: docsSidebarItems }],
+              },
+            ]
+          : []),
       ],
     }),
   ],

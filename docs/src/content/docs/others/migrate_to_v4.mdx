@@ -4,9 +4,50 @@ description: A guide to migrate to v4 and update your codebase.
 ---
 
 ```ts twoslash
-import { EVMToolbox } from "@swapkit/toolboxes/evm"
+import { BTCToolbox } from "@swapkit/toolboxes/utxo"
+import { Chain, createSwapKit, DerivationPath } from "@swapkit/sdk"
 
-const evm = EVMToolbox
+const btc = BTCToolbox()
+
+const btcKeys = await btc.createKeysForPath({
+  phrase: "...",
+  derivationPath: `${DerivationPath.BTC}/0`,
+})
+
+const publicKey = btcKeys.getPublicKey?.();
+
+const skClient = createSwapKit()
+
+skClient.swap
+//       ^|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

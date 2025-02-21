@@ -29,25 +29,26 @@ import type { BCHToolbox, BTCToolbox, DASHToolbox, DOGEToolbox, LTCToolbox } fro
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
 
-async function createKeysForPath({
-  phrase,
-  wif,
-  derivationPath,
-  chain,
-}: { phrase?: string; wif?: string; derivationPath: string; chain: Chain }) {
-  const { ECPairFactory } = await import("ecpair");
-  if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
+function createKeysForPath(chain: Chain) {
+  return async function createKeysForPath({
+    phrase,
+    wif,
+    derivationPath,
+  }: { phrase?: string; wif?: string; derivationPath: string }) {
+    const { ECPairFactory } = await import("ecpair");
+    if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
 
-  const factory = ECPairFactory(secp256k1);
-  const network = getNetwork(chain);
+    const factory = ECPairFactory(secp256k1);
+    const network = getNetwork(chain);
 
-  if (wif) return factory.fromWIF(wif, network);
+    if (wif) return factory.fromWIF(wif, network);
 
-  const seed = mnemonicToSeedSync(phrase as string);
-  const master = HDKey.fromMasterSeed(seed, network).derive(derivationPath);
-  if (!master.privateKey) throw new Error("Could not get private key from phrase");
+    const seed = mnemonicToSeedSync(phrase as string);
+    const master = HDKey.fromMasterSeed(seed, network).derive(derivationPath);
+    if (!master.privateKey) throw new Error("Could not get private key from phrase");
 
-  return factory.fromPrivateKey(Buffer.from(master.privateKey), { network });
+    return factory.fromPrivateKey(Buffer.from(master.privateKey), { network });
+  };
 }
 
 function validateAddress({ address, chain }: { address: string; chain: UTXOChain }) {
@@ -60,14 +61,16 @@ function validateAddress({ address, chain }: { address: string; chain: UTXOChain
   }
 }
 
-function getAddressFromKeys({ keys, chain }: { chain: UTXOChain; keys: ECPairInterface }) {
-  if (!keys) throw new Error("Keys must be provided");
+function getAddressFromKeys(chain: UTXOChain) {
+  return function getAddressFromKeys(keys: ECPairInterface) {
+    if (!keys) throw new Error("Keys must be provided");
 
-  const method = nonSegwitChains.includes(chain) ? payments.p2pkh : payments.p2wpkh;
-  const { address } = method({ pubkey: keys.publicKey, network: getNetwork(chain) });
-  if (!address) throw new Error("Address not defined");
+    const method = nonSegwitChains.includes(chain) ? payments.p2pkh : payments.p2wpkh;
+    const { address } = method({ pubkey: keys.publicKey, network: getNetwork(chain) });
+    if (!address) throw new Error("Address not defined");
 
-  return address;
+    return address;
+  };
 }
 
 function transfer(chain: UTXOChain) {
@@ -307,15 +310,13 @@ export const BaseUTXOToolbox = (chain: UTXOChain) => ({
   getInputsOutputsFee: getInputsOutputsFee(chain),
 
   broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
-  getAddressFromKeys: (keys: ECPairInterface) => getAddressFromKeys({ keys, chain }),
+  getAddressFromKeys: getAddressFromKeys(chain),
   validateAddress: (address: string) => validateAddress({ address, chain }),
-  createKeysForPath: (params: any) => createKeysForPath({ ...params, chain }),
+  createKeysForPath: createKeysForPath(chain),
 
-  getPrivateKeyFromMnemonic: async (params: {
-    phrase: string;
-    derivationPath: string;
-  }) => {
-    const keys = await createKeysForPath({ ...params, chain });
+  getPrivateKeyFromMnemonic: async (params: { phrase: string; derivationPath: string }) => {
+    const getKeysForPath = createKeysForPath(chain);
+    const keys = await getKeysForPath(params);
     return keys.toWIF();
   },
 
