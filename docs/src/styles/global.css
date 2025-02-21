@@ -3,3 +3,7 @@
     --twoslash-popup-bg: color-mix(in srgb, var(--astro-code-background) 80%, black) !important;
   }
 }
+
+.sidebar-pane {
+  width: 360px !important;
+}
