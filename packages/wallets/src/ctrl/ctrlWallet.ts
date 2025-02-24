@@ -7,7 +7,6 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
 
 import { getWalletSupportedChains } from "../helpers";
 import {
@@ -149,7 +148,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
 
       try {
         if (chain !== Chain.Ethereum) {
-          const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
+          const networkParams = toolbox.getNetworkParams();
           await switchEVMWalletNetwork(provider, chain, networkParams);
         }
       } catch (_error) {

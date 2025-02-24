@@ -1,4 +1,5 @@
-import type { BrowserProvider } from "ethers";
+import type { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import type { BrowserProvider, JsonRpcPayload, Provider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
   type AddChainType,
@@ -116,12 +117,16 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   }) as unknown as T;
 }
 
-export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[]) => any }>({
+export function prepareNetworkSwitch<
+  T extends ReturnType<ReturnType<typeof getToolboxByChain>>,
+  P extends BrowserProvider | Provider | JsonRpcPayload | undefined,
+  M extends keyof T,
+>({
   toolbox,
   chain,
   provider = window.ethereum,
   methodNames = [],
-}: { toolbox: T; chain: Chain; provider?: BrowserProvider; methodNames?: string[] }) {
+}: { toolbox: T; chain: Chain; provider?: P; methodNames?: M[] }) {
   const methodsToWrap = [
     ...methodNames,
     "approve",
@@ -138,18 +143,19 @@ export function prepareNetworkSwitch<T extends { [key: string]: (...args: any[])
     "estimateGasLimit",
     "estimateGasPrices",
     "createContractTxObject",
-  ];
+  ] as M[];
   const wrappedMethods = methodsToWrap.reduce((object, methodName) => {
     if (!toolbox[methodName]) return object;
+
     const method = toolbox[methodName];
 
     if (typeof method !== "function") return object;
 
-    return {
-      // biome-ignore lint/performance/noAccumulatingSpread: This is a valid use case
-      ...object,
-      [methodName]: wrapMethodWithNetworkSwitch<typeof method>(method, provider, chain),
-    };
+    // @ts-expect-error
+    const wrappedMethod = wrapMethodWithNetworkSwitch(method, provider, chain);
+
+    // biome-ignore lint/performance/noAccumulatingSpread: valid use case
+    return { ...object, [methodName]: wrappedMethod };
   }, {});
 
   return { ...toolbox, ...wrappedMethods };

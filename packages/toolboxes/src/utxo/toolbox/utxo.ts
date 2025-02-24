@@ -51,14 +51,16 @@ function createKeysForPath(chain: Chain) {
   };
 }
 
-function validateAddress({ address, chain }: { address: string; chain: UTXOChain }) {
-  try {
-    initEccLib(secp256k1);
-    btcLibAddress.toOutputScript(address, getNetwork(chain));
-    return true;
-  } catch (_error) {
-    return false;
-  }
+function validateAddress(chain: UTXOChain) {
+  return function validateAddress(address: string) {
+    try {
+      initEccLib(secp256k1);
+      btcLibAddress.toOutputScript(address, getNetwork(chain));
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  };
 }
 
 function getAddressFromKeys(chain: UTXOChain) {
@@ -311,7 +313,7 @@ export const BaseUTXOToolbox = (chain: UTXOChain) => ({
 
   broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
   getAddressFromKeys: getAddressFromKeys(chain),
-  validateAddress: (address: string) => validateAddress({ address, chain }),
+  validateAddress: validateAddress(chain),
   createKeysForPath: createKeysForPath(chain),
 
   getPrivateKeyFromMnemonic: async (params: { phrase: string; derivationPath: string }) => {
@@ -347,7 +349,7 @@ export const BaseUTXOToolbox = (chain: UTXOChain) => ({
 export function utxoValidateAddress({ chain, address }: { chain: UTXOChain; address: string }) {
   return chain === Chain.BitcoinCash
     ? validateBCHAddress(address)
-    : validateAddress({ address, chain });
+    : validateAddress(chain)(address);
 }
 
 export type BaseUTXOWallet = ReturnType<typeof BaseUTXOToolbox>;

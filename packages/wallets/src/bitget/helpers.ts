@@ -175,7 +175,8 @@ export const getWeb3WalletMethods = async ({
 
   const provider = new BrowserProvider(walletProvider, "any");
   const signer = await provider.getSigner();
-  const toolbox = getToolboxByChain(chain)({ provider, signer });
+  const getToolbox = getToolboxByChain(chain);
+  const toolbox = getToolbox({ provider, signer });
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {

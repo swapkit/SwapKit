@@ -239,13 +239,14 @@ export function getCtrlMethods(provider: BrowserProvider) {
       if (!contractAddress) {
         throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
       }
-      const { createContract, createContractTxObject, isStateChangingCall, toHexString } =
+      const { createContract, getCreateContractTxObject, isStateChangingCall, toHexString } =
         await import("@swapkit/toolboxes/evm");
 
-      const isStateChanging = isStateChangingCall(abi, funcName);
+      const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const { value, from, to, data } = await createContractTxObject(contractProvider, {
+        const createTx = getCreateContractTxObject(contractProvider);
+        const { value, from, to, data } = await createTx({
           contractAddress,
           abi,
           funcName,
@@ -269,7 +270,7 @@ export function getCtrlMethods(provider: BrowserProvider) {
       return typeof result?.hash === "string" ? result?.hash : result;
     },
     approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, createContractTxObject, toHexString } = await import(
+      const { MAX_APPROVAL, getCreateContractTxObject, toHexString } = await import(
         "@swapkit/toolboxes/evm"
       );
       const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
@@ -283,7 +284,8 @@ export function getCtrlMethods(provider: BrowserProvider) {
         txOverrides,
       };
 
-      const { value, to, data } = await createContractTxObject(provider, functionCallParams);
+      const createTx = getCreateContractTxObject(provider);
+      const { value, to, data } = await createTx(functionCallParams);
 
       return provider.send("eth_sendTransaction", [
         {

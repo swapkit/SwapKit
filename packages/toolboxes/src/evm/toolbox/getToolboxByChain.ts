@@ -1,11 +1,6 @@
 import { Chain } from "@swapkit/helpers";
 
-import { ARBToolbox } from "./arb";
-import { AVAXToolbox } from "./avax";
-import { BASEToolbox } from "./base";
-import { BSCToolbox } from "./bsc";
-import { ETHToolbox } from "./eth";
-import { MATICToolbox } from "./matic";
+import { ARBToolbox, AVAXToolbox, BASEToolbox, BSCToolbox, ETHToolbox, MATICToolbox } from "./evm";
 import { OPToolbox } from "./op";
 
 type ToolboxType = {
@@ -39,4 +34,4 @@ export const getToolboxByChain = <T extends keyof ToolboxType>(chain: T): Toolbo
   }
 };
 
-export { evmValidateAddress } from "./EVMToolbox";
+export { evmValidateAddress } from "./baseEVMToolbox";

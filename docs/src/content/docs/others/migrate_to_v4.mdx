@@ -5,9 +5,15 @@ description: A guide to migrate to v4 and update your codebase.
 
 ```ts twoslash
 import { BTCToolbox } from "@swapkit/toolboxes/utxo"
+import { AVAXToolbox, ETHToolbox, getProvider } from "@swapkit/toolboxes/evm"
 import { Chain, createSwapKit, DerivationPath } from "@swapkit/sdk"
 
 const btc = BTCToolbox()
+const eth = ETHToolbox({ provider: getProvider(Chain.Ethereum) })
+const avax = AVAXToolbox({ provider: getProvider(Chain.Avalanche) })
+
+const ethNetwork = eth.getNetworkParams()
+const avaxNetwork = avax.getNetworkParams()
 
 const btcKeys = await btc.createKeysForPath({
   phrase: "...",
@@ -20,12 +26,6 @@ const skClient = createSwapKit()
 
 skClient.swap
 //       ^|
-
-
-
-
-
-
 
 
 

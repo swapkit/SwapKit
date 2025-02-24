@@ -76,7 +76,7 @@ export const EVMPlugin = createPlugin({
       }
 
       const { from, to, data, value } = tx as EVMTransaction;
-      return wallet.sendTransaction({ from, to, data, value: BigInt(value) }, feeOptionKey);
+      return wallet.sendTransaction({ from, to, data, value: BigInt(value), feeOptionKey });
     },
   }),
 });

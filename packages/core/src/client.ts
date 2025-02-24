@@ -310,7 +310,7 @@ export function SwapKit<
         const wallet = getWallet(chain);
         if (type === "transfer") {
           const txObject = await wallet.createTransferTx(params);
-          return wallet.estimateTransactionFee(txObject, feeOptionKey);
+          return wallet.estimateTransactionFee({ ...txObject, chain, feeOption: feeOptionKey });
         }
 
         if (type === "approve" && !assetValue.isGasAsset) {
@@ -321,7 +321,7 @@ export function SwapKit<
             from: wallet.address,
           });
 
-          return wallet.estimateTransactionFee(approvalTx, feeOptionKey);
+          return wallet.estimateTransactionFee({ ...approvalTx, chain, feeOption: feeOptionKey });
         }
 
         if (type === "swap") {
@@ -333,7 +333,7 @@ export function SwapKit<
               assetValue,
             });
 
-            return wallet.estimateTransactionFee(txObject, feeOptionKey);
+            return wallet.estimateTransactionFee({ ...txObject, chain, feeOption: feeOptionKey });
           }
 
           const { tx } = params.route;
@@ -341,10 +341,12 @@ export function SwapKit<
             return undefined;
           }
 
-          return wallet.estimateTransactionFee(
-            { ...(tx as EVMTransaction), value: BigInt((tx as EVMTransaction).value) },
-            feeOptionKey,
-          );
+          return wallet.estimateTransactionFee({
+            ...(tx as EVMTransaction),
+            value: BigInt((tx as EVMTransaction).value),
+            feeOption: feeOptionKey,
+            chain,
+          });
         }
 
         return AssetValue.from({ chain });

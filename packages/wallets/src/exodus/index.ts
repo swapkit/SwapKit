@@ -9,7 +9,6 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "@swapkit/toolboxes/utxo";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
@@ -120,7 +119,7 @@ export const getWalletMethods = async ({
 
       try {
         if (chain !== Chain.Ethereum) {
-          const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
+          const networkParams = toolbox.getNetworkParams();
           await switchEVMWalletNetwork(browserProvider, chain, networkParams);
         }
       } catch (_error) {
@@ -129,7 +128,7 @@ export const getWalletMethods = async ({
 
       return {
         address,
-        ...prepareNetworkSwitch<typeof toolbox>({ toolbox, chain, provider: browserProvider }),
+        ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }),
       };
     }
     default:

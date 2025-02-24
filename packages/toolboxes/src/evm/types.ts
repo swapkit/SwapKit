@@ -64,7 +64,7 @@ export type TransferParams = WalletTxParams & {
   assetValue: AssetValue;
 };
 
-export type EVMToolboxType = ReturnType<
+export type BaseEVMToolboxType = ReturnType<
   | typeof ARBToolbox
   | typeof AVAXToolbox
   | typeof BASEToolbox
@@ -76,7 +76,7 @@ export type EVMToolboxType = ReturnType<
 
 export type EVMMaxSendableAmountsParams = {
   from: string;
-  toolbox: EVMToolboxType;
+  toolbox: BaseEVMToolboxType;
   assetValue: AssetValue;
   feeOptionKey?: FeeOption;
   memo?: string;
@@ -108,11 +108,3 @@ export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & {
 };
 
 export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
-
-export type NonETHToolbox =
-  | ReturnType<typeof ARBToolbox>
-  | ReturnType<typeof AVAXToolbox>
-  | ReturnType<typeof BSCToolbox>
-  | ReturnType<typeof MATICToolbox>
-  | ReturnType<typeof OPToolbox>
-  | ReturnType<typeof BASEToolbox>;

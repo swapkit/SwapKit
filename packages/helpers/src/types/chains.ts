@@ -212,7 +212,7 @@ export const MAYASupportedChains = [
 
 export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
-  [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
+  [Chain.Avalanche]: "https://api.avax.network/ext/bc/C/rpc",
   [Chain.Base]: "https://base-rpc.publicnode.com",
   [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
   [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",

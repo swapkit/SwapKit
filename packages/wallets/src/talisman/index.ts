@@ -9,7 +9,6 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { NonETHToolbox } from "@swapkit/toolboxes/evm";
 import { type InjectedWindow, Network } from "@swapkit/toolboxes/substrate";
 import type { Eip1193Provider } from "ethers";
 import { getWalletSupportedChains } from "../helpers";
@@ -67,13 +66,11 @@ async function getWeb3WalletMethods({
 
   const provider = new BrowserProvider(walletProvider, "any");
   const signer = await provider.getSigner();
-
   const toolbox = getToolboxByChain(chain)({ provider, signer });
 
   try {
     if (chain !== Chain.Ethereum) {
-      const networkParams = (toolbox as NonETHToolbox).getNetworkParams();
-      await switchEVMWalletNetwork(provider, chain, networkParams);
+      await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
   } catch (_error) {
     throw new SwapKitError({
@@ -82,7 +79,7 @@ async function getWeb3WalletMethods({
     });
   }
 
-  return prepareNetworkSwitch<typeof toolbox>({ toolbox, chain, provider });
+  return prepareNetworkSwitch({ toolbox, chain, provider });
 }
 
 async function getWalletMethods(chain: Chain) {

@@ -11,7 +11,8 @@ import {
 import type { BrowserProvider, JsonRpcProvider, Provider } from "ethers";
 
 import { getEvmApi } from "./api";
-import { type EIP1559TxParams, type EVMMaxSendableAmountsParams, estimateGasPrices } from "./index";
+import { getEstimateGasPrices } from "./toolbox/baseEVMToolbox";
+import type { EIP1559TxParams, EVMMaxSendableAmountsParams } from "./types";
 
 export const estimateMaxSendableAmount = async ({
   toolbox,
@@ -72,7 +73,9 @@ export const estimateMaxSendableAmount = async ({
   return AssetValue.from({ chain: balance.chain, value: maxSendableAmount.getValue("string") });
 };
 
-export const toHexString = (value: bigint) => (value > 0n ? `0x${value.toString(16)}` : "0x0");
+export function toHexString(value: bigint) {
+  return value > 0n ? `0x${value.toString(16)}` : "0x0";
+}
 
 export const getBalance = async ({
   provider,
@@ -114,32 +117,32 @@ export const getBalance = async ({
   );
 };
 
-export const estimateTransactionFee = async (
-  txObject: EIP1559TxParams,
-  // biome-ignore lint/style/useDefaultParameterLast: Should only be used through wrapped toolboxes
-  feeOption: FeeOption = FeeOption.Fast,
-  chain: EVMChain,
-  provider: Provider | BrowserProvider,
+export function getEstimateTransactionFee({
+  provider,
   isEIP1559Compatible = true,
-) => {
-  const gasPrices = (await estimateGasPrices(provider, isEIP1559Compatible))[feeOption];
-  const gasLimit = await provider.estimateGas(txObject);
-  const assetValue = AssetValue.from({ chain });
+}: { provider: Provider | BrowserProvider; isEIP1559Compatible?: boolean }) {
+  return async function estimateTransactionFee({
+    feeOption = FeeOption.Fast,
+    chain,
+    ...txObject
+  }: EIP1559TxParams & { feeOption: FeeOption; chain: EVMChain }) {
+    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible });
+    const gasPrices = await estimateGasPrices();
+    const gasLimit = await provider.estimateGas(txObject);
 
-  if (!isEIP1559Compatible && gasPrices.gasPrice) {
-    return assetValue.set(
-      SwapKitNumber.fromBigInt(gasPrices.gasPrice * gasLimit, assetValue.decimal),
-    );
-  }
+    const assetValue = AssetValue.from({ chain });
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = gasPrices[feeOption];
 
-  if (gasPrices.maxFeePerGas && gasPrices.maxPriorityFeePerGas) {
-    return assetValue.set(
-      SwapKitNumber.fromBigInt(
-        (gasPrices.maxFeePerGas + gasPrices.maxPriorityFeePerGas) * gasLimit,
-        assetValue.decimal,
-      ),
-    );
-  }
+    if (!isEIP1559Compatible && gasPrice) {
+      return assetValue.set(SwapKitNumber.fromBigInt(gasPrice * gasLimit, assetValue.decimal));
+    }
 
-  throw new Error("No gas price found");
-};
+    if (maxFeePerGas && maxPriorityFeePerGas) {
+      const fee = (maxFeePerGas + maxPriorityFeePerGas) * gasLimit;
+
+      return assetValue.set(SwapKitNumber.fromBigInt(fee, assetValue.decimal));
+    }
+
+    throw new Error("No gas price found");
+  };
+}

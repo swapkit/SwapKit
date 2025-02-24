@@ -32,40 +32,11 @@ import type {
 
 import { BaseUTXOToolbox } from "./utxo";
 
-// needed because TS can not infer types
-type BCHMethods = {
-  stripPrefix: (address: string) => string;
-  stripToCashAddress: (address: string) => string;
-  validateAddress: (address: string, chain?: UTXOChain) => boolean;
-  createKeysForPath: (params: {
-    wif?: string;
-    phrase?: string;
-    derivationPath?: string;
-  }) => Promise<{ getAddress: (index?: number) => string }>;
-  getAddressFromKeys: (keys: { getAddress: (index?: number) => string }) => string;
-  buildBCHTx: (
-    params: UTXOBuildTxParams,
-  ) => Promise<{ builder: TransactionBuilderType; utxos: UTXOType[] }>;
-  buildTx: (params: UTXOBuildTxParams) => Promise<{ psbt: Psbt }>;
-  transfer: (
-    params: UTXOWalletTransferParams<
-      { builder: TransactionBuilderType; utxos: UTXOType[] },
-      TransactionType
-    >,
-  ) => Promise<string>;
-};
-
 const chain = Chain.BitcoinCash as UTXOChain;
 
 export const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
 
-const buildBCHTx: BCHMethods["buildBCHTx"] = async ({
-  assetValue,
-  recipient,
-  memo,
-  feeRate,
-  sender,
-}) => {
+const buildBCHTx = async ({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) => {
   if (!validateAddress(recipient)) throw new Error("Invalid address");
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
@@ -223,11 +194,11 @@ export const validateAddress = (address: string) => {
   );
 };
 
-const createKeysForPath: BCHMethods["createKeysForPath"] = async ({
+const createKeysForPath = async ({
   phrase,
   derivationPath = `${DerivationPath.BCH}/0`,
   wif,
-}) => {
+}: { wif?: string; phrase?: string; derivationPath?: string }) => {
   const { ECPairFactory } = await import("ecpair");
 
   const network = getNetwork(chain);
@@ -252,11 +223,7 @@ const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) =>
   return stripToCashAddress(address);
 };
 
-export const createBCHToolbox = (): Omit<
-  ReturnType<typeof BaseUTXOToolbox>,
-  "getAddressFromKeys" | "transfer" | "createKeysForPath"
-> &
-  BCHMethods => {
+export const createBCHToolbox = () => {
   const { getBalance, ...toolbox } = BaseUTXOToolbox(Chain.BitcoinCash);
 
   return {

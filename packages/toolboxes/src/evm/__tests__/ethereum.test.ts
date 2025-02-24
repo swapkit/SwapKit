@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type ethers from "@nomicfoundation/hardhat-ethers";
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
+import { AssetValue, Chain } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { JsonRpcProvider } from "ethers";
 // import hre from "hardhat";
@@ -74,7 +74,7 @@ describe("Ethereum toolkit", () => {
   test.todo(
     "Send Token",
     async () => {
-      const USDC = await context.toolbox.createContract(USDCAddress, erc20ABI, context.provider);
+      const USDC = await context.toolbox.createContract(USDCAddress, erc20ABI);
       const balance = await USDC.balanceOf?.(emptyRecipient);
       expect(balance.toString()).toBe("0");
       await context.toolbox.transfer({
@@ -124,7 +124,7 @@ describe("Ethereum toolkit", () => {
   test.todo(
     "Create contract tx object and sendTransaction",
     async () => {
-      const USDC = context.toolbox.createContract(USDCAddress, erc20ABI, context.provider);
+      const USDC = context.toolbox.createContract(USDCAddress, erc20ABI);
       const balance = await USDC.balanceOf?.(emptyRecipient);
       expect(balance.toString()).toBe("0");
 
@@ -138,7 +138,7 @@ describe("Ethereum toolkit", () => {
         },
       });
 
-      await context.toolbox.sendTransaction(txObject, FeeOption.Average);
+      await context.toolbox.sendTransaction(txObject);
       // biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
       expect((await USDC?.balanceOf?.(emptyRecipient)).toString()).toBe("2222222");
     },
