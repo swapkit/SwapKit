@@ -1,10 +1,7 @@
 import { buildPackage } from "../../tools/builder";
 
+const helpers = ["api", "contracts", "tokens"];
+
 buildPackage({
-  entrypoints: [
-    "src/index.ts",
-    "src/api/index.ts",
-    "src/contracts/index.ts",
-    "src/tokens/index.ts",
-  ],
+  entrypoints: ["src/index.ts", ...helpers.map((helper) => `src/${helper}/index.ts`)],
 });

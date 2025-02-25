@@ -1,0 +1,11 @@
+{
+  "extends": "../../tools/typescript/base.json",
+  "include": ["src", "page", "typings.d.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "paths": {
+      "~/*": ["./page/src/*"]
+    }
+  }
+}

@@ -1,16 +1,12 @@
-import {
-  BaseDecimal,
-  Chain,
-  ChainToExplorerUrl,
-  ChainToHexChainId,
-  type EVMChain,
-  FeeOption,
-  type NetworkParams,
-  SKConfig,
-} from "@swapkit/helpers";
+import { Chain, type EVMChain, FeeOption } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 import { multicallAbi } from "../contracts/eth/multicall";
-import { getBalance, getEstimateTransactionFee } from "../helpers";
+import {
+  getBalance,
+  getEstimateTransactionFee,
+  getIsEIP1559Compatible,
+  getNetworkParams,
+} from "../helpers";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 export function ETHToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
@@ -87,69 +83,7 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
       ...evmToolbox,
       estimateTransactionFee: getEstimateTransactionFee({ provider, isEIP1559Compatible }),
       getNetworkParams: getNetworkParams(chain),
-      getBalance: (
-        address: string,
-        potentialScamFilter = true,
-        overwriteProvider?: JsonRpcProvider | BrowserProvider,
-      ) =>
-        getBalance({
-          provider: overwriteProvider || provider,
-          address,
-          chain,
-          potentialScamFilter,
-        }),
+      getBalance: getBalance({ provider, chain }),
     };
   };
-}
-
-function getNetworkParams<C extends EVMChain>(chain: C) {
-  return () =>
-    (Chain.Ethereum === chain
-      ? undefined
-      : {
-          ...getNetworkInfo({ chain }),
-          chainId: ChainToHexChainId[chain],
-          rpcUrls: [SKConfig.get("rpcUrls")[chain]],
-          blockExplorerUrls: [ChainToExplorerUrl[chain]],
-        }) as C extends Chain.Ethereum ? undefined : NetworkParams;
-}
-
-function getIsEIP1559Compatible<C extends EVMChain>(chain: C) {
-  const notCompatible = [Chain.Arbitrum, Chain.BinanceSmartChain];
-
-  return !notCompatible.includes(chain);
-}
-
-function getNetworkInfo<C extends EVMChain>({ chain }: { chain: C }) {
-  const decimals = BaseDecimal[chain];
-
-  switch (chain) {
-    case Chain.Arbitrum:
-      return {
-        chainName: "Arbitrum One",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
-    case Chain.Avalanche:
-      return {
-        chainName: "Avalanche Network",
-        nativeCurrency: { name: "Avalanche", symbol: chain, decimals },
-      };
-    case Chain.Base:
-      return {
-        chainName: "Base Mainnet",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
-    case Chain.BinanceSmartChain:
-      return {
-        chainName: "BNB Chain",
-        nativeCurrency: { name: "Binance Coin", symbol: "BNB", decimals },
-      };
-    case Chain.Polygon:
-      return {
-        chainName: "Polygon Mainnet",
-        nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals },
-      };
-    default:
-      throw new Error(`Chain ${chain} is not supported`);
-  }
 }

@@ -35,14 +35,15 @@
   "license": "Apache-2.0",
   "name": "@swapkit/helpers",
   "repository": {
+    "directory": "packages/helpers",
     "type": "git",
     "url": "git+https://github.com/thorswap/SwapKit.git"
   },
   "scripts": {
     "build": "bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
-    "lint": "biome check --write ./src",
     "generate-tokens": "bun --bun ./fetchTokenLists.ts",
+    "lint": "biome check --write ./src",
     "test": "bun test",
     "test:ci": "bun test --coverage",
     "type-check": "tsc --noEmit"

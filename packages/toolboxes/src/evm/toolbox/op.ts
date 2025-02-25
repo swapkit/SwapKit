@@ -143,18 +143,8 @@ export function OPToolbox<P extends JsonRpcProvider | BrowserProvider, S extends
     estimateL1GasCost: estimateL1GasCost(provider),
     estimateL2GasCost: estimateL2GasCost(provider),
     estimateTotalGasCost: estimateTotalGasCost(provider),
+    getBalance: getBalance({ provider, chain: Chain.Optimism }),
     getL1GasPrice,
     getNetworkParams,
-    getBalance: (
-      address: string,
-      potentialScamFilter = true,
-      overwriteProvider?: JsonRpcProvider | BrowserProvider,
-    ) =>
-      getBalance({
-        provider: overwriteProvider || provider,
-        address,
-        chain: Chain.Optimism,
-        potentialScamFilter,
-      }),
   };
 }

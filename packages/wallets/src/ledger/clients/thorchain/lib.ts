@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import type Transport from "@ledgerhq/hw-transport";
 /** ******************************************************************************
  *  (c) 2019 ZondaX GmbH
@@ -16,8 +15,6 @@ import type Transport from "@ledgerhq/hw-transport";
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ******************************************************************************* */
-import { bech32 } from "@scure/base";
-import Ripemd160 from "ripemd160";
 
 import {
   CHUNK_SIZE,
@@ -59,22 +56,6 @@ export class THORChainApp {
     buf.writeUInt8(hrp.length, 0);
     buf.write(hrp, 1);
     return buf;
-  }
-
-  static getBech32FromPK(hrp: string, pk: Buffer) {
-    if (pk.length !== 33) {
-      throw new Error("expected compressed public key [31 bytes]");
-    }
-    // @ts-ignore
-    const hashSha256 = crypto.createHash("sha256").update(pk).digest();
-    // @ts-ignore
-    const hashRip = new Ripemd160().update(hashSha256).digest();
-    // @ts-ignore
-    const encode = bech32.encode || bech32.bech32.encode;
-    // @ts-ignore
-    const toWords = bech32.toWords || bech32.bech32.toWords;
-    // @ts-ignore
-    return encode(hrp, toWords(hashRip));
   }
 
   async serializePath(path: number[]) {

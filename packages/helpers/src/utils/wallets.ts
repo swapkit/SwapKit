@@ -1,5 +1,5 @@
 import type { getToolboxByChain } from "@swapkit/toolboxes/evm";
-import type { BrowserProvider, JsonRpcPayload, Provider } from "ethers";
+import type { BrowserProvider, JsonRpcProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
   type AddChainType,
@@ -119,14 +119,13 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
 
 export function prepareNetworkSwitch<
   T extends ReturnType<ReturnType<typeof getToolboxByChain>>,
-  P extends BrowserProvider | Provider | JsonRpcPayload | undefined,
   M extends keyof T,
 >({
   toolbox,
   chain,
   provider = window.ethereum,
   methodNames = [],
-}: { toolbox: T; chain: Chain; provider?: P; methodNames?: M[] }) {
+}: { toolbox: T; chain: Chain; provider?: BrowserProvider | JsonRpcProvider; methodNames?: M[] }) {
   const methodsToWrap = [
     ...methodNames,
     "approve",

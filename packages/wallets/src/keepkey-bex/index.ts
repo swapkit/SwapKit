@@ -150,9 +150,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
         toolbox: {
           ...toolbox,
           ...keepkeyMethods,
-          // Overwrite getBalance due to race conditions
-          getBalance: (address: string, potentialScamFilter?: boolean) =>
-            getBalance({ chain, provider: getProvider(chain), address, potentialScamFilter }),
+          getBalance: getBalance({ chain, provider: getProvider(chain) }),
         },
       });
     }

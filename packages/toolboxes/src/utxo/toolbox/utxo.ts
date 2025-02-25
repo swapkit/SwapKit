@@ -106,15 +106,17 @@ function transfer(chain: UTXOChain) {
   };
 }
 
-const getBalance = async ({ address, chain }: { address: string; chain: UTXOChain }) => {
-  const baseBalance = await getUtxoApi(chain).getBalance(address);
-  const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
-    "string",
-  );
-  const asset = AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
+function getBalance(chain: UTXOChain) {
+  return async function getBalance(address: string, _scamFilter = true) {
+    const baseBalance = await getUtxoApi(chain).getBalance(address);
+    const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
+      "string",
+    );
+    const asset = AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
 
-  return [asset];
-};
+    return [asset];
+  };
+}
 
 async function getFeeRates(chain: UTXOChain) {
   const suggestedFeeRate = await getUtxoApi(chain).getSuggestedTxFee();
@@ -303,48 +305,52 @@ function estimateMaxSendableAmount(chain: UTXOChain) {
   };
 }
 
-export const BaseUTXOToolbox = (chain: UTXOChain) => ({
-  accumulative,
-  calculateTxSize,
-  getFeeRates: () => getFeeRates(chain),
-  buildTx: buildTx(chain),
-  transfer: transfer(chain),
-  getInputsOutputsFee: getInputsOutputsFee(chain),
+export function BaseUTXOToolbox(chain: UTXOChain) {
+  return function createUTXOToolbox() {
+    return {
+      accumulative,
+      calculateTxSize,
+      getFeeRates: () => getFeeRates(chain),
+      buildTx: buildTx(chain),
+      transfer: transfer(chain),
+      getInputsOutputsFee: getInputsOutputsFee(chain),
 
-  broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
-  getAddressFromKeys: getAddressFromKeys(chain),
-  validateAddress: validateAddress(chain),
-  createKeysForPath: createKeysForPath(chain),
+      broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
+      getAddressFromKeys: getAddressFromKeys(chain),
+      validateAddress: validateAddress(chain),
+      createKeysForPath: createKeysForPath(chain),
 
-  getPrivateKeyFromMnemonic: async (params: { phrase: string; derivationPath: string }) => {
-    const getKeysForPath = createKeysForPath(chain);
-    const keys = await getKeysForPath(params);
-    return keys.toWIF();
-  },
+      getPrivateKeyFromMnemonic: async (params: { phrase: string; derivationPath: string }) => {
+        const getKeysForPath = createKeysForPath(chain);
+        const keys = await getKeysForPath(params);
+        return keys.toWIF();
+      },
 
-  getBalance: async (address: string, _potentialScamFilter?: boolean) =>
-    getBalance({ address, chain }),
+      getBalance: getBalance(chain),
 
-  estimateTransactionFee: async (params: {
-    assetValue: AssetValue;
-    recipient: string;
-    from: string;
-    memo?: string;
-    feeOptionKey?: FeeOption;
-    feeRate?: number;
-    fetchTxHex?: boolean;
-  }) => {
-    const getInputsFee = getInputsOutputsFee(chain);
-    const inputFees = await getInputsFee(params);
+      estimateTransactionFee: async (params: {
+        assetValue: AssetValue;
+        recipient: string;
+        from: string;
+        memo?: string;
+        feeOptionKey?: FeeOption;
+        feeRate?: number;
+        fetchTxHex?: boolean;
+      }) => {
+        const getInputsFee = getInputsOutputsFee(chain);
+        const inputFees = await getInputsFee(params);
 
-    return AssetValue.from({
-      chain,
-      value: SwapKitNumber.fromBigInt(BigInt(inputFees.fee), 8).getValue("string"),
-    });
-  },
+        return AssetValue.from({
+          chain,
+          value: SwapKitNumber.fromBigInt(BigInt(inputFees.fee), 8).getValue("string"),
+        });
+      },
 
-  estimateMaxSendableAmount: async (params: any) => estimateMaxSendableAmount({ ...params, chain }),
-});
+      estimateMaxSendableAmount: async (params: any) =>
+        estimateMaxSendableAmount({ ...params, chain }),
+    };
+  };
+}
 
 export function utxoValidateAddress({ chain, address }: { chain: UTXOChain; address: string }) {
   return chain === Chain.BitcoinCash
@@ -352,7 +358,7 @@ export function utxoValidateAddress({ chain, address }: { chain: UTXOChain; addr
     : validateAddress(chain)(address);
 }
 
-export type BaseUTXOWallet = ReturnType<typeof BaseUTXOToolbox>;
+export type BaseUTXOWallet = ReturnType<ReturnType<typeof BaseUTXOToolbox>>;
 type UTXOWalletType = {
   [Chain.Bitcoin]: ReturnType<typeof BTCToolbox>;
   [Chain.BitcoinCash]: ReturnType<typeof BCHToolbox>;

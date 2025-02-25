@@ -11,20 +11,6 @@ export type TargetOutput =
   | { address: string; script?: Buffer; value: number }
   | { script: Buffer; value: number };
 
-export type TransactionBuilderType = {
-  inputs: any[];
-  sign(
-    vin: number,
-    keyPair: { getAddress: (index?: number) => string },
-    redeemScript?: Buffer,
-    hashType?: number,
-    witnessValue?: number,
-    witnessScript?: Buffer,
-    signatureAlgorithm?: string,
-  ): void;
-  build(): TransactionType;
-};
-
 export type UTXOToolbox = ReturnType<
   typeof BTCToolbox | typeof BCHToolbox | typeof DOGEToolbox | typeof LTCToolbox
 >;

@@ -195,7 +195,7 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(chain: T, potentialScamFilter = true) {
+  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
     if (chain === Chain.Fiat || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
@@ -203,7 +203,7 @@ export function SwapKit<
     const defaultBalance = [AssetValue.from({ chain })];
 
     if ("getBalance" in wallet) {
-      const balance = await wallet.getBalance(wallet.address, potentialScamFilter);
+      const balance = await wallet.getBalance(wallet.address, scamFilter);
       wallet.balance = balance?.length ? balance : defaultBalance;
     }
 

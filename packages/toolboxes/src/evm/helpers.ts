@@ -1,19 +1,31 @@
 import {
   AssetValue,
   BaseDecimal,
+  Chain,
+  ChainToExplorerUrl,
+  ChainToHexChainId,
   type EVMChain,
   FeeOption,
+  type NetworkParams,
+  SKConfig,
   SwapKitNumber,
   filterAssets,
   formatBigIntToSafeValue,
   isGasAsset,
 } from "@swapkit/helpers";
-import type { BrowserProvider, JsonRpcProvider, Provider } from "ethers";
+import { type BrowserProvider, JsonRpcProvider, type Provider } from "ethers";
 
 import { getEvmApi } from "./api";
 import { getEstimateGasPrices } from "./toolbox/baseEVMToolbox";
 import type { EIP1559TxParams, EVMMaxSendableAmountsParams } from "./types";
 
+export const getProvider = (chain: EVMChain, customUrl?: string) => {
+  return new JsonRpcProvider(customUrl || SKConfig.get("rpcUrls")[chain]);
+};
+
+/**
+ * @deprecated
+ */
 export const estimateMaxSendableAmount = async ({
   toolbox,
   from,
@@ -26,7 +38,8 @@ export const estimateMaxSendableAmount = async ({
   contractAddress,
   txOverrides,
 }: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
-  const balance = (await toolbox.getBalance(from)).find(({ symbol, chain }) =>
+  const balances = await toolbox.getBalance(from);
+  const balance = balances.find(({ symbol, chain }) =>
     assetValue ? symbol === assetValue.symbol : symbol === AssetValue.from({ chain })?.symbol,
   );
 
@@ -77,45 +90,45 @@ export function toHexString(value: bigint) {
   return value > 0n ? `0x${value.toString(16)}` : "0x0";
 }
 
-export const getBalance = async ({
-  provider,
-  address,
+export function getBalance<C extends EVMChain>({
+  provider: toolboxProvider,
   chain,
-  potentialScamFilter,
-}: {
-  provider: JsonRpcProvider | BrowserProvider;
-  address: string;
-  chain: EVMChain;
-  potentialScamFilter?: boolean;
-}) => {
-  const tokenBalances = await getEvmApi(chain).getBalance(address);
-  const evmGasTokenBalance = await provider.getBalance(address);
+}: { provider?: BrowserProvider | JsonRpcProvider; chain: C }) {
+  return async function getBalance(
+    address: string,
+    scamFilter = true,
+    overwriteProvider?: BrowserProvider | JsonRpcProvider,
+  ) {
+    const provider = overwriteProvider || toolboxProvider;
+    const tokenBalances = await getEvmApi(chain).getBalance(address);
+    const evmGasTokenBalance = (await provider?.getBalance(address)) || 0n;
 
-  const balances = [
-    {
-      chain,
-      symbol: AssetValue.from({ chain }).symbol,
-      value: formatBigIntToSafeValue({
-        value: BigInt(evmGasTokenBalance),
-        decimal: 18,
-        bigIntDecimal: 18,
-      }),
-      decimal: BaseDecimal[chain],
-    },
-    ...tokenBalances.filter((token) => !isGasAsset(token)),
-  ];
+    const balances = [
+      {
+        chain,
+        decimal: BaseDecimal[chain],
+        symbol: AssetValue.from({ chain }).symbol,
+        value: formatBigIntToSafeValue({
+          value: BigInt(evmGasTokenBalance),
+          decimal: BaseDecimal[chain],
+          bigIntDecimal: BaseDecimal[chain],
+        }),
+      },
+      ...tokenBalances.filter((token) => !isGasAsset(token)),
+    ];
 
-  const filteredBalances = potentialScamFilter ? filterAssets(balances) : balances;
+    const filteredBalances = scamFilter ? filterAssets(balances) : balances;
 
-  return filteredBalances.map(
-    ({ symbol, value, decimal }) =>
-      new AssetValue({
-        decimal: decimal || BaseDecimal[chain],
-        value,
-        identifier: `${chain}.${symbol}`,
-      }),
-  );
-};
+    return filteredBalances.map(
+      ({ symbol, value, decimal }) =>
+        new AssetValue({
+          decimal: decimal || BaseDecimal[chain],
+          value,
+          identifier: `${chain}.${symbol}`,
+        }),
+    );
+  };
+}
 
 export function getEstimateTransactionFee({
   provider,
@@ -145,4 +158,56 @@ export function getEstimateTransactionFee({
 
     throw new Error("No gas price found");
   };
+}
+
+export function getNetworkParams<C extends EVMChain>(chain: C) {
+  return () =>
+    (Chain.Ethereum === chain
+      ? undefined
+      : {
+          ...getNetworkInfo({ chain }),
+          chainId: ChainToHexChainId[chain],
+          rpcUrls: [SKConfig.get("rpcUrls")[chain]],
+          blockExplorerUrls: [ChainToExplorerUrl[chain]],
+        }) as C extends Chain.Ethereum ? undefined : NetworkParams;
+}
+
+export function getIsEIP1559Compatible<C extends EVMChain>(chain: C) {
+  const notCompatible = [Chain.Arbitrum, Chain.BinanceSmartChain];
+
+  return !notCompatible.includes(chain);
+}
+
+function getNetworkInfo<C extends EVMChain>({ chain }: { chain: C }) {
+  const decimals = BaseDecimal[chain];
+
+  switch (chain) {
+    case Chain.Arbitrum:
+      return {
+        chainName: "Arbitrum One",
+        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
+      };
+    case Chain.Avalanche:
+      return {
+        chainName: "Avalanche Network",
+        nativeCurrency: { name: "Avalanche", symbol: chain, decimals },
+      };
+    case Chain.Base:
+      return {
+        chainName: "Base Mainnet",
+        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
+      };
+    case Chain.BinanceSmartChain:
+      return {
+        chainName: "BNB Chain",
+        nativeCurrency: { name: "Binance Coin", symbol: "BNB", decimals },
+      };
+    case Chain.Polygon:
+      return {
+        chainName: "Polygon Mainnet",
+        nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals },
+      };
+    default:
+      throw new Error(`Chain ${chain} is not supported`);
+  }
 }

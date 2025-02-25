@@ -1,3 +1,5 @@
 import { buildPackage } from "../../tools/builder";
 
-buildPackage();
+buildPackage({
+  entrypoints: ["./src/index.ts"],
+});

@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { createHash } from "crypto";
 import { ProviderName, RequestClient, SKConfig, SwapKitError, warnOnce } from "@swapkit/helpers";
 
 import {
@@ -54,7 +54,7 @@ export const computeHash = (
       ? JSON.stringify(hashParams.payload)
       : `${hashParams.url}${swapKit}`;
 
-  return crypto.createHash("sha256").update(data, "utf8").digest("hex");
+  return createHash("sha256").update(data, "utf8").digest("hex");
 };
 
 export function getTrackerDetails(payload: TrackerParams) {

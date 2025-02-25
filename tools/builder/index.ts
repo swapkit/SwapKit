@@ -1,12 +1,6 @@
 import type { BuildArtifact, BuildConfig } from "bun";
 
-export async function buildPackage({
-  entrypoints = ["./src/index.ts"],
-  plugins,
-  ...rest
-}: Omit<BuildConfig, "entrypoints"> & {
-  entrypoints?: string[];
-} = {}) {
+export async function buildPackage({ plugins, entrypoints, ...rest }: BuildConfig) {
   const { name: pkgName } = await Bun.file("package.json").json();
   const buildOptions: BuildConfig = {
     entrypoints,
@@ -34,6 +28,8 @@ export async function buildPackage({
       .filter((file) => file.path.endsWith(".cjs"))
       .reduce((acc, file) => acc + file.size, 0);
 
+    updateSizeData({ [pkgName]: { esm: esmBytesize, cjs: cjsBytesize } });
+
     return console.info(
       `✅ Build successful: ${buildESM.outputs.length} files
 ${"ESM: ".padStart(21)}${formatBytes(esmBytesize)}
@@ -41,14 +37,18 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
     );
   }
 
+  const sizeData: Record<string, { esm: number; cjs: number }> = {};
+
   const { files: esmFiles, maxLength: esmMaxLength } = mapFiles({
     pkgName,
     files: buildESM.outputs,
     type: "esm",
   });
   console.info("📦 ESM Import Sizes:");
-  for (const { size, pathImportName } of esmFiles) {
-    console.info(`${pathImportName.padEnd(esmMaxLength)}${formatBytes(size)}`);
+  for (const { size, name, label } of esmFiles) {
+    // @ts-expect-error
+    sizeData[name] = { esm: size };
+    console.info(`${label.padEnd(esmMaxLength)}${formatBytes(size)}`);
   }
 
   const { files: cjsFiles, maxLength: cjsMaxLength } = mapFiles({
@@ -57,9 +57,13 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
     type: "cjs",
   });
   console.info("📦 CJS Import Sizes:");
-  for (const { size, pathImportName } of cjsFiles) {
-    console.info(`${pathImportName.padEnd(cjsMaxLength)}${formatBytes(size)}`);
+  for (const { size, name, label } of cjsFiles) {
+    // @ts-expect-error
+    sizeData[name].cjs = size;
+    console.info(`${label.padEnd(cjsMaxLength)}${formatBytes(size)}`);
   }
+
+  updateSizeData(sizeData);
 }
 
 function mapFiles({
@@ -69,21 +73,22 @@ function mapFiles({
 }: { pkgName: string; files: BuildArtifact[]; type: "esm" | "cjs" }) {
   const ext = type === "esm" ? "js" : "cjs";
   let maxLength = 0;
+
   const mappedFiles = files
     .filter((file) => file.path.endsWith(`.${ext}`))
     .map(({ size, path }) => {
-      const [name, fileName] = path.split("/").slice(-2);
+      const [moduleName, fileName] = path.split("/").slice(-2);
       const params =
-        name === "dist" || name === "src"
+        moduleName === "dist" || moduleName === "src"
           ? fileName === `index.${ext}`
             ? { type: "root", exportName: "" }
             : { type: "chunk", exportName: fileName }
-          : { type: "package", exportName: name };
+          : { type: "package", exportName: moduleName };
 
-      const pathImportName = importName({ pkgName, ...params });
+      const { label, name } = importName({ pkgName, ...params });
 
-      maxLength = Math.max(maxLength, pathImportName.length + 1);
-      return { size, path, pathImportName };
+      maxLength = Math.max(maxLength, label.length + 1);
+      return { size, path, label, name };
     })
     .sort((a, b) => {
       const fileNameA = a.path.split("/").pop() || "";
@@ -92,10 +97,21 @@ function mapFiles({
         ? 1
         : fileNameB.startsWith("chunk")
           ? -1
-          : a.pathImportName.localeCompare(b.pathImportName);
+          : a.label.localeCompare(b.label);
     });
 
   return { files: mappedFiles, maxLength };
+}
+
+async function updateSizeData(sizeData: Record<string, { esm: number; cjs: number }>) {
+  const sizes = Bun.file("../../build/data.json");
+
+  if (await sizes.exists()) {
+    const existingSizes = await sizes.json();
+    await sizes.write(JSON.stringify({ ...existingSizes, ...sizeData }, null, 2));
+  } else {
+    await sizes.write(JSON.stringify({ size: { ...sizeData } }, null, 2));
+  }
 }
 
 function importName({
@@ -107,7 +123,7 @@ function importName({
   const base =
     type === "package" ? `${prefix}/${exportName}` : type === "chunk" ? `${exportName}` : "";
 
-  return `${base || prefix}: `;
+  return { label: `${base || prefix}: `, name: (base || prefix).trim() };
 }
 
 function formatBytes(bytes: number) {

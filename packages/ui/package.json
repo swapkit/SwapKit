@@ -1,0 +1,43 @@
+{
+  "author": "swapkit-oss",
+  "dependencies": {
+    "@swapkit/core": "workspace:*",
+    "bun-plugin-tailwind": "0.0.14",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "tailwindcss": "4.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4"
+  },
+  "description": "SwapKit - UI",
+  "exports": {
+    "./widget": {
+      "default": "./dist/widget/index.js",
+      "require": "./dist/widget/index.cjs",
+      "types": "./src/widget/index.ts"
+    }
+  },
+  "files": ["src/", "dist/"],
+  "homepage": "https://github.com/thorswap/SwapKit",
+  "license": "Apache-2.0",
+  "name": "@swapkit/ui",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorswap/SwapKit.git"
+  },
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "page": "bun ./page/index.tsx --bun --hot",
+    "page:ci": "NODE_ENV=production bun --bun ./page/index.tsx",
+    "lint": "biome check --write ./src",
+    "test": "echo 'bun test'",
+    "test:ci": "bun test --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}
