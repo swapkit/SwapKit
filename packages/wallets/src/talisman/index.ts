@@ -35,7 +35,7 @@ export const talismanWallet = createWallet({
         filteredChains.map(async (chain) => {
           const { address, ...walletMethods } = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, address, balance: [], chain, walletType });
+          addChain({ ...walletMethods, address, chain, walletType });
         }),
       );
 

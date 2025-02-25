@@ -17,3 +17,13 @@ label.label input[type="file"] {
 .label:valid + span {
   color: #0f0;
 }
+
+html,
+body,
+input,
+button,
+select,
+textarea {
+  color: #ccc;
+  background-color: #000;
+}

@@ -1,11 +1,10 @@
-import {
-  type FungibleResourcesCollectionItem,
+import type {
+  FungibleResourcesCollectionItem,
   GatewayApiClient,
-  type StateEntityDetailsVaultResponseItem,
-  type StateEntityFungiblesPageRequest,
-  type StateEntityFungiblesPageResponse,
+  StateEntityDetailsVaultResponseItem,
+  StateEntityFungiblesPageRequest,
+  StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
-import { RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
 import { AssetValue, Chain, type SKConfigIntegrations } from "@swapkit/helpers";
 
 export type RadixWallets = {
@@ -130,6 +129,9 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
 export const RadixToolbox = async ({
   dappConfig,
 }: { dappConfig: SKConfigIntegrations["radix"] }) => {
+  const { RadixDappToolkit } = await import("@radixdlt/radix-dapp-toolkit");
+  const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
+
   const radixToolkit = RadixDappToolkit({
     ...dappConfig,
     networkId: dappConfig.network?.networkId || 1,
@@ -138,11 +140,9 @@ export const RadixToolbox = async ({
   const networkApi = GatewayApiClient.initialize(radixToolkit.gatewayApi.clientConfig);
 
   return {
-    networkApi,
+    getAddress: () => "",
     getBalance: getBalance({ networkApi }),
-    getAddress: () => {
-      return "";
-    },
+    networkApi,
     validateAddress,
     signAndBroadcast: (() => {
       throw new Error("Not implemented");

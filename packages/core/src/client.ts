@@ -91,10 +91,15 @@ export function SwapKit<
     return plugin;
   }
 
-  function addChain<T extends Chain>(connectWallet: ChainWallet<T>) {
+  function addChain<T extends Chain>(
+    connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] },
+  ) {
     const currentWallet = getWallet(connectWallet.chain);
 
-    connectedWallets[connectWallet.chain] = { ...currentWallet, ...connectWallet };
+    const balance = connectWallet.balance ||
+      currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
+
+    connectedWallets[connectWallet.chain] = { ...currentWallet, ...connectWallet, balance };
   }
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
@@ -153,7 +158,7 @@ export function SwapKit<
    * @Public
    */
   function getWallet<T extends Chain>(chain: T) {
-    return connectedWallets[chain];
+    return connectedWallets[chain] || {};
   }
 
   function getAllWallets() {

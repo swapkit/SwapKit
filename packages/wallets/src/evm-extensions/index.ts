@@ -103,14 +103,7 @@ export const evmWallet = createWallet({
             const getBalance = async (potentialScamFilter = true) =>
               walletMethods.getBalance(address, potentialScamFilter, getProvider(chain));
 
-            addChain({
-              ...walletMethods,
-              address,
-              balance: [],
-              chain,
-              getBalance,
-              walletType,
-            });
+            addChain({ ...walletMethods, address, chain, getBalance, walletType });
             return;
           }
 
@@ -131,15 +124,7 @@ export const evmWallet = createWallet({
           const disconnect = () =>
             web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
 
-          addChain({
-            ...walletMethods,
-            address,
-            balance: [],
-            chain,
-            disconnect,
-            getBalance,
-            walletType,
-          });
+          addChain({ ...walletMethods, address, chain, disconnect, getBalance, walletType });
         }),
       );
 

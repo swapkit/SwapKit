@@ -1,6 +1,3 @@
-/**
- * Package
- */
 export * from "./thorchainUtils/index";
 export * from "./toolbox/BaseCosmosToolbox";
 export * from "./toolbox/gaia";

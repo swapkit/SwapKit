@@ -16,11 +16,11 @@ import {
 } from "@swapkit/helpers";
 import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 import type {
-  Psbt,
   TransactionType,
   UTXOTransferParams,
   UTXOWalletTransferParams,
 } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 import { getWalletSupportedChains } from "../helpers";
 
 type Params = {
@@ -217,13 +217,7 @@ export const keystoreWallet = createWallet({
             phrase,
           });
 
-          addChain({
-            ...walletMethods,
-            address,
-            balance: [],
-            chain,
-            walletType: WalletOption.KEYSTORE,
-          });
+          addChain({ ...walletMethods, address, chain, walletType: WalletOption.KEYSTORE });
         }),
       );
 

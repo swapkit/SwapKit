@@ -90,7 +90,6 @@ export const keplrWallet = createWallet({
             chain,
             transfer,
             address,
-            balance: [],
             walletType,
           });
         }),

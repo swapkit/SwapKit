@@ -33,10 +33,10 @@
   "scripts": {
     "build-playground": "NODE_OPTIONS=--max_old_space_size=65536 vite build",
     "visualise": "VISUALISE=true bun build-playground",
-    "dev": "vite",
+    "dev": "vite --host",
     "lint": "biome check --write ./src",
-    "type-check": "tsc --noEmit",
-    "preview-playground": "vite preview"
+    "preview-playground": "vite preview",
+    "serve": "bun build-playground && bun preview-playground"
   },
   "version": "0.0.0"
 }

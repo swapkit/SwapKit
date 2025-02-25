@@ -10,7 +10,8 @@ import {
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolboxes/cosmos";
-import type { Psbt, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
 
 function cosmosTransfer() {
@@ -76,7 +77,8 @@ export async function getWalletMethods(chain: Chain) {
       }
       const { unisat: wallet } = bitget;
 
-      const { Psbt, BTCToolbox } = await import("@swapkit/toolboxes/utxo");
+      const { Psbt } = await import("bitcoinjs-lib");
+      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
       const [address] = await wallet.requestAccounts();
       const toolbox = BTCToolbox();
 

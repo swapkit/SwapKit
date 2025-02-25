@@ -148,6 +148,7 @@ export const availableChainsByWallet = {
 
 export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
   const [loading, setLoading] = useState(false);
+  const [balanceLoading, setBalanceLoading] = useState(false);
   const [chains, setChains] = useState<Chain[]>([]);
 
   const connectWallet = useCallback(
@@ -221,6 +222,22 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     [chains, skClient],
   );
 
+  const handleBalanceUpdate = useCallback(async () => {
+    if (!skClient) return alert("client is not ready");
+    setBalanceLoading(true);
+    try {
+      const walletDataArray = await Promise.all(
+        chains.map((chain) => skClient.getWalletWithBalance(chain, true)),
+      );
+      setWallet(walletDataArray.filter(Boolean));
+    } catch (e) {
+      console.error(e);
+      alert(e);
+    } finally {
+      setBalanceLoading(false);
+    }
+  }, [chains, skClient, setWallet]);
+
   const handleKeystoreConnection = useCallback(
     async ({ target }: any) => {
       if (!skClient) return alert("client is not ready");
@@ -237,20 +254,18 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           setPhrase(phrases);
 
           await skClient.connectKeystore(chains, phrases);
-
-          const walletDataArray = await Promise.all(
-            chains.map((chain) => skClient.getWalletWithBalance(chain, true)),
-          );
-
+          const walletDataArray = chains.map((chain) => skClient.getWallet(chain));
           setWallet(walletDataArray.filter(Boolean));
           setLoading(false);
         } catch (e) {
           console.error(e);
           alert(e);
         }
+
+        handleBalanceUpdate();
       }, 500);
     },
-    [chains, setWallet, skClient, setPhrase],
+    [chains, setWallet, skClient, setPhrase, handleBalanceUpdate],
   );
 
   const handleConnection = useCallback(
@@ -258,15 +273,13 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
       if (!skClient) return alert("client is not ready");
       setLoading(true);
       await connectWallet(option, provider);
-
-      const walletDataArray = await Promise.all(
-        chains.map((chain) => skClient.getWalletWithBalance(chain, true)),
-      );
-
+      const walletDataArray = chains.map((chain) => skClient.getWallet(chain));
       setWallet(walletDataArray.filter(Boolean));
       setLoading(false);
+
+      handleBalanceUpdate();
     },
-    [chains, connectWallet, setWallet, skClient],
+    [chains, connectWallet, setWallet, skClient, handleBalanceUpdate],
   );
 
   const isWalletDisabled = useCallback(
@@ -326,6 +339,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         </select>
 
         {loading && <div>Loading...</div>}
+        {balanceLoading && <div>Loading balance...</div>}
       </div>
 
       <div>

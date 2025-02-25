@@ -93,7 +93,6 @@ export const walletconnectWallet = createWallet({
           addChain({
             ...toolbox,
             address,
-            balance: [],
             chain,
             disconnect: walletconnect.disconnect,
             walletType: WalletOption.WALLETCONNECT,

@@ -28,7 +28,7 @@ export const okxWallet = createWallet({
         filteredChains.map(async (chain) => {
           const walletMethods = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, chain, balance: [], walletType });
+          addChain({ ...walletMethods, chain, walletType });
         }),
       );
 

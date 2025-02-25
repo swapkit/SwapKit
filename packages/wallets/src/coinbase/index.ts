@@ -41,7 +41,7 @@ export const coinbaseWallet = createWallet({
         filteredChains.map(async (chain) => {
           const walletMethods = await getWalletMethods({ chain, coinbaseSdk });
 
-          addChain({ ...walletMethods, balance: [], chain, walletType });
+          addChain({ ...walletMethods, chain, walletType });
         }),
       );
 

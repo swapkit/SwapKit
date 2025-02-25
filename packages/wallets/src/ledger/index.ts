@@ -42,7 +42,7 @@ export const ledgerWallet = createWallet({
 
       const walletMethods = await getWalletMethods({ chain, derivationPath });
 
-      addChain({ ...walletMethods, chain, balance: [], walletType: WalletOption.LEDGER });
+      addChain({ ...walletMethods, chain, walletType: WalletOption.LEDGER });
 
       return true;
     },

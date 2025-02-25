@@ -2,7 +2,7 @@ import type { Chain } from "./chains";
 import type { ChainWallet, CryptoChain } from "./wallet";
 
 export type AddChainType<M = { [key in string]: any }> = <T extends CryptoChain>(
-  params: ChainWallet<T> & M,
+  params: Omit<ChainWallet<T>, "balance"> & M,
 ) => void;
 
 export type Witness = {

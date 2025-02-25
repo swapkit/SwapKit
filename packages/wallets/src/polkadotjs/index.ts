@@ -20,7 +20,7 @@ export const polkadotWallet = createWallet({
         filteredChains.map(async (chain) => {
           const { address, ...walletMethods } = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, chain, address, walletType, balance: [] });
+          addChain({ ...walletMethods, chain, address, walletType });
         }),
       );
 

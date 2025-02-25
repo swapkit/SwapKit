@@ -47,7 +47,7 @@ export const ctrlWallet = createWallet({
         const address = await getCtrlAddress(chain);
         const walletMethods = await getWalletMethods(chain);
 
-        addChain({ ...walletMethods, address, balance: [], chain, walletType });
+        addChain({ ...walletMethods, address, chain, walletType });
       });
 
       await Promise.all(promises);

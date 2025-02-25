@@ -421,7 +421,7 @@ export const ledgerLiveWallet = createWallet({
 
       const toolbox = await getLedgerLiveWallet({ chain, ledgerLiveAccount });
 
-      addChain({ ...toolbox, chain, balance: [], walletType });
+      addChain({ ...toolbox, chain, walletType });
 
       return true;
     },

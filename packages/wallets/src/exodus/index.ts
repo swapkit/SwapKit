@@ -10,7 +10,7 @@ import {
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
-import type { Psbt } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 import {
   AddressPurpose,
@@ -35,7 +35,8 @@ async function getWalletMethods({
 }) {
   switch (chain) {
     case Chain.Bitcoin: {
-      const { BTCToolbox, Psbt } = await import("@swapkit/toolboxes/utxo");
+      const { Psbt } = await import("bitcoinjs-lib");
+      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
       const toolbox = BTCToolbox();
 
       let address = "";
@@ -174,7 +175,6 @@ export const exodusWallet = createWallet({
             chain,
             address,
             getBalance,
-            balance: [],
             walletType: WalletOption.EXODUS,
           });
         }),

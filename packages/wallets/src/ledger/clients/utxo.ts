@@ -6,7 +6,8 @@ import {
   derivationPathToString,
   getWalletFormatFor,
 } from "@swapkit/helpers";
-import type { Psbt, UTXOType } from "@swapkit/toolboxes/utxo";
+import type { UTXOType } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
@@ -21,7 +22,7 @@ const signUTXOTransaction = async (
   { psbt, inputUtxos, btcApp, derivationPath }: Params,
   options?: Partial<CreateTransactionArg>,
 ) => {
-  const { Transaction } = await import("@swapkit/toolboxes/utxo");
+  const { Transaction } = await import("bitcoinjs-lib");
 
   const inputs = inputUtxos.map((item) => {
     const utxoTx = Transaction.fromHex(item.txHex || "");

@@ -6,7 +6,8 @@ import {
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { BCHToolbox, Psbt, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { BCHToolbox, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
 

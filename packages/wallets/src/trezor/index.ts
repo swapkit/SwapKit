@@ -9,7 +9,8 @@ import {
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { Psbt, UTXOTransferParams, UTXOType } from "@swapkit/toolboxes/utxo";
+import type { UTXOTransferParams, UTXOType } from "@swapkit/toolboxes/utxo";
+import type { Psbt } from "bitcoinjs-lib";
 import { getWalletSupportedChains } from "../helpers";
 
 function getScriptType(derivationPath: DerivationPathArray) {
@@ -238,7 +239,7 @@ export const trezorWallet = createWallet({
 
       const { address, walletMethods } = await getToolbox({ chain, derivationPath });
 
-      addChain({ ...walletMethods, address, balance: [], chain, walletType });
+      addChain({ ...walletMethods, address, chain, walletType });
 
       return true;
     },

@@ -33,7 +33,7 @@ export const radixWallet = createWallet({
         filteredChains.map(async (chain) => {
           const walletMethods = await getWalletMethods();
 
-          addChain({ ...walletMethods, chain, balance: [], walletType });
+          addChain({ ...walletMethods, chain, walletType });
         }),
       );
 

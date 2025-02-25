@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { ProviderName, RequestClient, SKConfig, SwapKitError, warnOnce } from "@swapkit/helpers";
 
 import {
@@ -53,6 +52,8 @@ export const computeHash = (
     hashParams.method === "POST"
       ? JSON.stringify(hashParams.payload)
       : `${hashParams.url}${swapKit}`;
+
+  const { createHash } = require("crypto");
 
   return createHash("sha256").update(data, "utf8").digest("hex");
 };

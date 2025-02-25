@@ -1,5 +1,3 @@
-export { type Network, networks, Psbt, Transaction } from "bitcoinjs-lib";
-
 /**
  * Package
  */

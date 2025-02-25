@@ -23,7 +23,7 @@ export const phantomWallet = createWallet({
           filteredChains.map(async (chain) => {
             const { address, ...methods } = await getWalletMethods(chain);
 
-            addChain({ ...methods, chain, address, walletType, balance: [] });
+            addChain({ ...methods, chain, address, walletType });
           }),
         );
 

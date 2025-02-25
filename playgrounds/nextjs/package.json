@@ -7,8 +7,7 @@
     "clean": "rm -rf .next node_modules",
     "build-playground": "next build",
     "start": "next start",
-    "lint": "biome check --write ./src",
-    "type-check": "tsc --noEmit"
+    "lint": "biome check --write ./src"
   },
   "dependencies": {
     "@hookform/resolvers": "4.1.2",

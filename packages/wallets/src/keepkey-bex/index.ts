@@ -49,7 +49,7 @@ export const keepkeyBexWallet = createWallet({
           const address = await getKEEPKEYAddress(chain);
           const walletMethods = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, address, balance: [], chain, walletType });
+          addChain({ ...walletMethods, address, chain, walletType });
         }),
       );
 

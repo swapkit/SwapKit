@@ -1,4 +1,3 @@
-import type { TokenInfo } from "@solana/spl-token-registry";
 import type { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
   AssetValue,
@@ -236,7 +235,7 @@ async function getTokenBalances({
 
     if (amount <= BigInt(0)) continue;
 
-    const tokenInfo = tokenList.find((token: TokenInfo) => token.address === mintAddress);
+    const tokenInfo = tokenList.find((token) => token.address === mintAddress);
     const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
     const existing = tokenBalanceMap.get(mintAddress);
 

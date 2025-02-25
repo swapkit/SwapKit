@@ -61,12 +61,7 @@ export const keepkeyWallet = createWallet({
             sdk: keepKeySdk,
           });
 
-          addChain({
-            ...walletMethods,
-            balance: [],
-            chain,
-            walletType: WalletOption.KEEPKEY,
-          });
+          addChain({ ...walletMethods, chain, walletType: WalletOption.KEEPKEY });
         }),
       );
       return true;
