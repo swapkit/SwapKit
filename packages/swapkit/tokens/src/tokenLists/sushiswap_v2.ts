@@ -2,14 +2,14 @@ export const list = {
   provider: "SUSHISWAP_V2",
   chainId: "1",
   name: "SUSHISWAP_V2",
-  timestamp: "2025-02-07T19:02:12.428Z",
+  timestamp: "2025-02-25T00:13:57.325Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 83,
+  count: 81,
   tokens: [
     {
       address: "0x4Af698B479D0098229DC715655c667Ceb6cd8433",
@@ -310,16 +310,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.ilv-0x767fe9edc9e0df98e07454847909b5e959d7ca0e.png",
       ticker: "ILV",
-    },
-    {
-      address: "0xF57e7e7C23978C3cAEC3C3548E3D615c346e79fF",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.IMX-0XF57E7E7C23978C3CAEC3C3548E3D615C346E79FF",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.imx-0xf57e7e7c23978c3caec3c3548e3d615c346e79ff.png",
-      ticker: "IMX",
     },
     {
       address: "0xe28b3B32B6c345A34Ff64674606124Dd5Aceca30",
@@ -750,16 +740,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.wbtc-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png",
       ticker: "WBTC",
-    },
-    {
-      address: "0x35a532d376FFd9a705d0Bb319532837337A398E7",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.WDOGE-0X35A532D376FFD9A705D0BB319532837337A398E7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.wdoge-0x35a532d376ffd9a705d0bb319532837337a398e7.png",
-      ticker: "WDOGE",
     },
     {
       address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",

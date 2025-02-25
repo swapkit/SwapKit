@@ -2,14 +2,14 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-02-07T19:01:41.239Z",
+  timestamp: "2025-02-25T00:14:58.322Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 54,
+  count: 55,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -88,6 +88,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
       ticker: "TGT",
+    },
+    {
+      address: "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.UNI-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.uni-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0.png",
+      ticker: "UNI",
     },
     {
       address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
