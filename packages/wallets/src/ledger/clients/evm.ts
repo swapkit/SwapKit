@@ -5,13 +5,7 @@ import {
   NetworkDerivationPath,
   derivationPathToString,
 } from "@swapkit/helpers";
-import {
-  AbstractSigner,
-  type Provider,
-  Signature,
-  Transaction,
-  type TransactionRequest,
-} from "ethers";
+import { AbstractSigner, type Provider, type TransactionRequest } from "ethers";
 
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
@@ -79,6 +73,7 @@ class EVMLedgerInterface extends AbstractSigner {
   };
 
   signMessage = async (messageHex: string) => {
+    const { Signature } = await import("ethers");
     await this.createTransportAndLedger();
 
     const sig = await this.ledgerApp?.signPersonalMessage(this.derivationPath, messageHex);
@@ -103,6 +98,7 @@ class EVMLedgerInterface extends AbstractSigner {
   }
 
   signTransaction = async (tx: TransactionRequest) => {
+    const { Transaction } = await import("ethers");
     await this.createTransportAndLedger();
 
     const transactionCount = await this.provider?.getTransactionCount(

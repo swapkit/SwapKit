@@ -1,7 +1,6 @@
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
-import { chainflipGateway } from "@swapkit/helpers/contracts";
 import type { ETHToolbox } from "@swapkit/toolboxes/evm";
 import type { ChainflipToolbox } from "@swapkit/toolboxes/substrate";
 
@@ -86,7 +85,7 @@ const withdrawFee =
 
 const fundStateChainAccount =
   (chainflipToolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
-  ({
+  async ({
     evmToolbox,
     stateChainAccount,
     assetValue,
@@ -95,6 +94,8 @@ const fundStateChainAccount =
     stateChainAccount: string;
     assetValue: AssetValue;
   }) => {
+    const { chainflipGateway } = await import("@swapkit/helpers/contracts");
+
     const flipAssetValue = AssetValue.from({ asset: "ETH.FLIP" });
 
     if (!assetValue.eqAsset(flipAssetValue)) {

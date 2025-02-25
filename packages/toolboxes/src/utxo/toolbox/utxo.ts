@@ -1,6 +1,5 @@
+// TODO: remove this
 import * as secp256k1 from "@bitcoinerlab/secp256k1";
-import { HDKey } from "@scure/bip32";
-import { mnemonicToSeedSync } from "@scure/bip39";
 import {
   AssetValue,
   BaseDecimal,
@@ -36,6 +35,10 @@ function createKeysForPath(chain: Chain) {
     derivationPath,
   }: { phrase?: string; wif?: string; derivationPath: string }) {
     const { ECPairFactory } = await import("ecpair");
+    const secp256k1 = await import("@bitcoinerlab/secp256k1");
+    const { HDKey } = await import("@scure/bip32");
+    const { mnemonicToSeedSync } = await import("@scure/bip39");
+
     if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
 
     const factory = ECPairFactory(secp256k1);

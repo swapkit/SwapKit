@@ -1,14 +1,4 @@
-import * as secp256k1 from "@bitcoinerlab/secp256k1";
-import {
-  HDNode,
-  Transaction,
-  TransactionBuilder,
-  address as bchAddress,
-  // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
-} from "@psf/bitcoincashjs-lib";
-import { mnemonicToSeedSync } from "@scure/bip39";
 import { Chain, DerivationPath, FeeOption, type UTXOChain } from "@swapkit/helpers";
-import { Psbt } from "bitcoinjs-lib";
 
 import {
   accumulative,
@@ -33,9 +23,51 @@ import { BaseUTXOToolbox } from "./utxo";
 
 const chain = Chain.BitcoinCash as UTXOChain;
 
-export const stripToCashAddress = (address: string) => stripPrefix(toCashAddress(address));
+export function stripPrefix(address: string) {
+  return address.replace(/(bchtest:|bitcoincash:)/, "");
+}
 
-const buildBCHTx = async ({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) => {
+export function validateAddress(address: string) {
+  const strippedAddress = stripPrefix(address);
+  return (
+    isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet
+  );
+}
+
+export function stripToCashAddress(address: string) {
+  return stripPrefix(toCashAddress(address));
+}
+
+export function createBCHToolbox() {
+  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = BaseUTXOToolbox(Chain.BitcoinCash)();
+
+  function handleGetBalance(address: string, _scamFilter = true) {
+    return getBalance(stripPrefix(toCashAddress(address)));
+  }
+
+  return {
+    ...toolbox,
+    broadcastTx,
+    buildBCHTx,
+    buildTx,
+    createKeysForPath,
+    getAddressFromKeys,
+    getBalance: handleGetBalance,
+    getFeeRates,
+    stripPrefix,
+    stripToCashAddress,
+    validateAddress,
+    transfer: transfer({ getFeeRates, broadcastTx }),
+  };
+}
+
+async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
+  const {
+    Transaction,
+    TransactionBuilder,
+    address: bchAddress,
+    // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+  } = await import("@psf/bitcoincashjs-lib");
   if (!validateAddress(recipient)) throw new Error("Invalid address");
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
@@ -81,7 +113,7 @@ const buildBCHTx = async ({ assetValue, recipient, memo, feeRate, sender }: UTXO
   }
 
   return { builder, utxos: inputs };
-};
+}
 
 function transfer({
   broadcastTx,
@@ -122,14 +154,9 @@ function transfer({
   };
 }
 
-const buildTx = async ({
-  assetValue,
-  recipient,
-  memo,
-  feeRate,
-  sender,
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
-}: UTXOBuildTxParams) => {
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
+async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
+  const { Psbt } = await import("bitcoinjs-lib");
   const recipientCashAddress = toCashAddress(recipient);
   if (!validateAddress(recipientCashAddress)) throw new Error("Invalid address");
 
@@ -185,23 +212,18 @@ const buildTx = async ({
   }
 
   return { psbt, utxos, inputs: inputs as UTXOType[] };
-};
+}
 
-export const stripPrefix = (address: string) => address.replace(/(bchtest:|bitcoincash:)/, "");
-
-export const validateAddress = (address: string) => {
-  const strippedAddress = stripPrefix(address);
-  return (
-    isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet
-  );
-};
-
-const createKeysForPath = async ({
+async function createKeysForPath({
   phrase,
   derivationPath = `${DerivationPath.BCH}/0`,
   wif,
-}: { wif?: string; phrase?: string; derivationPath?: string }) => {
+}: { wif?: string; phrase?: string; derivationPath?: string }) {
   const { ECPairFactory } = await import("ecpair");
+  const secp256k1 = await import("@bitcoinerlab/secp256k1");
+  const { mnemonicToSeedSync } = await import("@scure/bip39");
+  // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+  const { HDNode } = await import("@psf/bitcoincashjs-lib");
 
   const network = getNetwork(chain);
 
@@ -218,35 +240,12 @@ const createKeysForPath = async ({
   // const a = payments.p2pkh({ pubkey: k.publicKey, network });
 
   return keyPair;
-};
+}
 
-const getAddressFromKeys = (keys: { getAddress: (index?: number) => string }) => {
+function getAddressFromKeys(keys: { getAddress: (index?: number) => string }) {
   const address = keys.getAddress(0);
   return stripToCashAddress(address);
-};
-
-export const createBCHToolbox = () => {
-  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = BaseUTXOToolbox(Chain.BitcoinCash)();
-
-  function handleGetBalance(address: string, _scamFilter = true) {
-    return getBalance(stripPrefix(toCashAddress(address)));
-  }
-
-  return {
-    ...toolbox,
-    broadcastTx,
-    buildBCHTx,
-    buildTx,
-    createKeysForPath,
-    getAddressFromKeys,
-    getBalance: handleGetBalance,
-    getFeeRates,
-    stripPrefix,
-    stripToCashAddress,
-    validateAddress,
-    transfer: transfer({ getFeeRates, broadcastTx }),
-  };
-};
+}
 
 type TransactionBuilderType = {
   inputs: any[];

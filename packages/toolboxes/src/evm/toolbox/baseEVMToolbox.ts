@@ -23,8 +23,6 @@ import {
   type Provider,
   type Signer,
   getAddress,
-  hexlify,
-  toUtf8Bytes,
 } from "ethers";
 
 import {
@@ -326,6 +324,7 @@ function getTransfer({ signer, isEIP1559Compatible = true, provider }: ToolboxWr
     gasPrice,
     ...tx
   }: TransferParams) {
+    const { hexlify, toUtf8Bytes } = await import("ethers");
     const txAmount = assetValue.getBaseValue("bigint");
     const chain = assetValue.chain as EVMChain;
     const from = fromOverride || (await signer?.getAddress());
@@ -421,7 +420,7 @@ function getEstimateCall({ provider, signer }: { signer?: Signer; provider: Prov
 }
 
 function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
-  return function estimateGasLimit({
+  return async function estimateGasLimit({
     assetValue,
     recipient,
     memo,
@@ -453,6 +452,8 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
         txOverrides,
       });
     }
+
+    const { hexlify, toUtf8Bytes } = await import("ethers");
 
     return provider.estimateGas({
       from,
@@ -621,6 +622,8 @@ function getCreateTransferTx({
     if (!from) throw new SwapKitError("toolbox_evm_no_from_address");
 
     if (isGasAsset(assetValue)) {
+      const { hexlify, toUtf8Bytes } = await import("ethers");
+
       return {
         ...tx,
         from,

@@ -7,7 +7,7 @@ import {
   SKConfig,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
-import { Contract, Transaction } from "ethers";
+import { Contract } from "ethers";
 
 import { gasOracleAbi } from "../contracts/op/gasOracle";
 import { getBalance } from "../helpers";
@@ -33,6 +33,8 @@ function getL1GasPriceFetcher<P extends JsonRpcProvider | BrowserProvider>(provi
 
 function serializeTx<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
   return async function serializeTx({ from, to, nonce, ...tx }: TransactionRequest) {
+    const { Transaction } = await import("ethers");
+
     if (!to) throw new Error("Missing to address");
     const txParams = {
       ...tx,

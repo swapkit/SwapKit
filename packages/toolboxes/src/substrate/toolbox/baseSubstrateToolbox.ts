@@ -1,10 +1,9 @@
-import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
+import type { ApiPromise } from "@polkadot/api";
 import type { SubmittableExtrinsic } from "@polkadot/api/types";
 import type { KeyringPair } from "@polkadot/keyring/types";
 import type { Callback, IKeyringPair, ISubmittableResult, Signer } from "@polkadot/types/types";
 import { hexToU8a, isHex, u8aToHex } from "@polkadot/util";
 import {
-  cryptoWaitReady,
   decodeAddress as decodePolkadotAddress,
   encodeAddress as encodePolkadotAddress,
 } from "@polkadot/util-crypto";
@@ -31,6 +30,8 @@ export const isKeyringPair = (account: IKeyringPair | Signer): account is IKeyri
 };
 
 export const createKeyring = async (phrase: string, networkPrefix: number) => {
+  const { Keyring } = await import("@polkadot/api");
+  const { cryptoWaitReady } = await import("@polkadot/util-crypto");
   await cryptoWaitReady();
 
   return new Keyring({ type: "sr25519", ss58Format: networkPrefix }).addFromUri(phrase);
@@ -266,8 +267,9 @@ export async function ToolboxFactory({
   chain,
   signer,
 }: ToolboxParams & { chain: SubstrateChain }) {
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
-  const provider = new WsProvider(rpcUrl);
+  const { ApiPromise, WsProvider } = await import("@polkadot/api");
+
+  const provider = new WsProvider(SKConfig.get("rpcUrls")[chain]);
   const api = await ApiPromise.create({ provider });
   const gasAsset = AssetValue.from({ chain });
   const network = generic ? Network.GENERIC : Network[chain];
