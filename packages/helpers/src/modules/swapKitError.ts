@@ -95,6 +95,8 @@ const errorCodes = {
   wallet_keepkey_send_transaction_no_address: 20903,
   wallet_bitkeep_not_found: 21001,
   wallet_exodus_sign_transaction_error: 21100,
+  wallet_keystore_invalid_password: 29900,
+  wallet_keystore_unsupported_version: 29901,
   /**
    * Chainflip
    */

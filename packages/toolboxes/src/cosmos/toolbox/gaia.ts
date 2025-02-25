@@ -1,7 +1,6 @@
 import { BaseDecimal, Chain, ChainId, SwapKitNumber } from "@swapkit/helpers";
 
 import type { TransferParams } from "../types";
-
 import { buildNativeTransferTx } from "../util";
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from "./BaseCosmosToolbox";
 
@@ -10,6 +9,7 @@ export function GaiaToolbox() {
 
   async function getFees() {
     const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 500);
+
     return {
       type: "base",
       average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal.GAIA),

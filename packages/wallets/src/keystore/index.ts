@@ -201,16 +201,13 @@ export const keystoreWallet = createWallet({
               ? derivationPathMapOrIndex[chain]
               : undefined;
 
-          const [first, second, third, fourth, fifth] = NetworkDerivationPath[chain];
+          const derivationArrayToUpdate = NetworkDerivationPath[chain].slice(
+            0,
+            chain === Chain.Solana ? 4 : 5,
+          ) as DerivationPathArray;
 
           const derivationPathArray: DerivationPathArray =
-            derivationPathFromMap ||
-            updatedLastIndex(
-              chain === Chain.Solana
-                ? [first, second, third, fourth]
-                : [first, second, third, fourth, fifth],
-              derivationPathIndex,
-            );
+            derivationPathFromMap || updatedLastIndex(derivationArrayToUpdate, derivationPathIndex);
 
           const derivationPath = derivationPathToString(derivationPathArray);
 

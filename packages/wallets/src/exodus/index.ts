@@ -24,7 +24,7 @@ import {
 } from "sats-connect";
 import { getWalletSupportedChains } from "../helpers";
 
-export const getWalletMethods = async ({
+async function getWalletMethods({
   walletProvider,
   provider,
   chain,
@@ -32,7 +32,7 @@ export const getWalletMethods = async ({
   walletProvider?: Eip1193Provider;
   provider: BrowserProvider | BitcoinProvider;
   chain: Chain;
-}) => {
+}) {
   switch (chain) {
     case Chain.Bitcoin: {
       const { BTCToolbox, Psbt } = await import("@swapkit/toolboxes/utxo");
@@ -59,6 +59,7 @@ export const getWalletMethods = async ({
         },
       };
 
+      // TODO: Towan - probably not needed ?
       await getAddress(getAddressOptions);
 
       async function signTransaction(psbt: Psbt) {
@@ -134,7 +135,7 @@ export const getWalletMethods = async ({
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }
-};
+}
 
 export const exodusWallet = createWallet({
   name: "connectExodusWallet",

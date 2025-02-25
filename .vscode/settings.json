@@ -34,11 +34,14 @@
     "blakejs",
     "blockchair",
     "Chunkv",
+    "cipherparams",
     "coininfo",
     "cosmjs",
+    "dklen",
     "ecpair",
     "freekey",
     "hexlify",
+    "kdfparams",
     "keepkey",
     "Keplr",
     "Keyv",
@@ -68,6 +71,7 @@
     "Walletconnect",
     "webusb",
     "Woofi",
+    "xchain",
     "xpub"
   ],
   "[jsonc]": {

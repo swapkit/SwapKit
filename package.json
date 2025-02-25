@@ -1,9 +1,4 @@
 {
-  "overrides": {
-    "axios": "^1.6.8",
-    "json5@<=1.0.1": "^1.0.2",
-    "semver@<=4.3.2": "^7.6.0"
-  },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/changelog-github": "0.5.1",
@@ -54,8 +49,6 @@
     "lefthook",
     "protobufjs",
     "keccak",
-    "secp256k1",
-    "tiny-secp256k1",
     "usb"
   ],
   "workspaces": ["packages/*", "playgrounds/*", "tools/*", "docs"]

@@ -16,7 +16,6 @@ import {
   WalletOption,
   createWallet,
 } from "@swapkit/helpers";
-import { ETHToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import { BigNumber as BigNumberJS } from "bignumber.js";
 import { VoidSigner } from "ethers";
@@ -155,6 +154,8 @@ export const getLedgerLiveWallet = async ({
   switch (chain) {
     case Chain.Arbitrum:
     case Chain.Ethereum: {
+      const { ETHToolbox, getProvider } = await import("@swapkit/toolboxes/evm");
+
       const getAddress = () => ledgerLiveAccount.address;
 
       const ledgerLiveClient = EthereumLedgerLive();

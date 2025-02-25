@@ -7,7 +7,6 @@ export async function getAddressValidator() {
   const { utxoValidateAddress } = await import("@swapkit/toolboxes/utxo");
   const { getAddressValidator: getSolValidator } = await import("@swapkit/toolboxes/solana");
   const { validateAddress: validateRadixAddress } = await import("@swapkit/toolboxes/radix");
-
   const solanaValidateAddress = await getSolValidator();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {

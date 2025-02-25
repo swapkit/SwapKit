@@ -27,17 +27,11 @@ type Params = {
   index?: number;
 };
 
-export async function getFeeRateFromThorswap(chainId: ChainId, safeDefault: number) {
-  try {
-    const response = await SwapKitApi.getGasRate();
-    const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
-
-    return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (e) {
-    console.error(e);
-    return safeDefault;
-  }
-}
+export type BaseCosmosToolboxType = ReturnType<typeof BaseCosmosToolbox>;
+export type BaseCosmosWallet = ReturnType<typeof BaseCosmosToolbox>;
+export type CosmosWallets = {
+  [chain in Chain.Cosmos | Chain.Kujira]: BaseCosmosWallet;
+};
 
 export function BaseCosmosToolbox({
   chain,
@@ -51,63 +45,46 @@ export function BaseCosmosToolbox({
     ? `${paramsDerivationPath}/${index}`
     : `${DerivationPath[chain]}/${index}`;
 
-  const getCosmosAccount = cosmosAccountGetter(chainPrefix);
+  const getCosmosAccount = cosmosAccountGetter({ prefix: chainPrefix, derivationPath });
   const getCosmosBalance = cosmosBalanceGetter({ chain, rpcUrl });
-  const getCosmosBalanceAsDenoms = cosmosBalanceDenomsGetter(rpcUrl);
 
   return {
     transfer: cosmosTransfer(rpcUrl),
-    getSigner: async (phrase: string) => {
-      const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
-      const { stringToPath } = await import("@cosmjs/crypto");
-
-      return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
-        prefix,
-        hdPaths: [stringToPath(derivationPath)],
-      });
-    },
+    getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
+    getBalance: getCosmosBalance,
+    getSigner: getSigner({ prefix: chainPrefix, derivationPath }),
+    createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
+    validateAddress: validateAddress(chainPrefix),
     getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
       const { DirectSecp256k1Wallet } = await import("@cosmjs/proto-signing");
-
-      return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
-    },
-    createPrivateKeyFromPhrase: async (phrase: string) => {
-      const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = await import(
-        "@cosmjs/crypto"
-      );
-
-      const mnemonicChecked = new EnglishMnemonic(phrase);
-      const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
-
-      const { privkey } = Slip10.derivePath(
-        Slip10Curve.Secp256k1,
-        seed,
-        stringToPath(derivationPath),
-      );
-
-      return privkey;
+      return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     getAccount: async (address: string) => {
       const client = await createStargateClient(rpcUrl);
       return client.getAccount(address);
     },
-    validateAddress: (address: string) => validateCosmosAddress({ prefix: chainPrefix, address }),
     getAddressFromMnemonic: async (phrase: string) => {
-      const walletAccount = await getCosmosAccount({ phrase, derivationPath });
-
-      return walletAccount.address;
+      const account = await getCosmosAccount(phrase);
+      return account.address;
     },
     getPubKeyFromMnemonic: async (phrase: string) => {
-      const account = await getCosmosAccount({ phrase, derivationPath });
+      const account = await getCosmosAccount(phrase);
       return base64.encode(account.pubkey);
     },
-    getFeeRateFromThorswap,
-    getBalanceAsDenoms: getCosmosBalanceAsDenoms,
-    getBalance: getCosmosBalance,
   };
 }
 
-export type BaseCosmosToolboxType = ReturnType<typeof BaseCosmosToolbox>;
+export async function getFeeRateFromThorswap(chainId: ChainId, safeDefault: number) {
+  try {
+    const response = await SwapKitApi.getGasRate();
+    const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
+
+    return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
+  } catch (e) {
+    console.error(e);
+    return safeDefault;
+  }
+}
 
 export function cosmosValidateAddress({
   address,
@@ -123,19 +100,26 @@ export function cosmosValidateAddress({
     throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
   }
 
-  return validateCosmosAddress({ prefix, address });
+  return validateAddress(prefix)(address);
 }
 
 export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: AssetValue }) {
   return AssetValue.from({ chain, value: getMinTransactionFee(chain) });
 }
 
-export type BaseCosmosWallet = ReturnType<typeof BaseCosmosToolbox>;
-export type CosmosWallets = {
-  [chain in Chain.Cosmos | Chain.Kujira]: BaseCosmosWallet;
-};
+function getSigner({ prefix, derivationPath }: { prefix: string; derivationPath: string }) {
+  return async function getSigner(phrase: string) {
+    const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
+    const { stringToPath } = await import("@cosmjs/crypto");
 
-function getPrefix(chain?: CosmosChain) {
+    return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
+      prefix,
+      hdPaths: [stringToPath(derivationPath)],
+    });
+  };
+}
+
+function getPrefix<C extends CosmosChain>(chain?: C) {
   const { isStagenet } = SKConfig.get("envs");
   const useStagenetPrefix = chain
     ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet
@@ -156,17 +140,19 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function validateCosmosAddress({ prefix, address }: { prefix: string; address: string }) {
-  if (!address.startsWith(prefix)) return false;
+function validateAddress(prefix: string) {
+  return function validateAddress(address: string) {
+    if (!address.startsWith(prefix)) return false;
 
-  try {
-    const { prefix, words } = bech32.decode(address as `${string}1${string}`);
-    const normalized = bech32.encode(prefix, words);
+    try {
+      const { prefix, words } = bech32.decode(address as `${string}1${string}`);
+      const normalized = bech32.encode(prefix, words);
 
-    return normalized === address.toLocaleLowerCase();
-  } catch (_error) {
-    return false;
-  }
+      return normalized === address.toLocaleLowerCase();
+    } catch (_error) {
+      return false;
+    }
+  };
 }
 
 function cosmosTransfer(rpcUrl: string) {
@@ -211,10 +197,7 @@ function cosmosBalanceDenomsGetter(rpcUrl: string) {
 }
 
 function cosmosBalanceGetter({ chain, rpcUrl }: { chain: Chain; rpcUrl: string }) {
-  return async function getCosmosBalance(
-    address: string,
-    // filterFunc?: (params: { denom: string; amount: string }) => boolean,
-  ) {
+  return async function getCosmosBalance(address: string) {
     const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
 
     const balances = denomBalances
@@ -231,13 +214,14 @@ function cosmosBalanceGetter({ chain, rpcUrl }: { chain: Chain; rpcUrl: string }
   };
 }
 
-function cosmosAccountGetter(prefix: string) {
-  return async function getCosmosAccount({
-    phrase,
-    derivationPath,
-  }: { phrase: string; derivationPath: string }) {
+function cosmosAccountGetter({
+  prefix,
+  derivationPath,
+}: { prefix: string; derivationPath: string }) {
+  return async function getCosmosAccount(phrase: string) {
     const { Secp256k1HdWallet } = await import("@cosmjs/amino");
     const { stringToPath } = await import("@cosmjs/crypto");
+
     const wallet = await Secp256k1HdWallet.fromMnemonic(phrase, {
       prefix,
       hdPaths: [stringToPath(derivationPath)],
@@ -250,5 +234,24 @@ function cosmosAccountGetter(prefix: string) {
     }
 
     return account;
+  };
+}
+
+function createPrivateKeyFromPhrase(derivationPath: string) {
+  return async function createPrivateKeyFromPhrase(phrase: string) {
+    const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = await import(
+      "@cosmjs/crypto"
+    );
+
+    const mnemonicChecked = new EnglishMnemonic(phrase);
+    const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
+
+    const { privkey } = Slip10.derivePath(
+      Slip10Curve.Secp256k1,
+      seed,
+      stringToPath(derivationPath),
+    );
+
+    return privkey;
   };
 }

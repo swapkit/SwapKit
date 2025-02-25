@@ -25,5 +25,3 @@ export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {
     plugins: defaultPlugins,
   });
 }
-
-export { SwapKitApi } from "@swapkit/helpers/api";

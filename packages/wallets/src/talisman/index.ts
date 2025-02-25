@@ -9,7 +9,7 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import { type InjectedWindow, Network } from "@swapkit/toolboxes/substrate";
+import type { InjectedWindow } from "@swapkit/toolboxes/substrate";
 import type { Eip1193Provider } from "ethers";
 import { getWalletSupportedChains } from "../helpers";
 
@@ -107,7 +107,7 @@ async function getWalletMethods(chain: Chain) {
 
     case Chain.Polkadot:
     case Chain.Chainflip: {
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/substrate");
+      const { getToolboxByChain, Network } = await import("@swapkit/toolboxes/substrate");
 
       const injectedWindow = window as Window & InjectedWindow;
       const injectedExtension = injectedWindow?.injectedWeb3?.talisman;

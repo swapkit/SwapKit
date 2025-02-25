@@ -23,7 +23,6 @@ export type NodeUrl = {
 
 export type DepositParam = {
   signer?: OfflineDirectSigner | OfflineAminoSigner;
-  walletIndex?: number;
   assetValue: AssetValue;
   memo: string;
 };

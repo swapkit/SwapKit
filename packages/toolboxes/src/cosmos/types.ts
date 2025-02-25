@@ -1,6 +1,8 @@
 import type { OfflineAminoSigner, StdFee } from "@cosmjs/amino";
 import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type { AssetValue, ChainId, FeeOption } from "@swapkit/helpers";
+import type { buildAminoMsg } from "./thorchainUtils";
+import type { getDefaultChainFee } from "./util";
 
 export type CosmosSDKClientParams = {
   server: string;
@@ -28,4 +30,13 @@ export type ToolboxParams = {
 export type Signer = {
   pubKey: string;
   signature: string;
+};
+
+export type MultisigTx = {
+  msgs: ReturnType<typeof buildAminoMsg>[];
+  accountNumber: number;
+  sequence: number;
+  chainId: ChainId;
+  fee: ReturnType<typeof getDefaultChainFee>;
+  memo: string;
 };

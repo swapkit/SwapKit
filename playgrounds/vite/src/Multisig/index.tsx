@@ -80,10 +80,10 @@ export default function Multisig({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const handleSignTransaction = useCallback(async () => {
     const wallet = await toolbox.secp256k1HdWalletFromMnemonic(phrase);
-    const { signature, bodyBytes } = await toolbox.signMultisigTx(
+    const { signature, bodyBytes } = await toolbox.signMultisigTx({
       wallet,
-      JSON.stringify(transaction),
-    );
+      tx: transaction,
+    });
     setBodyBytes(bodyBytes);
     const [account] = await wallet.getAccounts();
 

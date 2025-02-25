@@ -1,16 +1,14 @@
-import {
-  type FungibleResourcesCollectionItem,
+import type {
+  FungibleResourcesCollectionItem,
   GatewayApiClient,
-  type StateEntityDetailsVaultResponseItem,
-  type StateEntityFungiblesPageRequest,
-  type StateEntityFungiblesPageResponse,
+  StateEntityDetailsVaultResponseItem,
+  StateEntityFungiblesPageRequest,
+  StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
-import { DataRequestBuilder, RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
 import {
   AssetValue,
   Chain,
   SKConfig,
-  type SKConfigIntegrations,
   SwapKitError,
   WalletOption,
   createWallet,
@@ -33,7 +31,7 @@ export const radixWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const walletMethods = await getWalletMethods(radixConfig);
+          const walletMethods = await getWalletMethods();
 
           addChain({ ...walletMethods, chain, balance: [], walletType });
         }),
@@ -45,13 +43,15 @@ export const radixWallet = createWallet({
 
 export const RADIX_SUPPORTED_CHAINS = getWalletSupportedChains(radixWallet);
 
-async function fetchFungibleResources({
-  address,
-  networkApi,
-}: { address: string; networkApi: GatewayApiClient }): Promise<FungibleResourcesCollectionItem[]> {
+async function fetchFungibleResources(address: string): Promise<FungibleResourcesCollectionItem[]> {
+  const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
+  const { applicationName } = SKConfig.get("integrations").radix;
+  const networkApi = GatewayApiClient.initialize({ networkId: 1, applicationName });
+
   let hasNextPage = true;
   let nextCursor: string | undefined;
   let fungibleResources: FungibleResourcesCollectionItem[] = [];
+
   const stateVersion = await currentStateVersion(networkApi);
 
   while (hasNextPage) {
@@ -82,25 +82,13 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
-function getBalance({ networkApi }: { networkApi: GatewayApiClient }) {
-  return async function getBalance(address: string) {
-    const fungibleResources = await fetchFungibleResources({ address, networkApi });
-    const fungibleBalances = convertResourcesToBalances({
-      resources: fungibleResources,
-      networkApi,
-    });
-    return fungibleBalances;
-  };
-}
-
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Split into multiple functions
-async function convertResourcesToBalances({
-  resources,
-  networkApi,
-}: {
-  resources: FungibleResourcesCollectionItem[]; //| NonFungibleResourcesCollectionItem[];
-  networkApi: GatewayApiClient;
-}): Promise<AssetValue[]> {
+async function getBalance(address: string): Promise<AssetValue[]> {
+  const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
+  const resources = await fetchFungibleResources(address);
+  const { applicationName } = SKConfig.get("integrations").radix;
+  const networkApi = GatewayApiClient.initialize({ networkId: 1, applicationName });
+
   const balances: AssetValue[] = [];
   const BATCH_SIZE = 50;
 
@@ -124,10 +112,7 @@ async function convertResourcesToBalances({
           metaDataSymbol?.value.typed.type === "String" ? metaDataSymbol.value.typed.value : "?";
 
         if (result.details.type === "FungibleResource") {
-          divisibilities.set(result.address, {
-            decimals: result.details.divisibility,
-            symbol,
-          });
+          divisibilities.set(result.address, { decimals: result.details.divisibility, symbol });
         }
       }
     }
@@ -147,18 +132,20 @@ async function convertResourcesToBalances({
       }
     }
   }
-  // Iterate through resources
+
   return balances;
 }
 
-const getWalletMethods = async (dappConfig: SKConfigIntegrations["radix"]) => {
+async function getWalletMethods() {
+  const { RadixDappToolkit } = await import("@radixdlt/radix-dapp-toolkit");
+  const dappConfig = SKConfig.get("integrations").radix;
   const rdt = RadixDappToolkit({ ...dappConfig, networkId: dappConfig.network.networkId });
 
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  // Wat is dat
+  // TODO: @Towan - Wat is dat?
   await delay(400);
 
   function getAddress() {
@@ -169,6 +156,7 @@ const getWalletMethods = async (dappConfig: SKConfigIntegrations["radix"]) => {
   }
 
   const getNewAddress = async () => {
+    const { DataRequestBuilder } = await import("@radixdlt/radix-dapp-toolkit");
     rdt.walletApi.setRequestData(DataRequestBuilder.accounts().exactly(1));
     const res = await rdt.walletApi.sendRequest();
 
@@ -187,15 +175,11 @@ const getWalletMethods = async (dappConfig: SKConfigIntegrations["radix"]) => {
 
   const address = getAddress() || (await getNewAddress());
 
-  const networkApi = GatewayApiClient.initialize({
-    networkId: 1,
-    applicationName: dappConfig.applicationName,
-  });
-
   return {
     radixDappToolkit: rdt,
     address,
-    getBalance: () => getBalance({ networkApi })(address),
+    getAddress,
+    getBalance: () => getBalance(address),
     transfer: (_params: { assetValue: AssetValue; recipient: string; from: string }) => {
       throw new Error("Not implemented");
     },
@@ -213,6 +197,5 @@ const getWalletMethods = async (dappConfig: SKConfigIntegrations["radix"]) => {
 
       return txResult;
     },
-    getAddress: getAddress,
   };
-};
+}

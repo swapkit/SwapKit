@@ -46,8 +46,11 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
   });
   console.info("📦 ESM Import Sizes:");
   for (const { size, name, label } of esmFiles) {
-    // @ts-expect-error
-    sizeData[name] = { esm: size };
+    if (sizeData[name]) {
+      sizeData[name].esm = size;
+    } else {
+      sizeData[name] = { esm: size, cjs: 0 };
+    }
     console.info(`${label.padEnd(esmMaxLength)}${formatBytes(size)}`);
   }
 
@@ -58,8 +61,11 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
   });
   console.info("📦 CJS Import Sizes:");
   for (const { size, name, label } of cjsFiles) {
-    // @ts-expect-error
-    sizeData[name].cjs = size;
+    if (sizeData[name]) {
+      sizeData[name].cjs = size;
+    } else {
+      sizeData[name] = { esm: 0, cjs: size };
+    }
     console.info(`${label.padEnd(cjsMaxLength)}${formatBytes(size)}`);
   }
 
@@ -110,7 +116,7 @@ async function updateSizeData(sizeData: Record<string, { esm: number; cjs: numbe
     const existingSizes = await sizes.json();
     await sizes.write(JSON.stringify({ ...existingSizes, ...sizeData }, null, 2));
   } else {
-    await sizes.write(JSON.stringify({ size: { ...sizeData } }, null, 2));
+    await sizes.write(JSON.stringify(sizeData, null, 2));
   }
 }
 
