@@ -34,9 +34,10 @@ function getAuthHeaders(hash?: string) {
   };
 }
 
-export const computeHash = (
+export async function computeHash(
   hashParams: { method: "POST"; payload: any } | { method: "GET"; url: string },
-) => {
+) {
+  const { createHash } = await import("crypto");
   const { swapKit } = SKConfig.get("apiKeys");
   const { referer } = SKConfig.get("envs");
 
@@ -53,22 +54,24 @@ export const computeHash = (
       ? JSON.stringify(hashParams.payload)
       : `${hashParams.url}${swapKit}`;
 
-  const { createHash } = require("crypto");
-
   return createHash("sha256").update(data, "utf8").digest("hex");
-};
+}
 
-export function getTrackerDetails(payload: TrackerParams) {
+export async function getTrackerDetails(payload: TrackerParams) {
+  const hash = await computeHash({ method: "POST", payload });
+
   return RequestClient.post<TrackerResponse>(getApiUrl("/track"), {
     json: payload,
-    headers: getAuthHeaders(computeHash({ method: "POST", payload })),
+    headers: getAuthHeaders(hash),
   });
 }
 
 export async function getSwapQuote(searchParams: QuoteRequest) {
+  const hash = await computeHash({ method: "POST", payload: searchParams });
+
   const response = await RequestClient.post<QuoteResponse>(getApiUrl("/quote"), {
     json: searchParams,
-    headers: getAuthHeaders(computeHash({ method: "POST", payload: searchParams })),
+    headers: getAuthHeaders(hash),
   });
 
   if (response.error) {
@@ -98,25 +101,24 @@ export function getTokenListProvidersV2() {
   return getTokenListProviders();
 }
 
-export function getTokenListProviders() {
+export async function getTokenListProviders() {
   const url = getApiUrl("/providers");
-  return RequestClient.get<TokenListProvidersResponse>(url, {
-    headers: getAuthHeaders(computeHash({ method: "GET", url })),
-  });
+  const hash = await computeHash({ method: "GET", url });
+  return RequestClient.get<TokenListProvidersResponse>(url, { headers: getAuthHeaders(hash) });
 }
 
-export function getTokenList(provider: ProviderName) {
+export async function getTokenList(provider: ProviderName) {
   const url = getApiUrl(`/tokens?provider=${provider}`);
-  return RequestClient.get<TokensResponseV2>(url, {
-    headers: getAuthHeaders(computeHash({ method: "GET", url })),
-  });
+  const hash = await computeHash({ method: "GET", url });
+  return RequestClient.get<TokensResponseV2>(url, { headers: getAuthHeaders(hash) });
 }
 
 export async function getPrice(body: PriceRequest) {
   const url = getApiUrl("/price");
+  const hash = await computeHash({ method: "POST", payload: body });
   const response = await RequestClient.post<PriceResponse>(url, {
     json: body,
-    headers: getAuthHeaders(computeHash({ method: "POST", payload: body })),
+    headers: getAuthHeaders(hash),
   });
 
   try {
@@ -134,10 +136,8 @@ export async function getPrice(body: PriceRequest) {
 
 export async function getGasRate() {
   const url = getApiUrl("/gas");
-
-  const response = await RequestClient.get<GasResponse>(url, {
-    headers: getAuthHeaders(computeHash({ method: "GET", url })),
-  });
+  const hash = await computeHash({ method: "GET", url });
+  const response = await RequestClient.get<GasResponse>(url, { headers: getAuthHeaders(hash) });
 
   try {
     const parsedResponse = GasResponseSchema.safeParse(response);
