@@ -91,4 +91,43 @@ export class THORChainLedger extends CosmosLedgerInterface {
 
     return getSignature(signature);
   };
+
+  signAmino = async (signerAddress: string, signDoc: any): Promise<any> => {
+    await this.checkOrCreateTransportAndLedger(true);
+
+    const accounts = await this.getAccounts();
+    const accountIndex = accounts.findIndex((account) => account.address === signerAddress);
+
+    if (accountIndex === -1) {
+      throw new Error(`Address ${signerAddress} not found in wallet`);
+    }
+
+    const { encodeSecp256k1Signature, serializeSignDoc } = await import("@cosmjs/amino");
+    const { Secp256k1Signature } = await import("@cosmjs/crypto");
+
+    const message = serializeSignDoc(signDoc);
+    const signature = await this.ledgerApp.sign(this.derivationPath, message);
+
+    this.validateResponse(signature.return_code, signature.error_message);
+
+    const secpSignature = Secp256k1Signature.fromDer(signature.signature).toFixedLength();
+
+    return {
+      signed: signDoc,
+      signature: encodeSecp256k1Signature(accounts[0].pubkey, secpSignature),
+    };
+  };
+
+  getAccounts = async () => {
+    await this.checkOrCreateTransportAndLedger(true);
+
+    const addressAndPubKey = await this.getAddressAndPubKey();
+    return [
+      {
+        address: addressAndPubKey.bech32_address,
+        algo: "secp256k1",
+        pubkey: Buffer.from(addressAndPubKey.compressed_pk, "hex"),
+      },
+    ] as any[];
+  };
 }

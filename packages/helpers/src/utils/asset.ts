@@ -30,14 +30,24 @@ const ethGasChains = [
   Chain.Polygon,
 ] as const;
 
-async function getContractDecimals({ chain, to }: { chain: EVMChain; to: string }) {
+async function getContractDecimals({
+  chain,
+  to,
+}: {
+  chain: EVMChain;
+  to: string;
+}) {
   const getDecimalMethodHex = "0x313ce567";
 
   try {
     const { result } = await RequestClient.post<{ result: string }>(
       SKConfig.get("rpcUrls")[chain],
       {
-        headers: { accept: "*/*", "content-type": "application/json", "cache-control": "no-cache" },
+        headers: {
+          accept: "*/*",
+          "content-type": "application/json",
+          "cache-control": "no-cache",
+        },
         body: JSON.stringify({
           id: 44,
           jsonrpc: "2.0",
@@ -64,7 +74,10 @@ async function getRadixAssetDecimal(symbol: string) {
       `${SKConfig.get("rpcUrls").XRD}/state/resource`,
       {
         headers: { Accept: "*/*", "Content-Type": "application/json" },
-        body: JSON.stringify({ network: "mainnet", resource_address: resourceAddress }),
+        body: JSON.stringify({
+          network: "mainnet",
+          resource_address: resourceAddress,
+        }),
       },
     );
 
@@ -87,7 +100,13 @@ function getEVMAssetDecimal(symbol: string) {
     : BaseDecimal[symbol as EVMChain];
 }
 
-export function getDecimal({ chain, symbol }: { chain: Chain; symbol: string }) {
+export function getDecimal({
+  chain,
+  symbol,
+}: {
+  chain: Chain;
+  symbol: string;
+}) {
   return match(chain)
     .with(...EVMChains, () => getEVMAssetDecimal(symbol))
     .with(Chain.Radix, () => getRadixAssetDecimal(symbol))
@@ -101,7 +120,13 @@ export function getGasAsset({ chain }: { chain: Chain }) {
   return AssetValue.from({ chain });
 }
 
-export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
+export function isGasAsset({
+  chain,
+  symbol,
+}: {
+  chain: Chain;
+  symbol: string;
+}) {
   return match(chain)
     .with(...ethGasChains, () => symbol === "ETH")
     .with(Chain.BinanceSmartChain, () => symbol === "BNB")
@@ -116,11 +141,23 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
   const decimal = BaseDecimal[assetString as Chain];
 
   const commonAssetInfo = match(assetString)
-    .with(...ethGasChains, () => ({ identifier: `${assetString}.ETH`, decimal }))
-    .with(Chain.THORChain, () => ({ identifier: `${assetString}.RUNE`, decimal }))
+    .with(...ethGasChains, () => ({
+      identifier: `${assetString}.ETH`,
+      decimal,
+    }))
+    .with(Chain.THORChain, () => ({
+      identifier: `${assetString}.RUNE`,
+      decimal,
+    }))
     .with(Chain.Cosmos, () => ({ identifier: `${assetString}.ATOM`, decimal }))
-    .with(Chain.Maya, () => ({ identifier: `${assetString}.CACAO`, decimal: 10 }))
-    .with(Chain.BinanceSmartChain, () => ({ identifier: `${assetString}.BNB`, decimal }))
+    .with(Chain.Maya, () => ({
+      identifier: `${assetString}.CACAO`,
+      decimal: 10,
+    }))
+    .with(Chain.BinanceSmartChain, () => ({
+      identifier: `${assetString}.BNB`,
+      decimal,
+    }))
     .with(Chain.Radix, "XRD.XRD", () => ({
       identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
       decimal,
@@ -139,12 +176,21 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       decimal: BaseDecimal.ETH,
     }))
     .with("MAYA.MAYA", () => ({ identifier: assetString, decimal: 4 }))
-    .otherwise(() => ({ identifier: `${assetString}.${assetString}`, decimal }));
+    .otherwise(() => ({
+      identifier: `${assetString}.${assetString}`,
+      decimal,
+    }));
 
   return commonAssetInfo;
 };
 
-export function getAssetType({ chain, symbol }: { chain: Chain; symbol: string }) {
+export function getAssetType({
+  chain,
+  symbol,
+}: {
+  chain: Chain;
+  symbol: string;
+}) {
   if (symbol.includes("/")) return "Synth";
 
   const isNative = match(chain)

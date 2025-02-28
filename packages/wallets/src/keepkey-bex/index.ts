@@ -6,6 +6,7 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
+import type { CosmosSigner } from "@swapkit/toolboxes/cosmos";
 import type { Eip1193Provider } from "ethers";
 import { getWalletSupportedChains } from "../utils";
 import {
@@ -71,7 +72,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const toolbox = getToolboxByChain(chain);
 
       return {
-        ...toolbox(),
+        ...toolbox({} as CosmosSigner),
         deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
         transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
       };

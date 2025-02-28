@@ -1,23 +1,20 @@
-import type { StdSignDoc } from "@cosmjs/amino";
+import type { AminoSignResponse, StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
-  ChainId,
+  type CosmosChain,
   SKConfig,
   SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type {
-  BaseCosmosToolboxType,
-  DepositParam,
-  TransferParams,
-} from "@swapkit/toolboxes/cosmos";
+import type { GaiaToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
-import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
+import type { SignClientTypes } from "@walletconnect/types";
 
 import { getWalletSupportedChains } from "../utils";
 import {
+  CosmosChainToWcChainId,
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,
   DEFAULT_LOGGER,
@@ -30,6 +27,42 @@ import { getRequiredNamespaces } from "./namespaces";
 
 export * from "./constants";
 export * from "./types";
+
+function getWcOfflineAminoSigner(
+  walletconnect: Awaited<ReturnType<typeof getWalletconnect>>,
+  chain: Chain,
+) {
+  async function getAccounts() {
+    if (!walletconnect) {
+      throw new SwapKitError("wallet_walletconnect_connection_not_established");
+    }
+    const { accounts } = walletconnect;
+    return accounts.map((account: any) => ({
+      address: account.address,
+      algo: account.algo,
+      pubkey: account.pubkey,
+    }));
+  }
+
+  function signAmino(signerAddress: string, signDoc: StdSignDoc) {
+    if (!walletconnect) {
+      throw new SwapKitError("wallet_walletconnect_connection_not_established");
+    }
+    return walletconnect.client.request<AminoSignResponse>({
+      chainId: CosmosChainToWcChainId[chain as CosmosChain],
+      topic: walletconnect.session.topic,
+      request: {
+        method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO,
+        params: { signerAddress, signDoc },
+      },
+    });
+  }
+
+  return {
+    getAccounts,
+    signAmino,
+  };
+}
 
 export const walletconnectWallet = createWallet({
   name: "connectWalletconnect",
@@ -69,18 +102,21 @@ export const walletconnectWallet = createWallet({
         throw new SwapKitError("wallet_walletconnect_connection_not_established");
       }
 
-      const { session, accounts } = walletconnect;
-
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const address = getAddressByChain(chain, accounts);
-          const toolbox = await getToolbox({ session, address, chain, walletconnect });
+          const address = getAddressByChain(chain, walletconnect.accounts);
+          const toolbox = await getToolbox({
+            chain,
+            walletconnect,
+          });
 
           async function getAccount(accountAddress: string) {
-            const account = await (toolbox as BaseCosmosToolboxType).getAccount(accountAddress);
+            const account = await (toolbox as unknown as ReturnType<typeof GaiaToolbox>).getAccount(
+              accountAddress,
+            );
             const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
               chainId: THORCHAIN_MAINNET_ID,
-              topic: session.topic,
+              topic: walletconnect.session.topic,
               request: {
                 method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
                 params: {},
@@ -99,7 +135,7 @@ export const walletconnectWallet = createWallet({
             getAccount:
               chain === Chain.THORChain
                 ? getAccount
-                : (toolbox as BaseCosmosToolboxType).getAccount,
+                : (toolbox as unknown as ReturnType<typeof GaiaToolbox>).getAccount,
           });
         }),
       );
@@ -114,13 +150,9 @@ export type Walletconnect = Awaited<ReturnType<typeof getWalletconnect>>;
 async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
   chain,
   walletconnect,
-  address,
-  session,
 }: {
   walletconnect: Walletconnect;
-  session: SessionTypes.Struct;
   chain: T;
-  address: string;
 }) {
   switch (chain) {
     case Chain.Arbitrum:
@@ -139,107 +171,16 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
       return toolbox({ provider, signer });
     }
 
+    case Chain.Cosmos:
+    case Chain.Kujira:
+    case Chain.Maya:
     case Chain.THORChain: {
-      const { SignMode } = await import("cosmjs-types/cosmos/tx/signing/v1beta1/signing.js");
-      const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx.js");
-      const { encodePubkey, makeAuthInfoBytes } = await import("@cosmjs/proto-signing");
-      const { makeSignDoc } = await import("@cosmjs/amino");
-      const {
-        ThorchainToolbox,
-        buildAminoMsg,
-        buildEncodedTxBody,
-        createStargateClient,
-        fromBase64,
-        getDefaultChainFee,
-        parseAminoMessageForDirectSigning,
-      } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = ThorchainToolbox();
+      const { ThorchainToolbox } = await import("@swapkit/toolboxes/cosmos");
 
-      const fee = getDefaultChainFee(chain);
-
-      const signRequest = (signDoc: StdSignDoc) =>
-        walletconnect?.client.request({
-          chainId: THORCHAIN_MAINNET_ID,
-          topic: session.topic,
-          request: {
-            method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO,
-            params: { signerAddress: address, signDoc },
-          },
-        });
-
-      async function thorchainTransfer({
-        assetValue,
-        memo,
-        ...rest
-      }: TransferParams | DepositParam) {
-        const account = await toolbox.getAccount(address);
-        if (!account) {
-          throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account } });
-        }
-
-        if (!account.pubkey) {
-          throw new SwapKitError({
-            errorKey: "wallet_missing_params",
-            info: { account, pubkey: account?.pubkey },
-          });
-        }
-
-        const { accountNumber, sequence = 0 } = account;
-
-        const msgs = [
-          buildAminoMsg({ chain: Chain.THORChain, assetValue, memo, from: address, ...rest }),
-        ];
-
-        const chainId = ChainId.THORChain;
-
-        const signDoc = makeSignDoc(
-          msgs,
-          fee,
-          chainId,
-          memo,
-          accountNumber?.toString(),
-          sequence?.toString() || "0",
-        );
-
-        const signature: any = await signRequest(signDoc);
-
-        const bodyBytes = await buildEncodedTxBody({
-          chain: Chain.THORChain,
-          msgs: msgs.map(parseAminoMessageForDirectSigning),
-          memo: memo || "",
-        });
-        const pubkey = encodePubkey(account.pubkey);
-        const authInfoBytes = makeAuthInfoBytes(
-          [{ pubkey, sequence }],
-          fee.amount,
-          Number.parseInt(fee.gas),
-          undefined,
-          undefined,
-          SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
-        );
-
-        const txRaw = TxRaw.fromPartial({
-          bodyBytes,
-          authInfoBytes,
-          signatures: [
-            fromBase64(
-              typeof signature.signature === "string"
-                ? signature.signature
-                : signature.signature.signature,
-            ),
-          ],
-        });
-        const txBytes = TxRaw.encode(txRaw).finish();
-
-        const broadcaster = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
-        const result = await broadcaster.broadcastTx(txBytes);
-        return result.transactionHash;
-      }
+      const toolbox = ThorchainToolbox(getWcOfflineAminoSigner(walletconnect, chain));
 
       return {
         ...toolbox,
-        transfer: (params: TransferParams) => thorchainTransfer(params),
-        deposit: (params: DepositParam) => thorchainTransfer(params),
       };
     }
     default:

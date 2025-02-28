@@ -14,7 +14,6 @@ import {
   filterSupportedChains,
   updatedLastIndex,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 import type {
   TransactionType,
   UTXOTransferParams,
@@ -44,7 +43,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
       const { HDNodeWallet } = await import("ethers");
 
       const provider = getProvider(chain, rpcUrl);
-      const wallet = HDNodeWallet.fromPhrase(phrase).connect(provider);
+      const wallet = HDNodeWallet.fromPhrase(phrase, undefined, derivationPath).connect(provider);
       const toolbox = getToolboxByChain(chain)({ provider, signer: wallet });
 
       return { address: wallet.address, walletMethods: toolbox };
@@ -108,38 +107,15 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.Cosmos:
-    case Chain.Kujira: {
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getToolboxByChain(chain)();
-      const address = await toolbox.getAddressFromMnemonic(phrase);
-      const signer = await toolbox.getSigner(phrase);
-
-      const transfer = (params: TransferParams) => toolbox.transfer({ ...params, signer });
-
-      return { address, walletMethods: { ...toolbox, transfer } };
-    }
-
+    case Chain.Kujira:
     case Chain.Maya:
     case Chain.THORChain: {
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
-
-      const toolbox = getToolboxByChain(chain)();
-      const signer = await toolbox.getSigner(phrase);
+      const { getToolboxByChain, getSignerFromPhrase } = await import("@swapkit/toolboxes/cosmos");
+      const signer = await getSignerFromPhrase({ phrase, chain });
+      const toolbox = getToolboxByChain(chain)(signer);
       const address = await toolbox.getAddressFromMnemonic(phrase);
 
-      return {
-        address,
-        walletMethods: {
-          ...toolbox,
-          deposit: (params: DepositParam) => toolbox.deposit({ ...params, from: address, signer }),
-          transfer: (params: TransferParams) =>
-            toolbox.transfer({ ...params, from: address, signer }),
-          signMessage: async (message: string) => {
-            const privateKey = await toolbox.createPrivateKeyFromPhrase(phrase);
-            return toolbox.signWithPrivateKey({ privateKey, message });
-          },
-        },
-      };
+      return { address, walletMethods: { ...toolbox } };
     }
 
     case Chain.Polkadot:

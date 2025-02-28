@@ -69,24 +69,19 @@ export class AssetValue extends BigIntArithmetics {
     this.ticker = assetInfo.ticker;
     this.symbol = assetInfo.symbol;
     this.address = assetInfo.address;
-    this.isSynthetic = assetInfo.isSynthetic;
     this.isTradeAsset = assetInfo.isTradeAsset;
     this.isGasAsset = assetInfo.isGasAsset;
     this.chainId = ChainToChainId[assetInfo.chain];
   }
 
   toString({ includeSynthProtocol }: { includeSynthProtocol?: boolean } = {}) {
-    return (this.isSynthetic || this.isTradeAsset) && !includeSynthProtocol
+    return this.isTradeAsset && !includeSynthProtocol
       ? this.symbol
       : `${this.chain}.${this.symbol}`;
   }
 
   toUrl() {
-    return this.isSynthetic
-      ? `${this.chain}.${this.symbol.replace("/", ".")}`
-      : this.isTradeAsset
-        ? `${this.chain}.${this.symbol.replace("~", "..")}`
-        : this.toString();
+    return this.isTradeAsset ? `${this.chain}.${this.symbol.replace("~", "..")}` : this.toString();
   }
 
   eqAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
@@ -127,7 +122,7 @@ export class AssetValue extends BigIntArithmetics {
       assetOrChain as CommonAssetString,
     );
 
-    const { chain, isSynthetic, isTradeAsset } = getAssetInfo(unsafeIdentifier);
+    const { chain, isTradeAsset, isSynthetic } = getAssetInfo(unsafeIdentifier);
     const token = staticTokensMap.get(
       chain === Chain.Solana
         ? (unsafeIdentifier as TokenNames)
@@ -226,7 +221,11 @@ async function createAssetValue(identifier: string, value: NumberPrimitives = 0)
     staticTokensMap.set(modifiedIdentifier, { identifier, decimal });
   }
 
-  return new AssetValue({ decimal, value: safeValue(value, decimal), identifier });
+  return new AssetValue({
+    decimal,
+    value: safeValue(value, decimal),
+    identifier,
+  });
 }
 
 function createSyntheticAssetValue(identifier: string, value: NumberPrimitives = 0) {
@@ -242,7 +241,10 @@ function createSyntheticAssetValue(identifier: string, value: NumberPrimitives =
     : identifier.split(assetSeparator);
 
   if (!(synthChain && symbol)) {
-    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
+    throw new SwapKitError({
+      errorKey: "helpers_invalid_asset_identifier",
+      info: { identifier },
+    });
   }
 
   return new AssetValue({
@@ -283,7 +285,10 @@ function getAssetInfo(identifier: string) {
     : identifier.split(assetSeparator);
 
   if (isSynthOrTrade && !(synthChain && synthSymbol)) {
-    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
+    throw new SwapKitError({
+      errorKey: "helpers_invalid_asset_identifier",
+      info: { identifier },
+    });
   }
 
   const [chain, ...rest] = (

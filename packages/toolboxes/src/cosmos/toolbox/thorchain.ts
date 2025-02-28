@@ -1,5 +1,4 @@
 import type { Pubkey, Secp256k1HdWallet } from "@cosmjs/amino";
-import type { Account } from "@cosmjs/stargate";
 import { base64 } from "@scure/base";
 import {
   BaseDecimal,
@@ -9,7 +8,6 @@ import {
   FeeOption,
   RequestClient,
   SKConfig,
-  SwapKitError,
   SwapKitNumber,
 } from "@swapkit/helpers";
 
@@ -24,19 +22,23 @@ import {
   parseAminoMessageForDirectSigning,
 } from "../thorchainUtils/index";
 import type { ThorchainConstantsResponse } from "../thorchainUtils/types/client-types";
-import type { MultisigTx, Signer, TransferParams } from "../types";
+import type { MultisigTx } from "../types";
+import type { CosmosSigner, MultiSigSigner, TransferParams } from "../types";
 import {
   createOfflineStargateClient,
   createSigningStargateClient,
   createStargateClient,
   getDefaultChainFee,
 } from "../util";
-import { BaseCosmosToolbox } from "./BaseCosmosToolbox";
+import { BaseCosmosToolbox, type CosmosToolboxParams } from "./BaseCosmosToolbox";
 
 function secp256k1HdWalletFromMnemonic({
   prefix,
   derivationPath,
-}: { prefix: string; derivationPath: string }) {
+}: {
+  prefix: string;
+  derivationPath: string;
+}) {
   return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
     const { Secp256k1HdWallet } = await import("@cosmjs/amino");
     const { stringToPath } = await import("@cosmjs/crypto");
@@ -56,14 +58,20 @@ function signMultisigTx(chain: Chain.THORChain | Chain.Maya) {
   return async function signMultisigTx({
     wallet,
     tx,
-  }: { wallet: Secp256k1HdWallet; tx: string | MultisigTx }) {
+  }: {
+    wallet: Secp256k1HdWallet;
+    tx: string | MultisigTx;
+  }) {
     const { msgs, accountNumber, sequence, chainId, fee, memo } =
       typeof tx === "string" ? JSON.parse(tx) : tx;
 
     const address = (await wallet.getAccounts())?.[0]?.address || "";
     const aminoTypes = await createDefaultAminoTypes(chain);
     const registry = await createDefaultRegistry();
-    const signingClient = await createOfflineStargateClient(wallet, { registry, aminoTypes });
+    const signingClient = await createOfflineStargateClient(wallet, {
+      registry,
+      aminoTypes,
+    });
     const msgForSigning = [];
 
     for (const msg of msgs) {
@@ -89,10 +97,16 @@ function signMultisigTx(chain: Chain.THORChain | Chain.Maya) {
   };
 }
 
-function broadcastMultisigTx({ prefix, rpcUrl }: { prefix: string; rpcUrl: string }) {
+function broadcastMultisigTx({
+  prefix,
+  rpcUrl,
+}: {
+  prefix: string;
+  rpcUrl: string;
+}) {
   return async function broadcastMultisigTx(
     tx: string,
-    signers: Signer[],
+    signers: MultiSigSigner[],
     membersPubKeys: string[],
     threshold: number,
     bodyBytes: Uint8Array,
@@ -140,51 +154,39 @@ function importSignature(signature: string) {
 async function signWithPrivateKey({
   privateKey,
   message,
-}: { privateKey: Uint8Array; message: string }) {
+}: {
+  privateKey: Uint8Array;
+  message: string;
+}) {
   const { Secp256k1 } = await import("@cosmjs/crypto");
 
   const signature = await Secp256k1.createSignature(base64.decode(message), privateKey);
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
 
-function verifySignature(getAccount: (address: string) => Promise<Account | null>) {
-  return async function verifySignature({
-    signature,
-    message,
-    address,
-  }: {
-    signature: string;
-    message: string;
-    address: string;
-  }) {
-    const account = await getAccount(address);
-    if (!account?.pubkey) throw new SwapKitError("toolbox_cosmos_verify_signature_no_pubkey");
-    const { Secp256k1Signature, Secp256k1 } = await import("@cosmjs/crypto");
-
-    const secpSignature = Secp256k1Signature.fromFixedLength(base64.decode(signature));
-    return Secp256k1.verifySignature(secpSignature, base64.decode(message), account.pubkey.value);
-  };
-}
-
-export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
+export function BaseThorchainToolbox({
+  chain,
+  derivationPath: paramsDerivationPath,
+  index = 0,
+  signer,
+}: Omit<CosmosToolboxParams, "chain"> & {
+  chain: Chain.THORChain | Chain.Maya;
+}) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const { isStagenet } = SKConfig.get("envs");
 
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;
-  const derivationPath = DerivationPath[chain];
+  const derivationPath = paramsDerivationPath || DerivationPath[chain];
 
-  const cosmosToolbox = BaseCosmosToolbox({ chain, derivationPath, prefix: chainPrefix });
+  const cosmosToolbox = BaseCosmosToolbox({
+    chain,
+    derivationPath,
+    signer,
+    index,
+  });
   const defaultFee = getDefaultChainFee(chain);
-
-  function loadAddressBalances(address: string) {
-    try {
-      return cosmosToolbox.getBalance(address);
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }
 
   async function getFees() {
     let fee: SwapKitNumber;
@@ -202,10 +204,17 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
 
       fee = new SwapKitNumber(nativeFee);
     } catch {
-      fee = new SwapKitNumber({ value: isThorchain ? 0.02 : 1, decimal: BaseDecimal[chain] });
+      fee = new SwapKitNumber({
+        value: isThorchain ? 0.02 : 1,
+        decimal: BaseDecimal[chain],
+      });
     }
 
-    return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
+    return {
+      [FeeOption.Average]: fee,
+      [FeeOption.Fast]: fee,
+      [FeeOption.Fastest]: fee,
+    };
   }
 
   async function transfer({
@@ -213,7 +222,6 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     from,
     memo = "",
     recipient,
-    signer,
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
     if (!signer) throw new Error("Signer not defined");
@@ -226,7 +234,13 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
       aminoTypes,
     });
 
-    const aminoMessage = buildAminoMsg({ assetValue, from, recipient, memo, chain });
+    const aminoMessage = buildAminoMsg({
+      assetValue,
+      from,
+      recipient,
+      memo,
+      chain,
+    });
 
     if (isAminoSigner) {
       const msgSign = await convertToSignable(aminoMessage, chain);
@@ -274,7 +288,6 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     deposit: transfer,
     getFees,
     importSignature,
-    loadAddressBalances,
     parseAminoMessageForDirectSigning,
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({
       derivationPath,
@@ -283,7 +296,6 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
     signMultisigTx: signMultisigTx(chain),
     signWithPrivateKey,
     transfer,
-    verifySignature: verifySignature(cosmosToolbox.getAccount),
     pubkeyToAddress: async (pubkey: Pubkey) => {
       const { pubkeyToAddress } = await import("@cosmjs/amino");
       return pubkeyToAddress(pubkey, chainPrefix);
@@ -291,12 +303,12 @@ export function BaseThorchainToolbox(chain: Chain.THORChain | Chain.Maya) {
   };
 }
 
-export function ThorchainToolbox() {
-  return BaseThorchainToolbox(Chain.THORChain);
+export function ThorchainToolbox<S extends CosmosSigner>(signer: S) {
+  return BaseThorchainToolbox({ chain: Chain.THORChain, signer });
 }
 
-export function MayaToolbox() {
-  return BaseThorchainToolbox(Chain.Maya);
+export function MayaToolbox<S extends CosmosSigner>(signer: S) {
+  return BaseThorchainToolbox({ chain: Chain.Maya, signer });
 }
 
 export type ThorchainWallet = Omit<ReturnType<typeof BaseThorchainToolbox>, "signMessage">;

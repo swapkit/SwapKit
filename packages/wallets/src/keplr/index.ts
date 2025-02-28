@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   ChainId,
   ChainToChainId,
@@ -7,7 +6,6 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { CosmosToolboxType } from "@swapkit/toolboxes/cosmos";
 import { chainRegistry } from "./chainRegistry";
 
 const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
@@ -25,7 +23,6 @@ export const keplrWallet = createWallet({
       const keplrClient = window[extensionKey];
 
       await Promise.all(
-        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor/split
         filteredChains.map(async (chain) => {
           const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
 
@@ -46,41 +43,11 @@ export const keplrWallet = createWallet({
           if (!accounts?.[0]?.address) throw new Error("No accounts found");
 
           const [{ address }] = accounts;
-          const toolbox = getToolboxByChain(chain)();
-
-          const transfer = (params: {
-            from?: string;
-            recipient: string;
-            assetValue: AssetValue;
-            memo?: string;
-          }) =>
-            toolbox.transfer({
-              ...params,
-              signer: offlineSigner,
-              fee: 2,
-              from: params.from || address,
-            });
-
-          const deposit =
-            chain === Chain.THORChain
-              ? (params: {
-                  from?: string;
-                  assetValue: AssetValue;
-                  memo?: string;
-                }) =>
-                  (toolbox as ReturnType<CosmosToolboxType["THOR"]>).deposit({
-                    ...params,
-                    signer: offlineSigner,
-                    from: params.from || address,
-                    memo: params.memo || "",
-                  })
-              : undefined;
+          const toolbox = getToolboxByChain(chain)(offlineSigner);
 
           addChain({
             ...toolbox,
-            deposit,
             chain,
-            transfer,
             address,
             walletType,
           });

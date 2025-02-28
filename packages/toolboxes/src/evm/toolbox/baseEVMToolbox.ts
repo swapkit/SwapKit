@@ -249,6 +249,7 @@ function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
    * When using this method to make a non state changing call to the blockchain, like a isApproved call,
    * the signer needs to be set to undefined
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO reduce complexity
   return async function call<T>({
     callProvider,
     contractAddress,
@@ -511,6 +512,7 @@ const isEIP1559Transaction = (tx: EVMTxParams) =>
   !!(tx as EIP1559TxParams).maxPriorityFeePerGas;
 
 function getSendTransaction({ provider, signer, isEIP1559Compatible = true }: ToolboxWrapParams) {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO reduce complexity
   return async function sendTransaction({
     feeOptionKey = FeeOption.Fast,
     ...tx

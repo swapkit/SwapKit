@@ -299,7 +299,6 @@ function transfer(chain: UTXOChain) {
     memo,
     recipient,
     feeOptionKey,
-    broadcastTx,
     feeRate,
     assetValue,
   }: UTXOWalletTransferParams<Psbt, Psbt>) {
@@ -319,7 +318,7 @@ function transfer(chain: UTXOChain) {
     const signedPsbt = await signTransaction(psbt);
     signedPsbt.finalizeAllInputs(); // Finalise inputs
     // TX extracted and formatted to hex
-    return broadcastTx(signedPsbt.extractTransaction().toHex());
+    return getUtxoApi(chain).broadcastTx(signedPsbt.extractTransaction().toHex());
   };
 }
 

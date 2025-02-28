@@ -58,7 +58,9 @@ export function getCtrlProvider<T extends Chain>(
       return window.xfi.ethereum;
 
     case Chain.Cosmos:
+    case Chain.THORChain:
     case Chain.Kujira:
+    case Chain.Maya:
       // @ts-expect-error
       return window.xfi.keplr;
 
@@ -74,12 +76,8 @@ export function getCtrlProvider<T extends Chain>(
     case Chain.Litecoin:
       // @ts-expect-error
       return window.xfi.litecoin;
-    case Chain.THORChain:
-      // @ts-expect-error
-      return window.xfi.thorchain;
-    case Chain.Maya:
-      // @ts-expect-error
-      return window.xfi.mayachain;
+    //   return window.xfi.thorchain;
+    //   return window.xfi.mayachain;
     case Chain.Solana:
       // @ts-expect-error
       return window.xfi.solana;

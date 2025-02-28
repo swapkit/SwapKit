@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   ChainToChainId,
   SwapKitError,
@@ -10,7 +9,6 @@ import {
 
 import { getWalletSupportedChains } from "../utils";
 import {
-  type WalletTxParams,
   getCtrlAddress,
   getCtrlMethods,
   getCtrlProvider,
@@ -73,22 +71,23 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       return { ...toolbox, transfer: solanaTransfer(toolbox, pubKey.publicKey) };
     }
 
+    // {
+    //   const { getToolboxByChain, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
+    //     "@swapkit/toolboxes/cosmos"
+    //   );
+
+    //   const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
+    //   const toolbox = getToolboxByChain(chain);
+
+    //   return {
+    //     ...toolbox(),
+    //     deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
+    //     transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
+    //   };
+    // }
+
     case Chain.Maya:
-    case Chain.THORChain: {
-      const { getToolboxByChain, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolboxes/cosmos"
-      );
-
-      const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
-      const toolbox = getToolboxByChain(chain);
-
-      return {
-        ...toolbox(),
-        deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
-        transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
-      };
-    }
-
+    case Chain.THORChain:
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
@@ -99,19 +98,14 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       // @ts-ignore
       const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
 
-      const toolbox = getToolboxByChain(chain)();
+      if (!offlineSigner) {
+        throw new SwapKitError("wallet_ctrl_not_found");
+      }
 
-      const transfer = (params: {
-        from: string;
-        recipient: string;
-        assetValue: AssetValue;
-        memo: string;
-      }) => toolbox.transfer({ signer: offlineSigner, ...params });
+      const toolbox = getToolboxByChain(chain)(offlineSigner);
 
       return {
         ...toolbox,
-
-        transfer,
       };
     }
 

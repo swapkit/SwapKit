@@ -19,7 +19,10 @@ import {
   type createPlugin,
   type createWallet,
 } from "@swapkit/helpers";
-import type { TransferParams as CosmosTransferParams } from "@swapkit/toolboxes/cosmos";
+import type {
+  CosmosSigner,
+  TransferParams as CosmosTransferParams,
+} from "@swapkit/toolboxes/cosmos";
 import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 
@@ -264,10 +267,12 @@ export function SwapKit<
     signature,
   }: { chain: Chain; signature: string; message: string; address: string }) {
     switch (chain) {
+      case Chain.Cosmos:
+      case Chain.Maya:
       case Chain.THORChain: {
         const { getToolboxByChain } = await import("@swapkit/toolboxes/cosmos");
         const toolbox = getToolboxByChain(chain);
-        return toolbox().verifySignature({ signature, message, address });
+        return toolbox({} as CosmosSigner).verifySignature({ signature, message, address });
       }
 
       default:
