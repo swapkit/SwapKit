@@ -3,6 +3,7 @@
   "dependencies": {
     "@swapkit/core": "workspace:*",
     "@swapkit/plugins": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*"
   },
   "description": "SwapKit - SDK",

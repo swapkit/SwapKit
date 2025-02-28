@@ -97,6 +97,8 @@ const errorCodes = {
   wallet_exodus_sign_transaction_error: 21100,
   wallet_keystore_invalid_password: 29900,
   wallet_keystore_unsupported_version: 29901,
+  wallet_onekey_not_found: 21200,
+  wallet_onekey_sign_transaction_error: 21201,
   /**
    * Chainflip
    */

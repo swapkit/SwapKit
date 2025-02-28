@@ -2,6 +2,7 @@
 .aider*
 .astro/
 .idea/
+.cursor/mcp.json
 build/
 cache/
 coverage/

@@ -9,6 +9,7 @@ import { keplrWallet } from "./keplr";
 import { keystoreWallet } from "./keystore";
 import { ledgerWallet } from "./ledger";
 import { okxWallet } from "./okx";
+import { onekeyWallet } from "./onekey";
 import { phantomWallet } from "./phantom";
 import { polkadotWallet } from "./polkadotjs";
 import { radixWallet } from "./radix";
@@ -28,6 +29,7 @@ export const wallets = {
   ...keystoreWallet,
   ...ledgerWallet,
   ...okxWallet,
+  ...onekeyWallet,
   ...phantomWallet,
   ...polkadotWallet,
   ...radixWallet,

@@ -20,6 +20,7 @@ declare const window: {
   braveSolana: any;
   bitkeep?: { ethereum: EthereumWindowProvider };
   xfi?: { ethereum: EthereumWindowProvider };
+  $onekey?: { ethereum: EthereumWindowProvider };
 } & Window;
 
 export function isWeb3Detected() {
@@ -41,6 +42,7 @@ export function listWeb3EVMWallets() {
       window?.ethereum?.selectedProvider?.isCoinbaseWallet) ||
     window?.coinbaseWalletExtension;
   const bitgetEnabled = window?.bitkeep?.ethereum;
+  const onekeyEnabled = window?.$onekey?.ethereum;
 
   const wallets = [];
   if (metamaskEnabled) wallets.push(WalletOption.METAMASK);
@@ -50,6 +52,7 @@ export function listWeb3EVMWallets() {
   if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);
   if (okxMobileEnabled()) wallets.push(WalletOption.OKX_MOBILE);
   if (bitgetEnabled) wallets.push(WalletOption.BITGET);
+  if (onekeyEnabled) wallets.push(WalletOption.ONEKEY);
 
   return wallets;
 }
@@ -176,6 +179,7 @@ export function getETHDefaultWallet() {
   if (isBraveWallet) return WalletOption.BRAVE;
   if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;
   if (__XDEFI) WalletOption.CTRL;
+  if (window?.$onekey?.ethereum) return WalletOption.ONEKEY;
   return WalletOption.METAMASK;
 }
 
@@ -225,7 +229,7 @@ export function createWallet<
   }) => (...params: ConnectParams) => Promise<boolean>;
   name: Name;
   supportedChains: SupportedChains;
-  walletType?: WalletType;
+  walletType?: WalletType | string;
 }) {
   function connectWallet(connectParams: {
     addChain: AddChainType;

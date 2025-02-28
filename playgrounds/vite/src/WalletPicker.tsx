@@ -56,6 +56,17 @@ export const availableChainsByWallet = {
   [WalletOption.LEDGER]: AllChainsSupported,
   [WalletOption.METAMASK]: EVMChains,
   [WalletOption.OKX_MOBILE]: EVMChains,
+  [WalletOption.ONEKEY]: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Bitcoin,
+    Chain.Ethereum,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.Solana,
+  ],
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
@@ -182,6 +193,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         }
         case WalletOption.KEEPKEY_BEX:
           return skClient.connectKeepkeyBex?.(chains);
+        case WalletOption.ONEKEY:
+          return skClient.connectOnekeyWallet?.(chains);
         case WalletOption.TREZOR:
         case WalletOption.LEDGER: {
           const [chain] = chains;

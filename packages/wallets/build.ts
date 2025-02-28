@@ -12,6 +12,7 @@ const wallets = [
   "keystore",
   "ledger",
   "okx",
+  "onekey",
   "phantom",
   "polkadotjs",
   "radix",
