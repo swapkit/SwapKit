@@ -2,8 +2,8 @@ export const list = {
   provider: "CAMELOT_V3",
   chainId: "42161",
   name: "Camelot V3",
-  timestamp: "1738954930065",
-  count: 1593,
+  timestamp: "1741089947037",
+  count: 1599,
   tokens: [
     {
       address: "0xda39A32c9c5Bb2C9E99d4e2a24bc55A418599F90",
@@ -4766,6 +4766,26 @@ export const list = {
       ticker: "CLIPS",
     },
     {
+      address: "0xF4AcDE4D938844751f34659C67056f7e69dBE85a",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.CLUTCH-0xF4AcDE4D938844751f34659C67056f7e69dBE85a",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.clutch-0xf4acde4d938844751f34659c67056f7e69dbe85a.png",
+      ticker: "CLUTCH",
+    },
+    {
+      address: "0xfD5c7F32b623A4d554ef79F7f744B75d4819dfaf",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.CLUTCH-0xfD5c7F32b623A4d554ef79F7f744B75d4819dfaf",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.clutch-0xfd5c7f32b623a4d554ef79f7f744b75d4819dfaf.png",
+      ticker: "CLUTCH",
+    },
+    {
       address: "0x1922C36F3bc762Ca300b4a46bB2102F84B1684aB",
       chain: "ARB",
       chainId: "42161",
@@ -6756,6 +6776,16 @@ export const list = {
       ticker: "g",
     },
     {
+      address: "0xF18e4466F26B4cA55bbAb890b314a54976E45B17",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.G7-0xF18e4466F26B4cA55bbAb890b314a54976E45B17",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.g7-0xf18e4466f26b4ca55bbab890b314a54976e45b17.png",
+      ticker: "G7",
+    },
+    {
       address: "0xB560121c897d77AD41D6037D2A87241407cDBdc1",
       chain: "ARB",
       chainId: "42161",
@@ -7184,6 +7214,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.green apple-0x20e6f741a2974e82f5eebef522af34d1e9de74ef.png",
       ticker: "GREEN APPLE",
+    },
+    {
+      address: "0x812F2D5Ff6088ed7A655567dBcDf0d42cf07ca38",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.GRIX-0x812F2D5Ff6088ed7A655567dBcDf0d42cf07ca38",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.grix-0x812f2d5ff6088ed7a655567dbcdf0d42cf07ca38.png",
+      ticker: "GRIX",
     },
     {
       address: "0x3b58a4C865B568a2F6a957C264F6b50CbA35D8CE",
@@ -15047,6 +15087,16 @@ export const list = {
       ticker: "WHEAT",
     },
     {
+      address: "0xaC75f0c46723432a2303f2a7c7769535A179Ed56",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 6,
+      identifier: "ARB.wHYPE-0xaC75f0c46723432a2303f2a7c7769535A179Ed56",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.whype-0xac75f0c46723432a2303f2a7c7769535a179ed56.png",
+      ticker: "wHYPE",
+    },
+    {
       address: "0x0b4d0F471996E894f79c8118Cf532192A09d7940",
       chain: "ARB",
       chainId: "42161",
@@ -15455,6 +15505,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.xpro-0x6814a8cb25bd8da57bdfe84d7205ada8cbad85e0.png",
       ticker: "XPRO",
+    },
+    {
+      address: "0x9aF3AA01A7E8d2E298e186ee3A7Ac29Ef49303A9",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.xRunes-0x9aF3AA01A7E8d2E298e186ee3A7Ac29Ef49303A9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.xrunes-0x9af3aa01a7e8d2e298e186ee3a7ac29ef49303a9.png",
+      ticker: "xRunes",
     },
     {
       address: "0xEb04f3f2CC6CB01f70759d1841Ee5599BE32812d",
