@@ -36,8 +36,9 @@ async function getWalletMethods({
   switch (chain) {
     case Chain.Bitcoin: {
       const { Psbt } = await import("bitcoinjs-lib");
-      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = BTCToolbox();
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       let address = "";
 
@@ -92,10 +93,7 @@ async function getWalletMethods({
       }
 
       const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({
-          ...transferParams,
-          signTransaction,
-        });
+        return toolbox.transfer({ ...transferParams, signTransaction });
       };
 
       return { ...toolbox, transfer, address };
@@ -128,10 +126,7 @@ async function getWalletMethods({
         throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
       }
 
-      return {
-        address,
-        ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }),
-      };
+      return { ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }), address };
     }
     default:
       throw new Error(`Unsupported chain: ${chain}`);

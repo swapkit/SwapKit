@@ -1,3 +1,4 @@
+import type { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import {
   Chain,
   DerivationPath,
@@ -6,26 +7,11 @@ import {
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { BCHToolbox, UTXOToolbox, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
 
-type KKUtxoWalletParams = {
-  sdk: any;
-  chain: UTXOChain;
-  derivationPath?: DerivationPathArray;
-};
-
-interface psbtTxOutput {
-  address: string;
-  script: Buffer;
-  value: number;
-  change?: boolean; // Optional, assuming it indicates if the output is a change
-}
-interface ExtendedPsbt extends Psbt {
-  txOutputs: psbtTxOutput[];
-}
 interface KeepKeyInputObject {
   addressNList: number[];
   scriptType: string;
@@ -39,21 +25,13 @@ export const utxoWalletMethods = async ({
   sdk,
   chain,
   derivationPath,
-}: KKUtxoWalletParams): Promise<
-  UTXOToolbox & {
-    address: string;
-    signTransaction: (
-      psbt: ExtendedPsbt,
-      inputs: KeepKeyInputObject[],
-      memo?: string,
-    ) => Promise<string>;
-    transfer: (params: UTXOTransferParams) => Promise<string>;
-  }
-> => {
+}: { sdk: KeepKeySdk; chain: UTXOChain; derivationPath?: DerivationPathArray }) => {
   const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-
-  const toolbox = getToolboxByChain(chain)();
-  const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain) ? "p2wpkh" : "p2pkh";
+  const getToolbox = await getToolboxByChain(chain);
+  const toolbox = getToolbox();
+  const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain)
+    ? ("p2wpkh" as const)
+    : ("p2pkh" as const);
 
   const derivationPathString = derivationPath
     ? derivationPathToString(derivationPath)
@@ -65,17 +43,21 @@ export const utxoWalletMethods = async ({
     address_n: bip32ToAddressNList(derivationPathString),
   };
 
-  const { address: walletAddress } = await sdk.address.utxoGetAddress(addressInfo);
+  const walletAddress: string = (await sdk.address.utxoGetAddress(addressInfo)).address;
 
   const signTransaction = async (psbt: Psbt, inputs: KeepKeyInputObject[], memo = "") => {
     const outputs = psbt.txOutputs
       .map((output) => {
-        const { value, address, change } = output as psbtTxOutput;
+        const { value, address, change } = output as {
+          address: string;
+          script: Buffer;
+          value: number;
+          change?: boolean;
+        };
 
         const outputAddress =
-          chain === Chain.BitcoinCash
-            ? (toolbox as ReturnType<typeof BCHToolbox>).stripToCashAddress(address)
-            : address;
+          // @ts-expect-error - stripToCashAddress is not defined in the UTXO toolbox just only on BCH
+          chain === Chain.BitcoinCash ? toolbox.stripToCashAddress(address) : address;
 
         if (change || address === walletAddress) {
           return {
@@ -86,6 +68,7 @@ export const utxoWalletMethods = async ({
             scriptType,
           };
         }
+
         if (outputAddress) {
           return { address: outputAddress, amount: value, addressType: "spend" };
         }
@@ -104,11 +87,10 @@ export const utxoWalletMethods = async ({
       coin: ChainToKeepKeyName[chain],
       inputs,
       outputs: removeNullAndEmptyObjectsFromArray(outputs),
-      version: 1,
-      locktime: 0,
       opReturnData: memo,
     });
-    return responseSign.serializedTx;
+
+    return responseSign.serializedTx?.toString();
   };
 
   const transfer = async ({
@@ -134,11 +116,11 @@ export const utxoWalletMethods = async ({
     const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({
       //@TODO don't hardcode master, lookup on blockbook what input this is for and what path that address is!
       addressNList: addressInfo.address_n,
-      scriptType,
       amount: value.toString(),
-      vout: index,
-      txid: hash,
       hex: txHex || "",
+      scriptType,
+      txid: hash,
+      vout: index,
     }));
 
     const txHex = await signTransaction(psbt, inputs, memo);

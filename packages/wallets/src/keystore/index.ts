@@ -51,8 +51,10 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.BitcoinCash: {
-      const { BCHToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = BCHToolbox();
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const getToolbox = await getToolboxByChain(Chain.BitcoinCash);
+      const toolbox = getToolbox();
+
       const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);
 
@@ -85,8 +87,8 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-
-      const toolbox = getToolboxByChain(chain)();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
       const address = toolbox.getAddressFromKeys(keys);

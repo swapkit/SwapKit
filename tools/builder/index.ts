@@ -112,11 +112,15 @@ function mapFiles({
 async function updateSizeData(sizeData: Record<string, { esm: number; cjs: number }>) {
   const sizes = Bun.file("../../build/data.json");
 
-  if (await sizes.exists()) {
-    const existingSizes = await sizes.json();
-    await sizes.write(JSON.stringify({ ...existingSizes, ...sizeData }, null, 2));
-  } else {
-    await sizes.write(JSON.stringify(sizeData, null, 2));
+  try {
+    if (await sizes.exists()) {
+      const existingSizes = await sizes.json();
+      await sizes.write(JSON.stringify({ ...existingSizes, ...sizeData }, null, 2));
+    } else {
+      await sizes.write(JSON.stringify(sizeData, null, 2));
+    }
+  } catch {
+    // NOOP
   }
 }
 

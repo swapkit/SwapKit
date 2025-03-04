@@ -37,20 +37,24 @@ export type SwapKitParams<P, W> = {
 export function SwapKit<
   Plugins extends ReturnType<typeof createPlugin>,
   Wallets extends ReturnType<typeof createWallet>,
->({ config, plugins, wallets = {} as Wallets }: SwapKitParams<Plugins, Wallets> = {}) {
+>({
+  config,
+  plugins,
+  wallets,
+}: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
   if (config) {
     SKConfig.set(config);
   }
 
   type PluginName = keyof Plugins;
   const connectedWallets = {} as FullWallet;
+  type ConnectedChains = keyof typeof connectedWallets;
 
   const availablePlugins = Object.entries(plugins || {}).reduce(
     (acc, [pluginName, plugin]) => {
       const methods = plugin({ getWallet });
 
-      // @ts-expect-error key is generic and cannot be indexed
-      acc[pluginName] = methods;
+      acc[pluginName as PluginName] = methods as ReturnType<Plugins[keyof Plugins]>;
       return acc;
     },
     {} as { [key in PluginName]: ReturnType<Plugins[key]> },
@@ -60,35 +64,25 @@ export function SwapKit<
     (acc, [walletName, wallet]) => {
       const connectWallet = wallet.connectWallet({ addChain });
 
-      // @ts-expect-error key is generic and cannot be indexed
-      acc[walletName] = connectWallet;
+      acc[walletName as keyof Wallets] = connectWallet as ReturnType<
+        Wallets[keyof Wallets]["connectWallet"]
+      >;
       return acc;
     },
     {} as {
-      [key in keyof typeof wallets]: ReturnType<(typeof wallets)[key]["connectWallet"]>;
+      [key in keyof Wallets]: ReturnType<Wallets[key]["connectWallet"]>;
     },
   );
 
-  function getSwapKitPlugin<T extends PluginName>(pluginName: T) {
-    const plugin = availablePlugins[pluginName] || Object.values(availablePlugins)[0];
+  function getSwapKitPlugin<T extends PluginName>(pluginName?: T) {
+    const availablePlugin = pluginName && availablePlugins[pluginName];
+    const plugin = availablePlugin || Object.values(availablePlugins)[0];
 
     if (!plugin) {
       throw new SwapKitError("core_plugin_not_found");
     }
 
-    return plugin;
-  }
-
-  function getSwapKitPluginForSKProvider(pluginName: PluginNameEnum) {
-    const plugin = Object.values(availablePlugins).find((plugin) =>
-      plugin.supportedSwapkitProviders?.includes(pluginName),
-    );
-
-    if (!plugin) {
-      throw new SwapKitError("core_plugin_not_found");
-    }
-
-    return plugin;
+    return plugin as ReturnType<Plugins[T]>;
   }
 
   function addChain<T extends Chain>(
@@ -99,7 +93,11 @@ export function SwapKit<
     const balance = connectWallet.balance ||
       currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
 
-    connectedWallets[connectWallet.chain] = { ...currentWallet, ...connectWallet, balance };
+    const wallet = { ...currentWallet, ...connectWallet, balance } as FullWallet[T];
+
+    connectedWallets[connectWallet.chain] = wallet;
+
+    return wallet;
   }
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
@@ -157,7 +155,7 @@ export function SwapKit<
   /**
    * @Public
    */
-  function getWallet<T extends Chain>(chain: T) {
+  function getWallet<T extends ConnectedChains>(chain: T) {
     return connectedWallets[chain] || {};
   }
 
@@ -220,13 +218,10 @@ export function SwapKit<
     pluginName,
     ...rest
   }: SwapParams<T, QuoteResponseRoute>) {
-    const plugin =
-      (pluginName && getSwapKitPlugin(pluginName)) ||
-      getSwapKitPluginForSKProvider(route.providers[0] as PluginNameEnum);
-
-    if (!plugin) throw new SwapKitError("core_swap_route_not_complete");
+    const plugin = getSwapKitPlugin(pluginName || route.providers[0]);
 
     if ("swap" in plugin) {
+      // @ts-expect-error TODO: fix this
       return plugin.swap({ ...rest, route });
     }
 
@@ -362,14 +357,9 @@ export function SwapKit<
       case Chain.Dogecoin:
       case Chain.Dash:
       case Chain.Litecoin: {
-        const { estimateTransactionFee, address } = getWallet(chain);
+        const { estimateTransactionFee, address: recipient } = getWallet(chain);
 
-        return estimateTransactionFee({
-          ...params,
-          feeOptionKey,
-          from: address,
-          recipient: address,
-        });
+        return estimateTransactionFee({ ...params, feeOptionKey, recipient, from: recipient });
       }
 
       case Chain.THORChain:

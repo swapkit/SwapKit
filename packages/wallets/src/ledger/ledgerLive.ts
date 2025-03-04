@@ -279,7 +279,8 @@ export const getLedgerLiveWallet = async ({
     case Chain.Bitcoin: {
       const ledgerLiveClient = BitcoinLedgerLive();
       const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = getToolboxByChain(chain)();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       const getAddress = () => ledgerLiveAccount.address;
 

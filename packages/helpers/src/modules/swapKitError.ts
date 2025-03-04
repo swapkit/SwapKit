@@ -28,6 +28,7 @@ const errorCodes = {
   core_wallet_talisman_not_installed: 10110,
   core_wallet_not_keypair_wallet: 10111,
   core_wallet_sign_message_not_supported: 10110,
+  core_wallet_connection_failed: 10112,
   /**
    * Core - Swap
    */
@@ -171,17 +172,14 @@ export class SwapKitError extends Error {
 
   constructor(
     errorOrErrorKey: ErrorKeys | { errorKey: ErrorKeys; info?: Record<string, any> },
-    sourceError?: any,
+    sourceErrorOrInfo?: any,
   ) {
     const isErrorString = typeof errorOrErrorKey === "string";
     const errorKey = isErrorString ? errorOrErrorKey : errorOrErrorKey.errorKey;
     super(errorKey);
 
-    if (sourceError) {
-      console.error(sourceError, {
-        stack: sourceError?.stack,
-        message: sourceError?.message,
-      });
+    if (sourceErrorOrInfo) {
+      console.error(sourceErrorOrInfo);
     }
 
     console.error(errorKey, {

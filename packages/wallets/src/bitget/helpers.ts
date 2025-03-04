@@ -78,9 +78,10 @@ export async function getWalletMethods(chain: Chain) {
       const { unisat: wallet } = bitget;
 
       const { Psbt } = await import("bitcoinjs-lib");
-      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const [address] = await wallet.requestAccounts();
-      const toolbox = BTCToolbox();
+      const getToolbox = await getToolboxByChain(Chain.Bitcoin);
+      const toolbox = getToolbox();
 
       async function signTransaction(psbt: Psbt) {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });

@@ -26,7 +26,7 @@ function getScriptType(derivationPath: DerivationPathArray) {
   }
 }
 
-async function getToolbox({
+async function getWalletMethods({
   chain,
   derivationPath,
 }: { chain: Chain; derivationPath: DerivationPathArray }) {
@@ -54,10 +54,8 @@ async function getToolbox({
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { toCashAddress, getToolboxByChain, BCHToolbox } = await import(
-        "@swapkit/toolboxes/utxo"
-      );
-
+      const { toCashAddress, getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const getToolbox = await getToolboxByChain(chain);
       const scriptType = getScriptType(derivationPath);
 
       if (!scriptType) {
@@ -68,7 +66,6 @@ async function getToolbox({
       }
 
       const coin = chain.toLowerCase();
-      const toolbox = getToolboxByChain(chain)();
 
       const getAddress = async (path: DerivationPathArray = derivationPath) => {
         const { default: TrezorConnect } = await import("@trezor/connect-web");
@@ -87,9 +84,12 @@ async function getToolbox({
           });
         }
 
-        return chain === Chain.BitcoinCash
-          ? (toolbox as ReturnType<typeof BCHToolbox>).stripPrefix(payload.address)
-          : payload.address;
+        if (chain === Chain.BitcoinCash) {
+          const toolbox = (await getToolboxByChain(chain))();
+          return toolbox.stripPrefix(payload.address);
+        }
+
+        return payload.address;
       };
 
       const address = await getAddress();
@@ -99,32 +99,28 @@ async function getToolbox({
         const address_n = derivationPath.map((pathElement, index) =>
           index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
         );
+        const getToolbox = await getToolboxByChain(chain as Chain.BitcoinCash);
 
         const result = await TrezorConnect.signTransaction({
           coin,
-          inputs: inputs.map((input) => ({
+          inputs: inputs.map(({ hash, index, value }) => ({
             // Hardens the first 3 elements of the derivation path - required by trezor
             address_n,
-            prev_hash: input.hash,
-            prev_index: input.index,
+            prev_hash: hash,
+            prev_index: index,
             // object needs amount but does not use it for signing
-            amount: input.value,
+            amount: value,
             script_type: scriptType.input,
           })),
 
           // Lint is not happy with the type of txOutputs
-          // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
           outputs: psbt.txOutputs.map((output: any) => {
             const outputAddress =
               chain === Chain.BitcoinCash && output.address
-                ? toCashAddress(output.address)
+                ? getToolbox().stripPrefix(toCashAddress(output.address))
                 : output.address;
 
-            // Strip prefix from BCH address to compare with stripped address from Trezor
-            const isChangeAddress =
-              chain === Chain.BitcoinCash && outputAddress
-                ? (toolbox as ReturnType<typeof BCHToolbox>).stripPrefix(outputAddress) === address
-                : outputAddress === address;
+            const isChangeAddress = outputAddress === address;
 
             // OP_RETURN
             if (!output.address) {
@@ -135,17 +131,13 @@ async function getToolbox({
               };
             }
 
-            // Change Address
-            if (isChangeAddress) {
-              return { address_n, amount: output.value, script_type: scriptType.output };
-            }
-
-            // Outgoing UTXO
-            return { address: outputAddress, amount: output.value, script_type: "PAYTOADDRESS" };
+            return isChangeAddress
+              ? { amount: output.value, address_n, script_type: scriptType.output }
+              : { amount: output.value, address: outputAddress, script_type: "PAYTOADDRESS" };
           }),
         });
 
-        if (result.success && result.payload?.serializedTx) {
+        if (result.success) {
           return result.payload.serializedTx;
         }
 
@@ -173,6 +165,9 @@ async function getToolbox({
           });
         }
 
+        const getToolbox = await getToolboxByChain(chain as Chain.BitcoinCash);
+        const toolbox = getToolbox();
+
         const feeRate =
           paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
 
@@ -190,6 +185,8 @@ async function getToolbox({
 
         return tx;
       };
+
+      const toolbox = getToolbox();
 
       return { address, walletMethods: { ...toolbox, transfer, signTransaction } };
     }
@@ -237,7 +234,7 @@ export const trezorWallet = createWallet({
         TrezorConnect.init({ lazyLoad: true, manifest });
       }
 
-      const { address, walletMethods } = await getToolbox({ chain, derivationPath });
+      const { address, walletMethods } = await getWalletMethods({ chain, derivationPath });
 
       addChain({ ...walletMethods, address, chain, walletType });
 

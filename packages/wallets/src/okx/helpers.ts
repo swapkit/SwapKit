@@ -6,8 +6,7 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { GaiaToolbox } from "@swapkit/toolboxes/cosmos";
-import type { BTCToolbox, UTXOTransferParams } from "@swapkit/toolboxes/utxo";
+import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Eip1193Provider } from "ethers";
 
 const cosmosTransfer =
@@ -55,15 +54,7 @@ async function getWeb3WalletMethods({
   return prepareNetworkSwitch({ toolbox, provider, chain });
 }
 
-export async function getWalletMethods(
-  chain: Chain,
-): Promise<
-  (
-    | ReturnType<typeof GaiaToolbox>
-    | Awaited<ReturnType<typeof getWeb3WalletMethods>>
-    | ReturnType<typeof BTCToolbox>
-  ) & { address: string }
-> {
+export async function getWalletMethods(chain: Chain) {
   switch (chain) {
     case Chain.Ethereum:
     case Chain.Base:
@@ -96,11 +87,12 @@ export async function getWalletMethods(
         throw new Error("No bitcoin okxwallet found");
       }
       const { Psbt } = await import("bitcoinjs-lib");
-      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
 
       const { bitcoin: wallet } = window.okxwallet;
       const address = (await wallet.connect()).address;
-      const toolbox = BTCToolbox();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       const signTransaction = async (psbt: InstanceType<typeof Psbt>) => {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });

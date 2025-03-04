@@ -60,6 +60,7 @@ export const keepkeyWallet = createWallet({
             derivationPath: derivationPathMap?.[chain] || NetworkDerivationPath[chain],
             sdk: keepKeySdk,
           });
+          walletMethods.address;
 
           addChain({ ...walletMethods, chain, walletType: WalletOption.KEEPKEY });
         }),
@@ -110,11 +111,7 @@ async function getWalletMethods({
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      return utxoWalletMethods({
-        sdk,
-        chain,
-        derivationPath,
-      });
+      return utxoWalletMethods({ sdk, chain, derivationPath });
     }
     default:
       throw new Error(`Chain not supported ${chain}`);

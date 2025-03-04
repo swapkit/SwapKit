@@ -1,18 +1,13 @@
 import {
   AssetValue,
-  type EVMWallets,
+  type CryptoChain,
   ProviderName,
   SKConfig,
-  type SolanaWallets,
-  type SubstrateWallets,
   SwapKitError,
-  type UTXOWallets,
   createPlugin,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import type { RequestSwapDepositAddressParams } from "./types";
-
-type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & SolanaWallets);
 
 export const ChainflipPlugin = createPlugin({
   name: "chainflip",
@@ -48,7 +43,7 @@ export const ChainflipPlugin = createPlugin({
         value: sellAmount,
       });
 
-      const wallet = getWallet(sellAsset.chain as SupportedChain);
+      const wallet = getWallet(sellAsset.chain as CryptoChain);
 
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
