@@ -41,25 +41,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Repo
         uses: ./tools/github/setup-repo
+
       - name: Replace versions
         run: bun run ./scripts/replace-versions.ts
 
       - name: Copy npmrc config
         run: cp .npmrc.prod .npmrc
-
-      - name: Change nightly changeset
-        if: contains(github.ref_name, 'nightly')
-        continue-on-error: true
-        run: |
-          bun changeset version --snapshot nightly
-
-      - name: Change beta changeset
-        if: contains(github.ref_name, 'beta')
-        continue-on-error: true
-        run: |
-          bun changeset pre enter beta
 
       - name: Set job params
         shell: bash
@@ -68,6 +58,21 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           echo "publishName=${{ github.ref_name == 'develop' && 'Release' || github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: Exit pre changeset
+        if: contains(github.ref_name, 'nightly')
+        continue-on-error: true
+        run: bun changeset pre exit
+
+      - name: Change nightly changeset
+        if: contains(github.ref_name, 'nightly')
+        run: bun changeset version --snapshot nightly
+
+      - name: Change beta changeset
+        if: contains(github.ref_name, 'beta')
+        continue-on-error: true
+        run: bun changeset pre enter beta
+
 
       - name: Create Pull Request or Publish to npm
         id: changesets
@@ -97,30 +102,32 @@ jobs:
           publish: bun publish-packages --tag nightly
           setupGitUser: false
 
-  deploy-playground:
-    if: contains(github.ref_name, 'develop')
-    needs: [build-lint-test]
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Repo
-        uses: ./tools/github/setup-repo
-      - name: Setup Pages
-        uses: actions/configure-pages@v5.0.0
+  # deploy-playground:
+  #   if: contains(github.ref_name, 'develop')
+  #   needs: [build-lint-test]
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Build playground
-        run: |
-          bun run build
-          bun playground:vite build-playground
+  #     - name: Setup Repo
+  #       uses: ./tools/github/setup-repo
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3.0.1
-        with:
-          path: "./playgrounds/vite/dist"
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v5.0.0
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4.0.5
+  #     - name: Build playground
+  #       run: |
+  #         bun run build
+  #         bun playground:vite build-playground
+
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v3.0.1
+  #       with:
+  #         path: "./playgrounds/vite/dist"
+
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4.0.5

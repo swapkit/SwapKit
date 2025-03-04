@@ -12,7 +12,7 @@
     "@ledgerhq/errors": "6.19.1",
     "@ledgerhq/hw-app-btc": "10.6.0",
     "@ledgerhq/hw-app-cosmos": "6.30.4",
-    "@ledgerhq/hw-app-eth": "6.42.7",
+    "@ledgerhq/hw-app-eth": "6.42.8",
     "@ledgerhq/hw-transport": "6.31.4",
     "@ledgerhq/hw-transport-webusb": "6.29.4",
     "@ledgerhq/wallet-api-client": "1.6.2",
@@ -25,7 +25,7 @@
     "@solana/web3.js": "1.98.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "@trezor/connect-web": "9.4.7",
+    "@trezor/connect-web": "9.5.0",
     "@walletconnect/modal-sign-html": "2.7.0",
     "bitcoinjs-lib": "6.1.7",
     "blakejs": "1.2.1",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@walletconnect/logger": "2.1.2",
-    "@walletconnect/types": "2.18.1"
+    "@walletconnect/types": "2.19.0"
   },
   "exports": {
     ".": {
@@ -96,6 +96,11 @@
       "default": "./dist/src/okx/index.js",
       "require": "./dist/src/okx/index.cjs",
       "types": "./src/okx/index.ts"
+    },
+    "./onekey": {
+      "default": "./dist/src/onekey/index.js",
+      "require": "./dist/src/onekey/index.cjs",
+      "types": "./src/onekey/index.ts"
     },
     "./phantom": {
       "default": "./dist/src/phantom/index.js",

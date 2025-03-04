@@ -43,15 +43,6 @@ export type NetworkParams = {
   blockExplorerUrls: string[];
 };
 
-export type {
-  CosmosWallets,
-  ThorchainWallets,
-  EVMWallets,
-  SubstrateWallets,
-  UTXOWallets,
-  SolanaWallets,
-};
-
 export enum WalletOption {
   BITGET = "BITGET",
   BRAVE = "BRAVE",

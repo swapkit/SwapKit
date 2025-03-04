@@ -60,9 +60,9 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
       const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const [{ address }] = await provider.requestAccounts();
 
-      const toolbox = getToolboxByChain(chain)();
+      const getToolbox = await getToolboxByChain(chain);
 
-      return { ...toolbox, address };
+      return { ...getToolbox(), address };
     }
 
     case Chain.Ethereum: {

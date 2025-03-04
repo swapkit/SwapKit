@@ -3,6 +3,7 @@ import {
   type ApproveReturnType,
   AssetValue,
   Chain,
+  type CryptoChain,
   type EVMChain,
   EVMChains,
   type ErrorKeys,
@@ -44,7 +45,6 @@ import type {
   NodeActionParams,
   RegisterThornameParams,
   SavingsParams,
-  SupportedChain,
   WithdrawParams,
 } from "./types";
 
@@ -154,7 +154,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const abis = pluginType === "thorchain" ? TCSpecificAbi : MayaSpecificAbi;
       const { chain, symbol, ticker } = assetValue;
 
-      const wallet = getWallet(chain as SupportedChain);
+      const wallet = getWallet(chain as CryptoChain);
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
@@ -274,7 +274,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       name: string;
       ownerAddress: string;
     }) {
-      const payout = payoutAddress || getWallet(assetValue.chain as SupportedChain)?.address;
+      const payout = payoutAddress || getWallet(assetValue.chain as CryptoChain)?.address;
 
       if (!payout) {
         throw new SwapKitError("thorchain_preferred_asset_payout_required");
@@ -308,7 +308,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
         throw new SwapKitError("core_transaction_create_liquidity_invalid_params");
       }
 
-      const assetAddress = getWallet(assetValue.chain as SupportedChain).address;
+      const assetAddress = getWallet(assetValue.chain as CryptoChain).address;
       const baseAssetAddress = getWallet(pluginChain).address;
 
       const baseAssetTx = await wrapWithThrow(() => {
@@ -364,7 +364,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
 
       const baseAddress = includeBaseAddress ? baseAssetAddr || baseAssetWalletAddress : "";
       const assetAddress =
-        isSym || mode === "asset" ? assetAddr || getWallet(chain as SupportedChain).address : "";
+        isSym || mode === "asset" ? assetAddr || getWallet(chain as CryptoChain).address : "";
 
       if (!(baseTransfer || assetTransfer)) {
         throw new SwapKitError("core_transaction_add_liquidity_invalid_params");

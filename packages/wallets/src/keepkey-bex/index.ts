@@ -91,7 +91,8 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = getToolboxByChain(chain)();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       const getBalance = async () => {
         try {
