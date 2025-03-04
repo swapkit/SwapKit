@@ -1,0 +1,15 @@
+# @swapkit/ui
+
+## 0.1.0-beta.0
+
+### Minor Changes
+
+- [#1210](https://github.com/thorswap/SwapKit/pull/1210) [`cb2cea9`](https://github.com/thorswap/SwapKit/commit/cb2cea9054eb3105fc6697ce1d32fa1ff1d21f50) Thanks [@ice-chillios](https://github.com/ice-chillios)! - @swapkit/ui & async imports
+
+### Patch Changes
+
+- Updated dependencies [[`8f8feee`](https://github.com/thorswap/SwapKit/commit/8f8feee8bf28dc7704346cfb205f80ed86668f41), [`cb2cea9`](https://github.com/thorswap/SwapKit/commit/cb2cea9054eb3105fc6697ce1d32fa1ff1d21f50)]:
+  - @swapkit/toolboxes@1.0.0-beta.0
+  - @swapkit/plugins@1.0.0-beta.0
+  - @swapkit/wallets@3.0.0-beta.0
+  - @swapkit/core@4.0.0-beta.0
