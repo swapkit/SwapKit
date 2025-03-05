@@ -1,7 +1,6 @@
 import type { AssetValue, FeeOption, UTXOChain, Witness } from "@swapkit/helpers";
 
 import type { UTXOScriptType } from "./helpers";
-import type { BCHToolbox, BTCToolbox, DOGEToolbox, LTCToolbox } from "./index";
 
 export type TransactionType = {
   toHex(): string;
@@ -10,10 +9,6 @@ export type TransactionType = {
 export type TargetOutput =
   | { address: string; script?: Buffer; value: number }
   | { script: Buffer; value: number };
-
-export type UTXOToolbox = ReturnType<
-  typeof BTCToolbox | typeof BCHToolbox | typeof DOGEToolbox | typeof LTCToolbox
->;
 
 export type UTXOType = {
   hash: string;

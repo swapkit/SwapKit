@@ -246,23 +246,20 @@ function createSyntheticAssetValue(identifier: string, value: NumberPrimitives =
     : undefined;
   const isMayaOrThor = chain ? [Chain.Maya, Chain.THORChain].includes(chain) : false;
 
-  const assetSeperator = identifier.slice(0, 14).includes("~") ? "~" : "/";
+  const assetSeparator = identifier.slice(0, 14).includes("~") ? "~" : "/";
 
   const [synthChain, symbol] = isMayaOrThor
-    ? identifier.split(".").slice(1).join().split(assetSeperator)
-    : identifier.split(assetSeperator);
+    ? identifier.split(".").slice(1).join().split(assetSeparator)
+    : identifier.split(assetSeparator);
 
   if (!(synthChain && symbol)) {
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_asset_identifier",
-      info: { identifier },
-    });
+    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
   return new AssetValue({
     decimal: 8,
     value: safeValue(value, 8),
-    identifier: `${chain || Chain.THORChain}.${synthChain}${assetSeperator}${symbol}`,
+    identifier: `${chain || Chain.THORChain}.${synthChain}${assetSeparator}${symbol}`,
   });
 }
 
@@ -272,53 +269,57 @@ function safeValue(value: NumberPrimitives, decimal: number) {
     : value;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor & split into smaller functions
 function getAssetInfo(identifier: string) {
-  const isSynthetic = identifier.slice(0, 14).includes("/");
-  const isTradeAsset = identifier.slice(0, 14).includes("~");
-  const assetSeperator = isTradeAsset ? "~" : "/";
+  const shortIdentifier = identifier.slice(0, 14);
+  const splitIdentifier = identifier.split(".");
+  const identifierChain = splitIdentifier[0]?.toUpperCase() as Chain;
+  const isThorOrMaya = [Chain.THORChain, Chain.Maya].includes(identifierChain);
 
-  const isThorchain = identifier.split(".")?.[0]?.toUpperCase() === Chain.THORChain;
-  const isMaya = identifier.split(".")?.[0]?.toUpperCase() === Chain.Maya;
+  const isSynthetic = shortIdentifier.includes("/");
+  const isTradeAsset = shortIdentifier.includes("~");
+  const isSynthOrTrade = isSynthetic || isTradeAsset;
+  const assetSeparator = isTradeAsset ? "~" : "/";
 
-  const [synthChain, synthSymbol = ""] =
-    isThorchain || isMaya
-      ? identifier.split(".").slice(1).join().split(assetSeperator)
-      : identifier.split(assetSeperator);
+  const [synthChain, synthSymbol = ""] = isThorOrMaya
+    ? splitIdentifier.slice(1).join().split(assetSeparator)
+    : identifier.split(assetSeparator);
 
-  if ((isSynthetic || isTradeAsset) && !(synthChain && synthSymbol)) {
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_asset_identifier",
-      info: { identifier },
-    });
+  if (isSynthOrTrade && !(synthChain && synthSymbol)) {
+    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
-  const adjustedIdentifier =
-    identifier.includes(".") && !isSynthetic && !isTradeAsset
-      ? identifier
-      : `${isMaya ? Chain.Maya : Chain.THORChain}.${synthSymbol}`;
+  const [chain, ...rest] = (
+    identifier.includes(".") && !isSynthOrTrade ? identifier : `${identifierChain}.${synthSymbol}`
+  ).split(".") as [Chain, string];
 
-  const [chain, ...rest] = adjustedIdentifier.split(".") as [Chain, string];
+  const assetSymbol = isSynthOrTrade ? synthSymbol : rest.join(".");
 
-  const symbol = isSynthetic || isTradeAsset ? synthSymbol : rest.join(".");
-  const splitSymbol = symbol.split("-");
-  const ticker = (
-    splitSymbol.length === 1 ? splitSymbol[0] : splitSymbol.slice(0, -1).join("-")
-  ) as string;
-  const unformattedAddress =
-    splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
-
-  const address = chain === Chain.Solana ? unformattedAddress : unformattedAddress?.toLowerCase();
+  const { address, ticker } = getAssetBaseInfo({ symbol: assetSymbol, chain });
+  const symbol =
+    (isSynthOrTrade ? `${synthChain}${assetSeparator}` : "") +
+    (address ? `${ticker}-${address ?? ""}` : assetSymbol);
 
   return {
     address,
     chain,
-    isGasAsset: isGasAsset({ chain, symbol }),
+    isSynthOrTrade,
     isSynthetic,
     isTradeAsset,
     ticker,
-    symbol:
-      (isSynthetic || isTradeAsset ? `${synthChain}${assetSeperator}` : "") +
-      (address ? `${ticker}-${address ?? ""}` : symbol),
+    symbol,
+    isGasAsset: isGasAsset({ chain, symbol: assetSymbol }),
   };
+}
+
+function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
+  const splitSymbol = symbol.split("-");
+  const unformattedAddress =
+    splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
+
+  const address = chain === Chain.Solana ? unformattedAddress : unformattedAddress?.toLowerCase();
+  const ticker = (
+    splitSymbol.length === 1 ? splitSymbol[0] : splitSymbol.slice(0, -1).join("-")
+  ) as string;
+
+  return { address, ticker };
 }

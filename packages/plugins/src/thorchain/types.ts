@@ -1,14 +1,4 @@
-import type {
-  AssetValue,
-  CosmosWallets,
-  EVMWallets,
-  FeeOption,
-  MemoType,
-  ThorchainWallets,
-  UTXOWallets,
-} from "@swapkit/helpers";
-
-export type SupportedChain = keyof (EVMWallets & UTXOWallets & ThorchainWallets & CosmosWallets);
+import type { AssetValue, FeeOption, MemoType } from "@swapkit/helpers";
 
 export type AddLiquidityPartParams = {
   assetValue: AssetValue;

@@ -7,7 +7,7 @@
     "@cosmjs/crypto": "0.33.0",
     "@cosmjs/proto-signing": "0.33.0",
     "@cosmjs/stargate": "0.33.0",
-    "@polkadot/api": "15.7.1",
+    "@polkadot/api": "15.7.2",
     "@polkadot/keyring": "13.4.3",
     "@polkadot/util": "13.4.3",
     "@polkadot/util-crypto": "13.4.3",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.8",
     "@nomicfoundation/hardhat-toolbox": "5.0.0",
-    "@polkadot/types": "15.7.1",
+    "@polkadot/types": "15.7.2",
     "@types/bn.js": "5.1.6",
     "@types/crypto-js": "4.2.2",
     "@types/elliptic": "6.4.18",

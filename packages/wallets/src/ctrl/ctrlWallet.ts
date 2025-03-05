@@ -120,7 +120,8 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = getToolboxByChain(chain)();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       return { ...toolbox, transfer: walletTransfer };
     }

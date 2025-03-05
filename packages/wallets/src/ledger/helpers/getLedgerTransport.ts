@@ -10,7 +10,6 @@ const getNavigatorUsb = () =>
     addEventListener: (event: string, callback: (e: any) => void) => void;
   };
 
-// TODO: Still needed?
 const getLedgerDevices = async () => {
   const navigatorUsb = getNavigatorUsb();
 

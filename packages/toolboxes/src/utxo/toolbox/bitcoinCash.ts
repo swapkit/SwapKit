@@ -5,8 +5,8 @@ import {
   Network as bchNetwork,
   compileMemo,
   detectAddressNetwork,
-  getNetwork,
   getUtxoApi,
+  getUtxoNetwork,
   isValidAddress,
   toCashAddress,
   toLegacyAddress,
@@ -18,8 +18,7 @@ import type {
   UTXOType,
   UTXOWalletTransferParams,
 } from "../types";
-
-import { BaseUTXOToolbox } from "./utxo";
+import { createUTXOToolbox } from "./utxo";
 
 const chain = Chain.BitcoinCash as UTXOChain;
 
@@ -38,26 +37,30 @@ export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));
 }
 
-export function createBCHToolbox() {
-  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = BaseUTXOToolbox(Chain.BitcoinCash)();
+export async function createBCHToolbox() {
+  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = (
+    await createUTXOToolbox(Chain.BitcoinCash)
+  )();
 
   function handleGetBalance(address: string, _scamFilter = true) {
     return getBalance(stripPrefix(toCashAddress(address)));
   }
 
-  return {
-    ...toolbox,
-    broadcastTx,
-    buildBCHTx,
-    buildTx,
-    createKeysForPath,
-    getAddressFromKeys,
-    getBalance: handleGetBalance,
-    getFeeRates,
-    stripPrefix,
-    stripToCashAddress,
-    validateAddress,
-    transfer: transfer({ getFeeRates, broadcastTx }),
+  return function createBCHToolbox() {
+    return {
+      ...toolbox,
+      broadcastTx,
+      buildBCHTx,
+      buildTx,
+      createKeysForPath,
+      getAddressFromKeys,
+      getBalance: handleGetBalance,
+      getFeeRates,
+      stripPrefix,
+      stripToCashAddress,
+      validateAddress,
+      transfer: transfer({ getFeeRates, broadcastTx }),
+    };
   };
 }
 
@@ -66,7 +69,7 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
     Transaction,
     TransactionBuilder,
     address: bchAddress,
-    // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+    // @ts-ignore
   } = await import("@psf/bitcoincashjs-lib");
   if (!validateAddress(recipient)) throw new Error("Invalid address");
   const utxos = await getUtxoApi(chain).scanUTXOs({
@@ -74,7 +77,7 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
     fetchTxHex: true,
   });
 
-  const compiledMemo = memo ? compileMemo(memo) : null;
+  const compiledMemo = memo ? await compileMemo(memo) : null;
 
   const targetOutputs: TargetOutput[] = [];
   // output to recipient
@@ -88,7 +91,7 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!(inputs && outputs)) throw new Error("Balance insufficient for transaction");
-
+  const getNetwork = await getUtxoNetwork();
   const builder = new TransactionBuilder(getNetwork(chain));
 
   await Promise.all(
@@ -102,6 +105,7 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
   for (const output of outputs) {
     const address =
       "address" in output && output.address ? output.address : toLegacyAddress(sender);
+    const getNetwork = await getUtxoNetwork();
     const outputScript = bchAddress.toOutputScript(toLegacyAddress(address), getNetwork(chain));
 
     builder.addOutput(outputScript, output.value);
@@ -166,7 +170,7 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
   });
 
   const feeRateWhole = Number(feeRate.toFixed(0));
-  const compiledMemo = memo ? compileMemo(memo) : null;
+  const compiledMemo = memo ? await compileMemo(memo) : null;
 
   const targetOutputs = [] as TargetOutput[];
 
@@ -190,6 +194,7 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!(inputs && outputs)) throw new Error("Balance insufficient for transaction");
+  const getNetwork = await getUtxoNetwork();
   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
 
   for (const { hash, index, witnessUtxo } of inputs) {
@@ -222,8 +227,9 @@ async function createKeysForPath({
   const { ECPairFactory } = await import("ecpair");
   const secp256k1 = await import("@bitcoinerlab/secp256k1");
   const { mnemonicToSeedSync } = await import("@scure/bip39");
-  // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+  // @ts-ignore
   const { HDNode } = await import("@psf/bitcoincashjs-lib");
+  const getNetwork = await getUtxoNetwork();
 
   const network = getNetwork(chain);
 
@@ -234,10 +240,6 @@ async function createKeysForPath({
 
   const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
   const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
-  // TODO: Figure out same pattern as in BTC
-  // const testWif = keyPair.toWIF();
-  // const k = ECPairFactory(secp256k1).fromWIF(testWif, network);
-  // const a = payments.p2pkh({ pubkey: k.publicKey, network });
 
   return keyPair;
 }

@@ -38,7 +38,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
       }
 
       const { Psbt } = await import("bitcoinjs-lib");
-      const { BTCToolbox } = await import("@swapkit/toolboxes/utxo");
+      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
       const {
         signTransaction: satsSignTransaction,
         getAddress,
@@ -46,7 +46,8 @@ async function getWalletMethodsForExtension(chain: Chain) {
         BitcoinNetworkType,
       } = await import("sats-connect");
 
-      const toolbox = BTCToolbox();
+      const getToolbox = await getToolboxByChain(chain);
+      const toolbox = getToolbox();
 
       let address = "";
 

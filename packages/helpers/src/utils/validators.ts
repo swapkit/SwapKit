@@ -1,8 +1,9 @@
+import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
-import { Chain } from "../types/chains";
+import type { Chain } from "../types/chains";
 
 // Backward compatibility
-const supportedChains = [...Object.values(Chain), "TERRA"];
+const supportedChains = ["TERRA", ...SKConfig.get("chains")];
 
 export function validateIdentifier(identifier = "") {
   const uppercasedIdentifier = identifier.toUpperCase();
