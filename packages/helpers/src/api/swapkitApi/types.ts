@@ -56,7 +56,7 @@ export enum TxnStatus {
   unknown = "unknown",
   not_started = "not_started",
   pending = "pending",
-  swappping = "swapping",
+  swapping = "swapping",
   completed = "completed",
 }
 
@@ -159,23 +159,18 @@ export const AssetValueSchema = object({
   address: optional(string()),
   isGasAsset: boolean(),
   isSynthetic: boolean(),
-  tax: optional(
-    object({
-      buy: number(),
-      sell: number(),
-    }),
-  ),
+  tax: optional(object({ buy: number(), sell: number() })),
 });
 
 export const TokenDetailsMetadataSchema = object({
-  name: string(),
   id: string(),
   market_cap: number(),
-  total_volume: number(),
+  name: string(),
   price_change_24h_usd: number(),
   price_change_percentage_24h_usd: number(),
-  timestamp: string(),
   sparkline_in_7d: array(number()),
+  timestamp: string(),
+  total_volume: number(),
 });
 
 export const PriceResponseSchema = array(
@@ -191,96 +186,44 @@ export const PriceResponseSchema = array(
 export type PriceResponse = z.infer<typeof PriceResponseSchema>;
 
 export const QuoteRequestSchema = object({
-  sellAsset: string({
-    description: "Asset to sell",
-  }),
-  buyAsset: string({
-    description: "Asset to buy",
-  }),
-  sellAmount: string({
-    description: "Amount of asset to sell",
-  }).refine((amount) => +amount > 0, {
+  sellAsset: string({ description: "Asset to sell" }),
+  buyAsset: string({ description: "Asset to buy" }),
+  sellAmount: string({ description: "Amount of asset to sell" }).refine((amount) => +amount > 0, {
     message: "sellAmount must be greater than 0",
     path: ["sellAmount"],
   }),
   providers: optional(
     array(
-      string({
-        description: "List of providers to use",
-      }).refine(
-        (provider) => {
-          return ProviderName[provider as ProviderName] !== undefined;
-        },
-        {
-          message: "Invalid provider",
-          path: ["providers"],
-        },
+      string({ description: "List of providers to use" }).refine(
+        (provider) => ProviderName[provider as ProviderName] !== undefined,
+        { message: "Invalid provider", path: ["providers"] },
       ),
     ),
   ),
-  sourceAddress: optional(
-    string({
-      description: "Address to send asset from",
-    }),
-  ),
-  destinationAddress: optional(
-    string({
-      description: "Address to send asset to",
-    }),
-  ),
-  slippage: optional(
-    number({
-      description: "Slippage tolerance as a percentage. Default is 3%.",
-    }),
-  ),
-  affiliate: optional(
-    string({
-      description: "Affiliate thorname",
-    }),
-  ),
+  sourceAddress: optional(string({ description: "Address to send asset from" })),
+  destinationAddress: optional(string({ description: "Address to send asset to" })),
+  slippage: optional(number({ description: "Slippage tolerance as a percentage. Default is 3%." })),
+  affiliate: optional(string({ description: "Affiliate thorname" })),
   affiliateFee: optional(
-    number({
-      description: "Affiliate fee in basis points",
-    }).refine(
-      (fee) => {
-        return fee === Math.floor(fee) && fee >= 0;
-      },
-      {
-        message: "affiliateFee must be a positive integer",
-        path: ["affiliateFee"],
-      },
+    number({ description: "Affiliate fee in basis points" }).refine(
+      (fee) => fee === Math.floor(fee) && fee >= 0,
+      { message: "affiliateFee must be a positive integer", path: ["affiliateFee"] },
     ),
   ),
-  allowSmartContractSender: optional(
-    boolean({
-      description: "Allow smart contract as sender",
-    }),
-  ),
+  allowSmartContractSender: optional(boolean({ description: "Allow smart contract as sender" })),
   allowSmartContractReceiver: optional(
-    boolean({
-      description: "Allow smart contract as recipient",
-    }),
+    boolean({ description: "Allow smart contract as recipient" }),
   ),
-  disableSecurityChecks: optional(
-    boolean({
-      description: "Disable security checks",
-    }),
-  ),
+  disableSecurityChecks: optional(boolean({ description: "Disable security checks" })),
   includeTx: optional(
-    boolean({
-      description: "Set to true to include an transaction object (EVM only)",
-    }),
+    boolean({ description: "Set to true to include an transaction object (EVM only)" }),
   ),
   cfBoost: optional(
     boolean({
       description: "Set to true to enable CF boost to speed up Chainflip swaps. BTC only.",
     }),
   ),
-  referrer: optional(
-    string({
-      description: "Referrer address (referral program)",
-    }),
-  ),
+  referrer: optional(string({ description: "Referrer address (referral program)" })),
 }).refine((data) => data.sellAsset !== data.buyAsset, {
   message: "Must be different",
   path: ["sellAsset", "buyAsset"],
@@ -301,11 +244,11 @@ export type PriceRequest = z.infer<typeof PriceRequestSchema>;
 
 export const BrokerDepositChannelParamsSchema = object({
   sellAsset: object({
-    chain: string(), // identifier of the asset
+    chain: string(),
     asset: string(), // identifier of the asset
   }),
   buyAsset: object({
-    chain: string(), // identifier of the asset
+    chain: string(),
     asset: string(), // identifier of the asset
   }),
   destinationAddress: string(),
@@ -343,7 +286,7 @@ export const DepositChannelResponseSchema = object({
 export type DepositChannelResponse = z.infer<typeof DepositChannelResponseSchema>;
 
 const TxnPayloadSchema = object({
-  evmCalldata: optional(string()), // raw 0xcalldata
+  evmCalldata: optional(string()),
   logs: optional(unknown()),
   memo: optional(string()),
   spender: optional(string()), // used in evm approve transactions
@@ -353,7 +296,7 @@ export type TxnPayload = z.infer<typeof TxnPayloadSchema>;
 
 // props that are most important while the transaction is live
 const TxnTransientSchema = object({
-  estimatedfinalisedAt: number(),
+  estimatedFinalisedAt: number(),
   estimatedTimeToComplete: number(),
   updatedAt: number(),
   currentLegIndex: optional(number()),
@@ -372,7 +315,6 @@ const TransactionFeesSchema = object({
 
 export type TransactionFees = z.infer<typeof TransactionFeesSchema>;
 
-// props that are not part of the transaction itself, but are still relevant for integrators
 const TxnMetaSchema = object({
   broadcastedAt: optional(number()),
   wallet: optional(string()),
@@ -444,41 +386,19 @@ export const FeesSchema = array(
 export type Fees = z.infer<typeof FeesSchema>;
 
 export const EstimatedTimeSchema = object({
-  inbound: optional(
-    number({
-      description: "Time to receive inbound asset in seconds",
-    }),
-  ),
-  swap: optional(
-    number({
-      description: "Time to swap assets in seconds",
-    }),
-  ),
-  outbound: optional(
-    number({
-      description: "Time to receive outbound asset in seconds",
-    }),
-  ),
-  total: number({
-    description: "Total time in seconds",
-  }),
+  inbound: optional(number({ description: "Time to receive inbound asset in seconds" })),
+  swap: optional(number({ description: "Time to swap assets in seconds" })),
+  outbound: optional(number({ description: "Time to receive outbound asset in seconds" })),
+  total: number({ description: "Total time in seconds" }),
 });
 
 export type EstimatedTime = z.infer<typeof EstimatedTimeSchema>;
 
 export const EVMTransactionSchema = object({
-  to: string({
-    description: "Address of the recipient",
-  }),
-  from: string({
-    description: "Address of the sender",
-  }),
-  value: string({
-    description: "Value to send",
-  }),
-  data: string({
-    description: "Data to send",
-  }),
+  to: string({ description: "Address of the recipient" }),
+  from: string({ description: "Address of the sender" }),
+  value: string({ description: "Value to send" }),
+  data: string({ description: "Data to send" }),
 });
 
 export type EVMTransaction = z.infer<typeof EVMTransactionSchema>;
@@ -489,44 +409,23 @@ export const EVMTransactionDetailsParamsSchema = array(
     number(),
     array(string()),
 
-    object({
-      from: string(),
-      value: string(),
-    }).describe("Parameters to pass to the contract method"),
+    object({ from: string(), value: string() }).describe(
+      "Parameters to pass to the contract method",
+    ),
   ]),
 );
 
 export type EVMTransactionDetailsParams = z.infer<typeof EVMTransactionDetailsParamsSchema>;
 
 export const EVMTransactionDetailsSchema = object({
-  contractAddress: string({
-    description: "Address of the contract to interact with",
-  }),
-  contractMethod: string({
-    description: "Name of the method to call",
-  }),
+  contractAddress: string({ description: "Address of the contract to interact with" }),
+  contractMethod: string({ description: "Name of the method to call" }),
   contractParams: EVMTransactionDetailsParamsSchema,
-  // contractParamsStreaming: array(
-  //   string({
-  //     description:
-  //       "If making a streaming swap through THORChain, parameters to pass to the contract method",
-  //   }),
-  // ),
   contractParamNames: array(
-    string({
-      description: "Names of the parameters to pass to the contract method",
-    }),
+    string({ description: "Names of the parameters to pass to the contract method" }),
   ),
-  approvalToken: optional(
-    string({
-      description: "Address of the token to approve spending of",
-    }),
-  ),
-  approvalSpender: optional(
-    string({
-      description: "Address of the spender to approve",
-    }),
-  ),
+  approvalToken: optional(string({ description: "Address of the token to approve spending of" })),
+  approvalSpender: optional(string({ description: "Address of the spender to approve" })),
 });
 
 export type EVMTransactionDetails = z.infer<typeof EVMTransactionDetailsSchema>;
@@ -537,12 +436,7 @@ const EncodeObjectSchema = object({
 });
 
 const FeeSchema = object({
-  amount: array(
-    object({
-      denom: string(),
-      amount: string(),
-    }),
-  ),
+  amount: array(object({ denom: string(), amount: string() })),
   gas: string(),
 });
 
@@ -559,29 +453,15 @@ export const CosmosTransactionSchema = object({
 export type CosmosTransaction = z.infer<typeof CosmosTransactionSchema>;
 
 export const RouteLegSchema = object({
-  sellAsset: string({
-    description: "Asset to sell",
-  }),
-  buyAsset: string({
-    description: "Asset to buy",
-  }),
+  sellAsset: string({ description: "Asset to sell" }),
+  buyAsset: string({ description: "Asset to buy" }),
   provider: nativeEnum(ProviderName),
-  sourceAddress: string({
-    description: "Source address",
-  }),
-  destinationAddress: string({
-    description: "Destination address",
-  }),
+  sourceAddress: string({ description: "Source address" }),
+  destinationAddress: string({ description: "Destination address" }),
   estimatedTime: EstimatedTimeSchema.optional(),
-  affiliate: string({
-    description: "Affiliate address",
-  }).optional(),
-  affiliateFee: number({
-    description: "Affiliate fee",
-  }).optional(),
-  slipPercentage: number({
-    description: "Slippage as a percentage",
-  }),
+  affiliate: string({ description: "Affiliate address" }).optional(),
+  affiliateFee: number({ description: "Affiliate fee" }).optional(),
+  slipPercentage: number({ description: "Slippage as a percentage" }),
 });
 
 export type RouteLeg = z.infer<typeof RouteLegSchema>;
@@ -595,15 +475,9 @@ export const RouteLegWithoutAddressesSchema = RouteLegSchema.omit({
 export type RouteLegWithoutAddresses = z.infer<typeof RouteLegWithoutAddressesSchema>;
 
 export const RouteQuoteMetadataAssetSchema = object({
-  asset: string({
-    description: "Asset name",
-  }),
-  price: number({
-    description: "Price in USD",
-  }),
-  image: string({
-    description: "Asset image",
-  }),
+  asset: string({ description: "Asset name" }),
+  price: number({ description: "Price in USD" }),
+  image: string({ description: "Asset image" }),
 });
 
 export type RouteQuoteMetadataAsset = z.infer<typeof RouteQuoteMetadataAssetSchema>;
@@ -613,125 +487,63 @@ export const ChainflipMetadataSchema = BrokerDepositChannelParamsSchema;
 export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
 
 export const RouteQuoteMetadataSchema = object({
-  priceImpact: optional(
-    number({
-      description: "Price impact",
-    }),
-  ),
+  priceImpact: optional(number({ description: "Price impact" })),
   assets: optional(array(RouteQuoteMetadataAssetSchema)),
-  approvalAddress: optional(
-    string({
-      description: "Approval address for swap",
-    }),
-  ),
+  approvalAddress: optional(string({ description: "Approval address for swap" })),
   streamingInterval: number().optional(),
   maxStreamingQuantity: number().optional(),
   tags: array(nativeEnum(PriorityLabel)),
-
   affiliate: optional(string()),
   affiliateFee: optional(string()),
-
   txType: optional(nativeEnum(RouteQuoteTxType)),
   chainflip: optional(ChainflipMetadataSchema),
   referrer: optional(string()),
 });
 
 export const RouteQuoteWarningSchema = array(
-  object({
-    code: nativeEnum(WarningCodeEnum),
-    display: string(),
-    tooltip: string().optional(),
-  }),
+  object({ code: nativeEnum(WarningCodeEnum), display: string(), tooltip: string().optional() }),
 );
 
 export type RouteQuoteWarning = z.infer<typeof RouteQuoteWarningSchema>;
 
 const QuoteResponseRouteLegItem = object({
   provider: nativeEnum(ProviderName),
-  sellAsset: string({
-    description: "Asset to sell",
-  }),
-  sellAmount: string({
-    description: "Sell amount",
-  }),
-  buyAsset: string({
-    description: "Asset to buy",
-  }),
-  buyAmount: string({
-    description: "Buy amount",
-  }),
-  buyAmountMaxSlippage: string({
-    description: "Buy amount max slippage",
-  }),
+  sellAsset: string({ description: "Asset to sell" }),
+  sellAmount: string({ description: "Sell amount" }),
+  buyAsset: string({ description: "Asset to buy" }),
+  buyAmount: string({ description: "Buy amount" }),
+  buyAmountMaxSlippage: string({ description: "Buy amount max slippage" }),
   fees: optional(FeesSchema),
 });
 
 const QuoteResponseRouteItem = object({
   providers: array(nativeEnum(ProviderName)),
-  sellAsset: string({
-    description: "Asset to sell",
-  }),
-  sellAmount: string({
-    description: "Sell amount",
-  }),
-  buyAsset: string({
-    description: "Asset to buy",
-  }),
-  expectedBuyAmount: string({
-    description: "Expected Buy amount",
-  }),
-  expectedBuyAmountMaxSlippage: string({
-    description: "Expected Buy amount max slippage",
-  }),
-  sourceAddress: string({
-    description: "Source address",
-  }),
-  destinationAddress: string({
-    description: "Destination address",
-  }),
-  targetAddress: optional(
-    string({
-      description: "Target address",
-    }),
-  ),
-  inboundAddress: optional(
-    string({
-      description: "Inbound address",
-    }),
-  ),
-  expiration: optional(
-    string({
-      description: "Expiration",
-    }),
-  ),
-  memo: optional(
-    string({
-      description: "Memo",
-    }),
-  ),
+  sellAsset: string({ description: "Asset to sell" }),
+  sellAmount: string({ description: "Sell amount" }),
+  buyAsset: string({ description: "Asset to buy" }),
+  expectedBuyAmount: string({ description: "Expected Buy amount" }),
+  expectedBuyAmountMaxSlippage: string({ description: "Expected Buy amount max slippage" }),
+  sourceAddress: string({ description: "Source address" }),
+  destinationAddress: string({ description: "Destination address" }),
+  targetAddress: optional(string({ description: "Target address" })),
+  inboundAddress: optional(string({ description: "Inbound address" })),
+  expiration: optional(string({ description: "Expiration" })),
+  memo: optional(string({ description: "Memo" })),
   fees: FeesSchema,
   txType: optional(nativeEnum(RouteQuoteTxType)),
   tx: optional(union([EVMTransactionSchema, CosmosTransactionSchema, string()])),
   estimatedTime: optional(EstimatedTimeSchema),
-  totalSlippageBps: number({
-    description: "Total slippage in bps",
-  }),
+  totalSlippageBps: number({ description: "Total slippage in bps" }),
   legs: array(QuoteResponseRouteLegItem),
   warnings: RouteQuoteWarningSchema,
   meta: RouteQuoteMetadataSchema,
 });
 
 export const QuoteResponseSchema = object({
-  quoteId: string({
-    description: "Quote ID",
-  }),
+  quoteId: string({ description: "Quote ID" }),
   routes: array(QuoteResponseRouteItem),
   // in case of bad request or actual backend error, not bad quotes from providers
-  error: optional(
-    string({
-      description: "Error message",
-    }),
-  ),
+  error: optional(string({ description: "Error message" })),
   // errors from providers
   providerErrors: optional(
     array(
@@ -749,13 +561,7 @@ export type QuoteResponseRoute = z.infer<typeof QuoteResponseRouteItem>;
 export type QuoteResponseRouteLeg = z.infer<typeof QuoteResponseRouteLegItem>;
 
 export const GasResponseSchema = array(
-  object({
-    id: number(),
-    chainId: string(),
-    value: string(),
-    unit: string(),
-    createdAt: string(),
-  }),
+  object({ id: number(), chainId: string(), value: string(), unit: string(), createdAt: string() }),
 );
 
 export type GasResponse = z.infer<typeof GasResponseSchema>;

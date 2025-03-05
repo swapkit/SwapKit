@@ -176,17 +176,15 @@ export class SwapKitError extends Error {
   ) {
     const isErrorString = typeof errorOrErrorKey === "string";
     const errorKey = isErrorString ? errorOrErrorKey : errorOrErrorKey.errorKey;
-    super(errorKey);
+    const message = `${errorKey}${isErrorString ? "" : `: ${JSON.stringify(errorOrErrorKey.info)}`}`;
 
     if (sourceErrorOrInfo) {
       console.error(sourceErrorOrInfo);
     }
 
-    console.error(errorKey, {
-      code: SwapKitError.ErrorCode[errorKey],
-      message: `${errorKey}${isErrorString ? "" : `: ${JSON.stringify(errorOrErrorKey.info)}`}`,
-    });
+    console.error(errorKey, { code: SwapKitError.ErrorCode[errorKey], message });
 
+    super(errorKey);
     Object.setPrototypeOf(this, SwapKitError.prototype);
   }
 }
