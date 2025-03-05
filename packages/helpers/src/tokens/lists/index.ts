@@ -1,3 +1,4 @@
+export { list as CamelotV3List } from "./camelot_v3";
 export { list as CaviarV1List } from "./caviar_v1";
 export { list as ChainflipList } from "./chainflip";
 export { list as JupiterList } from "./jupiter";

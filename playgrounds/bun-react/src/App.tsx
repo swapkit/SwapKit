@@ -1,4 +1,4 @@
-import "./index.css";
+import "../styles/index.css";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +12,7 @@ function Content() {
   const connectSwapKit = useCallback(async () => {
     const skClient = await connect({
       walletOption: WalletOption.CTRL,
-      chains: [Chain.Cosmos, Chain.Bitcoin],
+      chains: [Chain.Cosmos, Chain.Ethereum],
     });
 
     console.info(skClient.getAllWallets());
@@ -32,6 +32,8 @@ function Content() {
 
   return (
     <div className="container mx-auto p-8 text-center relative z-10">
+      <a href="/widget">Widget</a>
+
       <Card className="bg-card/50 backdrop-blur-sm border-muted">
         <CardContent className="pt-6">
           {wallets?.[0]?.walletType}

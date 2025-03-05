@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.tsx",
-  "module": "src/index.tsx",
+  "main": "src/server.tsx",
+  "module": "src/server.tsx",
   "scripts": {
     "clean": "rm -rf dist node_modules",
-    "dev": "bun --hot src/index.tsx",
-    "start": "NODE_ENV=production bun src/index.tsx",
+    "dev": "bun --hot src/server.tsx",
+    "start": "NODE_ENV=production bun src/server.tsx",
     "build-playground": "bun run build.ts"
   },
   "dependencies": {

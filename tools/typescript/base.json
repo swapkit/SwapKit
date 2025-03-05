@@ -6,8 +6,6 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "baseUrl": "./",
-    "declaration": true,
-    "declarationMap": true,
     "disableSizeLimit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

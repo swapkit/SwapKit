@@ -9,6 +9,7 @@ import {
   isGasAsset,
 } from "../utils/asset";
 import { warnOnce } from "../utils/others";
+import { type TokenListName, loadTokenLists } from "../utils/tokens";
 import { validateIdentifier } from "../utils/validators";
 
 import type { NumberPrimitives } from "./bigIntArithmetics";
@@ -167,26 +168,19 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
     return assetValue as ConditionalAssetValueReturn<T>;
   }
 
-  static async loadStaticAssets() {
-    try {
-      await import("@swapkit/helpers/tokens").then(({ tokenLists }) => {
-        for (const { tokens } of Object.values(tokenLists)) {
-          for (const { identifier, chain, ...rest } of tokens) {
-            staticTokensMap.set(
-              chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames),
-              {
-                identifier,
-                decimal: "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain],
-              },
-            );
-          }
-        }
-      });
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
+  static async loadStaticAssets(listNames?: TokenListName[]) {
+    const lists = await loadTokenLists(listNames);
+
+    for (const { tokens } of Object.values(lists)) {
+      for (const { identifier, chain, ...rest } of tokens) {
+        const tokenKey = chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames);
+        const tokenDecimal = "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain];
+
+        staticTokensMap.set(tokenKey, { identifier, decimal: tokenDecimal });
+      }
     }
+
+    return true;
   }
 }
 
