@@ -663,7 +663,7 @@ const QuoteResponseRouteLegItem = object({
   buyAmountMaxSlippage: string({
     description: "Buy amount max slippage",
   }),
-  fees: optional(FeesSchema), // TODO remove optionality
+  fees: optional(FeesSchema),
 });
 
 const QuoteResponseRouteItem = object({
@@ -712,7 +712,7 @@ const QuoteResponseRouteItem = object({
   fees: FeesSchema,
   txType: optional(nativeEnum(RouteQuoteTxType)),
   tx: optional(union([EVMTransactionSchema, CosmosTransactionSchema, string()])),
-  estimatedTime: optional(EstimatedTimeSchema), // TODO remove optionality
+  estimatedTime: optional(EstimatedTimeSchema),
   totalSlippageBps: number({
     description: "Total slippage in bps",
   }),

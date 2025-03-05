@@ -47,9 +47,9 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
     }: { walletOption: WalletOption; chains: SKWalletsSupportedChains[WalletOption] }) => {
       const { client, connectMethod } = await getSkClient({ walletOption, pluginNames });
 
-      // @ts-ignore TODO: fix
+      // @ts-ignore
       await client[connectMethod as keyof typeof client](chains);
-      // @ts-ignore TODO: fix
+      // @ts-ignore
       setClient(client);
       return client;
     },
@@ -73,7 +73,7 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
 
   const contextValue = useMemo(() => ({ getClient, connect }), [connect, getClient]);
 
-  // @ts-ignore TODO: fix
+  // @ts-ignore
   return <SwapKitContext.Provider value={contextValue}>{children}</SwapKitContext.Provider>;
 }
 

@@ -3,7 +3,7 @@ import { Chain, FeeOption } from "@swapkit/helpers";
 const pid = typeof process !== "undefined" && process.pid ? process.pid.toString(36) : "";
 
 export async function getUtxoNetwork() {
-  // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+  // @ts-ignore
   const { coininfo } = await import("coininfo");
   const { networks } = await import("bitcoinjs-lib");
 

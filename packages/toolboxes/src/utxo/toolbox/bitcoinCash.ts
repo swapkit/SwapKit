@@ -69,7 +69,7 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
     Transaction,
     TransactionBuilder,
     address: bchAddress,
-    // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+    // @ts-ignore
   } = await import("@psf/bitcoincashjs-lib");
   if (!validateAddress(recipient)) throw new Error("Invalid address");
   const utxos = await getUtxoApi(chain).scanUTXOs({
@@ -227,7 +227,7 @@ async function createKeysForPath({
   const { ECPairFactory } = await import("ecpair");
   const secp256k1 = await import("@bitcoinerlab/secp256k1");
   const { mnemonicToSeedSync } = await import("@scure/bip39");
-  // @ts-ignore TODO: check why wallets doesn't see modules included in toolbox
+  // @ts-ignore
   const { HDNode } = await import("@psf/bitcoincashjs-lib");
   const getNetwork = await getUtxoNetwork();
 
@@ -240,10 +240,6 @@ async function createKeysForPath({
 
   const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
   const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
-  // TODO: Figure out same pattern as in BTC
-  // const testWif = keyPair.toWIF();
-  // const k = ECPairFactory(secp256k1).fromWIF(testWif, network);
-  // const a = payments.p2pkh({ pubkey: k.publicKey, network });
 
   return keyPair;
 }

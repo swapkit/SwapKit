@@ -62,15 +62,14 @@ export function buildTx(chain: UTXOChain) {
     if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
 
     for (const utxo of inputs) {
-      psbt.addInput({
-        hash: utxo.hash,
-        index: utxo.index,
-        ...(!!utxo.witnessUtxo &&
-          !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo }),
-        ...(nonSegwitChains.includes(chain) && {
-          nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
-        }),
-      });
+      const witnessInfo = !!utxo.witnessUtxo &&
+        !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo };
+
+      const nonWitnessInfo = nonSegwitChains.includes(chain) && {
+        nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
+      };
+
+      psbt.addInput({ hash: utxo.hash, index: utxo.index, ...witnessInfo, ...nonWitnessInfo });
     }
 
     for (const output of outputs) {

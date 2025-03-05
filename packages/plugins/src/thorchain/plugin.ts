@@ -172,7 +172,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
         if (!abi) {
           const wallet = getWallet(chain as PluginChain);
           const shouldDeposit = pluginChain === chain && recipient === "";
-          // TODO: Ask @Towan - that's the same action? :)
+          // @Towan: Is that the same action? :)
           return shouldDeposit ? wallet.deposit(params) : wallet.transfer(params);
         }
 

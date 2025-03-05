@@ -7,160 +7,148 @@ import type {
   THORNameDetails,
 } from "./types";
 
-// TODO: question: Move to SKConfig under midgardUrls
-// also - shouldn't that be named `isThorchain`?
-// As we default to TC and this is the only place that checks for opposite
-function getMidgardBaseUrl(isMayachain = false) {
-  return isMayachain ? "https://midgard.mayachain.info" : "https://midgard.ninerealms.com";
+function getMidgardBaseUrl(isThorchain = true) {
+  return isThorchain ? "https://midgard.ninerealms.com" : "https://midgard.mayachain.info";
 }
 
-function getNameServiceBaseUrl(isMayachain = false) {
-  return isMayachain
-    ? `${getMidgardBaseUrl(isMayachain)}/v2/mayaname`
-    : `${getMidgardBaseUrl(isMayachain)}/v2/thorname`;
+function getNameServiceBaseUrl(isThorchain = true) {
+  const baseUrl = getMidgardBaseUrl(isThorchain);
+  return isThorchain ? `${baseUrl}/v2/thorname` : `${baseUrl}/v2/mayaname`;
 }
 
-export function getBorrowerDetailRaw(address: string, isMayachain = false) {
-  return RequestClient.get<BorrowerDetails>(
-    `${getMidgardBaseUrl(isMayachain)}/v2/borrower/${address}`,
-  );
+function getBorrowerDetailRaw(baseUrl: string) {
+  return function getBorrowerDetail(address: string) {
+    return RequestClient.get<BorrowerDetails>(`${baseUrl}/v2/borrower/${address}`);
+  };
 }
 
-export function getSaverDetailRaw(address: string, isMayachain = false) {
-  return RequestClient.get<SaverDetails>(`${getMidgardBaseUrl(isMayachain)}/v2/saver/${address}`);
+function getSaverDetailRaw(baseUrl: string) {
+  return function getSaverDetail(address: string) {
+    return RequestClient.get<SaverDetails>(`${baseUrl}/v2/saver/${address}`);
+  };
 }
 
-export function getLiquidityPositionRaw<T extends boolean = false>(
-  address: string,
-  isMayachain?: T,
-) {
-  return RequestClient.get<T extends true ? MemberDetailsMayachain : MemberDetailsThorchain>(
-    `${getMidgardBaseUrl(isMayachain)}/v2/member/${address}`,
-  );
+function getLiquidityPositionRaw<Chain extends Chain.THORChain | Chain.Maya>(baseUrl: string) {
+  return function getLiquidityPosition(
+    address: string,
+  ): Promise<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain> {
+    return RequestClient.get<
+      Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain
+    >(`${baseUrl}/v2/member/${address}`);
+  };
 }
 
-export function getNameDetails(name: string, isMayachain = false) {
-  return RequestClient.get<THORNameDetails>(`${getNameServiceBaseUrl(isMayachain)}/lookup/${name}`);
+function getNameDetails(baseUrl: string) {
+  return function getNameDetails(name: string) {
+    return RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
+  };
 }
 
-export function getNamesByAddress(address: string, isMayachain = false) {
-  return RequestClient.get<THORNameDetails>(
-    `${getNameServiceBaseUrl(isMayachain)}/rlookup/${address}`,
-  );
+function getNamesByAddress(baseUrl: string) {
+  return function getNamesByAddress(address: string) {
+    return RequestClient.get<THORNameDetails>(`${baseUrl}/rlookup/${address}`);
+  };
 }
 
-export function getNamesByOwner(address: string, isMayachain = false) {
-  return RequestClient.get<THORNameDetails>(
-    `${getNameServiceBaseUrl(isMayachain)}/owner/${address}`,
-  );
+function getNamesByOwner(baseUrl: string) {
+  return function getNamesByOwner(address: string) {
+    return RequestClient.get<THORNameDetails>(`${baseUrl}/owner/${address}`);
+  };
 }
 
-export async function getBorrowerDetail(address: string, isMayachain = false) {
-  const rawBorrowerDetail = await getBorrowerDetailRaw(address, isMayachain);
+function getBorrowerDetail(borrowerDetailGetter: ReturnType<typeof getBorrowerDetailRaw>) {
+  return async function getBorrowerDetail(address: string) {
+    const rawBorrowerDetail = await borrowerDetailGetter(address);
 
-  return rawBorrowerDetail.pools.map((p) => ({
-    collateral_deposited: AssetValue.from({
-      asset: p.collateral_asset,
-      value: p.collateral_deposited,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    collateral_withdrawn: AssetValue.from({
-      asset: p.collateral_asset,
-      value: p.collateral_withdrawn,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    debt_issued_tor: SwapKitNumber.fromBigInt(BigInt(p.debt_issued_tor), BaseDecimal.THOR),
-    debt_repaid_tor: SwapKitNumber.fromBigInt(BigInt(p.debt_repaid_tor), BaseDecimal.THOR),
-    last_open_loan_timestamp: p.last_open_loan_timestamp,
-    last_repay_loan_timestamp: p.last_repay_loan_timestamp,
-    target_assets: p.target_assets.map((asset) => AssetValue.from({ asset })),
-  }));
+    return rawBorrowerDetail.pools.map((p) => ({
+      collateral_deposited: AssetValue.from({
+        asset: p.collateral_asset,
+        value: p.collateral_deposited,
+        fromBaseDecimal: BaseDecimal.THOR,
+      }),
+      collateral_withdrawn: AssetValue.from({
+        asset: p.collateral_asset,
+        value: p.collateral_withdrawn,
+        fromBaseDecimal: BaseDecimal.THOR,
+      }),
+      debt_issued_tor: SwapKitNumber.fromBigInt(BigInt(p.debt_issued_tor), BaseDecimal.THOR),
+      debt_repaid_tor: SwapKitNumber.fromBigInt(BigInt(p.debt_repaid_tor), BaseDecimal.THOR),
+      last_open_loan_timestamp: p.last_open_loan_timestamp,
+      last_repay_loan_timestamp: p.last_repay_loan_timestamp,
+      target_assets: p.target_assets.map((asset) => AssetValue.from({ asset })),
+    }));
+  };
 }
 
-export async function getSaverDetail(address: string, isMayachain = false) {
-  const rawSaverPositions = await getSaverDetailRaw(address, isMayachain);
-
-  return rawSaverPositions.pools.map((p) => ({
-    assetRegisteredAddress: p.assetAddress,
-    assetAdded: AssetValue.from({
-      asset: p.pool,
-      value: p.assetAdded,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    assetDeposit: AssetValue.from({
-      asset: p.pool,
-      value: p.assetDeposit,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    assetRedeem: AssetValue.from({
-      asset: p.pool,
-      value: p.assetRedeem,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    assetWithdrawn: AssetValue.from({
-      asset: p.pool,
-      value: p.assetWithdrawn,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    dateLastAdded: p.dateLastAdded,
-    dateFirstAdded: p.dateFirstAdded,
-  }));
+function getPoolAsset({ asset, value }: { asset: string; value: string }) {
+  return AssetValue.from({ asset, value, fromBaseDecimal: BaseDecimal.THOR });
 }
 
-export async function getLiquidityPosition(address: string, isMayachain = false) {
-  const rawLiquidityPositions = await getLiquidityPositionRaw(address, isMayachain);
+function getSaverDetail(saverDetailGetter: ReturnType<typeof getSaverDetailRaw>) {
+  return async function getSaverDetail(address: string) {
+    const rawSaverPositions = await saverDetailGetter(address);
 
-  return rawLiquidityPositions.pools.map((p) => ({
-    assetRegisteredAddress: p.assetAddress,
-    asset: AssetValue.from({
-      asset: p.pool,
-      value: p.assetAdded,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    assetPending: AssetValue.from({
-      asset: p.pool,
-      value: p.assetPending,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    assetWithdrawn: AssetValue.from({
-      asset: p.pool,
-      value: p.assetWithdrawn,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    [`${isMayachain ? "cacao" : "rune"}RegisteredAddress`]: p.runeAddress,
-    [`${isMayachain ? "cacao" : "rune"}`]: AssetValue.from({
-      asset: "THOR.RUNE",
-      value: p.runeAdded,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    [`${isMayachain ? "cacao" : "rune"}Pending`]: AssetValue.from({
-      asset: "THOR.RUNE",
-      value: p.runePending,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    [`${isMayachain ? "cacao" : "rune"}Withdrawn`]: AssetValue.from({
-      asset: "THOR.RUNE",
-      value: p.runeWithdrawn,
-      fromBaseDecimal: BaseDecimal.THOR,
-    }),
-    poolShare: new SwapKitNumber(p.liquidityUnits).div(p.pool),
-    dateLastAdded: p.dateLastAdded,
-    dateFirstAdded: p.dateFirstAdded,
-  }));
+    return rawSaverPositions.pools.map((p) => ({
+      assetAdded: getPoolAsset({ asset: p.pool, value: p.assetAdded }),
+      assetDeposit: getPoolAsset({ asset: p.pool, value: p.assetDeposit }),
+      assetRedeem: getPoolAsset({ asset: p.pool, value: p.assetRedeem }),
+      assetWithdrawn: getPoolAsset({ asset: p.pool, value: p.assetWithdrawn }),
+      assetRegisteredAddress: p.assetAddress,
+      dateFirstAdded: p.dateFirstAdded,
+      dateLastAdded: p.dateLastAdded,
+    }));
+  };
 }
 
-const getMidgardMethodsForProtocol = (chain: Chain.THORChain | Chain.Maya) => ({
-  getBorrowerDetail: (address: string) => getBorrowerDetail(address, chain === Chain.Maya),
-  getBorrowerDetailRaw: (address: string) => getBorrowerDetailRaw(address, chain === Chain.Maya),
-  getSaversDetail: (address: string) => getSaverDetail(address, chain === Chain.Maya),
-  getSaverDetailRaw: (address: string) => getSaverDetailRaw(address, chain === Chain.Maya),
-  getLiquidityPosition: (address: string) => getLiquidityPosition(address, chain === Chain.Maya),
-  getLiquidityPositionRaw: (address: string) =>
-    getLiquidityPositionRaw(address, chain === Chain.Maya),
-  getNameDetails: (name: string) => getNameDetails(name, chain === Chain.Maya),
-  getNamesByAddress: (address: string) => getNamesByAddress(address, chain === Chain.Maya),
-  getNamesByOwner: (address: string) => getNamesByOwner(address, chain === Chain.Maya),
-});
+function getLiquidityPosition<IsThorchain extends boolean = true>({
+  liquidityPositionGetter,
+  isThorchain,
+}: {
+  liquidityPositionGetter: ReturnType<
+    typeof getLiquidityPositionRaw<IsThorchain extends true ? Chain.THORChain : Chain.Maya>
+  >;
+  isThorchain: IsThorchain;
+}) {
+  return async function getLiquidityPosition(address: string) {
+    const rawLiquidityPositions = await liquidityPositionGetter(address);
+    const fieldPrefix = isThorchain ? "rune" : "cacao";
+
+    return rawLiquidityPositions.pools.map((p) => ({
+      [`${fieldPrefix}Pending`]: getPoolAsset({ asset: "THOR.RUNE", value: p.runePending }),
+      [`${fieldPrefix}RegisteredAddress`]: p.runeAddress,
+      [`${fieldPrefix}Withdrawn`]: getPoolAsset({ asset: "THOR.RUNE", value: p.runeWithdrawn }),
+      [fieldPrefix]: getPoolAsset({ asset: "THOR.RUNE", value: p.runeAdded }),
+      asset: getPoolAsset({ asset: p.pool, value: p.assetAdded }),
+      assetPending: getPoolAsset({ asset: p.pool, value: p.assetPending }),
+      assetRegisteredAddress: p.assetAddress,
+      assetWithdrawn: getPoolAsset({ asset: p.pool, value: p.assetWithdrawn }),
+      dateFirstAdded: p.dateFirstAdded,
+      dateLastAdded: p.dateLastAdded,
+      poolShare: new SwapKitNumber(p.liquidityUnits).div(p.pool),
+    }));
+  };
+}
+
+function getMidgardMethodsForProtocol<T extends Chain.THORChain | Chain.Maya>(chain: T) {
+  const isThorchain = chain === Chain.THORChain;
+  const midgardBaseUrl = getMidgardBaseUrl(isThorchain);
+  const nameServiceBaseUrl = getNameServiceBaseUrl(isThorchain);
+  const liquidityPositionGetter = getLiquidityPositionRaw<T>(midgardBaseUrl);
+  const borrowerDetailGetter = getBorrowerDetailRaw(midgardBaseUrl);
+  const saverDetailGetter = getSaverDetailRaw(midgardBaseUrl);
+
+  return {
+    getLiquidityPositionRaw: liquidityPositionGetter,
+    getBorrowerDetailRaw: borrowerDetailGetter,
+    getSaverDetailRaw: saverDetailGetter,
+    getBorrowerDetail: getBorrowerDetail(borrowerDetailGetter),
+    getSaversDetail: getSaverDetail(saverDetailGetter),
+    getNameDetails: getNameDetails(nameServiceBaseUrl),
+    getNamesByAddress: getNamesByAddress(nameServiceBaseUrl),
+    getNamesByOwner: getNamesByOwner(nameServiceBaseUrl),
+    getLiquidityPosition: getLiquidityPosition({ liquidityPositionGetter, isThorchain }),
+  };
+}
 
 export const thorchainMidgard = getMidgardMethodsForProtocol(Chain.THORChain);
 export const mayachainMidgard = getMidgardMethodsForProtocol(Chain.Maya);

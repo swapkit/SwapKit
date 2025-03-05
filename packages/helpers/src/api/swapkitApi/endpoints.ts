@@ -172,7 +172,6 @@ const CHAINABLE_PROVIDERS = [
   ProviderName.UNISWAP_V3,
 ];
 
-// TODO update this once the trading pairs are supported by BE api
 export async function getTokenTradingPairs(providers: ProviderName[]) {
   const tradingPairs = new Map<
     string,

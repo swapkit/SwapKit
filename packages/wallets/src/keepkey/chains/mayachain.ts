@@ -76,18 +76,12 @@ export const mayachainWalletMethods = async ({
       sequence,
     );
 
-    const signedTx = isTransfer
-      ? await sdk.mayachain.mayachainSignAminoTransfer({
-          // TODO can we ignore this ?
-          // @ts-expect-error readonly cant be assigned to writable
-          signDoc,
-          signerAddress: from,
-        })
-      : await sdk.mayachain.mayachainSignAminoDeposit({
-          // @ts-expect-error
-          signDoc,
-          signerAddress: from,
-        });
+    const sdkMethod = isTransfer
+      ? sdk.mayachain.mayachainSignAminoTransfer
+      : sdk.mayachain.mayachainSignAminoDeposit;
+
+    // @ts-expect-error TC
+    const signedTx = await sdkMethod({ signDoc, signerAddress: from });
     const decodedBytes = atob(signedTx.serialized);
     return new Uint8Array(decodedBytes.length).map((_, i) => decodedBytes.charCodeAt(i));
   };

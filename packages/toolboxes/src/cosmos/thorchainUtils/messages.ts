@@ -92,9 +92,8 @@ export const buildAminoMsg = ({
   return msg;
 };
 
-// TODO I think the msg typing is wrong it should be not prepared for broadcast
 export const convertToSignable = async (
-  msg: DirectMsgDepositForBroadcast | DirectMsgSendForBroadcast | MsgSend | MsgDeposit,
+  msg: MsgSend | MsgDeposit,
   chain: Chain.THORChain | Chain.Maya,
 ) => {
   const aminoTypes = await createDefaultAminoTypes(chain);

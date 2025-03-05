@@ -16,6 +16,11 @@
   "author": "swapkit-oss",
   "description": "SwapKit - UI",
   "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./src/index.ts"
+    },
     "./react": {
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
