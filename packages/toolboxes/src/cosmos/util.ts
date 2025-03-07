@@ -6,7 +6,6 @@ import {
   ChainId,
   type CosmosChain,
   SKConfig,
-  defaultRequestHeaders,
   getGasAsset,
 } from "@swapkit/helpers";
 
@@ -124,7 +123,7 @@ export const getAssetFromDenom = (denom: string, amount: string) => {
 export async function createStargateClient(url: string) {
   const { StargateClient } = await import("@cosmjs/stargate");
 
-  return StargateClient.connect({ url, headers: defaultRequestHeaders });
+  return StargateClient.connect(url);
 }
 
 export async function createSigningStargateClient(
@@ -136,7 +135,7 @@ export async function createSigningStargateClient(
   const gasPrice = typeof optionsOrBaseGas === "string" ? optionsOrBaseGas : "0.0003uatom";
   const options = typeof optionsOrBaseGas === "string" ? {} : optionsOrBaseGas;
 
-  return SigningStargateClient.connectWithSigner({ url, headers: defaultRequestHeaders }, signer, {
+  return SigningStargateClient.connectWithSigner(url, signer, {
     gasPrice: GasPrice.fromString(gasPrice),
     ...options,
   });

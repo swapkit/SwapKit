@@ -565,3 +565,16 @@ export const GasResponseSchema = array(
 );
 
 export type GasResponse = z.infer<typeof GasResponseSchema>;
+
+const BalanceResponseSchema = array(
+  object({
+    chain: nativeEnum(Chain),
+    decimal: number(),
+    ticker: string(),
+    symbol: string(),
+    value: string(),
+    identifier: string(),
+  }),
+);
+
+export type BalanceResponse = z.infer<typeof BalanceResponseSchema>;
