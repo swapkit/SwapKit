@@ -48,7 +48,6 @@ const initialState = {
     devApiUrl: "https://dev-api.swapkit.dev",
     isDev: false,
     isStagenet: false,
-    referer: "https://swapkit.dev",
   },
 
   integrations: {
