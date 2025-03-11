@@ -602,7 +602,6 @@ function getCreateTransferTx({
     assetValue,
     memo,
     recipient,
-    feeOptionKey = FeeOption.Fast,
     data,
     from: fromOverride,
     maxFeePerGas,

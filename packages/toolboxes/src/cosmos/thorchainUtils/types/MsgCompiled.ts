@@ -1,5 +1,5 @@
 // @ts-nocheck
-import $protobuf from "protobufjs/minimal";
+import $protobuf from "protobufjs/minimal.js";
 
 // Common aliases
 const $Reader = $protobuf.Reader;
@@ -7,7 +7,8 @@ const $Writer = $protobuf.Writer;
 const $util = $protobuf.util;
 
 // Exported root namespace
-const $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
+
+const $root = ($protobuf.roots.default || ($protobuf.roots.default = {})) as any;
 
 $root.common = (() => {
   /**
@@ -948,7 +949,6 @@ $root.common = (() => {
         if (!$util.isString(message.toAddress)) return "toAddress: string expected";
       if (message.coins != null && message.hasOwnProperty("coins")) {
         if (!Array.isArray(message.coins)) return "coins: array expected";
-
         for (let i = 0; i < message.coins.length; ++i) {
           const error = $root.common.Coin.verify(message.coins[i]);
           if (error) return "coins." + error;
@@ -956,7 +956,6 @@ $root.common = (() => {
       }
       if (message.gas != null && message.hasOwnProperty("gas")) {
         if (!Array.isArray(message.gas)) return "gas: array expected";
-
         for (let j = 0; j < message.gas.length; ++j) {
           const error = $root.common.Coin.verify(message.gas[j]);
           if (error) return "gas." + error;
@@ -1207,7 +1206,6 @@ $root.common = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (message.coins != null && message.hasOwnProperty("coins")) {
         if (!Array.isArray(message.coins)) return "coins: array expected";
-
         for (let i = 0; i < message.coins.length; ++i) {
           const error = $root.common.Coin.verify(message.coins[i]);
           if (error) return "coins." + error;
@@ -1628,7 +1626,6 @@ $root.types = (() => {
       if (typeof message !== "object" || message === null) return "object expected";
       if (message.coins != null && message.hasOwnProperty("coins")) {
         if (!Array.isArray(message.coins)) return "coins: array expected";
-
         for (let i = 0; i < message.coins.length; ++i) {
           const error = $root.common.Coin.verify(message.coins[i]);
           if (error) return "coins." + error;
@@ -1908,7 +1905,6 @@ $root.types = (() => {
           return "toAddress: buffer expected";
       if (message.amount != null && message.hasOwnProperty("amount")) {
         if (!Array.isArray(message.amount)) return "amount: array expected";
-
         for (let i = 0; i < message.amount.length; ++i) {
           const error = $root.cosmos.base.v1beta1.Coin.verify(message.amount[i]);
           if (error) return "amount." + error;

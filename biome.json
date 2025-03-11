@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": ["node_modules", "dist", "coverage", "types/proto/*"],
+    "ignore": ["node_modules", "dist", "coverage", "MsgCompiled.ts"],
     "maxSize": 5242880
   },
   "organizeImports": {

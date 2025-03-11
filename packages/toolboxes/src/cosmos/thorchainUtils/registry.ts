@@ -1,6 +1,6 @@
 import { Chain } from "@swapkit/helpers";
-import * as types from "../thorchainUtils/types/proto/MsgCompiled";
 import { base64ToBech32, bech32ToBase64 } from "./addressFormat";
+import * as types from "./types/MsgCompiled";
 
 export async function createDefaultRegistry() {
   const { Registry } = await import("@cosmjs/proto-signing");
