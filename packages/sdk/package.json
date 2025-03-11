@@ -7,10 +7,16 @@
     "@swapkit/wallets": "workspace:*"
   },
   "description": "SwapKit - SDK",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./src/index.ts"
+    }
+  },
   "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
-  "main": "./dist/index.js",
   "name": "@swapkit/sdk",
   "repository": {
     "directory": "packages/sdk",
@@ -24,6 +30,5 @@
     "type-check": "tsc --noEmit"
   },
   "type": "module",
-  "types": "./src/index.ts",
   "version": "2.2.17"
 }

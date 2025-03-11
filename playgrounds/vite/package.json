@@ -3,6 +3,7 @@
     "@esbuild-plugins/node-globals-polyfill": "0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "0.2.2",
     "@swapkit/sdk": "workspace:*",
+    "@swapkit/ui": "workspace:*",
     "base64-js": "1.5.1",
     "buffer": "6.0.3",
     "crypto-browserify": "3.12.1",

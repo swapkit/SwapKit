@@ -1,7 +1,17 @@
 import type { BuildArtifact, BuildConfig } from "bun";
 
-export async function buildPackage({ plugins, entrypoints, ...rest }: BuildConfig) {
-  const { name: pkgName } = await Bun.file("package.json").json();
+export async function buildPackage({
+  plugins,
+  entrypoints: packageEntrypoints,
+  ...rest
+}: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
+  const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
+    exports: Record<string, { types: string }>;
+    name: string;
+  };
+
+  const entrypoints = packageEntrypoints || Object.entries(exports).map(([, { types }]) => types);
+
   const buildOptions: BuildConfig = {
     entrypoints,
     outdir: "./dist",

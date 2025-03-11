@@ -1,5 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import { Chain, EXPLORER_URLS, NODE_URLS, RPC_URLS } from "../types";
+import { Chain, EXPLORER_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
 
 export type SKConfigIntegrations = {
   chainflip?: { useSDKBroker?: boolean; brokerUrl: string };
@@ -29,6 +29,7 @@ const initialState = {
   // Maybe move rpc/toolbox apis to helpers?
   apis: {} as { [key in Chain]: any },
   chains: Object.values(Chain),
+  wallets: Object.values(WalletOption),
   explorerUrls: EXPLORER_URLS,
   nodeUrls: NODE_URLS,
   rpcUrls: RPC_URLS,
@@ -73,6 +74,7 @@ export type SKConfigState = {
   integrations?: Partial<SKConfigIntegrations>;
   nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
+  wallets?: SKState["wallets"];
 };
 
 type SwapKitConfigStore = SKState & {
@@ -102,12 +104,13 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   setConfig: (config) =>
     set((s) => ({
       apiKeys: { ...s.apiKeys, ...config.apiKeys },
-      chains: s.chains.concat(config.chains || []),
       envs: { ...s.envs, ...config.envs },
       explorerUrls: { ...s.explorerUrls, ...config.explorerUrls },
       integrations: { ...s.integrations, ...config.integrations },
       nodeUrls: { ...s.nodeUrls, ...config.nodeUrls },
       rpcUrls: { ...s.rpcUrls, ...config.rpcUrls },
+      chains: s.chains.concat(config.chains || []),
+      wallets: s.wallets.concat(config.wallets || []),
     })),
 }));
 

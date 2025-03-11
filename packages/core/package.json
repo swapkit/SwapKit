@@ -5,10 +5,16 @@
     "@swapkit/toolboxes": "workspace:*"
   },
   "description": "SwapKit - Core",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./src/index.ts"
+    }
+  },
   "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
-  "main": "./dist/index.js",
   "name": "@swapkit/core",
   "repository": {
     "directory": "packages/core",
@@ -24,6 +30,5 @@
     "type-check": "tsc --noEmit"
   },
   "type": "module",
-  "types": "./src/index.ts",
   "version": "3.2.20"
 }

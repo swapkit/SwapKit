@@ -1,4 +1,4 @@
-import { SKConfig, type SwapKit, type WalletOption } from "@swapkit/core";
+import { SKConfig, type SwapKit, type WalletOption, warnOnce } from "@swapkit/core";
 import type { PluginName } from "@swapkit/plugins";
 import type { SKWalletsSupportedChains } from "@swapkit/wallets";
 import {
@@ -57,9 +57,7 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
   );
 
   const getClient = useCallback(() => {
-    if (!client) {
-      console.error("Client not found. Please run connect first.");
-    }
+    warnOnce(!client, "Client not found. Please run connect first.");
 
     return client;
   }, [client]);

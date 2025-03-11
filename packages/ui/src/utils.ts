@@ -35,11 +35,26 @@ export async function loadPlugins<P extends PluginName[]>(pluginNames: P) {
 
 async function loadPlugin<P extends PluginName>(pluginName: P) {
   const plugin = await match(pluginName as PluginName)
-    .with("chainflip", async () => (await import("@swapkit/plugins/chainflip")).ChainflipPlugin)
-    .with("thorchain", async () => (await import("@swapkit/plugins/thorchain")).ThorchainPlugin)
-    .with("kado", async () => (await import("@swapkit/plugins/kado")).KadoPlugin)
-    .with("radix", async () => (await import("@swapkit/plugins/radix")).RadixPlugin)
-    .with("evm", async () => (await import("@swapkit/plugins/evm")).EVMPlugin)
+    .with("chainflip", async () => {
+      const { ChainflipPlugin } = await import("@swapkit/plugins/chainflip");
+      return ChainflipPlugin;
+    })
+    .with("thorchain", async () => {
+      const { ThorchainPlugin } = await import("@swapkit/plugins/thorchain");
+      return ThorchainPlugin;
+    })
+    .with("kado", async () => {
+      const { KadoPlugin } = await import("@swapkit/plugins/kado");
+      return KadoPlugin;
+    })
+    .with("radix", async () => {
+      const { RadixPlugin } = await import("@swapkit/plugins/radix");
+      return RadixPlugin;
+    })
+    .with("evm", async () => {
+      const { EVMPlugin } = await import("@swapkit/plugins/evm");
+      return EVMPlugin;
+    })
     .exhaustive();
 
   return plugin as unknown as SKPlugins[P];

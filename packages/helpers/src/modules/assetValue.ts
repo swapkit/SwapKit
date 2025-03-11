@@ -26,8 +26,7 @@ type ConditionalAssetValueReturn<T extends { asyncTokenLookup?: boolean }> =
   T["asyncTokenLookup"] extends true ? Promise<AssetValue> : AssetValue;
 
 type AssetIdentifier =
-  | { asset: CommonAssetString }
-  | { asset: TokenNames }
+  | { asset: CommonAssetString | TokenNames }
   | { asset: string }
   | { chain: Chain };
 
@@ -155,13 +154,15 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       identifier: unsafeIdentifier,
     };
 
+    const isSynthOrTrade = isSynthetic || isTradeAsset;
+
     const adjustedValue = fromBaseDecimal
       ? safeValue(BigInt(parsedValue), fromBaseDecimal)
       : safeValue(parsedValue, decimal);
 
     const assetValue = asyncTokenLookup
       ? createAssetValue(identifier, fromBaseDecimal ? adjustedValue : parsedValue)
-      : isSynthetic || isTradeAsset
+      : isSynthOrTrade
         ? createSyntheticAssetValue(identifier, adjustedValue)
         : new AssetValue({ tax, decimal, identifier, value: adjustedValue });
 
@@ -173,7 +174,7 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
 
     for (const { tokens } of Object.values(lists)) {
       for (const { identifier, chain, ...rest } of tokens) {
-        const tokenKey = chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames);
+        const tokenKey = (chain === "SOL" ? identifier : identifier.toUpperCase()) as TokenNames;
         const tokenDecimal = "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain];
 
         staticTokensMap.set(tokenKey, { identifier, decimal: tokenDecimal });

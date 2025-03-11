@@ -20,9 +20,26 @@ export type TokenLists = {
 
 export type TokenListName = keyof TokenLists;
 
-export async function loadTokenLists(pickedLists?: TokenListName[]) {
-  const listsToLoad = await getListToLoad(pickedLists);
-  const lists = {} as { [key in (typeof listsToLoad)[number]]: TokenLists[key] };
+const defaultLists = [
+  "camelot",
+  "caviar",
+  "chainflip",
+  "jupiter",
+  "mayachain",
+  "oneinch",
+  "openocean",
+  "pancakeswap",
+  "pangolin",
+  "sushiswap",
+  "thorchain",
+  "traderjoe",
+  "uniswap",
+  "uniswapv3",
+] as TokenListName[];
+
+export async function loadTokenLists<T extends TokenListName[]>(pickedLists?: T) {
+  const listsToLoad = pickedLists || defaultLists;
+  const lists = {} as { [key in T[number]]: TokenLists[key] };
 
   for (const list of listsToLoad) {
     const tokenList = await loadTokenList(list);
@@ -34,18 +51,8 @@ export async function loadTokenLists(pickedLists?: TokenListName[]) {
   return lists;
 }
 
-async function getListToLoad(listNames?: TokenListName[]) {
-  if (listNames) {
-    return listNames;
-  }
-
-  const { tokenLists } = await import("../tokens");
-
-  return Object.keys(tokenLists) as TokenListName[];
-}
-
 async function loadTokenList<T extends TokenListName>(listName: T): Promise<TokenLists[T]> {
-  const list = await match(listName as TokenListName)
+  const { list } = await match(listName as TokenListName)
     .with("camelot", () => import("../tokens/lists/camelot_v3"))
     .with("caviar", () => import("../tokens/lists/caviar_v1"))
     .with("chainflip", () => import("../tokens/lists/chainflip"))

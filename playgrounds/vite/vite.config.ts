@@ -51,6 +51,7 @@ export default defineConfig({
       "@swapkit/sdk": resolve("../../packages/sdk/src"),
       "@swapkit/toolboxes": resolve("../../packages/toolboxes/src"),
       "@swapkit/wallets": resolve("../../packages/wallets/src"),
+      "@swapkit/ui": resolve("../../packages/ui/src"),
 
       crypto: "crypto-browserify",
       stream: "stream-browserify",

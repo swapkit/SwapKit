@@ -1,49 +1,53 @@
-import { useState } from "react";
-import type { ChangeEvent } from "react";
-
-type Asset = {
-  symbol: string;
-  name: string;
-  chain: string;
-  ticker: string;
-  decimals: number;
-};
+import { AssetValue, SKConfig } from "@swapkit/helpers";
+import { type ChangeEvent, useMemo, useState } from "react";
 
 type AssetInputProps = {
-  value: string;
-  assets: Asset[];
-  selectedAsset: Asset | null;
+  predefinedAssets?: AssetValue[];
+  selectedAsset?: AssetValue;
   onValueChange: (value: string) => void;
-  onAssetChange: (asset: Asset) => void;
+  onAssetChange: (asset: AssetValue) => void;
   placeholder?: string;
   disabled?: boolean;
   label?: string;
 };
 
 export const AssetInput = ({
-  value,
-  assets,
-  selectedAsset,
-  onValueChange,
-  onAssetChange,
-  placeholder = "0.0",
   disabled = false,
   label,
+  onAssetChange,
+  onValueChange,
+  placeholder = "0.0",
+  predefinedAssets,
+  selectedAsset,
 }: AssetInputProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const defaultPredefinedAssets = useMemo(() => {
+    const chainAssets = SKConfig.get("chains")?.map((chain) => AssetValue.from({ chain }));
+    const stableAssets = [
+      "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "ETH.USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    ].map((asset) => AssetValue.from({ asset }));
+
+    return [...stableAssets, ...chainAssets];
+  }, []);
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // Only allow numbers and decimals
     const newValue = e.target.value.replace(/[^0-9.]/g, "");
     onValueChange(newValue);
   };
 
-  const handleAssetSelect = (asset: Asset) => {
+  const handleAssetSelect = (asset: AssetValue) => {
     onAssetChange(asset);
     setIsDropdownOpen(false);
   };
 
   const inputId = label ? `asset-input-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined;
+
+  const assets = useMemo(
+    () => predefinedAssets || defaultPredefinedAssets,
+    [predefinedAssets, defaultPredefinedAssets],
+  );
 
   return (
     <div className="asset-input-container">
@@ -52,7 +56,7 @@ export const AssetInput = ({
         <input
           id={inputId}
           type="text"
-          value={value}
+          value={selectedAsset?.getValue("string")}
           onChange={handleInputChange}
           placeholder={placeholder}
           disabled={disabled}
@@ -81,9 +85,8 @@ export const AssetInput = ({
                 className="asset-option"
                 onClick={() => handleAssetSelect(asset)}
               >
-                <span>{asset.name}</span>
                 <span>
-                  {asset.symbol} ({asset.chain})
+                  {asset.ticker} ({asset.chain})
                 </span>
               </button>
             ))}
