@@ -46,6 +46,8 @@ export type SKWallets = {
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
 };
 
+export type SKConnectWallets = SKWallets[keyof SKWallets];
+
 export type SKWalletsSupportedChains = {
   [WalletOption.BITGET]: typeof bitgetWallet.connectBitget.supportedChains;
   [WalletOption.BRAVE]: typeof evmWallet.connectEVMWallet.supportedChains;

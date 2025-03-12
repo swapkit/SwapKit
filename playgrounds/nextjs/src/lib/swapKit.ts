@@ -1,13 +1,8 @@
 "use client";
 
-import type { SwapKit } from "@swapkit/core";
 import type { AssetValue, Chain, EVMChain } from "@swapkit/helpers";
 import { NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
-import type { ChainflipPlugin } from "@swapkit/plugins/chainflip";
-import type { KadoPlugin } from "@swapkit/plugins/kado";
-import type { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
-import type { SKWallets } from "@swapkit/wallets";
-
+import type { createSwapKit } from "@swapkit/sdk";
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 
@@ -17,12 +12,7 @@ type KeystoreFile = {
   chains: Chain[];
 } | null;
 
-const swapKitAtom = atom<ReturnType<
-  typeof SwapKit<
-    typeof ThorchainPlugin & typeof ChainflipPlugin & typeof MayachainPlugin & typeof KadoPlugin,
-    SKWallets[WalletOption]
-  >
-> | null>(null);
+const swapKitAtom = atom<ReturnType<typeof createSwapKit> | null>(null);
 const balanceAtom = atom<AssetValue[]>([]);
 const walletState = atom<{ connected: boolean; type: WalletOption | null }>({
   connected: false,
@@ -32,18 +22,6 @@ const keystoreFileAtom = atom<KeystoreFile>(null);
 const isKeystoreOpenAtom = atom<boolean>(false);
 const isKeystoreDecryptingAtom = atom<boolean>(false);
 
-async function loadWallets() {
-  const { loadWallet } = await import("@swapkit/wallets");
-
-  const walletsToLoad = Object.values(WalletOption).map(loadWallet);
-  const loadedWallets = await Promise.all(walletsToLoad);
-
-  // biome-ignore lint/performance/noAccumulatingSpread: Shouldn't be a problem here ~max 20-30 elements
-  const wallets = loadedWallets.reduce((acc, wallet) => ({ ...acc, ...wallet }), {} as SKWallets);
-
-  return wallets;
-}
-
 export const useSwapKit = () => {
   const [swapKit, setSwapKit] = useAtom(swapKitAtom);
   const [balances, setBalances] = useAtom(balanceAtom);
@@ -51,14 +29,9 @@ export const useSwapKit = () => {
 
   useEffect(() => {
     const loadSwapKit = async () => {
-      const { SwapKit } = await import("@swapkit/core");
-      const { ChainflipPlugin } = await import("@swapkit/plugins/chainflip");
-      const { KadoPlugin } = await import("@swapkit/plugins/kado");
-      const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugins/thorchain");
+      const { createSwapKit } = await import("@swapkit/sdk");
 
-      const wallets = await loadWallets();
-
-      const swapKitClient = SwapKit({
+      const swapKitClient = createSwapKit({
         config: {
           apiKeys: {
             blockchair:
@@ -78,8 +51,6 @@ export const useSwapKit = () => {
             },
           },
         },
-        wallets,
-        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin, ...KadoPlugin },
       });
 
       setSwapKit(swapKitClient);

@@ -13,6 +13,7 @@ import { exodusWallet } from "@swapkit/wallets/exodus";
 import { keepkeyWallet } from "@swapkit/wallets/keepkey";
 import { keepkeyBexWallet } from "@swapkit/wallets/keepkey-bex";
 import { keplrWallet } from "@swapkit/wallets/keplr";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
 import { ledgerWallet } from "@swapkit/wallets/ledger";
 import { okxWallet } from "@swapkit/wallets/okx";
 import { onekeyWallet } from "@swapkit/wallets/onekey";
@@ -39,13 +40,14 @@ export const defaultWallets = {
   ...coinbaseWallet,
   ...ctrlWallet,
   ...evmWallet,
+  ...exodusWallet,
+  ...keepkeyBexWallet,
+  ...keepkeyWallet,
+  ...keplrWallet,
+  ...keystoreWallet,
+  ...ledgerWallet,
   ...okxWallet,
   ...onekeyWallet,
-  ...exodusWallet,
-  ...keepkeyWallet,
-  ...keepkeyBexWallet,
-  ...keplrWallet,
-  ...ledgerWallet,
   ...phantomWallet,
   ...polkadotWallet,
   ...radixWallet,

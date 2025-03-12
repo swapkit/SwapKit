@@ -49,7 +49,7 @@ export enum DEFAULT_COSMOS_METHODS {
   COSMOS_GET_ACCOUNTS = "cosmos_getAccounts",
 }
 
-export enum DEFAULT_COSMOS_EVENTS { }
+export enum DEFAULT_COSMOS_EVENTS {}
 
 /**
  * SOLANA
@@ -59,7 +59,7 @@ export enum DEFAULT_SOLANA_METHODS {
   SOL_SIGN_MESSAGE = "solana_signMessage",
 }
 
-export enum DEFAULT_SOLANA_EVENTS { }
+export enum DEFAULT_SOLANA_EVENTS {}
 
 /**
  * POLKADOT
@@ -69,7 +69,7 @@ export enum DEFAULT_POLKADOT_METHODS {
   POLKADOT_SIGN_MESSAGE = "polkadot_signMessage",
 }
 
-export enum DEFAULT_POLKADOT_EVENTS { }
+export enum DEFAULT_POLKADOT_EVENTS {}
 
 /**
  * NEAR
@@ -82,4 +82,4 @@ export enum DEFAULT_NEAR_METHODS {
   NEAR_SIGN_AND_SEND_TRANSACTIONS = "near_signAndSendTransactions",
 }
 
-export enum DEFAULT_NEAR_EVENTS { }
+export enum DEFAULT_NEAR_EVENTS {}
