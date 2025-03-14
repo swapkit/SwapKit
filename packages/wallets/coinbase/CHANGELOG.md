@@ -1,5 +1,11 @@
 # @swapkit/wallet-coinbase
 
+## 1.3.2
+
+### Patch Changes
+
+- [`c533440`](https://github.com/thorswap/SwapKit/commit/c533440a0338dbbe01f1c4db960bc0620b54d7f2) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes requestAccount for Signer
+
 ## 1.3.1
 
 ### Patch Changes
