@@ -1,8 +1,9 @@
-import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
-import { filterSupportedChains, setRequestClientConfig } from "@swapkit/helpers";
+import { ChainToChainId, filterSupportedChains, setRequestClientConfig } from "@swapkit/helpers";
 import { Chain, type ConnectWalletParams, WalletOption } from "@swapkit/helpers";
 
-import { getWalletForChain } from "./signer.js";
+import { createCoinbaseWalletSDK } from "@coinbase/wallet-sdk";
+import type { CreateCoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/createCoinbaseWalletSDK";
+import { getWalletForChain } from "./signer";
 
 export const COINBASE_SUPPORTED_CHAINS = [
   Chain.Arbitrum,
@@ -19,7 +20,7 @@ function connectCoinbaseWallet({
   apis,
   config: { thorswapApiKey, covalentApiKey, ethplorerApiKey },
   coinbaseWalletSettings,
-}: ConnectWalletParams & { coinbaseWalletSettings?: CoinbaseWalletSDKOptions }) {
+}: ConnectWalletParams & { coinbaseWalletSettings?: CreateCoinbaseWalletSDKOptions }) {
   return async function connectCoinbaseWallet(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
@@ -29,13 +30,22 @@ function connectCoinbaseWallet({
       WalletOption.COINBASE_MOBILE,
     );
 
+    const coinbaseSdk = createCoinbaseWalletSDK({
+      ...coinbaseWalletSettings,
+      appChainIds: supportedChains.map((chain) => Number(ChainToChainId[chain])),
+    });
+
+    //     const oldCoinbaseSdk = new CoinbaseWalletSDK(coinbaseWalletSettings as any);
+
+    // oldCoinbaseSdk.makeWeb3Provider
+
     const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
+        coinbaseSdk,
         apis,
         chain,
         covalentApiKey,
         ethplorerApiKey,
-        coinbaseWalletSettings,
       });
 
       addChain({ ...walletMethods, balance: [], chain, walletType: WalletOption.COINBASE_MOBILE });

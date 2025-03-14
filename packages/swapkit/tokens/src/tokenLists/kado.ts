@@ -67,7 +67,7 @@ export const list = {
     {
       chain: "BTC",
       chainId: "bitcoin",
-      decimals: 18,
+      decimals: 8,
       identifier: "BTC.BTC",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/btc.btc.png",
       ticker: "BTC",
@@ -385,7 +385,7 @@ export const list = {
     {
       chain: "LTC",
       chainId: "litecoin",
-      decimals: 18,
+      decimals: 8,
       identifier: "LTC.LTC",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/ltc.ltc.png",
       ticker: "LTC",

@@ -3,7 +3,7 @@
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*",
-    "@trezor/connect-web": "9.4.0"
+    "@trezor/connect-web": "9.5.1"
   },
   "description": "SwapKit Wallet - Trezor",
   "files": [

@@ -1,63 +1,21 @@
-import { type CoinbaseWalletProvider, CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
-import type { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
-import { Chain, type ChainApis, ChainToRPC, pickEvmApiKey } from "@swapkit/helpers";
+import { Chain, type ChainApis, pickEvmApiKey } from "@swapkit/helpers";
 import type { getToolboxByChain } from "@swapkit/toolbox-evm";
-import { AbstractSigner, type Provider } from "ethers";
 
-class CoinbaseMobileSigner extends AbstractSigner {
-  #coinbaseProvider: CoinbaseWalletProvider;
-
-  constructor(coinbaseProvider: CoinbaseWalletProvider, provider?: Provider) {
-    super(provider);
-    this.#coinbaseProvider = coinbaseProvider;
-  }
-
-  async getAddress() {
-    const accounts = await this.#coinbaseProvider.request<string[]>({
-      method: "eth_requestAccounts",
-    });
-
-    if (!accounts[0]) throw new Error("No Account found");
-
-    return accounts[0];
-  }
-
-  async signTransaction() {
-    return await this.#coinbaseProvider.request<string>({
-      method: "eth_signTransaction",
-    });
-  }
-
-  async signMessage(message: string | Uint8Array) {
-    return await this.#coinbaseProvider.request<string>({
-      method: "personal_sign",
-      params: [message, await this.getAddress()],
-    });
-  }
-
-  signTypedData = () => {
-    throw new Error("this method is not implemented");
-  };
-
-  connect(provider: Provider) {
-    return new CoinbaseMobileSigner(this.#coinbaseProvider, provider);
-  }
-}
+import type { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
+import type { createCoinbaseWalletSDK } from "@coinbase/wallet-sdk/dist/createCoinbaseWalletSDK.js";
 
 export const getWalletForChain = async ({
   chain,
   ethplorerApiKey,
   covalentApiKey,
   apis,
-  coinbaseWalletSettings = {
-    appName: "Developer App",
-  } as CoinbaseWalletSDKOptions,
+  coinbaseSdk,
 }: {
   chain: Chain;
   ethplorerApiKey?: string;
   covalentApiKey?: string;
   apis?: ChainApis;
-  coinbaseWalletSettings?: CoinbaseWalletSDKOptions;
+  coinbaseSdk: ReturnType<typeof createCoinbaseWalletSDK>;
 }): Promise<ReturnType<ReturnType<typeof getToolboxByChain>> & { address: string }> => {
   switch (chain) {
     case Chain.Ethereum:
@@ -66,9 +24,15 @@ export const getWalletForChain = async ({
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
-      const coinbaseWallet = new CoinbaseWalletSDK(coinbaseWalletSettings);
+      const { getToolboxByChain } = await import("@swapkit/toolbox-evm");
+      const { BrowserProvider } = await import("ethers");
 
       const api = apis?.[chain];
+
+      const walletProvider = coinbaseSdk.getProvider() as CoinbaseWalletProvider;
+
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
 
       const apiKey = api
         ? undefined
@@ -78,33 +42,16 @@ export const getWalletForChain = async ({
             ethApiKey: ethplorerApiKey,
           });
 
-      const walletProvider = coinbaseWallet.makeWeb3Provider(ChainToRPC[chain]);
-
-      // TODO fix error
-      if (!walletProvider) throw new Error("No wallet provider");
-
-      const { getToolboxByChain, getProvider } = await import("@swapkit/toolbox-evm");
-
-      const provider = getProvider(chain);
-
-      const signer = new CoinbaseMobileSigner(walletProvider, provider);
-
-      const params = {
-        api,
+      const toolbox = getToolboxByChain(chain)({
         provider,
         signer,
-      };
-
-      const toolbox = getToolboxByChain(chain)({
-        ...params,
         api,
         apiKey,
       });
 
-      return {
-        address: await signer.getAddress(),
-        ...toolbox,
-      };
+      const address = await signer.getAddress();
+
+      return { ...toolbox, address };
     }
 
     default:
