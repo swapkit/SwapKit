@@ -13,9 +13,7 @@ function parseIdentifier(identifier: string) {
   return identifier;
 }
 
-const providers = (
-  await SwapKitApi.getTokenListProvidersV2(false, "4974e4d9-f662-4e6e-a5b6-d44881902dcb")
-).filter(
+const providers = (await SwapKitApi.getTokenListProvidersV2(false, "")).filter(
   (provider) =>
     ![
       ProviderName.CHAINFLIP_STREAMING,
@@ -35,11 +33,7 @@ console.info(
 
 for (const { provider } of providers) {
   try {
-    const tokenList = await SwapKitApi.getTokenList(
-      provider,
-      false,
-      "4974e4d9-f662-4e6e-a5b6-d44881902dcb",
-    );
+    const tokenList = await SwapKitApi.getTokenList(provider, false, "");
     if (!tokenList) continue;
 
     console.info(`✅ ${provider} token list fetched (${tokenList.tokens.length} tokens)`);
