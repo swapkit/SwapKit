@@ -1,5 +1,13 @@
 # @swapkit/plugin-radix
 
+## 1.3.17
+
+### Patch Changes
+
+- Updated dependencies [[`51719d0`](https://github.com/thorswap/SwapKit/commit/51719d0b6d7af91ccf38525958e5d650ab0ba09e)]:
+  - @swapkit/helpers@2.5.1
+  - @swapkit/api@2.4.1
+
 ## 1.3.16
 
 ### Patch Changes

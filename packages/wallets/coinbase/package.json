@@ -27,5 +27,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "1.3.0"
+  "version": "1.3.1"
 }
