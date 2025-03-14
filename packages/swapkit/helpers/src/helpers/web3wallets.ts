@@ -52,6 +52,7 @@ type ProviderRequestParams = {
     | "wallet_switchEthereumChain"
     | "eth_requestAccounts"
     | "eth_sendTransaction"
+    | "eth_sendRawTransaction"
     | "eth_signTransaction";
 };
 

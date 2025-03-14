@@ -420,7 +420,7 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
         getPrice: (body: PriceRequest) => SwapKitApi.getPrice(body, isDev, swapkitApiKey, referer),
         getSwapQuote: (params: QuoteRequest) =>
           SwapKitApi.getSwapQuote(params, isDev, swapkitApiKey, referer),
-        getTokenList: (provider: string) => SwapKitApi.getTokenList(provider),
+        getTokenList: (provider: PluginNameEnum) => SwapKitApi.getTokenList(provider),
         getTokenListProviders: () =>
           SwapKitApi.getTokenListProvidersV2(isDev, swapkitApiKey, referer),
         getTokenTradingPairs: (providers: PluginNameEnum[]) =>

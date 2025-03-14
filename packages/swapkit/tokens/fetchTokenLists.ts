@@ -13,7 +13,7 @@ function parseIdentifier(identifier: string) {
   return identifier;
 }
 
-const providers = (await SwapKitApi.getTokenListProvidersV2(false)).filter(
+const providers = (await SwapKitApi.getTokenListProvidersV2(false, "")).filter(
   (provider) =>
     ![
       ProviderName.CHAINFLIP_STREAMING,
@@ -31,11 +31,9 @@ console.info(
     .join("\n-")}`,
 );
 
-const thorchainChainId = ChainId.THORChain;
-
 for (const { provider } of providers) {
   try {
-    const tokenList = await SwapKitApi.getTokenListV2(provider, true);
+    const tokenList = await SwapKitApi.getTokenList(provider, false, "");
     if (!tokenList) continue;
 
     console.info(`✅ ${provider} token list fetched (${tokenList.tokens.length} tokens)`);
@@ -45,7 +43,7 @@ for (const { provider } of providers) {
         address: token.address,
         chain: parseChain(token.chain),
         // TODO remove after fork
-        chainId: token.chainId === "thorchain-mainnet-v1" ? thorchainChainId : token.chainId,
+        chainId: token.chainId === "thorchain-mainnet-v1" ? ChainId.THORChain : token.chainId,
         decimals: token.decimals,
         identifier: parseIdentifier(token.identifier),
         logoURI: token.logoURI,

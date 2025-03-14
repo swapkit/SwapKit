@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@coinbase/wallet-sdk": "3.7.2",
+    "@coinbase/wallet-sdk": "4.3.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*"
   },
