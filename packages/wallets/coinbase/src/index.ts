@@ -35,10 +35,6 @@ function connectCoinbaseWallet({
       appChainIds: supportedChains.map((chain) => Number(ChainToChainId[chain])),
     });
 
-    //     const oldCoinbaseSdk = new CoinbaseWalletSDK(coinbaseWalletSettings as any);
-
-    // oldCoinbaseSdk.makeWeb3Provider
-
     const promises = supportedChains.map(async (chain) => {
       const walletMethods = await getWalletForChain({
         coinbaseSdk,
