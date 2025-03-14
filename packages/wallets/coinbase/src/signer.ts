@@ -31,6 +31,18 @@ export const getWalletForChain = async ({
 
       const walletProvider = coinbaseSdk.getProvider() as CoinbaseWalletProvider;
 
+      async function getAddress() {
+        const accounts = await walletProvider.request<string[]>({
+          method: "eth_requestAccounts",
+        });
+
+        if (!accounts[0]) throw new Error("No Account found");
+
+        return accounts[0];
+      }
+
+      const address = await getAddress();
+
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
@@ -48,8 +60,6 @@ export const getWalletForChain = async ({
         api,
         apiKey,
       });
-
-      const address = await signer.getAddress();
 
       return { ...toolbox, address };
     }
