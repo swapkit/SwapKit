@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.0.28
+
+### Patch Changes
+
+- Updated dependencies [[`3f4a29f`](https://github.com/thorswap/SwapKit/commit/3f4a29f7160f781bac3cbcce7c530c359807fa87)]:
+  - @swapkit/wallet-coinbase@1.4.0
+
 ## 2.0.27
 
 ### Patch Changes

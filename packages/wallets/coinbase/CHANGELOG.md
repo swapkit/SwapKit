@@ -1,5 +1,11 @@
 # @swapkit/wallet-coinbase
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1222](https://github.com/thorswap/SwapKit/pull/1222) [`3f4a29f`](https://github.com/thorswap/SwapKit/commit/3f4a29f7160f781bac3cbcce7c530c359807fa87) Thanks [@towanTG](https://github.com/towanTG)! - Enables Base for Coinbase Wallet
+
 ## 1.3.2
 
 ### Patch Changes
