@@ -345,7 +345,7 @@ function getAssetInfo(identifier: string) {
   const isSynthetic = identifier.slice(0, 14).includes("/");
   const isTradeAsset = identifier.slice(0, 14).includes("~");
   const isSynthOrTradeAsset = isSynthetic || isTradeAsset;
-  const assetSeperator = /~|\//;
+  const assetSeperator = identifier.slice(0, 14).includes("~") ? "~" : "/";
 
   const isThorchain = identifier.split(".")?.[0]?.toUpperCase() === Chain.THORChain;
   const isMaya = identifier.split(".")?.[0]?.toUpperCase() === Chain.Maya;
