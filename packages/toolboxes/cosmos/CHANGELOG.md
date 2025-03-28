@@ -1,5 +1,15 @@
 # @swapkit/toolbox-cosmos
 
+## 1.10.3
+
+### Patch Changes
+
+- [#1224](https://github.com/thorswap/SwapKit/pull/1224) [`5b9cab5`](https://github.com/thorswap/SwapKit/commit/5b9cab5bf1951a3206c1d238f8367c7033243766) Thanks [@towanTG](https://github.com/towanTG)! - Updates tokenlist and fixes trade asset usage on THORChain
+
+- Updated dependencies [[`5b9cab5`](https://github.com/thorswap/SwapKit/commit/5b9cab5bf1951a3206c1d238f8367c7033243766)]:
+  - @swapkit/helpers@2.5.2
+  - @swapkit/api@2.4.2
+
 ## 1.10.2
 
 ### Patch Changes

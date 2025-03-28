@@ -1,5 +1,20 @@
 # @swapkit/sdk
 
+## 2.2.26
+
+### Patch Changes
+
+- Updated dependencies [[`5b9cab5`](https://github.com/thorswap/SwapKit/commit/5b9cab5bf1951a3206c1d238f8367c7033243766)]:
+  - @swapkit/tokens@2.4.1
+  - @swapkit/plugin-thorchain@2.3.14
+  - @swapkit/core@3.2.26
+  - @swapkit/plugin-chainflip@2.1.2
+  - @swapkit/plugin-evm@1.3.24
+  - @swapkit/plugin-kado@0.2.16
+  - @swapkit/plugin-radix@1.3.18
+  - @swapkit/api@2.4.2
+  - @swapkit/wallets@2.0.29
+
 ## 2.2.25
 
 ### Patch Changes
