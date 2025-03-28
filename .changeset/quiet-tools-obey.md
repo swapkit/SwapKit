@@ -4,4 +4,4 @@
 "@swapkit/tokens": patch
 ---
 
-Nightly bump
+Updates tokenlist and fixes trade asset usage on THORChain
