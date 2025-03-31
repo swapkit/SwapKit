@@ -81,6 +81,7 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Cosmos]: Chain.Cosmos,
   [ChainId.Dash]: Chain.Dash,
   [ChainId.Dogecoin]: Chain.Dogecoin,
+  [ChainId.EthereumHex]: Chain.Ethereum,
   [ChainId.GnosisHex]: Chain.Gnosis,
   [ChainId.Gnosis]: Chain.Gnosis,
   [ChainId.Fiat]: Chain.Fiat,
