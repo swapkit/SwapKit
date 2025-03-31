@@ -123,7 +123,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     .with(Chain.Cosmos, () => ({ identifier: `${assetString}.ATOM`, decimal }))
     .with(Chain.Maya, () => ({ identifier: `${assetString}.CACAO`, decimal: 10 }))
     .with(Chain.BinanceSmartChain, () => ({ identifier: `${assetString}.BNB`, decimal }))
-    .with(Chain.Gnosis, () => ({ identifier: `${assetString}.GNO`, decimal }))
+    .with(Chain.Gnosis, () => ({ identifier: `${assetString}.XDAI`, decimal }))
     .with(Chain.Radix, "XRD.XRD", () => ({
       identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
       decimal,
