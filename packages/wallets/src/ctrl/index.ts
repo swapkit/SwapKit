@@ -23,6 +23,7 @@ export const ctrlWallet = createWallet({
   walletType: WalletOption.CTRL,
   supportedChains: [
     Chain.Arbitrum,
+    Chain.Aurora,
     Chain.Avalanche,
     Chain.Base,
     Chain.BinanceSmartChain,
@@ -31,6 +32,7 @@ export const ctrlWallet = createWallet({
     Chain.Cosmos,
     Chain.Dogecoin,
     Chain.Ethereum,
+    Chain.Gnosis,
     Chain.Kujira,
     Chain.Litecoin,
     Chain.Maya,
@@ -127,10 +129,12 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     }
 
     case Chain.Arbitrum:
+    case Chain.Aurora:
     case Chain.Avalanche:
     case Chain.Base:
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
+    case Chain.Gnosis:
     case Chain.Optimism:
     case Chain.Polygon: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
