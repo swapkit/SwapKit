@@ -2,16 +2,19 @@ import type { Chain } from "./chains";
 
 export enum ContractAddress {
   ARB = "0x0000000000000000000000000000000000000000",
+  AURORA = "0x0000000000000000000000000000000000000000",
   AVAX = "0x0000000000000000000000000000000000000000",
   BASE = "0x0000000000000000000000000000000000000000",
   ETH = "0x0000000000000000000000000000000000000000",
   BSC = "0x0000000000000000000000000000000000000000",
+  GNOSIS = "0x0000000000000000000000000000000000000000",
   MATIC = "0x0000000000000000000000000000000000001010",
   OP = "0x4200000000000000000000000000000000000042",
 }
 
 export enum DerivationPath {
   ARB = "m/44'/60'/0'/0",
+  AURORA = "m/44'/60'/0'/0",
   AVAX = "m/44'/60'/0'/0",
   BASE = "m/44'/60'/0'/0",
   BCH = "m/44'/145'/0'/0",
@@ -23,6 +26,7 @@ export enum DerivationPath {
   ETH = "m/44'/60'/0'/0",
   FLIP = "////",
   GAIA = "m/44'/118'/0'/0",
+  GNO = "m/44'/60'/0'/0",
   KUJI = "m/44'/118'/0'/0",
   LTC = "m/84'/2'/0'/0",
   MATIC = "m/44'/60'/0'/0",
@@ -38,6 +42,7 @@ export type DerivationPathArray = [number, number, number, number, number?];
 
 export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   ARB: [44, 60, 0, 0, 0],
+  AURORA: [44, 60, 0, 0, 0],
   AVAX: [44, 60, 0, 0, 0],
   BASE: [44, 60, 0, 0, 0],
   BCH: [44, 145, 0, 0, 0],
@@ -47,6 +52,7 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   DOGE: [44, 3, 0, 0, 0],
   ETH: [44, 60, 0, 0, 0],
   GAIA: [44, 118, 0, 0, 0],
+  GNO: [44, 60, 0, 0, 0],
   KUJI: [44, 118, 0, 0, 0],
   LTC: [84, 2, 0, 0, 0],
   MATIC: [44, 60, 0, 0, 0],
