@@ -85,7 +85,6 @@ const transfer = async ({
   from,
   memo,
   recipient,
-  chain,
   apiClient,
   feeOptionKey,
   broadcastTx,
@@ -100,8 +99,6 @@ const transfer = async ({
     recipient,
     feeRate: txFeeRate,
     sender: from,
-    fetchTxHex: nonSegwitChains.includes(chain),
-    chain,
     apiClient,
     assetValue,
     memo,
@@ -167,9 +164,7 @@ export const buildTx = async ({
   memo,
   feeRate,
   sender,
-  fetchTxHex = false,
   apiClient,
-  chain,
 }: UTXOBuildTxParams): Promise<{
   psbt: Psbt;
   utxos: UTXOType[];
@@ -177,13 +172,16 @@ export const buildTx = async ({
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
 }> => {
   const compiledMemo = memo ? compileMemo(memo) : null;
+  const chain = assetValue.chain as UTXOChain;
+
+  const isNonSegwitChain = nonSegwitChains.includes(chain);
 
   const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
     recipient,
     memo,
     sender,
-    fetchTxHex,
+    fetchTxHex: isNonSegwitChain,
     apiClient,
   });
 
@@ -199,9 +197,8 @@ export const buildTx = async ({
     psbt.addInput({
       hash: utxo.hash,
       index: utxo.index,
-      ...(!!utxo.witnessUtxo &&
-        !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo }),
-      ...(nonSegwitChains.includes(chain) && {
+      ...(!!utxo.witnessUtxo && !isNonSegwitChain && { witnessUtxo: utxo.witnessUtxo }),
+      ...(isNonSegwitChain && {
         nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
       }),
     });

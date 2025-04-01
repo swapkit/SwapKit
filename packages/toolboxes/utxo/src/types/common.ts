@@ -57,15 +57,12 @@ export type UTXOBuildTxParams = {
   memo?: string;
   feeRate: number;
   sender: string;
-  fetchTxHex?: boolean;
   apiClient: BlockchairApiType;
-  chain: UTXOChain;
 };
 
 export type UTXOTransferParams = {
   apiClient: BlockchairApiType;
   broadcastTx: (txHex: string) => Promise<string>;
-  chain: UTXOChain;
   feeOptionKey?: FeeOption;
   feeRate?: number;
   from: string;
