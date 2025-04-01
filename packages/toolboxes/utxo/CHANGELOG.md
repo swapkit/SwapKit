@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.3.3
+
+### Patch Changes
+
+- [#1227](https://github.com/thorswap/SwapKit/pull/1227) [`d5c7a62`](https://github.com/thorswap/SwapKit/commit/d5c7a625010be37de1ca45ede7fca6d8b066ab58) Thanks [@towanTG](https://github.com/towanTG)! - Simplifies the interface of buildTx and transfer. We deduct chain from AssetValue and fetchTxHex is not needed anymore
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.2
+
 ## 1.3.2
 
 ### Patch Changes
