@@ -3,6 +3,7 @@ export enum Chain {
   Aurora = "AURORA",
   Avalanche = "AVAX",
   Base = "BASE",
+  Berachain = "BERA",
   BinanceSmartChain = "BSC",
   Bitcoin = "BTC",
   BitcoinCash = "BCH",
@@ -38,6 +39,8 @@ export enum ChainId {
   AvalancheHex = "0xa86a",
   Base = "8453",
   BaseHex = "0x2105",
+  Berachain = "80094",
+  BerachainHex = "0x138de",
   BinanceSmartChain = "56",
   BinanceSmartChainHex = "0x38",
   Bitcoin = "bitcoin",
@@ -75,6 +78,8 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Avalanche]: Chain.Avalanche,
   [ChainId.BaseHex]: Chain.Base,
   [ChainId.Base]: Chain.Base,
+  [ChainId.BerachainHex]: Chain.Berachain,
+  [ChainId.Berachain]: Chain.Berachain,
   [ChainId.BinanceSmartChainHex]: Chain.BinanceSmartChain,
   [ChainId.BinanceSmartChain]: Chain.BinanceSmartChain,
   [ChainId.BitcoinCash]: Chain.BitcoinCash,
@@ -113,6 +118,7 @@ export const BaseDecimal: Record<Chain, number> = {
   AVAX: 18,
   BASE: 18,
   BCH: 8,
+  BERA: 18,
   BSC: 18,
   BTC: 8,
   DASH: 8,
@@ -138,6 +144,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Aurora]: 1,
   [Chain.Avalanche]: 3,
   [Chain.Base]: 2,
+  [Chain.Berachain]: 2,
   [Chain.BinanceSmartChain]: 3,
   [Chain.Bitcoin]: 600,
   [Chain.BitcoinCash]: 600,
@@ -167,6 +174,7 @@ export type EVMChain =
   | Chain.Aurora
   | Chain.Avalanche
   | Chain.Base
+  | Chain.Berachain
   | Chain.BinanceSmartChain
   | Chain.Ethereum
   | Chain.Gnosis
@@ -178,6 +186,7 @@ export const EVMChains = [
   Chain.Aurora,
   Chain.Avalanche,
   Chain.Base,
+  Chain.Berachain,
   Chain.BinanceSmartChain,
   Chain.Ethereum,
   Chain.Gnosis,
@@ -234,6 +243,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Aurora]: "https://aurora-rpc.publicnode.com",
   [Chain.Avalanche]: "https://api.avax.network/ext/bc/C/rpc",
   [Chain.Base]: "https://base-rpc.publicnode.com",
+  [Chain.Berachain]: "https://berachain-rpc.publicnode.com",
   [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
   [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",
   [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
@@ -281,6 +291,10 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
     "https://avalanche-c-chain-rpc.publicnode.com",
   ],
   [Chain.Base]: ["https://base.blockpi.network/v1/rpc/public", "https://1rpc.io/base"],
+  [Chain.Berachain]: [
+    "https://rpc.berachain.com",
+    "https://berachain.drpc.org",
+  ],
   [Chain.BinanceSmartChain]: [
     "https://bsc-rpc.gateway.pokt.network",
     "https://bsc-dataseed2.binance.org",
@@ -321,6 +335,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Aurora]: "https://explorer.mainnet.aurora.dev",
   [Chain.Avalanche]: "https://snowtrace.io",
   [Chain.Base]: "https://basescan.org",
+  [Chain.Berachain]: "https://berascan.com",
   [Chain.BinanceSmartChain]: "https://bscscan.com",
   [Chain.Bitcoin]: "https://blockchair.com/bitcoin",
   [Chain.BitcoinCash]: "https://www.blockchair.com/bitcoin-cash",
@@ -350,6 +365,7 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
     case Chain.Aurora:
     case Chain.Avalanche:
     case Chain.Base:
+    case Chain.Berachain:
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Gnosis:
