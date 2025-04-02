@@ -196,6 +196,7 @@ export function getMinAmountByChain(chain: Chain) {
     case Chain.Aurora:
     case Chain.Avalanche:
     case Chain.Base:
+    case Chain.Berachain:
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Gnosis:
