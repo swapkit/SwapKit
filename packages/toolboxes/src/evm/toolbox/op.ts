@@ -9,8 +9,8 @@ import {
 import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
 import { Contract } from "ethers";
 
+import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
-import { getBalance } from "../helpers";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 const GAS_PRICE_ORACLE_ADDRESS = "0x420000000000000000000000000000000000000f";
@@ -145,7 +145,7 @@ export function OPToolbox<P extends JsonRpcProvider | BrowserProvider, S extends
     estimateL1GasCost: estimateL1GasCost(provider),
     estimateL2GasCost: estimateL2GasCost(provider),
     estimateTotalGasCost: estimateTotalGasCost(provider),
-    getBalance: getBalance({ provider, chain: Chain.Optimism }),
+    getBalance: getEvmApi(Chain.Optimism).getBalance,
     getL1GasPrice,
     getNetworkParams,
   };

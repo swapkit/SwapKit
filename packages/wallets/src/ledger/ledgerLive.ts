@@ -159,7 +159,7 @@ export const getLedgerLiveWallet = async ({
       const getAddress = () => ledgerLiveAccount.address;
 
       const ledgerLiveClient = EthereumLedgerLive();
-      const provider = getProvider(Chain.Ethereum);
+      const provider = await getProvider(Chain.Ethereum);
       const signer = new VoidSigner(ledgerLiveAccount.address, provider);
 
       const toolbox = ETHToolbox({ provider, signer });

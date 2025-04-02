@@ -1,5 +1,5 @@
 import { Chain, RequestClient, SKConfig, type UTXOChain, warnOnce } from "@swapkit/helpers";
-import { uniqid } from "./utils";
+import { uniqid } from "../../utils";
 
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
 type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
@@ -129,25 +129,6 @@ async function getUnconfirmedBalance({
   return response?.address.balance || 0;
 }
 
-async function getConfirmedBalance({
-  chain,
-  address,
-  apiKey,
-}: BlockchairParams<{ address?: string }>) {
-  if (!address) throw new Error("address is required");
-
-  try {
-    const response = await blockchairRequest<BlockchairMultipleBalancesResponse>(
-      `${baseUrl(chain)}/addresses/balances?addresses=${address}`,
-      apiKey,
-    );
-
-    return response[address] || 0;
-  } catch (_error) {
-    return 0;
-  }
-}
-
 async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
   if (!txHash) throw new Error("txHash is required");
 
@@ -251,7 +232,6 @@ function utxoApi(chain: UTXOChain) {
 
   return {
     broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, chain }),
-    getConfirmedBalance: (address: string) => getConfirmedBalance({ chain, address, apiKey }),
     getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
     getSuggestedTxFee: () => getSuggestedTxFee(chain),
     getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
@@ -279,8 +259,32 @@ export function getUtxoApi(chain: UTXOChain) {
   return utxoApi(chain);
 }
 
-interface BlockchairMultipleBalancesResponse {
-  [key: string]: number;
+export async function getUtxoNetwork() {
+  // @ts-ignore
+  const coininfo = await import("coininfo");
+  const { networks } = await import("bitcoinjs-lib");
+
+  return function getNetwork(chain: Chain) {
+    switch (chain) {
+      case Chain.Bitcoin:
+        return networks.bitcoin;
+      case Chain.BitcoinCash:
+        return coininfo.bitcoincash.main.toBitcoinJS();
+      case Chain.Dash:
+        return coininfo.dash.main.toBitcoinJS();
+      case Chain.Litecoin:
+        return coininfo.litecoin.main.toBitcoinJS();
+
+      case Chain.Dogecoin: {
+        const bip32 = { private: 0x04358394, public: 0x043587cf };
+        const test = coininfo.dogecoin.test;
+        test.versions.bip32 = bip32;
+        return coininfo.dogecoin.main.toBitcoinJS();
+      }
+      default:
+        throw new Error("Invalid chain");
+    }
+  };
 }
 
 interface BlockchairVin {

@@ -222,36 +222,6 @@ export const assetFromString = (assetString: string) => {
   return { chain, symbol, ticker, synth };
 };
 
-const potentialScamRegex = new RegExp(
-  /(.)\1{6}|\.ORG|\.NET|\.FINANCE|\.COM|WWW|HTTP|\\\\|\/\/|[\s$%:[\]]/,
-  "gmi",
-);
-
-const evmAssetHasAddress = (assetString: string) => {
-  const [chain, symbol] = assetString.split(".") as [EVMChain, string];
-  if (!EVMChains.includes(chain as EVMChain)) return true;
-  const splitSymbol = symbol.split("-");
-  const address = splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
-
-  return isGasAsset({ chain: chain as Chain, symbol }) || !!address;
-};
-
-export const filterAssets = (
-  tokens: {
-    value: string;
-    decimal: number;
-    chain: Chain;
-    symbol: string;
-  }[],
-) =>
-  tokens.filter(({ chain, value, symbol }) => {
-    const assetString = `${chain}.${symbol}`;
-
-    return (
-      !potentialScamRegex.test(assetString) && evmAssetHasAddress(assetString) && value !== "0"
-    );
-  });
-
 export async function findAssetBy(
   params:
     | { chain: EVMChain | Chain.Radix | Chain.Solana; contract: string }

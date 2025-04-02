@@ -17,12 +17,12 @@ import { SwapKitApi } from "@swapkit/helpers/api";
 
 import type { StdFee } from "@cosmjs/amino";
 import type { Account } from "@cosmjs/stargate";
+import { getBalance } from "../../utils";
 import type { CosmosSigner, TransferParams } from "../types";
 import {
   buildNativeTransferTx,
   createSigningStargateClient,
   createStargateClient,
-  getAssetFromDenom,
   getDenomWithChain,
   getMsgSendDenom,
 } from "../util";
@@ -138,12 +138,7 @@ export function BaseCosmosToolbox({
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const chainPrefix = CosmosChainPrefixes[chain];
   const derivationPath = paramsDerivationPath ? paramsDerivationPath : DerivationPath[chain];
-
-  const getCosmosAccount = cosmosAccountGetter({
-    prefix: chainPrefix,
-    derivationPath,
-  });
-  const getCosmosBalance = cosmosBalanceGetter({ chain, rpcUrl });
+  const getCosmosAccount = cosmosAccountGetter({ prefix: chainPrefix, derivationPath });
 
   async function getAccount(address: string) {
     const client = await createStargateClient(rpcUrl);
@@ -192,6 +187,7 @@ export function BaseCosmosToolbox({
 
   return {
     transfer,
+    getBalance: getBalance(chain),
     getSigner: getSigner({ prefix: chainPrefix, derivationPath }),
     getSignerFromPhrase: async (phrase: string) =>
       getSignerFromPhrase({
@@ -221,7 +217,6 @@ export function BaseCosmosToolbox({
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
     fetchFeeRateFromSwapKit,
     getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
-    getBalance: getCosmosBalance,
     buildTransferTx: buildNativeTransferTx,
     verifySignature: verifySignature(getAccount),
   };
@@ -327,30 +322,6 @@ function cosmosBalanceDenomsGetter(rpcUrl: string) {
       ...balance,
       denom: balance.denom.includes("/") ? balance.denom.toUpperCase() : balance.denom,
     }));
-
-    return balances;
-  };
-}
-
-function cosmosBalanceGetter({
-  chain,
-  rpcUrl,
-}: {
-  chain: Chain;
-  rpcUrl: string;
-}) {
-  return async function getCosmosBalance(address: string) {
-    const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
-
-    const balances = denomBalances
-      .filter(({ denom }) => denom && !denom.includes("IBC/"))
-      .map(({ denom, amount }) => {
-        const fullDenom =
-          [Chain.THORChain, Chain.Maya].includes(chain) && denom.includes("/")
-            ? `${chain}.${denom}`
-            : denom;
-        return getAssetFromDenom(fullDenom, amount);
-      });
 
     return balances;
   };

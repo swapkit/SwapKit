@@ -9,8 +9,8 @@ import { AVAXToolbox, ETHToolbox, getProvider } from "@swapkit/toolboxes/evm"
 import { Chain, createSwapKit, DerivationPath } from "@swapkit/sdk"
 
 const btc = BTCToolbox()
-const eth = ETHToolbox({ provider: getProvider(Chain.Ethereum) })
-const avax = AVAXToolbox({ provider: getProvider(Chain.Avalanche) })
+const eth = ETHToolbox()
+const avax = AVAXToolbox()
 
 const ethNetwork = eth.getNetworkParams()
 const avaxNetwork = avax.getNetworkParams()

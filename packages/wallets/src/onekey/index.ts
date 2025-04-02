@@ -177,7 +177,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
       const rpcUrl = SKConfig.get("rpcUrls")[chain];
 
       await provider.send("eth_requestAccounts", []);
-      const jsonRpcProvider = getProvider(chain, rpcUrl);
+      const jsonRpcProvider = await getProvider(chain, rpcUrl);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
 

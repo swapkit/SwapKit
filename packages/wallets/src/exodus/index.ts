@@ -108,7 +108,7 @@ async function getWalletMethods({
       if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
-      const jsonRpcProvider = getProvider(chain);
+      const jsonRpcProvider = await getProvider(chain);
       const browserProvider = provider as BrowserProvider;
 
       await browserProvider.send("eth_requestAccounts", []);

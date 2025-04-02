@@ -9,19 +9,17 @@ import {
   type NetworkParams,
   SKConfig,
   SwapKitNumber,
-  filterAssets,
-  formatBigIntToSafeValue,
-  isGasAsset,
 } from "@swapkit/helpers";
-import { type BrowserProvider, JsonRpcProvider, type Provider } from "ethers";
+import type { BrowserProvider, Provider } from "ethers";
 
-import { getEvmApi } from "./api";
 import { getEstimateGasPrices } from "./toolbox/baseEVMToolbox";
 import type { EIP1559TxParams, EVMMaxSendableAmountsParams } from "./types";
 
-export const getProvider = (chain: EVMChain, customUrl?: string) => {
+export async function getProvider(chain: EVMChain, customUrl?: string) {
+  const { JsonRpcProvider } = await import("ethers");
+
   return new JsonRpcProvider(customUrl || SKConfig.get("rpcUrls")[chain]);
-};
+}
 
 /**
  * @deprecated
@@ -88,46 +86,6 @@ export const estimateMaxSendableAmount = async ({
 
 export function toHexString(value: bigint) {
   return value > 0n ? `0x${value.toString(16)}` : "0x0";
-}
-
-export function getBalance<C extends EVMChain>({
-  provider: toolboxProvider,
-  chain,
-}: { provider?: BrowserProvider | JsonRpcProvider; chain: C }) {
-  return async function getBalance(
-    address: string,
-    scamFilter = true,
-    overwriteProvider?: BrowserProvider | JsonRpcProvider,
-  ) {
-    const provider = overwriteProvider || toolboxProvider;
-    const tokenBalances = await getEvmApi(chain).getBalance(address);
-    const evmGasTokenBalance = (await provider?.getBalance(address)) || 0n;
-
-    const balances = [
-      {
-        chain,
-        decimal: BaseDecimal[chain],
-        symbol: AssetValue.from({ chain }).symbol,
-        value: formatBigIntToSafeValue({
-          value: BigInt(evmGasTokenBalance),
-          decimal: BaseDecimal[chain],
-          bigIntDecimal: BaseDecimal[chain],
-        }),
-      },
-      ...tokenBalances.filter((token) => !isGasAsset(token)),
-    ];
-
-    const filteredBalances = scamFilter ? filterAssets(balances) : balances;
-
-    return filteredBalances.map(
-      ({ symbol, value, decimal }) =>
-        new AssetValue({
-          decimal: decimal || BaseDecimal[chain],
-          value,
-          identifier: `${chain}.${symbol}`,
-        }),
-    );
-  };
 }
 
 export function getEstimateTransactionFee({

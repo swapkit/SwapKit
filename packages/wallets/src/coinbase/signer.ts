@@ -70,7 +70,7 @@ export const getWalletMethods = async ({
 
       const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
 
-      const provider = getProvider(chain);
+      const provider = await getProvider(chain);
       const signer = await getCoinbaseMobileSigner(walletProvider, provider);
       const toolbox = getToolboxByChain(chain)({ provider, signer });
       const address = await signer.getAddress();

@@ -74,7 +74,6 @@ export const evmWallet = createWallet({
       eip1193Provider?: Eip1193Provider,
     ) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
 
       await Promise.all(
@@ -93,7 +92,7 @@ export const evmWallet = createWallet({
             });
 
             const getBalance = async (potentialScamFilter = true) =>
-              walletMethods.getBalance(address, potentialScamFilter, getProvider(chain));
+              walletMethods.getBalance(address, potentialScamFilter);
 
             addChain({ ...walletMethods, address, chain, getBalance, walletType });
             return;
@@ -111,7 +110,7 @@ export const evmWallet = createWallet({
           });
 
           const getBalance = (potentialScamFilter = true) =>
-            walletMethods.getBalance(address, potentialScamFilter, getProvider(chain));
+            walletMethods.getBalance(address, potentialScamFilter);
 
           const disconnect = () =>
             web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);

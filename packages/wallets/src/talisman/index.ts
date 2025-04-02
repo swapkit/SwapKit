@@ -94,13 +94,12 @@ async function getWalletMethods(chain: Chain) {
       if (!(window.talismanEth && "send" in window.talismanEth)) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_found", info: { chain } });
       }
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
 
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.talismanEth });
       const address: string = (await window.talismanEth.send("eth_requestAccounts", []))[0];
 
       const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
+        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter);
 
       return { walletMethods: { ...evmWallet, getBalance }, address };
     }

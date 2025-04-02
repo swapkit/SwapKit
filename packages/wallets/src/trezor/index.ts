@@ -41,7 +41,7 @@ async function getWalletMethods({
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { getEVMSigner } = await import("./evmSigner");
 
-      const provider = getProvider(chain);
+      const provider = await getProvider(chain);
       const signer = await getEVMSigner({ chain, derivationPath, provider });
       const address = await signer.getAddress();
       const toolbox = getToolboxByChain(chain)({ provider, signer });

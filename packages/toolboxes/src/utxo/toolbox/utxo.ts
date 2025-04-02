@@ -18,7 +18,6 @@ import {
   getInputSize,
   getUtxoApi,
   getUtxoNetwork,
-  standardFeeRates,
 } from "../helpers";
 import type { TargetOutput, UTXOBuildTxParams, UTXOType, UTXOWalletTransferParams } from "../types";
 import { validateAddress as validateBCHAddress } from "./bitcoinCash";
@@ -337,7 +336,11 @@ function getBalance(chain: UTXOChain) {
 async function getFeeRates(chain: UTXOChain) {
   const suggestedFeeRate = await getUtxoApi(chain).getSuggestedTxFee();
 
-  return standardFeeRates(suggestedFeeRate);
+  return {
+    [FeeOption.Average]: suggestedFeeRate,
+    [FeeOption.Fast]: suggestedFeeRate * 1.5,
+    [FeeOption.Fastest]: suggestedFeeRate * 2.0,
+  };
 }
 
 function getInputsAndTargetOutputs(chain: UTXOChain) {

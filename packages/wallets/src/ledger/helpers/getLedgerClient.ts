@@ -69,7 +69,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
     case Chain.Polygon:
     case Chain.Base: {
       const { getProvider } = await import("@swapkit/toolboxes/evm");
-      const params = { provider: getProvider(chain), derivationPath };
+      const params = { provider: await getProvider(chain), derivationPath };
 
       switch (chain) {
         case Chain.BinanceSmartChain:

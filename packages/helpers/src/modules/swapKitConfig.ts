@@ -36,8 +36,6 @@ const initialState = {
 
   apiKeys: {
     blockchair: "",
-    covalent: "",
-    ethplorer: "freekey",
     kado: "",
     keepKey: "",
     swapKit: "",

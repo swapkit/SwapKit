@@ -1,8 +1,14 @@
-import { describe, expect, it } from "bun:test";
-import { SwapKit } from "@swapkit/core";
-
+import { beforeEach, describe, expect, it } from "bun:test";
+import { SKConfig, SwapKit } from "@swapkit/core";
 import { KEYSTORE_SUPPORTED_CHAINS, keystoreWallet } from "../src/keystore";
 import { testKeystoreWalletData } from "./fixtures";
+
+beforeEach(() => {
+  SKConfig.set({
+    apiKeys: { swapKit: process.env.TEST_API_KEY },
+    envs: { isDev: true },
+  });
+});
 
 describe("keystore - Reading address", () => {
   it("should read address from keystore", async () => {
@@ -40,13 +46,7 @@ describe("keystore - Reading balances", () => {
         try {
           const wallet = await swapKitClient.getWalletWithBalance(chain);
           if (wallet) {
-            console.info(
-              wallet.balance.map((balance) => ({
-                asset: balance.toString(),
-                amount: balance.getValue("string"),
-              })),
-            );
-
+            console.info(wallet.balance[0].toString(), wallet.balance[0].getValue("string"));
             expect(wallet.balance.length).toBeGreaterThan(0);
           }
         } catch (error) {

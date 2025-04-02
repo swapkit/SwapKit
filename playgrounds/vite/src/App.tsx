@@ -20,15 +20,9 @@ const App = () => {
   const [wallet, setWallet] = useState<WalletDataType>(null);
   const [phrase, setPhrase] = useState("");
   const [stagenet, setStagenet] = useState(false);
-  /**
-   * NOTE: Test API keys - please use your own API keys in app as those will timeout, reach limits, etc.
-   */
+
   const [keys, setKeys] = useState({
-    blockchair: (import.meta.env.VITE_BLOCKCHAIR_API_KEY ||
-      "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf") as string,
-    covalent: (import.meta.env.VITE_COVALENT_API_KEY ||
-      "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q") as string,
-    ethplorer: (import.meta.env.VITE_ETHPLORER_API_KEY || "freekey") as string,
+    swapKit: (import.meta.env.VITE_TEST_API_KEY || "") as string,
     walletConnectProjectId: "",
     brokerEndpoint: "https://dev-api.swapkit.dev/channel",
   });

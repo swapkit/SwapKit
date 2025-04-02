@@ -1,12 +1,8 @@
 import { Chain, type EVMChain, FeeOption } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
+import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
-import {
-  getBalance,
-  getEstimateTransactionFee,
-  getIsEIP1559Compatible,
-  getNetworkParams,
-} from "../helpers";
+import { getEstimateTransactionFee, getIsEIP1559Compatible, getNetworkParams } from "../helpers";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 export function ETHToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
@@ -83,7 +79,7 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
       ...evmToolbox,
       estimateTransactionFee: getEstimateTransactionFee({ provider, isEIP1559Compatible }),
       getNetworkParams: getNetworkParams(chain),
-      getBalance: getBalance({ provider, chain }),
+      getBalance: getEvmApi(chain).getBalance,
     };
   };
 }

@@ -62,11 +62,10 @@ export async function getWalletMethods(chain: Chain) {
       const wallet = bitget.ethereum;
 
       const [address]: [string] = await wallet.send("eth_requestAccounts", []);
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
 
       const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
+        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter);
 
       return { ...evmWallet, getBalance, address };
     }

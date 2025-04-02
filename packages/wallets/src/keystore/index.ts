@@ -42,7 +42,7 @@ const getWalletMethods = async ({ chain, phrase, derivationPath }: Params) => {
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       const { HDNodeWallet } = await import("ethers");
 
-      const provider = getProvider(chain, rpcUrl);
+      const provider = await getProvider(chain, rpcUrl);
       const wallet = HDNodeWallet.fromPhrase(phrase, undefined, derivationPath).connect(provider);
       const toolbox = getToolboxByChain(chain)({ provider, signer: wallet });
 

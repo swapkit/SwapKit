@@ -85,13 +85,8 @@ async function getWalletMethods({
     case Chain.Polygon:
     case Chain.Avalanche:
     case Chain.Ethereum: {
-      const provider = getProvider(chain);
-      const signer = new KeepKeySigner({
-        sdk,
-        chain,
-        derivationPath,
-        provider,
-      });
+      const provider = await getProvider(chain);
+      const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
       const address = await signer.getAddress();
       const toolbox = getToolboxByChain(chain)({ provider, signer });
 
