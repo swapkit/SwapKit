@@ -18,6 +18,7 @@ export async function getAddressValidator() {
       case Chain.Optimism:
       case Chain.BinanceSmartChain:
       case Chain.Base:
+      case Chain.Berachain:
       case Chain.Gnosis:
       case Chain.Polygon:
       case Chain.Ethereum:
