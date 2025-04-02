@@ -25,7 +25,9 @@ export const getLedgerAddress = async ({
     case Chain.Polygon:
     case Chain.Arbitrum:
     case Chain.Optimism:
-    case Chain.Base: {
+    case Chain.Base: 
+    case Chain.Aurora:
+    case Chain.Gnosis: {
       return (ledgerClient as EVMLedgerClients).getAddress();
     }
 
