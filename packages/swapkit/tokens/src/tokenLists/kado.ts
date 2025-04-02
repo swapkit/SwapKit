@@ -1,7 +1,7 @@
 export const list = {
   provider: "KADO",
   name: "KADO",
-  timestamp: "2025-02-07T19:03:54.399Z",
+  timestamp: "2025-04-02T08:02:38.526Z",
   version: {
     major: 1,
     minor: 0,
@@ -67,7 +67,7 @@ export const list = {
     {
       chain: "BTC",
       chainId: "bitcoin",
-      decimals: 8,
+      decimals: 18,
       identifier: "BTC.BTC",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/btc.btc.png",
       ticker: "BTC",
@@ -327,11 +327,12 @@ export const list = {
       ticker: "VND",
     },
     {
+      address: "uatom",
       chain: "GAIA",
       chainId: "cosmoshub-4",
       decimals: 6,
-      identifier: "GAIA.ATOM",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/gaia.atom.png",
+      identifier: "GAIA.ATOM-uatom",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/gaia.atom-uatom.png",
       ticker: "ATOM",
     },
     {

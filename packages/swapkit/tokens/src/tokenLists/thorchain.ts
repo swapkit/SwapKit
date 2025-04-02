@@ -2,7 +2,7 @@ export const list = {
   provider: "THORCHAIN",
   chainId: "thorchain-1",
   name: "THORCHAIN",
-  timestamp: "2025-03-27T08:31:19.573Z",
+  timestamp: "2025-04-02T08:01:51.998Z",
   version: {
     major: 1,
     minor: 0,
@@ -336,7 +336,7 @@ export const list = {
     {
       chain: "LTC",
       chainId: "litecoin",
-      decimals: 18,
+      decimals: 8,
       identifier: "LTC.LTC",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/ltc.ltc.png",
       shortCode: "l",
@@ -378,7 +378,7 @@ export const list = {
       identifier: "THOR.AVAX/USDt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
-      ticker: "USDT",
+      ticker: "USDt",
     },
     {
       chain: "THOR",

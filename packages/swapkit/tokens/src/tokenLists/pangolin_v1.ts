@@ -2,14 +2,14 @@ export const list = {
   provider: "PANGOLIN_V1",
   chainId: "43114",
   name: "PANGOLIN_V1",
-  timestamp: "2025-03-27T08:31:17.473Z",
+  timestamp: "2025-04-02T08:01:49.544Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 9,
+  count: 7,
   tokens: [
     {
       address: "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
@@ -50,26 +50,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.usdc-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e.png",
       ticker: "USDC",
-    },
-    {
-      address: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 6,
-      identifier: "AVAX.USDT-0X9702230A8EA53601F5CD2DC00FDBC13D4DF4A8C7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
-      ticker: "USDT",
-    },
-    {
-      address: "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 6,
-      identifier: "AVAX.USDT.E-0XC7198437980C041C805A1EDCBA50C1CE5DB95118",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.usdt.e-0xc7198437980c041c805a1edcba50c1ce5db95118.png",
-      ticker: "USDT.E",
     },
     {
       address: "0x260Bbf5698121EB85e7a74f2E45E16Ce762EbE11",
