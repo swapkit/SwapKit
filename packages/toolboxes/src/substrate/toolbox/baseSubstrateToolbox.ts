@@ -16,6 +16,7 @@ import {
   SwapKitNumber,
 } from "@swapkit/helpers";
 
+import { getBalance } from "../../utils";
 import { Network, type SubstrateNetwork } from "../types/network";
 
 // TODO combine this type with the more general SK type
@@ -38,24 +39,6 @@ export const createKeyring = async (phrase: string, networkPrefix: number) => {
 };
 
 const getNonce = (api: ApiPromise, address: string) => api.rpc.system.accountNextIndex(address);
-
-const getBalance = async (api: ApiPromise, gasAsset: AssetValue, address: string) => {
-  const data = await api.query.system?.account?.(address);
-
-  // @ts-expect-error @Towan some parts of data missing?
-  if (!data?.data?.free || data?.data?.isEmpty) {
-    return [gasAsset.set(0)];
-  }
-
-  return [
-    gasAsset.set(
-      // @ts-expect-error @Towan some parts of data missing?
-      SwapKitNumber.fromBigInt(BigInt(data.data.free.toString()), gasAsset.decimal).getValue(
-        "string",
-      ),
-    ),
-  ];
-};
 
 const validateAddress = (address: string, networkPrefix: number) => {
   try {
@@ -208,12 +191,12 @@ export const BaseSubstrateToolbox = ({
   decodeAddress,
   encodeAddress,
   convertAddress,
+  getBalance: getBalance(Chain.Polkadot),
   createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
   getAddress: (keyring: IKeyringPair | Signer = signer) =>
     isKeyringPair(keyring) ? keyring.address : undefined,
   createTransfer: ({ recipient, assetValue }: { recipient: string; assetValue: AssetValue }) =>
     createTransfer(api, { recipient, amount: assetValue.getBaseValue("number") }),
-  getBalance: (address: string) => getBalance(api, gasAsset, address),
   validateAddress: (address: string) => validateAddress(address, network.prefix),
   transfer: (params: SubstrateTransferParams) => transfer(api, signer, params),
   estimateTransactionFee: (params: SubstrateTransferParams) =>
@@ -227,8 +210,7 @@ export const BaseSubstrateToolbox = ({
       "Signer does not have keyring pair capabilities required for signing.",
     );
   },
-  broadcast: (tx: SubmittableExtrinsic<"promise">, callback?: Callback<ISubmittableResult>) =>
-    broadcast(tx, callback),
+  broadcast,
   signAndBroadcast: ({
     tx,
     callback,

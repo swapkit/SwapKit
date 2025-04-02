@@ -64,10 +64,7 @@ export async function getWalletMethods(chain: Chain) {
       const [address]: [string] = await wallet.send("eth_requestAccounts", []);
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
 
-      const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter);
-
-      return { ...evmWallet, getBalance, address };
+      return { ...evmWallet, address };
     }
 
     case Chain.Bitcoin: {
@@ -166,8 +163,8 @@ export async function getWalletMethods(chain: Chain) {
 }
 
 export const getWeb3WalletMethods = async ({
-  walletProvider,
   chain,
+  walletProvider,
 }: { walletProvider?: Eip1193Provider; chain: EVMChain }) => {
   const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
@@ -186,5 +183,9 @@ export const getWeb3WalletMethods = async ({
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
   }
 
-  return prepareNetworkSwitch({ toolbox, provider, chain });
+  return prepareNetworkSwitch({
+    toolbox,
+    provider,
+    chain,
+  });
 };

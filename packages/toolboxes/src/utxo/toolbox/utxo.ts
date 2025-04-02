@@ -1,14 +1,8 @@
-import {
-  AssetValue,
-  BaseDecimal,
-  Chain,
-  FeeOption,
-  SwapKitNumber,
-  type UTXOChain,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, FeeOption, SwapKitNumber, type UTXOChain } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
 
+import { getBalance } from "../../utils";
 import {
   UTXOScriptType,
   accumulative,
@@ -318,18 +312,6 @@ function transfer(chain: UTXOChain) {
     signedPsbt.finalizeAllInputs(); // Finalise inputs
     // TX extracted and formatted to hex
     return getUtxoApi(chain).broadcastTx(signedPsbt.extractTransaction().toHex());
-  };
-}
-
-function getBalance(chain: UTXOChain) {
-  return async function getBalance(address: string, _scamFilter = true) {
-    const baseBalance = await getUtxoApi(chain).getBalance(address);
-    const balance = SwapKitNumber.fromBigInt(BigInt(baseBalance), BaseDecimal[chain]).getValue(
-      "string",
-    );
-    const asset = AssetValue.from({ asset: `${chain}.${chain}`, value: balance });
-
-    return [asset];
   };
 }
 

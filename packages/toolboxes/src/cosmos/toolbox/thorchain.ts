@@ -210,11 +210,7 @@ export function BaseThorchainToolbox({
       });
     }
 
-    return {
-      [FeeOption.Average]: fee,
-      [FeeOption.Fast]: fee,
-      [FeeOption.Fastest]: fee,
-    };
+    return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
   }
 
   async function transfer({

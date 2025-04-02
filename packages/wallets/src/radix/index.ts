@@ -82,6 +82,7 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
+// TODO - @Towan: is that still needed with SwapKitApi.getChainBalance()?
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Split into multiple functions
 async function getBalance(address: string): Promise<AssetValue[]> {
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");

@@ -96,7 +96,7 @@ async function getWalletMethods({
         return toolbox.transfer({ ...transferParams, signTransaction });
       };
 
-      return { ...toolbox, transfer, address };
+      return { ...toolbox, transfer, address, getBalance: () => toolbox.getBalance(address) };
     }
     case Chain.Arbitrum:
     case Chain.Avalanche:
@@ -158,9 +158,6 @@ export const exodusWallet = createWallet({
             walletProvider: providers.ethereum,
           });
 
-          const getBalance = async (potentialScamFilter = true) =>
-            walletMethods.getBalance(address, potentialScamFilter);
-
           const disconnect = () =>
             provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
 
@@ -169,7 +166,6 @@ export const exodusWallet = createWallet({
             disconnect,
             chain,
             address,
-            getBalance,
             walletType: WalletOption.EXODUS,
           });
         }),

@@ -1,5 +1,6 @@
-import { AssetValue, Chain } from "@swapkit/helpers";
+import { Chain } from "@swapkit/helpers";
 
+import { getBalance } from "../../utils";
 import { ToolboxFactory, type ToolboxParams } from "./baseSubstrateToolbox";
 
 export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams) => {
@@ -9,15 +10,7 @@ export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams) => {
 export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams) => {
   const toolbox = await ToolboxFactory({ chain: Chain.Chainflip, generic, signer });
 
-  async function getBalance(address: string) {
-    // @ts-expect-error @Towan some parts of data missing?
-    // biome-ignore lint/correctness/noUnsafeOptionalChaining: @Towan some parts of data missing?
-    const { balance } = await toolbox.api.query.flip?.account?.(address);
-
-    return [AssetValue.from({ chain: Chain.Chainflip, value: BigInt(balance.toString()) })];
-  }
-
-  return { ...toolbox, getBalance };
+  return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
 };
 
 type ToolboxType = {

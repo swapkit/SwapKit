@@ -1,13 +1,13 @@
 import type { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import {
-  AssetValue,
+  type AssetValue,
   Chain,
   DerivationPath,
   SKConfig,
   SwapKitError,
-  SwapKitNumber,
   type WalletTxParams,
 } from "@swapkit/helpers";
+import { getBalance } from "../utils";
 
 export async function getAddressValidator() {
   const { PublicKey } = await import("@solana/web3.js");
@@ -28,7 +28,7 @@ export const SOLToolbox = () => {
     createKeysForPath,
     getAddressFromKeys,
     createSolanaTransaction: createSolanaTransaction(getConnection),
-    getBalance: getBalance(getConnection),
+    getBalance: getBalance(Chain.Solana),
     transfer: transfer(getConnection),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator,
@@ -230,65 +230,4 @@ async function createKeysForPath({
 
 function getAddressFromKeys(keypair: Keypair) {
   return keypair.publicKey.toString();
-}
-
-async function getTokenBalances({
-  connection,
-  address,
-}: { connection: Connection; address: string }) {
-  const { PublicKey } = await import("@solana/web3.js");
-  const { TOKEN_PROGRAM_ID } = await import("@solana/spl-token");
-  const { TokenListProvider } = await import("@solana/spl-token-registry");
-
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
-    programId: TOKEN_PROGRAM_ID,
-  });
-  const tokenListProvider = new TokenListProvider();
-  const tokenListContainer = await tokenListProvider.resolve();
-  const tokenList = tokenListContainer.filterByChainId(101).getList();
-
-  // Group token balances by mint address
-  const tokenBalanceMap = new Map<string, { amount: bigint; decimal: number; symbol: string }>();
-
-  for await (const tokenAccountInfo of tokenAccounts.value) {
-    const accountInfo = tokenAccountInfo.account.data.parsed.info;
-    const mintAddress = accountInfo.mint;
-    const decimal = accountInfo.tokenAmount.decimals;
-    const amount = BigInt(accountInfo.tokenAmount.amount);
-
-    if (amount <= BigInt(0)) continue;
-
-    const tokenInfo = tokenList.find((token) => token.address === mintAddress);
-    const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
-    const existing = tokenBalanceMap.get(mintAddress);
-
-    tokenBalanceMap.set(mintAddress, {
-      amount: existing ? existing.amount + amount : amount,
-      decimal,
-      symbol: tokenSymbol,
-    });
-  }
-
-  // Convert grouped balances to AssetValue array
-  const tokenBalances: AssetValue[] = Array.from(tokenBalanceMap.entries()).map(
-    ([mintAddress, { amount, decimal, symbol }]) =>
-      new AssetValue({
-        value: SwapKitNumber.fromBigInt(amount, decimal),
-        decimal,
-        identifier: `${Chain.Solana}.${symbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
-      }),
-  );
-
-  return tokenBalances;
-}
-
-function getBalance(getConnection: () => Promise<Connection>) {
-  return async (address: string) => {
-    const { PublicKey } = await import("@solana/web3.js");
-    const connection = await getConnection();
-    const SOLBalance = await connection.getBalance(new PublicKey(address));
-    const tokenBalances = await getTokenBalances({ connection, address });
-
-    return [AssetValue.from({ chain: Chain.Solana, value: BigInt(SOLBalance) }), ...tokenBalances];
-  };
 }
