@@ -48,15 +48,16 @@ export async function getWalletMethods(chain: Chain) {
   const bitget = window.bitkeep;
 
   switch (chain) {
-    case Chain.Ethereum:
-    case Chain.Base:
-    case Chain.Avalanche:
     case Chain.Arbitrum:
     case Chain.Aurora:
+    case Chain.Avalanche:
+    case Chain.Base:
+    case Chain.Berachain:
+    case Chain.BinanceSmartChain:
+    case Chain.Ethereum:
     case Chain.Gnosis:
     case Chain.Optimism:
-    case Chain.Polygon:
-    case Chain.BinanceSmartChain: {
+    case Chain.Polygon: {
       if (!(bitget && "ethereum" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
