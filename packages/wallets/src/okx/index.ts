@@ -11,6 +11,7 @@ export const okxWallet = createWallet({
     Chain.Aurora,
     Chain.Avalanche,
     Chain.Base,
+    Chain.Berachain,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.Cosmos,
