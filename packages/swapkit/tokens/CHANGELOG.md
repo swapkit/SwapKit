@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.4.2
+
+### Patch Changes
+
+- [#1229](https://github.com/thorswap/SwapKit/pull/1229) [`8ca6390`](https://github.com/thorswap/SwapKit/commit/8ca639075310f80669b48f5001c63132f9686ab4) Thanks [@towanTG](https://github.com/towanTG)! - Updates Tokenlists
+
 ## 2.4.1
 
 ### Patch Changes

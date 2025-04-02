@@ -1,5 +1,12 @@
 # @swapkit/toolbox-solana
 
+## 1.4.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.3
+
 ## 1.4.8
 
 ### Patch Changes

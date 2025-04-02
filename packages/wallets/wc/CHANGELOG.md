@@ -1,5 +1,14 @@
 # @swapkit/wallet-wc
 
+## 1.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.3
+  - @swapkit/toolbox-evm@1.9.3
+  - @swapkit/toolbox-cosmos@1.10.4
+
 ## 1.8.3
 
 ### Patch Changes

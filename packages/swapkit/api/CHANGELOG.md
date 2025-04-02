@@ -1,5 +1,12 @@
 # @swapkit/api
 
+## 2.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.3
+
 ## 2.4.2
 
 ### Patch Changes

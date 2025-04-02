@@ -1,5 +1,18 @@
 # @swapkit/wallet-keystore
 
+## 1.6.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.3
+  - @swapkit/toolbox-evm@1.9.3
+  - @swapkit/toolbox-cosmos@1.10.4
+  - @swapkit/toolbox-radix@1.2.37
+  - @swapkit/toolbox-solana@1.4.9
+  - @swapkit/toolbox-substrate@1.3.22
+  - @swapkit/toolbox-utxo@1.3.4
+
 ## 1.6.5
 
 ### Patch Changes
