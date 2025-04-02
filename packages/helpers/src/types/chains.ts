@@ -31,8 +31,9 @@ export enum StagenetChain {
 
 export enum ChainId {
   Arbitrum = "42161",
-  Aurora = "1313161554",
   ArbitrumHex = "0xa4b1",
+  Aurora = "1313161554",
+  AuroraHex = "0x4e454152",
   Avalanche = "43114",
   AvalancheHex = "0xa86a",
   Base = "8453",
@@ -46,6 +47,7 @@ export enum ChainId {
   Dash = "dash",
   Dogecoin = "dogecoin",
   Gnosis = "100",
+  GnosisHex = "0x64",
   Kujira = "kaiyo-1",
   Ethereum = "1",
   EthereumHex = "0x1",
