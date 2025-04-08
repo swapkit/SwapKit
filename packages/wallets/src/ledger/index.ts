@@ -130,11 +130,10 @@ async function getWalletMethods({
     case Chain.Polygon:
     case Chain.BinanceSmartChain:
     case Chain.Base: {
-      const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
+      const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
-      const provider = await getProvider(chain);
-      const toolbox = getToolboxByChain(chain)({ signer, provider });
+      const toolbox = await getEvmToolbox(chain, { signer });
 
       return { ...toolbox, address };
     }

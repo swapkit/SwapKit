@@ -50,10 +50,10 @@ export const getWeb3WalletMethods = async ({
   provider: BrowserProvider;
 }) => {
   if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
-  const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+  const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
   const signer = await provider.getSigner();
-  const toolbox = getToolboxByChain(chain)({ provider, signer });
+  const toolbox = await getEvmToolbox(chain, { provider, signer });
 
   if (chain !== Chain.Ethereum) {
     const currentNetwork = await provider.getNetwork();

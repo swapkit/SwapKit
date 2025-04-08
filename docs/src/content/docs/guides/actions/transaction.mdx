@@ -242,19 +242,15 @@ For lower-level control, you can use the toolboxes directly instead of SwapKit's
 // @noErrorValidation
 
 import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { getProvider, getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getProvider, getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function directEVMTransfer() {
   // Create a signer
-  const provider = getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key-here", provider);
 
   // Create a toolbox with the signer
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({
-    provider,
-    signer,
-  });
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, { signer });
 
   // Create an asset value
   const amount = AssetValue.from({
@@ -408,21 +404,18 @@ For EVM chains, you can interact with smart contracts using the EVM toolbox:
 // @noErrorValidation
 
 import { Chain } from "@swapkit/helpers";
-import { getProvider, getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
 
 
 async function interactWithContract() {
   // Create a provider and signer
-  const provider = getProvider(Chain.Ethereum);
+  const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key-here", provider);
 
   // Get the EVM toolbox
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({
-    provider,
-    signer,
-  });
+  const ethToolbox =  await getEvmToolbox(Chain.Ethereum, {signer });
 
   // USDC contract address
   const contractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";

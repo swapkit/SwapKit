@@ -1,16 +1,14 @@
 import type { AssetValue, FeeOption, WalletTxParams } from "@swapkit/helpers";
-import type { BigNumberish, JsonFragment, Transaction } from "ethers";
-
 import type {
-  ARBToolbox,
-  AVAXToolbox,
-  BASEToolbox,
-  BSCToolbox,
-  ETHToolbox,
-  MATICToolbox,
-  OPToolbox,
-  getProvider,
-} from "./index";
+  BigNumberish,
+  BrowserProvider,
+  JsonFragment,
+  JsonRpcProvider,
+  Signer,
+  Transaction,
+} from "ethers";
+
+import type { getProvider } from "./index";
 
 export enum EthNetwork {
   Test = "goerli",
@@ -64,19 +62,13 @@ export type TransferParams = WalletTxParams & {
   assetValue: AssetValue;
 };
 
-export type BaseEVMToolboxType = ReturnType<
-  | typeof ARBToolbox
-  | typeof AVAXToolbox
-  | typeof BASEToolbox
-  | typeof BSCToolbox
-  | typeof ETHToolbox
-  | typeof MATICToolbox
-  | typeof OPToolbox
->;
+export type EVMToolboxParams = {
+  provider: BrowserProvider | JsonRpcProvider;
+  signer?: Signer;
+};
 
 export type EVMMaxSendableAmountsParams = {
   from: string;
-  toolbox: BaseEVMToolboxType;
   assetValue: AssetValue;
   feeOptionKey?: FeeOption;
   memo?: string;

@@ -105,7 +105,7 @@ async function getWalletMethods({
     case Chain.Optimism:
     case Chain.Polygon: {
       if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const jsonRpcProvider = await getProvider(chain);
       const browserProvider = provider as BrowserProvider;
@@ -114,7 +114,7 @@ async function getWalletMethods({
 
       const signer = await browserProvider.getSigner();
       const address = await signer.getAddress();
-      const toolbox = getToolboxByChain(chain)({ provider: jsonRpcProvider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider: jsonRpcProvider, signer });
 
       try {
         if (chain !== Chain.Ethereum) {

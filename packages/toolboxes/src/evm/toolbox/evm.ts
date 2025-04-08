@@ -1,14 +1,11 @@
 import { Chain, type EVMChain, FeeOption } from "@swapkit/helpers";
-import type { BrowserProvider, JsonRpcProvider, Signer } from "ethers";
 import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
 import { getEstimateTransactionFee, getIsEIP1559Compatible, getNetworkParams } from "../helpers";
+import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
-export function ETHToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
-  provider,
-  signer,
-}: { signer?: S; provider: P }) {
+export function ETHToolbox({ provider, signer }: EVMToolboxParams) {
   const evmToolbox = createEvmToolbox(Chain.Ethereum)({
     provider,
     signer,
@@ -32,10 +29,7 @@ export function ETHToolbox<P extends JsonRpcProvider | BrowserProvider, S extend
   return { ...evmToolbox, multicall };
 }
 
-export function ARBToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
-  provider,
-  signer,
-}: { signer?: S; provider: P }) {
+export function ARBToolbox({ provider, signer }: EVMToolboxParams) {
   const { estimateGasPrices: _, ...evmToolbox } = createEvmToolbox(Chain.Arbitrum)({
     provider,
     signer,
@@ -68,10 +62,7 @@ export const BSCToolbox = createEvmToolbox(Chain.BinanceSmartChain);
 export const MATICToolbox = createEvmToolbox(Chain.Polygon);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
-  return function createEvmToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
-    provider,
-    signer,
-  }: { provider: P; signer?: S }) {
+  return function createEvmToolbox({ provider, signer }: EVMToolboxParams) {
     const isEIP1559Compatible = getIsEIP1559Compatible(chain);
     const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible });
 

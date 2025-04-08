@@ -1,4 +1,4 @@
-import type { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import type { BrowserProvider, JsonRpcProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
@@ -121,7 +121,7 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
 }
 
 export function prepareNetworkSwitch<
-  T extends ReturnType<ReturnType<typeof getToolboxByChain>>,
+  T extends Awaited<ReturnType<typeof getEvmToolbox>>,
   M extends keyof T,
 >({
   toolbox,

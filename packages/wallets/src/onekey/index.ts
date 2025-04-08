@@ -162,7 +162,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       if (!window.$onekey?.ethereum) {
         throw new SwapKitError({
           errorKey: "wallet_onekey_not_found",
@@ -180,7 +180,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
 
-      const toolbox = getToolboxByChain(chain)({ provider: jsonRpcProvider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider: jsonRpcProvider, signer });
       try {
         if (chain !== Chain.Ethereum) {
           const networkParams = toolbox.getNetworkParams() as NetworkParams;

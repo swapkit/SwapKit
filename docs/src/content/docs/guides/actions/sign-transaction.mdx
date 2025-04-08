@@ -195,7 +195,7 @@ For more control over the signing process, you can use toolboxes directly:
 ```ts twoslash
 // @noErrorValidation
 import { Chain } from "@swapkit/helpers";
-import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 // Create and sign an Ethereum transaction manually
@@ -205,7 +205,7 @@ async function signEthereumTransaction() {
   const signer = new ethers.Wallet("your-eth-private-key", provider);
 
   // Get the EVM toolbox
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, {
     provider,
     signer,
   });

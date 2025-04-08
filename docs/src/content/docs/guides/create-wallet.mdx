@@ -29,7 +29,7 @@ import {
   type ChainWallet,
   type EVMChain
 } from "@swapkit/helpers";
-import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 
 
 // Create a basic EVM wallet adapter
@@ -78,7 +78,7 @@ export const myCustomWallet = createWallet({
         const address = accounts[0];
 
         // Create toolbox with the provider
-        const toolbox = getToolboxByChain(chain)({
+        const toolbox = await getEvmToolbox(chain, {
           provider,
           // You might also add a signer here i.e.:
           // signer: provider.getSigner(),
@@ -112,7 +112,7 @@ import {
   createWallet,
   type ChainWallet
 } from "@swapkit/helpers";
-import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
 export const customHardwareWallet = createWallet({
@@ -197,7 +197,7 @@ export const customHardwareWallet = createWallet({
           })
         } else {
           // For EVM chains
-          const evmToolbox = getToolboxByChain(chain)({
+          const evmToolbox = await getEvmToolbox(chain, {
             // Initialize with a special provider that communicates with hardware
             provider: createHardwareProvider(deviceId, chain),
           });
@@ -208,7 +208,7 @@ export const customHardwareWallet = createWallet({
             chain,
             walletType,
             address,
-        });
+          });
         }
       }
 

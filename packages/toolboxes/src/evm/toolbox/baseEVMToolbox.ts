@@ -25,16 +25,7 @@ import {
   getAddress,
 } from "ethers";
 
-import {
-  type ARBToolbox,
-  type AVAXToolbox,
-  type BASEToolbox,
-  type BSCToolbox,
-  type ETHToolbox,
-  type MATICToolbox,
-  type OPToolbox,
-  toHexString,
-} from "../index";
+import { toHexString } from "../index";
 import type {
   ApproveParams,
   CallParams,
@@ -46,25 +37,10 @@ import type {
   TransferParams,
 } from "../types";
 
-export type EVMWallet = ReturnType<typeof BaseEVMToolbox>;
-export type EVMWalletType = {
-  [Chain.Arbitrum]: ReturnType<typeof ARBToolbox>;
-  [Chain.Avalanche]: ReturnType<typeof AVAXToolbox>;
-  [Chain.Base]: ReturnType<typeof BASEToolbox>;
-  [Chain.BinanceSmartChain]: ReturnType<typeof BSCToolbox>;
-  [Chain.Ethereum]: ReturnType<typeof ETHToolbox>;
-  [Chain.Optimism]: ReturnType<typeof OPToolbox>;
-  [Chain.Polygon]: ReturnType<typeof MATICToolbox>;
-};
-
 type ToolboxWrapParams<P = Provider | BrowserProvider, T = {}> = T & {
   isEIP1559Compatible?: boolean;
   provider: P;
   signer?: Signer;
-};
-
-export type EVMWallets = {
-  [chain in EVMChain]: EVMWallet & EVMWalletType[chain];
 };
 
 export const MAX_APPROVAL = BigInt(

@@ -164,14 +164,13 @@ export const getWeb3WalletMethods = async ({
   chain,
   walletProvider,
 }: { walletProvider?: Eip1193Provider; chain: EVMChain }) => {
-  const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+  const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
   if (!walletProvider) throw new SwapKitError("wallet_provider_not_found");
 
   const provider = new BrowserProvider(walletProvider, "any");
   const signer = await provider.getSigner();
-  const getToolbox = getToolboxByChain(chain);
-  const toolbox = getToolbox({ provider, signer });
+  const toolbox = await getEvmToolbox(chain, { provider, signer });
 
   try {
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
@@ -181,9 +180,5 @@ export const getWeb3WalletMethods = async ({
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
   }
 
-  return prepareNetworkSwitch({
-    toolbox,
-    provider,
-    chain,
-  });
+  return prepareNetworkSwitch({ chain, toolbox, provider });
 };

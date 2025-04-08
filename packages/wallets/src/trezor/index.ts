@@ -26,7 +26,7 @@ function getScriptType(derivationPath: DerivationPathArray) {
   }
 }
 
-async function getWalletMethods<T extends Chain>({
+async function getTrezorWallet<T extends Chain>({
   chain,
   derivationPath,
 }: { chain: T; derivationPath: DerivationPathArray }) {
@@ -38,15 +38,15 @@ async function getWalletMethods<T extends Chain>({
     case Chain.Polygon:
     case Chain.Base:
     case Chain.Ethereum: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { getEVMSigner } = await import("./evmSigner");
 
       const provider = await getProvider(chain);
       const signer = await getEVMSigner({ chain, derivationPath, provider });
       const address = await signer.getAddress();
-      const toolbox = getToolboxByChain(chain)({ provider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
 
-      return { address, walletMethods: toolbox };
+      return { ...toolbox, address };
     }
 
     case Chain.Bitcoin:
@@ -186,7 +186,7 @@ async function getWalletMethods<T extends Chain>({
 
       const toolbox = await getUtxoToolbox(chain);
 
-      return { address, walletMethods: { ...toolbox, transfer, signTransaction } };
+      return { ...toolbox, address, transfer, signTransaction };
     }
 
     default:
@@ -232,9 +232,9 @@ export const trezorWallet = createWallet({
         TrezorConnect.init({ lazyLoad: true, manifest });
       }
 
-      const { address, walletMethods } = await getWalletMethods({ chain, derivationPath });
+      const wallet = await getTrezorWallet({ chain, derivationPath });
 
-      addChain({ ...walletMethods, address, chain, walletType });
+      addChain({ ...wallet, chain, walletType });
 
       return true;
     },

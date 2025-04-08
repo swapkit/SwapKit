@@ -56,14 +56,14 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
     }
 
     case Chain.Ethereum: {
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
 
       const provider = new BrowserProvider(phantom?.ethereum, "any");
       const [address] = await provider.send("eth_requestAccounts", []);
 
       const signer = await provider.getSigner();
-      const toolbox = getToolboxByChain(chain)({ signer, provider });
+      const toolbox = await getEvmToolbox(chain, { signer, provider });
 
       return { ...toolbox, address };
     }

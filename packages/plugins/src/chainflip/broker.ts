@@ -1,7 +1,7 @@
 import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
-import type { ETHToolbox } from "@swapkit/toolboxes/evm";
+import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
 import type { WithdrawFeeResponse } from "./types";
@@ -92,7 +92,7 @@ const fundStateChainAccount =
     stateChainAccount,
     assetValue,
   }: {
-    evmToolbox: ReturnType<typeof ETHToolbox>;
+    evmToolbox: Awaited<ReturnType<typeof getEvmToolbox>>;
     stateChainAccount: string;
     assetValue: AssetValue;
   }) => {

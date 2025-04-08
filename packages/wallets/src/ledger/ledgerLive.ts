@@ -154,15 +154,14 @@ export const getLedgerLiveWallet = async ({
   switch (chain) {
     case Chain.Arbitrum:
     case Chain.Ethereum: {
-      const { ETHToolbox, getProvider } = await import("@swapkit/toolboxes/evm");
+      const { getEvmToolbox, getProvider } = await import("@swapkit/toolboxes/evm");
 
       const getAddress = () => ledgerLiveAccount.address;
 
       const ledgerLiveClient = EthereumLedgerLive();
       const provider = await getProvider(Chain.Ethereum);
       const signer = new VoidSigner(ledgerLiveAccount.address, provider);
-
-      const toolbox = ETHToolbox({ provider, signer });
+      const toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
 
       const sendTransaction = async (unsignedTx: any) => {
         const signedTx = await ledgerLiveClient?.signTransaction(ledgerLiveAccount.id, {

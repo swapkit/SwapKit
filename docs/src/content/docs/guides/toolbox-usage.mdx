@@ -25,20 +25,19 @@ Each toolbox can be imported individually, which is preferred for frontend appli
 ### Importing and Initializing
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
-import { getToolboxByChain, getProvider } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 // Get a toolbox for a specific EVM chain
-const ethereumToolbox = getToolboxByChain(Chain.Ethereum)({
-  // You can provide a custom provider or signer
-  provider: getProvider(Chain.Ethereum),
-});
+const ethereumToolbox = await getEvmToolbox(Chain.Ethereum);
 
 // With a signer (for transactions)
 const signer = new ethers.Wallet("your-private-key-here", getProvider(Chain.Ethereum));
-const signingToolbox = getToolboxByChain(Chain.Ethereum)({
-  provider: getProvider(Chain.Ethereum),
+const signingToolbox = await getEvmToolbox(Chain.Ethereum, {
+  // You can provide a custom provider & signer
+  // provider: getProvider(Chain.Ethereum),
   signer,
 });
 ```
@@ -48,6 +47,7 @@ const signingToolbox = getToolboxByChain(Chain.Ethereum)({
 #### Address Validation
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { evmValidateAddress } from "@swapkit/toolboxes/evm";
 
@@ -58,17 +58,18 @@ const isValidAddress = evmValidateAddress("0x742d35Cc6634C0532925a3b844Bc454e443
 #### Token Transfers
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { getToolboxByChain, getProvider } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function transferTokens() {
   // Create a signer
-  const provider = getProvider(Chain.Ethereum);
+  const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key", provider);
 
   // Create a toolbox with signer
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, {
     provider,
     signer
   });
@@ -94,11 +95,12 @@ async function transferTokens() {
 }
 ```
 
-{/* #### Smart Contract Interactions
+#### Smart Contract Interactions
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
-import { getToolboxByChain, getProvider } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function interactWithContract() {
@@ -107,7 +109,7 @@ async function interactWithContract() {
   const signer = new ethers.Wallet("your-private-key", provider);
 
   // Create a toolbox with signer
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum)({
     provider,
     signer
   });
@@ -172,13 +174,13 @@ async function interactWithContract() {
 #### Fee Estimation
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain, FeeOption } from "@swapkit/helpers";
-import { getToolboxByChain, getProvider } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function estimateFees() {
-  const provider = getProvider(Chain.Ethereum);
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({ provider });
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum);
 
   // Transaction to estimate
   const transaction = {
@@ -215,6 +217,7 @@ async function estimateFees() {
 ### Importing and Initializing
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -228,6 +231,7 @@ async function setupBitcoinToolbox() {
 ### Key Generation and Address Management
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -255,6 +259,7 @@ async function bitcoinKeysAndAddresses() {
 ### Building and Signing Transactions
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -308,6 +313,7 @@ async function createBitcoinTransaction() {
 ### Balance and Fee Management
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -334,6 +340,7 @@ async function getUtxoData() {
 ### Importing and Initializing
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 
@@ -352,6 +359,7 @@ function initCosmosToolbox() {
 ###  Wallet Creation, Signing and Transfers
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
 import { getCosmosToolbox, TransferParams } from "@swapkit/toolboxes/cosmos";
 
@@ -389,6 +397,7 @@ const signedMessage = await wallet.signMessage("Hello, world!");
 ### Balances and Account Information
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 
@@ -415,6 +424,7 @@ async function cosmosBalances() {
 ### Importing and Initializing
 
 ```ts twoslash
+// @noErrorValidation
 import { getSolanaToolbox } from "@swapkit/toolboxes/solana";
 
 // Initialize Solana toolbox
@@ -427,6 +437,7 @@ function initSolanaToolbox() {
 ### Key Management and Addresses
 
 ```ts twoslash
+// @noErrorValidation
 import { getSolanaToolbox } from "@swapkit/toolboxes/solana";
 
 async function solanaKeysAndAddresses() {
@@ -449,6 +460,7 @@ async function solanaKeysAndAddresses() {
 ### Transactions and Transfers
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain } from "@swapkit/helpers";
 import { getSolanaToolbox } from "@swapkit/toolboxes/solana";
 
@@ -491,6 +503,7 @@ async function solanaTransfer() {
 ### Importing and Initializing
 
 ```ts twoslash
+// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
 import { createKeyring, Network, getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
@@ -511,6 +524,7 @@ async function initSubstrateToolbox() {
 ### Transactions and Transfers
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain } from "@swapkit/helpers";
 import { createKeyring, Network, getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
@@ -556,9 +570,10 @@ async function substrateTransfer() {
 For complex operations involving multiple chains, you can use multiple toolboxes together:
 
 ```ts twoslash
+// @noErrorValidation
 import { AssetValue, Chain } from "@swapkit/helpers";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
-import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function crossChainOperation() {
@@ -568,7 +583,7 @@ async function crossChainOperation() {
   // Initialize Ethereum toolbox
   const provider = new ethers.JsonRpcProvider("https://mainnet.infura.io/v3/your-infura-key");
   const signer = new ethers.Wallet("your-eth-private-key", provider);
-  const ethToolbox = getToolboxByChain(Chain.Ethereum)({ provider, signer });
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
 
   // Get Bitcoin balance
   const btcAddress = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";

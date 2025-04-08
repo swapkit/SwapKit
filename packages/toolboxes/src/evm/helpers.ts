@@ -25,7 +25,6 @@ export async function getProvider(chain: EVMChain, customUrl?: string) {
  * @deprecated
  */
 export const estimateMaxSendableAmount = async ({
-  toolbox,
   from,
   memo = "",
   feeOptionKey = FeeOption.Fastest,
@@ -36,6 +35,9 @@ export const estimateMaxSendableAmount = async ({
   contractAddress,
   txOverrides,
 }: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
+  const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+  const toolbox = await getEvmToolbox(assetValue.chain as EVMChain);
+
   const balances = await toolbox.getBalance(from);
   const balance = balances.find(({ symbol, chain }) =>
     assetValue ? symbol === assetValue.symbol : symbol === AssetValue.from({ chain })?.symbol,

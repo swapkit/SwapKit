@@ -109,7 +109,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Optimism:
     case Chain.Polygon: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
       const ethereumWindowProvider = getCtrlProvider(chain);
 
@@ -119,10 +119,8 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
 
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
-      const toolbox = getToolboxByChain(chain)({ provider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
       const ctrlMethods = getCtrlMethods(provider);
-
-      toolbox.sendTransaction;
 
       try {
         if (chain !== Chain.Ethereum) {

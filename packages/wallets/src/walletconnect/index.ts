@@ -129,13 +129,13 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const provider = await getProvider(chain);
       const signer = await getEVMSigner({ walletconnect, chain, provider });
-      const toolbox = getToolboxByChain(chain);
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
 
-      return toolbox({ provider, signer });
+      return toolbox;
     }
 
     case Chain.THORChain: {

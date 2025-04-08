@@ -76,7 +76,7 @@ async function getWalletMethods({
   chain,
   derivationPath,
 }: { sdk: KeepKeySdk; chain: Chain; derivationPath?: DerivationPathArray }) {
-  const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+  const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
   switch (chain) {
     case Chain.BinanceSmartChain:
@@ -88,7 +88,7 @@ async function getWalletMethods({
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
       const address = await signer.getAddress();
-      const toolbox = getToolboxByChain(chain)({ provider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
 
       return { address, ...toolbox };
     }

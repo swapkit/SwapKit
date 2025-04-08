@@ -67,12 +67,11 @@ export const getWalletMethods = async ({
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
       const walletProvider = coinbaseSdk.getProvider() as CoinbaseWalletProvider;
-
-      const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
+      const { getEvmToolbox, getProvider } = await import("@swapkit/toolboxes/evm");
 
       const provider = await getProvider(chain);
       const signer = await getCoinbaseMobileSigner(walletProvider, provider);
-      const toolbox = getToolboxByChain(chain)({ provider, signer });
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
       const address = await signer.getAddress();
 
       return { ...toolbox, address };

@@ -39,12 +39,12 @@ const getKeystoreWallet = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
+      const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { HDNodeWallet } = await import("ethers");
 
       const provider = await getProvider(chain, rpcUrl);
       const wallet = HDNodeWallet.fromPhrase(phrase).connect(provider);
-      const toolbox = getToolboxByChain(chain)({ provider, signer: wallet });
+      const toolbox = await getEvmToolbox(chain, { provider, signer: wallet });
 
       return { ...toolbox, address: wallet.address };
     }
