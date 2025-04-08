@@ -1,7 +1,6 @@
 import {
   Chain,
   type EVMChain,
-  type EthereumWindowProvider,
   SwapKitError,
   WalletOption,
   createWallet,
@@ -9,7 +8,6 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { InjectedWindow } from "@swapkit/toolboxes/substrate";
 import type { Eip1193Provider } from "ethers";
 import { getWalletSupportedChains } from "../utils";
 
@@ -44,11 +42,6 @@ export const talismanWallet = createWallet({
 });
 
 export const TALISMAN_SUPPORTED_CHAINS = getWalletSupportedChains(talismanWallet);
-
-declare const window: {
-  talismanEth: EthereumWindowProvider;
-} & Window &
-  InjectedWindow;
 
 async function getWeb3WalletMethods({
   walletProvider,
@@ -105,8 +98,7 @@ async function getWalletMethods(chain: Chain) {
     case Chain.Chainflip: {
       const { getSubstrateToolbox, Network } = await import("@swapkit/toolboxes/substrate");
 
-      const injectedWindow = window as Window & InjectedWindow;
-      const injectedExtension = injectedWindow?.injectedWeb3?.talisman;
+      const injectedExtension = window?.injectedWeb3?.talisman;
       const rawExtension = await injectedExtension?.enable?.("talisman");
 
       if (!rawExtension) {

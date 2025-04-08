@@ -4,8 +4,6 @@ import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { KeypairType } from "@polkadot/util-crypto/types";
 import type { AssetValue, SubstrateChain } from "@swapkit/helpers";
 
-type This = typeof globalThis;
-
 const polkadotNetwork = {
   prefix: 0,
   network: "polkadot",
@@ -53,37 +51,37 @@ export type SubstrateTransferParams = {
   from?: string;
 };
 
-export type Unsubcall = () => void;
+type Unsubcall = () => void;
 
-export interface InjectedAccount {
+interface InjectedAccount {
   address: string;
   genesisHash?: string | null;
   name?: string;
   type?: KeypairType;
 }
 
-export interface InjectedAccounts {
+interface InjectedAccounts {
   get: (anyType?: boolean) => Promise<InjectedAccount[]>;
   subscribe: (cb: (accounts: InjectedAccount[]) => void | Promise<void>) => Unsubcall;
 }
-export interface InjectedExtensionInfo {
+interface InjectedExtensionInfo {
   name: string;
   version: string;
 }
-export interface ProviderMeta {
+interface ProviderMeta {
   network: string;
   node: "full" | "light";
   source: string;
   transport: string;
 }
-export interface MetadataDefBase {
+interface MetadataDefBase {
   chain: string;
   genesisHash: string;
   icon: string;
   ss58Format: number;
   chainType?: "substrate" | "ethereum";
 }
-export interface MetadataDef extends MetadataDefBase {
+interface MetadataDef extends MetadataDefBase {
   color?: string;
   specVersion: number;
   tokenDecimals: number;
@@ -92,35 +90,33 @@ export interface MetadataDef extends MetadataDefBase {
   metaCalls?: string;
   userExtensions?: ExtDef;
 }
-export interface InjectedMetadataKnown {
+interface InjectedMetadataKnown {
   genesisHash: string;
   specVersion: number;
 }
-export interface InjectedMetadata {
+interface InjectedMetadata {
   get: () => Promise<InjectedMetadataKnown[]>;
   provide: (definition: MetadataDef) => Promise<boolean>;
 }
-export type ProviderList = Record<string, ProviderMeta>;
-export interface InjectedProvider extends ProviderInterface {
+type ProviderList = Record<string, ProviderMeta>;
+
+interface InjectedProvider extends ProviderInterface {
   listProviders: () => Promise<ProviderList>;
   startProvider: (key: string) => Promise<ProviderMeta>;
 }
-export interface InjectedProviderWithMeta {
-  provider: InjectedProvider;
-  meta: ProviderMeta;
-}
-export interface Injected {
+
+type InjectedWalletData = {
   accounts: InjectedAccounts;
   metadata?: InjectedMetadata;
   provider?: InjectedProvider;
   signer: InjectedSigner;
-}
-export interface InjectedWindowProvider {
-  connect?: (origin: string) => Promise<InjectedExtension>;
-  enable?: (origin: string) => Promise<Injected>;
-  version?: string;
-}
-export interface InjectedWindow extends This {
-  injectedWeb3: Record<string, InjectedWindowProvider>;
-}
-export type InjectedExtension = InjectedExtensionInfo & Injected;
+};
+
+export type SubstrateInjectedExtension = Record<
+  string,
+  {
+    connect?: (origin: string) => Promise<InjectedExtensionInfo & InjectedWalletData>;
+    enable?: (origin: string) => Promise<InjectedWalletData>;
+    version?: string;
+  }
+>;

@@ -5,7 +5,6 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { InjectedWindow } from "@swapkit/toolboxes/substrate";
 import { getWalletSupportedChains } from "../utils";
 
 export const polkadotWallet = createWallet({
@@ -34,8 +33,7 @@ async function getWalletMethods(chain: Chain) {
   switch (chain) {
     case Chain.Polkadot: {
       const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
-      const injectedWindow = window as Window & InjectedWindow;
-      const injectedExtension = injectedWindow?.injectedWeb3?.["polkadot-js"];
+      const injectedExtension = window?.injectedWeb3?.["polkadot-js"];
 
       const rawExtension = await injectedExtension?.enable?.("polkadot-js");
       if (!rawExtension) {

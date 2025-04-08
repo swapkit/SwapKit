@@ -21,7 +21,7 @@ describe("keystore - Reading address", () => {
     const wallet = swapKitClient.getAllWallets();
 
     for (const [chain, address] of Object.entries(testKeystoreWalletData.addresses)) {
-      const chainWallet = wallet[chain];
+      const chainWallet = wallet[chain as keyof typeof wallet];
       if (chainWallet) {
         expect(chainWallet.address).toBe(address);
       }
@@ -45,12 +45,13 @@ describe("keystore - Reading balances", () => {
       for (const chain of KEYSTORE_SUPPORTED_CHAINS) {
         try {
           const wallet = await swapKitClient.getWalletWithBalance(chain);
-          if (wallet) {
-            console.info(wallet.balance[0].toString(), wallet.balance[0].getValue("string"));
+          const firstBalance = wallet?.balance?.[0];
+          if (firstBalance) {
+            console.info(firstBalance.toString(), firstBalance.getValue("string"));
             expect(wallet.balance.length).toBeGreaterThan(0);
           }
-        } catch (error) {
-          failedChains.push([chain, error.message]);
+        } catch (error: any) {
+          failedChains.push([chain, error?.message]);
         }
       }
 

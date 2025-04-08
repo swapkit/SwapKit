@@ -8,8 +8,8 @@
     "deploy": "REFERENCES=true astro build"
   },
   "dependencies": {
-    "@astrojs/react": "4.2.2",
-    "@astrojs/starlight": "0.32.5",
+    "@astrojs/react": "4.2.3",
+    "@astrojs/starlight": "0.33.0",
     "@shikijs/twoslash": "3.2.1",
     "@swapkit/core": "workspace:*",
     "@swapkit/helpers": "workspace:*",
@@ -17,10 +17,10 @@
     "@swapkit/sdk": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
-    "astro": "5.5.5",
-    "sharp": "0.33.5",
+    "astro": "5.6.1",
+    "sharp": "0.34.1",
     "starlight-typedoc": "0.21.0",
-    "typedoc": "0.28.1",
-    "typedoc-plugin-markdown": "4.6.0"
+    "typedoc": "0.28.2",
+    "typedoc-plugin-markdown": "4.6.1"
   }
 }

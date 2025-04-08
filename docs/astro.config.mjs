@@ -4,6 +4,64 @@ import { rendererRich, transformerTwoslash } from "@shikijs/twoslash";
 import { defineConfig } from "astro/config";
 import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 
+const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
+
+// https://astro.build/config
+export default defineConfig({
+  markdown: {
+    syntaxHighlight: "shiki",
+    shikiConfig: {
+      wrap: true,
+      theme: "github-dark",
+      transformers: [transformerTwoslash({ renderer: rendererRich() })],
+    },
+  },
+  integrations: [
+    react(),
+    starlight({
+      customCss: ["./src/styles/global.css", "@shikijs/twoslash/style-rich.css"],
+      disable404Route: true,
+      expressiveCode: false,
+      lastUpdated: true,
+      plugins: [...docsPlugins],
+      title: "SwapKit Docs",
+      social: [
+        { icon: "github", label: "GitHub", href: "https://github.com/thorswap/swapkit" },
+        { icon: "x.com", label: "X", href: "https://x.com/SwapKitPowered" },
+        { icon: "discord", label: "Discord", href: "https://discord.gg/swapkit" },
+      ],
+      sidebar: [
+        {
+          label: "Guides",
+          items: [
+            { label: "Create custom plugin", link: "/guides/create-plugin" },
+            { label: "Create custom wallet", link: "/guides/create-wallet" },
+            { label: "Toolbox usage", link: "/guides/toolbox-usage" },
+            {
+              label: "Actions",
+              autogenerate: { directory: "guides/actions", collapsed: true },
+            },
+            {
+              label: "Integrations",
+              autogenerate: { directory: "guides/integrations", collapsed: true },
+            },
+          ],
+        },
+        { label: "Others", autogenerate: { directory: "others" } },
+        ...(process.env.REFERENCES
+          ? [
+              {
+                label: "References",
+                collapsed: true,
+                items: [{ label: "@swapkit", items: docsSidebarItems }],
+              },
+            ]
+          : []),
+      ],
+    }),
+  ],
+});
+
 function createTypeDoc(docs, nest = "") {
   const generatedDocs = docs.reduce(
     (acc, { label, entrypoint }) => {
@@ -92,43 +150,3 @@ function createDocs() {
     sidebarItems: [...base.items, ...plugins.items, ...toolboxes.items, ...wallets.items],
   };
 }
-
-const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
-
-// https://astro.build/config
-export default defineConfig({
-  markdown: {
-    syntaxHighlight: "shiki",
-    shikiConfig: {
-      wrap: true,
-      theme: "github-dark",
-      transformers: [transformerTwoslash({ renderer: rendererRich() })],
-    },
-  },
-  integrations: [
-    react(),
-    starlight({
-      expressiveCode: false,
-      title: "SwapKit Docs",
-      customCss: ["./src/styles/global.css", "@shikijs/twoslash/style-rich.css"],
-      social: {
-        github: "https://github.com/thorswap/swapkit",
-        "x.com": "https://x.com/SwapKitPowered",
-      },
-      plugins: [...docsPlugins],
-      sidebar: [
-        { label: "Guides", autogenerate: { directory: "guides" } },
-        { label: "Others", autogenerate: { directory: "others" } },
-        ...(process.env.REFERENCES
-          ? [
-              {
-                label: "References",
-                collapsed: true,
-                items: [{ label: "@swapkit", items: docsSidebarItems }],
-              },
-            ]
-          : []),
-      ],
-    }),
-  ],
-});

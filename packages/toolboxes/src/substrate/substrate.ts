@@ -16,8 +16,37 @@ import {
   SwapKitNumber,
 } from "@swapkit/helpers";
 
-import { getBalance } from "../../utils";
-import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "../types";
+import { getBalance } from "../utils";
+import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "./types";
+
+export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams) => {
+  return createSubstrateToolbox({ chain: Chain.Polkadot, generic, signer });
+};
+
+export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams) => {
+  const toolbox = await createSubstrateToolbox({ chain: Chain.Chainflip, generic, signer });
+
+  return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
+};
+
+type ToolboxType = {
+  DOT: ReturnType<typeof PolkadotToolbox>;
+  FLIP: ReturnType<typeof ChainflipToolbox>;
+};
+
+export const getSubstrateToolbox = <T extends keyof ToolboxType>(
+  chain: T,
+  params: ToolboxParams,
+): ToolboxType[T] => {
+  switch (chain) {
+    case Chain.Chainflip:
+      return ChainflipToolbox(params);
+    case Chain.Polkadot:
+      return PolkadotToolbox(params);
+    default:
+      throw new Error(`Chain ${chain} is not supported`);
+  }
+};
 
 export function isKeyringPair(account: IKeyringPair | Signer): account is IKeyringPair {
   return "address" in account;

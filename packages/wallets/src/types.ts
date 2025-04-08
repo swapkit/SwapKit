@@ -10,6 +10,7 @@ import { type EthereumWindowProvider, WalletOption } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
+import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
 import type { bitgetWallet } from "./bitget";
 import type { coinbaseWallet } from "./coinbase";
 import type { ctrlWallet } from "./ctrl";
@@ -95,6 +96,8 @@ type UnisatToSignInputs = {
 
 declare global {
   interface Window {
+    injectedWeb3?: SubstrateInjectedExtension;
+    talismanEth?: EthereumWindowProvider;
     $onekey?: any;
     braveSolana: any;
     coinbaseWalletExtension: EthereumWindowProvider;

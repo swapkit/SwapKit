@@ -4,6 +4,7 @@
   }
 }
 
-.sidebar-pane {
-  width: 360px !important;
+:root {
+  --sl-content-width: 65rem !important;
+  --sl-content-margin-inline: 0 !important;
 }

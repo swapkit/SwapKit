@@ -1,2 +1,2 @@
-export * from "./toolbox";
+export * from "./substrate";
 export * from "./types";
