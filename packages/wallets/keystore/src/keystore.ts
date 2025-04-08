@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   type ChainApis,
   type ConnectWalletParams,
@@ -9,7 +8,6 @@ import {
   NetworkDerivationPath,
   UTXOChains,
   WalletOption,
-  type WalletTxParams,
   type Witness,
   derivationPathToString,
   filterSupportedChains,
@@ -39,6 +37,7 @@ type KeystoreOptions = {
   ethplorerApiKey?: string;
   blockchairApiKey?: string;
   covalentApiKey?: string;
+  swapkitApiKey?: string;
   stagenet?: boolean;
 };
 
@@ -58,6 +57,7 @@ const getWalletMethodsForChain = async ({
   ethplorerApiKey,
   covalentApiKey,
   blockchairApiKey,
+  swapkitApiKey,
   derivationPath,
   stagenet,
 }: Params) => {
@@ -153,7 +153,7 @@ const getWalletMethodsForChain = async ({
 
       const api = apis?.[chain];
 
-      const toolbox = getToolboxByChain(chain)({ server: api, stagenet });
+      const toolbox = getToolboxByChain(chain)({ server: api, stagenet, swapkitApiKey });
       const address = await toolbox.getAddressFromMnemonic(phrase);
       const signer = await toolbox.getSigner(phrase);
 
@@ -205,16 +205,14 @@ const getWalletMethodsForChain = async ({
     }
 
     case Chain.Solana: {
-      const { SOLToolbox } = await import("@swapkit/toolbox-solana");
-      const toolbox = SOLToolbox({ rpcUrl });
-      const keypair = toolbox.createKeysForPath({ phrase, derivationPath });
+      const { SOLToolbox, createKeysForPath } = await import("@swapkit/toolbox-solana");
+      const signer = createKeysForPath({ phrase, derivationPath });
+      const toolbox = SOLToolbox({ rpcUrl, signer });
 
       return {
-        address: toolbox.getAddressFromKeys(keypair),
+        address: toolbox.getAddressFromKeys(signer),
         walletMethods: {
           ...toolbox,
-          transfer: (params: WalletTxParams & { assetValue: AssetValue }) =>
-            toolbox.transfer({ ...params, fromKeypair: keypair }),
         },
       };
     }
@@ -228,7 +226,14 @@ function connectKeystore({
   addChain,
   apis,
   rpcUrls,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
+  config: {
+    thorswapApiKey,
+    covalentApiKey,
+    ethplorerApiKey,
+    blockchairApiKey,
+    stagenet,
+    swapkitApiKey,
+  },
 }: ConnectWalletParams) {
   return async function connectKeystore(
     chains: Chain[],
@@ -274,6 +279,7 @@ function connectKeystore({
         ethplorerApiKey,
         phrase,
         blockchairApiKey,
+        swapkitApiKey,
         stagenet,
       });
 

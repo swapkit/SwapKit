@@ -32,13 +32,14 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
     setLoading(true);
     setRoutes([]);
+    debugger;
 
     const sourceAddress = skClient.getAddress(inputAsset.chain as Chain);
     const destinationAddress = skClient.getAddress(outputAsset.chain as Chain);
     // const providers = Object.values(ProviderName);
 
     try {
-      const { routes } = await SwapKitApi.getSwapQuoteV2(
+      const { routes } = await SwapKitApi.getSwapQuote(
         {
           sellAsset: inputAsset.toString(),
           sellAmount: inputAssetValue.getValue("string"),
@@ -51,6 +52,7 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
           includeTx: true,
         },
         true,
+        "3974e4d9-f662-4e6e-a5b6-d44881902dcb",
       );
 
       setRoutes(routes || []);

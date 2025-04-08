@@ -23,7 +23,7 @@ export const OKX_SUPPORTED_CHAINS = [
 function connectOkx({
   addChain,
   apis,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
+  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, swapkitApiKey },
 }: ConnectWalletParams) {
   return async function connectOkx(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
@@ -37,6 +37,7 @@ function connectOkx({
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,
+        swapkitApiKey,
       });
 
       addChain({

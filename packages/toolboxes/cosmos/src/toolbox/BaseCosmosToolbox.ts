@@ -14,9 +14,13 @@ type Params = {
   derivationPath: DerivationPath;
 };
 
-export const getFeeRateFromThorswap = async (chainId: ChainId, safeDefault: number) => {
+export const getFeeRateFromThorswap = async (
+  chainId: ChainId,
+  safeDefault: number,
+  swapkitApiKey: string,
+) => {
   try {
-    const response = await SwapKitApi.getGasRate();
+    const response = await SwapKitApi.getGasRate(false, swapkitApiKey);
 
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 

@@ -81,15 +81,15 @@ const getAddressFromKeys = ({ keys, chain }: { keys: ECPairInterface } & UTXOBas
 };
 
 const transfer = async ({
-  signTransaction,
-  from,
-  memo,
+  assetValue,
   recipient,
+  memo,
+  feeRate,
+  from,
+  signTransaction,
   apiClient,
   feeOptionKey,
   broadcastTx,
-  feeRate,
-  assetValue,
 }: UTXOWalletTransferParams<Psbt, Psbt>) => {
   if (!from) throw new Error("From address must be provided");
   if (!recipient) throw new Error("Recipient address must be provided");

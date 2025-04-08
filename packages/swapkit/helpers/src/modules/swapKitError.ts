@@ -141,6 +141,7 @@ const errorCodes = {
   toolbox_evm_error_estimating_gas_limit: 90211,
   toolbox_evm_error_sending_transaction: 90212,
   toolbox_radix_signer_not_defined: 90301,
+  toolbox_solana_no_signer: 90401,
   /**
    * Helpers
    */

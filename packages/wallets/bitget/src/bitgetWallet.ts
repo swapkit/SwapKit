@@ -19,7 +19,7 @@ export const BITGET_SUPPORTED_CHAINS = [
 function connectBitget({
   addChain,
   apis,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey },
+  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, swapkitApiKey },
 }: ConnectWalletParams) {
   return async function connectBitget(chains: Chain[]) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
@@ -37,6 +37,7 @@ function connectBitget({
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,
+        swapkitApiKey,
       });
 
       addChain({

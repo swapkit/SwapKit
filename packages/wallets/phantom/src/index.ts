@@ -11,7 +11,7 @@ import {
   pickEvmApiKey,
   setRequestClientConfig,
 } from "@swapkit/helpers";
-import type { SolanaProvider } from "@swapkit/toolbox-solana";
+import type { SolanaProvider, VersionedTransaction } from "@swapkit/toolbox-solana";
 
 export const PHANTOM_SUPPORTED_CHAINS = [Chain.Bitcoin, Chain.Ethereum, Chain.Solana] as const;
 export type PhantomSupportedChains = (typeof PHANTOM_SUPPORTED_CHAINS)[number];
@@ -133,7 +133,13 @@ async function getWalletMethods({
         return txid;
       };
 
-      return { ...toolbox, transfer, address };
+      const signTransaction = async (transaction: Transaction | VersionedTransaction) => {
+        const signedTransaction = await provider.signTransaction(transaction);
+
+        return signedTransaction;
+      };
+
+      return { ...toolbox, signTransaction, transfer, address };
     }
 
     default: {

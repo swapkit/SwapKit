@@ -30,6 +30,7 @@ export type TransferParams = {
 export type ToolboxParams = {
   server?: string;
   stagenet?: boolean;
+  swapkitApiKey?: string;
 };
 
 export type Signer = {

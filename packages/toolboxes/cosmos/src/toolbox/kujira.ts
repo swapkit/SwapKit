@@ -20,8 +20,8 @@ import { buildNativeTransferTx, getAssetFromDenom } from "../util";
 
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from "./BaseCosmosToolbox";
 
-async function getFees() {
-  const baseFee = await getFeeRateFromThorswap(ChainId.Kujira, 1000);
+async function getFees(swapkitApiKey?: string) {
+  const baseFee = await getFeeRateFromThorswap(ChainId.Kujira, 1000, swapkitApiKey || "");
   return {
     type: "base",
     average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal.KUJI),
@@ -30,7 +30,7 @@ async function getFees() {
   };
 }
 
-export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType => {
+export const KujiraToolbox = ({ server, swapkitApiKey }: ToolboxParams = {}): KujiraToolboxType => {
   const client = new CosmosClient({
     server: server || "https://lcd-kujira.synergynodes.com/",
     chainId: ChainId.Kujira,
@@ -73,7 +73,7 @@ export const KujiraToolbox = ({ server }: ToolboxParams = {}): KujiraToolboxType
       );
     },
     transfer: async (params: TransferParams) => {
-      const gasFees = await getFees();
+      const gasFees = await getFees(swapkitApiKey);
 
       return cosmosToolbox.transfer({
         ...params,
