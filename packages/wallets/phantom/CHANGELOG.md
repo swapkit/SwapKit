@@ -1,5 +1,21 @@
 # @swapkit/wallet-phantom
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1235](https://github.com/thorswap/SwapKit/pull/1235) [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4) Thanks [@towanTG](https://github.com/towanTG)! - Adds solana plugin and adapts wallets and toolbox
+
+### Patch Changes
+
+- [#1235](https://github.com/thorswap/SwapKit/pull/1235) [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Api key usage in cosmos toolbox and wallets
+
+- Updated dependencies [[`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4), [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4)]:
+  - @swapkit/toolbox-solana@1.5.0
+  - @swapkit/toolbox-utxo@1.3.5
+  - @swapkit/helpers@2.5.4
+  - @swapkit/toolbox-evm@1.9.4
+
 ## 1.3.4
 
 ### Patch Changes

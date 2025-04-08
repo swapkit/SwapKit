@@ -1,5 +1,23 @@
 # @swapkit/sdk
 
+## 2.2.29
+
+### Patch Changes
+
+- [#1235](https://github.com/thorswap/SwapKit/pull/1235) [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Api key usage in cosmos toolbox and wallets
+
+- Updated dependencies [[`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4), [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4)]:
+  - @swapkit/tokens@2.4.3
+  - @swapkit/plugin-solana@0.1.0
+  - @swapkit/core@3.2.29
+  - @swapkit/wallets@2.0.32
+  - @swapkit/plugin-thorchain@2.3.17
+  - @swapkit/plugin-chainflip@2.1.5
+  - @swapkit/plugin-evm@1.3.26
+  - @swapkit/plugin-kado@0.2.18
+  - @swapkit/plugin-radix@1.3.20
+  - @swapkit/api@2.4.4
+
 ## 2.2.28
 
 ### Patch Changes
