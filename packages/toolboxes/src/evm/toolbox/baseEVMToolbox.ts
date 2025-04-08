@@ -46,7 +46,7 @@ import type {
   TransferParams,
 } from "../types";
 
-export type EVMWallet = ReturnType<typeof createEVMToolbox>;
+export type EVMWallet = ReturnType<typeof BaseEVMToolbox>;
 export type EVMWalletType = {
   [Chain.Arbitrum]: ReturnType<typeof ARBToolbox>;
   [Chain.Avalanche]: ReturnType<typeof AVAXToolbox>;
@@ -71,7 +71,7 @@ export const MAX_APPROVAL = BigInt(
   "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 );
 
-export function createEVMToolbox<
+export function BaseEVMToolbox<
   P extends Provider | BrowserProvider,
   S extends Signer | JsonRpcSigner | HDNodeWallet | undefined,
 >({
@@ -96,11 +96,11 @@ export function createEVMToolbox<
     sendTransaction: getSendTransaction({ provider, signer, isEIP1559Compatible }),
     signMessage: signer?.signMessage,
     transfer: getTransfer({ provider, signer, isEIP1559Compatible }),
-    validateAddress: evmValidateAddress,
+    validateAddress: (address: string) => evmValidateAddress({ address }),
   };
 }
 
-export function evmValidateAddress(address: string) {
+export function evmValidateAddress({ address }: { address: string }) {
   try {
     getAddress(address);
     return true;
@@ -249,7 +249,7 @@ function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
    * When using this method to make a non state changing call to the blockchain, like a isApproved call,
    * the signer needs to be set to undefined
    */
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor/Split
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO reduce complexity
   return async function call<T>({
     callProvider,
     contractAddress,
@@ -512,7 +512,7 @@ const isEIP1559Transaction = (tx: EVMTxParams) =>
   !!(tx as EIP1559TxParams).maxPriorityFeePerGas;
 
 function getSendTransaction({ provider, signer, isEIP1559Compatible = true }: ToolboxWrapParams) {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor/Split
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO reduce complexity
   return async function sendTransaction({
     feeOptionKey = FeeOption.Fast,
     ...tx

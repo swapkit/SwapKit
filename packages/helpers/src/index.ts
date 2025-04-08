@@ -24,4 +24,4 @@ export * from "./utils/tokens";
 /**
  * Types
  */
-export * from "./types/index";
+export * from "./types";

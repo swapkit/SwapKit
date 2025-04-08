@@ -17,17 +17,17 @@ describe("swapKitConfig", () => {
     SKConfig.setApiKey("swapKit", "123");
     expect(SKConfig.get("apiKeys").swapKit).toBe("123");
 
-    SKConfig.setApiKey("ethplorer", "123");
+    SKConfig.setApiKey("walletConnectProjectId", "123");
     expect(SKConfig.get("apiKeys")).toMatchObject({
       swapKit: "123",
-      ethplorer: "123",
+      walletConnectProjectId: "123",
     });
 
     SKConfig.setExplorerUrl(Chain.Ethereum, "https://lul.xyz");
     expect(SKConfig.getState()).toMatchObject({
       apiKeys: {
         swapKit: "123",
-        ethplorer: "123",
+        walletConnectProjectId: "123",
       },
       explorerUrls: {
         [Chain.Ethereum]: "https://lul.xyz",

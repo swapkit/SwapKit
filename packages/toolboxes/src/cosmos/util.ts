@@ -68,51 +68,6 @@ export const getDenomWithChain = ({ symbol, chain }: AssetValue) => {
   return getMsgSendDenom(symbol, false);
 };
 
-// TODO: figure out some better way to initialize from base value
-export const getAssetFromDenom = (denom: string, amount: string) => {
-  switch (denom) {
-    case "rune":
-      return AssetValue.from({
-        chain: Chain.THORChain,
-        value: Number.parseInt(amount) / 1e8,
-      });
-    case "uatom":
-    case "atom":
-      return AssetValue.from({
-        chain: Chain.Cosmos,
-        value: Number.parseInt(amount) / 1e6,
-      });
-    case "cacao":
-      return AssetValue.from({
-        chain: Chain.Maya,
-        value: Number.parseInt(amount) / 1e10,
-      });
-    case "maya":
-      return AssetValue.from({
-        asset: `${Chain.Maya}.${Chain.Maya}`,
-        value: Number.parseInt(amount) / 1e4,
-      });
-    case "ukuji":
-    case "kuji":
-      return AssetValue.from({
-        chain: Chain.Kujira,
-        value: Number.parseInt(amount) / 1e6,
-      });
-    case USK_KUJIRA_FACTORY_DENOM:
-      // USK on Kujira
-      return AssetValue.from({
-        asset: `${Chain.Kujira}.USK`,
-        value: Number.parseInt(amount) / 1e6,
-      });
-
-    default:
-      return AssetValue.from({
-        asset: denom,
-        value: Number.parseInt(amount) / 1e8,
-      });
-  }
-};
-
 export async function createStargateClient(url: string) {
   const { StargateClient } = await import("@cosmjs/stargate");
 

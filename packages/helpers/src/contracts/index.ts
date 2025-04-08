@@ -20,7 +20,7 @@ import { uniswapV3_100 } from "./abis/uniswapV3_100";
 import { uniswapV3_500 } from "./abis/uniswapV3_500";
 import { uniswapV3_3000 } from "./abis/uniswapV3_3000";
 import { uniswapV3_10000 } from "./abis/uniswapV3_10000";
-import { lowercasedRouterAbiMapping } from "./routers/index";
+import { lowercasedRouterAbiMapping } from "./routers";
 
 type AbiTypes =
   | typeof avaxGeneric

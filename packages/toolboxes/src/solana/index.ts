@@ -19,6 +19,8 @@ interface ConnectOpts {
   onlyIfTrusted: boolean;
 }
 
+export * from "./toolbox";
+
 export type SolanaWallet = ReturnType<typeof getSolanaToolbox>;
 
 export interface SolanaProvider {
@@ -42,5 +44,3 @@ export interface SolanaProvider {
     transactions: T[],
   ) => Promise<T[]>;
 }
-
-export * from "./toolbox";

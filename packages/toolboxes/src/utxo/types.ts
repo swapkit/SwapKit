@@ -1,5 +1,6 @@
-import type { AssetValue, FeeOption, UTXOChain, Witness } from "@swapkit/helpers";
-import type { UTXOScriptType } from "./helpers/txSize";
+import type { AssetValue, FeeOption, Witness } from "@swapkit/helpers";
+
+import type { UTXOScriptType } from "./helpers";
 
 export type TransactionType = {
   toHex(): string;
@@ -35,11 +36,9 @@ export type UTXOBuildTxParams = {
 };
 
 export type UTXOTransferParams = {
-  broadcastTx: (txHex: string) => Promise<string>;
-  chain: UTXOChain;
   feeOptionKey?: FeeOption;
   feeRate?: number;
-  from?: string;
+  from: string;
   recipient: string;
   assetValue: AssetValue;
   memo?: string;

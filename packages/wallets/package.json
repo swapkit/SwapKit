@@ -34,7 +34,6 @@
     "ts-pattern": "5.7.0"
   },
   "devDependencies": {
-    "@swapkit/core": "workspace:*",
     "@walletconnect/logger": "2.1.2",
     "@walletconnect/types": "2.19.2"
   },

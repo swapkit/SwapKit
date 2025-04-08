@@ -39,10 +39,16 @@ const getWalletForType = (
 };
 
 export const getWeb3WalletMethods = async ({
+  address,
   walletProvider,
   chain,
   provider,
-}: { walletProvider?: Eip1193Provider; chain: EVMChain; provider: BrowserProvider }) => {
+}: {
+  address: string;
+  walletProvider?: Eip1193Provider;
+  chain: EVMChain;
+  provider: BrowserProvider;
+}) => {
   if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
   const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
@@ -61,7 +67,11 @@ export const getWeb3WalletMethods = async ({
     }
   }
 
-  return prepareNetworkSwitch({ toolbox, chain, provider });
+  return prepareNetworkSwitch({
+    toolbox: { ...toolbox, getBalance: () => toolbox.getBalance(address) },
+    chain,
+    provider,
+  });
 };
 
 export const evmWallet = createWallet({
@@ -74,28 +84,26 @@ export const evmWallet = createWallet({
       eip1193Provider?: Eip1193Provider,
     ) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
 
       await Promise.all(
         filteredChains.map(async (chain) => {
           if (walletType === WalletOption.EIP6963) {
             if (!eip1193Provider) throw new Error("Missing provider");
+
             const provider = new BrowserProvider(eip1193Provider, "any");
             await provider.send("eth_requestAccounts", []);
             const signer = await provider.getSigner();
             const address = await signer.getAddress();
 
             const walletMethods = await getWeb3WalletMethods({
+              address,
               chain,
               provider,
               walletProvider: eip1193Provider,
             });
 
-            const getBalance = async (potentialScamFilter = true) =>
-              walletMethods.getBalance(address, potentialScamFilter, getProvider(chain));
-
-            addChain({ ...walletMethods, address, chain, getBalance, walletType });
+            addChain({ ...walletMethods, address, chain, walletType });
             return;
           }
 
@@ -105,18 +113,16 @@ export const evmWallet = createWallet({
           const address = await signer.getAddress();
 
           const walletMethods = await getWeb3WalletMethods({
+            address,
             chain,
             walletProvider: getWalletForType(walletType),
             provider: web3provider,
           });
 
-          const getBalance = (potentialScamFilter = true) =>
-            walletMethods.getBalance(address, potentialScamFilter, getProvider(chain));
-
           const disconnect = () =>
             web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
 
-          addChain({ ...walletMethods, address, chain, disconnect, getBalance, walletType });
+          addChain({ ...walletMethods, address, chain, disconnect, walletType });
         }),
       );
 

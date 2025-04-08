@@ -34,11 +34,7 @@ export const useSwapKit = () => {
       const swapKitClient = createSwapKit({
         config: {
           apiKeys: {
-            blockchair:
-              process.env.NEXT_PUBLIC_BLOCKCHAIR_API_KEY || "A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf",
-            covalent:
-              process.env.NEXT_PUBLIC_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
-            ethplorer: process.env.NEXT_PUBLIC_ETHPLORER_API_KEY || "freekey",
+            swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
             walletConnectProjectId: "",
             keepKey: localStorage.getItem("keepkeyApiKey") || "",
           },

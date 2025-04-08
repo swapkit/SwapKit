@@ -15,8 +15,12 @@ export const cosmosWalletMethods = async ({
   sdk,
   derivationPath,
 }: { sdk: KeepKeySdk; derivationPath?: DerivationPathArray }) => {
-  const { DEFAULT_COSMOS_FEE_MAINNET, GaiaToolbox, getFeeRateFromThorswap, createStargateClient } =
-    await import("@swapkit/toolboxes/cosmos");
+  const {
+    DEFAULT_COSMOS_FEE_MAINNET,
+    getCosmosToolbox,
+    getFeeRateFromThorswap,
+    createStargateClient,
+  } = await import("@swapkit/toolboxes/cosmos");
 
   try {
     const derivationPathString = derivationPath
@@ -27,7 +31,7 @@ export const cosmosWalletMethods = async ({
       address_n: bip32ToAddressNList(derivationPathString),
     })) as { address: string };
 
-    const toolbox = GaiaToolbox();
+    const toolbox = getCosmosToolbox(Chain.Cosmos);
 
     if (DEFAULT_COSMOS_FEE_MAINNET.amount[0]) {
       DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(

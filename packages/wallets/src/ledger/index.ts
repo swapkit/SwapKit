@@ -13,7 +13,7 @@ import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
 import { getWalletSupportedChains } from "../utils";
-import { getLedgerAddress, getLedgerClient } from "./helpers/index";
+import { getLedgerAddress, getLedgerClient } from "./helpers";
 
 export const ledgerWallet = createWallet({
   name: "connectLedger",
@@ -133,17 +133,17 @@ async function getWalletMethods({
       const { getToolboxByChain, getProvider } = await import("@swapkit/toolboxes/evm");
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
-      const provider = getProvider(chain);
+      const provider = await getProvider(chain);
       const toolbox = getToolboxByChain(chain)({ signer, provider });
 
       return { ...toolbox, address };
     }
 
     case Chain.Cosmos: {
-      const { createSigningStargateClient, getMsgSendDenom, GaiaToolbox } = await import(
+      const { createSigningStargateClient, getMsgSendDenom, getCosmosToolbox } = await import(
         "@swapkit/toolboxes/cosmos"
       );
-      const toolbox = GaiaToolbox();
+      const toolbox = getCosmosToolbox(Chain.Cosmos);
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 

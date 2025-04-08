@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   ChainToChainId,
   SwapKitError,
@@ -10,7 +9,6 @@ import {
 
 import { getWalletSupportedChains } from "../utils";
 import {
-  type WalletTxParams,
   getCtrlAddress,
   getCtrlMethods,
   getCtrlProvider,
@@ -74,45 +72,23 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     }
 
     case Chain.Maya:
-    case Chain.THORChain: {
-      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolboxes/cosmos"
-      );
-
-      const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
-      const toolbox = getCosmosToolbox(chain);
-
-      return {
-        ...toolbox,
-        deposit: (tx: WalletTxParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
-        transfer: (tx: WalletTxParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
-      };
-    }
-
+    case Chain.THORChain:
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-
       const chainId = ChainToChainId[chain];
+      const provider = getCtrlProvider(chain);
 
-      await window.xfi?.keplr?.enable(chainId);
-      // @ts-ignore
-      const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
+      await provider?.enable(chainId);
+      const signer = provider?.getOfflineSignerOnlyAmino(chainId);
 
-      const toolbox = getCosmosToolbox(chain);
+      if (!signer) {
+        throw new SwapKitError("wallet_ctrl_not_found");
+      }
 
-      const transfer = (params: {
-        from: string;
-        recipient: string;
-        assetValue: AssetValue;
-        memo: string;
-      }) => toolbox.transfer({ signer: offlineSigner, ...params });
+      const toolbox = getCosmosToolbox(chain, { signer });
 
-      return {
-        ...toolbox,
-
-        transfer,
-      };
+      return toolbox;
     }
 
     case Chain.Bitcoin:

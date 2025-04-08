@@ -8,11 +8,7 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type {
-  BaseCosmosToolboxType,
-  DepositParam,
-  TransferParams,
-} from "@swapkit/toolboxes/cosmos";
+import type { DepositParam, TransferParams, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
@@ -77,7 +73,13 @@ export const walletconnectWallet = createWallet({
           const toolbox = await getToolbox({ session, address, chain, walletconnect });
 
           async function getAccount(accountAddress: string) {
-            const account = await (toolbox as BaseCosmosToolboxType).getAccount(accountAddress);
+            const cosmosToolbox = toolbox as ReturnType<typeof getCosmosToolbox>;
+            const account = await cosmosToolbox.getAccount(accountAddress);
+
+            if (chain !== Chain.THORChain) {
+              return account;
+            }
+
             const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
               chainId: THORCHAIN_MAINNET_ID,
               topic: session.topic,
@@ -95,11 +97,8 @@ export const walletconnectWallet = createWallet({
             address,
             chain,
             disconnect: walletconnect.disconnect,
+            getAccount,
             walletType: WalletOption.WALLETCONNECT,
-            getAccount:
-              chain === Chain.THORChain
-                ? getAccount
-                : (toolbox as BaseCosmosToolboxType).getAccount,
           });
         }),
       );
@@ -132,7 +131,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
     case Chain.Polygon: {
       const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
 
-      const provider = getProvider(chain);
+      const provider = await getProvider(chain);
       const signer = await getEVMSigner({ walletconnect, chain, provider });
       const toolbox = getToolboxByChain(chain);
 

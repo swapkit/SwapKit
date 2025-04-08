@@ -62,13 +62,9 @@ export async function getWalletMethods(chain: Chain) {
       const wallet = bitget.ethereum;
 
       const [address]: [string] = await wallet.send("eth_requestAccounts", []);
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
 
-      const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
-
-      return { ...evmWallet, getBalance, address };
+      return { ...evmWallet, address };
     }
 
     case Chain.Bitcoin: {
@@ -105,8 +101,8 @@ export async function getWalletMethods(chain: Chain) {
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
-      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = GaiaToolbox();
+      const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
+      const toolbox = getCosmosToolbox(Chain.Cosmos);
       const [{ address }] = accounts;
 
       return { ...toolbox, address, transfer: cosmosTransfer() };
@@ -120,10 +116,9 @@ export async function getWalletMethods(chain: Chain) {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const provider = bitget?.solana;
 
+      const toolbox = getSolanaToolbox();
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-
-      const toolbox = getSolanaToolbox();
 
       const transfer = async ({
         recipient,
@@ -166,8 +161,8 @@ export async function getWalletMethods(chain: Chain) {
 }
 
 export const getWeb3WalletMethods = async ({
-  walletProvider,
   chain,
+  walletProvider,
 }: { walletProvider?: Eip1193Provider; chain: EVMChain }) => {
   const { getToolboxByChain } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
@@ -186,5 +181,9 @@ export const getWeb3WalletMethods = async ({
     throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
   }
 
-  return prepareNetworkSwitch({ toolbox, provider, chain });
+  return prepareNetworkSwitch({
+    toolbox,
+    provider,
+    chain,
+  });
 };

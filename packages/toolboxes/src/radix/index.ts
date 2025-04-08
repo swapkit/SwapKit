@@ -124,7 +124,9 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
-async function RadixToolbox({ dappConfig }: { dappConfig: SKConfigIntegrations["radix"] }) {
+export const RadixToolbox = async ({
+  dappConfig,
+}: { dappConfig: SKConfigIntegrations["radix"] }) => {
   const { RadixDappToolkit } = await import("@radixdlt/radix-dapp-toolkit");
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
 
@@ -144,6 +146,4 @@ async function RadixToolbox({ dappConfig }: { dappConfig: SKConfigIntegrations["
       throw new Error("Not implemented");
     }) as (params: any) => Promise<string>,
   };
-}
-
-export const getRadixToolbox = RadixToolbox;
+};

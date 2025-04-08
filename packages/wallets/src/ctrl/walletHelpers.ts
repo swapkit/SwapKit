@@ -15,6 +15,7 @@ import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { SolanaProvider, SolanaWallet } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
+import { match } from "ts-pattern";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -46,48 +47,25 @@ export function getCtrlProvider<T extends Chain>(
       : undefined {
   if (!window.xfi) throw new SwapKitError("wallet_ctrl_not_found");
 
-  switch (chain) {
-    case Chain.Arbitrum:
-    case Chain.Avalanche:
-    case Chain.Base:
-    case Chain.BinanceSmartChain:
-    case Chain.Ethereum:
-    case Chain.Optimism:
-    case Chain.Polygon:
-      // @ts-expect-error
-      return window.xfi.ethereum;
-
-    case Chain.Cosmos:
-    case Chain.Kujira:
-      // @ts-expect-error
-      return window.xfi.keplr;
-
-    case Chain.Bitcoin:
-      // @ts-expect-error
-      return window.xfi.bitcoin;
-    case Chain.BitcoinCash:
-      // @ts-expect-error
-      return window.xfi.bitcoincash;
-    case Chain.Dogecoin:
-      // @ts-expect-error
-      return window.xfi.dogecoin;
-    case Chain.Litecoin:
-      // @ts-expect-error
-      return window.xfi.litecoin;
-    case Chain.THORChain:
-      // @ts-expect-error
-      return window.xfi.thorchain;
-    case Chain.Maya:
-      // @ts-expect-error
-      return window.xfi.mayachain;
-    case Chain.Solana:
-      // @ts-expect-error
-      return window.xfi.solana;
-
-    default:
-      // @ts-expect-error
-      return undefined;
-  }
+  // @ts-expect-error
+  return match(chain as Chain)
+    .with(
+      Chain.Arbitrum,
+      Chain.Avalanche,
+      Chain.Base,
+      Chain.BinanceSmartChain,
+      Chain.Ethereum,
+      Chain.Optimism,
+      Chain.Polygon,
+      () => window.xfi?.ethereum,
+    )
+    .with(Chain.Cosmos, Chain.Kujira, Chain.Maya, Chain.THORChain, () => window.xfi?.keplr)
+    .with(Chain.Bitcoin, () => window.xfi?.bitcoin)
+    .with(Chain.BitcoinCash, () => window.xfi?.bitcoincash)
+    .with(Chain.Dogecoin, () => window.xfi?.dogecoin)
+    .with(Chain.Litecoin, () => window.xfi?.litecoin)
+    .with(Chain.Solana, () => window.xfi?.solana)
+    .otherwise(() => undefined);
 }
 
 async function transaction({
@@ -205,6 +183,7 @@ export function solanaTransfer(solToolbox: SolanaWallet, walletPublicKey: Public
     memo,
     isProgramDerivedAddress,
   }: TransferParams & { isProgramDerivedAddress?: boolean }) => {
+    const solanaProvider = getCtrlProvider(Chain.Solana);
     const transaction = await solToolbox.createSolanaTransaction({
       recipient,
       assetValue,
@@ -213,7 +192,7 @@ export function solanaTransfer(solToolbox: SolanaWallet, walletPublicKey: Public
       isProgramDerivedAddress,
     });
 
-    const signedTransaction = await window.xfi?.solana.signTransaction(transaction);
+    const signedTransaction = await solanaProvider?.signTransaction(transaction);
 
     if (!signedTransaction) {
       throw new SwapKitError("core_transaction_failed");

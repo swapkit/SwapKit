@@ -1,34 +1,33 @@
-import { Chain } from "@swapkit/helpers";
+import { Chain, type CosmosChain } from "@swapkit/helpers";
 
-import { GaiaToolbox } from "./gaia";
-import { KujiraToolbox } from "./kujira";
+import type { CosmosToolboxParams } from "../types";
+import { createCosmosToolbox } from "./cosmos";
 import { createThorchainToolbox } from "./thorchain";
 
 export type CosmosToolboxType = {
-  THOR: ReturnType<typeof createThorchainToolbox<Chain.THORChain>>;
-  GAIA: ReturnType<typeof GaiaToolbox>;
-  KUJI: ReturnType<typeof KujiraToolbox>;
-  MAYA: ReturnType<typeof createThorchainToolbox<Chain.Maya>>;
+  GAIA: ReturnType<typeof createCosmosToolbox>;
+  KUJI: ReturnType<typeof createCosmosToolbox>;
+  MAYA: ReturnType<typeof createThorchainToolbox>;
+  THOR: ReturnType<typeof createThorchainToolbox>;
 };
 
-export const getCosmosToolbox = <T extends keyof CosmosToolboxType>(
+export const getCosmosToolbox = <T extends CosmosChain>(
   chain: T,
+  params?: Omit<CosmosToolboxParams, "chain">,
 ): CosmosToolboxType[T] => {
   switch (chain) {
-    case Chain.Kujira:
-      return KujiraToolbox() as CosmosToolboxType[T];
-    case Chain.Maya:
-      return createThorchainToolbox(Chain.Maya) as CosmosToolboxType[T];
-    case Chain.THORChain:
-      return createThorchainToolbox(Chain.THORChain) as CosmosToolboxType[T];
     case Chain.Cosmos:
-      return GaiaToolbox() as CosmosToolboxType[T];
+    case Chain.Kujira:
+      return createCosmosToolbox({ chain, ...params }) as CosmosToolboxType[T];
+
+    case Chain.Maya:
+    case Chain.THORChain:
+      return createThorchainToolbox({ chain, ...params }) as CosmosToolboxType[T];
+
     default:
       throw new Error(`Chain ${chain} is not supported`);
   }
 };
 
-export * from "./BaseCosmosToolbox";
-export * from "./gaia";
-export * from "./kujira";
+export * from "./cosmos";
 export * from "./thorchain";

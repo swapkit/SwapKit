@@ -1,4 +1,4 @@
-export * from "./thorchainUtils/index";
-export * from "./toolbox/index";
+export * from "./thorchainUtils";
+export * from "./toolbox";
 export * from "./types";
 export * from "./util";

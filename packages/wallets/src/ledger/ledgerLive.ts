@@ -159,7 +159,7 @@ export const getLedgerLiveWallet = async ({
       const getAddress = () => ledgerLiveAccount.address;
 
       const ledgerLiveClient = EthereumLedgerLive();
-      const provider = getProvider(Chain.Ethereum);
+      const provider = await getProvider(Chain.Ethereum);
       const signer = new VoidSigner(ledgerLiveAccount.address, provider);
 
       const toolbox = ETHToolbox({ provider, signer });
@@ -207,9 +207,9 @@ export const getLedgerLiveWallet = async ({
     }
 
     case Chain.Cosmos: {
-      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
+      const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const ledgerLiveClient = CosmosLedgerLive();
-      const toolbox = GaiaToolbox();
+      const toolbox = getCosmosToolbox(Chain.Cosmos);
 
       const getAddress = () => ledgerLiveAccount.address;
 

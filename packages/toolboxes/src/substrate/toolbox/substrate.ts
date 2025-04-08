@@ -16,39 +16,22 @@ import {
   SwapKitNumber,
 } from "@swapkit/helpers";
 
+import { getBalance } from "../../utils";
 import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "../types";
 
-export const isKeyringPair = (account: IKeyringPair | Signer): account is IKeyringPair => {
+export function isKeyringPair(account: IKeyringPair | Signer): account is IKeyringPair {
   return "address" in account;
-};
+}
 
-export const createKeyring = async (phrase: string, networkPrefix: number) => {
+export async function createKeyring(phrase: string, networkPrefix: number) {
   const { Keyring } = await import("@polkadot/api");
   const { cryptoWaitReady } = await import("@polkadot/util-crypto");
   await cryptoWaitReady();
 
   return new Keyring({ type: "sr25519", ss58Format: networkPrefix }).addFromUri(phrase);
-};
+}
 
 const getNonce = (api: ApiPromise, address: string) => api.rpc.system.accountNextIndex(address);
-
-const getBalance = async (api: ApiPromise, gasAsset: AssetValue, address: string) => {
-  const data = await api.query.system?.account?.(address);
-
-  // @ts-expect-error @Towan some parts of data missing?
-  if (!data?.data?.free || data?.data?.isEmpty) {
-    return [gasAsset.set(0)];
-  }
-
-  return [
-    gasAsset.set(
-      // @ts-expect-error @Towan some parts of data missing?
-      SwapKitNumber.fromBigInt(BigInt(data.data.free.toString()), gasAsset.decimal).getValue(
-        "string",
-      ),
-    ),
-  ];
-};
 
 const validateAddress = (address: string, networkPrefix: number) => {
   try {
@@ -201,12 +184,12 @@ export const BaseSubstrateToolbox = ({
   decodeAddress,
   encodeAddress,
   convertAddress,
+  getBalance: getBalance(Chain.Polkadot),
   createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
   getAddress: (keyring: IKeyringPair | Signer = signer) =>
     isKeyringPair(keyring) ? keyring.address : undefined,
   createTransfer: ({ recipient, assetValue }: { recipient: string; assetValue: AssetValue }) =>
     createTransfer(api, { recipient, amount: assetValue.getBaseValue("number") }),
-  getBalance: (address: string) => getBalance(api, gasAsset, address),
   validateAddress: (address: string) => validateAddress(address, network.prefix),
   transfer: (params: SubstrateTransferParams) => transfer(api, signer, params),
   estimateTransactionFee: (params: SubstrateTransferParams) =>
@@ -220,8 +203,7 @@ export const BaseSubstrateToolbox = ({
       "Signer does not have keyring pair capabilities required for signing.",
     );
   },
-  broadcast: (tx: SubmittableExtrinsic<"promise">, callback?: Callback<ISubmittableResult>) =>
-    broadcast(tx, callback),
+  broadcast,
   signAndBroadcast: ({
     tx,
     callback,

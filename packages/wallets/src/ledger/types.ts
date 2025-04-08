@@ -8,7 +8,7 @@ import type {
   OptimismLedger,
   PolygonLedger,
 } from "./clients/evm";
-import type { THORChainLedger } from "./clients/thorchain/index";
+import type { THORChainLedger } from "./clients/thorchain";
 import type {
   BitcoinCashLedger,
   BitcoinLedger,

@@ -33,9 +33,9 @@ export const talismanWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const { address, ...walletMethods } = await getWalletMethods(chain);
+          const walletMethods = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, address, chain, walletType });
+          addChain({ ...walletMethods, chain, walletType });
         }),
       );
 
@@ -94,15 +94,11 @@ async function getWalletMethods(chain: Chain) {
       if (!(window.talismanEth && "send" in window.talismanEth)) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_found", info: { chain } });
       }
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
 
       const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.talismanEth });
       const address: string = (await window.talismanEth.send("eth_requestAccounts", []))[0];
 
-      const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
-
-      return { walletMethods: { ...evmWallet, getBalance }, address };
+      return { ...evmWallet, address };
     }
 
     case Chain.Polkadot:
@@ -128,11 +124,7 @@ async function getWalletMethods(chain: Chain) {
       }
       const address = toolbox.convertAddress(accounts[0].address, Network[chain].prefix);
 
-      return {
-        ...toolbox,
-        getAddress: () => address,
-        address,
-      };
+      return { ...toolbox, address };
     }
 
     default:

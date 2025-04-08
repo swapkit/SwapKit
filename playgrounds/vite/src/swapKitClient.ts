@@ -1,24 +1,16 @@
 import { createSwapKit } from "@swapkit/sdk";
 
 export const getSwapKitClient = ({
-  ethplorer,
-  covalent,
-  blockchair,
   walletConnectProjectId,
   brokerEndpoint,
 }: {
-  ethplorer?: string;
-  covalent?: string;
-  blockchair?: string;
   walletConnectProjectId?: string;
   brokerEndpoint?: string;
 } = {}) => {
   const skClient = createSwapKit({
     config: {
       apiKeys: {
-        ethplorer,
-        covalent,
-        blockchair,
+        swapKit: process.env.TEST_API_KEY,
         walletConnectProjectId,
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
       },

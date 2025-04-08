@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   ChainId,
   ChainToChainId,
@@ -7,7 +6,6 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { CosmosToolboxType } from "@swapkit/toolboxes/cosmos";
 import { chainRegistry } from "./chainRegistry";
 
 const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
@@ -25,7 +23,6 @@ export const keplrWallet = createWallet({
       const keplrClient = window[extensionKey];
 
       await Promise.all(
-        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor/split
         filteredChains.map(async (chain) => {
           const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
 
@@ -37,53 +34,18 @@ export const keplrWallet = createWallet({
           }
 
           keplrClient?.enable(chainId);
-          const offlineSigner = keplrClient?.getOfflineSignerOnlyAmino(chainId);
-          if (!offlineSigner) throw new Error("Could not load offlineSigner");
+          const signer = keplrClient?.getOfflineSignerOnlyAmino(chainId);
+          if (!signer) throw new Error("Could not load signer");
 
           const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
-          const accounts = await offlineSigner.getAccounts();
+          const accounts = await signer.getAccounts();
           if (!accounts?.[0]?.address) throw new Error("No accounts found");
 
           const [{ address }] = accounts;
-          const toolbox = getCosmosToolbox(chain);
+          const toolbox = getCosmosToolbox(chain, { signer });
 
-          const transfer = (params: {
-            from?: string;
-            recipient: string;
-            assetValue: AssetValue;
-            memo?: string;
-          }) =>
-            toolbox.transfer({
-              ...params,
-              signer: offlineSigner,
-              fee: 2,
-              from: params.from || address,
-            });
-
-          const deposit =
-            chain === Chain.THORChain
-              ? (params: {
-                  from?: string;
-                  assetValue: AssetValue;
-                  memo?: string;
-                }) =>
-                  (toolbox as CosmosToolboxType["THOR"]).deposit({
-                    ...params,
-                    signer: offlineSigner,
-                    from: params.from || address,
-                    memo: params.memo || "",
-                  })
-              : undefined;
-
-          addChain({
-            ...toolbox,
-            deposit,
-            chain,
-            transfer,
-            address,
-            walletType,
-          });
+          addChain({ ...toolbox, chain, address, walletType });
         }),
       );
 

@@ -67,19 +67,10 @@ export async function getWalletMethods(chain: Chain) {
         throw new Error("No okxwallet found");
       }
 
-      const { getProvider } = await import("@swapkit/toolboxes/evm");
-
-      const evmWallet = await getWeb3WalletMethods({
-        chain,
-        walletProvider: window.okxwallet,
-      });
-
+      const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.okxwallet });
       const address: string = (await window.okxwallet.send("eth_requestAccounts", [])).result[0];
 
-      const getBalance = async (addressOverwrite?: string, potentialScamFilter = true) =>
-        evmWallet.getBalance(addressOverwrite || address, potentialScamFilter, getProvider(chain));
-
-      return { ...evmWallet, getBalance, address };
+      return { ...evmWallet, address };
     }
 
     case Chain.Bitcoin: {
@@ -116,9 +107,9 @@ export async function getWalletMethods(chain: Chain) {
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
-      const { GaiaToolbox } = await import("@swapkit/toolboxes/cosmos");
+      const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const [{ address }] = accounts;
-      const toolbox = GaiaToolbox();
+      const toolbox = getCosmosToolbox(Chain.Cosmos);
 
       return { ...toolbox, address, transfer: cosmosTransfer() };
     }

@@ -1,9 +1,12 @@
 import {
   type Chain,
+  type EVMChain,
+  EVMChains,
   type ProviderName,
   RequestClient,
   SKConfig,
   SwapKitError,
+  isGasAsset,
 } from "@swapkit/helpers";
 
 import {
@@ -24,12 +27,6 @@ import {
   type TrackerParams,
   type TrackerResponse,
 } from "./types";
-
-function getApiUrl(path?: `/${string}`) {
-  const { isDev, apiUrl, devApiUrl } = SKConfig.get("envs");
-
-  return `${isDev ? devApiUrl : apiUrl}${path}`;
-}
 
 export function getTrackerDetails(json: TrackerParams) {
   return RequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
@@ -57,12 +54,16 @@ export async function getSwapQuote(json: QuoteRequest) {
   }
 }
 
-export function getChainBalance<T extends Chain>({
+export async function getChainBalance<T extends Chain>({
   chain,
   address,
-}: { chain: T; address: string }) {
+  scamFilter = true,
+}: { chain: T; address: string; scamFilter?: boolean }) {
   const url = getApiUrl(`/balance?chain=${chain}&address=${address}`);
-  return RequestClient.get<BalanceResponse>(url);
+  const balanceResponse = await RequestClient.get<BalanceResponse>(url);
+  const balances = Array.isArray(balanceResponse) ? balanceResponse : [];
+
+  return scamFilter ? filterAssets(balances) : balances;
 }
 
 export function getTokenListProviders() {
@@ -132,4 +133,29 @@ export async function getChainflipDepositChannel(body: BrokerDepositChannelParam
   } catch (error) {
     throw new SwapKitError("api_v2_invalid_response", error);
   }
+}
+
+function getApiUrl(path?: `/${string}`) {
+  const { isDev, apiUrl, devApiUrl } = SKConfig.get("envs");
+
+  return `${isDev ? devApiUrl : apiUrl}${path}`;
+}
+
+function evmAssetHasAddress(assetString: string) {
+  const [chain, symbol] = assetString.split(".") as [EVMChain, string];
+  if (!EVMChains.includes(chain as EVMChain)) return true;
+  const splitSymbol = symbol.split("-");
+  const address = splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
+
+  return isGasAsset({ chain: chain as Chain, symbol }) || !!address;
+}
+
+const potentialScamRegex = new RegExp(
+  /(.)\1{6}|\.ORG|\.NET|\.FINANCE|\.COM|WWW|HTTP|\\\\|\/\/|[\s$%:[\]]/,
+  "gmi",
+);
+function filterAssets(tokens: BalanceResponse) {
+  return tokens.filter((token) => {
+    return !potentialScamRegex.test(token.identifier) && evmAssetHasAddress(token.identifier);
+  });
 }

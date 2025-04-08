@@ -39,7 +39,7 @@ export type IsApprovedParams = ApprovedParams & {
 };
 
 export type CallParams = {
-  callProvider?: ReturnType<typeof getProvider>;
+  callProvider?: Awaited<ReturnType<typeof getProvider>>;
   contractAddress: string;
   abi: readonly JsonFragment[];
   funcName: string;
@@ -59,7 +59,7 @@ export type TransferParams = WalletTxParams & {
   maxFeePerGas?: bigint;
   maxPriorityFeePerGas?: bigint;
   data?: string;
-  from?: string;
+  from: string;
   nonce?: number;
   assetValue: AssetValue;
 };
