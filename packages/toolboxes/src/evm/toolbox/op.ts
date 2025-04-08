@@ -11,7 +11,7 @@ import { Contract } from "ethers";
 
 import { gasOracleAbi } from "../contracts/op/gasOracle";
 import { getBalance } from "../helpers";
-import { BaseEVMToolbox } from "./baseEVMToolbox";
+import { createEVMToolbox } from "./baseEVMToolbox";
 
 const GAS_PRICE_ORACLE_ADDRESS = "0x420000000000000000000000000000000000000f";
 
@@ -135,7 +135,7 @@ export function OPToolbox<P extends JsonRpcProvider | BrowserProvider, S extends
   provider,
   signer,
 }: { signer?: S; provider: P }) {
-  const evmToolbox = BaseEVMToolbox({ provider, signer });
+  const evmToolbox = createEVMToolbox({ provider, signer });
   const getL1GasPrice = getL1GasPriceFetcher(provider);
 
   return {

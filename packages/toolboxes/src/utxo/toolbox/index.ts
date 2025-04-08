@@ -15,22 +15,20 @@ type UTXOToolboxes = {
 };
 
 export type UTXOWallets = {
-  [key in keyof UTXOToolboxes]: ReturnType<UTXOToolboxes[key]>;
+  [key in keyof UTXOToolboxes]: UTXOToolboxes[key];
 };
 
-export async function getToolboxByChain<T extends UTXOChain>(chain: T): Promise<UTXOToolboxes[T]> {
+export function getUtxoToolbox<T extends UTXOChain>(chain: T) {
   switch (chain) {
     case Chain.BitcoinCash: {
-      const toolbox = await createBCHToolbox();
-      return toolbox as UTXOToolboxes[T];
+      return createBCHToolbox() as Promise<UTXOToolboxes[T]>;
     }
 
     case Chain.Bitcoin:
     case Chain.Dogecoin:
     case Chain.Litecoin:
     case Chain.Dash: {
-      const toolbox = await createUTXOToolbox(chain);
-      return toolbox as UTXOToolboxes[T];
+      return createUTXOToolbox(chain) as Promise<UTXOToolboxes[T]>;
     }
 
     default:
@@ -39,3 +37,4 @@ export async function getToolboxByChain<T extends UTXOChain>(chain: T): Promise<
 }
 
 export { stripToCashAddress, stripPrefix, validateAddress } from "./bitcoinCash";
+export { getAddressValidator, createUTXOToolbox } from "./utxo";

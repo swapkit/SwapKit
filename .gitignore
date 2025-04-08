@@ -14,3 +14,8 @@ references/
 *.tsbuildinfo
 .env
 .npmrc
+.zig-cache/
+zig-out/
+
+# TODO
+CLAUDE.*

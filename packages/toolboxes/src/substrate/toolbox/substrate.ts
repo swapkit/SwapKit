@@ -16,14 +16,7 @@ import {
   SwapKitNumber,
 } from "@swapkit/helpers";
 
-import { Network, type SubstrateNetwork } from "../types/network";
-
-// TODO combine this type with the more general SK type
-type SubstrateTransferParams = {
-  recipient: string;
-  assetValue: AssetValue;
-  from?: string;
-};
+import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "../types";
 
 export const isKeyringPair = (account: IKeyringPair | Signer): account is IKeyringPair => {
   return "address" in account;
@@ -262,7 +255,7 @@ export const substrateValidateAddress = ({
   return validateAddress(address, prefix) || validateAddress(address, Network.GENERIC.prefix);
 };
 
-export async function ToolboxFactory({
+export async function createSubstrateToolbox({
   generic,
   chain,
   signer,

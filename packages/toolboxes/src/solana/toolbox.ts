@@ -9,6 +9,19 @@ import {
   type WalletTxParams,
 } from "@swapkit/helpers";
 
+export function getSolanaToolbox() {
+  return {
+    getConnection,
+    createKeysForPath,
+    getAddressFromKeys,
+    createSolanaTransaction: createSolanaTransaction(getConnection),
+    getBalance: getBalance(getConnection),
+    transfer: transfer(getConnection),
+    broadcastTransaction: broadcastTransaction(getConnection),
+    getAddressValidator,
+  };
+}
+
 export async function getAddressValidator() {
   const { PublicKey } = await import("@solana/web3.js");
 
@@ -22,18 +35,16 @@ export async function getAddressValidator() {
   };
 }
 
-export const SOLToolbox = () => {
-  return {
-    getConnection,
-    createKeysForPath,
-    getAddressFromKeys,
-    createSolanaTransaction: createSolanaTransaction(getConnection),
-    getBalance: getBalance(getConnection),
-    transfer: transfer(getConnection),
-    broadcastTransaction: broadcastTransaction(getConnection),
-    getAddressValidator,
+function broadcastTransaction(getConnection: () => Promise<Connection>) {
+  return async (transaction: Transaction) => {
+    const connection = await getConnection();
+    return connection.sendRawTransaction(transaction.serialize());
   };
-};
+}
+
+function getAddressFromKeys(keypair: Keypair) {
+  return keypair.publicKey.toString();
+}
 
 async function getConnection() {
   const { Connection } = await import("@solana/web3.js");
@@ -62,6 +73,7 @@ async function createAssetTransaction({
       }),
     );
   }
+
   if (assetValue.address) {
     return createSolanaTokenTransaction({
       amount: assetValue.getBaseValue("number"),
@@ -208,13 +220,6 @@ function transfer(getConnection: () => Promise<Connection>) {
   };
 }
 
-function broadcastTransaction(getConnection: () => Promise<Connection>) {
-  return async (transaction: Transaction) => {
-    const connection = await getConnection();
-    return connection.sendRawTransaction(transaction.serialize());
-  };
-}
-
 async function createKeysForPath({
   phrase,
   derivationPath = DerivationPath.SOL,
@@ -226,10 +231,6 @@ async function createKeysForPath({
   const hdKey = HDKey.fromMasterSeed(seed);
 
   return Keypair.fromSeed(hdKey.derive(derivationPath, true).privateKey);
-}
-
-function getAddressFromKeys(keypair: Keypair) {
-  return keypair.publicKey.toString();
 }
 
 async function getTokenBalances({

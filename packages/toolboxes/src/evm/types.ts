@@ -59,7 +59,7 @@ export type TransferParams = WalletTxParams & {
   maxFeePerGas?: bigint;
   maxPriorityFeePerGas?: bigint;
   data?: string;
-  from: string;
+  from?: string;
   nonce?: number;
   assetValue: AssetValue;
 };

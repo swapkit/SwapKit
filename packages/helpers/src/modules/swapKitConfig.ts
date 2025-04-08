@@ -69,7 +69,6 @@ type SKState = typeof initialState;
 export type SKConfigState = {
   apiKeys?: Partial<SKState["apiKeys"]>;
   chains?: SKState["chains"];
-  apis?: Partial<SKState["apis"]>;
   envs?: Partial<SKState["envs"]>;
   explorerUrls?: Partial<SKState["explorerUrls"]>;
   integrations?: Partial<SKConfigIntegrations>;
@@ -101,9 +100,7 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   setNodeUrl: (chain, url) => set((s) => ({ nodeUrls: { ...s.nodeUrls, [chain]: url } })),
   setRpcUrl: (chain, url) => set((s) => ({ rpcUrls: { ...s.rpcUrls, [chain]: url } })),
   setIntegrationConfig: (integration, config) =>
-    set((s) => ({
-      integrations: { ...s.integrations, [integration]: config },
-    })),
+    set((s) => ({ integrations: { ...s.integrations, [integration]: config } })),
   setConfig: (config) =>
     set((s) => ({
       apiKeys: { ...s.apiKeys, ...config.apiKeys },

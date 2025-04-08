@@ -26,10 +26,10 @@ function getScriptType(derivationPath: DerivationPathArray) {
   }
 }
 
-async function getWalletMethods({
+async function getWalletMethods<T extends Chain>({
   chain,
   derivationPath,
-}: { chain: Chain; derivationPath: DerivationPathArray }) {
+}: { chain: T; derivationPath: DerivationPathArray }) {
   switch (chain) {
     case Chain.BinanceSmartChain:
     case Chain.Avalanche:
@@ -54,8 +54,7 @@ async function getWalletMethods({
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { toCashAddress, getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
-      const getToolbox = await getToolboxByChain(chain);
+      const { toCashAddress, getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const scriptType = getScriptType(derivationPath);
 
       if (!scriptType) {
@@ -85,7 +84,7 @@ async function getWalletMethods({
         }
 
         if (chain === Chain.BitcoinCash) {
-          const toolbox = (await getToolboxByChain(chain))();
+          const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
           return toolbox.stripPrefix(payload.address);
         }
 
@@ -99,7 +98,7 @@ async function getWalletMethods({
         const address_n = derivationPath.map((pathElement, index) =>
           index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
         );
-        const getToolbox = await getToolboxByChain(chain as Chain.BitcoinCash);
+        const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
 
         const result = await TrezorConnect.signTransaction({
           coin,
@@ -117,7 +116,7 @@ async function getWalletMethods({
           outputs: psbt.txOutputs.map((output: any) => {
             const outputAddress =
               chain === Chain.BitcoinCash && output.address
-                ? getToolbox().stripPrefix(toCashAddress(output.address))
+                ? toolbox.stripPrefix(toCashAddress(output.address))
                 : output.address;
 
             const isChangeAddress = outputAddress === address;
@@ -165,8 +164,7 @@ async function getWalletMethods({
           });
         }
 
-        const getToolbox = await getToolboxByChain(chain as Chain.BitcoinCash);
-        const toolbox = getToolbox();
+        const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
 
         const feeRate =
           paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
@@ -186,7 +184,7 @@ async function getWalletMethods({
         return tx;
       };
 
-      const toolbox = getToolbox();
+      const toolbox = await getUtxoToolbox(chain);
 
       return { address, walletMethods: { ...toolbox, transfer, signTransaction } };
     }

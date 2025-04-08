@@ -1,3 +1,3 @@
-export * from "./toolbox/baseSubstrateToolbox";
+export * from "./toolbox/substrate";
 export * from "./toolbox";
-export * from "./types/index";
+export * from "./types";

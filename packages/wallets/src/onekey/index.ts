@@ -11,7 +11,6 @@ import {
   filterSupportedChains,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
-import { getProvider, getToolboxByChain } from "@swapkit/toolboxes/evm";
 import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type {
   BitcoinProvider,
@@ -32,7 +31,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
       }
 
       const { Psbt } = await import("bitcoinjs-lib");
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const {
         signTransaction: satsSignTransaction,
         getAddress,
@@ -40,8 +39,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
         BitcoinNetworkType,
       } = await import("sats-connect");
 
-      const getToolbox = await getToolboxByChain(chain);
-      const toolbox = getToolbox();
+      const toolbox = await getUtxoToolbox(chain);
 
       let address = "";
 
@@ -116,11 +114,11 @@ async function getWalletMethodsForExtension(chain: Chain) {
         });
       }
 
-      const { SOLToolbox } = await import("@swapkit/toolboxes/solana");
+      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const { Transaction, PublicKey } = await import("@solana/web3.js");
 
       const address = await window.$onekey.sol.getAddress();
-      const toolbox = SOLToolbox();
+      const toolbox = getSolanaToolbox();
 
       const transfer = async ({
         recipient,
@@ -164,6 +162,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
+      const { getProvider, getToolboxByChain } = await import("@swapkit/toolboxes/evm");
       if (!window.$onekey?.ethereum) {
         throw new SwapKitError({
           errorKey: "wallet_onekey_not_found",

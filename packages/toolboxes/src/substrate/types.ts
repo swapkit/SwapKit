@@ -2,8 +2,56 @@ import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { KeypairType } from "@polkadot/util-crypto/types";
+import type { AssetValue, SubstrateChain } from "@swapkit/helpers";
 
 type This = typeof globalThis;
+
+const polkadotNetwork = {
+  prefix: 0,
+  network: "polkadot",
+  displayName: "Polkadot Relay Chain",
+  symbols: ["DOT"],
+  decimals: [10],
+  standardAccount: "*25519",
+  website: "https://polkadot.network",
+};
+
+const chainflipNetwork = {
+  prefix: 2112,
+  network: "chainflip",
+  displayName: "Chainflip",
+  symbols: ["FLIP"],
+  decimals: [18],
+  standardAccount: "*25519",
+  website: "https://chainflip.io/",
+};
+
+const subtrateNetwork = {
+  prefix: 42,
+  network: "substrate",
+  displayName: "Substrate",
+  symbols: [],
+  decimals: [],
+  standardAccount: "*25519",
+  website: "https://substrate.io/",
+};
+
+export const Network: Record<SubstrateChain | "GENERIC", SubstrateNetwork> = {
+  DOT: polkadotNetwork,
+  FLIP: chainflipNetwork,
+  GENERIC: subtrateNetwork,
+};
+
+export type SubstrateNetwork =
+  | typeof polkadotNetwork
+  | typeof chainflipNetwork
+  | typeof subtrateNetwork;
+
+export type SubstrateTransferParams = {
+  recipient: string;
+  assetValue: AssetValue;
+  from?: string;
+};
 
 export type Unsubcall = () => void;
 

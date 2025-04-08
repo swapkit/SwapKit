@@ -23,9 +23,57 @@ import {
 import type { TargetOutput, UTXOBuildTxParams, UTXOType, UTXOWalletTransferParams } from "../types";
 import { validateAddress as validateBCHAddress } from "./bitcoinCash";
 
-export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
+export async function createUTXOToolbox(chain: UTXOChain) {
+  const validateAddress = await getAddressValidator();
+  const createKeysForPath = await getCreateKeysForPath(chain);
+  const getAddressFromKeys = await addressFromKeysGetter(chain);
 
-export function buildTx(chain: UTXOChain) {
+  return {
+    accumulative,
+    broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
+    buildTx: buildTx(chain),
+    calculateTxSize,
+    createKeysForPath,
+    getAddressFromKeys,
+    getFeeRates: () => getFeeRates(chain),
+    getInputsOutputsFee: getInputsOutputsFee(chain),
+    transfer: transfer(chain),
+    validateAddress: (address: string) => validateAddress({ chain, address }),
+    getPrivateKeyFromMnemonic: (params: { phrase: string; derivationPath: string }) => {
+      const keys = createKeysForPath(params);
+      return keys.toWIF();
+    },
+
+    getBalance: getBalance(chain),
+    estimateTransactionFee: estimateTransactionFee(chain),
+    estimateMaxSendableAmount: estimateMaxSendableAmount(chain),
+  };
+}
+
+export async function getAddressValidator() {
+  const secp256k1 = await import("@bitcoinerlab/secp256k1");
+  const { initEccLib, address: btcLibAddress } = await import("bitcoinjs-lib");
+  const getNetwork = await getUtxoNetwork();
+
+  return function validateAddress({ chain, address }: { chain: UTXOChain; address: string }) {
+    if (chain === Chain.BitcoinCash) {
+      return validateBCHAddress(address);
+    }
+
+    return function validateAddress(address: string) {
+      try {
+        initEccLib(secp256k1);
+        btcLibAddress.toOutputScript(address, getNetwork(chain));
+        return true;
+      } catch (_error) {
+        return false;
+      }
+    };
+  };
+}
+
+const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
+function buildTx(chain: UTXOChain) {
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
   return async function buildTx({
     assetValue,
@@ -87,57 +135,6 @@ export function buildTx(chain: UTXOChain) {
     }
 
     return { psbt, utxos: inputsAndOutputs.inputs, inputs };
-  };
-}
-
-export async function getAddressValidator() {
-  const secp256k1 = await import("@bitcoinerlab/secp256k1");
-  const { initEccLib, address: btcLibAddress } = await import("bitcoinjs-lib");
-  const getNetwork = await getUtxoNetwork();
-
-  return function validateAddress({ chain, address }: { chain: UTXOChain; address: string }) {
-    if (chain === Chain.BitcoinCash) {
-      return validateBCHAddress(address);
-    }
-
-    return function validateAddress(address: string) {
-      try {
-        initEccLib(secp256k1);
-        btcLibAddress.toOutputScript(address, getNetwork(chain));
-        return true;
-      } catch (_error) {
-        return false;
-      }
-    };
-  };
-}
-
-export async function createUTXOToolbox(chain: UTXOChain) {
-  const getAddressFromKeys = await addressFromKeysGetter(chain);
-  const validateAddress = await getAddressValidator();
-  const createKeysForPath = await getCreateKeysForPath(chain);
-
-  return function createUTXOToolbox() {
-    return {
-      accumulative,
-      calculateTxSize,
-      getAddressFromKeys,
-      validateAddress: (address: string) => validateAddress({ chain, address }),
-      broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
-      buildTx: buildTx(chain),
-      createKeysForPath,
-      getFeeRates: () => getFeeRates(chain),
-      getInputsOutputsFee: getInputsOutputsFee(chain),
-      transfer: transfer(chain),
-      getPrivateKeyFromMnemonic: (params: { phrase: string; derivationPath: string }) => {
-        const keys = createKeysForPath(params);
-        return keys.toWIF();
-      },
-
-      getBalance: getBalance(chain),
-      estimateTransactionFee: estimateTransactionFee(chain),
-      estimateMaxSendableAmount: estimateMaxSendableAmount(chain),
-    };
   };
 }
 
@@ -299,6 +296,7 @@ function transfer(chain: UTXOChain) {
     memo,
     recipient,
     feeOptionKey,
+    broadcastTx,
     feeRate,
     assetValue,
   }: UTXOWalletTransferParams<Psbt, Psbt>) {
@@ -318,7 +316,7 @@ function transfer(chain: UTXOChain) {
     const signedPsbt = await signTransaction(psbt);
     signedPsbt.finalizeAllInputs(); // Finalise inputs
     // TX extracted and formatted to hex
-    return getUtxoApi(chain).broadcastTx(signedPsbt.extractTransaction().toHex());
+    return broadcastTx(signedPsbt.extractTransaction().toHex());
   };
 }
 

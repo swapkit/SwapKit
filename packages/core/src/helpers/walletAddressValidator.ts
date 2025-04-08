@@ -19,7 +19,7 @@ export async function getAddressValidator() {
       case Chain.Base:
       case Chain.Polygon:
       case Chain.Ethereum:
-        return evmValidateAddress({ address });
+        return evmValidateAddress(address);
 
       case Chain.Litecoin:
       case Chain.Dash:

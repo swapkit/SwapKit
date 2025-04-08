@@ -12,7 +12,7 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { CosmosSigner, DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
@@ -31,10 +31,10 @@ export const thorchainWalletMethods = async ({
   derivationPath?: DerivationPathArray;
 }) => {
   const { makeSignDoc } = await import("@cosmjs/amino");
-  const { buildAminoMsg, getDefaultChainFee, createStargateClient, ThorchainToolbox } =
+  const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } =
     await import("@swapkit/toolboxes/cosmos");
 
-  const toolbox = ThorchainToolbox({} as CosmosSigner);
+  const toolbox = getCosmosToolbox(Chain.THORChain);
   const derivationPathString = derivationPath
     ? derivationPathToString(derivationPath)
     : `${DerivationPath.THOR}/0`;

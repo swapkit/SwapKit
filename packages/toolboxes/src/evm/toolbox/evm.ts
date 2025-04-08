@@ -7,7 +7,7 @@ import {
   getIsEIP1559Compatible,
   getNetworkParams,
 } from "../helpers";
-import { BaseEVMToolbox } from "./baseEVMToolbox";
+import { createEVMToolbox } from "./baseEVMToolbox";
 
 export function ETHToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
   provider,
@@ -77,7 +77,7 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
     signer,
   }: { provider: P; signer?: S }) {
     const isEIP1559Compatible = getIsEIP1559Compatible(chain);
-    const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible });
+    const evmToolbox = createEVMToolbox({ provider, signer, isEIP1559Compatible });
 
     return {
       ...evmToolbox,

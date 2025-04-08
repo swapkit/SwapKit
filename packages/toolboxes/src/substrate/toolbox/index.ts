@@ -1,13 +1,9 @@
 import { AssetValue, Chain } from "@swapkit/helpers";
 
-import { ToolboxFactory, type ToolboxParams } from "./baseSubstrateToolbox";
+import { type ToolboxParams, createSubstrateToolbox } from "./substrate";
 
-export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams) => {
-  return ToolboxFactory({ chain: Chain.Polkadot, generic, signer });
-};
-
-export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams) => {
-  const toolbox = await ToolboxFactory({ chain: Chain.Chainflip, generic, signer });
+async function ChainflipToolbox({ signer, generic = false }: ToolboxParams) {
+  const toolbox = await createSubstrateToolbox({ chain: Chain.Chainflip, generic, signer });
 
   async function getBalance(address: string) {
     // @ts-expect-error @Towan some parts of data missing?
@@ -18,23 +14,24 @@ export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParam
   }
 
   return { ...toolbox, getBalance };
-};
+}
 
 type ToolboxType = {
-  DOT: ReturnType<typeof PolkadotToolbox>;
+  DOT: ReturnType<typeof createSubstrateToolbox>;
   FLIP: ReturnType<typeof ChainflipToolbox>;
 };
 
-export const getToolboxByChain = <T extends keyof ToolboxType>(
+export function getSubstrateToolbox<T extends keyof ToolboxType>(
   chain: T,
   params: ToolboxParams,
-): ToolboxType[T] => {
+): ToolboxType[T] {
   switch (chain) {
     case Chain.Chainflip:
       return ChainflipToolbox(params);
     case Chain.Polkadot:
-      return PolkadotToolbox(params);
+      return createSubstrateToolbox({ chain: Chain.Polkadot, ...params });
+
     default:
       throw new Error(`Chain ${chain} is not supported`);
   }
-};
+}

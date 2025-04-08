@@ -78,10 +78,9 @@ export async function getWalletMethods(chain: Chain) {
       const { unisat: wallet } = bitget;
 
       const { Psbt } = await import("bitcoinjs-lib");
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const [address] = await wallet.requestAccounts();
-      const getToolbox = await getToolboxByChain(Chain.Bitcoin);
-      const toolbox = getToolbox();
+      const toolbox = await getUtxoToolbox(Chain.Bitcoin);
 
       async function signTransaction(psbt: Psbt) {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });
@@ -118,13 +117,13 @@ export async function getWalletMethods(chain: Chain) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
 
-      const { SOLToolbox } = await import("@swapkit/toolboxes/solana");
+      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const provider = bitget?.solana;
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
 
-      const toolbox = SOLToolbox();
+      const toolbox = getSolanaToolbox();
 
       const transfer = async ({
         recipient,

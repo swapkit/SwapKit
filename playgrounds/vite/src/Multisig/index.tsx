@@ -1,5 +1,5 @@
-import type { AssetValue, Chain } from "@swapkit/core";
-import { ThorchainToolbox, buildAminoMsg } from "@swapkit/toolboxes/cosmos";
+import { type AssetValue, Chain } from "@swapkit/helpers";
+import { buildAminoMsg, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 import { fromByteArray } from "base64-js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { SwapKitClient } from "../swapKitClient";
@@ -13,7 +13,7 @@ export default function Multisig({
   inputAsset?: AssetValue;
   phrase: string;
 }) {
-  const toolbox = useMemo(() => ThorchainToolbox(), []);
+  const toolbox = useMemo(() => getCosmosToolbox(Chain.THORChain), []);
   const [pubkeys, setPubkeys] = useState({ 0: "", 1: "" });
   const [threshold, setThreshold] = useState(2);
   const [recipient, setRecipient] = useState("");

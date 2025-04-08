@@ -87,12 +87,11 @@ export async function getWalletMethods(chain: Chain) {
         throw new Error("No bitcoin okxwallet found");
       }
       const { Psbt } = await import("bitcoinjs-lib");
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
 
       const { bitcoin: wallet } = window.okxwallet;
       const address = (await wallet.connect()).address;
-      const getToolbox = await getToolboxByChain(chain);
-      const toolbox = getToolbox();
+      const toolbox = await getUtxoToolbox(chain);
 
       const signTransaction = async (psbt: InstanceType<typeof Psbt>) => {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });

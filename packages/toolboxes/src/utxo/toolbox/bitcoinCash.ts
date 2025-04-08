@@ -38,29 +38,27 @@ export function stripToCashAddress(address: string) {
 }
 
 export async function createBCHToolbox() {
-  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = (
-    await createUTXOToolbox(Chain.BitcoinCash)
-  )();
+  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox(
+    Chain.BitcoinCash,
+  );
 
   function handleGetBalance(address: string, _scamFilter = true) {
     return getBalance(stripPrefix(toCashAddress(address)));
   }
 
-  return function createBCHToolbox() {
-    return {
-      ...toolbox,
-      broadcastTx,
-      buildBCHTx,
-      buildTx,
-      createKeysForPath,
-      getAddressFromKeys,
-      getBalance: handleGetBalance,
-      getFeeRates,
-      stripPrefix,
-      stripToCashAddress,
-      validateAddress,
-      transfer: transfer({ getFeeRates, broadcastTx }),
-    };
+  return {
+    ...toolbox,
+    broadcastTx,
+    buildBCHTx,
+    buildTx,
+    createKeysForPath,
+    getAddressFromKeys,
+    getBalance: handleGetBalance,
+    getFeeRates,
+    stripPrefix,
+    stripToCashAddress,
+    validateAddress,
+    transfer: transfer({ getFeeRates, broadcastTx }),
   };
 }
 

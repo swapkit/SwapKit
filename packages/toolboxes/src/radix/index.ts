@@ -7,9 +7,7 @@ import type {
 } from "@radixdlt/babylon-gateway-api-sdk";
 import { AssetValue, Chain, type SKConfigIntegrations } from "@swapkit/helpers";
 
-export type RadixWallets = {
-  [Chain.Radix]: Awaited<ReturnType<typeof RadixToolbox>>;
-};
+export type RadixWallet = Awaited<ReturnType<typeof RadixToolbox>>;
 
 type RadixGetBalanceParams = {
   address: string;
@@ -126,9 +124,7 @@ async function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
-export const RadixToolbox = async ({
-  dappConfig,
-}: { dappConfig: SKConfigIntegrations["radix"] }) => {
+async function RadixToolbox({ dappConfig }: { dappConfig: SKConfigIntegrations["radix"] }) {
   const { RadixDappToolkit } = await import("@radixdlt/radix-dapp-toolkit");
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
 
@@ -148,4 +144,6 @@ export const RadixToolbox = async ({
       throw new Error("Not implemented");
     }) as (params: any) => Promise<string>,
   };
-};
+}
+
+export const getRadixToolbox = RadixToolbox;

@@ -33,7 +33,7 @@ export const POLKADOT_SUPPORTED_CHAINS = getWalletSupportedChains(polkadotWallet
 async function getWalletMethods(chain: Chain) {
   switch (chain) {
     case Chain.Polkadot: {
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/substrate");
+      const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
       const injectedWindow = window as Window & InjectedWindow;
       const injectedExtension = injectedWindow?.injectedWeb3?.["polkadot-js"];
 
@@ -42,7 +42,7 @@ async function getWalletMethods(chain: Chain) {
         throw new SwapKitError({ errorKey: "wallet_polkadot_not_found", info: { chain } });
       }
 
-      const toolbox = await getToolboxByChain(chain, { signer: rawExtension.signer });
+      const toolbox = await getSubstrateToolbox(chain, { signer: rawExtension.signer });
       const [account] = await rawExtension.accounts.get();
 
       if (!account?.address) {

@@ -48,12 +48,11 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         throw new SwapKitError("wallet_phantom_not_found");
       }
 
-      const { getToolboxByChain } = await import("@swapkit/toolboxes/utxo");
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const [{ address }] = await provider.requestAccounts();
+      const toolbox = await getUtxoToolbox(chain);
 
-      const getToolbox = await getToolboxByChain(chain);
-
-      return { ...getToolbox(), address };
+      return { ...toolbox, address };
     }
 
     case Chain.Ethereum: {
@@ -70,7 +69,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
     }
 
     case Chain.Solana: {
-      const { SOLToolbox } = await import("@swapkit/toolboxes/solana");
+      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const provider = phantom?.solana;
       if (!provider?.isPhantom) {
         throw new SwapKitError("wallet_phantom_not_found");
@@ -78,7 +77,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-      const toolbox = SOLToolbox();
+      const toolbox = getSolanaToolbox();
 
       const transfer = async ({
         recipient,

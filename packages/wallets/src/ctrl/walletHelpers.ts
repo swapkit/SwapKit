@@ -13,7 +13,7 @@ import {
 import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
-import type { SOLToolbox, SolanaProvider } from "@swapkit/toolboxes/solana";
+import type { SolanaProvider, SolanaWallet } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 type TransactionMethod = "transfer" | "deposit";
@@ -58,9 +58,7 @@ export function getCtrlProvider<T extends Chain>(
       return window.xfi.ethereum;
 
     case Chain.Cosmos:
-    case Chain.THORChain:
     case Chain.Kujira:
-    case Chain.Maya:
       // @ts-expect-error
       return window.xfi.keplr;
 
@@ -76,8 +74,12 @@ export function getCtrlProvider<T extends Chain>(
     case Chain.Litecoin:
       // @ts-expect-error
       return window.xfi.litecoin;
-    //   return window.xfi.thorchain;
-    //   return window.xfi.mayachain;
+    case Chain.THORChain:
+      // @ts-expect-error
+      return window.xfi.thorchain;
+    case Chain.Maya:
+      // @ts-expect-error
+      return window.xfi.mayachain;
     case Chain.Solana:
       // @ts-expect-error
       return window.xfi.solana;
@@ -196,10 +198,7 @@ export async function walletTransfer(
   return transaction({ method, params, chain: assetValue.chain });
 }
 
-export function solanaTransfer(
-  solToolbox: ReturnType<typeof SOLToolbox>,
-  walletPublicKey: PublicKey,
-) {
+export function solanaTransfer(solToolbox: SolanaWallet, walletPublicKey: PublicKey) {
   return async ({
     recipient,
     assetValue,

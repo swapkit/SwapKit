@@ -1,6 +1,5 @@
 import type { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
-import { Chain } from "@swapkit/helpers";
-import type { SOLToolbox } from "./toolbox";
+import type { getSolanaToolbox } from "./toolbox";
 
 type DisplayEncoding = "utf8" | "hex";
 
@@ -20,11 +19,7 @@ interface ConnectOpts {
   onlyIfTrusted: boolean;
 }
 
-export * from "./toolbox";
-
-export type SolanaWallets = {
-  [Chain.Solana]: ReturnType<typeof SOLToolbox>;
-};
+export type SolanaWallet = ReturnType<typeof getSolanaToolbox>;
 
 export interface SolanaProvider {
   connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;
@@ -47,3 +42,5 @@ export interface SolanaProvider {
     transactions: T[],
   ) => Promise<T[]>;
 }
+
+export * from "./toolbox";

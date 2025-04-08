@@ -1,4 +1,3 @@
-import { Chain } from "@swapkit/helpers";
 import type { ClientMetadata } from "./types";
 
 export const DEFAULT_RELAY_URL = "wss://relay.walletconnect.com";
@@ -14,13 +13,6 @@ export const ARBITRUM_ONE_MAINNET_ID = "eip155:42161";
 export const OPTIMISM_MAINNET_ID = "eip155:10";
 export const POLYGON_MAINNET_ID = "eip155:137";
 export const BASE_MAINNET_ID = "eip155:8453";
-
-export const CosmosChainToWcChainId = {
-  [Chain.THORChain]: THORCHAIN_MAINNET_ID,
-  [Chain.Kujira]: KUJIRA_MAINNET_ID,
-  [Chain.Maya]: MAYACHAIN_MAINNET_ID,
-  [Chain.Cosmos]: COSMOS_HUB_MAINNET_ID,
-};
 
 export const DEFAULT_LOGGER = "debug";
 

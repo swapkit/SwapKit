@@ -2,9 +2,11 @@ import { decodeAddress } from "@polkadot/keyring";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
 import type { ETHToolbox } from "@swapkit/toolboxes/evm";
-import type { ChainflipToolbox } from "@swapkit/toolboxes/substrate";
+import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
 import type { WithdrawFeeResponse } from "./types";
+
+type ChainflipToolbox = Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Chainflip>>>;
 
 export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["ARB.ETH", "ArbEth"],
@@ -19,7 +21,7 @@ export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["SOL.USDC-EPJFWDD5AUFQSSQEM2QN1XZYBAPC8G4WEGGKZWYTDT1V", "SolUsdc"],
 ]);
 
-const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) => () => {
+const registerAsBroker = (toolbox: ChainflipToolbox) => () => {
   const extrinsic = toolbox.api.tx.swapping?.registerAsBroker?.();
 
   if (!extrinsic) {
@@ -30,7 +32,7 @@ const registerAsBroker = (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>)
 };
 
 const withdrawFee =
-  (toolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
+  (toolbox: ChainflipToolbox) =>
   ({ feeAsset, recipient }: { feeAsset: AssetValue; recipient: string }) => {
     const isFeeChainPolkadot = feeAsset.chain === Chain.Polkadot;
 
@@ -84,7 +86,7 @@ const withdrawFee =
   };
 
 const fundStateChainAccount =
-  (chainflipToolbox: Awaited<ReturnType<typeof ChainflipToolbox>>) =>
+  (chainflipToolbox: ChainflipToolbox) =>
   async ({
     evmToolbox,
     stateChainAccount,
@@ -118,9 +120,7 @@ const fundStateChainAccount =
     });
   };
 
-export const ChainflipBroker = (
-  chainflipToolbox: Awaited<ReturnType<typeof ChainflipToolbox>>,
-) => ({
+export const ChainflipBroker = (chainflipToolbox: ChainflipToolbox) => ({
   registerAsBroker: registerAsBroker(chainflipToolbox),
   fundStateChainAccount: fundStateChainAccount(chainflipToolbox),
   withdrawFee: withdrawFee(chainflipToolbox),

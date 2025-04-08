@@ -107,7 +107,7 @@ async function getWalletMethods(chain: Chain) {
 
     case Chain.Polkadot:
     case Chain.Chainflip: {
-      const { getToolboxByChain, Network } = await import("@swapkit/toolboxes/substrate");
+      const { getSubstrateToolbox, Network } = await import("@swapkit/toolboxes/substrate");
 
       const injectedWindow = window as Window & InjectedWindow;
       const injectedExtension = injectedWindow?.injectedWeb3?.talisman;
@@ -117,7 +117,7 @@ async function getWalletMethods(chain: Chain) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_enabled", info: { chain } });
       }
 
-      const toolbox = await getToolboxByChain(chain, { signer: rawExtension.signer });
+      const toolbox = await getSubstrateToolbox(chain, { signer: rawExtension.signer });
       const accounts = await rawExtension.accounts.get();
 
       if (!accounts[0]?.address) {
