@@ -1,0 +1,306 @@
+---
+title: Creating a SwapKit Plugin
+description: Learn how to create a custom plugin for SwapKit
+---
+
+# Creating a Custom SwapKit Plugin
+
+SwapKit plugins extend the functionality of the core library to support various DeFi protocols and services. This guide explains how to create a custom plugin for SwapKit.
+
+## Plugin Structure
+
+A SwapKit plugin consists of the following components:
+
+1. A plugin factory created with `createPlugin`
+2. Plugin methods that interact with external services or smart contracts
+3. Integration with the SwapKit client
+
+## Basic Plugin Example
+
+Here's a simple example of creating a plugin:
+
+```ts twoslash
+// @noErrorValidation
+import {
+  AssetValue,
+  Chain,
+  SwapKitError,
+  createPlugin,
+  type EVMChain,
+} from "@swapkit/helpers";
+
+type SwapParams = {
+  route: {
+    sellAsset: string;
+    buyAsset: string;
+    sellAmount: string;
+  };
+};
+
+type QuoteParams = {
+  sellAsset: string;
+  buyAsset: string;
+  sellAmount: string;
+};
+
+// Create a simple example plugin
+export const ExamplePlugin = createPlugin({
+  name: "example",
+  properties: {
+    // Plugin properties/metadata
+    supportedSwapkitProviders: ["your-provider-name"],
+  },
+  methods: ({ getWallet }) => ({
+    // Define plugin methods here
+    swap: async function exampleSwap({ route }: SwapParams) {
+      // Extract necessary data from the route
+      const { sellAsset, buyAsset, sellAmount } = route;
+
+      if (!(sellAsset && buyAsset)) {
+        throw new SwapKitError("core_swap_asset_not_recognized");
+      }
+
+      // Create an asset value from the sell asset
+      const assetValue = await AssetValue.from({
+        asyncTokenLookup: true,
+        asset: sellAsset,
+        value: sellAmount,
+      });
+
+      // Get the wallet for the source chain
+      const wallet = getWallet(assetValue.chain as EVMChain);
+
+      if (!wallet) {
+        throw new SwapKitError("core_wallet_connection_not_found");
+      }
+
+      // Custom swap logic goes here - this is where you would
+      // connect to your DeFi protocol or service
+      // For this example, we'll just transfer the funds to simulate a swap
+      if ('transfer' in wallet) {
+        const txHash = await wallet.transfer({
+          assetValue,
+          from: wallet.address,
+          recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e", // Example recipient
+        });
+        return txHash;
+      }
+
+      throw new Error("Wallet does not support transfer");
+    },
+
+    // Add additional methods as needed
+    getQuote: async function getExampleQuote(params: QuoteParams) {
+      // Custom quote logic here
+      return {
+        // Return quote data
+        success: true,
+        data: {
+          // Quote details
+        }
+      };
+    },
+  }),
+});
+```
+
+## Creating an EVM-based Swap Plugin
+
+Here's a more realistic example of an EVM-based plugin that integrates with an exchange:
+
+```ts twoslash
+// @noErrors
+
+import {
+  ApproveMode,
+  AssetValue,
+  Chain,
+  EVMChain,
+  ProviderName,
+  SwapKitError,
+  createPlugin
+} from "@swapkit/helpers";
+import { SwapKitApi, type QuoteResponseRoute } from "@swapkit/helpers/api";
+
+// Helper function for approval handling
+const approve = ({ approveMode, getWallet }) =>
+  async function({ assetValue }) {
+    const evmChain = assetValue.chain as EVMChain;
+    const wallet = getWallet(evmChain);
+
+    if (!wallet) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    // Get the router contract address from your protocol
+    const routerAddress = "0x1234567890123456789012345678901234567890";
+
+    // Handle the approval based on the mode
+    if (approveMode === ApproveMode.CheckOnly) {
+      return wallet.isApproved({
+        amount: assetValue.getBaseValue("bigint"),
+        assetAddress: assetValue.address,
+        from: wallet.address,
+        spenderAddress: routerAddress,
+      });
+    }
+
+    return wallet.approve({
+      amount: assetValue.getBaseValue("bigint"),
+      assetAddress: assetValue.address,
+      from: wallet.address,
+      spenderAddress: routerAddress,
+    });
+  };
+
+// Create the exchange plugin
+export const ExchangePlugin = createPlugin({
+  name: "exchange",
+  properties: {
+    supportedSwapkitProviders: [ProviderName.CUSTOM_EXCHANGE],
+  },
+  methods: ({ getWallet }) => ({
+    // Approval methods
+    approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
+    isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
+
+    // Swap method
+    swap: async function exchangeSwap({ route }) {
+      const { tx, sellAsset } = route;
+
+      if (!tx) {
+        throw new SwapKitError("core_swap_invalid_params");
+      }
+
+      const assetValue = await AssetValue.from({
+        asset: sellAsset,
+        asyncTokenLookup: true
+      });
+
+      const evmChain = assetValue.chain as EVMChain;
+      const wallet = getWallet(evmChain);
+
+      if (!wallet) {
+        throw new SwapKitError("core_wallet_connection_not_found");
+      }
+
+      // Send the transaction
+      const { from, to, data, value } = tx;
+      return wallet.sendTransaction({
+        from,
+        to,
+        data,
+        value: BigInt(value || 0)
+      });
+    },
+
+    // Get a quote from the exchange
+    getQuote: async function getExchangeQuote({
+      sellAsset,
+      buyAsset,
+      sellAmount,
+      slippage = 1, // 1% default slippage
+    }) {
+      try {
+        // Call your exchange API to get a quote
+        const response = await fetch("https://api.your-exchange.com/quote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sellAsset,
+            buyAsset,
+            sellAmount,
+            slippage,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const quoteData = await response.json();
+
+        // Format the response to match SwapKit's expected format
+        return {
+          success: true,
+          data: {
+            routes: [
+              {
+                sellAsset,
+                buyAsset,
+                sellAmount,
+                buyAmount: quoteData.buyAmount,
+                // Include the transaction data needed for the swap
+                tx: {
+                  from: quoteData.from,
+                  to: quoteData.to,
+                  data: quoteData.data,
+                  value: quoteData.value,
+                },
+                providers: [ProviderName.CUSTOM_EXCHANGE],
+              } as QuoteResponseRoute,
+            ],
+          },
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: String(error),
+        };
+      }
+    },
+  }),
+});
+```
+
+## Using Your Plugin with SwapKit
+
+Once you've created your plugin, you can use it with the SwapKit client:
+
+```ts twoslash
+// @noErrorValidation
+import { SwapKit, Chain } from "@swapkit/core";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+// @ts-ignore
+import { ExamplePlugin } from "./example-plugin";
+
+// Initialize SwapKit with your plugin
+const swapKit = SwapKit({
+  plugins: { examplePlugin: ExamplePlugin },
+  wallets: { ...keystoreWallet },
+});
+
+// Connect a wallet
+async function connectAndUsePlugin() {
+  // Connect a wallet first
+  await swapKit.connectKeystore(
+    [Chain.Bitcoin, Chain.Ethereum], // Chains to connect
+    "your secret phrase here"
+  );
+
+  // Get a quote from your plugin
+  const quoteResponse = await swapKit.examplePlugin.getQuote({
+    sellAsset: "ETH.ETH",
+    buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    sellAmount: "0.1",
+  });
+
+  if (quoteResponse.success) {
+    // Execute the swap using the first route from the quote
+    const txHash = await swapKit.swap({ route: quoteResponse.data.routes[0] });
+  }
+}
+```
+
+## Best Practices
+
+When creating a SwapKit plugin, follow these best practices:
+
+1. **Error Handling**: Use SwapKitError for consistent error reporting
+2. **Type Safety**: Leverage TypeScript to provide proper type definitions
+3. **Documentation**: Document your plugin methods and parameters
+4. **Testing**: Create comprehensive tests for all functionality
+5. **Validation**: Validate inputs to prevent runtime errors
+6. **Security**: Be careful with sensitive data and external API calls
+
+By following this guide, you should be able to create, test, and integrate custom plugins with SwapKit.

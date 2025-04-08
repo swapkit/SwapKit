@@ -1,0 +1,502 @@
+---
+title: Connecting Wallets
+description: How to connect different types of wallets with SwapKit
+---
+
+# Connecting Wallets with SwapKit
+
+SwapKit provides multiple ways to connect wallets for different blockchain networks. This guide demonstrates how to connect various wallet types using both granular and all-in-one approaches.
+
+## Two Approaches to Using SwapKit
+
+You can use SwapKit in two ways:
+
+1. **Granular approach** - Import only what you need from individual packages:
+   ```ts
+   import { SwapKit } from "@swapkit/core";
+   import { keystoreWallet } from "@swapkit/wallets/keystore";
+   ```
+
+2. **All-in-one approach** - Import everything from the SDK (better for backend/Node.js):
+   ```ts
+   import { createSwapKit } from "@swapkit/sdk";
+   ```
+
+The granular approach is recommended for frontend applications as it results in smaller bundle sizes.
+
+## Initialize SwapKit
+
+### Granular Approach (Frontend Recommended)
+
+```ts twoslash
+// @noErrorValidation
+
+import { SwapKit } from "@swapkit/core";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { ledgerWallet } from "@swapkit/wallets/ledger";
+import { evmWallet } from "@swapkit/wallets/evm-extensions";
+
+// Initialize the SwapKit client with specific wallets
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      covalent: "your-covalent-api-key",
+      blockchair: "your-blockchair-api-key",
+      ethplorer: "your-ethplorer-api-key",
+      walletConnectProjectId: "your-walletconnect-project-id",
+    },
+  },
+  wallets: {
+    keystore: keystoreWallet,
+    ledger: ledgerWallet,
+    evm: evmWallet,
+    // Add only the wallets you need
+  },
+});
+```
+
+### All-in-one Approach (Backend/Node.js)
+
+```ts twoslash
+// @noErrorValidation
+
+import { createSwapKit } from "@swapkit/sdk";
+
+// Initialize the SwapKit client with all wallets included
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      covalent: "your-covalent-api-key",
+      blockchair: "your-blockchair-api-key",
+      ethplorer: "your-ethplorer-api-key",
+      walletConnectProjectId: "your-walletconnect-project-id",
+    },
+  },
+});
+```
+
+## Connect with Keystore Wallet
+
+### Granular Approach
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { decryptFromKeystore, type Keystore } from "@swapkit/wallets/keystore";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: { ...keystoreWallet },
+});
+
+// Connect with keystore
+async function connectWithKeystore(
+  keystoreFile: Keystore,
+  password: string,
+  chains: Chain[]
+) {
+  try {
+    // Decrypt the keystore file
+    const phrase = await decryptFromKeystore(keystoreFile, password);
+
+    // Connect the chains with the decrypted phrase
+    await swapKit.connectKeystore(chains, phrase);
+
+    // Get wallet balances
+    const balances = await Promise.all(
+      chains.map(async (chain) => {
+        const wallet = await swapKit.getWalletWithBalance(chain);
+        return wallet.balance;
+      })
+    );
+
+    return { success: true, balances };
+  } catch (error) {
+    console.error("Failed to connect with keystore:", error);
+    return { success: false, error };
+  }
+}
+```
+
+### All-in-one Approach
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { createSwapKit } from "@swapkit/sdk";
+import { decryptFromKeystore, type Keystore } from "@swapkit/wallets/keystore";
+
+// Initialize SwapKit
+const swapKit = createSwapKit();
+
+// Connect with keystore
+async function connectWithKeystore(
+  keystoreFile: Keystore,
+  password: string,
+  chains: Chain[]
+) {
+  try {
+    // Decrypt the keystore file
+    const phrase = await decryptFromKeystore(keystoreFile, password);
+
+    // Connect the chains with the decrypted phrase
+    await swapKit.connectKeystore(chains, phrase);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to connect with keystore:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Using Hardware Wallets
+
+### Ledger Wallet
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { ledgerWallet } from "@swapkit/wallets/ledger";
+
+// Initialize SwapKit with Ledger wallet
+const swapKit = SwapKit({
+  wallets: {
+    ledger: ledgerWallet,
+  },
+});
+
+// Connect Ledger wallet
+async function connectLedger(chains: Chain[]) {
+  try {
+    // Connect to Ledger
+    await swapKit.connectLedger(chains);
+
+    // Get the wallet address for a specific chain
+    const ethAddress = swapKit.getAddress(Chain.Ethereum);
+    console.log("Ethereum address:", ethAddress);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to connect Ledger:", error);
+    return { success: false, error };
+  }
+}
+```
+
+### Trezor Wallet
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { trezorWallet } from "@swapkit/wallets/trezor";
+
+// Initialize SwapKit with Trezor wallet
+const swapKit = SwapKit({
+  wallets: {
+    trezor: trezorWallet,
+  },
+});
+
+// Connect Trezor wallet
+async function connectTrezor(chains: Chain[]) {
+  try {
+    // Connect to Trezor
+    await swapKit.connectTrezor(chains);
+
+    // Get wallet balances for Bitcoin
+    const btcWallet = await swapKit.getWalletWithBalance(Chain.Bitcoin);
+    console.log("Bitcoin balance:", btcWallet.balance);
+
+    return { success: true, balance: btcWallet.balance };
+  } catch (error) {
+    console.error("Failed to connect Trezor:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Using Browser Extension Wallets
+
+### MetaMask / EVM Wallets
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { evmWallet } from "@swapkit/wallets/evm-extensions";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: {
+    evm: evmWallet,
+  },
+});
+
+// Connect to MetaMask or other EVM wallets
+async function connectEVMWallet() {
+  try {
+    // This will prompt the user to connect with their browser wallet
+    await swapKit.connectEvm([Chain.Ethereum, Chain.BinanceSmartChain]);
+
+    // Get the Ethereum address
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Connected Ethereum address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect EVM wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+### Keplr (Cosmos) Wallet
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { keplrWallet } from "@swapkit/wallets/keplr";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: {
+    keplr: keplrWallet,
+  },
+});
+
+// Connect to Keplr
+async function connectKeplr() {
+  try {
+    await swapKit.connectKeplr([Chain.Cosmos]);
+
+    // Get the Cosmos address
+    const address = swapKit.getAddress(Chain.Cosmos);
+    console.log("Connected Cosmos address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Keplr:", error);
+    return { success: false, error };
+  }
+}
+```
+
+### Phantom (Solana) Wallet
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { phantomWallet } from "@swapkit/wallets/phantom";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: {
+    phantom: phantomWallet,
+  },
+});
+
+// Connect to Phantom
+async function connectPhantom() {
+  try {
+    await swapKit.connectPhantom([Chain.Solana]);
+
+    // Get the Solana address
+    const address = swapKit.getAddress(Chain.Solana);
+    console.log("Connected Solana address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Phantom:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Managing Wallet Connections
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { evmWallet } from "@swapkit/wallets/evm-extensions";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: {
+    evm: evmWallet,
+  },
+});
+
+// Get all connected wallets
+function getAllWallets() {
+  const wallets = swapKit.getAllWallets();
+  console.log("Connected wallets:", wallets);
+  return wallets;
+}
+
+// Disconnect a specific chain
+function disconnectChain(chain: Chain) {
+  swapKit.disconnectChain(chain);
+  console.log(`${chain} wallet disconnected`);
+}
+
+// Disconnect all wallets
+function disconnectAll() {
+  swapKit.disconnectAll();
+  console.log("All wallets disconnected");
+}
+```
+
+## Getting Wallet Balances
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { evmWallet } from "@swapkit/wallets/evm-extensions";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: {
+    evm: evmWallet,
+  },
+});
+
+// Connect a wallet first
+await swapKit.connectEvm([Chain.Ethereum]);
+
+// Get balance for a specific chain
+async function getChainBalance(chain: Chain) {
+  // Get the balance (true parameter refreshes the balance from the network)
+  const balance = await swapKit.getBalance(chain, true);
+  console.log(`${chain} balance:`, balance);
+  return balance;
+}
+
+// Get balances for multiple chains
+async function getAllBalances(chains: Chain[]) {
+  const balances = await Promise.all(
+    chains.map(async (chain) => {
+      try {
+        const wallet = await swapKit.getWalletWithBalance(chain);
+        return { chain, balance: wallet.balance };
+      } catch (error) {
+        console.error(`Failed to get balance for ${chain}:`, error);
+        return { chain, balance: [], error };
+      }
+    })
+  );
+
+  return balances;
+}
+```
+
+## Using WalletConnect
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { walletconnectWallet } from "@swapkit/wallets/walletconnect";
+
+// Initialize SwapKit with WalletConnect
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID", // Required
+    },
+  },
+  wallets: {
+    walletconnect: walletconnectWallet,
+  },
+});
+
+// Connect using WalletConnect
+async function connectWalletConnect() {
+  try {
+    await swapKit.connectWalletconnect([
+      Chain.Ethereum,
+      Chain.BinanceSmartChain,
+      Chain.Cosmos,
+    ]);
+
+    // Check connected addresses
+    const ethAddress = swapKit.getAddress(Chain.Ethereum);
+    console.log("Connected Ethereum address:", ethAddress);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to connect via WalletConnect:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Advanced: Connecting Multiple Wallets
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { keplrWallet } from "@swapkit/wallets/keplr";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+
+// Initialize SwapKit with multiple wallet types
+const swapKit = SwapKit({
+  wallets: {
+    evm: evmWallet,
+    keplr: keplrWallet,
+    keystore: keystoreWallet,
+  },
+});
+
+// Connect multiple wallet types
+async function connectMultipleWallets(phrase: string) {
+  try {
+    // Connect EVM wallet for Ethereum
+    await swapKit.connectEvm([Chain.Ethereum]);
+
+    // Connect Keplr for Cosmos
+    await swapKit.connectKeplr([Chain.Cosmos]);
+
+    // Connect keystore for Bitcoin
+    await swapKit.connectKeystore([Chain.Bitcoin], phrase);
+
+    // Get all connected wallets
+    const wallets = swapKit.getAllWallets();
+
+    // Get addresses for each chain
+    const addresses = {
+      [Chain.Ethereum]: swapKit.getAddress(Chain.Ethereum),
+      [Chain.Cosmos]: swapKit.getAddress(Chain.Cosmos),
+      [Chain.Bitcoin]: swapKit.getAddress(Chain.Bitcoin),
+    };
+
+    console.log("Connected addresses:", addresses);
+
+    return { success: true, addresses };
+  } catch (error) {
+    console.error("Failed to connect multiple wallets:", error);
+    return { success: false, error };
+  }
+}
+```

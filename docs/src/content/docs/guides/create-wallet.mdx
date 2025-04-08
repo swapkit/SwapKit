@@ -1,0 +1,321 @@
+---
+title: Creating a Custom Wallet
+description: A guide to create a custom wallet adapter
+---
+
+# Creating a Custom Wallet Adapter
+
+This guide explains how to create a custom wallet adapter for SwapKit using the `createWallet` function.
+
+## Wallet Adapter Structure
+
+A SwapKit wallet adapter consists of:
+
+1. A wallet factory created with `createWallet`
+2. Configuration for supported chains and derivation paths
+3. Connection methods for interacting with the wallet
+
+## Basic Wallet Adapter Example
+
+Here's a simple example of creating a custom wallet adapter:
+
+```ts twoslash
+// @noErrorValidation
+import {
+  Chain,
+  DerivationPath,
+  NetworkDerivationPath,
+  createWallet,
+  type ChainWallet,
+  type EVMChain
+} from "@swapkit/helpers";
+import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+
+
+// Create a basic EVM wallet adapter
+export const myCustomWallet = createWallet({
+  name: "connectMyCustomWallet", // This will be the name of the connect method
+  walletType: "custom", // Unique identifier for your wallet
+  supportedChains: [
+    Chain.Ethereum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+    Chain.Polygon,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) =>
+    // This function returns the actual connect method
+    async function connectMyCustomWallet(chains: typeof supportedChains) {
+      // Filter out chains that this wallet doesn't support
+      const filteredChains = chains.filter(
+        (chain) => supportedChains.includes(chain)
+      );
+
+      if (filteredChains.length === 0) {
+        // depends on your wallet implementation - you can throw or return false
+        return false;
+      }
+
+      // For each chain, create a wallet instance
+      for (const chain of filteredChains) {
+        // This is where you'd implement your wallet connection logic
+        // For this example, we'll simulate connecting to MetaMask or similar
+
+        // In a real implementation, you would:
+        // 1. Request connection to the wallet
+        // 2. Get the provider/signer
+        // 3. Get the address
+
+        // Simulate wallet connection
+        // In a real app, properly check this
+        const provider = (window as any).ethereum;
+
+        if (!provider) {
+          throw new Error("Provider not found");
+        }
+
+        // Request accounts
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        const address = accounts[0];
+
+        // Create toolbox with the provider
+        const toolbox = getToolboxByChain(chain)({
+          provider,
+          // You might also add a signer here i.e.:
+          // signer: provider.getSigner(),
+        });
+
+        // Add the connected chain to SwapKit
+        addChain({
+          ...toolbox,
+          chain,
+          walletType,
+          address,
+        });
+      }
+
+      return true;
+    },
+});
+```
+
+## Wallet with Hardware Connection
+
+Here's an example of creating a wallet adapter for a hardware wallet:
+
+```ts twoslash
+// @noErrorValidation
+
+import {
+  Chain,
+  NetworkDerivationPath,
+  WalletOption,
+  createWallet,
+  type ChainWallet
+} from "@swapkit/helpers";
+import { getToolboxByChain } from "@swapkit/toolboxes/evm";
+import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+
+export const customHardwareWallet = createWallet({
+  name: "connectCustomHardware",
+  // ^ This will be the name of the connect method
+  walletType: "customHardwareName",
+  // ^ This will be the name of the wallet type - in case of custom plugin identification
+  supportedChains: [
+    Chain.Bitcoin,
+    Chain.Ethereum,
+    Chain.BinanceSmartChain,
+  ],
+  connect: ({ addChain, supportedChains, walletType }) => {
+    // device detection
+    async function detectDevice() {
+      return "device-123";
+    }
+
+    // address derivation from device
+    async function getAddressFromDevice(chain: Chain, deviceId: string) {
+      return {
+        address: chain === Chain.Bitcoin
+          ? "bc1q...test"
+          : "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+        publicKey: "dummy-public-key"
+      };
+    }
+
+    // custom device signing logic
+    async function signTransactionWithDevice(deviceId: string, tx: any, chain: Chain) {
+      return "signed-transaction-hex";
+    }
+
+    // Create a provider that communicates with hardware wallet
+    function createHardwareProvider(deviceId: string, chain: Chain) {
+      return {} as any; // Mock for example
+    }
+
+    async function connectCustomHardware(chains: typeof supportedChains, options?: { deviceId?: string }) {
+      const filteredChains = chains.filter(
+        (chain) => supportedChains.includes(chain)
+      );
+      const deviceId = options?.deviceId || await detectDevice();
+
+      if (filteredChains.length === 0 || !deviceId) {
+        // depends on your wallet implementation - you can throw or return false
+        return false;
+      }
+
+      for (const chain of filteredChains) {
+        // Get address from the hardware device
+        const { address, publicKey } = await getAddressFromDevice(chain, deviceId);
+
+        if (chain === Chain.Bitcoin) {
+          // For Bitcoin, use UTXO toolbox
+          const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
+
+          addChain({
+            ...btcToolbox,
+            chain,
+            walletType,
+            address,
+            publicKey,
+            getBalance: () => btcToolbox.getBalance(address),
+            transfer: async (params: Parameters<typeof btcToolbox.transfer>[0]) => {
+              // Implement transfer that communicates with device for signing
+              const { assetValue, recipient, memo } = params;
+              const tx = await btcToolbox.buildTx({
+                recipient,
+                assetValue,
+                sender: address,
+                feeRate: 1.33,
+                memo
+              });
+
+              // Request signing from device
+              const signedTx = await signTransactionWithDevice(deviceId, tx, chain);
+
+              return btcToolbox.broadcastTx(signedTx);
+            },
+            // Add other necessary methods
+          })
+        } else {
+          // For EVM chains
+          const evmToolbox = getToolboxByChain(chain)({
+            // Initialize with a special provider that communicates with hardware
+            provider: createHardwareProvider(deviceId, chain),
+          });
+
+          addChain({
+            ...evmToolbox,
+            getBalance: () => evmToolbox.getBalance(address),
+            chain,
+            walletType,
+            address,
+        });
+        }
+      }
+
+      return true;
+    }
+
+    return connectCustomHardware;
+  }
+});
+
+```
+
+## Using Your Custom Wallet with SwapKit
+
+To use your custom wallet adapter with SwapKit:
+
+```ts twoslash
+// @noErrors
+import { SwapKit } from "@swapkit/core";
+import { myCustomWallet } from "./my-custom-wallet";
+
+// Initialize SwapKit with your wallet adapter
+const swapKit = SwapKit({
+  wallets: {
+    myWallet: myCustomWallet,
+  },
+});
+
+// Connect using your custom wallet
+async function connectWithCustomWallet() {
+  await swapKit.connectMyCustomWallet(["ETH", "BSC"]);
+
+
+  const ethWallet = await swapKit.getWallet("ETH");
+}
+```
+
+## Testing Your Wallet Adapter
+
+Test your wallet adapter thoroughly before using it in production:
+
+```ts twoslash
+// @noErrors
+import { describe, jest, it, expect, beforeEach } from "bun:test";
+import { Chain } from "@swapkit/helpers";
+import { SwapKit } from "@swapkit/core";
+import { myCustomWallet } from "./my-custom-wallet";
+
+describe("MyCustomWallet", () => {
+  let swapKit: ReturnType<typeof SwapKit>;
+
+  beforeEach(() => {
+    // Mock window.ethereum
+    global.window = {
+      ethereum: {
+        request: jest.fn().mockResolvedValue(["0x742d35Cc6634C0532925a3b844Bc454e4438f44e"]),
+        // Add other methods as needed
+      },
+    } as any;
+
+    swapKit = SwapKit({
+      wallets: {
+        myWallet: myCustomWallet,
+      },
+    });
+  });
+
+  it("should connect to Ethereum", async () => {
+    await swapKit.connectMyCustomWallet([Chain.Ethereum]);
+
+    const wallets = swapKit.getAllWallets();
+    expect(wallets[Chain.Ethereum]).toBeDefined();
+    expect(wallets[Chain.Ethereum].address).toBe("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
+  });
+
+  it("should transfer ETH", async () => {
+    await swapKit.connectMyCustomWallet([Chain.Ethereum]);
+
+    // Mock the transfer method for testing
+    const mockTransfer = jest.fn().mockResolvedValue("0xtxhash");
+    swapKit.getWallet(Chain.Ethereum).transfer = mockTransfer;
+
+    const result = await swapKit.transfer({
+      assetValue: {
+        chain: Chain.Ethereum,
+        symbol: "ETH",
+        value: "0.1",
+      },
+      recipient: "0xabc123...",
+    });
+
+    expect(mockTransfer).toHaveBeenCalled();
+    expect(result).toBe("0xtxhash");
+  });
+});
+```
+
+## Best Practices
+
+When creating a custom wallet adapter, follow these best practices:
+
+1. **Error Handling**: Provide clear error messages when connection or operations fail
+2. **Chain Filtering**: Properly filter and validate supported chains
+3. **Feature Detection**: Check if features like signing or specific networks are supported
+4. **Security**: Be careful with private keys and sensitive operations
+5. **Testing**: Test thoroughly with both happy and error paths
+6. **Documentation**: Document any special requirements or features of your wallet
+
+By following this guide, you can create a custom wallet adapter that integrates seamlessly with the SwapKit ecosystem.
+
