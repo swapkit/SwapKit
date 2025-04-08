@@ -222,7 +222,7 @@ export function parseAminoMessageForDirectSigning<T extends MsgDeposit | MsgSend
           asset: {
             chain,
             symbol,
-            ticker: symbol,
+            ticker: assetValue.ticker,
             synth: assetValue.isSynthetic,
             trade: assetValue.isTradeAsset,
           },

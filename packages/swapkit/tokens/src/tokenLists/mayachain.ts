@@ -2,35 +2,15 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-04-02T08:01:32.594Z",
+  timestamp: "2025-04-08T08:01:02.232Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 54,
+  count: 50,
   tokens: [
-    {
-      address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.ARB-0x912ce59144191c1204e64559fe8253a0e49e6548",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.arb-0x912ce59144191c1204e64559fe8253a0e49e6548.png",
-      ticker: "ARB",
-    },
-    {
-      address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.DAI-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.dai-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1.png",
-      ticker: "DAI",
-    },
     {
       chain: "ARB",
       chainId: "42161",
@@ -120,16 +100,6 @@ export const list = {
       ticker: "WBTC",
     },
     {
-      address: "0x5979d7b546e38e414f7e9822514be443a4800529",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
-      ticker: "wstETH",
-    },
-    {
       address: "0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
       chain: "ARB",
       chainId: "42161",
@@ -210,14 +180,6 @@ export const list = {
       identifier: "KUJI.KUJI",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.kuji.png",
       ticker: "KUJI",
-    },
-    {
-      chain: "KUJI",
-      chainId: "kaiyo-1",
-      decimals: 6,
-      identifier: "KUJI.USK",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.usk.png",
-      ticker: "USK",
     },
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
