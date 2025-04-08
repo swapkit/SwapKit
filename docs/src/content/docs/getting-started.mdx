@@ -1,11 +1,386 @@
 ---
-title: Getting Started
+title: Getting started with SwapKit
 description: Get started building your app with SwapKit.
+hero:
+  tagline: SwapKit is a powerful suite of tools for building blockchain applications. It provides a modular framework for integrating with multiple blockchains, wallet providers, and DeFi protocols.
+    # actions:
+    #   - text: SDK (Simple)
+    #     link: #sdk-quick-start
+    #     icon: rocket
+    #   - text: Core (Advanced)
+    #     link: #core-setup
+    #     variant: secondary
+    #     icon: puzzle
 ---
 
-# Getting Started
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-SwapKit is a suite of tools for building on-chain applications. This guide will help you get started with the SwapKit SDK.
+## Choose Your Implementation
 
-## Installation
+SwapKit offers two implementation approaches to suit your needs:
+
+<Tabs>
+  <TabItem label="SwapKit SDK">
+    <div>
+      <h3>Quick and Simple</h3>
+      <p>The all-in-one solution that bundles Core with all available plugins and wallet integrations.</p>
+      <p>Perfect for developers who want to get started quickly with minimal configuration.</p>
+
+      **Pros:**
+      - Simplicity and convenience
+      - Reduced setup time
+      - Pre-configured with all available plugins and wallets
+      - Faster implementation for multi-chain applications
+
+      **Cons:**
+      - Larger bundle size
+      - Less flexibility for specific customizations
+
+      <LinkButton href="#sdk-quick-start">Start with SDK</LinkButton>
+    </div>
+  </TabItem>
+  <TabItem label="SwapKit Core">
+    <div>
+      <h3>Flexible and Customized</h3>
+      <p>The foundation package providing essential functionality.</p>
+      <p>Designed to be modular and flexible, allowing you to customize your implementation with only the specific components you need.</p>
+
+      **Pros:**
+      - Lightweight bundle size
+      - Fine-grained control over dependencies
+      - Allows selective updates of components
+      - Better for specialized applications
+
+      **Cons:**
+      - Requires more configuration
+      - More imports and setup code
+
+      <LinkButton href="#core-setup">Start with Core</LinkButton>
+    </div>
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+  Choose the implementation that best suits your project's needs. SwapKit SDK is recommended for most users getting started.
+</Aside>
+
+<div id="sdk-quick-start"></div>
+
+## SwapKit SDK: Quick Start
+
+The fastest way to integrate SwapKit into your application.
+
+<Steps>
+1. **Install the SDK**
+
+   Choose your package manager:
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       ```bash
+       bun add @swapkit/sdk
+       ```
+     </TabItem>
+     <TabItem label="pnpm">
+       ```bash
+       pnpm add @swapkit/sdk
+       ```
+     </TabItem>
+     <TabItem label="npm">
+       ```bash
+       npm install @swapkit/sdk
+       ```
+     </TabItem>
+     <TabItem label="yarn">
+       ```bash
+       yarn add @swapkit/sdk
+       ```
+     </TabItem>
+   </Tabs>
+
+2. **Initialize SwapKit**
+
+   ```typescript
+   import { createSwapKit } from '@swapkit/sdk';
+
+   // Initialize with default configuration
+   const defaultSwapKit = createSwapKit();
+
+   // Or with custom configuration
+   const swapKit = createSwapKit({
+     config: {
+       apiKeys: {
+        swapKit: 'your-swapkit-api-key',
+       }
+     },
+   });
+   ```
+
+3. **Start Using SwapKit**
+
+   Connect a wallet:
+   ```typescript
+   import { createSwapKit, Chain } from '@swapkit/sdk';
+
+   const swapKit = createSwapKit({
+    config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
+   });
+
+   // Connect to a wallet
+   const wallet = await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
+
+   // Get wallet address for a specific chain
+   const address = swapKit.getAddress(Chain.Ethereum);
+   ```
+</Steps>
+
+<div id="core-setup"></div>
+
+## SwapKit Core: Advanced Setup
+
+For developers who need more control and custom configurations.
+
+<Steps>
+1. **Install Core Package**
+
+   Start with the core package:
+
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">
+       ```bash
+       bun add @swapkit/core
+       ```
+     </TabItem>
+     <TabItem label="pnpm">
+       ```bash
+       pnpm add @swapkit/core
+       ```
+     </TabItem>
+     <TabItem label="npm">
+       ```bash
+       npm install @swapkit/core
+       ```
+     </TabItem>
+     <TabItem label="yarn">
+       ```bash
+       yarn add @swapkit/core
+       ```
+     </TabItem>
+   </Tabs>
+
+2. **Install Required Components**
+
+   Add only the components you need:
+
+    <Tabs>
+      <TabItem label="Wallets">
+        <Tabs syncKey="package-manager">
+          <TabItem label="bun">
+            ```bash
+            bun add @swapkit/wallets
+            ```
+          </TabItem>
+          <TabItem label="pnpm">
+            ```bash
+            pnpm add @swapkit/wallets
+            ```
+          </TabItem>
+          <TabItem label="npm">
+            ```bash
+            npm install @swapkit/wallets
+            ```
+          </TabItem>
+          <TabItem label="yarn">
+            ```bash
+            yarn add @swapkit/wallets
+            ```
+          </TabItem>
+        </Tabs>
+
+        Install to add integrations with specific wallets.
+        Import specific wallet integrations as needed (e.g., `@swapkit/wallets/keystore`).
+        Supports around 20+ wallets, including Ledger, Trezor, Coinbase, WalletConnect and more.
+      </TabItem>
+
+      <TabItem label="Plugins">
+        <Tabs syncKey="package-manager">
+          <TabItem label="bun">
+            ```bash
+            bun add @swapkit/plugins
+            ```
+          </TabItem>
+          <TabItem label="pnpm">
+            ```bash
+            pnpm add @swapkit/plugins
+            ```
+          </TabItem>
+          <TabItem label="npm">
+            ```bash
+            npm install @swapkit/plugins
+            ```
+          </TabItem>
+          <TabItem label="yarn">
+            ```bash
+            yarn add @swapkit/plugins
+            ```
+          </TabItem>
+        </Tabs>
+
+        Install for interactions with specific protocols or products.
+        Install the main plugins package below; you can then import specific plugin integrations as needed (e.g., `@swapkit/plugins/thorchain`).
+        By building your own plugins, you can extend SwapKit to support new protocols, products or actions.
+        Currently SwapKit includes plugins for Chainflip, Thorchain, EVM, Radix, and more.
+      </TabItem>
+
+      <TabItem label="Toolboxes">
+        Toolboxes provide foundational, chain-specific functionalities used internally by wallets and plugins.
+        They are included when you install `@swapkit/core` and typically **don't need separate installation** unless you are building custom integrations or need direct access to low-level chain functions.
+        Check out [Toolbox Usage](/guides/toolbox-usage/) for more information on advanced scenarios.
+      </TabItem>
+    </Tabs>
+
+
+3. **Configure SwapKit**
+
+   ```typescript
+   // @noErrorValidation
+   import { SwapKit, Chain } from '@swapkit/core';
+
+   // Import only the plugins you need
+   import { ThorchainPlugin } from '@swapkit/plugins/thorchain';
+   import { EVMPlugin } from '@swapkit/plugins/evm';
+
+   // Import only the wallets you need
+   import { keystoreWallet } from '@swapkit/wallets/keystore';
+   import { ledgerWallet } from '@swapkit/wallets/ledger';
+
+   const swapKit = SwapKit({
+      config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
+     },
+     plugins: { ...ThorchainPlugin, ...EVMPlugin },
+     wallets: { ...keystoreWallet, ...ledgerWallet },
+   });
+
+   // Connect to a wallet
+   await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
+   const wallet = swapKit.getWallet(Chain.Ethereum);
+   ```
+</Steps>
+
+<Aside type="tip">
+  With the Core implementation, you only include the dependencies you actually need, resulting in a smaller bundle size.
+</Aside>
+
+## Common Use Cases
+
+No matter which implementation you choose, you can use these common patterns:
+
+<CardGrid>
+  <Card title="Check Balances" icon="seti:database">
+    ```typescript
+    // @noErrorValidation
+    import { SwapKit, Chain } from '@swapkit/core';
+
+    const swapKit = SwapKit({
+      config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
+    });
+    // Get balance for a specific chain
+    const balance = await swapKit.getBalance(Chain.Bitcoin, true);
+
+    // Get balances for all connected wallets
+    const allWallets = swapKit.getAllWallets();
+    ```
+  </Card>
+
+  <Card title="Transfer Assets" icon="seti:send">
+    ```typescript
+    // @noErrorValidation
+    import { AssetValue, Chain, SwapKit } from '@swapkit/core';
+    import { keystoreWallet } from '@swapkit/wallets/keystore';
+
+    // Initialize SwapKit
+    const swapKit = SwapKit({
+      config: { apiKeys: { swapKit: 'your-swapkit-api-key' }, wallets: { ...keystoreWallet } },
+    });
+    // Connect to a wallet
+    await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
+
+    // Create an asset value to transfer
+    const assetValue = AssetValue.from({
+      chain: Chain.Ethereum,
+      symbol: 'ETH',
+      decimal: 18,
+      value: '0.1',
+    });
+
+    // Transfer the asset
+    const txHash = await swapKit.transfer({
+      assetValue,
+      recipient: '0xRecipientAddressHere',
+      memo: 'Optional memo',
+    });
+    ```
+  </Card>
+
+  <Card title="Perform Swaps" icon="seti:swap">
+    ```typescript
+    // @noErrorValidation
+    import { AssetValue, Chain, SwapKitApi, SwapKit } from '@swapkit/core';
+    import { keystoreWallet } from '@swapkit/wallets/keystore';
+
+    // Initialize SwapKit
+    const swapKit = SwapKit({
+      config: { apiKeys: { swapKit: 'your-swapkit-api-key' }, wallets: { ...keystoreWallet } },
+    });
+
+    // Connect to a wallet
+    await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
+
+    // Get a quote for a swap
+    const quoteResponse = await SwapKitApi.getSwapQ({
+      fromAsset: AssetValue.from({
+        chain: Chain.Ethereum,
+        symbol: 'ETH',
+        value: '0.1'
+      }),
+      toAsset: AssetValue.from({
+        chain: Chain.Bitcoin,
+        symbol: 'BTC'
+      }),
+    });
+
+    // Perform the swap with the quote
+    const swapTx = await swapKit.swap({ route: quoteResponse.routes[0] });
+    ```
+  </Card>
+</CardGrid>
+
+<Aside type="caution">
+  Always secure sensitive information like mnemonic phrases. In production apps, never hardcode these values.
+</Aside>
+
+
+## Next Steps
+
+<CardGrid>
+  <Card title="API Reference" icon="open-book">
+    Explore detailed documentation of all SwapKit components and APIs.
+    <LinkButton href="/references/">View References</LinkButton>
+  </Card>
+  <Card title="Guides" icon="document">
+    Learn how to implement specific use cases with SwapKit.
+    <LinkButton href="/guides/">Browse Guides</LinkButton>
+  </Card>
+  <Card title="Toolboxes" icon="puzzle">
+    Discover blockchain-specific toolboxes for extended functionality.
+    <LinkButton href="/references/toolboxes/">Explore Toolboxes</LinkButton>
+  </Card>
+  <Card title="Wallets" icon="seti:key">
+    Integrate with different wallet providers using SwapKit.
+    <LinkButton href="/references/wallets/">View Wallets</LinkButton>
+  </Card>
+</CardGrid>
 

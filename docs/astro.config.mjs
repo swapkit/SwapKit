@@ -56,7 +56,15 @@ export default defineConfig({
                 items: [{ label: "@swapkit", items: docsSidebarItems }],
               },
             ]
-          : []),
+          : process.env.DOCS
+            ? [
+                {
+                  label: "References",
+                  collapsed: true,
+                  autogenerate: { collapsed: true, directory: "references" },
+                },
+              ]
+            : []),
       ],
     }),
   ],

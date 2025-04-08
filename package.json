@@ -21,6 +21,7 @@
     "build:clean": "bun --filter '*' --elide-lines=0 build:clean",
     "build:ci": "bun --filter '*' build",
     "build:debug": "DEBUG=true bun --filter '*' build",
+    "build:docs": "bun --cwd ./docs build-docs",
     "clean": "bun --filter '*' clean && rm -rf node_modules build; bun install",
     "deps": "bun ncu --root -u -i -ws",
     "docs": "bun --cwd ./docs",

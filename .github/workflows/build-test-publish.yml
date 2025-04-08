@@ -114,7 +114,7 @@ jobs:
         uses: actions/configure-pages@v5.0.0
 
       - name: Build Docs
-        run: bun docs deploy
+        run: bun build:docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
