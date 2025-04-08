@@ -12,10 +12,10 @@ import {
   Connection,
   Keypair,
   PublicKey,
-  Signer,
+  type Signer,
   SystemProgram,
   Transaction,
-  VersionedTransaction,
+  type VersionedTransaction,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import {
