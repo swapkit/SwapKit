@@ -32,7 +32,6 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
     setLoading(true);
     setRoutes([]);
-    debugger;
 
     const sourceAddress = skClient.getAddress(inputAsset.chain as Chain);
     const destinationAddress = skClient.getAddress(outputAsset.chain as Chain);
