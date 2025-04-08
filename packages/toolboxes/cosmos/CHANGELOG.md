@@ -1,5 +1,15 @@
 # @swapkit/toolbox-cosmos
 
+## 1.10.5
+
+### Patch Changes
+
+- [#1235](https://github.com/thorswap/SwapKit/pull/1235) [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Api key usage in cosmos toolbox and wallets
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.4
+  - @swapkit/api@2.4.4
+
 ## 1.10.4
 
 ### Patch Changes

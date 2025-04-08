@@ -1,5 +1,16 @@
 # @swapkit/toolbox-solana
 
+## 1.5.0
+
+### Minor Changes
+
+- [#1235](https://github.com/thorswap/SwapKit/pull/1235) [`57abbdd`](https://github.com/thorswap/SwapKit/commit/57abbdd2c850f98ecf4fd203863e4bf2068cdde4) Thanks [@towanTG](https://github.com/towanTG)! - Adds solana plugin and adapts wallets and toolbox
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.4
+
 ## 1.4.9
 
 ### Patch Changes

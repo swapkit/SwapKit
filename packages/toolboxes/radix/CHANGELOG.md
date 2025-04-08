@@ -1,5 +1,12 @@
 # @swapkit/toolbox-radix
 
+## 1.2.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.4
+
 ## 1.2.37
 
 ### Patch Changes
