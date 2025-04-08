@@ -12,8 +12,10 @@ import {
   Connection,
   Keypair,
   PublicKey,
+  type Signer,
   SystemProgram,
   Transaction,
+  type VersionedTransaction,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import {
@@ -36,7 +38,7 @@ export function validateAddress(address: string) {
   }
 }
 
-function createKeysForPath({
+export function createKeysForPath({
   phrase,
   derivationPath = DerivationPath.SOL,
 }: {
@@ -215,18 +217,20 @@ function createSolanaTransaction(connection: Connection) {
   };
 }
 
-function transfer(connection: Connection) {
+function transfer(connection: Connection, fromKeypair?: Keypair) {
   return async ({
     recipient,
     assetValue,
-    fromKeypair,
     memo,
     isProgramDerivedAddress,
   }: WalletTxParams & {
     assetValue: AssetValue;
-    fromKeypair: Keypair;
     isProgramDerivedAddress?: boolean;
   }) => {
+    if (!fromKeypair) {
+      throw new SwapKitError("toolbox_solana_no_signer");
+    }
+
     const transaction = await createSolanaTransaction(connection)({
       recipient,
       assetValue,
@@ -240,12 +244,25 @@ function transfer(connection: Connection) {
 }
 
 function broadcastTransaction(connection: Connection) {
-  return (transaction: Transaction) => {
+  return (transaction: Transaction | VersionedTransaction) => {
     return connection.sendRawTransaction(transaction.serialize());
   };
 }
 
-export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: string } = {}) => {
+function signTransaction(signer?: Signer) {
+  return async (transaction: Transaction | VersionedTransaction) => {
+    if (!signer) {
+      throw new SwapKitError("toolbox_solana_no_signer");
+    }
+    await transaction.sign([signer] as Signer & Signer[]);
+    return transaction;
+  };
+}
+
+export const SOLToolbox = ({
+  rpcUrl = getRPCUrl(Chain.Solana),
+  signer,
+}: { rpcUrl?: string; signer?: Keypair } = {}) => {
   const connection = new Connection(rpcUrl, "confirmed");
 
   return {
@@ -254,7 +271,8 @@ export const SOLToolbox = ({ rpcUrl = getRPCUrl(Chain.Solana) }: { rpcUrl?: stri
     getAddressFromKeys,
     createSolanaTransaction: createSolanaTransaction(connection),
     getBalance: getBalance(connection),
-    transfer: transfer(connection),
+    transfer: transfer(connection, signer),
+    signTransaction: signTransaction(signer),
     broadcastTransaction: broadcastTransaction(connection),
     validateAddress,
   };

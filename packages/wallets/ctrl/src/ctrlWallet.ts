@@ -19,6 +19,7 @@ import {
   getCtrlAddress,
   getCtrlMethods,
   getCtrlProvider,
+  solanaSignTransaction,
   solanaTransfer,
   walletTransfer,
 } from "./walletHelpers";
@@ -48,6 +49,7 @@ async function getWalletMethodsForChain({
   blockchairApiKey,
   covalentApiKey,
   ethplorerApiKey,
+  swapkitApiKey,
   apis,
 }: ConnectConfig & { chain: (typeof CTRL_SUPPORTED_CHAINS)[number]; apis: ChainApis }) {
   switch (chain) {
@@ -61,7 +63,11 @@ async function getWalletMethodsForChain({
         throw new SwapKitError("wallet_ctrl_not_found");
       }
 
-      return { ...toolbox, transfer: solanaTransfer(toolbox, pubKey.publicKey) };
+      return {
+        ...toolbox,
+        transfer: solanaTransfer(toolbox, pubKey.publicKey),
+        signTransaction: solanaSignTransaction,
+      };
     }
 
     case Chain.Maya:
@@ -90,7 +96,7 @@ async function getWalletMethodsForChain({
       // @ts-ignore
       const offlineSigner = window.xfi?.keplr?.getOfflineSignerOnlyAmino(chainId);
 
-      const toolbox = getToolboxByChain(chain)();
+      const toolbox = getToolboxByChain(chain)({ swapkitApiKey });
 
       const transfer = (params: {
         from: string;
@@ -191,7 +197,7 @@ async function getWalletMethodsForChain({
 function connectCtrl({
   addChain,
   apis,
-  config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey },
+  config: { covalentApiKey, ethplorerApiKey, blockchairApiKey, thorswapApiKey, swapkitApiKey },
 }: ConnectWalletParams) {
   return async (chains: Chain[]) => {
     setRequestClientConfig({ apiKey: thorswapApiKey });
@@ -205,6 +211,7 @@ function connectCtrl({
         blockchairApiKey,
         covalentApiKey,
         ethplorerApiKey,
+        swapkitApiKey,
         apis,
       });
 

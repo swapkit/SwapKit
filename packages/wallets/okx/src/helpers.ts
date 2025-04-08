@@ -44,6 +44,7 @@ export const getWalletForChain = async ({
   ethplorerApiKey,
   covalentApiKey,
   blockchairApiKey,
+  swapkitApiKey,
   rpcUrl,
 }: {
   apis?: ChainApis;
@@ -51,6 +52,7 @@ export const getWalletForChain = async ({
   ethplorerApiKey?: string;
   covalentApiKey?: string;
   blockchairApiKey?: string;
+  swapkitApiKey?: string;
   rpcUrl?: string;
 }): Promise<
   (
@@ -139,7 +141,7 @@ export const getWalletForChain = async ({
 
       return {
         address,
-        ...GaiaToolbox({ server: api }),
+        ...GaiaToolbox({ server: api, swapkitApiKey }),
         transfer: cosmosTransfer(rpcUrl),
       };
     }

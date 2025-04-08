@@ -15,9 +15,11 @@ export const cosmosWalletMethods = async ({
   sdk,
   api,
   derivationPath,
+  swapkitApiKey,
 }: {
   sdk: KeepKeySdk;
   api: string;
+  swapkitApiKey?: string;
   derivationPath?: DerivationPathArray;
 }): Promise<BaseCosmosToolboxType & { address: string }> => {
   const { DEFAULT_COSMOS_FEE_MAINNET, GaiaToolbox, createStargateClient } = await import(
@@ -37,7 +39,7 @@ export const cosmosWalletMethods = async ({
 
     if (DEFAULT_COSMOS_FEE_MAINNET.amount[0]) {
       DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(
-        await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos, 500),
+        await toolbox?.getFeeRateFromThorswap?.(ChainId.Cosmos, 500, swapkitApiKey || ""),
       );
     }
 

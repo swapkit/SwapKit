@@ -1,4 +1,4 @@
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, type Transaction } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
@@ -57,6 +57,7 @@ export async function getWalletForChain({
   ethplorerApiKey,
   covalentApiKey,
   blockchairApiKey,
+  swapkitApiKey,
   rpcUrl,
   apis,
 }: {
@@ -64,6 +65,7 @@ export async function getWalletForChain({
   ethplorerApiKey?: string;
   covalentApiKey?: string;
   blockchairApiKey?: string;
+  swapkitApiKey?: string;
   rpcUrl?: string;
   apis?: ChainApis;
 }) {
@@ -154,7 +156,7 @@ export async function getWalletForChain({
 
       return {
         address,
-        ...GaiaToolbox({ server: typeof api === "string" ? api : undefined }),
+        ...GaiaToolbox({ server: typeof api === "string" ? api : undefined, swapkitApiKey }),
         transfer: cosmosTransfer(rpcUrl),
       };
     }
@@ -200,7 +202,17 @@ export async function getWalletForChain({
         return toolbox.broadcastTransaction(signedTransaction);
       };
 
-      return { ...toolbox, transfer, address };
+      const signTransaction = async (transaction: Transaction) => {
+        const blockHash = await toolbox.connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockHash.blockhash;
+        transaction.feePayer = new PublicKey(providerConnection.publicKey);
+
+        const signedTransaction = await provider.signTransaction(transaction);
+
+        return signedTransaction;
+      };
+
+      return { ...toolbox, signTransaction, transfer, address };
     }
 
     default:

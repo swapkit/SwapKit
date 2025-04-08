@@ -111,7 +111,11 @@ export type BaseCosmosToolboxType = {
   getPubKeyFromMnemonic: (phrase: string) => Promise<string>;
   getBalance: (address: string, potentialScamFilter?: boolean) => Promise<AssetValue[]>;
   transfer: (params: TransferParams) => Promise<string>;
-  getFeeRateFromThorswap?: (chainId: ChainId, safeDefault: number) => Promise<number>;
+  getFeeRateFromThorswap?: (
+    chainId: ChainId,
+    safeDefault: number,
+    swapkitApiKey: string,
+  ) => Promise<number>;
   createPrivateKeyFromPhrase: (phrase: string) => Promise<Uint8Array>;
 };
 

@@ -2,14 +2,14 @@ export const list = {
   provider: "PANCAKESWAP",
   chainId: "56",
   name: "PancakeSwap Extended",
-  timestamp: "2025-04-01T09:23:47.706Z",
+  timestamp: "2025-04-07T09:37:28.436Z",
   version: {
     major: 2,
     minor: 16,
-    patch: 338,
+    patch: 341,
   },
   keywords: ["pancakeswap", "extended"],
-  count: 500,
+  count: 502,
   tokens: [
     {
       address: "0x6EaDc05928ACd93eFB3FA0DFbC644D96C6Aa1Df8",
@@ -3092,6 +3092,16 @@ export const list = {
       ticker: "ORBS",
     },
     {
+      address: "0x4E200fE2f3eFb977d5fd9c430A41531FB04d97B8",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.ORDER-0X4E200FE2F3EFB977D5FD9C430A41531FB04D97B8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/bsc.order-0x4e200fe2f3efb977d5fd9c430a41531fb04d97b8.png",
+      ticker: "ORDER",
+    },
+    {
       address: "0xe2aE1a99bBd2eFab0a5C38f2146B7aCE61aBC5cE",
       chain: "BSC",
       chainId: "56",
@@ -3930,6 +3940,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/bsc.stkbnb-0xc2e9d07f66a89c44062459a47a0d2dc038e4fb16.png",
       ticker: "STKBNB",
+    },
+    {
+      address: "0xdAf1695c41327b61B9b9965Ac6A5843A3198cf07",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.STO-0XDAF1695C41327B61B9B9965AC6A5843A3198CF07",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/bsc.sto-0xdaf1695c41327b61b9b9965ac6a5843a3198cf07.png",
+      ticker: "STO",
     },
     {
       address: "0x80137510979822322193FC997d400D5A6C747bf7",

@@ -60,6 +60,7 @@ const getToolbox = async ({
   covalentApiKey,
   derivationPath,
   ethplorerApiKey,
+  swapkitApiKey,
   rpcUrl,
   stagenet,
 }: ConnectWalletParams["config"] & {
@@ -129,7 +130,7 @@ const getToolbox = async ({
       const { createSigningStargateClient, getMsgSendDenom, GaiaToolbox } = await import(
         "@swapkit/toolbox-cosmos"
       );
-      const toolbox = GaiaToolbox();
+      const toolbox = GaiaToolbox({ swapkitApiKey });
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
@@ -263,7 +264,14 @@ function connectLedger({
   addChain,
   apis,
   rpcUrls,
-  config: { thorswapApiKey, covalentApiKey, ethplorerApiKey, blockchairApiKey, stagenet },
+  config: {
+    thorswapApiKey,
+    covalentApiKey,
+    ethplorerApiKey,
+    blockchairApiKey,
+    stagenet,
+    swapkitApiKey,
+  },
 }: ConnectWalletParams) {
   return async function connectLedger(chains: Chain[], derivationPath?: DerivationPathArray) {
     const supportedChains = filterSupportedChains(
@@ -284,6 +292,7 @@ function connectLedger({
       derivationPath,
       covalentApiKey,
       ethplorerApiKey,
+      swapkitApiKey,
       rpcUrl: rpcUrls[chain],
       stagenet,
     });

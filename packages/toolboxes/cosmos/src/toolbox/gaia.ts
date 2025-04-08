@@ -16,7 +16,7 @@ import type { GaiaToolboxType } from "../thorchainUtils/types/client-types";
 import { buildNativeTransferTx } from "../util";
 import { BaseCosmosToolbox, getFeeRateFromThorswap } from "./BaseCosmosToolbox";
 
-export const GaiaToolbox = ({ server }: ToolboxParams = {}): GaiaToolboxType => {
+export const GaiaToolbox = ({ server, swapkitApiKey }: ToolboxParams = {}): GaiaToolboxType => {
   const client = new CosmosClient({
     server: server || "https://node-router.thorswap.net/cosmos/rest",
     chainId: ChainId.Cosmos,
@@ -39,7 +39,7 @@ export const GaiaToolbox = ({ server }: ToolboxParams = {}): GaiaToolboxType => 
   });
 
   async function getFees() {
-    const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 500);
+    const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 500, swapkitApiKey || "");
     return {
       type: "base",
       average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal.GAIA),

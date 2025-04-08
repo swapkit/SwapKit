@@ -45,6 +45,7 @@ type KeepKeyOptions = {
   ethplorerApiKey?: string;
   blockchairApiKey?: string;
   covalentApiKey?: string;
+  swapkitApiKey?: string;
   chain: Chain;
   derivationPath?: DerivationPathArray;
 };
@@ -58,6 +59,7 @@ const getWalletMethods = async ({
   covalentApiKey,
   ethplorerApiKey,
   blockchairApiKey,
+  swapkitApiKey,
 }: KeepKeyOptions) => {
   const { getProvider, getToolboxByChain } = await import("@swapkit/toolbox-evm");
 
@@ -95,7 +97,7 @@ const getWalletMethods = async ({
       };
     }
     case Chain.Cosmos: {
-      return cosmosWalletMethods({ sdk, derivationPath, api: apiClient });
+      return cosmosWalletMethods({ sdk, derivationPath, api: apiClient, swapkitApiKey });
     }
     case Chain.THORChain: {
       return thorchainWalletMethods({ sdk, derivationPath });
@@ -160,6 +162,7 @@ function connectKeepkey({
     ethplorerApiKey = "freekey",
     keepkeyConfig,
     thorswapApiKey,
+    swapkitApiKey,
   },
 }: ConnectWalletParams) {
   return async function connectKeepkey(
@@ -196,6 +199,7 @@ function connectKeepkey({
         covalentApiKey,
         ethplorerApiKey,
         blockchairApiKey,
+        swapkitApiKey,
       });
 
       addChain({
