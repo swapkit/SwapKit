@@ -31,9 +31,9 @@ const App = () => {
     covalentApiKey: import.meta.env.VITE_COVALENT_API_KEY || "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
     alchemyApiKey: import.meta.env.VITE_ALCHEMY_API_KEY || import.meta.env.ALCHEMY_API_KEY || "",
     ethplorerApiKey: import.meta.env.VITE_ETHPLORER_API_KEY || "freekey",
-    swapkitApiKey: import.meta.env.VITE_SWAPKIT_API_KEY || "freekey",
+    swapkitApiKey: import.meta.env.VITE_SWAPKIT_API_KEY || "",
     walletConnectProjectId: "",
-    brokerEndpoint: "https://dev-api.swapkit.dev/channel",
+    brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
   });
 
   const [{ inputAsset, outputAsset }, setSwapAssets] = useState<{
