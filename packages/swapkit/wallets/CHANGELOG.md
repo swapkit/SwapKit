@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 2.0.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallet-bitget@1.2.8
+  - @swapkit/wallet-ctrl@2.2.8
+  - @swapkit/wallet-keystore@1.6.8
+  - @swapkit/wallet-phantom@1.4.1
+
 ## 2.0.32
 
 ### Patch Changes

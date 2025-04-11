@@ -1,5 +1,14 @@
 # @swapkit/sdk
 
+## 2.2.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/plugin-solana@0.1.1
+  - @swapkit/core@3.2.30
+  - @swapkit/wallets@2.0.33
+
 ## 2.2.29
 
 ### Patch Changes
