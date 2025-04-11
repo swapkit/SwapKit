@@ -1,5 +1,14 @@
 # @swapkit/toolbox-solana
 
+## 1.5.1
+
+### Patch Changes
+
+- [#1238](https://github.com/thorswap/SwapKit/pull/1238) [`0ed0c93`](https://github.com/thorswap/SwapKit/commit/0ed0c939de19498ab8f9e5d61d04a2d9ee770c0e) Thanks [@towanTG](https://github.com/towanTG)! - Fixes PDA token transfers
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.5.4
+
 ## 1.5.0
 
 ### Minor Changes
