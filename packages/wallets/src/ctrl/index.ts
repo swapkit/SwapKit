@@ -8,13 +8,7 @@ import {
 } from "@swapkit/helpers";
 
 import { getWalletSupportedChains } from "../utils";
-import {
-  getCtrlAddress,
-  getCtrlMethods,
-  getCtrlProvider,
-  solanaTransfer,
-  walletTransfer,
-} from "./walletHelpers";
+import { getCtrlAddress, getCtrlMethods, getCtrlProvider, walletTransfer } from "./walletHelpers";
 
 export const ctrlWallet = createWallet({
   name: "connectCtrl",
@@ -61,18 +55,19 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
 
-      const toolbox = getSolanaToolbox();
-      const pubKey = await window.xfi?.solana?.connect();
+      const solanaProvider = window.xfi?.solana;
 
-      if (!pubKey) {
+      if (!solanaProvider) {
         throw new SwapKitError("wallet_ctrl_not_found");
       }
+      const toolbox = getSolanaToolbox(solanaProvider);
 
-      return { ...toolbox, transfer: solanaTransfer(toolbox, pubKey.publicKey) };
+      return { ...toolbox };
     }
 
     case Chain.Maya:
-    case Chain.THORChain:
+    case Chain.THORChain: {
+    }
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");

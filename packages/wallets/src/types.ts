@@ -5,7 +5,6 @@ import type {
   StdSignature,
 } from "@cosmjs/amino";
 import type { Keplr } from "@keplr-wallet/types";
-import type { Transaction } from "@solana/web3.js";
 import { type EthereumWindowProvider, WalletOption } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
@@ -155,11 +154,7 @@ declare global {
         ) => Promise<boolean>;
         getOfflineSignerOnlyAmino: (chainId: string) => OfflineAminoSigner;
       };
-      solana: {
-        connect: () => Promise<{ publicKey: string }>;
-        getAccounts: () => Promise<{ publicKey: string }[]>;
-        signTransaction: (transaction: Transaction) => Promise<Transaction>;
-      };
+      solana: SolanaProvider;
       ethereum: EthereumWindowProvider;
     };
 

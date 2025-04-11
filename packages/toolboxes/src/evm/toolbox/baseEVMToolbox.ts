@@ -2,6 +2,7 @@ import {
   type Asset,
   type AssetValue,
   Chain,
+  type ChainSigner,
   ContractAddress,
   type EVMChain,
   FeeOption,
@@ -22,6 +23,7 @@ import {
   type JsonRpcSigner,
   type Provider,
   type Signer,
+  type Transaction,
   getAddress,
 } from "ethers";
 
@@ -49,7 +51,11 @@ export const MAX_APPROVAL = BigInt(
 
 export function BaseEVMToolbox<
   P extends Provider | BrowserProvider,
-  S extends Signer | JsonRpcSigner | HDNodeWallet | undefined,
+  S extends
+    | (ChainSigner<TransferParams, Transaction> & Signer)
+    | JsonRpcSigner
+    | HDNodeWallet
+    | undefined,
 >({
   provider,
   signer,

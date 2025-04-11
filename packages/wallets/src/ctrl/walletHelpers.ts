@@ -1,5 +1,4 @@
 import type { Keplr } from "@keplr-wallet/types";
-import type { PublicKey } from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
@@ -11,9 +10,8 @@ import {
   WalletOption,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
-import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
-import type { SolanaProvider, SolanaWallet } from "@swapkit/toolboxes/solana";
+import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 type TransactionMethod = "transfer" | "deposit";
@@ -176,32 +174,6 @@ export async function walletTransfer(
   ];
 
   return transaction({ method, params, chain: assetValue.chain });
-}
-
-export function solanaTransfer(solToolbox: SolanaWallet, walletPublicKey: PublicKey) {
-  return async ({
-    recipient,
-    assetValue,
-    memo,
-    isProgramDerivedAddress,
-  }: TransferParams & { isProgramDerivedAddress?: boolean }) => {
-    const solanaProvider = await getCtrlProvider(Chain.Solana);
-    const transaction = await solToolbox.createSolanaTransaction({
-      recipient,
-      assetValue,
-      memo,
-      fromPublicKey: walletPublicKey,
-      isProgramDerivedAddress,
-    });
-
-    const signedTransaction = await solanaProvider?.signTransaction(transaction);
-
-    if (!signedTransaction) {
-      throw new SwapKitError("core_transaction_failed");
-    }
-
-    return solToolbox.broadcastTransaction(signedTransaction);
-  };
 }
 
 export function getCtrlMethods(provider: BrowserProvider) {

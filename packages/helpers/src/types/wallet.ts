@@ -9,6 +9,7 @@ import type { Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
 import { Chain, type ChainId } from "./chains";
+import type { FeeOption } from "./sdk";
 
 declare global {
   interface WindowEventMap {
@@ -27,7 +28,10 @@ export type EthereumWindowProvider = BrowserProvider & {
   isTalisman?: boolean;
   on: (event: string, callback?: () => void) => void;
   overrideIsMetaMask?: boolean;
-  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>;
+  request: <T = unknown>(args: {
+    method: string;
+    params?: unknown[];
+  }) => Promise<T>;
   selectedProvider?: EthereumWindowProvider;
 };
 
@@ -128,4 +132,18 @@ export type EIP6963Provider = {
 // This type represents the structure of an event dispatched by a wallet to announce its presence based on EIP-6963.
 export type EIP6963AnnounceProviderEvent = Event & {
   detail: EIP6963Provider;
+};
+
+export type ChainSigner<T, S> = {
+  signTransaction: (params: T) => Promise<S>;
+  getAddress: () => Promise<string>;
+  sign?: (message: string) => Promise<string>;
+};
+
+export type TransferParams = {
+  recipient: string;
+  assetValue: AssetValue;
+  memo?: string;
+  feeRate?: number;
+  feeOptionKey?: FeeOption;
 };

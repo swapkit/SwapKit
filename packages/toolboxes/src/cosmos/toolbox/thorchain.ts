@@ -9,6 +9,7 @@ import {
   RequestClient,
   SKConfig,
   SwapKitNumber,
+  type TransferParams,
 } from "@swapkit/helpers";
 
 import {
@@ -23,7 +24,7 @@ import {
 } from "../thorchainUtils";
 import type { ThorchainConstantsResponse } from "../thorchainUtils/types/client-types";
 import type { MultisigTx } from "../types";
-import type { CosmosToolboxParams, MultiSigSigner, TransferParams } from "../types";
+import type { CosmosToolboxParams, MultiSigSigner } from "../types";
 import {
   createOfflineStargateClient,
   createSigningStargateClient,
@@ -213,12 +214,12 @@ export function createThorchainToolbox({
 
   async function transfer({
     assetValue,
-    from,
     memo = "",
     recipient,
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
-    if (!signer) throw new Error("Signer not defined");
+    const from = await signer?.getAddress();
+    if (!(from && signer)) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;
     const registry = await createDefaultRegistry();

@@ -12,13 +12,15 @@ import {
   SKConfig,
   SwapKitError,
   SwapKitNumber,
+  type TransferParams,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 
+import { sign } from "crypto";
 import type { StdFee } from "@cosmjs/amino";
 import type { Account } from "@cosmjs/stargate";
 import { getBalance } from "../../utils";
-import type { CosmosToolboxParams, TransferParams } from "../types";
+import type { CosmosToolboxParams } from "../types";
 import {
   buildNativeTransferTx,
   createSigningStargateClient,
@@ -133,14 +135,15 @@ export function createCosmosToolbox({
   }
 
   async function transfer({
-    from,
     recipient,
     assetValue,
     memo = "",
-    fee,
+    feeRate,
     feeOptionKey = FeeOption.Fast,
   }: TransferParams) {
-    if (!signer) {
+    const from = await signer?.getAddress();
+
+    if (!(signer && from)) {
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
     }
 
@@ -150,7 +153,7 @@ export function createCosmosToolbox({
     const assetDenom = getDenomWithChain(feeAssetValue);
 
     const txFee =
-      fee ||
+      feeRate ||
       feeToStdFee((await getFees(chain, SafeDefaultFeeValues[chain]))[feeOptionKey], assetDenom);
 
     const signingClient = await createSigningStargateClient(rpcUrl, signer);

@@ -1,4 +1,11 @@
-import { Chain, DerivationPath, FeeOption, type UTXOChain } from "@swapkit/helpers";
+import {
+  Chain,
+  type ChainSigner,
+  DerivationPath,
+  FeeOption,
+  type TransferParams,
+  type UTXOChain,
+} from "@swapkit/helpers";
 
 import {
   accumulative,
@@ -11,13 +18,7 @@ import {
   toCashAddress,
   toLegacyAddress,
 } from "../helpers";
-import type {
-  TargetOutput,
-  TransactionType,
-  UTXOBuildTxParams,
-  UTXOType,
-  UTXOWalletTransferParams,
-} from "../types";
+import type { TargetOutput, TransactionType, UTXOBuildTxParams, UTXOType } from "../types";
 import { createUTXOToolbox } from "./utxo";
 
 const chain = Chain.BitcoinCash as UTXOChain;
@@ -37,7 +38,9 @@ export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));
 }
 
-export async function createBCHToolbox() {
+export async function createBCHToolbox(
+  signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>,
+) {
   const { getBalance, getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox(
     Chain.BitcoinCash,
   );
@@ -58,7 +61,7 @@ export async function createBCHToolbox() {
     stripPrefix,
     stripToCashAddress,
     validateAddress,
-    transfer: transfer({ getFeeRates, broadcastTx }),
+    transfer: transfer({ getFeeRates, broadcastTx, signer }),
   };
 }
 
@@ -79,7 +82,10 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
 
   const targetOutputs: TargetOutput[] = [];
   // output to recipient
-  targetOutputs.push({ address: recipient, value: assetValue.getBaseValue("number") });
+  targetOutputs.push({
+    address: recipient,
+    value: assetValue.getBaseValue("number"),
+  });
   const { inputs, outputs } = accumulative({
     inputs: utxos,
     outputs: targetOutputs,
@@ -120,25 +126,18 @@ async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXO
 function transfer({
   broadcastTx,
   getFeeRates,
+  signer,
 }: {
   broadcastTx: (txHash: string) => Promise<string>;
   getFeeRates: () => Promise<Record<FeeOption, number>>;
+  signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>;
 }) {
-  return async function transfer({
-    signTransaction,
-    from,
-    recipient,
-    assetValue,
-    ...rest
-  }: UTXOWalletTransferParams<
-    { builder: TransactionBuilderType; utxos: UTXOType[] },
-    TransactionType
-  >) {
-    if (!from) throw new Error("From address must be provided");
+  return async function transfer({ recipient, assetValue, feeOptionKey, ...rest }: TransferParams) {
+    const from = await signer?.getAddress();
+    if (!(signer && from)) throw new Error("Signer must provider address");
     if (!recipient) throw new Error("Recipient address must be provided");
-    if (!signTransaction) throw new Error("signTransaction must be provided");
 
-    const feeRate = rest.feeRate || (await getFeeRates())[FeeOption.Fast];
+    const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey || FeeOption.Fast];
 
     // try out if psbt tx is faster/better/nicer
     const { builder, utxos } = await buildBCHTx({
@@ -149,7 +148,7 @@ function transfer({
       sender: from,
     });
 
-    const tx = await signTransaction({ builder, utxos });
+    const tx = await signer.signTransaction({ builder, utxos });
     const txHex = tx.toHex();
 
     return broadcastTx(txHex);
@@ -247,7 +246,7 @@ function getAddressFromKeys(keys: { getAddress: (index?: number) => string }) {
   return stripToCashAddress(address);
 }
 
-type TransactionBuilderType = {
+export type TransactionBuilderType = {
   inputs: any[];
   sign(
     vin: number,

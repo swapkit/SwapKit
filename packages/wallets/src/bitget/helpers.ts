@@ -3,46 +3,13 @@ import {
   Chain,
   ChainId,
   type EVMChain,
-  SKConfig,
   SwapKitError,
   type WalletTxParams,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { TransferParams } from "@swapkit/toolboxes/cosmos";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
-
-function cosmosTransfer() {
-  return async ({ from, recipient, assetValue, memo }: TransferParams) => {
-    const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolboxes/cosmos"
-    );
-    if (!(window.bitkeep && "keplr" in window.bitkeep)) {
-      throw new SwapKitError("wallet_bitkeep_not_found");
-    }
-
-    const { keplr: wallet } = window.bitkeep;
-
-    const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
-    const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls").GAIA, offlineSigner);
-
-    const coins = [
-      {
-        denom: getMsgSendDenom(assetValue.symbol).toLowerCase(),
-        amount: assetValue.getBaseValue("string"),
-      },
-    ];
-
-    try {
-      const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 2, memo);
-      return transactionHash;
-    } catch (error) {
-      throw new SwapKitError("core_transaction_failed", { error });
-    }
-  };
-}
 
 export async function getWalletMethods(chain: Chain) {
   const bitget = window.bitkeep;
@@ -76,7 +43,6 @@ export async function getWalletMethods(chain: Chain) {
       const { Psbt } = await import("bitcoinjs-lib");
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const [address] = await wallet.requestAccounts();
-      const toolbox = await getUtxoToolbox(Chain.Bitcoin);
 
       async function signTransaction(psbt: Psbt) {
         const signedPsbt = await wallet.signPsbt(psbt.toHex(), { autoFinalized: false });
@@ -84,11 +50,14 @@ export async function getWalletMethods(chain: Chain) {
         return Psbt.fromHex(signedPsbt);
       }
 
-      function transfer(transferParams: UTXOTransferParams) {
-        return toolbox.transfer({ ...transferParams, signTransaction });
-      }
+      const signer = {
+        getAddress: () => Promise.resolve(address),
+        signTransaction,
+      };
 
-      return { ...toolbox, transfer, address };
+      const toolbox = await getUtxoToolbox(Chain.Bitcoin, signer);
+
+      return { ...toolbox, address };
     }
 
     case Chain.Cosmos: {
@@ -98,14 +67,24 @@ export async function getWalletMethods(chain: Chain) {
       const { keplr: wallet } = bitget;
 
       await wallet.enable(ChainId.Cosmos);
-      const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
+      const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
+      const accounts = await offlineSigner.getAccounts();
       if (!accounts?.[0]) throw new Error("No cosmos account found");
 
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getCosmosToolbox(Chain.Cosmos);
       const [{ address }] = accounts;
 
-      return { ...toolbox, address, transfer: cosmosTransfer() };
+      const signer = {
+        ...offlineSigner,
+        getAddress: () => Promise.resolve(address),
+        signTransaction: async () => Promise.resolve({} as any),
+      };
+
+      const toolbox = getCosmosToolbox(Chain.Cosmos, {
+        signer,
+      });
+
+      return { ...toolbox, address };
     }
 
     case Chain.Solana: {
@@ -139,7 +118,6 @@ export async function getWalletMethods(chain: Chain) {
           recipient,
           assetValue,
           memo,
-          fromPublicKey,
           isProgramDerivedAddress,
         });
 

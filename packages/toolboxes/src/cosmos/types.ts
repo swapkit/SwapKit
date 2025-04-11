@@ -4,6 +4,7 @@ import type {
   AssetValue,
   Chain,
   ChainId,
+  ChainSigner,
   CosmosChain,
   DerivationPath,
   FeeOption,
@@ -18,15 +19,6 @@ export type CosmosSDKClientParams = {
   chainId: ChainId;
   prefix?: string;
   stagenet?: boolean;
-};
-
-export type TransferParams = {
-  assetValue: AssetValue;
-  fee?: StdFee | number;
-  feeOptionKey?: FeeOption;
-  from: string;
-  memo?: string;
-  recipient: string;
 };
 
 export type MultiSigSigner = {
@@ -46,7 +38,7 @@ export type MultisigTx = {
 export type CosmosSigner = DirectSecp256k1HdWallet | OfflineDirectSigner | OfflineAminoSigner;
 
 export type CosmosToolboxParams = {
-  signer?: CosmosSigner;
+  signer?: ChainSigner<any, any> | CosmosSigner;
   derivationPath?: DerivationPath;
   index?: number;
   chain: CosmosChain;

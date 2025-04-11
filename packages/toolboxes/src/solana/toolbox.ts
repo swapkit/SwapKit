@@ -1,13 +1,23 @@
-import type { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import type {
+  Connection,
+  Keypair,
+  PublicKey,
+  Signer,
+  Transaction,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import {
   type AssetValue,
   Chain,
   DerivationPath,
   SKConfig,
   SwapKitError,
-  type WalletTxParams,
+  type TransferParams,
 } from "@swapkit/helpers";
+import type { SolanaProvider } from ".";
 import { getBalance } from "../utils";
+
+type SolanaSigner = SolanaProvider | Signer;
 
 export async function getSolanaAddressValidator() {
   const { PublicKey } = await import("@solana/web3.js");
@@ -22,14 +32,14 @@ export async function getSolanaAddressValidator() {
   };
 }
 
-export function getSolanaToolbox() {
+export function getSolanaToolbox(signer?: SolanaSigner) {
   return {
     getConnection,
     createKeysForPath,
     getAddressFromKeys,
     createSolanaTransaction: createSolanaTransaction(getConnection),
     getBalance: getBalance(Chain.Solana),
-    transfer: transfer(getConnection),
+    transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator: getSolanaAddressValidator,
   };
@@ -40,40 +50,42 @@ async function getConnection() {
   return new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
 }
 
-async function createAssetTransaction({
-  assetValue,
-  fromPublicKey,
-  recipient,
-  connection,
-}: {
-  assetValue: AssetValue;
-  fromPublicKey: PublicKey;
-  recipient: string;
-  connection: Connection;
-}) {
-  if (assetValue.isGasAsset) {
-    const { Transaction, SystemProgram, PublicKey } = await import("@solana/web3.js");
+function createAssetTransaction(getConnection: () => Promise<Connection>) {
+  return async ({
+    assetValue,
+    recipient,
+    fromPubkey,
+  }: {
+    assetValue: AssetValue;
+    recipient: string;
+    fromPubkey: PublicKey;
+  }) => {
+    const connection = await getConnection();
 
-    return new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: fromPublicKey,
-        lamports: assetValue.getBaseValue("number"),
-        toPubkey: new PublicKey(recipient),
-      }),
-    );
-  }
-  if (assetValue.address) {
-    return createSolanaTokenTransaction({
-      amount: assetValue.getBaseValue("number"),
-      connection,
-      decimals: assetValue.decimal as number,
-      from: fromPublicKey,
-      recipient,
-      tokenAddress: assetValue.address,
-    });
-  }
+    if (assetValue.isGasAsset) {
+      const { Transaction, SystemProgram, PublicKey } = await import("@solana/web3.js");
 
-  return undefined;
+      return new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: fromPubkey,
+          lamports: assetValue.getBaseValue("number"),
+          toPubkey: new PublicKey(recipient),
+        }),
+      );
+    }
+    if (assetValue.address) {
+      return createSolanaTokenTransaction({
+        amount: assetValue.getBaseValue("number"),
+        connection,
+        decimals: assetValue.decimal as number,
+        from: fromPubkey,
+        recipient,
+        tokenAddress: assetValue.address,
+      });
+    }
+
+    return undefined;
+  };
 }
 
 async function createSolanaTokenTransaction({
@@ -143,13 +155,12 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
   return async ({
     recipient,
     assetValue,
-    fromPublicKey,
     memo,
     isProgramDerivedAddress,
-  }: WalletTxParams & {
-    assetValue: AssetValue;
-    fromPublicKey: PublicKey;
+    fromPubkey,
+  }: TransferParams & {
     isProgramDerivedAddress?: boolean;
+    fromPubkey: PublicKey;
   }) => {
     const { createMemoInstruction } = await import("@solana/spl-memo");
 
@@ -160,11 +171,10 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
     }
 
     const connection = await getConnection();
-    const transaction = await createAssetTransaction({
+    const transaction = await createAssetTransaction(getConnection)({
       assetValue,
-      fromPublicKey,
       recipient,
-      connection,
+      fromPubkey,
     });
 
     if (!transaction) {
@@ -175,41 +185,48 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
 
     const blockHash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockHash.blockhash;
-    transaction.feePayer = fromPublicKey;
+    transaction.feePayer = fromPubkey;
 
     return transaction;
   };
 }
 
-function transfer(getConnection: () => Promise<Connection>) {
+function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async ({
     recipient,
     assetValue,
-    fromKeypair,
     memo,
     isProgramDerivedAddress,
-  }: WalletTxParams & {
-    assetValue: AssetValue;
-    fromKeypair: Keypair;
+  }: TransferParams & {
     isProgramDerivedAddress?: boolean;
   }) => {
-    const { sendAndConfirmTransaction } = await import("@solana/web3.js");
-    const connection = await getConnection();
+    if (!signer) {
+      throw new SwapKitError("core_transaction_invalid_sender_address");
+    }
+
+    const fromPubkey = signer.publicKey ?? (await (signer as SolanaProvider).connect()).publicKey;
 
     const transaction = await createSolanaTransaction(getConnection)({
       recipient,
       assetValue,
       memo,
-      fromPublicKey: fromKeypair.publicKey,
       isProgramDerivedAddress,
+      fromPubkey,
     });
 
-    return sendAndConfirmTransaction(connection, transaction, [fromKeypair]);
+    if ("connect" in signer) {
+      const signedTransaction = await signer.signTransaction(transaction);
+      return broadcastTransaction(getConnection)(signedTransaction);
+    }
+
+    transaction.sign(signer);
+
+    return broadcastTransaction(getConnection)(transaction);
   };
 }
 
 function broadcastTransaction(getConnection: () => Promise<Connection>) {
-  return async (transaction: Transaction) => {
+  return async (transaction: Transaction | VersionedTransaction) => {
     const connection = await getConnection();
     return connection.sendRawTransaction(transaction.serialize());
   };

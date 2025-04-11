@@ -1,4 +1,12 @@
-import { AssetValue, Chain, FeeOption, SwapKitNumber, type UTXOChain } from "@swapkit/helpers";
+import {
+  AssetValue,
+  Chain,
+  type ChainSigner,
+  FeeOption,
+  SwapKitNumber,
+  type TransferParams,
+  type UTXOChain,
+} from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
 
@@ -13,7 +21,7 @@ import {
   getUtxoApi,
   getUtxoNetwork,
 } from "../helpers";
-import type { TargetOutput, UTXOBuildTxParams, UTXOType, UTXOWalletTransferParams } from "../types";
+import type { TargetOutput, UTXOBuildTxParams, UTXOType } from "../types";
 import { validateAddress as validateBCHAddress } from "./bitcoinCash";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
@@ -103,7 +111,7 @@ export async function getUTXOAddressValidator() {
   };
 }
 
-export async function createUTXOToolbox(chain: UTXOChain) {
+export async function createUTXOToolbox(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
   const getAddressFromKeys = await addressFromKeysGetter(chain);
   const validateAddress = await getUTXOAddressValidator();
   const createKeysForPath = await getCreateKeysForPath(chain);
@@ -118,7 +126,7 @@ export async function createUTXOToolbox(chain: UTXOChain) {
     createKeysForPath,
     getFeeRates: () => getFeeRates(chain),
     getInputsOutputsFee: getInputsOutputsFee(chain),
-    transfer: transfer(chain),
+    transfer: transfer(chain, signer),
     getPrivateKeyFromMnemonic: (params: { phrase: string; derivationPath: string }) => {
       const keys = createKeysForPath(params);
       return keys.toWIF();
@@ -281,19 +289,17 @@ async function addressFromKeysGetter(chain: UTXOChain) {
   };
 }
 
-function transfer(chain: UTXOChain) {
+function transfer(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
   return async function transfer({
-    signTransaction,
-    from,
     memo,
     recipient,
     feeOptionKey,
     feeRate,
     assetValue,
-  }: UTXOWalletTransferParams<Psbt, Psbt>) {
-    if (!from) throw new Error("From address must be provided");
+  }: TransferParams) {
+    const from = await signer?.getAddress();
+    if (!(signer && from)) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
-    if (!signTransaction) throw new Error("Sign transaction must be provided");
     const txFeeRate = feeRate || (await getFeeRates(chain))[feeOptionKey || FeeOption.Fast];
 
     const { psbt } = await buildTx(chain)({
@@ -304,7 +310,7 @@ function transfer(chain: UTXOChain) {
       assetValue,
       memo,
     });
-    const signedPsbt = await signTransaction(psbt);
+    const signedPsbt = await signer.signTransaction(psbt);
     signedPsbt.finalizeAllInputs(); // Finalise inputs
     // TX extracted and formatted to hex
     return getUtxoApi(chain).broadcastTx(signedPsbt.extractTransaction().toHex());

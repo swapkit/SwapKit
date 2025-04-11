@@ -34,16 +34,3 @@ export type UTXOBuildTxParams = {
   sender: string;
   fetchTxHex?: boolean;
 };
-
-export type UTXOTransferParams = {
-  feeOptionKey?: FeeOption;
-  feeRate?: number;
-  from: string;
-  recipient: string;
-  assetValue: AssetValue;
-  memo?: string;
-};
-
-export type UTXOWalletTransferParams<T, U> = UTXOTransferParams & {
-  signTransaction?: (params: T) => Promise<U>;
-};
