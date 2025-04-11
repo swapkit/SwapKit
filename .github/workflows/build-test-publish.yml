@@ -5,15 +5,15 @@ env:
 
 on:
   workflow_dispatch:
+  pull_request_target:
+    branches:
+      - develop
+      - v4
   push:
     branches:
       - develop
       - beta
       - nightly
-      - v4
-  pull_request:
-    branches:
-      - develop
 
 jobs:
   build-lint-test:

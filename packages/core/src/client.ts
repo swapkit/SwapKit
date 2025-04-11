@@ -267,6 +267,7 @@ export function SwapKit<
       case Chain.THORChain: {
         const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
         const toolbox = getCosmosToolbox(chain);
+
         return toolbox.verifySignature({ signature, message, address });
       }
 

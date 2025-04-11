@@ -227,14 +227,12 @@ To use your custom wallet adapter with SwapKit:
 
 ```ts twoslash
 // @noErrors
-import { SwapKit } from "@swapkit/core";
+import { SwapKit, Chain } from "@swapkit/core";
 import { myCustomWallet } from "./my-custom-wallet";
 
 // Initialize SwapKit with your wallet adapter
 const swapKit = SwapKit({
-  wallets: {
-    myWallet: myCustomWallet,
-  },
+  wallets: { ...myCustomWallet },
 });
 
 // Connect using your custom wallet
@@ -253,7 +251,7 @@ Test your wallet adapter thoroughly before using it in production:
 ```ts twoslash
 // @noErrors
 import { describe, jest, it, expect, beforeEach } from "bun:test";
-import { Chain } from "@swapkit/helpers";
+import { Chain, AssetValue } from "@swapkit/helpers";
 import { SwapKit } from "@swapkit/core";
 import { myCustomWallet } from "./my-custom-wallet";
 
@@ -292,11 +290,7 @@ describe("MyCustomWallet", () => {
     swapKit.getWallet(Chain.Ethereum).transfer = mockTransfer;
 
     const result = await swapKit.transfer({
-      assetValue: {
-        chain: Chain.Ethereum,
-        symbol: "ETH",
-        value: "0.1",
-      },
+      assetValue: AssetValue.from({chain: Chain.Ethereum, value: "0.1" }),
       recipient: "0xabc123...",
     });
 

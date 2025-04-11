@@ -115,6 +115,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
         chain,
         params as Parameters<typeof getCosmosToolbox>[1],
       );
+
       return cosmosToolbox as Toolboxes[T];
     }
 

@@ -54,10 +54,8 @@ async function signMessageExample() {
       message,
     });
 
-    console.log("Message signature:", signature);
     return signature;
   } catch (error) {
-    console.error("Failed to sign message:", error);
     throw error;
   }
 }
@@ -88,10 +86,8 @@ async function signMessageExample() {
       message,
     });
 
-    console.log("Message signature:", signature);
     return signature;
   } catch (error) {
-    console.error("Failed to sign message:", error);
     throw error;
   }
 }
@@ -311,9 +307,10 @@ async function signWithLedger() {
     // Create a simple ETH transfer
     const txHash = await ledgerWallet.transfer({
       assetValue: AssetValue.from({ chain: Chain.Ethereum, value: "0.01" }),
-      recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
       feeOptionKey: FeeOption.Fast,
+      from: ledgerWallet.address,
       memo: "Ledger transfer",
+      recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
     });
 
     return txHash;
@@ -332,29 +329,15 @@ For complete control over the signing process, you can use toolbox-specific meth
 import { Chain } from "@swapkit/helpers";
 import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 
-async function signCosmosTransactionManually() {
+async function cosmosWallet() {
   // Get Cosmos toolbox
   const cosmosToolbox = getCosmosToolbox(Chain.THORChain);
 
   // Create a wallet from a mnemonic phrase
   const phrase = "your twelve word mnemonic phrase here";
-  const wallet = await cosmosToolbox.getSigner(phrase);
+  const signer = await cosmosToolbox.getSigner(phrase);
   const address = await cosmosToolbox.getAddressFromMnemonic(phrase);
 
-  // Message to sign
-  const message = "Sign this THORChain message";
-
-  // Sign the message
-  const signature = await cosmosToolbox.signMessage(message, wallet);
-
-  // Verify the signature
-  const isValid = await cosmosToolbox.verifySignature({ message, signature, address });
-
-  return { signature, isValid };
+  return { signer, address }
 }
 ```
-
-
-
-
-

@@ -62,7 +62,7 @@ async function transferAsset() {
       recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
       memo: "Payment for services", // Optional memo
       feeOptionKey: FeeOption.Fast, // Fee speed preference
-    }) as string
+    })
 
 
     // Get explorer URL for the transaction
@@ -247,6 +247,7 @@ import { ethers } from "ethers";
 
 async function directEVMTransfer() {
   // Create a signer
+  const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key-here", provider);
 
   // Create a toolbox with the signer
@@ -316,83 +317,6 @@ async function directBitcoinTransfer() {
   });
 
   return txHash;
-}
-```
-
-## Fee Estimation
-
-Before executing transactions, you can estimate the transaction fees:
-
-```ts twoslash
-// @noErrorValidation
-
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-
-// Initialize SwapKit and connect wallet
-const swapKit = SwapKit({
-  wallets: { ...evmWallet },
-});
-
-await swapKit.connectEVMWallet([Chain.Ethereum]);
-
-// Estimate transaction fee
-async function estimateTransferFee() {
-  const amount = AssetValue.from({
-    chain: Chain.Ethereum,
-    symbol: "ETH",
-    value: "0.01",
-  });
-
-  // Estimate the transaction fee
-  const estimatedFee = await swapKit.estimateTransactionFee({
-    type: "transfer",
-    feeOptionKey: FeeOption.Fast,
-    params: {
-      assetValue: amount,
-      recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    },
-  });
-
-  return estimatedFee;
-}
-```
-
-## Transaction Status
-
-Check the status of a transaction:
-
-```ts twoslash
-// @noErrorValidation
-
-import { Chain } from "@swapkit/helpers";
-import { getProvider } from "@swapkit/toolboxes/evm";
-
-// Check Ethereum transaction status
-async function checkTransactionStatus(txHash: string) {
-  const provider = getProvider(Chain.Ethereum);
-
-  try {
-    // Get transaction receipt
-    const receipt = await provider.getTransactionReceipt(txHash);
-
-    if (!receipt) {
-      return { status: "pending", confirmations: 0 };
-    }
-
-    // Check if transaction was successful
-    const success = receipt.status === 1;
-
-    return {
-      status: success ? "confirmed" : "failed",
-      blockNumber: receipt.blockNumber,
-      confirmations: await provider.getBlockNumber() - receipt.blockNumber,
-      gasUsed: receipt.gasUsed.toString(),
-    };
-  } catch (error) {
-    return { status: "unknown", error: String(error) };
-  }
 }
 ```
 

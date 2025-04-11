@@ -25,6 +25,7 @@ Each toolbox can be imported individually, which is preferred for frontend appli
 You can initialize a toolbox either by importing specific toolbox methods like `getEvmToolbox` or `getUtxoToolbox` or by common toolbox method `getToolbox`.
 
 ```ts twoslash
+import { Chain } from "@swapkit/helpers";
 import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -34,6 +35,7 @@ const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
 
 or
 ``` ts twoslash
+import { Chain } from "@swapkit/helpers";
 import { getToolbox } from "@swapkit/toolboxes";
 
 const ethToolbox = await getToolbox(Chain.Ethereum);
@@ -45,16 +47,16 @@ const btcToolbox = await getToolbox(Chain.Bitcoin);
 ### Importing and Initializing
 
 ```ts twoslash
-// @noErrorValidation
 import { Chain } from "@swapkit/helpers";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 // Get a toolbox for a specific EVM chain
 const ethereumToolbox = await getEvmToolbox(Chain.Ethereum);
 
+const provider = await getProvider(Chain.Ethereum);
 // With a signer (for transactions)
-const signer = new ethers.Wallet("your-private-key-here", getProvider(Chain.Ethereum));
+const signer = new ethers.Wallet("your-private-key-here", provider);
 const signingToolbox = await getEvmToolbox(Chain.Ethereum, {
   // You can provide a custom provider & signer
   // provider: getProvider(Chain.Ethereum),
@@ -72,7 +74,9 @@ import { Chain } from "@swapkit/helpers";
 import { evmValidateAddress } from "@swapkit/toolboxes/evm";
 
 // Validate an Ethereum address | true or false
-const isValidAddress = evmValidateAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
+const isValidAddress = evmValidateAddress({
+  address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+});
 ```
 
 #### Token Transfers
@@ -110,7 +114,6 @@ async function transferTokens() {
     feeOptionKey: FeeOption.Fast,
   });
 
-  console.log("Token transfer hash:", txHash);
   return txHash;
 }
 ```
@@ -120,62 +123,53 @@ async function transferTokens() {
 ```ts twoslash
 // @noErrorValidation
 import { Chain } from "@swapkit/helpers";
+import { erc20ABI } from "@swapkit/helpers/contracts";
 import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
 import { ethers } from "ethers";
 
 async function interactWithContract() {
   // Create a signer
-  const provider = getProvider(Chain.Ethereum);
+  const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key", provider);
 
   // Create a toolbox with signer
-  const ethToolbox = await getEvmToolbox(Chain.Ethereum)({
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, {
     provider,
     signer
   });
-
-  // ERC20 ABI (simplified)
-  const erc20Abi = [
-    "function balanceOf(address owner) view returns (uint256)",
-    "function transfer(address to, uint256 amount) returns (bool)",
-    "function name() view returns (string)",
-    "function symbol() view returns (string)",
-    "function decimals() view returns (uint8)",
-  ];
 
   // USDC contract address
   const contractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 
   // Read-only call (no signer needed)
-  const tokenName = await ethToolbox.call({
+  const tokenName = await ethToolbox.call<string>({
     contractAddress,
-    abi: erc20Abi,
+    abi: erc20ABI,
     funcName: "name",
   });
 
   // Get balance
-  const balance = await ethToolbox.call({
+  const balance = await ethToolbox.call<number>({
     contractAddress,
-    abi: erc20Abi,
+    abi: erc20ABI,
     funcName: "balanceOf",
     funcParams: [signer.address],
   });
 
   // Get decimals
-  const decimals = await ethToolbox.call({
+  const decimals = await ethToolbox.call<number>({
     contractAddress,
-    abi: erc20Abi,
+    abi: erc20ABI,
     funcName: "decimals",
   });
 
   // Format the balance
   const formattedBalance = ethers.formatUnits(balance, decimals);
-  console.log(`Balance: ${formattedBalance} ${tokenName}`);
 
   // Contract write operation (requires signer)
-  const transferResult = await ethToolbox.call({
+  const transferResult = await ethToolbox.call<string>({
     contractAddress,
-    abi: erc20Abi,
+    abi: erc20ABI,
     funcName: "transfer",
     funcParams: [
       "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
@@ -189,7 +183,7 @@ async function interactWithContract() {
     transferTx: transferResult,
   };
 }
-``` */}
+```
 
 #### Fee Estimation
 
@@ -221,9 +215,6 @@ async function estimateFees() {
     ...transaction,
     feeOption: FeeOption.Average,
   });
-
-  console.log("Fast fee:", fastFee.toString());
-  console.log("Average fee:", averageFee.toString());
 
   return {
     fast: fastFee.toString(),
@@ -266,11 +257,9 @@ async function bitcoinKeysAndAddresses() {
 
   // Get address from keys
   const address = btcToolbox.getAddressFromKeys(keys);
-  console.log("Bitcoin address:", address);
 
   // Validate an address
   const isValid = btcToolbox.validateAddress("bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq");
-  console.log("Is valid address:", isValid);
 
   return { address, isValid };
 }
@@ -344,12 +333,8 @@ async function getUtxoData() {
   const address = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
   const balance = await btcToolbox.getBalance(address);
 
-  console.log("Balance:", balance);
-
-
   // Calculate optimal fee
   const feeRates = await btcToolbox.getFeeRates();
-  console.log("Fee rates:", feeRates);
 
   return { balance, feeRates };
 }
@@ -428,12 +413,8 @@ async function cosmosBalances() {
   const address = "cosmos1abcd1234abcd1234abcd1234abcd1234abcd12";
   const balances = await cosmosToolbox.getBalance(address);
 
-  console.log("Balances:", balances);
-
   // Get account information
   const accountInfo = await cosmosToolbox.getAccount(address);
-
-  console.log("Account info:", accountInfo);
 
   return { balances, accountInfo };
 }
@@ -471,7 +452,6 @@ async function solanaKeysAndAddresses() {
 
   // Get the address from the keypair
   const address = solanaToolbox.getAddressFromKeys(keypair);
-  console.log("Solana address:", address);
 
   return { address, keypair };
 }
@@ -509,10 +489,8 @@ async function solanaTransfer() {
       memo: "Transfer from SwapKit",
     });
 
-    console.log("Transaction hash:", txHash);
     return txHash;
   } catch (error) {
-    console.error("Transfer failed:", error);
     throw error;
   }
 }
@@ -576,10 +554,8 @@ async function substrateTransfer() {
       from: signer.address,
     });
 
-    console.log("Transaction hash:", txHash);
     return txHash;
   } catch (error) {
-    console.error("Transfer failed:", error);
     throw error;
   }
 }
@@ -612,9 +588,6 @@ async function crossChainOperation() {
   // Get Ethereum balance
   const ethAddress = signer.address;
   const ethBalance = await ethToolbox.getBalance(ethAddress);
-
-  console.log("Bitcoin balance:", btcBalance);
-  console.log("Ethereum balance:", ethBalance);
 
   return { btcBalance, ethBalance };
 }
