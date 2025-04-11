@@ -4,7 +4,7 @@ import type { CosmosToolboxParams } from "../types";
 import { createCosmosToolbox } from "./cosmos";
 import { createThorchainToolbox } from "./thorchain";
 
-export type CosmosToolboxType = {
+export type CosmosToolboxes = {
   GAIA: ReturnType<typeof createCosmosToolbox>;
   KUJI: ReturnType<typeof createCosmosToolbox>;
   MAYA: ReturnType<typeof createThorchainToolbox>;
@@ -14,15 +14,15 @@ export type CosmosToolboxType = {
 export const getCosmosToolbox = <T extends CosmosChain>(
   chain: T,
   params?: Omit<CosmosToolboxParams, "chain">,
-): CosmosToolboxType[T] => {
+): CosmosToolboxes[T] => {
   switch (chain) {
     case Chain.Cosmos:
     case Chain.Kujira:
-      return createCosmosToolbox({ chain, ...params }) as CosmosToolboxType[T];
+      return createCosmosToolbox({ chain, ...params }) as CosmosToolboxes[T];
 
     case Chain.Maya:
     case Chain.THORChain:
-      return createThorchainToolbox({ chain, ...params }) as CosmosToolboxType[T];
+      return createThorchainToolbox({ chain, ...params }) as CosmosToolboxes[T];
 
     default:
       throw new Error(`Chain ${chain} is not supported`);

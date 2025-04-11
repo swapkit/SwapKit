@@ -19,34 +19,33 @@ import {
 import { getBalance } from "../utils";
 import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "./types";
 
-export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams) => {
+export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams = {}) => {
   return createSubstrateToolbox({ chain: Chain.Polkadot, generic, signer });
 };
 
-export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams) => {
+export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams = {}) => {
   const toolbox = await createSubstrateToolbox({ chain: Chain.Chainflip, generic, signer });
 
   return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
 };
 
-type ToolboxType = {
-  DOT: ReturnType<typeof PolkadotToolbox>;
-  FLIP: ReturnType<typeof ChainflipToolbox>;
+export type SubstrateToolboxes = {
+  DOT: Awaited<ReturnType<typeof PolkadotToolbox>>;
+  FLIP: Awaited<ReturnType<typeof ChainflipToolbox>>;
 };
 
-export const getSubstrateToolbox = <T extends keyof ToolboxType>(
-  chain: T,
-  params: ToolboxParams,
-): ToolboxType[T] => {
+export function getSubstrateToolbox<T extends SubstrateChain>(chain: T, params?: ToolboxParams) {
   switch (chain) {
-    case Chain.Chainflip:
+    case Chain.Chainflip: {
       return ChainflipToolbox(params);
-    case Chain.Polkadot:
+    }
+    case Chain.Polkadot: {
       return PolkadotToolbox(params);
+    }
     default:
       throw new Error(`Chain ${chain} is not supported`);
   }
-};
+}
 
 export function isKeyringPair(account: IKeyringPair | Signer): account is IKeyringPair {
   return "address" in account;
@@ -205,7 +204,7 @@ export const BaseSubstrateToolbox = ({
   api: ApiPromise;
   network: SubstrateNetwork;
   gasAsset: AssetValue;
-  signer: IKeyringPair | Signer;
+  signer?: IKeyringPair | Signer;
 }) => ({
   api,
   network,
@@ -215,18 +214,27 @@ export const BaseSubstrateToolbox = ({
   convertAddress,
   getBalance: getBalance(Chain.Polkadot),
   createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
-  getAddress: (keyring: IKeyringPair | Signer = signer) =>
-    isKeyringPair(keyring) ? keyring.address : undefined,
+  getAddress: (keyring?: IKeyringPair | Signer) => {
+    const keyringPair = keyring || signer;
+    if (!keyringPair) throw new SwapKitError("core_wallet_not_keypair_wallet");
+
+    return isKeyringPair(keyringPair) ? keyringPair.address : undefined;
+  },
   createTransfer: ({ recipient, assetValue }: { recipient: string; assetValue: AssetValue }) =>
     createTransfer(api, { recipient, amount: assetValue.getBaseValue("number") }),
   validateAddress: (address: string) => validateAddress(address, network.prefix),
-  transfer: (params: SubstrateTransferParams) => transfer(api, signer, params),
-  estimateTransactionFee: (params: SubstrateTransferParams) =>
-    estimateTransactionFee(api, signer, gasAsset, params),
+  transfer: (params: SubstrateTransferParams) => {
+    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+    return transfer(api, signer, params);
+  },
+  estimateTransactionFee: (params: SubstrateTransferParams) => {
+    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+    return estimateTransactionFee(api, signer, gasAsset, params);
+  },
   sign: (tx: SubmittableExtrinsic<"promise">) => {
-    if (isKeyringPair(signer)) {
-      return sign(signer, tx);
-    }
+    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+    if (isKeyringPair(signer)) return sign(signer, tx);
+
     throw new SwapKitError(
       "core_wallet_not_keypair_wallet",
       "Signer does not have keyring pair capabilities required for signing.",
@@ -242,9 +250,8 @@ export const BaseSubstrateToolbox = ({
     callback?: Callback<ISubmittableResult>;
     address?: string;
   }) => {
-    if (isKeyringPair(signer)) {
-      return signAndBroadcastKeyring(signer, tx, callback);
-    }
+    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+    if (isKeyringPair(signer)) return signAndBroadcastKeyring(signer, tx, callback);
 
     if (address) {
       return signAndBroadcast({ signer, address, tx, callback, api });
@@ -283,10 +290,5 @@ export async function createSubstrateToolbox({
 
 export type ToolboxParams = {
   generic?: boolean;
-  signer: KeyringPair | Signer;
-};
-
-export type BaseSubstrateWallet = ReturnType<typeof BaseSubstrateToolbox>;
-export type SubstrateWallets = {
-  [chain in SubstrateChain]: BaseSubstrateWallet;
+  signer?: KeyringPair | Signer;
 };

@@ -77,7 +77,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Kujira: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const chainId = ChainToChainId[chain];
-      const provider = getCtrlProvider(chain);
+      const provider = await getCtrlProvider(chain);
 
       await provider?.enable(chainId);
       const signer = provider?.getOfflineSignerOnlyAmino(chainId);
@@ -111,7 +111,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
-      const ethereumWindowProvider = getCtrlProvider(chain);
+      const ethereumWindowProvider = await getCtrlProvider(chain);
 
       if (!ethereumWindowProvider) {
         throw new SwapKitError("wallet_ctrl_not_found");

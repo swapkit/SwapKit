@@ -6,16 +6,12 @@ import { createUTXOToolbox } from "./utxo";
 type BCHToolbox = Awaited<ReturnType<typeof createBCHToolbox>>;
 type CommonUTXOToolbox = Awaited<ReturnType<typeof createUTXOToolbox>>;
 
-type UTXOToolboxes = {
+export type UTXOToolboxes = {
   [Chain.BitcoinCash]: BCHToolbox;
   [Chain.Bitcoin]: CommonUTXOToolbox;
   [Chain.Dogecoin]: CommonUTXOToolbox;
   [Chain.Litecoin]: CommonUTXOToolbox;
   [Chain.Dash]: CommonUTXOToolbox;
-};
-
-export type UTXOWallets = {
-  [key in keyof UTXOToolboxes]: UTXOToolboxes[key];
 };
 
 export async function getUtxoToolbox<T extends UTXOChain>(chain: T): Promise<UTXOToolboxes[T]> {

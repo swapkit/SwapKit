@@ -6,11 +6,12 @@ import {
   FeeOption,
   SKConfig,
 } from "@swapkit/helpers";
-import type { BrowserProvider, JsonRpcProvider, Signer, TransactionRequest } from "ethers";
+import type { BrowserProvider, JsonRpcProvider, TransactionRequest } from "ethers";
 import { Contract } from "ethers";
 
 import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
+import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 const GAS_PRICE_ORACLE_ADDRESS = "0x420000000000000000000000000000000000000f";
@@ -131,10 +132,7 @@ function estimateGasPrices<P extends JsonRpcProvider | BrowserProvider>(provider
   };
 }
 
-export function OPToolbox<P extends JsonRpcProvider | BrowserProvider, S extends Signer>({
-  provider,
-  signer,
-}: { signer?: S; provider: P }) {
+export function OPToolbox({ provider, signer }: EVMToolboxParams) {
   const evmToolbox = BaseEVMToolbox({ provider, signer });
   const getL1GasPrice = getL1GasPriceFetcher(provider);
 

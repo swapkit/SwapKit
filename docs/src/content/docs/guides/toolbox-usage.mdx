@@ -20,6 +20,26 @@ SwapKit provides specialized toolboxes for different blockchain ecosystems:
 
 Each toolbox can be imported individually, which is preferred for frontend applications to minimize bundle size.
 
+## Importing Toolboxes
+
+You can initialize a toolbox either by importing specific toolbox methods like `getEvmToolbox` or `getUtxoToolbox` or by common toolbox method `getToolbox`.
+
+```ts twoslash
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+
+const ethToolbox = await getEvmToolbox(Chain.Ethereum);
+const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
+```
+
+or
+``` ts twoslash
+import { getToolbox } from "@swapkit/toolboxes";
+
+const ethToolbox = await getToolbox(Chain.Ethereum);
+const btcToolbox = await getToolbox(Chain.Bitcoin);
+```
+
 ## EVM Toolbox
 
 ### Importing and Initializing

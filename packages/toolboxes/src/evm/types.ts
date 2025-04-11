@@ -1,4 +1,4 @@
-import type { AssetValue, FeeOption, WalletTxParams } from "@swapkit/helpers";
+import { type AssetValue, Chain, type FeeOption, type WalletTxParams } from "@swapkit/helpers";
 import type {
   BigNumberish,
   BrowserProvider,
@@ -7,6 +7,15 @@ import type {
   Signer,
   Transaction,
 } from "ethers";
+import type {
+  ARBToolbox,
+  AVAXToolbox,
+  BASEToolbox,
+  BSCToolbox,
+  ETHToolbox,
+  MATICToolbox,
+  OPToolbox,
+} from "./toolbox";
 
 import type { getProvider } from "./index";
 
@@ -62,11 +71,6 @@ export type TransferParams = WalletTxParams & {
   assetValue: AssetValue;
 };
 
-export type EVMToolboxParams = {
-  provider: BrowserProvider | JsonRpcProvider;
-  signer?: Signer;
-};
-
 export type EVMMaxSendableAmountsParams = {
   from: string;
   assetValue: AssetValue;
@@ -100,3 +104,18 @@ export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & {
 };
 
 export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
+
+export type EVMToolboxParams = {
+  provider: BrowserProvider | JsonRpcProvider;
+  signer?: Signer;
+};
+
+export type EVMToolboxes = {
+  [Chain.Arbitrum]: ReturnType<typeof ARBToolbox>;
+  [Chain.Avalanche]: ReturnType<typeof AVAXToolbox>;
+  [Chain.Base]: ReturnType<typeof BASEToolbox>;
+  [Chain.BinanceSmartChain]: ReturnType<typeof BSCToolbox>;
+  [Chain.Ethereum]: ReturnType<typeof ETHToolbox>;
+  [Chain.Optimism]: ReturnType<typeof OPToolbox>;
+  [Chain.Polygon]: ReturnType<typeof MATICToolbox>;
+};

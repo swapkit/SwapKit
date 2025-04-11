@@ -15,7 +15,6 @@ import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { SolanaProvider, SolanaWallet } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
-import { match } from "ts-pattern";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -36,16 +35,19 @@ export type WalletTxParams = {
   gasLimit?: string | bigint;
 };
 
-export function getCtrlProvider<T extends Chain>(
+export async function getCtrlProvider<T extends Chain>(
   chain: T,
-): T extends Chain.Solana
-  ? SolanaProvider
-  : T extends Chain.Cosmos | Chain.Kujira
-    ? Keplr
-    : T extends EVMChain
-      ? Eip1193Provider
-      : undefined {
+): Promise<
+  T extends Chain.Solana
+    ? SolanaProvider
+    : T extends Chain.Cosmos | Chain.Kujira
+      ? Keplr
+      : T extends EVMChain
+        ? Eip1193Provider
+        : undefined
+> {
   if (!window.xfi) throw new SwapKitError("wallet_ctrl_not_found");
+  const { match } = await import("ts-pattern");
 
   // @ts-expect-error
   return match(chain as Chain)
@@ -77,7 +79,7 @@ async function transaction({
   params: TransactionParams[];
   chain: Chain;
 }): Promise<string> {
-  const client = getCtrlProvider(chain);
+  const client = await getCtrlProvider(chain);
 
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
@@ -90,7 +92,7 @@ async function transaction({
 }
 
 export async function getCtrlAddress(chain: Chain) {
-  const eipProvider = getCtrlProvider(chain) as Eip1193Provider;
+  const eipProvider = (await getCtrlProvider(chain)) as Eip1193Provider;
   if (!eipProvider) {
     throw new SwapKitError({
       errorKey: "wallet_provider_not_found",
@@ -99,7 +101,7 @@ export async function getCtrlAddress(chain: Chain) {
   }
 
   if ([Chain.Cosmos, Chain.Kujira].includes(chain)) {
-    const provider = getCtrlProvider(Chain.Cosmos);
+    const provider = await getCtrlProvider(Chain.Cosmos);
     if (!provider || "request" in provider) {
       throw new SwapKitError({
         errorKey: "wallet_provider_not_found",
@@ -126,7 +128,7 @@ export async function getCtrlAddress(chain: Chain) {
   }
 
   if (chain === Chain.Solana) {
-    const provider = getCtrlProvider(Chain.Solana);
+    const provider = await getCtrlProvider(Chain.Solana);
 
     const accounts = await provider.connect();
     return accounts.publicKey.toString();
@@ -183,7 +185,7 @@ export function solanaTransfer(solToolbox: SolanaWallet, walletPublicKey: Public
     memo,
     isProgramDerivedAddress,
   }: TransferParams & { isProgramDerivedAddress?: boolean }) => {
-    const solanaProvider = getCtrlProvider(Chain.Solana);
+    const solanaProvider = await getCtrlProvider(Chain.Solana);
     const transaction = await solToolbox.createSolanaTransaction({
       recipient,
       assetValue,
