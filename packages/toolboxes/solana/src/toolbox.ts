@@ -120,6 +120,7 @@ export async function createSolanaTokenTransaction({
   connection,
   amount,
   decimals,
+  isProgramDerivedAddress,
 }: {
   tokenAddress: string;
   recipient: string;
@@ -127,13 +128,18 @@ export async function createSolanaTokenTransaction({
   connection: Connection;
   amount: number;
   decimals: number;
+  isProgramDerivedAddress?: boolean;
 }) {
   const transaction = new Transaction();
   const tokenPublicKey = new PublicKey(tokenAddress);
   const fromSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, from);
 
   const recipientPublicKey = new PublicKey(recipient);
-  const recipientSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, recipientPublicKey);
+  const recipientSPLAddress = await getAssociatedTokenAddress(
+    tokenPublicKey,
+    recipientPublicKey,
+    isProgramDerivedAddress,
+  );
 
   let recipientAccountExists = false;
   try {
@@ -200,6 +206,7 @@ function createSolanaTransaction(connection: Connection) {
             from: fromPublicKey,
             recipient,
             tokenAddress: assetValue.address,
+            isProgramDerivedAddress,
           })
         : undefined;
 
