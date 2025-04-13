@@ -115,6 +115,7 @@ async function getWalletMethods({
                 from: fromPubkey,
                 recipient,
                 tokenAddress: assetValue.address,
+                isProgramDerivedAddress,
               })
             : undefined;
 
