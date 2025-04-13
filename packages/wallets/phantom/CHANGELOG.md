@@ -1,5 +1,11 @@
 # @swapkit/wallet-phantom
 
+## 1.4.2
+
+### Patch Changes
+
+- [#1240](https://github.com/thorswap/SwapKit/pull/1240) [`77efc92`](https://github.com/thorswap/SwapKit/commit/77efc9267180b7aaba701fe1baae034244f85f3b) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Phantom transfer method for sol tokens
+
 ## 1.4.1
 
 ### Patch Changes
