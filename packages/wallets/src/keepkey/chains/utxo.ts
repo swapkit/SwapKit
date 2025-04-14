@@ -4,10 +4,10 @@ import {
   DerivationPath,
   type DerivationPathArray,
   FeeOption,
+  type TransferParams,
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
@@ -92,15 +92,8 @@ export const utxoWalletMethods = async ({
     return responseSign.serializedTx?.toString();
   };
 
-  const transfer = async ({
-    from,
-    recipient,
-    feeOptionKey,
-    feeRate,
-    memo,
-    ...rest
-  }: UTXOTransferParams) => {
-    if (!from) throw new Error("From address must be provided");
+  const transfer = async ({ recipient, feeOptionKey, feeRate, memo, ...rest }: TransferParams) => {
+    if (!walletAddress) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
 
     const { psbt, inputs: rawInputs } = await toolbox.buildTx({
@@ -108,8 +101,7 @@ export const utxoWalletMethods = async ({
       memo,
       recipient,
       feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
-      sender: from,
-      fetchTxHex: chain === Chain.BitcoinCash,
+      sender: walletAddress,
     });
 
     const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({

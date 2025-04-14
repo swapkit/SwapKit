@@ -1,17 +1,14 @@
 import {
-  type AssetValue,
   Chain,
   type NetworkParams,
   SKConfig,
   SwapKitError,
   WalletOption,
-  type WalletTxParams,
   addEVMWalletNetwork,
   createWallet,
   filterSupportedChains,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type {
   BitcoinProvider,
   GetAddressOptions,
@@ -38,8 +35,6 @@ async function getWalletMethodsForExtension(chain: Chain) {
         AddressPurpose,
         BitcoinNetworkType,
       } = await import("sats-connect");
-
-      const toolbox = await getUtxoToolbox(chain);
 
       let address = "";
 
@@ -96,14 +91,14 @@ async function getWalletMethodsForExtension(chain: Chain) {
         return signedPsbt;
       }
 
-      const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({
-          ...transferParams,
-          signTransaction,
-        });
+      const signer = {
+        signTransaction,
+        getAddress: () => Promise.resolve(address),
       };
 
-      return { ...toolbox, transfer, address };
+      const toolbox = await getUtxoToolbox(chain, { signer });
+
+      return { ...toolbox, address };
     }
 
     case Chain.Solana: {
@@ -115,44 +110,12 @@ async function getWalletMethodsForExtension(chain: Chain) {
       }
 
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
-      const { Transaction, PublicKey } = await import("@solana/web3.js");
 
-      const address = await window.$onekey.sol.getAddress();
-      const toolbox = getSolanaToolbox();
+      const signer = window.$onekey.sol;
+      const address = await signer.getAddress();
+      const toolbox = getSolanaToolbox({ signer });
 
-      const transfer = async ({
-        recipient,
-        assetValue,
-        isPDA,
-      }: WalletTxParams & {
-        assetValue: AssetValue;
-        isPDA?: boolean;
-      }) => {
-        try {
-          if (!recipient) throw new SwapKitError("core_transaction_invalid_recipient_address");
-          if (!assetValue) throw new SwapKitError("wallet_missing_params");
-
-          const transaction = await toolbox.createSolanaTransaction({
-            fromPublicKey: new PublicKey(address),
-            recipient,
-            assetValue,
-            isProgramDerivedAddress: isPDA,
-          });
-
-          const tx = Transaction.from(
-            Buffer.from(transaction.serialize({ requireAllSignatures: false })),
-          );
-          const signedTransaction = await window.$onekey.sol.signTransaction(tx);
-          const signature = await toolbox.broadcastTransaction(signedTransaction.serialize());
-
-          return signature;
-        } catch (error) {
-          console.error(error);
-          throw new SwapKitError("core_transaction_failed", { error });
-        }
-      };
-
-      return { ...toolbox, transfer, address };
+      return { ...toolbox, address };
     }
 
     case Chain.Arbitrum:

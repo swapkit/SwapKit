@@ -1,10 +1,8 @@
 import {
-  type AssetValue,
   Chain,
   ChainId,
   type EVMChain,
   SwapKitError,
-  type WalletTxParams,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -55,7 +53,7 @@ export async function getWalletMethods(chain: Chain) {
         signTransaction,
       };
 
-      const toolbox = await getUtxoToolbox(Chain.Bitcoin, signer);
+      const toolbox = await getUtxoToolbox(Chain.Bitcoin, { signer });
 
       return { ...toolbox, address };
     }
@@ -95,42 +93,11 @@ export async function getWalletMethods(chain: Chain) {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const provider = bitget?.solana;
 
-      const toolbox = getSolanaToolbox();
+      const toolbox = getSolanaToolbox({ signer: provider });
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
 
-      const transfer = async ({
-        recipient,
-        assetValue,
-        isProgramDerivedAddress,
-        memo,
-      }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
-        const validateAddress = await toolbox.getAddressValidator();
-
-        if (!(isProgramDerivedAddress || validateAddress(recipient))) {
-          throw new SwapKitError("core_transaction_invalid_recipient_address");
-        }
-        const { PublicKey } = await import("@solana/web3.js");
-        const fromPublicKey = new PublicKey(address);
-
-        const connection = await toolbox.getConnection();
-        const transaction = await toolbox.createSolanaTransaction({
-          recipient,
-          assetValue,
-          memo,
-          isProgramDerivedAddress,
-        });
-
-        const blockHash = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockHash.blockhash;
-        transaction.feePayer = fromPublicKey;
-
-        const signedTransaction = await provider.signTransaction(transaction);
-
-        return toolbox.broadcastTransaction(signedTransaction);
-      };
-
-      return { ...toolbox, transfer, address };
+      return { ...toolbox, address };
     }
 
     default:

@@ -4,11 +4,12 @@ import {
   ChainId,
   SKConfig,
   SwapKitError,
+  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 

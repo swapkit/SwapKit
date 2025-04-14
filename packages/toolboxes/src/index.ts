@@ -76,7 +76,7 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
   [key in SubstrateChain]: Parameters<typeof getSubstrateToolbox>[1];
 } & {
   [Chain.Radix]: Parameters<typeof RadixToolbox>[0];
-  [Chain.Solana]: undefined;
+  [Chain.Solana]: Parameters<typeof getSolanaToolbox>[0];
 };
 
 export async function getToolbox<T extends keyof Toolboxes>(
@@ -102,7 +102,10 @@ export async function getToolbox<T extends keyof Toolboxes>(
     case Chain.BitcoinCash:
     case Chain.Bitcoin: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const utxoToolbox = await getUtxoToolbox(chain);
+      const utxoToolbox = await getUtxoToolbox(
+        chain,
+        params as Parameters<typeof getUtxoToolbox>[1],
+      );
       return utxoToolbox as Toolboxes[T];
     }
 
@@ -137,7 +140,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
 
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
-      const solanaToolbox = getSolanaToolbox();
+      const solanaToolbox = getSolanaToolbox(params as Parameters<typeof getSolanaToolbox>[0]);
       return solanaToolbox as Toolboxes[T];
     }
 

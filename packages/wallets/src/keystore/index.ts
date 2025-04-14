@@ -1,5 +1,4 @@
 import {
-  type AssetValue,
   Chain,
   CosmosChains,
   type DerivationPathArray,
@@ -8,17 +7,12 @@ import {
   SKConfig,
   UTXOChains,
   WalletOption,
-  type WalletTxParams,
   createWallet,
   derivationPathToString,
   filterSupportedChains,
   updatedLastIndex,
 } from "@swapkit/helpers";
-import type {
-  TransactionType,
-  UTXOTransferParams,
-  UTXOWalletTransferParams,
-} from "@swapkit/toolboxes/utxo";
+import type { TransactionBuilderType, UTXOType } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 import { getWalletSupportedChains } from "../utils";
 
@@ -50,31 +44,32 @@ const getKeystoreWallet = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.BitcoinCash: {
-      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(Chain.BitcoinCash);
+      const { getUtxoToolbox, getCreateKeysForPath, addressFromKeysGetter } = await import(
+        "@swapkit/toolboxes/utxo"
+      );
 
-      const keys = await toolbox.createKeysForPath({ phrase, derivationPath });
-      const address = toolbox.getAddressFromKeys(keys);
+      const keys = (await getCreateKeysForPath(chain))({ phrase, derivationPath });
+      const address = await (await addressFromKeysGetter(chain))(keys);
 
       async function signTransaction({
         builder,
         utxos,
-      }: Awaited<ReturnType<typeof toolbox.buildBCHTx>>) {
+      }: { builder: TransactionBuilderType; utxos: UTXOType[] }) {
         utxos.forEach((utxo, index) => {
           builder.sign(index, keys, undefined, 0x41, utxo.witnessUtxo?.value);
         });
 
         return builder.build();
       }
+      const signer = {
+        getAddress: () => Promise.resolve(address),
+        signTransaction,
+      };
+
+      const toolbox = await getUtxoToolbox(Chain.BitcoinCash, { signer });
 
       return {
         ...toolbox,
-        transfer: (
-          params: UTXOWalletTransferParams<
-            Awaited<ReturnType<typeof toolbox.buildBCHTx>>,
-            TransactionType
-          >,
-        ) => toolbox.transfer({ ...params, from: address, signTransaction }),
         address,
       };
     }
@@ -83,21 +78,26 @@ const getKeystoreWallet = async ({ chain, phrase, derivationPath }: Params) => {
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(chain);
+      const { getUtxoToolbox, getCreateKeysForPath, addressFromKeysGetter } = await import(
+        "@swapkit/toolboxes/utxo"
+      );
 
-      const keys = toolbox.createKeysForPath({ phrase, derivationPath });
-      const address = toolbox.getAddressFromKeys(keys);
+      const keys = (await getCreateKeysForPath(chain))({ phrase, derivationPath });
+      const address = (await addressFromKeysGetter(chain))(keys);
+
+      const signer = {
+        getAddress: () => Promise.resolve(address),
+        signTransaction: async (psbt: Psbt) => {
+          await psbt.signAllInputs(keys);
+          return psbt;
+        },
+      };
+
+      const toolbox = await getUtxoToolbox(chain, { signer });
 
       return {
         ...toolbox,
         address,
-        transfer: (params: UTXOTransferParams) =>
-          toolbox.transfer({
-            ...params,
-            from: address,
-            signTransaction: async (psbt: Psbt) => psbt.signAllInputs(keys),
-          }),
       };
     }
 
@@ -127,15 +127,15 @@ const getKeystoreWallet = async ({ chain, phrase, derivationPath }: Params) => {
     }
 
     case Chain.Solana: {
-      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
-      const toolbox = getSolanaToolbox();
-      const keypair = await toolbox.createKeysForPath({ phrase, derivationPath });
+      const { getSolanaToolbox, createKeysForPath } = await import("@swapkit/toolboxes/solana");
+      const keypair = await createKeysForPath({ phrase, derivationPath });
+      const toolbox = getSolanaToolbox({ signer: keypair });
+
+      const address = await toolbox.getAddressFromKeys(keypair);
 
       return {
         ...toolbox,
-        address: toolbox.getAddressFromKeys(keypair),
-        transfer: (params: WalletTxParams & { assetValue: AssetValue }) =>
-          toolbox.transfer({ ...params, fromKeypair: keypair }),
+        address,
       };
     }
 

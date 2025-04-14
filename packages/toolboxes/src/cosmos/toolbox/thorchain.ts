@@ -218,7 +218,7 @@ export function createThorchainToolbox({
     recipient,
   }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
-    const from = await signer?.getAddress();
+    const from = (await signer?.getAccounts())?.[0]?.address;
     if (!(from && signer)) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;

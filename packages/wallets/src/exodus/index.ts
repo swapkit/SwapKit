@@ -9,7 +9,6 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 import {
@@ -37,7 +36,6 @@ async function getWalletMethods({
     case Chain.Bitcoin: {
       const { Psbt } = await import("bitcoinjs-lib");
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(chain);
 
       let address = "";
 
@@ -91,11 +89,13 @@ async function getWalletMethods({
         return signedPsbt;
       }
 
-      const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({ ...transferParams, signTransaction });
+      const signer = {
+        signTransaction,
+        getAddress: () => Promise.resolve(address),
       };
+      const toolbox = await getUtxoToolbox(chain, { signer });
 
-      return { ...toolbox, transfer, address, getBalance: () => toolbox.getBalance(address) };
+      return { ...toolbox, address };
     }
     case Chain.Arbitrum:
     case Chain.Avalanche:

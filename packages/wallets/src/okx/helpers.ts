@@ -6,7 +6,6 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 import type { Eip1193Provider } from "ethers";
 
 const cosmosTransfer =
@@ -23,7 +22,10 @@ const cosmosTransfer =
     const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls").GAIA, offlineSigner);
 
     const coins = [
-      { denom: asset?.symbol === "MUON" ? "umuon" : "uatom", amount: amount.amount().toString() },
+      {
+        denom: asset?.symbol === "MUON" ? "umuon" : "uatom",
+        amount: amount.amount().toString(),
+      },
     ];
 
     const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 1.6, memo);
@@ -66,7 +68,10 @@ export async function getWalletMethods(chain: Chain) {
         throw new Error("No okxwallet found");
       }
 
-      const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: window.okxwallet });
+      const evmWallet = await getWeb3WalletMethods({
+        chain,
+        walletProvider: window.okxwallet,
+      });
       const address: string = (await window.okxwallet.send("eth_requestAccounts", [])).result[0];
 
       return { ...evmWallet, address };
@@ -81,19 +86,22 @@ export async function getWalletMethods(chain: Chain) {
 
       const { bitcoin: wallet } = window.okxwallet;
       const address = (await wallet.connect()).address;
-      const toolbox = await getUtxoToolbox(chain);
 
-      const signTransaction = async (psbt: InstanceType<typeof Psbt>) => {
-        const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });
+      const signer = {
+        signTransaction: async (psbt: InstanceType<typeof Psbt>) => {
+          const signedPsbt = await wallet.signPsbt(psbt.toHex(), {
+            from: address,
+            type: "list",
+          });
 
-        return Psbt.fromHex(signedPsbt);
+          return Psbt.fromHex(signedPsbt);
+        },
+        getAddress: async () => Promise.resolve(address),
       };
 
-      const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({ ...transferParams, signTransaction });
-      };
+      const toolbox = await getUtxoToolbox(chain, { signer });
 
-      return { ...toolbox, transfer, address };
+      return { ...toolbox, address };
     }
 
     case Chain.Cosmos: {

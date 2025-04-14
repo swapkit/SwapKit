@@ -91,13 +91,14 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
           throw new SwapKitError("core_transaction_invalid_recipient_address");
         }
 
-        const fromPublicKey = new PublicKey(address);
+        const fromPubkey = new PublicKey(address);
         const connection = await toolbox.getConnection();
 
         const transaction = await toolbox.createSolanaTransaction({
           recipient,
           assetValue,
-          fromPublicKey,
+          fromPubkey,
+          isProgramDerivedAddress,
         });
 
         if (!transaction) {
@@ -106,7 +107,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
 
         const blockHash = await connection.getLatestBlockhash();
         transaction.recentBlockhash = blockHash.blockhash;
-        transaction.feePayer = fromPublicKey;
+        transaction.feePayer = fromPubkey;
 
         const signedTransaction = await provider.signTransaction(transaction);
 

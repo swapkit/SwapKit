@@ -1,5 +1,4 @@
-import type { OfflineAminoSigner } from "@cosmjs/amino";
-import type { EncodeObject, OfflineDirectSigner } from "@cosmjs/proto-signing";
+import type { EncodeObject } from "@cosmjs/proto-signing";
 import type { Asset, AssetValue, Chain, ChainId } from "@swapkit/helpers";
 
 enum TxType {
@@ -22,7 +21,6 @@ export type NodeUrl = {
 };
 
 export type DepositParam = {
-  signer?: OfflineDirectSigner | OfflineAminoSigner;
   assetValue: AssetValue;
   memo: string;
 };

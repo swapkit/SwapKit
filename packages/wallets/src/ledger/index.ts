@@ -5,11 +5,12 @@ import {
   FeeOption,
   SKConfig,
   StagenetChain,
+  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
 import { getWalletSupportedChains } from "../utils";
@@ -110,7 +111,6 @@ async function getWalletMethods({
         const { psbt, inputs } = await toolbox.buildTx({
           ...params,
           feeRate,
-          fetchTxHex: true,
           memo,
           sender: address,
         });

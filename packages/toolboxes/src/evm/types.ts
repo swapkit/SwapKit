@@ -5,6 +5,7 @@ import type {
   BrowserProvider,
   JsonFragment,
   JsonRpcProvider,
+  JsonRpcSigner,
   Signer,
   Transaction,
 } from "ethers";
@@ -108,7 +109,7 @@ export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
 
 export type EVMToolboxParams = {
   provider: BrowserProvider | JsonRpcProvider;
-  signer?: ChainSigner<TransferParams, Transaction> & Signer;
+  signer?: (ChainSigner<TransferParams, string> & Signer) | JsonRpcSigner;
 };
 
 export type EVMToolboxes = {

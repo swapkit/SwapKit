@@ -2,6 +2,7 @@ import {
   AssetValue,
   Chain,
   type ChainSigner,
+  DerivationPath,
   FeeOption,
   SwapKitNumber,
   type TransferParams,
@@ -10,6 +11,7 @@ import {
 import type { Psbt } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
 
+import type { UtxoToolboxParams } from ".";
 import { getBalance } from "../../utils";
 import {
   UTXOScriptType,
@@ -21,73 +23,110 @@ import {
   getUtxoApi,
   getUtxoNetwork,
 } from "../helpers";
-import type { TargetOutput, UTXOBuildTxParams, UTXOType } from "../types";
+import type { BchECPair, TargetOutput, UTXOBuildTxParams, UTXOType } from "../types";
 import { validateAddress as validateBCHAddress } from "./bitcoinCash";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
 
-export function buildTx(chain: UTXOChain) {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
-  return async function buildTx({
+async function addInputsAndOutputs({
+  inputs,
+  outputs,
+  chain,
+  psbt,
+  sender,
+  compiledMemo,
+}: {
+  inputs: UTXOType[];
+  outputs: TargetOutput[];
+  chain: UTXOChain;
+  psbt: Psbt;
+  sender: string;
+  compiledMemo: Buffer<ArrayBufferLike> | null;
+}) {
+  for (const utxo of inputs) {
+    const witnessInfo = !!utxo.witnessUtxo &&
+      !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo };
+
+    const nonWitnessInfo = nonSegwitChains.includes(chain) && {
+      nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
+    };
+
+    psbt.addInput({ hash: utxo.hash, index: utxo.index, ...witnessInfo, ...nonWitnessInfo });
+  }
+
+  const { initEccLib } = await import("bitcoinjs-lib");
+  const secp256k1 = await import("@bitcoinerlab/secp256k1");
+
+  for (const output of outputs) {
+    const address = "address" in output && output.address ? output.address : sender;
+    const hasOutputScript = output.script;
+
+    if (hasOutputScript && !compiledMemo) {
+      continue;
+    }
+
+    const mappedOutput = hasOutputScript
+      ? {
+          script: compiledMemo as Buffer<ArrayBufferLike>,
+          value: 0,
+        }
+      : {
+          address,
+          value: output.value,
+        };
+
+    initEccLib(secp256k1);
+    psbt.addOutput(mappedOutput);
+  }
+
+  return { psbt, inputs };
+}
+
+async function buildTx({
+  assetValue,
+  recipient,
+  memo,
+  feeRate,
+  sender,
+}: UTXOBuildTxParams): Promise<{
+  psbt: Psbt;
+  utxos: UTXOType[];
+  inputs: UTXOType[];
+}> {
+  const chain = assetValue.chain as UTXOChain;
+
+  const { Psbt } = await import("bitcoinjs-lib");
+  const compiledMemo = memo ? await compileMemo(memo) : null;
+
+  const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
     recipient,
     memo,
-    feeRate,
     sender,
-    fetchTxHex = false,
-  }: UTXOBuildTxParams): Promise<{
-    psbt: Psbt;
-    utxos: UTXOType[];
-    inputs: UTXOType[];
-  }> {
-    const secp256k1 = await import("@bitcoinerlab/secp256k1");
-    const { initEccLib, Psbt } = await import("bitcoinjs-lib");
-    const compiledMemo = memo ? await compileMemo(memo) : null;
-    const getInputsAndOutputs = getInputsAndTargetOutputs(chain);
+  });
 
-    const inputsAndOutputs = await getInputsAndOutputs({
-      assetValue,
-      recipient,
-      memo,
-      sender,
-      fetchTxHex,
-    });
+  const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
 
-    const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
+  // .inputs and .outputs will be undefined if no solution was found
+  if (!(inputs && outputs)) throw new Error("Insufficient Balance for transaction");
+  const getNetwork = await getUtxoNetwork();
+  const psbt = new Psbt({ network: getNetwork(chain) });
 
-    // .inputs and .outputs will be undefined if no solution was found
-    if (!(inputs && outputs)) throw new Error("Insufficient Balance for transaction");
-    const getNetwork = await getUtxoNetwork();
-    const psbt = new Psbt({ network: getNetwork(chain) });
+  if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
 
-    if (chain === Chain.Dogecoin) psbt.setMaximumFeeRate(650000000);
+  const { psbt: mappedPsbt, inputs: mappedInputs } = await addInputsAndOutputs({
+    inputs,
+    outputs,
+    chain,
+    psbt,
+    sender,
+    compiledMemo,
+  });
 
-    for (const utxo of inputs) {
-      const witnessInfo = !!utxo.witnessUtxo &&
-        !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo };
-
-      const nonWitnessInfo = nonSegwitChains.includes(chain) && {
-        nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
-      };
-
-      psbt.addInput({ hash: utxo.hash, index: utxo.index, ...witnessInfo, ...nonWitnessInfo });
-    }
-
-    for (const output of outputs) {
-      const address = "address" in output && output.address ? output.address : sender;
-      const params = output.script
-        ? compiledMemo
-          ? { script: compiledMemo, value: 0 }
-          : undefined
-        : { address, value: output.value };
-
-      if (params) {
-        initEccLib(secp256k1);
-        psbt.addOutput(params);
-      }
-    }
-
-    return { psbt, utxos: inputsAndOutputs.inputs, inputs };
+  return {
+    psbt: mappedPsbt,
+    utxos: inputsAndOutputs.inputs,
+    inputs: mappedInputs,
   };
 }
 
@@ -111,7 +150,11 @@ export async function getUTXOAddressValidator() {
   };
 }
 
-export async function createUTXOToolbox(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
+export async function createUTXOToolbox<T extends UTXOChain>(
+  chain: T,
+  params?: UtxoToolboxParams[T],
+) {
+  const { signer } = params || {};
   const getAddressFromKeys = await addressFromKeysGetter(chain);
   const validateAddress = await getUTXOAddressValidator();
   const createKeysForPath = await getCreateKeysForPath(chain);
@@ -122,11 +165,11 @@ export async function createUTXOToolbox(chain: UTXOChain, signer?: ChainSigner<P
     getAddressFromKeys,
     validateAddress: (address: string) => validateAddress({ address, chain }),
     broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
-    buildTx: buildTx(chain),
+    buildTx,
     createKeysForPath,
     getFeeRates: () => getFeeRates(chain),
-    getInputsOutputsFee: getInputsOutputsFee(chain),
-    transfer: transfer(chain, signer),
+    getInputsOutputsFee,
+    transfer: transfer(signer as UtxoToolboxParams["BTC"]["signer"]),
     getPrivateKeyFromMnemonic: (params: { phrase: string; derivationPath: string }) => {
       const keys = createKeysForPath(params);
       return keys.toWIF();
@@ -138,37 +181,33 @@ export async function createUTXOToolbox(chain: UTXOChain, signer?: ChainSigner<P
   };
 }
 
-function getInputsOutputsFee(chain: UTXOChain) {
-  return async function getInputsOutputsFee({
+async function getInputsOutputsFee({
+  assetValue,
+  feeOptionKey = FeeOption.Fast,
+  feeRate,
+  memo,
+  recipient,
+  from,
+}: {
+  assetValue: AssetValue;
+  recipient: string;
+  memo?: string;
+  from: string;
+  feeOptionKey?: FeeOption;
+  feeRate?: number;
+}) {
+  const chain = assetValue.chain as UTXOChain;
+
+  const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
-    feeOptionKey = FeeOption.Fast,
-    feeRate,
-    fetchTxHex = false,
-    memo,
     recipient,
-    from,
-  }: {
-    assetValue: AssetValue;
-    recipient: string;
-    memo?: string;
-    from: string;
-    feeOptionKey?: FeeOption;
-    feeRate?: number;
-    fetchTxHex?: boolean;
-  }) {
-    const getInputsAndOutputs = getInputsAndTargetOutputs(chain);
-    const inputsAndOutputs = await getInputsAndOutputs({
-      assetValue,
-      recipient,
-      memo,
-      sender: from,
-      fetchTxHex,
-    });
+    memo,
+    sender: from,
+  });
 
-    const feeRateWhole = feeRate ? Math.floor(feeRate) : (await getFeeRates(chain))[feeOptionKey];
+  const feeRateWhole = feeRate ? Math.floor(feeRate) : (await getFeeRates(chain))[feeOptionKey];
 
-    return accumulative({ ...inputsAndOutputs, feeRate: feeRateWhole, chain });
-  };
+  return accumulative({ ...inputsAndOutputs, feeRate: feeRateWhole, chain });
 }
 
 function estimateMaxSendableAmount(chain: UTXOChain) {
@@ -237,8 +276,7 @@ function estimateTransactionFee(chain: UTXOChain) {
     feeRate?: number;
     fetchTxHex?: boolean;
   }) => {
-    const getInputsFee = getInputsOutputsFee(chain);
-    const inputFees = await getInputsFee(params);
+    const inputFees = await getInputsOutputsFee(params);
 
     return AssetValue.from({
       chain,
@@ -247,38 +285,95 @@ function estimateTransactionFee(chain: UTXOChain) {
   };
 }
 
-async function getCreateKeysForPath(chain: Chain) {
+type CreateKeysForPathReturnType = {
+  [Chain.BitcoinCash]: BchECPair;
+  [Chain.Bitcoin]: ECPairInterface;
+  [Chain.Dash]: ECPairInterface;
+  [Chain.Dogecoin]: ECPairInterface;
+  [Chain.Litecoin]: ECPairInterface;
+};
+
+export async function getCreateKeysForPath<T extends keyof CreateKeysForPathReturnType>(
+  chain: T,
+): Promise<
+  (params: {
+    wif?: string;
+    phrase?: string;
+    derivationPath?: string;
+  }) => CreateKeysForPathReturnType[T]
+> {
   const { ECPairFactory } = await import("ecpair");
   const secp256k1 = await import("@bitcoinerlab/secp256k1");
   const { HDKey } = await import("@scure/bip32");
   const { mnemonicToSeedSync } = await import("@scure/bip39");
   const getNetwork = await getUtxoNetwork();
+  // @ts-ignore
+  const { HDNode, ECPair } = await import("@psf/bitcoincashjs-lib");
 
-  return function createKeysForPath({
-    phrase,
-    wif,
-    derivationPath,
-  }: { phrase?: string; wif?: string; derivationPath: string }) {
-    if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
+  switch (chain) {
+    case Chain.BitcoinCash: {
+      return function createKeysForPath({
+        phrase,
+        derivationPath = `${DerivationPath.BCH}/0`,
+        wif,
+      }: { wif?: string; phrase?: string; derivationPath?: string }) {
+        const network = getNetwork(chain);
 
-    const factory = ECPairFactory(secp256k1);
-    const network = getNetwork(chain);
+        if (wif) {
+          return ECPair.fromWIF(wif, network) as BchECPair;
+        }
+        if (!phrase) throw new Error("No phrase provided");
 
-    if (wif) return factory.fromWIF(wif, network);
+        const masterHDNode = HDNode.fromSeedBuffer(
+          Buffer.from(mnemonicToSeedSync(phrase)),
+          network,
+        );
+        const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
 
-    const seed = mnemonicToSeedSync(phrase as string);
-    const master = HDKey.fromMasterSeed(seed, network).derive(derivationPath);
-    if (!master.privateKey) throw new Error("Could not get private key from phrase");
+        return keyPair as BchECPair;
+      } as (params: {
+        wif?: string;
+        phrase?: string;
+        derivationPath?: string;
+      }) => CreateKeysForPathReturnType[T];
+    }
+    case Chain.Bitcoin:
+    case Chain.Dogecoin:
+    case Chain.Litecoin:
+    case Chain.Dash: {
+      return function createKeysForPath({
+        phrase,
+        wif,
+        derivationPath,
+      }: { phrase?: string; wif?: string; derivationPath: string }) {
+        if (!(wif || phrase)) throw new Error("Either phrase or wif must be provided");
 
-    return factory.fromPrivateKey(Buffer.from(master.privateKey), { network });
-  };
+        const factory = ECPairFactory(secp256k1);
+        const network = getNetwork(chain);
+
+        if (wif) return factory.fromWIF(wif, network);
+
+        const seed = mnemonicToSeedSync(phrase as string);
+        const master = HDKey.fromMasterSeed(seed, network).derive(derivationPath);
+        if (!master.privateKey) throw new Error("Could not get private key from phrase");
+
+        return factory.fromPrivateKey(Buffer.from(master.privateKey), { network });
+      } as (params: {
+        wif?: string;
+        phrase?: string;
+        derivationPath?: string;
+      }) => CreateKeysForPathReturnType[T];
+    }
+    default:
+      throw new Error(`Chain ${chain} is not supported`);
+  }
 }
 
-async function addressFromKeysGetter(chain: UTXOChain) {
+export async function addressFromKeysGetter(chain: UTXOChain) {
   const { payments } = await import("bitcoinjs-lib");
   const getNetwork = await getUtxoNetwork();
 
-  return function getAddressFromKeys(keys: ECPairInterface) {
+  return function getAddressFromKeys(keys: ECPairInterface | BchECPair) {
     if (!keys) throw new Error("Keys must be provided");
 
     const method = nonSegwitChains.includes(chain) ? payments.p2pkh : payments.p2wpkh;
@@ -289,7 +384,7 @@ async function addressFromKeysGetter(chain: UTXOChain) {
   };
 }
 
-function transfer(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
+function transfer(signer?: ChainSigner<Psbt, Psbt>) {
   return async function transfer({
     memo,
     recipient,
@@ -298,15 +393,17 @@ function transfer(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
     assetValue,
   }: TransferParams) {
     const from = await signer?.getAddress();
+
+    const chain = assetValue.chain as UTXOChain;
+
     if (!(signer && from)) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
     const txFeeRate = feeRate || (await getFeeRates(chain))[feeOptionKey || FeeOption.Fast];
 
-    const { psbt } = await buildTx(chain)({
+    const { psbt } = await buildTx({
       recipient,
       feeRate: txFeeRate,
       sender: from,
-      fetchTxHex: nonSegwitChains.includes(chain),
       assetValue,
       memo,
     });
@@ -327,31 +424,31 @@ async function getFeeRates(chain: UTXOChain) {
   };
 }
 
-function getInputsAndTargetOutputs(chain: UTXOChain) {
-  return async function getInputsAndTargetOutputs({
-    assetValue,
-    recipient,
-    memo,
-    sender,
-    fetchTxHex = false,
-  }: {
-    assetValue: AssetValue;
-    recipient: string;
-    memo?: string;
-    sender: string;
-    fetchTxHex?: boolean;
-  }) {
-    const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex });
+async function getInputsAndTargetOutputs({
+  assetValue,
+  recipient,
+  memo,
+  sender,
+}: {
+  assetValue: AssetValue;
+  recipient: string;
+  memo?: string;
+  sender: string;
+}) {
+  const chain = assetValue.chain as UTXOChain;
 
-    //1. add output amount and recipient to targets
-    //2. add output memo to targets (optional)
+  const fetchTxHex = nonSegwitChains.includes(chain);
 
-    return {
-      inputs,
-      outputs: [
-        { address: recipient, value: Number(assetValue.bigIntValue) },
-        ...(memo ? [{ address: "", script: await compileMemo(memo), value: 0 }] : []),
-      ],
-    };
+  const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex });
+
+  //1. add output amount and recipient to targets
+  //2. add output memo to targets (optional)
+
+  return {
+    inputs,
+    outputs: [
+      { address: recipient, value: Number(assetValue.bigIntValue) },
+      ...(memo ? [{ address: "", script: await compileMemo(memo), value: 0 }] : []),
+    ],
   };
 }

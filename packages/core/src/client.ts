@@ -16,12 +16,11 @@ import {
   type SKConfigState,
   SwapKitError,
   type SwapParams,
+  type TransferParams,
   type createPlugin,
   type createWallet,
 } from "@swapkit/helpers";
-import type { TransferParams as CosmosTransferParams } from "@swapkit/toolboxes/cosmos";
 import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
-import type { UTXOTransferParams } from "@swapkit/toolboxes/utxo";
 
 import {
   getExplorerAddressUrl as getAddressUrl,
@@ -228,10 +227,7 @@ export function SwapKit<
     throw new SwapKitError("core_plugin_swap_not_found");
   }
 
-  function transfer({
-    assetValue,
-    ...params
-  }: UTXOTransferParams | EVMTransferParams | CosmosTransferParams) {
+  function transfer({ assetValue, ...params }: TransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
     if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
@@ -283,7 +279,7 @@ export function SwapKit<
     params,
   }: (
     | { type: "swap"; params: SwapParams<T, QuoteResponseRoute> & { assetValue: AssetValue } }
-    | { type: "transfer"; params: UTXOTransferParams | EVMTransferParams | CosmosTransferParams }
+    | { type: "transfer"; params: EVMTransferParams | TransferParams }
     | {
         type: "approve";
         params: {
@@ -310,7 +306,7 @@ export function SwapKit<
       case Chain.Polygon: {
         const wallet = getWallet(chain);
         if (type === "transfer") {
-          const txObject = await wallet.createTransferTx(params);
+          const txObject = await wallet.createTransferTx(params as EVMTransferParams);
           return wallet.estimateTransactionFee({ ...txObject, chain, feeOption: feeOptionKey });
         }
 

@@ -23,7 +23,6 @@ import {
   type JsonRpcSigner,
   type Provider,
   type Signer,
-  type Transaction,
   getAddress,
 } from "ethers";
 
@@ -52,7 +51,7 @@ export const MAX_APPROVAL = BigInt(
 export function BaseEVMToolbox<
   P extends Provider | BrowserProvider,
   S extends
-    | (ChainSigner<TransferParams, Transaction> & Signer)
+    | (ChainSigner<TransferParams, string> & Signer)
     | JsonRpcSigner
     | HDNodeWallet
     | undefined,

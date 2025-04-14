@@ -6,9 +6,10 @@ import {
   DerivationPath,
   type DerivationPathArray,
   SKConfig,
+  type TransferParams,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { DepositParam, TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 

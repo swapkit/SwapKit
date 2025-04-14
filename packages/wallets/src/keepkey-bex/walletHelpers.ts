@@ -1,17 +1,13 @@
 import {
   type AssetValue,
   Chain,
-  ChainToChainId,
-  type CosmosChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
-  SKConfig,
   SwapKitError,
   WalletOption,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
-import type { TransferParams } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
@@ -186,32 +182,6 @@ export async function walletTransfer(
   ];
 
   return transaction({ method, params, chain: assetValue.chain });
-}
-
-export function cosmosTransfer(chain: CosmosChain) {
-  const chainId = ChainToChainId[chain];
-  return async ({ from, recipient, assetValue }: TransferParams) => {
-    const { getMsgSendDenom, createSigningStargateClient } = await import(
-      "@swapkit/toolboxes/cosmos"
-    );
-    // @ts-expect-error assumed available connection
-    const offlineSigner = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(chainId);
-    const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls")[chain], offlineSigner);
-
-    const coins = [
-      {
-        denom: getMsgSendDenom(assetValue.symbol).toLowerCase(),
-        amount: assetValue.getBaseValue("string"),
-      },
-    ];
-
-    try {
-      const { transactionHash } = await cosmJS.sendTokens(from, recipient, coins, 2);
-      return transactionHash;
-    } catch (error) {
-      throw new SwapKitError("core_transaction_failed", { error });
-    }
-  };
 }
 
 export function getKEEPKEYMethods(provider: BrowserProvider) {

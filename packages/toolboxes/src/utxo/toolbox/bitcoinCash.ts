@@ -1,12 +1,11 @@
 import {
   Chain,
   type ChainSigner,
-  DerivationPath,
   FeeOption,
   type TransferParams,
   type UTXOChain,
 } from "@swapkit/helpers";
-
+import type { UtxoToolboxParams } from ".";
 import {
   accumulative,
   Network as bchNetwork,
@@ -18,7 +17,13 @@ import {
   toCashAddress,
   toLegacyAddress,
 } from "../helpers";
-import type { TargetOutput, TransactionType, UTXOBuildTxParams, UTXOType } from "../types";
+import type {
+  TargetOutput,
+  TransactionBuilderType,
+  TransactionType,
+  UTXOBuildTxParams,
+  UTXOType,
+} from "../types";
 import { createUTXOToolbox } from "./utxo";
 
 const chain = Chain.BitcoinCash as UTXOChain;
@@ -38,9 +43,9 @@ export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));
 }
 
-export async function createBCHToolbox(
-  signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>,
-) {
+export async function createBCHToolbox<T extends Chain.BitcoinCash>({
+  signer,
+}: UtxoToolboxParams[T]) {
   const { getBalance, getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox(
     Chain.BitcoinCash,
   );
@@ -54,7 +59,6 @@ export async function createBCHToolbox(
     broadcastTx,
     buildBCHTx,
     buildTx,
-    createKeysForPath,
     getAddressFromKeys,
     getBalance: handleGetBalance,
     getFeeRates,
@@ -216,46 +220,7 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
   return { psbt, utxos, inputs: inputs as UTXOType[] };
 }
 
-async function createKeysForPath({
-  phrase,
-  derivationPath = `${DerivationPath.BCH}/0`,
-  wif,
-}: { wif?: string; phrase?: string; derivationPath?: string }) {
-  const { ECPairFactory } = await import("ecpair");
-  const secp256k1 = await import("@bitcoinerlab/secp256k1");
-  const { mnemonicToSeedSync } = await import("@scure/bip39");
-  // @ts-ignore
-  const { HDNode } = await import("@psf/bitcoincashjs-lib");
-  const getNetwork = await getUtxoNetwork();
-
-  const network = getNetwork(chain);
-
-  if (wif) {
-    return ECPairFactory(secp256k1).fromWIF(wif, network);
-  }
-  if (!phrase) throw new Error("No phrase provided");
-
-  const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
-  const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
-
-  return keyPair;
-}
-
 function getAddressFromKeys(keys: { getAddress: (index?: number) => string }) {
   const address = keys.getAddress(0);
   return stripToCashAddress(address);
 }
-
-export type TransactionBuilderType = {
-  inputs: any[];
-  sign(
-    vin: number,
-    keyPair: { getAddress: (index?: number) => string },
-    redeemScript?: Buffer,
-    hashType?: number,
-    witnessValue?: number,
-    witnessScript?: Buffer,
-    signatureAlgorithm?: string,
-  ): void;
-  build(): TransactionType;
-};

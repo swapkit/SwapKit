@@ -2,6 +2,7 @@ import {
   Chain,
   ChainToChainId,
   SwapKitError,
+  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -60,14 +61,27 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       if (!solanaProvider) {
         throw new SwapKitError("wallet_ctrl_not_found");
       }
-      const toolbox = getSolanaToolbox(solanaProvider);
+      const toolbox = getSolanaToolbox({ signer: solanaProvider });
 
       return { ...toolbox };
     }
 
     case Chain.Maya:
     case Chain.THORChain: {
+      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
+        "@swapkit/toolboxes/cosmos"
+      );
+
+      const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
+      const toolbox = getCosmosToolbox(chain);
+
+      return {
+        ...toolbox,
+        deposit: (tx: TransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
+        transfer: (tx: TransferParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
+      };
     }
+
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");

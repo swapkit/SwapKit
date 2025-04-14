@@ -24,6 +24,10 @@ export async function loadPlugin<P extends PluginName>(pluginName: P) {
       const { EVMPlugin } = await import("./evm");
       return EVMPlugin;
     })
+    .with("solana", async () => {
+      const { SolanaPlugin } = await import("./solana");
+      return SolanaPlugin;
+    })
     .exhaustive();
 
   return plugin as unknown as SKPlugins[P];

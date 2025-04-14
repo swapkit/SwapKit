@@ -4,12 +4,13 @@ import {
   FeeOption,
   SKConfig,
   SwapKitError,
+  type TransferParams,
   WalletOption,
   createWallet,
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { UTXOTransferParams, UTXOType } from "@swapkit/toolboxes/utxo";
+import type { UTXOType } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 import { getWalletSupportedChains } from "../utils";
 
@@ -150,17 +151,16 @@ async function getTrezorWallet<T extends Chain>({
       };
 
       const transfer = async ({
-        from,
         recipient,
         feeOptionKey,
         feeRate: paramFeeRate,
         memo,
         ...rest
-      }: UTXOTransferParams) => {
-        if (!(from && recipient)) {
+      }: TransferParams) => {
+        if (!(address && recipient)) {
           throw new SwapKitError({
             errorKey: "wallet_missing_params",
-            info: { wallet: WalletOption.TREZOR, memo, from, recipient },
+            info: { wallet: WalletOption.TREZOR, memo, address, recipient },
           });
         }
 
@@ -174,8 +174,7 @@ async function getTrezorWallet<T extends Chain>({
           memo,
           recipient,
           feeRate,
-          sender: from,
-          fetchTxHex: chain === Chain.Dogecoin,
+          sender: address,
         });
 
         const txHex = await signTransaction(psbt, inputs, memo);

@@ -32,7 +32,8 @@ export async function getSolanaAddressValidator() {
   };
 }
 
-export function getSolanaToolbox(signer?: SolanaSigner) {
+export function getSolanaToolbox(params?: { signer?: SolanaSigner }) {
+  const { signer } = params || {};
   return {
     getConnection,
     createKeysForPath,
@@ -42,6 +43,7 @@ export function getSolanaToolbox(signer?: SolanaSigner) {
     transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator: getSolanaAddressValidator,
+    signTransaction: signTransaction(signer),
   };
 }
 
@@ -55,10 +57,12 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
     assetValue,
     recipient,
     fromPubkey,
+    isProgramDerivedAddress,
   }: {
     assetValue: AssetValue;
     recipient: string;
     fromPubkey: PublicKey;
+    isProgramDerivedAddress?: boolean;
   }) => {
     const connection = await getConnection();
 
@@ -81,6 +85,7 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
         from: fromPubkey,
         recipient,
         tokenAddress: assetValue.address,
+        isProgramDerivedAddress,
       });
     }
 
@@ -95,6 +100,7 @@ async function createSolanaTokenTransaction({
   connection,
   amount,
   decimals,
+  isProgramDerivedAddress,
 }: {
   tokenAddress: string;
   recipient: string;
@@ -102,6 +108,7 @@ async function createSolanaTokenTransaction({
   connection: Connection;
   amount: number;
   decimals: number;
+  isProgramDerivedAddress?: boolean;
 }) {
   const {
     getAssociatedTokenAddress,
@@ -116,7 +123,11 @@ async function createSolanaTokenTransaction({
   const fromSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, from);
 
   const recipientPublicKey = new PublicKey(recipient);
-  const recipientSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, recipientPublicKey);
+  const recipientSPLAddress = await getAssociatedTokenAddress(
+    tokenPublicKey,
+    recipientPublicKey,
+    isProgramDerivedAddress,
+  );
 
   let recipientAccountExists = false;
   try {
@@ -175,6 +186,7 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
       assetValue,
       recipient,
       fromPubkey,
+      isProgramDerivedAddress,
     });
 
     if (!transaction) {
@@ -232,7 +244,23 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
-async function createKeysForPath({
+function signTransaction(signer?: SolanaSigner) {
+  return async (transaction: Transaction | VersionedTransaction) => {
+    if (!signer) {
+      throw new SwapKitError("toolbox_solana_no_signer");
+    }
+
+    if ("connect" in signer) {
+      const signedTransaction = await signer.signTransaction(transaction);
+      return signedTransaction;
+    }
+
+    await transaction.sign([signer] as Signer & Signer[]);
+    return transaction;
+  };
+}
+
+export async function createKeysForPath({
   phrase,
   derivationPath = DerivationPath.SOL,
 }: { phrase: string; derivationPath?: string }) {

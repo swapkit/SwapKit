@@ -1,4 +1,4 @@
-import type { AssetValue, FeeOption, Witness } from "@swapkit/helpers";
+import type { AssetValue, Witness } from "@swapkit/helpers";
 
 import type { UTXOScriptType } from "./helpers";
 
@@ -32,5 +32,24 @@ export type UTXOBuildTxParams = {
   memo?: string;
   feeRate: number;
   sender: string;
-  fetchTxHex?: boolean;
+};
+
+export type BchECPair = {
+  getAddress: (index?: number) => string;
+  publicKey: Buffer;
+  toWIF: () => string;
+};
+
+export type TransactionBuilderType = {
+  inputs: any[];
+  sign(
+    vin: number,
+    keyPair: BchECPair,
+    redeemScript?: Buffer,
+    hashType?: number,
+    witnessValue?: number,
+    witnessScript?: Buffer,
+    signatureAlgorithm?: string,
+  ): void;
+  build(): TransactionType;
 };

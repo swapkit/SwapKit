@@ -1,3 +1,5 @@
+import type { StdFee } from "@cosmjs/amino";
+import type { Account } from "@cosmjs/stargate";
 import { base64, bech32 } from "@scure/base";
 import {
   AssetValue,
@@ -15,10 +17,6 @@ import {
   type TransferParams,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
-
-import { sign } from "crypto";
-import type { StdFee } from "@cosmjs/amino";
-import type { Account } from "@cosmjs/stargate";
 import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
@@ -141,7 +139,7 @@ export function createCosmosToolbox({
     feeRate,
     feeOptionKey = FeeOption.Fast,
   }: TransferParams) {
-    const from = await signer?.getAddress();
+    const from = (await signer?.getAccounts())?.[0]?.address;
 
     if (!(signer && from)) {
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");

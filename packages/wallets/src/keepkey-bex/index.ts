@@ -1,6 +1,7 @@
 import {
   AssetValue,
   Chain,
+  ChainIdToChain,
   SwapKitError,
   WalletOption,
   createWallet,
@@ -10,7 +11,6 @@ import type { Eip1193Provider } from "ethers";
 import { getWalletSupportedChains } from "../utils";
 import {
   type WalletTxParams,
-  cosmosTransfer,
   getKEEPKEYAddress,
   getKEEPKEYMethods,
   getKEEPKEYProvider,
@@ -80,9 +80,18 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
     case Chain.Cosmos:
     case Chain.Kujira: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getCosmosToolbox(chain);
 
-      return { ...toolbox, transfer: cosmosTransfer(chain) };
+      // @ts-expect-error assumed available connection
+      const signer = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(ChainIdToChain[chain]);
+      if (!signer) throw new Error("Could not load signer");
+      const toolbox = getCosmosToolbox(chain, { signer });
+
+      const accounts = await signer.getAccounts();
+      if (!accounts?.[0]?.address) throw new Error("No accounts found");
+
+      const [{ address }] = accounts;
+
+      return { ...toolbox, address };
     }
 
     case Chain.Dash:

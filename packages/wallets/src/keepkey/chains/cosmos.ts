@@ -7,7 +7,7 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { TransferParams } from "@swapkit/toolboxes/cosmos";
+import type { TransferParams } from "@swapkit/helpers";
 
 import { bip32ToAddressNList } from "../coins";
 
