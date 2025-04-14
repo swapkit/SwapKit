@@ -2,7 +2,7 @@ import { match } from "ts-pattern";
 import { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
 import { SKConfig } from "../modules/swapKitConfig";
-import { BaseDecimal, Chain, type EVMChain, EVMChains } from "../types/chains";
+import { BaseDecimal, Chain, type EVMChain, EVMChains, UTXOChains } from "../types/chains";
 import type { RadixCoreStateResourceDTO } from "../types/radix";
 import type { TokenNames } from "../types/tokens";
 
@@ -75,21 +75,23 @@ async function getRadixAssetDecimal(symbol: string) {
   }
 }
 
-function getEVMAssetDecimal(symbol: string) {
+async function getEVMAssetDecimal({ chain, symbol }: { chain: EVMChain; symbol: string }) {
   if (EVMChains.includes(symbol as EVMChain)) return BaseDecimal[symbol as EVMChain];
 
   const splitSymbol = symbol.split("-");
   const address =
     splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1]?.toLowerCase();
 
-  return address?.startsWith("0x")
-    ? getContractDecimals({ chain: Chain.Ethereum, to: address })
-    : BaseDecimal[symbol as EVMChain];
+  const decimal = await (address?.startsWith("0x")
+    ? getContractDecimals({ chain, to: address })
+    : BaseDecimal[chain as EVMChain]);
+
+  return decimal;
 }
 
 export function getDecimal({ chain, symbol }: { chain: Chain; symbol: string }) {
   return match(chain)
-    .with(...EVMChains, () => getEVMAssetDecimal(symbol))
+    .with(...EVMChains, (chain) => getEVMAssetDecimal({ chain, symbol }))
     .with(Chain.Radix, () => getRadixAssetDecimal(symbol))
     .otherwise(() => BaseDecimal[chain]);
 }
@@ -121,6 +123,10 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     .with(Chain.Cosmos, () => ({ identifier: `${assetString}.ATOM`, decimal }))
     .with(Chain.Maya, () => ({ identifier: `${assetString}.CACAO`, decimal: 10 }))
     .with(Chain.BinanceSmartChain, () => ({ identifier: `${assetString}.BNB`, decimal }))
+    .with(...UTXOChains, Chain.Chainflip, Chain.Kujira, () => ({
+      identifier: `${assetString}.${assetString}`,
+      decimal,
+    }))
     .with(Chain.Radix, "XRD.XRD", () => ({
       identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
       decimal,
@@ -139,7 +145,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       decimal: BaseDecimal.ETH,
     }))
     .with("MAYA.MAYA", () => ({ identifier: assetString, decimal: 4 }))
-    .otherwise(() => ({ identifier: `${assetString}.${assetString}`, decimal }));
+    .otherwise(() => ({ identifier: assetString, decimal }));
 
   return commonAssetInfo;
 };

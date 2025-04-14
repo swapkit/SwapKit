@@ -79,13 +79,15 @@ describe("AssetValue", () => {
 
       expect(atomDerived.toString()).toBe("THOR.ATOM");
 
+      const value = 10;
       const mayaCacao = AssetValue.from({
         asset: "MAYA.CACAO",
-        value: 10,
+        value,
       });
 
       expect(mayaCacao.toString()).toBe("MAYA.CACAO");
-      expect(mayaCacao.getBaseValue("string")).toBe("1000000000");
+      const expectedValue = value * 10_000_000_000;
+      expect(mayaCacao.getBaseValue("string")).toBe(expectedValue.toString());
 
       const ethMayaSynth = AssetValue.from({
         asset: "MAYA.ETH/ETH",
@@ -557,8 +559,8 @@ describe("AssetValue", () => {
           decimal: 8,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "BTC.b-0x152b9d0fdc40c096757f570a51e494bd4b943e50",
-          ticker: "BTC.b",
+          symbol: "BTC.B-0x152b9d0fdc40c096757f570a51e494bd4b943e50",
+          ticker: "BTC.B",
         }),
       );
     });

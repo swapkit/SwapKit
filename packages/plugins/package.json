@@ -1,8 +1,8 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@polkadot/keyring": "13.4.3",
-    "@polkadot/util": "13.4.3",
+    "@polkadot/keyring": "13.4.4",
+    "@polkadot/util": "13.4.4",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "ts-pattern": "5.7.0"
