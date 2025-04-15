@@ -70,7 +70,7 @@ export function BaseEVMToolbox<
     approve: getApprove({ provider, signer, isEIP1559Compatible }),
     approvedAmount: getApprovedAmount({ provider }),
     broadcastTransaction: provider.broadcastTransaction,
-    createApprovalTx: getCreateApprovalTx(provider),
+    createApprovalTx: getCreateApprovalTx({ provider, signer }),
     createContract: getCreateContract({ provider }),
     createContractTxObject: getCreateContractTxObject(provider),
     createTransferTx: getCreateTransferTx({ provider, signer }),
@@ -339,10 +339,11 @@ function getApprove({ signer, isEIP1559Compatible = true, provider }: ToolboxWra
     feeOptionKey = FeeOption.Fast,
     amount,
     gasLimitFallback,
-    from,
+    from: fromParam,
     nonce,
   }: ApproveParams) {
     const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+    const from = (await signer?.getAddress()) || fromParam;
 
     const functionCallParams = {
       contractAddress: assetAddress,
@@ -361,7 +362,7 @@ function getApprove({ signer, isEIP1559Compatible = true, provider }: ToolboxWra
       return sendTx(txObject);
     }
 
-    const call = getCall({ provider, isEIP1559Compatible });
+    const call = getCall({ provider, isEIP1559Compatible, signer });
 
     return call<string>({
       ...functionCallParams,
@@ -627,13 +628,15 @@ function getCreateTransferTx({
   };
 }
 
-function getCreateApprovalTx(provider: Provider) {
+function getCreateApprovalTx({ provider, signer }: { provider: Provider; signer?: Signer }) {
   return async function createApprovalTx({
     assetAddress,
     spenderAddress,
     amount,
-    from,
+    from: fromParam,
   }: ApproveParams) {
+    const from = (await signer?.getAddress()) || fromParam;
+
     const createTx = getCreateContractTxObject(provider);
     const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
 
