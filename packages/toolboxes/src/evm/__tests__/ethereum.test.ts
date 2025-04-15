@@ -30,7 +30,7 @@ beforeEach(async () => {
   const signer = await hre.ethers.getImpersonatedSigner(testAddress);
   SKConfig.set({
     apiKeys: {
-      swapKit: "3974e4d9-f662-4e6e-a5b6-d44881902dcb",
+      swapKit: process.env.SWAPKIT_API_KEY,
     },
   });
   context.provider = provider;
