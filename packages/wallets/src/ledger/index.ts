@@ -142,7 +142,7 @@ async function getWalletMethods({
       const { createSigningStargateClient, getMsgSendDenom, getCosmosToolbox } = await import(
         "@swapkit/toolboxes/cosmos"
       );
-      const toolbox = getCosmosToolbox(Chain.Cosmos);
+      const toolbox = await getCosmosToolbox(Chain.Cosmos);
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
@@ -192,7 +192,7 @@ async function getWalletMethods({
         fromBase64,
         parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getCosmosToolbox(chain);
+      const toolbox = await getCosmosToolbox(chain);
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 

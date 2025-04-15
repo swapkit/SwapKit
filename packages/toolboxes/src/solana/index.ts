@@ -21,7 +21,7 @@ interface ConnectOpts {
 
 export * from "./toolbox";
 
-export type SolanaWallet = ReturnType<typeof getSolanaToolbox>;
+export type SolanaWallet = Awaited<ReturnType<typeof getSolanaToolbox>>;
 
 export interface SolanaProvider {
   connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;

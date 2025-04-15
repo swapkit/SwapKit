@@ -1,4 +1,9 @@
-import { Chain, type ChainSigner, type UTXOChain } from "@swapkit/helpers";
+import {
+  Chain,
+  type ChainSigner,
+  type DerivationPathArray,
+  type UTXOChain,
+} from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 
 import type { TransactionBuilderType, TransactionType, UTXOType } from "../types";
@@ -26,19 +31,21 @@ export type UtxoToolboxParams = {
   [Chain.BitcoinCash]: {
     signer: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>;
   };
-} & {
   [Chain.Bitcoin]: { signer: ChainSigner<Psbt, Psbt> };
-} & {
   [Chain.Dogecoin]: { signer: ChainSigner<Psbt, Psbt> };
-} & {
   [Chain.Litecoin]: { signer: ChainSigner<Psbt, Psbt> };
-} & {
   [Chain.Dash]: { signer: ChainSigner<Psbt, Psbt> };
 };
 
 export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
   chain: T,
-  params?: UtxoToolboxParams[T],
+  params?:
+    | UtxoToolboxParams[T]
+    | {
+        phrase?: string;
+        derivationPath?: DerivationPathArray;
+        index?: number;
+      },
 ): Promise<UTXOToolboxes[T]> {
   switch (chain) {
     case Chain.BitcoinCash: {
@@ -50,10 +57,10 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
     case Chain.Dogecoin:
     case Chain.Litecoin:
     case Chain.Dash: {
-      const toolbox = await createUTXOToolbox(
+      const toolbox = await createUTXOToolbox({
         chain,
-        params as UtxoToolboxParams[Exclude<T, Chain.BitcoinCash>],
-      );
+        ...(params as UtxoToolboxParams[Exclude<T, Chain.BitcoinCash>]),
+      });
       return toolbox as UTXOToolboxes[Exclude<T, Chain.BitcoinCash>];
     }
 

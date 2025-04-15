@@ -35,7 +35,7 @@ export const thorchainWalletMethods = async ({
   const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } =
     await import("@swapkit/toolboxes/cosmos");
 
-  const toolbox = getCosmosToolbox(Chain.THORChain);
+  const toolbox = await getCosmosToolbox(Chain.THORChain);
   const derivationPathString = derivationPath
     ? derivationPathToString(derivationPath)
     : `${DerivationPath.THOR}/0`;

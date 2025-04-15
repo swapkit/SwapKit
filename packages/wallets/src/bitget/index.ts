@@ -21,7 +21,9 @@ export const bitgetWallet = createWallet({
         filteredChains.map(async (chain) => {
           const walletMethods = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, chain, walletType });
+          const address = (await walletMethods.getAddress()) || "";
+
+          addChain({ ...walletMethods, address, chain, walletType });
         }),
       );
 

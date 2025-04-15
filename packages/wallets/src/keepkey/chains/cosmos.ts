@@ -31,7 +31,7 @@ export const cosmosWalletMethods = async ({
       address_n: bip32ToAddressNList(derivationPathString),
     })) as { address: string };
 
-    const toolbox = getCosmosToolbox(Chain.Cosmos);
+    const toolbox = await getCosmosToolbox(Chain.Cosmos);
 
     if (DEFAULT_COSMOS_FEE_MAINNET.amount[0]) {
       DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(

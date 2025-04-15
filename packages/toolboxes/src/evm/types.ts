@@ -1,4 +1,10 @@
-import type { AssetValue, ChainSigner, FeeOption, WalletTxParams } from "@swapkit/helpers";
+import type {
+  AssetValue,
+  ChainSigner,
+  DerivationPathArray,
+  FeeOption,
+  WalletTxParams,
+} from "@swapkit/helpers";
 import { Chain } from "@swapkit/helpers";
 import type {
   BigNumberish,
@@ -108,16 +114,24 @@ export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & {
 export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
 
 export type EVMToolboxParams = {
-  provider: BrowserProvider | JsonRpcProvider;
-  signer?: (ChainSigner<TransferParams, string> & Signer) | JsonRpcSigner;
-};
+  provider?: BrowserProvider | JsonRpcProvider;
+} & (
+  | {
+      signer?: (ChainSigner<TransferParams, string> & Signer) | JsonRpcSigner;
+    }
+  | {
+      phrase?: string;
+      derivationPath?: DerivationPathArray;
+      index?: number;
+    }
+);
 
 export type EVMToolboxes = {
-  [Chain.Arbitrum]: ReturnType<typeof ARBToolbox>;
-  [Chain.Avalanche]: ReturnType<typeof AVAXToolbox>;
-  [Chain.Base]: ReturnType<typeof BASEToolbox>;
-  [Chain.BinanceSmartChain]: ReturnType<typeof BSCToolbox>;
-  [Chain.Ethereum]: ReturnType<typeof ETHToolbox>;
-  [Chain.Optimism]: ReturnType<typeof OPToolbox>;
-  [Chain.Polygon]: ReturnType<typeof MATICToolbox>;
+  [Chain.Arbitrum]: Awaited<ReturnType<typeof ARBToolbox>>;
+  [Chain.Avalanche]: Awaited<ReturnType<typeof AVAXToolbox>>;
+  [Chain.Base]: Awaited<ReturnType<typeof BASEToolbox>>;
+  [Chain.BinanceSmartChain]: Awaited<ReturnType<typeof BSCToolbox>>;
+  [Chain.Ethereum]: Awaited<ReturnType<typeof ETHToolbox>>;
+  [Chain.Optimism]: Awaited<ReturnType<typeof OPToolbox>>;
+  [Chain.Polygon]: Awaited<ReturnType<typeof MATICToolbox>>;
 };

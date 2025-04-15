@@ -3,10 +3,14 @@ import {
   Chain,
   type ChainSigner,
   DerivationPath,
+  type DerivationPathArray,
   FeeOption,
+  NetworkDerivationPath,
   SwapKitNumber,
   type TransferParams,
   type UTXOChain,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
@@ -150,11 +154,61 @@ export async function getUTXOAddressValidator() {
   };
 }
 
-export async function createUTXOToolbox<T extends UTXOChain>(
-  chain: T,
-  params?: UtxoToolboxParams[T],
-) {
-  const { signer } = params || {};
+async function createSignerWithKeys({
+  chain,
+  phrase,
+  derivationPath,
+}: { chain: UTXOChain; phrase: string; derivationPath: string }) {
+  const keyPair = (await getCreateKeysForPath(chain as Chain.Bitcoin))({ phrase, derivationPath });
+
+  async function signTransaction(psbt: Psbt) {
+    await psbt.signAllInputs(keyPair);
+    return psbt;
+  }
+
+  async function getAddress() {
+    const addressGetter = await addressFromKeysGetter(chain);
+    return addressGetter(keyPair);
+  }
+
+  return {
+    getAddress,
+    signTransaction,
+  };
+}
+
+export async function createUTXOToolbox<T extends UTXOChain>({
+  chain,
+  ...toolboxParams
+}: (
+  | UtxoToolboxParams[T]
+  | {
+      phrase?: string;
+      derivationPath?: DerivationPathArray;
+      index?: number;
+    }
+) & { chain: T }) {
+  const phrase = "phrase" in toolboxParams ? toolboxParams.phrase : undefined;
+
+  const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+
+  const derivationPath = derivationPathToString(
+    "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
+  );
+
+  const signer = phrase
+    ? await createSignerWithKeys({ chain, phrase, derivationPath })
+    : "signer" in toolboxParams
+      ? toolboxParams.signer
+      : undefined;
+
+  function getAddress() {
+    return Promise.resolve(signer?.getAddress());
+  }
+
+  //   const { signer } = params || {};
   const getAddressFromKeys = await addressFromKeysGetter(chain);
   const validateAddress = await getUTXOAddressValidator();
   const createKeysForPath = await getCreateKeysForPath(chain);
@@ -163,6 +217,7 @@ export async function createUTXOToolbox<T extends UTXOChain>(
     accumulative,
     calculateTxSize,
     getAddressFromKeys,
+    getAddress,
     validateAddress: (address: string) => validateAddress({ address, chain }),
     broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
     buildTx,

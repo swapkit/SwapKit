@@ -60,9 +60,9 @@ export const keepkeyWallet = createWallet({
             derivationPath: derivationPathMap?.[chain] || NetworkDerivationPath[chain],
             sdk: keepKeySdk,
           });
-          walletMethods.address;
+          const address = (await walletMethods.getAddress()) || "";
 
-          addChain({ ...walletMethods, chain, walletType: WalletOption.KEEPKEY });
+          addChain({ ...walletMethods, address, chain, walletType: WalletOption.KEEPKEY });
         }),
       );
       return true;
@@ -87,10 +87,9 @@ async function getWalletMethods({
     case Chain.Ethereum: {
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
-      const address = await signer.getAddress();
       const toolbox = await getEvmToolbox(chain, { provider, signer });
 
-      return { address, ...toolbox };
+      return toolbox;
     }
     case Chain.Cosmos: {
       return cosmosWalletMethods({ sdk, derivationPath });

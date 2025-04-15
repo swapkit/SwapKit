@@ -7,10 +7,11 @@ import {
   SKConfig,
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, TransactionRequest } from "ethers";
-import { Contract } from "ethers";
+import { Contract, HDNodeWallet } from "ethers";
 
 import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
+import { getProvider } from "../helpers";
 import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
@@ -132,7 +133,19 @@ function estimateGasPrices<P extends JsonRpcProvider | BrowserProvider>(provider
   };
 }
 
-export function OPToolbox({ provider, signer }: EVMToolboxParams) {
+export async function OPToolbox({
+  provider: providerParam,
+  ...toolboxSignerParams
+}: EVMToolboxParams) {
+  const chain = Chain.Optimism;
+  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const provider = providerParam || (await getProvider(chain, rpcUrl));
+  const signer =
+    "phrase" in toolboxSignerParams && toolboxSignerParams.phrase
+      ? HDNodeWallet.fromPhrase(toolboxSignerParams.phrase).connect(provider)
+      : "signer" in toolboxSignerParams
+        ? toolboxSignerParams.signer
+        : undefined;
   const evmToolbox = BaseEVMToolbox({ provider, signer });
   const getL1GasPrice = getL1GasPriceFetcher(provider);
 

@@ -13,7 +13,7 @@ export default function Multisig({
   inputAsset?: AssetValue;
   phrase: string;
 }) {
-  const toolbox = useMemo(() => getCosmosToolbox(Chain.THORChain), []);
+  const toolbox = useMemo(async () => await getCosmosToolbox(Chain.THORChain), []);
   const [pubkeys, setPubkeys] = useState({ 0: "", 1: "" });
   const [threshold, setThreshold] = useState(2);
   const [recipient, setRecipient] = useState("");

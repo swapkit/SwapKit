@@ -1,14 +1,20 @@
-import { Chain, type EVMChain, FeeOption } from "@swapkit/helpers";
+import { Chain, type EVMChain, FeeOption, SKConfig } from "@swapkit/helpers";
+import { HDNodeWallet } from "ethers";
 import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
-import { getEstimateTransactionFee, getIsEIP1559Compatible, getNetworkParams } from "../helpers";
+import {
+  getEstimateTransactionFee,
+  getIsEIP1559Compatible,
+  getNetworkParams,
+  getProvider,
+} from "../helpers";
 import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
-export function ETHToolbox({ provider, signer }: EVMToolboxParams) {
-  const evmToolbox = createEvmToolbox(Chain.Ethereum)({
+export async function ETHToolbox({ provider, ...signer }: EVMToolboxParams) {
+  const evmToolbox = await createEvmToolbox(Chain.Ethereum)({
     provider,
-    signer,
+    ...signer,
   });
   async function multicall(
     callTuples: { address: string; data: string }[],
@@ -29,10 +35,14 @@ export function ETHToolbox({ provider, signer }: EVMToolboxParams) {
   return { ...evmToolbox, multicall };
 }
 
-export function ARBToolbox({ provider, signer }: EVMToolboxParams) {
-  const { estimateGasPrices: _, ...evmToolbox } = createEvmToolbox(Chain.Arbitrum)({
+export async function ARBToolbox({ provider: providerParam, ...signer }: EVMToolboxParams) {
+  const chain = Chain.Arbitrum;
+  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const provider = providerParam || (await getProvider(chain, rpcUrl));
+
+  const { estimateGasPrices: _, ...evmToolbox } = await createEvmToolbox(Chain.Arbitrum)({
     provider,
-    signer,
+    ...signer,
   });
 
   async function estimateGasPrices() {
@@ -62,8 +72,22 @@ export const BSCToolbox = createEvmToolbox(Chain.BinanceSmartChain);
 export const MATICToolbox = createEvmToolbox(Chain.Polygon);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
-  return function createEvmToolbox({ provider, signer }: EVMToolboxParams) {
+  return async function createEvmToolbox({
+    provider: providerParam,
+    ...toolboxSignerParams
+  }: EVMToolboxParams) {
+    const rpcUrl = SKConfig.get("rpcUrls")[chain];
+
+    const provider = providerParam || (await getProvider(chain, rpcUrl));
+
     const isEIP1559Compatible = getIsEIP1559Compatible(chain);
+    const signer =
+      "phrase" in toolboxSignerParams && toolboxSignerParams.phrase
+        ? HDNodeWallet.fromPhrase(toolboxSignerParams.phrase).connect(provider)
+        : "signer" in toolboxSignerParams
+          ? toolboxSignerParams.signer
+          : undefined;
+
     const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible });
 
     return {

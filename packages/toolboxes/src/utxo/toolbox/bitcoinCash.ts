@@ -1,9 +1,12 @@
 import {
   Chain,
   type ChainSigner,
+  type DerivationPathArray,
   FeeOption,
+  NetworkDerivationPath,
   type TransferParams,
-  type UTXOChain,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 import type { UtxoToolboxParams } from ".";
 import {
@@ -18,15 +21,16 @@ import {
   toLegacyAddress,
 } from "../helpers";
 import type {
+  BchECPair,
   TargetOutput,
   TransactionBuilderType,
   TransactionType,
   UTXOBuildTxParams,
   UTXOType,
 } from "../types";
-import { createUTXOToolbox } from "./utxo";
+import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
 
-const chain = Chain.BitcoinCash as UTXOChain;
+const chain = Chain.BitcoinCash;
 
 export function stripPrefix(address: string) {
   return address.replace(/(bchtest:|bitcoincash:)/, "");
@@ -43,12 +47,61 @@ export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));
 }
 
-export async function createBCHToolbox<T extends Chain.BitcoinCash>({
-  signer,
-}: UtxoToolboxParams[T]) {
-  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox(
-    Chain.BitcoinCash,
+async function createSignerWithKeys(keys: BchECPair) {
+  async function signTransaction({
+    builder,
+    utxos,
+  }: { builder: TransactionBuilderType; utxos: UTXOType[] }) {
+    utxos.forEach((utxo, index) => {
+      builder.sign(index, keys, undefined, 0x41, utxo.witnessUtxo?.value);
+    });
+
+    return builder.build();
+  }
+
+  const getAddress = () => {
+    const address = keys.getAddress(0);
+    return Promise.resolve(stripToCashAddress(address));
+  };
+
+  return {
+    getAddress,
+    signTransaction,
+  };
+}
+
+export async function createBCHToolbox<T extends Chain.BitcoinCash>(
+  toolboxParams:
+    | UtxoToolboxParams[T]
+    | {
+        phrase?: string;
+        derivationPath?: DerivationPathArray;
+        index?: number;
+      },
+) {
+  const phrase = "phrase" in toolboxParams ? toolboxParams.phrase : undefined;
+
+  const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+
+  const derivationPath = derivationPathToString(
+    "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
+
+  const keys = (await getCreateKeysForPath(chain))({ phrase, derivationPath });
+
+  const signer = keys
+    ? await createSignerWithKeys(keys)
+    : "signer" in toolboxParams
+      ? toolboxParams.signer
+      : undefined;
+
+  function getAddress() {
+    return Promise.resolve(signer?.getAddress());
+  }
+
+  const { getBalance, getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox({ chain });
 
   function handleGetBalance(address: string, _scamFilter = true) {
     return getBalance(stripPrefix(toCashAddress(address)));
@@ -56,6 +109,7 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>({
 
   return {
     ...toolbox,
+    getAddress,
     broadcastTx,
     buildBCHTx,
     buildTx,

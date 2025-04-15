@@ -61,6 +61,9 @@ export function BaseEVMToolbox<
   isEIP1559Compatible = true,
 }: { signer: S; provider: P; isEIP1559Compatible?: boolean }) {
   return {
+    getAddress: () => {
+      return signer ? signer.getAddress() : undefined;
+    },
     call: getCall({ provider, signer, isEIP1559Compatible }),
     estimateCall: getEstimateCall({ provider, signer }),
     EIP1193SendTransaction: getEIP1193SendTransaction(provider),

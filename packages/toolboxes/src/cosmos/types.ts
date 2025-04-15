@@ -1,6 +1,6 @@
 import type { OfflineAminoSigner } from "@cosmjs/amino";
 import type { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing";
-import type { Chain, ChainId, CosmosChain, DerivationPath } from "@swapkit/helpers";
+import type { Chain, ChainId, CosmosChain, DerivationPathArray } from "@swapkit/helpers";
 import type { buildAminoMsg } from "./thorchainUtils";
 import type { createCosmosToolbox } from "./toolbox/cosmos";
 import type { createThorchainToolbox } from "./toolbox/thorchain";
@@ -31,18 +31,20 @@ export type CosmosSigner = DirectSecp256k1HdWallet | OfflineDirectSigner | Offli
 
 export type CosmosToolboxParams<T = CosmosChain> = {
   chain: T;
-} & { signer?: CosmosSigner } & (
-    | { phrase?: string }
-    | ({ derivationPath: DerivationPath } & { index?: number })
-  );
+} & (
+  | { signer?: CosmosSigner }
+  | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }
+);
 
 export type BaseCosmosToolboxType = ReturnType<typeof createCosmosToolbox>;
-export type BaseCosmosWallet = ReturnType<typeof createCosmosToolbox>;
+export type BaseCosmosWallet = Awaited<ReturnType<typeof createCosmosToolbox>>;
 export type CosmosWallets = {
   [chain in Chain.Cosmos | Chain.Kujira]: BaseCosmosWallet;
 };
 
-export type ThorchainWallet = Omit<ReturnType<typeof createThorchainToolbox>, "signMessage">;
+export type ThorchainWallet = Awaited<
+  Omit<ReturnType<typeof createThorchainToolbox>, "signMessage">
+>;
 export type ThorchainWallets = {
   [chain in Chain.THORChain | Chain.Maya]: ThorchainWallet;
 };

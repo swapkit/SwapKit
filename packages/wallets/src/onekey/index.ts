@@ -198,7 +198,9 @@ export const onekeyWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const { address, ...walletMethods } = await getWalletMethodsForExtension(chain);
+          const walletMethods = await getWalletMethodsForExtension(chain);
+
+          const address = (await walletMethods.getAddress()) || "F";
 
           addChain({ ...walletMethods, chain, address, walletType });
         }),

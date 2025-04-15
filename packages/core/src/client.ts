@@ -197,16 +197,20 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
+  async function getWalletWithBalance<T extends Chain>(
+    chain: T,
+    scamFilter = true,
+  ): Promise<ReturnType<typeof getWallet> & { balance: AssetValue[] }> {
     if (chain === Chain.Fiat || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
     const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat>);
     const defaultBalance = [AssetValue.from({ chain })];
+    wallet.balance = defaultBalance;
 
     if ("getBalance" in wallet) {
       const balance = await wallet.getBalance(wallet.address, scamFilter);
-      wallet.balance = balance?.length ? balance : defaultBalance;
+      wallet.balance = balance;
     }
 
     return wallet;
@@ -262,7 +266,7 @@ export function SwapKit<
     switch (chain) {
       case Chain.THORChain: {
         const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-        const toolbox = getCosmosToolbox(chain);
+        const toolbox = await getCosmosToolbox(chain);
 
         return toolbox.verifySignature({ signature, message, address });
       }

@@ -10,6 +10,7 @@ import {
 import {
   AssetValue,
   Chain,
+  type DerivationPathArray,
   SKConfig,
   type SubstrateChain,
   SwapKitError,
@@ -19,12 +20,19 @@ import {
 import { getBalance } from "../utils";
 import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "./types";
 
-export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams = {}) => {
-  return createSubstrateToolbox({ chain: Chain.Polkadot, generic, signer });
+export const PolkadotToolbox = ({ generic = false, ...signerParams }: ToolboxParams = {}) => {
+  return createSubstrateToolbox({ chain: Chain.Polkadot, generic, ...signerParams });
 };
 
-export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams = {}) => {
-  const toolbox = await createSubstrateToolbox({ chain: Chain.Chainflip, generic, signer });
+export const ChainflipToolbox = async ({
+  generic = false,
+  ...signerParams
+}: ToolboxParams = {}) => {
+  const toolbox = await createSubstrateToolbox({
+    chain: Chain.Chainflip,
+    generic,
+    ...signerParams,
+  });
 
   return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
 };
@@ -276,7 +284,7 @@ export const substrateValidateAddress = ({
 export async function createSubstrateToolbox({
   generic,
   chain,
-  signer,
+  ...signerParams
 }: ToolboxParams & { chain: SubstrateChain }) {
   const { ApiPromise, WsProvider } = await import("@polkadot/api");
 
@@ -285,10 +293,25 @@ export async function createSubstrateToolbox({
   const gasAsset = AssetValue.from({ chain });
   const network = generic ? Network.GENERIC : Network[chain];
 
+  const signer =
+    "phrase" in signerParams && signerParams.phrase
+      ? await createKeyring(signerParams.phrase, Network[chain].prefix)
+      : "signer" in signerParams
+        ? signerParams.signer
+        : undefined;
+
   return BaseSubstrateToolbox({ api, signer, gasAsset, network });
 }
 
 export type ToolboxParams = {
   generic?: boolean;
-  signer?: KeyringPair | Signer;
-};
+} & (
+  | {
+      signer?: KeyringPair | Signer;
+    }
+  | {
+      phrase?: string;
+      derivationPath?: DerivationPathArray;
+      index?: number;
+    }
+);

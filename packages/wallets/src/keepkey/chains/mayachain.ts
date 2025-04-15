@@ -29,7 +29,7 @@ export const mayachainWalletMethods = async ({
 }) => {
   const { createStargateClient, getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
-  const toolbox = getCosmosToolbox(Chain.Maya);
+  const toolbox = await getCosmosToolbox(Chain.Maya);
   const derivationPathString = derivationPath
     ? derivationPathToString(derivationPath)
     : `${DerivationPath.MAYA}/0`;

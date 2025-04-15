@@ -9,7 +9,7 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { DepositParam, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
@@ -73,32 +73,11 @@ export const walletconnectWallet = createWallet({
           const address = getAddressByChain(chain, accounts);
           const toolbox = await getToolbox({ session, address, chain, walletconnect });
 
-          async function getAccount(accountAddress: string) {
-            const cosmosToolbox = toolbox as ReturnType<typeof getCosmosToolbox>;
-            const account = await cosmosToolbox.getAccount(accountAddress);
-
-            if (chain !== Chain.THORChain) {
-              return account;
-            }
-
-            const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
-              chainId: THORCHAIN_MAINNET_ID,
-              topic: session.topic,
-              request: {
-                method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
-                params: {},
-              },
-            })) as [{ address: string; algo: string; pubkey: string }];
-
-            return { ...account, address, pubkey: { type: algo, value: pubkey } };
-          }
-
           addChain({
             ...toolbox,
             address,
             chain,
             disconnect: walletconnect.disconnect,
-            getAccount,
             walletType: WalletOption.WALLETCONNECT,
           });
         }),
@@ -153,7 +132,29 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         getDefaultChainFee,
         parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getCosmosToolbox(Chain.THORChain);
+      const toolbox = await getCosmosToolbox(Chain.THORChain);
+
+      async function getAccount(accountAddress: string) {
+        const cosmosToolbox = toolbox;
+        const account = await (
+          cosmosToolbox as Awaited<ReturnType<typeof createThorchainToolbox>>
+        ).getAccount(accountAddress);
+
+        if (chain !== Chain.THORChain) {
+          return account;
+        }
+
+        const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
+          chainId: THORCHAIN_MAINNET_ID,
+          topic: session.topic,
+          request: {
+            method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
+            params: {},
+          },
+        })) as [{ address: string; algo: string; pubkey: string }];
+
+        return { ...account, address, pubkey: { type: algo, value: pubkey } };
+      }
 
       const fee = getDefaultChainFee(chain);
 
@@ -240,6 +241,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         ...toolbox,
         transfer: (params: TransferParams) => thorchainTransfer(params),
         deposit: (params: DepositParam) => thorchainTransfer(params),
+        getAccount,
       };
     }
     default:

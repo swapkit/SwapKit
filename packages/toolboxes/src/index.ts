@@ -114,7 +114,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
     case Chain.Maya:
     case Chain.THORChain: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const cosmosToolbox = getCosmosToolbox(
+      const cosmosToolbox = await getCosmosToolbox(
         chain,
         params as Parameters<typeof getCosmosToolbox>[1],
       );
@@ -140,7 +140,9 @@ export async function getToolbox<T extends keyof Toolboxes>(
 
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
-      const solanaToolbox = getSolanaToolbox(params as Parameters<typeof getSolanaToolbox>[0]);
+      const solanaToolbox = await getSolanaToolbox(
+        params as Parameters<typeof getSolanaToolbox>[0],
+      );
       return solanaToolbox as Toolboxes[T];
     }
 

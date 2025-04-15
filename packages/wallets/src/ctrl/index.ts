@@ -73,7 +73,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       );
 
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
-      const toolbox = getCosmosToolbox(chain);
+      const toolbox = await getCosmosToolbox(chain);
 
       return {
         ...toolbox,

@@ -1,6 +1,5 @@
 import type {
   Connection,
-  Keypair,
   PublicKey,
   Signer,
   Transaction,
@@ -10,9 +9,13 @@ import {
   type AssetValue,
   Chain,
   DerivationPath,
+  type DerivationPathArray,
+  NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   type TransferParams,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from ".";
 import { getBalance } from "../utils";
@@ -32,12 +35,35 @@ export async function getSolanaAddressValidator() {
   };
 }
 
-export function getSolanaToolbox(params?: { signer?: SolanaSigner }) {
-  const { signer } = params || {};
+export async function getSolanaToolbox(
+  toolboxParams?:
+    | { signer?: SolanaSigner }
+    | { phrase?: string; index?: number; derivationPath?: DerivationPathArray },
+) {
+  const index = toolboxParams && "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+  const derivationPath = derivationPathToString(
+    toolboxParams && "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[Chain.Solana], { index }),
+  );
+
+  const signer = toolboxParams
+    ? "phrase" in toolboxParams && toolboxParams.phrase
+      ? await createKeysForPath({ phrase: toolboxParams.phrase, derivationPath })
+      : "signer" in toolboxParams
+        ? toolboxParams.signer
+        : undefined
+    : undefined;
+
+  function getAddress() {
+    return signer?.publicKey ? getAddressFromPubKey(signer.publicKey) : "";
+  }
+
   return {
     getConnection,
+    getAddress,
     createKeysForPath,
-    getAddressFromKeys,
+    getAddressFromPubKey,
     createSolanaTransaction: createSolanaTransaction(getConnection),
     getBalance: getBalance(Chain.Solana),
     transfer: transfer(getConnection, signer),
@@ -273,6 +299,6 @@ export async function createKeysForPath({
   return Keypair.fromSeed(hdKey.derive(derivationPath, true).privateKey);
 }
 
-function getAddressFromKeys(keypair: Keypair) {
-  return keypair.publicKey.toString();
+function getAddressFromPubKey(publicKey: PublicKey) {
+  return publicKey.toString();
 }

@@ -13,7 +13,7 @@ type Params = {
   type?: "legacy" | "ledgerLive" | "nativeSegwitMiddleAccount" | "segwit" | "account";
 };
 
-export function updateNetworkPath(
+export function updateDerivationPath(
   path: DerivationPathArray,
   params: { index: number } | { account: number } | { change: number },
 ) {
@@ -54,12 +54,12 @@ export function getDerivationPathFor({ chain, index, addressIndex = 0, type }: P
       return [44, 60, index, 0, addressIndex] as DerivationPathArray;
     }
 
-    return updateNetworkPath(NetworkDerivationPath[chain], { index });
+    return updateDerivationPath(NetworkDerivationPath[chain], { index });
   }
 
   if (chain === Chain.Solana) {
     if (type === "account") return [44, 501, 0, index] as DerivationPathArray;
-    return updateNetworkPath(NetworkDerivationPath[chain], { index });
+    return updateDerivationPath(NetworkDerivationPath[chain], { index });
   }
 
   const chainId = chain === Chain.Litecoin ? 2 : 0;
@@ -72,7 +72,7 @@ export function getDerivationPathFor({ chain, index, addressIndex = 0, type }: P
     case "legacy":
       return [44, chainId, 0, 0, index] as DerivationPathArray;
     default:
-      return updateNetworkPath(NetworkDerivationPath[chain], { index });
+      return updateDerivationPath(NetworkDerivationPath[chain], { index });
   }
 }
 

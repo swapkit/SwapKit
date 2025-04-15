@@ -4,12 +4,14 @@ import {
   BaseDecimal,
   Chain,
   CosmosChainPrefixes,
-  DerivationPath,
   FeeOption,
+  NetworkDerivationPath,
   RequestClient,
   SKConfig,
   SwapKitNumber,
   type TransferParams,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 
 import {
@@ -165,7 +167,7 @@ async function signWithPrivateKey({
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
 
-export function createThorchainToolbox({
+export async function createThorchainToolbox({
   chain,
   ...toolboxParams
 }: CosmosToolboxParams<Chain.THORChain | Chain.Maya>) {
@@ -175,19 +177,31 @@ export function createThorchainToolbox({
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;
 
-  const signer = "signer" in toolboxParams ? toolboxParams.signer : undefined;
-  const { derivationPath, index, phrase } =
-    "derivationPath" in toolboxParams
-      ? toolboxParams
-      : { derivationPath: DerivationPath[chain], index: 0, phrase: "" };
+  const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
 
-  const cosmosToolbox = createCosmosToolbox({
+  const derivationPath = derivationPathToString(
+    "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
+  );
+
+  const cosmosToolbox = await createCosmosToolbox({
     chain,
-    derivationPath,
-    signer,
-    phrase,
-    index,
+    ...toolboxParams,
   });
+
+  const signer =
+    "phrase" in toolboxParams && toolboxParams.phrase
+      ? await cosmosToolbox.getSignerFromPhrase({
+          phrase: toolboxParams.phrase,
+          derivationPath:
+            toolboxParams.derivationPath ||
+            updateDerivationPath(NetworkDerivationPath[chain], { index }),
+        })
+      : "signer" in toolboxParams
+        ? toolboxParams.signer
+        : undefined;
+
   const defaultFee = getDefaultChainFee(chain);
 
   async function getFees() {
