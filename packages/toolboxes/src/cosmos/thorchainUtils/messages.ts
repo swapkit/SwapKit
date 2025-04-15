@@ -101,15 +101,8 @@ export const convertToSignable = async (
   return aminoTypes.fromAmino(msg);
 };
 
-const getAccount = async ({
-  rpcUrl,
-  from,
-}: {
-  from: string;
-  rpcUrl: string;
-}) => {
+const getAccount = async ({ rpcUrl, from }: { from: string; rpcUrl: string }) => {
   const client = await createStargateClient(rpcUrl);
-
   const account = await client.getAccount(from);
 
   if (!account) {

@@ -38,7 +38,7 @@ function secp256k1HdWalletFromMnemonic({
   derivationPath,
 }: {
   prefix: string;
-  derivationPath: string;
+  derivationPath?: string;
 }) {
   return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
     const { Secp256k1HdWallet } = await import("@cosmjs/amino");
@@ -167,22 +167,25 @@ async function signWithPrivateKey({
 
 export function createThorchainToolbox({
   chain,
-  derivationPath: paramsDerivationPath,
-  index = 0,
-  signer,
-}: Omit<CosmosToolboxParams, "chain"> & { chain: Chain.THORChain | Chain.Maya }) {
+  ...toolboxParams
+}: CosmosToolboxParams<Chain.THORChain | Chain.Maya>) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const { isStagenet } = SKConfig.get("envs");
-
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;
-  const derivationPath = paramsDerivationPath || DerivationPath[chain];
+
+  const signer = "signer" in toolboxParams ? toolboxParams.signer : undefined;
+  const { derivationPath, index, phrase } =
+    "derivationPath" in toolboxParams
+      ? toolboxParams
+      : { derivationPath: DerivationPath[chain], index: 0, phrase: "" };
 
   const cosmosToolbox = createCosmosToolbox({
     chain,
     derivationPath,
     signer,
+    phrase,
     index,
   });
   const defaultFee = getDefaultChainFee(chain);

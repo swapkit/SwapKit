@@ -29,12 +29,12 @@ export type MultisigTx = {
 
 export type CosmosSigner = DirectSecp256k1HdWallet | OfflineDirectSigner | OfflineAminoSigner;
 
-export type CosmosToolboxParams = {
-  signer?: CosmosSigner;
-  derivationPath?: DerivationPath;
-  index?: number;
-  chain: CosmosChain;
-};
+export type CosmosToolboxParams<T = CosmosChain> = {
+  chain: T;
+} & { signer?: CosmosSigner } & (
+    | { phrase?: string }
+    | ({ derivationPath: DerivationPath } & { index?: number })
+  );
 
 export type BaseCosmosToolboxType = ReturnType<typeof createCosmosToolbox>;
 export type BaseCosmosWallet = ReturnType<typeof createCosmosToolbox>;
