@@ -48,6 +48,11 @@ function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
         headers,
       });
 
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(`${response.statusText}(${response.status}): ${message}`);
+      }
+
       const body = await response.json();
 
       return options.onSuccess?.(body) || options.responseHandler?.(body) || body;
