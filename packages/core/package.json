@@ -28,7 +28,8 @@
     "lint": "biome check --write ./src",
     "test": "echo 'bun test'",
     "test:ci": "bun test --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "bun tsc --noEmit",
+    "type-check:go": "tsgo"
   },
   "type": "module",
   "version": "3.2.20"
