@@ -10,7 +10,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { getSkClient, type loadPlugins } from "../utils";
+import { getSkClient } from "../utils";
 
 type SwapKitContextType<P extends PluginName[] = []> = {
   connect: <W extends WalletOption>(params: {
@@ -34,11 +34,8 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
   config,
   plugins,
 }: PropsWithChildren<{ config?: Parameters<typeof SKConfig.set>[0]; plugins?: PluginNames }>) {
-  type Plugins = Awaited<ReturnType<typeof loadPlugins<PluginNames>>>;
   const pluginNames = plugins || ([] as unknown as PluginNames);
-  const [client, setClient] = useState<ReturnType<typeof SwapKit<Plugins, any>> | undefined>(
-    undefined,
-  );
+  const [client, setClient] = useState<ReturnType<typeof SwapKit<any, any>> | undefined>(undefined);
 
   const connect = useCallback(
     async ({
