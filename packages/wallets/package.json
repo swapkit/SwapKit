@@ -7,15 +7,15 @@
     "@cosmjs/crypto": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",
     "@keepkey/keepkey-sdk": "0.2.62",
-    "@keplr-wallet/types": "0.12.219",
+    "@keplr-wallet/types": "0.12.220",
     "@ledgerhq/devices": "8.4.4",
     "@ledgerhq/errors": "6.19.1",
-    "@ledgerhq/hw-app-btc": "10.8.0",
+    "@ledgerhq/hw-app-btc": "10.9.0",
     "@ledgerhq/hw-app-cosmos": "6.32.0",
-    "@ledgerhq/hw-app-eth": "6.45.0",
+    "@ledgerhq/hw-app-eth": "6.45.1",
     "@ledgerhq/hw-transport": "6.31.4",
     "@ledgerhq/hw-transport-webusb": "6.29.4",
-    "@ledgerhq/wallet-api-client": "1.7.3",
+    "@ledgerhq/wallet-api-client": "1.7.4",
     "@passkeys/core": "3.3.7",
     "@passkeys/react": "2.5.4",
     "@radixdlt/babylon-gateway-api-sdk": "1.10.1",
@@ -30,12 +30,12 @@
     "bitcoinjs-lib": "6.1.7",
     "blakejs": "1.2.1",
     "cosmjs-types": "0.9.0",
-    "sats-connect": "3.3.0",
+    "sats-connect": "3.4.0",
     "ts-pattern": "5.7.0"
   },
   "devDependencies": {
     "@walletconnect/logger": "2.1.2",
-    "@walletconnect/types": "2.19.2"
+    "@walletconnect/types": "2.20.0"
   },
   "exports": {
     ".": {
