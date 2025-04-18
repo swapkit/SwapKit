@@ -27,6 +27,7 @@ import * as walletconnectWallet from "@swapkit/wallets/walletconnect";
 
 export * from "@swapkit/core";
 
+export * from "@swapkit/toolboxes";
 export * from "@swapkit/toolboxes/cosmos";
 export * from "@swapkit/toolboxes/evm";
 export * from "@swapkit/toolboxes/radix";
@@ -34,12 +35,15 @@ export * from "@swapkit/toolboxes/solana";
 export * from "@swapkit/toolboxes/substrate";
 export * from "@swapkit/toolboxes/utxo";
 
+export * from "@swapkit/plugins";
 export * from "@swapkit/plugins/chainflip";
 export * from "@swapkit/plugins/evm";
 export * from "@swapkit/plugins/kado";
 export * from "@swapkit/plugins/radix";
 export * from "@swapkit/plugins/thorchain";
 export * from "@swapkit/plugins/solana";
+
+export * from "@swapkit/wallets";
 
 export {
   bitgetWallet,
