@@ -16,11 +16,6 @@ export type AddLiquidityParams = {
   mode?: "sym" | "baseAsset" | "asset";
 };
 
-export type ApproveParams = {
-  assetValue: AssetValue;
-  contractAddress?: string;
-};
-
 export type CreateLiquidityParams = {
   baseAssetValue: AssetValue;
   assetValue: AssetValue;

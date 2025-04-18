@@ -3,9 +3,9 @@ import {
   ChainId,
   type DerivationPathArray,
   FeeOption,
+  type GenericTransferParams,
   SKConfig,
   StagenetChain,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -99,7 +99,7 @@ async function getWalletMethods({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(chain);
+      const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
 
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
@@ -108,7 +108,7 @@ async function getWalletMethods({
         const feeRate = params.feeRate || (await toolbox.getFeeRates())[FeeOption.Average];
         const memo = [Chain.Bitcoin].includes(chain) ? params.memo : reduceMemo(params.memo);
 
-        const { psbt, inputs } = await toolbox.buildTx({
+        const { psbt, inputs } = await toolbox.createTransaction({
           ...params,
           feeRate,
           memo,
@@ -146,7 +146,7 @@ async function getWalletMethods({
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
-      const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+      const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
         if (!assetValue) throw new Error("invalid asset");
 
         const sendCoinsMessage = {
@@ -205,7 +205,7 @@ async function getWalletMethods({
         assetValue,
         ...rest
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
-      }: TransferParams | DepositParam) => {
+      }: GenericTransferParams | DepositParam) => {
         const account = await toolbox.getAccount(address);
         if (!account) throw new Error("invalid account");
         if (!assetValue) throw new Error("invalid asset");
@@ -260,7 +260,7 @@ async function getWalletMethods({
         return transactionHash;
       };
 
-      const transfer = (params: TransferParams) => thorchainTransfer(params);
+      const transfer = (params: GenericTransferParams) => thorchainTransfer(params);
       const deposit = (params: DepositParam) => thorchainTransfer(params);
 
       return { ...toolbox, address, deposit, transfer, signMessage };

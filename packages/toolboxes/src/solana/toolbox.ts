@@ -10,10 +10,11 @@ import {
   Chain,
   DerivationPath,
   type DerivationPathArray,
+  type GenericCreateTransactionParams,
+  type GenericTransferParams,
   NetworkDerivationPath,
   SKConfig,
   SwapKitError,
-  type TransferParams,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
@@ -64,7 +65,7 @@ export async function getSolanaToolbox(
     getAddress,
     createKeysForPath,
     getAddressFromPubKey,
-    createSolanaTransaction: createSolanaTransaction(getConnection),
+    createTransaction: createTransaction(getConnection),
     getBalance: getBalance(Chain.Solana),
     transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
@@ -188,14 +189,14 @@ async function createSolanaTokenTransaction({
   return transaction;
 }
 
-function createSolanaTransaction(getConnection: () => Promise<Connection>) {
+function createTransaction(getConnection: () => Promise<Connection>) {
   return async ({
     recipient,
     assetValue,
     memo,
     isProgramDerivedAddress,
     fromPubkey,
-  }: TransferParams & {
+  }: Omit<GenericCreateTransactionParams, "sender" | "feeRate"> & {
     isProgramDerivedAddress?: boolean;
     fromPubkey: PublicKey;
   }) => {
@@ -235,7 +236,7 @@ function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigne
     assetValue,
     memo,
     isProgramDerivedAddress,
-  }: TransferParams & {
+  }: GenericTransferParams & {
     isProgramDerivedAddress?: boolean;
   }) => {
     if (!signer) {
@@ -244,7 +245,7 @@ function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigne
 
     const fromPubkey = signer.publicKey ?? (await (signer as SolanaProvider).connect()).publicKey;
 
-    const transaction = await createSolanaTransaction(getConnection)({
+    const transaction = await createTransaction(getConnection)({
       recipient,
       assetValue,
       memo,

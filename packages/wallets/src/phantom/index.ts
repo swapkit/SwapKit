@@ -1,9 +1,9 @@
 import {
   type AssetValue,
   Chain,
+  type GenericTransferParams,
   SwapKitError,
   WalletOption,
-  type WalletTxParams,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
@@ -83,7 +83,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         recipient,
         assetValue,
         isProgramDerivedAddress,
-      }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
+      }: GenericTransferParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
         const { PublicKey } = await import("@solana/web3.js");
         const validateAddress = await toolbox.getAddressValidator();
 
@@ -94,7 +94,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         const fromPubkey = new PublicKey(address);
         const connection = await toolbox.getConnection();
 
-        const transaction = await toolbox.createSolanaTransaction({
+        const transaction = await toolbox.createTransaction({
           recipient,
           assetValue,
           fromPubkey,

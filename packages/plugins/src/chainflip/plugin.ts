@@ -59,7 +59,7 @@ export const ChainflipPlugin = createPlugin({
       // we need to simplify this to one object params
       const tx = await wallet.transfer({
         assetValue: sellAsset,
-        from: wallet.address,
+        sender: wallet.address,
         recipient: depositAddress,
         isProgramDerivedAddress: true,
       });

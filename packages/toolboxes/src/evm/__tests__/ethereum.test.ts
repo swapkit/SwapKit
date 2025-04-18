@@ -30,9 +30,10 @@ beforeEach(async () => {
   const signer = await hre.ethers.getImpersonatedSigner(testAddress);
   SKConfig.set({
     apiKeys: {
-      swapKit: process.env.SWAPKIT_API_KEY,
+      swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
     },
   });
+
   context.provider = provider;
   context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
 });
@@ -63,7 +64,7 @@ describe("Ethereum toolkit", () => {
     await context.toolbox.transfer({
       recipient: emptyRecipient,
       assetValue: await AssetValue.from({ chain: Chain.Ethereum, value: "0.010526" }),
-      from: testAddress,
+      sender: testAddress,
     });
     expect((await context.provider.getBalance(emptyRecipient)).toString()).toBe(
       "10526000000000000",
@@ -85,7 +86,7 @@ describe("Ethereum toolkit", () => {
     await context.toolbox.transfer({
       recipient: emptyRecipient,
       assetValue,
-      from: testAddress,
+      sender: testAddress,
     });
     // biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
     expect((await USDC.balanceOf?.(emptyRecipient)).toString()).toBe("1000000");

@@ -20,7 +20,7 @@ export async function getAddressValidator() {
   const { substrateValidateAddress } = await import("@swapkit/toolboxes/substrate");
   const { getUTXOAddressValidator } = await import("@swapkit/toolboxes/utxo");
   const { getSolanaAddressValidator } = await import("@swapkit/toolboxes/solana");
-  const { validateAddress: validateRadixAddress } = await import("@swapkit/toolboxes/radix");
+  const { radixValidateAddress } = await import("@swapkit/toolboxes/radix");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
   const utxoValidateAddress = await getUTXOAddressValidator();
@@ -46,7 +46,7 @@ export async function getAddressValidator() {
       .with(Chain.Chainflip, Chain.Polkadot, () =>
         substrateValidateAddress({ address, chain: chain as SubstrateChain }),
       )
-      .with(Chain.Radix, () => validateRadixAddress(address))
+      .with(Chain.Radix, () => radixValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
       .with(Chain.Fiat, () => false)
       .exhaustive();

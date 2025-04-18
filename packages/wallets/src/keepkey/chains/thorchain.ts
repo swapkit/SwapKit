@@ -9,8 +9,8 @@ import {
   ChainId,
   DerivationPath,
   type DerivationPathArray,
+  type GenericTransferParams,
   SKConfig,
-  type TransferParams,
   derivationPathToString,
 } from "@swapkit/helpers";
 import type { DepositParam } from "@swapkit/toolboxes/cosmos";
@@ -77,7 +77,7 @@ export const thorchainWalletMethods = async ({
     return new Uint8Array(decodedBytes.length).map((_, i) => decodedBytes.charCodeAt(i));
   };
 
-  const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+  const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
     const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
     const signedTransaction = await signTransaction({
       assetValue,

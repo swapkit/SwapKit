@@ -139,7 +139,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
       const toolbox = await getEvmToolbox(chain, { provider, signer });
-      const keepkeyMethods = getKEEPKEYMethods(provider);
+      const keepkeyMethods = getKEEPKEYMethods(provider, chain);
 
       try {
         if (chain !== Chain.Ethereum) {

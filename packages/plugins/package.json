@@ -34,6 +34,11 @@
       "require": "./dist/radix/index.cjs",
       "types": "./src/radix/index.ts"
     },
+    "./solana": {
+      "default": "./dist/solana/index.js",
+      "require": "./dist/solana/index.cjs",
+      "types": "./src/solana/index.ts"
+    },
     "./thorchain": {
       "default": "./dist/thorchain/index.js",
       "require": "./dist/thorchain/index.cjs",

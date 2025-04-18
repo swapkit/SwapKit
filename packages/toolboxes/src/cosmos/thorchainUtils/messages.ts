@@ -8,8 +8,8 @@ import {
   getMsgSendDenom,
 } from "../util";
 
+import type { ThorChainCreateTransactionParams } from "../types";
 import { createDefaultAminoTypes, createDefaultRegistry } from "./registry";
-import type { ThorchainDepositTxParams, ThorchainTransferTxParams } from "./types/client-types";
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
@@ -112,21 +112,46 @@ const getAccount = async ({ rpcUrl, from }: { from: string; rpcUrl: string }) =>
   return account;
 };
 
+export function getCreateTransaction(rpcUrl: string) {
+  return function createTransaction(params: ThorChainCreateTransactionParams) {
+    const { assetValue, recipient, memo, sender, asSignable, asAminoMessage } = params;
+
+    if (recipient) {
+      return buildTransferTx(rpcUrl)({
+        sender,
+        recipient,
+        assetValue,
+        memo,
+        asSignable,
+        asAminoMessage,
+      });
+    }
+
+    return buildDepositTx(rpcUrl)({
+      sender,
+      assetValue,
+      memo,
+      asSignable,
+      asAminoMessage,
+    });
+  };
+}
+
 export const buildTransferTx =
   (rpcUrl: string) =>
   async ({
-    from,
+    sender,
     recipient,
     assetValue,
     memo = "",
-    chain,
     asSignable = true,
     asAminoMessage = false,
-  }: ThorchainTransferTxParams) => {
-    const account = await getAccount({ rpcUrl, from });
+  }: ThorChainCreateTransactionParams) => {
+    const account = await getAccount({ rpcUrl, from: sender });
+    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
     const transferMsg = transferMsgAmino({
-      from,
+      from: sender,
       recipient,
       assetValue,
       chain,
@@ -154,16 +179,16 @@ export const buildTransferTx =
 export const buildDepositTx =
   (rpcUrl: string) =>
   async ({
-    from,
+    sender,
     assetValue,
     memo = "",
-    chain,
     asSignable = true,
     asAminoMessage = false,
-  }: ThorchainDepositTxParams) => {
-    const account = await getAccount({ rpcUrl, from });
+  }: ThorChainCreateTransactionParams) => {
+    const account = await getAccount({ rpcUrl, from: sender });
+    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
-    const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
+    const depositMsg = depositMsgAmino({ from: sender, assetValue, memo, chain });
 
     const msg = asSignable
       ? await convertToSignable(

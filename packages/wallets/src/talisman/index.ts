@@ -96,7 +96,9 @@ async function getWalletMethods(chain: Chain) {
 
     case Chain.Polkadot:
     case Chain.Chainflip: {
-      const { getSubstrateToolbox, Network } = await import("@swapkit/toolboxes/substrate");
+      const { getSubstrateToolbox, SubstrateNetwork } = await import(
+        "@swapkit/toolboxes/substrate"
+      );
 
       const injectedExtension = window?.injectedWeb3?.talisman;
       const rawExtension = await injectedExtension?.enable?.("talisman");
@@ -114,7 +116,7 @@ async function getWalletMethods(chain: Chain) {
           info: { wallet: WalletOption.TALISMAN, accounts, address: accounts[0]?.address },
         });
       }
-      const address = toolbox.convertAddress(accounts[0].address, Network[chain].prefix);
+      const address = toolbox.convertAddress(accounts[0].address, SubstrateNetwork[chain].prefix);
 
       return { ...toolbox, address };
     }

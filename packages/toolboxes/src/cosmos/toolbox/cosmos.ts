@@ -12,11 +12,11 @@ import {
   DerivationPath,
   type DerivationPathArray,
   FeeOption,
+  type GenericTransferParams,
   NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  type TransferParams,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
@@ -162,7 +162,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     memo = "",
     feeRate,
     feeOptionKey = FeeOption.Fast,
-  }: TransferParams) {
+  }: GenericTransferParams) {
     const from = await getAddress();
 
     if (!(signer && from)) {
@@ -217,7 +217,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
-    validateAddress: validateAddress(chainPrefix),
+    validateAddress: getCosmosalidateAddress(chainPrefix),
     getPubKey,
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
     fetchFeeRateFromSwapKit,
@@ -253,7 +253,7 @@ export function cosmosValidateAddress({
     throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
   }
 
-  return validateAddress(prefix)(address);
+  return getCosmosalidateAddress(prefix)(address);
 }
 
 export function estimateTransactionFee({
@@ -285,7 +285,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function validateAddress(prefix: string) {
+function getCosmosalidateAddress(prefix: string) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 

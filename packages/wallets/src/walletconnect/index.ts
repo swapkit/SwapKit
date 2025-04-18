@@ -2,9 +2,9 @@ import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
   ChainId,
+  type GenericTransferParams,
   SKConfig,
   SwapKitError,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -172,7 +172,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         assetValue,
         memo,
         ...rest
-      }: TransferParams | DepositParam) {
+      }: GenericTransferParams | DepositParam) {
         const account = await toolbox.getAccount(address);
         if (!account) {
           throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account } });
@@ -239,7 +239,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       return {
         ...toolbox,
-        transfer: (params: TransferParams) => thorchainTransfer(params),
+        transfer: (params: GenericTransferParams) => thorchainTransfer(params),
         deposit: (params: DepositParam) => thorchainTransfer(params),
         getAccount,
       };
