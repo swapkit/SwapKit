@@ -2,7 +2,11 @@
 description: After installing the SDK, you first need to set it up.
 ---
 
-# 2⃣ Set up the SDK
+# 2️⃣ 2️⃣ Set up the SDK
+
+{% hint style="danger" %}
+This documentation is outdated and doesn't correspond to the current release of SwapKit. For the correct documentation please visit [https://docs.swapkit.dev/](https://docs.swapkit.dev/)
+{% endhint %}
 
 To get started, you have to instantiate and configure the SwapKit SDK:
 

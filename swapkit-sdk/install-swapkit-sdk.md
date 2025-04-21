@@ -2,7 +2,11 @@
 description: Integrate our SDK to your dApp
 ---
 
-# 1️⃣ Install SwapKit SDK
+# 1️⃣ 1️⃣ Install SwapKit SDK
+
+{% hint style="danger" %}
+This documentation is outdated and doesn't correspond to the current release of SwapKit. For the correct documentation please visit https://docs.swapkit.dev/
+{% endhint %}
 
 This package is an all-in-one SDK for SwapKit. It includes all packages needed to use every SwapKit feature. That includes:
 

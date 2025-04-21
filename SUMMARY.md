@@ -1,6 +1,7 @@
 # Table of contents
 
-* [🏡 Getting Started](README.md)
+* [⚠️ Updated documentation](README.md)
+* [🏡 Getting Started](<README (1).md>)
   * [❓ FAQ](readme/faq.md)
   * [Terms of Service](readme/terms-of-service.md)
 * [⚡ Powered by SwapKit](powered-by-swapkit.md)

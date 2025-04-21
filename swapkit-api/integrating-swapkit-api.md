@@ -4,8 +4,8 @@ description: Unlock cross-chain swaps in your application
 
 # Advanced - Integrating SwapKit API
 
-{% hint style="info" %}
-The best way to integrate the SwapKit API is through the [SwapKit SDK](broken-reference/). For more information about that, refer to our other guide.
+{% hint style="danger" %}
+This documentation is outdated and doesn't correspond to the current release of SwapKit. For the correct documentation please visit [https://docs.swapkit.dev/](https://docs.swapkit.dev/)
 {% endhint %}
 
 If you want to integrate the API directly, this guide is for you!
@@ -92,16 +92,16 @@ The quote response contains a lot of information, and we suggest checking out th
 
 Within the `/quote` response there is a `transaction` property that can be used in order to make our swap.
 
-The SwapKit API returns a `transaction` object valid from the blockchain of the `sellAsset`. For example, if the `sellAsset` is `BTC.BTC` the `transaction` property will be a hexadecimal string of a [Partially Signed Bitcoin Transaction (PSBT)](https://en.bitcoin.it/wiki/BIP\_0174).
+The SwapKit API returns a `transaction` object valid from the blockchain of the `sellAsset`. For example, if the `sellAsset` is `BTC.BTC` the `transaction` property will be a hexadecimal string of a [Partially Signed Bitcoin Transaction (PSBT)](https://en.bitcoin.it/wiki/BIP_0174).
 
 The following table shows what the transaction object is for all of the blockchains supported by SwapKit API:
 
-| Sell Asset                      | Buy Asset | Scenario       | What is Transaction?                                                                                                                                                                                       |
-| ------------------------------- | --------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ETH.CRV                         | BTC.BTC   | Swap In        | A valid Ethereum transaction object.                                                                                                                                                                       |
-| BTC.BTC / LTC.LTC / DOGE.DOGE   | ETH.CRV   | Swap Out       | A hexadecimal string of a [PSBT](https://en.bitcoin.it/wiki/BIP\_0174).                                                                                                                                    |
-| GAIA.ATOM / THOR.RUNE / BNB.BNB | ETH.CRV   | Swap Out       | A Cosmos TxBody                                                                                                                                                                                            |
-| BCH.BCH                         | BTC.BTC   | THORChain only | An object of `inputs`and `output` used to create a [Transaction Builder](https://github.com/Bitcoin-com/bitcoincashjs-lib/blob/28447b40a4ccd23913f7ade6589dc7214c99e60a/src/transaction\_builder.js#L476). |
+| Sell Asset                      | Buy Asset | Scenario       | What is Transaction?                                                                                                                                                                                      |
+| ------------------------------- | --------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ETH.CRV                         | BTC.BTC   | Swap In        | A valid Ethereum transaction object.                                                                                                                                                                      |
+| BTC.BTC / LTC.LTC / DOGE.DOGE   | ETH.CRV   | Swap Out       | A hexadecimal string of a [PSBT](https://en.bitcoin.it/wiki/BIP_0174).                                                                                                                                    |
+| GAIA.ATOM / THOR.RUNE / BNB.BNB | ETH.CRV   | Swap Out       | A Cosmos TxBody                                                                                                                                                                                           |
+| BCH.BCH                         | BTC.BTC   | THORChain only | An object of `inputs`and `output` used to create a [Transaction Builder](https://github.com/Bitcoin-com/bitcoincashjs-lib/blob/28447b40a4ccd23913f7ade6589dc7214c99e60a/src/transaction_builder.js#L476). |
 
 The transaction objects different depending on the Sell Asset. It's possible to sign & send each transaction object using the core-libraries of each blockchain ecosystem:
 
@@ -233,7 +233,7 @@ And that's all! We have successfully made a swap from ETH.CRV to native Bitcoin 
 
 ### 3b. BTC.BTC -> ETH.CRV - PSBT Object
 
-As mentioned in ['Inspecting the Transaction'](integrating-swapkit-api.md#1a.-inspecting-the-transaction), the transaction object returned by the SwapKit API for this scenario is a valid hexadecimal string of a [Partially Signed Bitcoin Transaction](https://en.bitcoin.it/wiki/BIP\_0174) (PSBT). We will use the [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib) library to rehydrate the object, sign, and broadcast the transaction from our Bitcoin wallet.
+As mentioned in ['Inspecting the Transaction'](integrating-swapkit-api.md#1a.-inspecting-the-transaction), the transaction object returned by the SwapKit API for this scenario is a valid hexadecimal string of a [Partially Signed Bitcoin Transaction](https://en.bitcoin.it/wiki/BIP_0174) (PSBT). We will use the [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib) library to rehydrate the object, sign, and broadcast the transaction from our Bitcoin wallet.
 
 {% hint style="info" %}
 All code examples for the swaps we will cover can be found in our [Github repo](https://github.com/thorswap/swap-examples).
@@ -426,7 +426,7 @@ Whoop! Now we have successfully broadcasted a transaction from the Cosmos blockc
 
 ### 3d. BCH.BCH -> BTC.BTC
 
-As mentioned in ['Inspecting the Transaction'](integrating-swapkit-api.md#1a.-inspecting-the-transaction), the 'transaction' object returned when BitcoinCash is the sell asset differs to other UTXO assets. The API returns an object of inputs and outputs in the transaction prop. These are used to create a [Transaction Builder](https://github.com/Bitcoin-com/bitcoincashjs-lib/blob/28447b40a4ccd23913f7ade6589dc7214c99e60a/src/transaction\_builder.js#L476) of the [bitcoincashjs-lib](https://github.com/Bitcoin-com/bitcoincashjs-lib).
+As mentioned in ['Inspecting the Transaction'](integrating-swapkit-api.md#1a.-inspecting-the-transaction), the 'transaction' object returned when BitcoinCash is the sell asset differs to other UTXO assets. The API returns an object of inputs and outputs in the transaction prop. These are used to create a [Transaction Builder](https://github.com/Bitcoin-com/bitcoincashjs-lib/blob/28447b40a4ccd23913f7ade6589dc7214c99e60a/src/transaction_builder.js#L476) of the [bitcoincashjs-lib](https://github.com/Bitcoin-com/bitcoincashjs-lib).
 
 {% hint style="info" %}
 All code examples for the swaps we will cover can be found in our [Github repo](https://github.com/thorswap/swap-examples).

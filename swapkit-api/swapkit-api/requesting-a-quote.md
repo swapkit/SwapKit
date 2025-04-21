@@ -1,5 +1,9 @@
 # Requesting a Quote
 
+{% hint style="danger" %}
+This documentation is outdated and doesn't correspond to the current release of SwapKit. For the correct documentation please visit [https://docs.swapkit.dev/](https://docs.swapkit.dev/)
+{% endhint %}
+
 All that you need to send a transaction from any off your wallets is our `/quote` endpoint.
 
 ```
@@ -315,14 +319,14 @@ The `/quote` endpoints offer several parameters that can be used in order to cus
 | `limit`                       | ❌        | The maximum number of trade routes to return. The default is 5. E.g 5                                                                                                                                                                           | `5`                                                   |
 | `providers`                   | ❌        | The possible liquidity sources.                                                                                                                                                                                                                 |                                                       |
 | `preferredProvider`           | ❌        | Specify the provider that the swap should route through.                                                                                                                                                                                        | `ONEINCH`                                             |
-| `affiliateAddress`            | ❌        | The affiliate thorname that will receive the affiliate fee. **Must be 4 chars or less.** Shorter the better.                                                                                                                                   | `partner1`                                            |
+| `affiliateAddress`            | ❌        | The affiliate thorname that will receive the affiliate fee. **Must be 4 chars or less.** Shorter the better.                                                                                                                                    | `partner1`                                            |
 | `affiliateBasisPoints`        | ❌        | Basis points affiliate fee to take from the trade. E.g 50 is 0.5%                                                                                                                                                                               | `50`                                                  |
 | `allowSmartContractRecipient` | ❌        | If set to true, we will not perform any safety checks on the `recipientAddress` on an EVM chain. This is risky, and funds will likely be lost. More info [here](https://docs.thorswap.net/aggregation-api/pathfinder#smart-contract-addresses). | `false`                                               |
 
 ### Starting from an EVM Chain
 
 There are 3 options to build an EVM transaction from the response:\
-a. `transaction` \
+a. `transaction`\
 b. `evmTransactionDetails`\
 c. `calldata` (deprecated)
 
@@ -381,4 +385,3 @@ c. `calldata` (deprecated)
 The `contractParams` property will contain an ordered array of smart contract input parameters. If streaming (`meta.hasStreamingSwap`) is available, then you should use `contractParamsStreaming`
 
 `` `contractParamsNames` should not be used in production and could be removed. ``
-

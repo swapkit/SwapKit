@@ -74,7 +74,7 @@ const {
 
 ***
 
-### **addLiquidityPart(**params: [AddLiquidityPartParams](swapkit-thorchain.md#addliquiditypartparams)) => Promise\<string>
+### **addLiquidityPart(**&#x70;arams: [AddLiquidityPartParams](swapkit-thorchain.md#addliquiditypartparams)) => Promise\<string>
 
 _Performs transaction to deposit RUNE or asset to THORChain Liquidity Pool_
 
@@ -105,7 +105,7 @@ const btcTx = swapKitClient.thorchain.addLiquidityPart({
 
 ***
 
-### **deposit(**params: [CoreTxParams](swapkit-thorchain.md#coretxparams) & { router?: string; }) => Promise\<string>
+### **deposit(**&#x70;arams: [CoreTxParams](swapkit-thorchain.md#coretxparams) & { router?: string; }) => Promise\<string>
 
 _Performs deposit to THORChain pool transaction. Can use custom memo._
 
@@ -140,7 +140,7 @@ const txid = await swapkitClient.thorchain.loan({
 
 ***
 
-### **savings(**params: [SavingsParams](swapkit-thorchain.md#savingparams)) => Promise\<string>
+### **savings(**&#x70;arams: [SavingsParams](swapkit-thorchain.md#savingparams)) => Promise\<string>
 
 _Performs transaction to deposit or withdraw provided asset from THORChain Savers_
 
@@ -235,7 +235,7 @@ const ethInboundInfo = await swapKitClient.getInboundDataByChain(Chain.Ethereum)
 
 ***
 
-### **approveAssetValue(**params: [ApproveParams](swapkit-thorchain.md#approveparams)): Promise\<string | true>
+### **approveAssetValue(**&#x70;arams: [ApproveParams](swapkit-thorchain.md#approveparams)): Promise\<string | true>
 
 _Performs approval transaction or returns true if given asset doesn't need approval_
 
@@ -250,7 +250,7 @@ const txHash = await swapKitClient.approveAssetValue({
 
 ***
 
-### **isAssetValueApproved(**params: [ApproveParams](swapkit-thorchain.md#approveparams)**): Promise\<boolean>**
+### **isAssetValueApproved(**&#x70;arams: [ApproveParams](swapkit-thorchain.md#approveparams)**): Promise\<boolean>**
 
 _Checks if given asset needs approval. Additionally validates provided amount against approved contract spending._
 

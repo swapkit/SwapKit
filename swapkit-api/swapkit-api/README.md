@@ -4,9 +4,8 @@ description: Integrate our API directly into your dApp.
 
 # ⚙️ SwapKit API
 
-{% hint style="warning" %}
-Please note we are in the process of deprecating SwapKit API V1, for documentation on SwapKit API V2 - please visit [https://api.swapkit.dev/docs/](https://api.swapkit.dev/docs/).\
-(If you are a first time integrator - using SwapKit API V2 is highly recommended)
+{% hint style="danger" %}
+This documentation is outdated and doesn't correspond to the current release of SwapKit. For the correct documentation please visit https://docs.swapkit.dev/
 {% endhint %}
 
 The SwapKit API by THORSwap is a cutting-edge quote and routing API for cross-chain swaps. Our comprehensive solution enables you to swap assets across a variety of blockchains, in a decentralized manner. Our robust API links decentralised exchanges (DEXs), and DEX aggregators, to provide the absolute best possible quote for your trade. Explore our API, the best solution for trading **native Bitcoin,** without the need for a centralized custodian.

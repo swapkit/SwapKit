@@ -71,7 +71,7 @@ if (ethAddress) {
 
 ***
 
-### **getBalance(chain:** [Chain](swapkit-helpers.md#chain), refresh?: boolean**): Promise<**[**AssetValue**](swapkit-helpers.md#assetvalue)**\[]>**
+### **getBalance(chain:** [Chain](swapkit-helpers.md#chain), refresh?: boolea&#x6E;**): Promise<**[**AssetValue**](swapkit-helpers.md#assetvalue)**\[]>**
 
 _Returns current chain wallet balance. Can fetch newest available balance when provided with \`refresh\` param_
 
@@ -85,7 +85,7 @@ const newestBalance = await swapKitClient.getBalance(Chain.Ethereum, true)
 
 ***
 
-### getExplorerAddressUrl**(params:** { address: string; chain: [Chain](swapkit-helpers.md#chain) }**): string**
+### getExplorerAddressUr&#x6C;**(params:** { address: string; chain: [Chain](swapkit-helpers.md#chain) }**): string**
 
 _Returns url for address explorer. Useful for tracking connected addresses_
 
@@ -123,7 +123,7 @@ const txHashExplorerUrl = swapKitClient.getExplorerTxUrl({
 
 ***
 
-### getWallet**(chain:** [Chain](swapkit-helpers.md#chain)**):** ChainWallet
+### getWalle&#x74;**(chain:** [Chain](swapkit-helpers.md#chain)**):** ChainWallet
 
 _Returns connected wallet chain info_
 
@@ -144,7 +144,7 @@ const {
 
 ***
 
-### getWalletWithBalance**(chain:** [Chain](swapkit-helpers.md#chain)**):** Promise\<ChainWallet>
+### getWalletWithBalanc&#x65;**(chain:** [Chain](swapkit-helpers.md#chain)**):** Promise\<ChainWallet>
 
 _Fetches newest wallet balances, updated connected wallet with it and returns chain wallet. Useful for loading initial balance for connected chains._
 
@@ -165,7 +165,7 @@ const {
 
 ***
 
-### swap**(params:** { pluginName: PluginName, ...paramsForPluginSwap }**): Promise\<string>**
+### swa&#x70;**(params:** { pluginName: PluginName, ...paramsForPluginSwap }**): Promise\<string>**
 
 _Returns transaction hash after successful execution. Params depeds on connected/used plugin._ \
 _Check_ [_thorchain_](swapkit-thorchain.md#swap-chain-chain-string) _or_ [_chainflip_](swapkit-chainflip.md#swap-chain-chain-string) _swap params_
@@ -181,7 +181,7 @@ const ethTxHash = await swapKitClient.swap({
 
 ***
 
-### validateAddress**(params:** { address: string; chain: [Chain](swapkit-helpers.md#chain) }**): boolean**
+### validateAddres&#x73;**(params:** { address: string; chain: [Chain](swapkit-helpers.md#chain) }**): boolean**
 
 _Validates given address for chain._
 
