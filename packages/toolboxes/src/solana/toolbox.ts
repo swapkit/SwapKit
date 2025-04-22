@@ -2,8 +2,9 @@ import {
   type Connection,
   PublicKey,
   type Signer,
-  type Transaction,
-  type VersionedTransaction,
+  Transaction,
+  type TransactionInstruction,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import {
   AssetValue,
@@ -67,11 +68,12 @@ export async function getSolanaToolbox(
     getAddressFromPubKey,
     getPubkeyFromAddress,
     createTransaction: createTransaction(getConnection),
+    createTransactionFromInstructions,
     getBalance: getBalance(Chain.Solana),
     transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator: getSolanaAddressValidator,
-    signTransaction: signTransaction(signer),
+    signTransaction: signTransaction(getConnection, signer),
     estimateTransactionFee: estimateTransactionFee(getConnection),
   };
 }
@@ -264,6 +266,18 @@ function createTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
+function createTransactionFromInstructions({
+  instructions,
+}: { instructions: TransactionInstruction[]; isProgramDerivedAddress?: boolean }) {
+  const transaction = new Transaction().add(...instructions);
+
+  if (!transaction) {
+    throw new SwapKitError("core_transaction_invalid_sender_address");
+  }
+
+  return transaction;
+}
+
 function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async ({ recipient, assetValue, memo, isProgramDerivedAddress }: SolanaTransferParams) => {
     if (!signer) {
@@ -300,10 +314,18 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
-function signTransaction(signer?: SolanaSigner) {
+function signTransaction(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async (transaction: Transaction | VersionedTransaction) => {
     if (!signer) {
       throw new SwapKitError("toolbox_solana_no_signer");
+    }
+
+    if (!(transaction instanceof VersionedTransaction)) {
+      const connection = await getConnection();
+
+      const blockHash = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockHash.blockhash;
+      transaction.feePayer = signer.publicKey || undefined;
     }
 
     if ("connect" in signer) {
