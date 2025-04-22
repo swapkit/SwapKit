@@ -32,7 +32,8 @@
     "ethers": "6.13.5",
     "micro-key-producer": "0.7.5",
     "protobufjs": "7.4.0",
-    "ts-pattern": "5.7.0"
+    "ts-pattern": "5.7.0",
+    "xrpl": "4.2.0"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.8",
@@ -63,6 +64,11 @@
       "default": "./dist/radix/index.js",
       "require": "./dist/radix/index.cjs",
       "types": "./src/radix/index.ts"
+    },
+    "./ripple": {
+      "default": "./dist/ripple/index.js",
+      "require": "./dist/ripple/index.cjs",
+      "types": "./src/ripple/index.ts"
     },
     "./solana": {
       "default": "./dist/solana/index.js",

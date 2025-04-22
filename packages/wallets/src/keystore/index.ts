@@ -21,6 +21,7 @@ export const keystoreWallet = createWallet({
     ...CosmosChains,
     Chain.Polkadot,
     Chain.Chainflip,
+    Chain.Ripple,
     Chain.Solana,
   ],
   connect: ({ addChain, supportedChains, walletType }) =>

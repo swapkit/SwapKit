@@ -9,6 +9,7 @@ import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 
 import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import type { RadixToolbox } from "@swapkit/toolboxes/radix";
+import type { getRippleToolbox } from "@swapkit/toolboxes/ripple";
 import type { getSolanaToolbox } from "@swapkit/toolboxes/solana";
 import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
@@ -20,6 +21,7 @@ export async function getAddressValidator() {
   const { substrateValidateAddress } = await import("@swapkit/toolboxes/substrate");
   const { getUTXOAddressValidator } = await import("@swapkit/toolboxes/utxo");
   const { getSolanaAddressValidator } = await import("@swapkit/toolboxes/solana");
+  const { rippleValidateAddress } = await import("@swapkit/toolboxes/ripple");
   const { validateAddress: validateRadixAddress } = await import("@swapkit/toolboxes/radix");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
@@ -47,6 +49,7 @@ export async function getAddressValidator() {
         substrateValidateAddress({ address, chain: chain as SubstrateChain }),
       )
       .with(Chain.Radix, () => validateRadixAddress(address))
+      .with(Chain.Ripple, () => rippleValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
       .with(Chain.Fiat, () => false)
       .exhaustive();
@@ -65,6 +68,7 @@ type Toolboxes = {
   [key in SubstrateChain]: Awaited<ReturnType<typeof getSubstrateToolbox>>;
 } & {
   [Chain.Radix]: Awaited<ReturnType<typeof RadixToolbox>>;
+  [Chain.Ripple]: Awaited<ReturnType<typeof getRippleToolbox>>;
   [Chain.Solana]: Awaited<ReturnType<typeof getSolanaToolbox>>;
 };
 
@@ -76,6 +80,7 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
   [key in SubstrateChain]: Parameters<typeof getSubstrateToolbox>[1];
 } & {
   [Chain.Radix]: Parameters<typeof RadixToolbox>[0];
+  [Chain.Ripple]: Parameters<typeof getRippleToolbox>[0];
   [Chain.Solana]: Parameters<typeof getSolanaToolbox>[0];
 };
 
@@ -136,6 +141,14 @@ export async function getToolbox<T extends keyof Toolboxes>(
       const { RadixToolbox } = await import("@swapkit/toolboxes/radix");
       const radixToolbox = await RadixToolbox(params as Parameters<typeof RadixToolbox>[0]);
       return radixToolbox as Toolboxes[T];
+    }
+
+    case Chain.Ripple: {
+      const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
+      const rippleToolbox = await getRippleToolbox(
+        params as Parameters<typeof getRippleToolbox>[0],
+      );
+      return rippleToolbox as Toolboxes[T];
     }
 
     case Chain.Solana: {

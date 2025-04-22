@@ -31,6 +31,7 @@ export enum DerivationPath {
   SOL = "m/44'/501'/0'/0",
   THOR = "m/44'/931'/0'/0",
   XRD = "////",
+  XRP = "m/44'/144'/0'/0/0",
   FIAT = "////",
 }
 
@@ -60,4 +61,5 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   FIAT: [0, 0, 0, 0, 0],
   FLIP: [0, 0, 0, 0, 0],
   XRD: [0, 0, 0, 0, 0],
+  XRP: [44, 144, 0, 0, 0],
 };

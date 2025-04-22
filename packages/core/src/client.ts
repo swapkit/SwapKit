@@ -377,6 +377,12 @@ export function SwapKit<
         return estimateTransactionFee({ ...params, recipient: address });
       }
 
+      case Chain.Ripple: {
+        const { estimateTransactionFee } = getWallet(chain);
+
+        return estimateTransactionFee();
+      }
+
       default:
         return baseValue;
     }
