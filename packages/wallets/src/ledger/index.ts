@@ -10,7 +10,7 @@ import {
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
 import { getWalletSupportedChains } from "../utils";
@@ -205,7 +205,7 @@ async function getWalletMethods({
         assetValue,
         ...rest
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
-      }: GenericTransferParams | DepositParam) => {
+      }: GenericTransferParams | ThorchainDepositParams) => {
         const account = await toolbox.getAccount(address);
         if (!account) throw new Error("invalid account");
         if (!assetValue) throw new Error("invalid asset");
@@ -215,7 +215,7 @@ async function getWalletMethods({
         const sequence = (sequenceNumber || 0).toString();
 
         const orderedMessages = recursivelyOrderKeys([
-          buildAminoMsg({ chain, from: address, assetValue, memo, ...rest }),
+          buildAminoMsg({ sender: address, assetValue, memo, ...rest }),
         ]);
 
         // get tx signing msg
@@ -261,7 +261,7 @@ async function getWalletMethods({
       };
 
       const transfer = (params: GenericTransferParams) => thorchainTransfer(params);
-      const deposit = (params: DepositParam) => thorchainTransfer(params);
+      const deposit = (params: ThorchainDepositParams) => thorchainTransfer(params);
 
       return { ...toolbox, address, deposit, transfer, signMessage };
     }

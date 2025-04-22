@@ -9,14 +9,14 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { DepositParam } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
 type SignTransactionParams = {
   assetValue: AssetValue;
   recipient?: string;
-  from: string;
+  sender: string;
   memo: string | undefined;
 };
 
@@ -38,11 +38,16 @@ export const mayachainWalletMethods = async ({
     address_n: bip32ToAddressNList(derivationPathString),
   })) as { address: string };
 
-  const signTransaction = async ({ assetValue, recipient, from, memo }: SignTransactionParams) => {
+  const signTransaction = async ({
+    assetValue,
+    recipient,
+    sender,
+    memo,
+  }: SignTransactionParams) => {
     const { makeSignDoc } = await import("@cosmjs/amino");
     const { getDenomWithChain } = await import("@swapkit/toolboxes/cosmos");
 
-    const account = await toolbox.getAccount(from);
+    const account = await toolbox.getAccount(sender);
     if (!account) throw new Error("Account not found");
     const { accountNumber, sequence = 0 } = account;
     const amount = assetValue.getBaseValue("string");
@@ -55,7 +60,7 @@ export const mayachainWalletMethods = async ({
           type: "mayachain/MsgSend",
           value: {
             amount: [{ amount, denom: assetValue.symbol.toLowerCase() }],
-            from_address: from,
+            from_address: sender,
             to_address: recipient,
           },
         }
@@ -64,7 +69,7 @@ export const mayachainWalletMethods = async ({
           value: {
             coins: [{ amount, asset: getDenomWithChain(assetValue) }],
             memo,
-            signer: from,
+            signer: sender,
           },
         };
 
@@ -82,7 +87,7 @@ export const mayachainWalletMethods = async ({
       : sdk.mayachain.mayachainSignAminoDeposit;
 
     // @ts-expect-error TC
-    const signedTx = await sdkMethod({ signDoc, signerAddress: from });
+    const signedTx = await sdkMethod({ signDoc, signerAddress: sender });
     const decodedBytes = atob(signedTx.serialized);
     return new Uint8Array(decodedBytes.length).map((_, i) => decodedBytes.charCodeAt(i));
   };
@@ -93,19 +98,19 @@ export const mayachainWalletMethods = async ({
       assetValue,
       recipient,
       memo,
-      from: fromAddress,
+      sender: fromAddress,
     });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 
     return transactionHash;
   };
 
-  const deposit = async ({ assetValue, memo }: DepositParam) => {
+  const deposit = async ({ assetValue, memo }: ThorchainDepositParams) => {
     const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.Maya]);
     const signedTransaction = await signTransaction({
       assetValue,
       memo,
-      from: fromAddress,
+      sender: fromAddress,
     });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 

@@ -16,9 +16,7 @@ import {
 
 import {
   buildAminoMsg,
-  buildDepositTx,
   buildEncodedTxBody,
-  buildTransferTx,
   convertToSignable,
   createDefaultAminoTypes,
   createDefaultRegistry,
@@ -236,8 +234,8 @@ export async function createThorchainToolbox({
     recipient,
   }: Omit<GenericTransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
-    const from = (await signer?.getAccounts())?.[0]?.address;
-    if (!(from && signer)) throw new Error("Signer not defined");
+    const sender = (await signer?.getAccounts())?.[0]?.address;
+    if (!(sender && signer)) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;
     const registry = await createDefaultRegistry();
@@ -249,17 +247,16 @@ export async function createThorchainToolbox({
 
     const aminoMessage = buildAminoMsg({
       assetValue,
-      from,
+      sender,
       recipient,
       memo,
-      chain,
     });
 
     if (isAminoSigner) {
       const msgSign = await convertToSignable(aminoMessage, chain);
 
       const { signatures, authInfoBytes } = await signingClient.sign(
-        from,
+        sender,
         [msgSign],
         defaultFee,
         memo,
@@ -282,7 +279,7 @@ export async function createThorchainToolbox({
 
     const preparedMessage = parseAminoMessageForDirectSigning(aminoMessage);
     const msgSign = await convertToSignable(preparedMessage, chain);
-    const txResponse = await signingClient.signAndBroadcast(from, [msgSign], defaultFee, memo);
+    const txResponse = await signingClient.signAndBroadcast(sender, [msgSign], defaultFee, memo);
 
     return txResponse.transactionHash;
   }
@@ -291,9 +288,7 @@ export async function createThorchainToolbox({
     ...cosmosToolbox,
     broadcastMultisigTx: broadcastMultisigTx({ prefix: chainPrefix, rpcUrl }),
     buildAminoMsg,
-    buildDepositTx: buildDepositTx(rpcUrl),
     buildEncodedTxBody,
-    buildTransferTx: buildTransferTx(rpcUrl),
     convertToSignable,
     createDefaultAminoTypes: () => createDefaultAminoTypes(chain),
     createDefaultRegistry,

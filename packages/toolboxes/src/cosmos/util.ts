@@ -2,7 +2,7 @@ import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
 import { AssetValue, Chain, ChainId, type CosmosChain, SKConfig } from "@swapkit/helpers";
 
-import type { CosmosNativeTransferTxParams } from "./thorchainUtils";
+import type { CosmosCreateTransactionParams } from "./thorchainUtils";
 
 export const USK_KUJIRA_FACTORY_DENOM =
   "FACTORY/KUJIRA1QK00H5ATUTPSV900X202PXX42NPJR9THG58DNQPA72F2P7M2LUASE444A7/UUSK";
@@ -133,18 +133,20 @@ const getTransferMsgTypeByChain = (chain: CosmosChain) => {
 /**
  * Used to build tx for Cosmos and Kujira
  */
-export const buildNativeTransferTx = async ({
-  fromAddress,
-  toAddress,
+export const cosmosCreateTransaction = async ({
+  sender,
+  recipient,
   assetValue,
   memo = "",
-  fee,
-}: CosmosNativeTransferTxParams) => {
+  feeRate,
+  sequence,
+  accountNumber,
+}: CosmosCreateTransactionParams) => {
   const { chain, chainId } = assetValue;
 
   const url = getRPC(chainId);
   const client = await createStargateClient(url);
-  const accountOnChain = await client.getAccount(fromAddress);
+  const accountOnChain = await client.getAccount(sender);
 
   if (!accountOnChain) {
     throw new Error("Account does not exist");
@@ -155,24 +157,24 @@ export const buildNativeTransferTx = async ({
   const defaultFee = getDefaultChainFee(chain as CosmosChain);
 
   const txFee =
-    feeAsset && fee
-      ? { amount: [{ denom: feeAsset, amount: fee }], gas: defaultFee.gas }
+    feeAsset && feeRate
+      ? { amount: [{ denom: feeAsset, amount: feeRate.toString() }], gas: defaultFee.gas }
       : defaultFee;
 
   const msgSend = {
-    fromAddress,
-    toAddress,
+    fromAddress: sender,
+    toAddress: recipient,
     amount: [
       { amount: assetValue.getBaseValue("string"), denom: getMsgSendDenom(assetValue.symbol) },
     ],
   };
 
   return {
-    accountNumber: accountOnChain.accountNumber,
+    accountNumber: accountNumber ?? accountOnChain.accountNumber,
     chainId,
     fee: txFee,
     memo,
-    sequence: accountOnChain.sequence,
+    sequence: sequence ?? accountOnChain.sequence,
     msgs: [{ typeUrl: getTransferMsgTypeByChain(chain as CosmosChain), value: msgSend }],
   };
 };

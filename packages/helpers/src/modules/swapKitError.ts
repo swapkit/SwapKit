@@ -149,6 +149,7 @@ const errorCodes = {
   toolbox_evm_error_sending_transaction: 90212,
   toolbox_radix_signer_not_defined: 90301,
   toolbox_solana_no_signer: 90401,
+  toolbox_solana_fee_estimation_failed: 90402,
   /**
    * Helpers
    */

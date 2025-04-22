@@ -1,15 +1,18 @@
 import {
+  AssetValue,
   Chain,
   type CosmosChain,
   type EVMChain,
+  FeeOption,
+  type GenericCreateTransactionParams,
   type SubstrateChain,
   type UTXOChain,
 } from "@swapkit/helpers";
 import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 
-import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "@swapkit/toolboxes/evm";
 import type { RadixToolbox } from "@swapkit/toolboxes/radix";
-import type { getSolanaToolbox } from "@swapkit/toolboxes/solana";
+import type { SolanaCreateTransactionParams, getSolanaToolbox } from "@swapkit/toolboxes/solana";
 import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
@@ -55,6 +58,63 @@ export async function getAddressValidator() {
   };
 }
 
+export async function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: T) {
+  const toolbox = await getToolbox(chain);
+
+  return async function estimateFee(params: CreateTransactionParams[T]) {
+    switch (chain) {
+      case Chain.Arbitrum:
+      case Chain.Avalanche:
+      case Chain.Optimism:
+      case Chain.BinanceSmartChain:
+      case Chain.Base:
+      case Chain.Polygon:
+      case Chain.Ethereum: {
+        const txObject = await (
+          toolbox as Awaited<ReturnType<typeof ETHToolbox>>
+        ).createTransaction(params as EVMCreateTransactionParams);
+        return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
+          ...txObject,
+          feeOption: params.feeOptionKey || FeeOption.Fast,
+          chain,
+        });
+      }
+      case Chain.Bitcoin:
+      case Chain.BitcoinCash:
+      case Chain.Dogecoin:
+      case Chain.Dash:
+      case Chain.Litecoin: {
+        return (toolbox as Awaited<ReturnType<typeof getUtxoToolbox>>).estimateTransactionFee(
+          params as CreateTransactionParams[Chain.Bitcoin],
+        );
+      }
+
+      case Chain.THORChain:
+      case Chain.Maya:
+      case Chain.Kujira:
+      case Chain.Cosmos: {
+        const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
+        return estimateTransactionFee(params);
+      }
+
+      case Chain.Polkadot: {
+        return (
+          toolbox as Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Polkadot>>>
+        ).estimateTransactionFee(params);
+      }
+
+      case Chain.Solana: {
+        return (toolbox as Awaited<ReturnType<typeof getSolanaToolbox>>).estimateTransactionFee(
+          params as CreateTransactionParams[Chain.Solana],
+        );
+      }
+
+      default:
+        return AssetValue.from({ chain });
+    }
+  };
+}
+
 type Toolboxes = {
   [key in EVMChain]: Awaited<ReturnType<typeof getEvmToolbox>>;
 } & {
@@ -77,6 +137,17 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
 } & {
   [Chain.Radix]: Parameters<typeof RadixToolbox>[0];
   [Chain.Solana]: Parameters<typeof getSolanaToolbox>[0];
+};
+
+type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams } & {
+  [key in UTXOChain]: GenericCreateTransactionParams;
+} & {
+  [key in CosmosChain]: GenericCreateTransactionParams;
+} & {
+  [key in SubstrateChain]: GenericCreateTransactionParams;
+} & {
+  [Chain.Radix]: GenericCreateTransactionParams;
+  [Chain.Solana]: SolanaCreateTransactionParams;
 };
 
 export async function getToolbox<T extends keyof Toolboxes>(

@@ -13,14 +13,14 @@ import {
   SKConfig,
   derivationPathToString,
 } from "@swapkit/helpers";
-import type { DepositParam } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
 type SignTransactionParams = {
   assetValue: AssetValue;
   recipient?: string;
-  from: string;
+  sender: string;
   memo: string | undefined;
 };
 
@@ -44,14 +44,19 @@ export const thorchainWalletMethods = async ({
     address_n: bip32ToAddressNList(derivationPathString),
   })) as { address: string };
 
-  const signTransaction = async ({ assetValue, recipient, from, memo }: SignTransactionParams) => {
-    const account = await toolbox.getAccount(from);
+  const signTransaction = async ({
+    assetValue,
+    recipient,
+    sender,
+    memo,
+  }: SignTransactionParams) => {
+    const account = await toolbox.getAccount(sender);
     if (!account) throw new Error("Account not found");
     const { accountNumber, sequence = 0 } = account;
 
     const isTransfer = recipient && recipient !== "";
 
-    const msg = buildAminoMsg({ chain: Chain.THORChain, from, recipient, assetValue, memo });
+    const msg = buildAminoMsg({ sender, recipient, assetValue, memo });
 
     const chainId = ChainId.THORChain;
 
@@ -67,11 +72,11 @@ export const thorchainWalletMethods = async ({
     const signedTx = isTransfer
       ? await sdk.thorchain.thorchainSignAminoTransfer({
           signDoc: signDoc as TypesThorchainSignDocTransfer,
-          signerAddress: from,
+          signerAddress: sender,
         })
       : await sdk.thorchain.thorchainSignAminoDeposit({
           signDoc: signDoc as TypesThorchainSignDocDeposit,
-          signerAddress: from,
+          signerAddress: sender,
         });
     const decodedBytes = atob(signedTx.serialized);
     return new Uint8Array(decodedBytes.length).map((_, i) => decodedBytes.charCodeAt(i));
@@ -83,19 +88,19 @@ export const thorchainWalletMethods = async ({
       assetValue,
       recipient,
       memo,
-      from: fromAddress,
+      sender: fromAddress,
     });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 
     return transactionHash;
   };
 
-  const deposit = async ({ assetValue, memo }: DepositParam) => {
+  const deposit = async ({ assetValue, memo }: ThorchainDepositParams) => {
     const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
     const signedTransaction = await signTransaction({
       assetValue,
       memo,
-      from: fromAddress,
+      sender: fromAddress,
     });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 

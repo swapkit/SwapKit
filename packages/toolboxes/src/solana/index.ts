@@ -1,4 +1,5 @@
 import type { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
+import type { GenericCreateTransactionParams, GenericTransferParams } from "@swapkit/helpers";
 import type { getSolanaToolbox } from "./toolbox";
 
 type DisplayEncoding = "utf8" | "hex";
@@ -44,3 +45,11 @@ export interface SolanaProvider {
     transactions: T[],
   ) => Promise<T[]>;
 }
+
+export type SolanaCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {
+  isProgramDerivedAddress?: boolean;
+};
+
+export type SolanaTransferParams = Omit<GenericTransferParams, "feeRate"> & {
+  isProgramDerivedAddress?: boolean;
+};

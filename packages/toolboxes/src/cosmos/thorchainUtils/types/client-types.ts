@@ -1,5 +1,10 @@
 import type { EncodeObject } from "@cosmjs/proto-signing";
-import type { Asset, AssetValue, Chain, ChainId } from "@swapkit/helpers";
+import type {
+  Asset,
+  ChainId,
+  GenericCreateTransactionParams,
+  GenericTransferParams,
+} from "@swapkit/helpers";
 
 enum TxType {
   Transfer = "transfer",
@@ -18,11 +23,6 @@ type Tx = {
 export type NodeUrl = {
   node: string;
   rpc: string;
-};
-
-export type DepositParam = {
-  assetValue: AssetValue;
-  memo: string;
 };
 
 export type TxData = Pick<Tx, "from" | "to" | "type">;
@@ -56,22 +56,19 @@ export type TransferTransaction = {
   fee: { amount: { denom: string; amount: string }[]; gas: string };
 };
 
-export type CosmosNativeTransferTxParams = {
-  fromAddress: string;
-  toAddress: string;
-  assetValue: AssetValue;
-  memo?: string;
-  fee?: string;
+export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
+  accountNumber?: number;
+  sequence?: number;
 };
 
-export type ThorchainTransferTxParams = {
-  from: string;
-  recipient: string;
-  assetValue: AssetValue;
-  memo?: string;
-  chain: Chain.THORChain | Chain.Maya;
+export type ThorchainCreateTransactionParams = Omit<CosmosCreateTransactionParams, "feeRate"> & {
   asSignable?: boolean;
   asAminoMessage?: boolean;
 };
 
-export type ThorchainDepositTxParams = Omit<ThorchainTransferTxParams, "recipient">;
+export type ThorchainCreateDepositTransactionParams = Omit<
+  ThorchainCreateTransactionParams,
+  "recipient"
+>;
+
+export type ThorchainDepositParams = Omit<GenericTransferParams, "recipient">;

@@ -97,7 +97,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         const transaction = await toolbox.createTransaction({
           recipient,
           assetValue,
-          fromPubkey,
+          sender: address,
           isProgramDerivedAddress,
         });
 

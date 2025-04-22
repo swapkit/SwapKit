@@ -24,7 +24,7 @@ import { SwapKitApi } from "@swapkit/helpers/api";
 import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
-  buildNativeTransferTx,
+  cosmosCreateTransaction,
   createSigningStargateClient,
   createStargateClient,
   getDenomWithChain,
@@ -222,7 +222,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
     fetchFeeRateFromSwapKit,
     getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
-    buildTransferTx: buildNativeTransferTx,
+    createTransaction: cosmosCreateTransaction,
     verifySignature: verifySignature(getAccount),
   };
 }
