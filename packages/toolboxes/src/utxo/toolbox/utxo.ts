@@ -7,7 +7,6 @@ import {
   FeeOption,
   NetworkDerivationPath,
   SwapKitNumber,
-  type TransferParams,
   type UTXOChain,
   derivationPathToString,
   updateDerivationPath,
@@ -27,8 +26,14 @@ import {
   getUtxoApi,
   getUtxoNetwork,
 } from "../helpers";
-import type { BchECPair, TargetOutput, UTXOBuildTxParams, UTXOType } from "../types";
-import { validateAddress as validateBCHAddress } from "./bitcoinCash";
+import type {
+  BchECPair,
+  TargetOutput,
+  UTXOBuildTxParams,
+  UTXOTransferParams,
+  UTXOType,
+} from "../types";
+import { bchValidateAddress } from "./bitcoinCash";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
 
@@ -86,7 +91,7 @@ async function addInputsAndOutputs({
   return { psbt, inputs };
 }
 
-async function buildTx({
+async function createTransaction({
   assetValue,
   recipient,
   memo,
@@ -141,7 +146,7 @@ export async function getUTXOAddressValidator() {
 
   return function validateAddress({ address, chain }: { address: string; chain: UTXOChain }) {
     if (chain === Chain.BitcoinCash) {
-      return validateBCHAddress(address);
+      return bchValidateAddress(address);
     }
 
     try {
@@ -220,7 +225,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
     getAddress,
     validateAddress: (address: string) => validateAddress({ address, chain }),
     broadcastTx: (txHash: string) => getUtxoApi(chain).broadcastTx(txHash),
-    buildTx,
+    createTransaction,
     createKeysForPath,
     getFeeRates: () => getFeeRates(chain),
     getInputsOutputsFee,
@@ -241,13 +246,9 @@ async function getInputsOutputsFee({
   feeOptionKey = FeeOption.Fast,
   feeRate,
   memo,
+  sender,
   recipient,
-  from,
-}: {
-  assetValue: AssetValue;
-  recipient: string;
-  memo?: string;
-  from: string;
+}: Omit<UTXOBuildTxParams, "feeRate"> & {
   feeOptionKey?: FeeOption;
   feeRate?: number;
 }) {
@@ -255,9 +256,9 @@ async function getInputsOutputsFee({
 
   const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
-    recipient,
+    sender,
     memo,
-    sender: from,
+    recipient,
   });
 
   const feeRateWhole = feeRate ? Math.floor(feeRate) : (await getFeeRates(chain))[feeOptionKey];
@@ -325,7 +326,7 @@ function estimateTransactionFee(chain: UTXOChain) {
   return async (params: {
     assetValue: AssetValue;
     recipient: string;
-    from: string;
+    sender: string;
     memo?: string;
     feeOptionKey?: FeeOption;
     feeRate?: number;
@@ -446,7 +447,7 @@ function transfer(signer?: ChainSigner<Psbt, Psbt>) {
     feeOptionKey,
     feeRate,
     assetValue,
-  }: TransferParams) {
+  }: UTXOTransferParams) {
     const from = await signer?.getAddress();
 
     const chain = assetValue.chain as UTXOChain;
@@ -455,7 +456,7 @@ function transfer(signer?: ChainSigner<Psbt, Psbt>) {
     if (!recipient) throw new Error("Recipient address must be provided");
     const txFeeRate = feeRate || (await getFeeRates(chain))[feeOptionKey || FeeOption.Fast];
 
-    const { psbt } = await buildTx({
+    const { psbt } = await createTransaction({
       recipient,
       feeRate: txFeeRate,
       sender: from,
@@ -484,12 +485,7 @@ async function getInputsAndTargetOutputs({
   recipient,
   memo,
   sender,
-}: {
-  assetValue: AssetValue;
-  recipient: string;
-  memo?: string;
-  sender: string;
-}) {
+}: Omit<UTXOBuildTxParams, "feeRate">) {
   const chain = assetValue.chain as UTXOChain;
 
   const fetchTxHex = nonSegwitChains.includes(chain);

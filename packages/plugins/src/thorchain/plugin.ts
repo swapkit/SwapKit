@@ -35,11 +35,11 @@ import {
   TCEthereumVaultAbi,
 } from "@swapkit/helpers/contracts";
 
+import type { ApproveParams } from "@swapkit/toolboxes/evm";
 import { prepareTxParams, validateAddressType } from "./shared";
 import type {
   AddLiquidityParams,
   AddLiquidityPartParams,
-  ApproveParams,
   CoreTxParams,
   CreateLiquidityParams,
   NodeActionParams,
@@ -251,11 +251,11 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       });
     }
 
-    function approveAssetValue(params: ApproveParams) {
+    function approveAssetValue(params: ApproveParams & { assetValue: AssetValue }) {
       return approve({ ...params, type: ApproveMode.Approve });
     }
 
-    function isAssetValueApproved(params: ApproveParams) {
+    function isAssetValueApproved(params: ApproveParams & { assetValue: AssetValue }) {
       return approve({ ...params, type: ApproveMode.CheckOnly });
     }
 

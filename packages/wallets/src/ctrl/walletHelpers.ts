@@ -176,7 +176,7 @@ export async function walletTransfer(
   return transaction({ method, params, chain: assetValue.chain });
 }
 
-export function getCtrlMethods(provider: BrowserProvider) {
+export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
   return {
     call: async <T>({
       contractAddress,
@@ -185,7 +185,6 @@ export function getCtrlMethods(provider: BrowserProvider) {
       funcParams = [],
       txOverrides,
     }: CallParams): Promise<T> => {
-      const contractProvider = provider;
       if (!contractAddress) {
         throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
       }
@@ -195,7 +194,7 @@ export function getCtrlMethods(provider: BrowserProvider) {
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const createTx = getCreateContractTxObject(contractProvider);
+        const createTx = getCreateContractTxObject({ provider, chain });
         const { value, from, to, data } = await createTx({
           contractAddress,
           abi,
@@ -213,7 +212,7 @@ export function getCtrlMethods(provider: BrowserProvider) {
           } as any,
         ]);
       }
-      const contract = createContract(contractAddress, abi, contractProvider);
+      const contract = createContract(contractAddress, abi, provider);
 
       const result = await contract[funcName]?.(...funcParams);
 
@@ -234,7 +233,7 @@ export function getCtrlMethods(provider: BrowserProvider) {
         txOverrides,
       };
 
-      const createTx = getCreateContractTxObject(provider);
+      const createTx = getCreateContractTxObject({ provider, chain });
       const { value, to, data } = await createTx(functionCallParams);
 
       return provider.send("eth_sendTransaction", [

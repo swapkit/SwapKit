@@ -7,7 +7,7 @@ enum Format {
   Bitpay = "bitpay",
   Cashaddr = "cashaddr",
 }
-enum Network {
+enum UtxoNetwork {
   Mainnet = "mainnet",
   Testnet = "testnet",
 }
@@ -18,21 +18,21 @@ enum Type {
 
 const VERSION_BYTE = {
   [Format.Legacy]: {
-    [Network.Mainnet]: {
+    [UtxoNetwork.Mainnet]: {
       [Type.P2PKH]: 0,
       [Type.P2SH]: 5,
     },
-    [Network.Testnet]: {
+    [UtxoNetwork.Testnet]: {
       [Type.P2PKH]: 111,
       [Type.P2SH]: 196,
     },
   },
   [Format.Bitpay]: {
-    [Network.Mainnet]: {
+    [UtxoNetwork.Mainnet]: {
       [Type.P2PKH]: 28,
       [Type.P2SH]: 40,
     },
-    [Network.Testnet]: {
+    [UtxoNetwork.Testnet]: {
       [Type.P2PKH]: 111,
       [Type.P2SH]: 196,
     },
@@ -41,7 +41,7 @@ const VERSION_BYTE = {
 
 type DecodedType = {
   format: Format;
-  network: Network;
+  network: UtxoNetwork;
   type: Type;
   hash: any;
 };
@@ -97,23 +97,23 @@ function decodeBase58Address(address: string) {
     const hash = Array.prototype.slice.call(payload, 1);
 
     switch (versionByte) {
-      case VERSION_BYTE[Format.Legacy][Network.Mainnet][Type.P2PKH]:
-        return { hash, format: Format.Legacy, network: Network.Mainnet, type: Type.P2PKH };
+      case VERSION_BYTE[Format.Legacy][UtxoNetwork.Mainnet][Type.P2PKH]:
+        return { hash, format: Format.Legacy, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
 
-      case VERSION_BYTE[Format.Legacy][Network.Mainnet][Type.P2SH]:
-        return { hash, format: Format.Legacy, network: Network.Mainnet, type: Type.P2SH };
+      case VERSION_BYTE[Format.Legacy][UtxoNetwork.Mainnet][Type.P2SH]:
+        return { hash, format: Format.Legacy, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
-      case VERSION_BYTE[Format.Legacy][Network.Testnet][Type.P2PKH]:
-        return { hash, format: Format.Legacy, network: Network.Testnet, type: Type.P2PKH };
+      case VERSION_BYTE[Format.Legacy][UtxoNetwork.Testnet][Type.P2PKH]:
+        return { hash, format: Format.Legacy, network: UtxoNetwork.Testnet, type: Type.P2PKH };
 
-      case VERSION_BYTE[Format.Legacy][Network.Testnet][Type.P2SH]:
-        return { hash, format: Format.Legacy, network: Network.Testnet, type: Type.P2SH };
+      case VERSION_BYTE[Format.Legacy][UtxoNetwork.Testnet][Type.P2SH]:
+        return { hash, format: Format.Legacy, network: UtxoNetwork.Testnet, type: Type.P2SH };
 
-      case VERSION_BYTE[Format.Bitpay][Network.Mainnet][Type.P2PKH]:
-        return { hash, format: Format.Bitpay, network: Network.Mainnet, type: Type.P2PKH };
+      case VERSION_BYTE[Format.Bitpay][UtxoNetwork.Mainnet][Type.P2PKH]:
+        return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
 
-      case VERSION_BYTE[Format.Bitpay][Network.Mainnet][Type.P2SH]:
-        return { hash, format: Format.Bitpay, network: Network.Mainnet, type: Type.P2SH };
+      case VERSION_BYTE[Format.Bitpay][UtxoNetwork.Mainnet][Type.P2SH]:
+        return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       default:
         throw new Error("Received an invalid Bitcoin Cash address as input.");
@@ -151,7 +151,7 @@ function decodeCashAddressWithPrefix(address: string): DecodedType {
     return {
       format: Format.Cashaddr,
       hash: Array.prototype.slice.call(hash, 0),
-      network: prefix === "bitcoincash" ? Network.Mainnet : Network.Testnet,
+      network: prefix === "bitcoincash" ? UtxoNetwork.Mainnet : UtxoNetwork.Testnet,
       type: type === "P2PKH" ? Type.P2PKH : Type.P2SH,
     };
   } catch (_error) {
@@ -168,10 +168,10 @@ function encodeAsLegacy(decoded: DecodedType) {
 }
 
 function encodeAsCashaddr(decoded: DecodedType) {
-  const prefix = decoded.network === Network.Mainnet ? "bitcoincash" : "bchtest";
+  const prefix = decoded.network === UtxoNetwork.Mainnet ? "bitcoincash" : "bchtest";
   const type = decoded.type === Type.P2PKH ? "P2PKH" : "P2SH";
   const hash = new Uint8Array(decoded.hash);
   return cashaddr.encode(prefix, type, hash);
 }
 
-export { detectAddressNetwork, isValidAddress, Network, toCashAddress, toLegacyAddress };
+export { detectAddressNetwork, isValidAddress, UtxoNetwork, toCashAddress, toLegacyAddress };

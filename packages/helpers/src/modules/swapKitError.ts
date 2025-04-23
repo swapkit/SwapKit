@@ -149,6 +149,7 @@ const errorCodes = {
   toolbox_evm_error_sending_transaction: 90212,
   toolbox_radix_signer_not_defined: 90301,
   toolbox_solana_no_signer: 90401,
+  toolbox_solana_fee_estimation_failed: 90402,
   toolbox_ripple_rpc_not_configured: 90501,
   toolbox_ripple_signer_not_found: 90502,
   toolbox_ripple_asset_not_supported: 90503,

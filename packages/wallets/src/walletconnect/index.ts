@@ -2,14 +2,14 @@ import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
   ChainId,
+  type GenericTransferParams,
   SKConfig,
   SwapKitError,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
@@ -172,7 +172,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         assetValue,
         memo,
         ...rest
-      }: TransferParams | DepositParam) {
+      }: GenericTransferParams | ThorchainDepositParams) {
         const account = await toolbox.getAccount(address);
         if (!account) {
           throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account } });
@@ -187,9 +187,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const { accountNumber, sequence = 0 } = account;
 
-        const msgs = [
-          buildAminoMsg({ chain: Chain.THORChain, assetValue, memo, from: address, ...rest }),
-        ];
+        const msgs = [buildAminoMsg({ assetValue, memo, sender: address, ...rest })];
 
         const chainId = ChainId.THORChain;
 
@@ -239,8 +237,8 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       return {
         ...toolbox,
-        transfer: (params: TransferParams) => thorchainTransfer(params),
-        deposit: (params: DepositParam) => thorchainTransfer(params),
+        transfer: (params: GenericTransferParams) => thorchainTransfer(params),
+        deposit: (params: ThorchainDepositParams) => thorchainTransfer(params),
         getAccount,
       };
     }

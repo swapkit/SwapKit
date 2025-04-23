@@ -3,14 +3,14 @@ import {
   ChainId,
   type DerivationPathArray,
   FeeOption,
+  type GenericTransferParams,
   SKConfig,
   StagenetChain,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
 import { getWalletSupportedChains } from "../utils";
@@ -99,7 +99,7 @@ async function getWalletMethods({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(chain);
+      const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
 
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
@@ -108,7 +108,7 @@ async function getWalletMethods({
         const feeRate = params.feeRate || (await toolbox.getFeeRates())[FeeOption.Average];
         const memo = [Chain.Bitcoin].includes(chain) ? params.memo : reduceMemo(params.memo);
 
-        const { psbt, inputs } = await toolbox.buildTx({
+        const { psbt, inputs } = await toolbox.createTransaction({
           ...params,
           feeRate,
           memo,
@@ -146,7 +146,7 @@ async function getWalletMethods({
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
-      const transfer = async ({ assetValue, recipient, memo }: TransferParams) => {
+      const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
         if (!assetValue) throw new Error("invalid asset");
 
         const sendCoinsMessage = {
@@ -205,7 +205,7 @@ async function getWalletMethods({
         assetValue,
         ...rest
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
-      }: TransferParams | DepositParam) => {
+      }: GenericTransferParams | ThorchainDepositParams) => {
         const account = await toolbox.getAccount(address);
         if (!account) throw new Error("invalid account");
         if (!assetValue) throw new Error("invalid asset");
@@ -215,7 +215,7 @@ async function getWalletMethods({
         const sequence = (sequenceNumber || 0).toString();
 
         const orderedMessages = recursivelyOrderKeys([
-          buildAminoMsg({ chain, from: address, assetValue, memo, ...rest }),
+          buildAminoMsg({ sender: address, assetValue, memo, ...rest }),
         ]);
 
         // get tx signing msg
@@ -260,8 +260,8 @@ async function getWalletMethods({
         return transactionHash;
       };
 
-      const transfer = (params: TransferParams) => thorchainTransfer(params);
-      const deposit = (params: DepositParam) => thorchainTransfer(params);
+      const transfer = (params: GenericTransferParams) => thorchainTransfer(params);
+      const deposit = (params: ThorchainDepositParams) => thorchainTransfer(params);
 
       return { ...toolbox, address, deposit, transfer, signMessage };
     }

@@ -3,7 +3,8 @@ import type {
   ChainSigner,
   DerivationPathArray,
   FeeOption,
-  WalletTxParams,
+  GenericCreateTransactionParams,
+  GenericTransferParams,
 } from "@swapkit/helpers";
 import { Chain } from "@swapkit/helpers";
 import type {
@@ -68,15 +69,23 @@ export type EstimateCallParams = Pick<
   "contractAddress" | "abi" | "funcName" | "funcParams" | "txOverrides"
 >;
 
-export type TransferParams = WalletTxParams & {
+export type EVMTransferParams = GenericTransferParams & {
+  //   gasLimit?: bigint;
+  //   gasPrice?: bigint;
+  //   maxFeePerGas?: bigint;
+  //   maxPriorityFeePerGas?: bigint;
+  //   data?: string;
+  sender?: string;
+  //   nonce?: number;
+};
+
+export type EVMCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {
   gasLimit?: bigint;
   gasPrice?: bigint;
   maxFeePerGas?: bigint;
   maxPriorityFeePerGas?: bigint;
   data?: string;
-  from: string;
   nonce?: number;
-  assetValue: AssetValue;
 };
 
 export type EVMMaxSendableAmountsParams = {
@@ -117,7 +126,7 @@ export type EVMToolboxParams = {
   provider?: BrowserProvider | JsonRpcProvider;
 } & (
   | {
-      signer?: (ChainSigner<TransferParams, string> & Signer) | JsonRpcSigner;
+      signer?: (ChainSigner<EVMTransferParams, string> & Signer) | JsonRpcSigner;
     }
   | {
       phrase?: string;

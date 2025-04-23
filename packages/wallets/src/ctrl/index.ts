@@ -1,8 +1,8 @@
 import {
   Chain,
   ChainToChainId,
+  type GenericTransferParams,
   SwapKitError,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -77,8 +77,8 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
 
       return {
         ...toolbox,
-        deposit: (tx: TransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
-        transfer: (tx: TransferParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
+        deposit: (tx: GenericTransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
+        transfer: (tx: GenericTransferParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
       };
     }
 
@@ -129,7 +129,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
       const toolbox = await getEvmToolbox(chain, { provider, signer });
-      const ctrlMethods = getCtrlMethods(provider);
+      const ctrlMethods = getCtrlMethods(provider, chain);
 
       try {
         if (chain !== Chain.Ethereum) {

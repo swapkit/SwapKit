@@ -2,9 +2,9 @@ import {
   Chain,
   type DerivationPathArray,
   FeeOption,
+  type GenericTransferParams,
   SKConfig,
   SwapKitError,
-  type TransferParams,
   WalletOption,
   createWallet,
   derivationPathToString,
@@ -156,7 +156,7 @@ async function getTrezorWallet<T extends Chain>({
         feeRate: paramFeeRate,
         memo,
         ...rest
-      }: TransferParams) => {
+      }: GenericTransferParams) => {
         if (!(address && recipient)) {
           throw new SwapKitError({
             errorKey: "wallet_missing_params",

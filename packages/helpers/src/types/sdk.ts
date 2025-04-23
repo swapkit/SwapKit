@@ -27,13 +27,6 @@ export type ApproveReturnType<T extends ApproveMode> = T extends "checkOnly"
   ? Promise<boolean>
   : Promise<string>;
 
-export type WalletTxParams = {
-  feeOptionKey?: FeeOption;
-  from?: string;
-  memo?: string; // optional memo to pass
-  recipient: string;
-};
-
 export enum MemoType {
   NAME_REGISTER = "~",
   BOND = "BOND",

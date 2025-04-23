@@ -184,7 +184,7 @@ export async function walletTransfer(
   return transaction({ method, params, chain: assetValue.chain });
 }
 
-export function getKEEPKEYMethods(provider: BrowserProvider) {
+export function getKEEPKEYMethods(provider: BrowserProvider, chain: EVMChain) {
   return {
     call: async <T>({
       contractAddress,
@@ -202,7 +202,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider) {
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const createTx = getCreateContractTxObject(provider);
+        const createTx = getCreateContractTxObject({ provider, chain });
         const { value, from, to, data } = await createTx({
           contractAddress,
           abi,
@@ -226,7 +226,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider) {
         "@swapkit/toolboxes/evm"
       );
 
-      const createTx = getCreateContractTxObject(provider);
+      const createTx = getCreateContractTxObject({ provider, chain });
       const { value, to, data } = await createTx({
         contractAddress: assetAddress,
         abi: erc20ABI,

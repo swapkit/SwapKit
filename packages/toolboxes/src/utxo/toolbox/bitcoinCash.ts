@@ -4,14 +4,13 @@ import {
   type DerivationPathArray,
   FeeOption,
   NetworkDerivationPath,
-  type TransferParams,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import type { UtxoToolboxParams } from ".";
 import {
   accumulative,
-  Network as bchNetwork,
+  UtxoNetwork as bchNetwork,
   compileMemo,
   detectAddressNetwork,
   getUtxoApi,
@@ -26,6 +25,7 @@ import type {
   TransactionBuilderType,
   TransactionType,
   UTXOBuildTxParams,
+  UTXOTransferParams,
   UTXOType,
 } from "../types";
 import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
@@ -36,7 +36,7 @@ export function stripPrefix(address: string) {
   return address.replace(/(bchtest:|bitcoincash:)/, "");
 }
 
-export function validateAddress(address: string) {
+export function bchValidateAddress(address: string) {
   const strippedAddress = stripPrefix(address);
   return (
     isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet
@@ -111,26 +111,32 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     ...toolbox,
     getAddress,
     broadcastTx,
-    buildBCHTx,
+    createTransaction,
     buildTx,
     getAddressFromKeys,
     getBalance: handleGetBalance,
     getFeeRates,
     stripPrefix,
     stripToCashAddress,
-    validateAddress,
+    validateAddress: bchValidateAddress,
     transfer: transfer({ getFeeRates, broadcastTx, signer }),
   };
 }
 
-async function buildBCHTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
+async function createTransaction({
+  assetValue,
+  recipient,
+  memo,
+  feeRate,
+  sender,
+}: UTXOBuildTxParams) {
   const {
     Transaction,
     TransactionBuilder,
     address: bchAddress,
     // @ts-ignore
   } = await import("@psf/bitcoincashjs-lib");
-  if (!validateAddress(recipient)) throw new Error("Invalid address");
+  if (!bchValidateAddress(recipient)) throw new Error("Invalid address");
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
     fetchTxHex: true,
@@ -190,15 +196,20 @@ function transfer({
   getFeeRates: () => Promise<Record<FeeOption, number>>;
   signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>;
 }) {
-  return async function transfer({ recipient, assetValue, feeOptionKey, ...rest }: TransferParams) {
+  return async function transfer({
+    recipient,
+    assetValue,
+    feeOptionKey = FeeOption.Fast,
+    ...rest
+  }: UTXOTransferParams) {
     const from = await signer?.getAddress();
     if (!(signer && from)) throw new Error("Signer must provider address");
     if (!recipient) throw new Error("Recipient address must be provided");
 
-    const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey || FeeOption.Fast];
+    const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey];
 
     // try out if psbt tx is faster/better/nicer
-    const { builder, utxos } = await buildBCHTx({
+    const { builder, utxos } = await createTransaction({
       ...rest,
       assetValue,
       feeRate,
@@ -217,7 +228,7 @@ function transfer({
 async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
   const { Psbt } = await import("bitcoinjs-lib");
   const recipientCashAddress = toCashAddress(recipient);
-  if (!validateAddress(recipientCashAddress)) throw new Error("Invalid address");
+  if (!bchValidateAddress(recipientCashAddress)) throw new Error("Invalid address");
 
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),

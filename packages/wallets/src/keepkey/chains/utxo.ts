@@ -4,7 +4,7 @@ import {
   DerivationPath,
   type DerivationPathArray,
   FeeOption,
-  type TransferParams,
+  type GenericTransferParams,
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
@@ -27,7 +27,8 @@ export const utxoWalletMethods = async ({
   derivationPath,
 }: { sdk: KeepKeySdk; chain: UTXOChain; derivationPath?: DerivationPathArray }) => {
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-  const toolbox = await getUtxoToolbox(chain);
+  // This might not work for BCH
+  const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
   const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain)
     ? ("p2wpkh" as const)
     : ("p2pkh" as const);
@@ -92,11 +93,17 @@ export const utxoWalletMethods = async ({
     return responseSign.serializedTx?.toString();
   };
 
-  const transfer = async ({ recipient, feeOptionKey, feeRate, memo, ...rest }: TransferParams) => {
+  const transfer = async ({
+    recipient,
+    feeOptionKey,
+    feeRate,
+    memo,
+    ...rest
+  }: GenericTransferParams) => {
     if (!walletAddress) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
 
-    const { psbt, inputs: rawInputs } = await toolbox.buildTx({
+    const { psbt, inputs: rawInputs } = await toolbox.createTransaction({
       ...rest,
       memo,
       recipient,

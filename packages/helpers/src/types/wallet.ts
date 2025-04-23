@@ -142,10 +142,18 @@ export type ChainSigner<T, S> = {
   sign?: (message: string) => Promise<string>;
 };
 
-export type TransferParams = {
+export type GenericTransferParams = {
   recipient: string;
   assetValue: AssetValue;
   memo?: string;
   feeRate?: number;
   feeOptionKey?: FeeOption;
+};
+
+export type GenericCreateTransactionParams = Omit<
+  GenericTransferParams,
+  "feeOptionKey" & "feeRate"
+> & {
+  sender: string;
+  feeRate: number;
 };

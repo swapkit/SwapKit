@@ -2,7 +2,7 @@ import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { KeypairType } from "@polkadot/util-crypto/types";
-import type { AssetValue, SubstrateChain } from "@swapkit/helpers";
+import type { GenericTransferParams, SubstrateChain } from "@swapkit/helpers";
 
 const polkadotNetwork = {
   prefix: 0,
@@ -34,7 +34,7 @@ const subtrateNetwork = {
   website: "https://substrate.io/",
 };
 
-export const Network: Record<SubstrateChain | "GENERIC", SubstrateNetwork> = {
+export const SubstrateNetwork: Record<SubstrateChain | "GENERIC", SubstrateNetwork> = {
   DOT: polkadotNetwork,
   FLIP: chainflipNetwork,
   GENERIC: subtrateNetwork,
@@ -45,10 +45,8 @@ export type SubstrateNetwork =
   | typeof chainflipNetwork
   | typeof subtrateNetwork;
 
-export type SubstrateTransferParams = {
-  recipient: string;
-  assetValue: AssetValue;
-  from?: string;
+export type SubstrateTransferParams = GenericTransferParams & {
+  sender?: string;
 };
 
 type Unsubcall = () => void;

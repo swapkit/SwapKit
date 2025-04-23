@@ -35,37 +35,7 @@ export async function ETHToolbox({ provider, ...signer }: EVMToolboxParams) {
   return { ...evmToolbox, multicall };
 }
 
-export async function ARBToolbox({ provider: providerParam, ...signer }: EVMToolboxParams) {
-  const chain = Chain.Arbitrum;
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
-  const provider = providerParam || (await getProvider(chain, rpcUrl));
-
-  const { estimateGasPrices: _, ...evmToolbox } = await createEvmToolbox(Chain.Arbitrum)({
-    provider,
-    ...signer,
-  });
-
-  async function estimateGasPrices() {
-    try {
-      const { gasPrice } = await provider.getFeeData();
-
-      if (!gasPrice) throw new Error("No fee data available");
-
-      return {
-        [FeeOption.Average]: { gasPrice },
-        [FeeOption.Fast]: { gasPrice },
-        [FeeOption.Fastest]: { gasPrice },
-      };
-    } catch (error) {
-      throw new Error(
-        `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
-      );
-    }
-  }
-
-  return { ...evmToolbox, estimateGasPrices };
-}
-
+export const ARBToolbox = createEvmToolbox(Chain.Arbitrum);
 export const AVAXToolbox = createEvmToolbox(Chain.Avalanche);
 export const BASEToolbox = createEvmToolbox(Chain.Base);
 export const BSCToolbox = createEvmToolbox(Chain.BinanceSmartChain);
@@ -88,11 +58,11 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
           ? toolboxSignerParams.signer
           : undefined;
 
-    const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible });
+    const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible, chain });
 
     return {
       ...evmToolbox,
-      estimateTransactionFee: getEstimateTransactionFee({ provider, isEIP1559Compatible }),
+      estimateTransactionFee: getEstimateTransactionFee({ provider, isEIP1559Compatible, chain }),
       getNetworkParams: getNetworkParams(chain),
       getBalance: getEvmApi(chain).getBalance,
     };
