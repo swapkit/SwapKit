@@ -2,7 +2,7 @@
   "author": "swapkit-oss",
   "dependencies": {
     "ts-pattern": "5.7.0",
-    "zod": "3.24.2",
+    "zod": "3.24.3",
     "zustand": "5.0.3"
   },
   "description": "SwapKit - Helpers",
@@ -45,7 +45,6 @@
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "generate-tokens": "bun --bun ./fetchTokenLists.ts",
-    "lint": "biome check --write ./src",
     "test": "bun test",
     "test:ci": "bun test --coverage",
     "type-check": "bun tsc --noEmit",

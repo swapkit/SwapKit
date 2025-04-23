@@ -61,7 +61,6 @@
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
-    "lint": "biome check --write ./src",
     "test": "echo 'bun test'",
     "test:ci": "bun test --coverage",
     "type-check": "bun tsc --noEmit",

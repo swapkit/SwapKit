@@ -16,12 +16,12 @@
     "stream-browserify": "3.0.0",
     "stream-http": "3.2.0",
     "url": "0.11.4",
-    "vite": "6.2.6",
+    "vite": "6.3.2",
     "vite-plugin-node-polyfills": "0.23.0"
   },
   "devDependencies": {
     "@react-scan/vite-plugin-react-scan": "0.1.8",
-    "@vitejs/plugin-react": "4.3.4",
+    "@vitejs/plugin-react": "4.4.1",
     "react-scan": "0.3.3",
     "rollup-plugin-visualizer": "5.14.0",
     "typescript": "5.8.3",
@@ -35,7 +35,6 @@
     "build-playground": "NODE_OPTIONS=--max_old_space_size=65536 vite build",
     "visualise": "VISUALISE=true bun build-playground",
     "dev": "vite --host",
-    "lint": "biome check --write ./src",
     "preview-playground": "vite preview",
     "serve": "bun build-playground && bun preview-playground"
   },
