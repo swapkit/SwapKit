@@ -510,15 +510,6 @@ function getTransfer({ signer, isEIP1559Compatible = true, provider }: ToolboxWr
     });
 
     return sendTx(transaction);
-
-    // return call<string>({
-    //   contractAddress,
-    //   abi: erc20ABI,
-    //   funcName: "transfer",
-    //   funcParams: [recipient, txAmount],
-    //   txOverrides: { from },
-    //   feeOption: feeOptionKey,
-    // });
   };
 }
 

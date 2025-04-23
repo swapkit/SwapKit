@@ -21,6 +21,7 @@ import {
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
+import { P, match } from "ts-pattern";
 import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
@@ -77,22 +78,6 @@ export async function getSignerFromPrivateKey({
   return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
 }
 
-async function getFees(chain: Chain, safeDefault: number) {
-  const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
-  return {
-    average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
-    fast: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 1.5)), BaseDecimal[chain]),
-    fastest: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 2)), BaseDecimal[chain]),
-  } as { [key in FeeOption]: SwapKitNumber };
-}
-
-function feeToStdFee(fee: SwapKitNumber, denom: string): StdFee {
-  return {
-    amount: [{ denom, amount: fee.getBaseValue("string") }],
-    gas: "200000",
-  };
-}
-
 const SafeDefaultFeeValues = {
   [Chain.Cosmos]: 500,
   [Chain.Kujira]: 1000,
@@ -130,16 +115,12 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
 
-  const signer =
-    "phrase" in toolboxParams && toolboxParams.phrase
-      ? await getSignerFromPhrase({
-          phrase: toolboxParams.phrase,
-          prefix: chainPrefix,
-          derivationPath,
-        })
-      : "signer" in toolboxParams
-        ? toolboxParams.signer
-        : undefined;
+  const signer = await match(toolboxParams)
+    .with({ phrase: P.string }, ({ phrase }) =>
+      getSignerFromPhrase({ phrase, prefix: chainPrefix, derivationPath }),
+    )
+    .with({ signer: P.any }, ({ signer }) => signer)
+    .otherwise(() => undefined);
 
   async function getAccount(address: string) {
     const client = await createStargateClient(rpcUrl);
@@ -147,13 +128,13 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
   }
 
   async function getAddress() {
-    const accounts = await signer?.getAccounts();
-    return accounts?.[0]?.address;
+    const [account] = (await signer?.getAccounts()) || [];
+    return account?.address;
   }
 
   async function getPubKey() {
-    const accounts = await signer?.getAccounts();
-    return accounts?.[0]?.pubkey;
+    const [account] = (await signer?.getAccounts()) || [];
+    return account?.pubkey;
   }
 
   async function transfer({
@@ -217,7 +198,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
-    validateAddress: getCosmosalidateAddress(chainPrefix),
+    validateAddress: getCosmosValidateAddress(chainPrefix),
     getPubKey,
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
     fetchFeeRateFromSwapKit,
@@ -253,7 +234,7 @@ export function cosmosValidateAddress({
     throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
   }
 
-  return getCosmosalidateAddress(prefix)(address);
+  return getCosmosValidateAddress(prefix)(address);
 }
 
 export function estimateTransactionFee({
@@ -274,6 +255,22 @@ function getPrefix<C extends CosmosChain>(chain?: C) {
   return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
 }
 
+async function getFees(chain: Chain, safeDefault: number) {
+  const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
+  return {
+    average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
+    fast: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 1.5)), BaseDecimal[chain]),
+    fastest: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 2)), BaseDecimal[chain]),
+  } as { [key in FeeOption]: SwapKitNumber };
+}
+
+function feeToStdFee(fee: SwapKitNumber, denom: string): StdFee {
+  return {
+    amount: [{ denom, amount: fee.getBaseValue("string") }],
+    gas: "200000",
+  };
+}
+
 function getMinTransactionFee(chain: Chain) {
   return (
     {
@@ -285,7 +282,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function getCosmosalidateAddress(prefix: string) {
+function getCosmosValidateAddress(prefix: string) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 

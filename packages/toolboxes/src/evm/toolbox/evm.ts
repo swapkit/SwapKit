@@ -1,5 +1,6 @@
 import { Chain, type EVMChain, FeeOption, SKConfig } from "@swapkit/helpers";
 import { HDNodeWallet } from "ethers";
+import { P, match } from "ts-pattern";
 import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
 import {
@@ -51,12 +52,10 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
     const provider = providerParam || (await getProvider(chain, rpcUrl));
 
     const isEIP1559Compatible = getIsEIP1559Compatible(chain);
-    const signer =
-      "phrase" in toolboxSignerParams && toolboxSignerParams.phrase
-        ? HDNodeWallet.fromPhrase(toolboxSignerParams.phrase).connect(provider)
-        : "signer" in toolboxSignerParams
-          ? toolboxSignerParams.signer
-          : undefined;
+    const signer = match(toolboxSignerParams)
+      .with({ phrase: P.string }, ({ phrase }) => HDNodeWallet.fromPhrase(phrase).connect(provider))
+      .with({ signer: P.any }, ({ signer }) => signer)
+      .otherwise(() => undefined);
 
     const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible, chain });
 

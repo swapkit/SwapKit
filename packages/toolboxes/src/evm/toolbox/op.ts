@@ -2,6 +2,8 @@ import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, SKConfig } from "@swap
 import type { BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 import { Contract, HDNodeWallet } from "ethers";
 
+import { P } from "ts-pattern";
+import { match } from "ts-pattern";
 import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
 import { getProvider } from "../helpers";
@@ -94,12 +96,11 @@ export async function OPToolbox({
   const chain = Chain.Optimism;
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const provider = providerParam || (await getProvider(chain, rpcUrl));
-  const signer =
-    "phrase" in toolboxSignerParams && toolboxSignerParams.phrase
-      ? HDNodeWallet.fromPhrase(toolboxSignerParams.phrase).connect(provider)
-      : "signer" in toolboxSignerParams
-        ? toolboxSignerParams.signer
-        : undefined;
+  const signer = match(toolboxSignerParams)
+    .with({ phrase: P.string }, ({ phrase }) => HDNodeWallet.fromPhrase(phrase).connect(provider))
+    .with({ signer: P.any }, ({ signer }) => signer)
+    .otherwise(() => undefined);
+
   const evmToolbox = BaseEVMToolbox({ provider, signer });
   const getL1GasPrice = getL1GasPriceFetcher(provider);
 

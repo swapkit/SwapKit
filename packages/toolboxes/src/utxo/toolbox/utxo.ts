@@ -13,7 +13,6 @@ import {
 } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
-
 import type { UtxoToolboxParams } from ".";
 import { getBalance } from "../../utils";
 import {

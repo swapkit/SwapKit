@@ -19,6 +19,8 @@ import {
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
+import { P } from "ts-pattern";
+import { match } from "ts-pattern";
 import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from ".";
 import { getBalance } from "../utils";
 
@@ -49,13 +51,10 @@ export async function getSolanaToolbox(
       : updateDerivationPath(NetworkDerivationPath[Chain.Solana], { index }),
   );
 
-  const signer = toolboxParams
-    ? "phrase" in toolboxParams && toolboxParams.phrase
-      ? await createKeysForPath({ phrase: toolboxParams.phrase, derivationPath })
-      : "signer" in toolboxParams
-        ? toolboxParams.signer
-        : undefined
-    : undefined;
+  const signer = await match(toolboxParams)
+    .with({ phrase: P.string }, ({ phrase }) => createKeysForPath({ phrase, derivationPath }))
+    .with({ signer: P.any }, ({ signer }) => signer)
+    .otherwise(() => undefined);
 
   function getAddress() {
     return signer?.publicKey ? getAddressFromPubKey(signer.publicKey) : "";

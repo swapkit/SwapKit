@@ -70,13 +70,7 @@ export type EstimateCallParams = Pick<
 >;
 
 export type EVMTransferParams = GenericTransferParams & {
-  //   gasLimit?: bigint;
-  //   gasPrice?: bigint;
-  //   maxFeePerGas?: bigint;
-  //   maxPriorityFeePerGas?: bigint;
-  //   data?: string;
   sender?: string;
-  //   nonce?: number;
 };
 
 export type EVMCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {

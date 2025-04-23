@@ -35,23 +35,22 @@ export enum RouteQuoteTxType {
 }
 
 export enum TxnType {
-  native_send = "native_send", // native send, msgSend, etc.
-  token_transfer = "token_transfer", // token transfer
-  native_contract_call = "native_contract_call", // native contract call
-  token_contract_call = "token_contract_call", // token contract call
-  approve = "approve", // token approve
-  deposit = "deposit", // msgDeposit and related cosmos operations, not deposit to vault or deposit contract name
-  thorname_action = "thorname_action", // should we use this or msgDeposit?
-  lp_action = "lp_action", // deposit to an evm pool, tc pool, etc.
-  swap = "swap", // any kind of operations that involves swapping assets
-  streaming_swap = "streaming_swap", // streaming swap
-  stake = "stake", // defi operations like $vthor and other types of staking
-  claim = "claim", // claim rewards, claim tokens, etc.
-  lending = "lending", // lending operations
+  native_send = "native_send",
+  token_transfer = "token_transfer",
+  native_contract_call = "native_contract_call",
+  token_contract_call = "token_contract_call",
+  approve = "approve",
+  deposit = "deposit",
+  thorname_action = "thorname_action",
+  lp_action = "lp_action",
+  swap = "swap",
+  streaming_swap = "streaming_swap",
+  stake = "stake",
+  claim = "claim",
+  lending = "lending",
   unknown = "unknown",
 }
 
-// transaction status devoid of any business logic
 export enum TxnStatus {
   unknown = "unknown",
   not_started = "not_started",
@@ -62,12 +61,12 @@ export enum TxnStatus {
 
 export enum TrackingStatus {
   not_started = "not_started",
-  starting = "starting", // first status once we receive, old or new transaction
+  starting = "starting",
   broadcasted = "broadcasted",
-  mempool = "mempool", // or indexing
+  mempool = "mempool",
   inbound = "inbound",
   outbound = "outbound",
-  swapping = "swapping", // more generic than streaming
+  swapping = "swapping",
   completed = "completed",
   refunded = "refunded",
   partially_refunded = "partially_refunded",
@@ -245,7 +244,7 @@ export type PriceRequest = z.infer<typeof PriceRequestSchema>;
 export const BrokerDepositChannelParamsSchema = object({
   sellAsset: object({
     chain: string(),
-    asset: string(), // identifier of the asset
+    asset: string(),
   }),
   buyAsset: object({
     chain: string(),
@@ -440,7 +439,6 @@ const FeeSchema = object({
   gas: string(),
 });
 
-// Define the full schema
 export const CosmosTransactionSchema = object({
   memo: string(),
   accountNumber: number(),
@@ -542,9 +540,7 @@ const QuoteResponseRouteItem = object({
 export const QuoteResponseSchema = object({
   quoteId: string({ description: "Quote ID" }),
   routes: array(QuoteResponseRouteItem),
-  // in case of bad request or actual backend error, not bad quotes from providers
   error: optional(string({ description: "Error message" })),
-  // errors from providers
   providerErrors: optional(
     array(
       object({

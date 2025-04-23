@@ -1,5 +1,5 @@
 export type RadixCoreStateResourceDTO = {
-  at_ledger_state?: any; // not needed
+  at_ledger_state?: any;
   manager: {
     resource_type: string;
     divisibility: {
@@ -10,5 +10,5 @@ export type RadixCoreStateResourceDTO = {
       };
     };
   };
-  owner_role?: any; // not needed
+  owner_role?: any;
 };

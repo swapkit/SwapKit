@@ -14,6 +14,7 @@ import {
   updateDerivationPath,
 } from "@swapkit/helpers";
 
+import { P, match } from "ts-pattern";
 import {
   buildAminoMsg,
   buildEncodedTxBody,
@@ -178,28 +179,22 @@ export async function createThorchainToolbox({
 
   const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
 
-  const derivationPath = derivationPathToString(
+  const derivationPath =
     "derivationPath" in toolboxParams && toolboxParams.derivationPath
       ? toolboxParams.derivationPath
-      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
-  );
+      : updateDerivationPath(NetworkDerivationPath[chain], { index });
 
   const cosmosToolbox = await createCosmosToolbox({
     chain,
     ...toolboxParams,
   });
 
-  const signer =
-    "phrase" in toolboxParams && toolboxParams.phrase
-      ? await cosmosToolbox.getSignerFromPhrase({
-          phrase: toolboxParams.phrase,
-          derivationPath:
-            toolboxParams.derivationPath ||
-            updateDerivationPath(NetworkDerivationPath[chain], { index }),
-        })
-      : "signer" in toolboxParams
-        ? toolboxParams.signer
-        : undefined;
+  const signer = await match(toolboxParams)
+    .with({ phrase: P.string }, ({ phrase }) =>
+      cosmosToolbox.getSignerFromPhrase({ phrase, derivationPath }),
+    )
+    .with({ signer: P.any }, ({ signer }) => signer)
+    .otherwise(() => undefined);
 
   const defaultFee = getDefaultChainFee(chain);
 
@@ -299,7 +294,7 @@ export async function createThorchainToolbox({
     importSignature,
     parseAminoMessageForDirectSigning,
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({
-      derivationPath,
+      derivationPath: derivationPathToString(derivationPath),
       prefix: chainPrefix,
     }),
     signMultisigTx: signMultisigTx(chain),

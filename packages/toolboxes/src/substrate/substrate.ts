@@ -18,6 +18,7 @@ import {
   SwapKitNumber,
 } from "@swapkit/helpers";
 
+import { P, match } from "ts-pattern";
 import { getBalance } from "../utils";
 import { SubstrateNetwork, type SubstrateTransferParams } from "./types";
 
@@ -293,12 +294,12 @@ export async function createSubstrateToolbox({
   const gasAsset = AssetValue.from({ chain });
   const network = generic ? SubstrateNetwork.GENERIC : SubstrateNetwork[chain];
 
-  const signer =
-    "phrase" in signerParams && signerParams.phrase
-      ? await createKeyring(signerParams.phrase, SubstrateNetwork[chain].prefix)
-      : "signer" in signerParams
-        ? signerParams.signer
-        : undefined;
+  const signer = await match(signerParams)
+    .with({ phrase: P.string }, ({ phrase }) =>
+      createKeyring(phrase, SubstrateNetwork[chain].prefix),
+    )
+    .with({ signer: P.any }, ({ signer }) => signer)
+    .otherwise(() => undefined);
 
   return BaseSubstrateToolbox({ api, signer, gasAsset, network });
 }
