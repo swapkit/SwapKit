@@ -22,7 +22,6 @@
     "@radixdlt/radix-dapp-toolkit": "2.2.1",
     "@scure/base": "1.2.4",
     "@scure/bip39": "1.5.4",
-    "@solana/web3.js": "1.98.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@trezor/connect-web": "9.5.4",
@@ -32,6 +31,9 @@
     "cosmjs-types": "0.9.0",
     "sats-connect": "3.3.0",
     "ts-pattern": "5.7.0"
+  },
+  "peerDependencies": {
+    "@solana/web3.js": "1.98.0"
   },
   "devDependencies": {
     "@walletconnect/logger": "2.1.2",

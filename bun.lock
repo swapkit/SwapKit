@@ -68,6 +68,9 @@
         "@swapkit/toolboxes": "workspace:*",
         "ts-pattern": "5.7.0",
       },
+      "peerDependencies": {
+        "@solana/web3.js": "1.98.0",
+      },
     },
     "packages/sdk": {
       "name": "@swapkit/sdk",
@@ -98,10 +101,6 @@
         "@scure/base": "1.2.4",
         "@scure/bip32": "1.6.2",
         "@scure/bip39": "1.5.4",
-        "@solana/spl-memo": "0.2.5",
-        "@solana/spl-token": "0.4.13",
-        "@solana/spl-token-registry": "0.2.4574",
-        "@solana/web3.js": "1.98.0",
         "@swapkit/helpers": "workspace:*",
         "base64-js": "1.5.1",
         "bitcoinjs-lib": "6.1.7",
@@ -123,6 +122,11 @@
         "@types/crypto-js": "4.2.2",
         "@types/elliptic": "6.4.18",
         "hardhat": "2.23.0",
+      },
+      "peerDependencies": {
+        "@solana/spl-memo": "0.2.5",
+        "@solana/spl-token": "0.4.13",
+        "@solana/web3.js": "1.98.0",
       },
     },
     "packages/ui": {
@@ -163,7 +167,6 @@
         "@radixdlt/radix-dapp-toolkit": "2.2.1",
         "@scure/base": "1.2.4",
         "@scure/bip39": "1.5.4",
-        "@solana/web3.js": "1.98.0",
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
         "@trezor/connect-web": "9.5.4",
@@ -177,6 +180,9 @@
       "devDependencies": {
         "@walletconnect/logger": "2.1.2",
         "@walletconnect/types": "2.19.2",
+      },
+      "peerDependencies": {
+        "@solana/web3.js": "1.98.0",
       },
     },
     "playgrounds/bun-react": {
@@ -1260,8 +1266,6 @@
 
     "@solana/spl-token-metadata": ["@solana/spl-token-metadata@0.1.6", "", { "dependencies": { "@solana/codecs": "2.0.0-rc.1" }, "peerDependencies": { "@solana/web3.js": "^1.95.3" } }, "sha512-7sMt1rsm/zQOQcUWllQX9mD2O6KhSAtY1hFR2hfFwgqfFWzSY9E9GDvFVNYUI1F0iQKcm6HmePU9QbKRXTEBiA=="],
 
-    "@solana/spl-token-registry": ["@solana/spl-token-registry@0.2.4574", "", { "dependencies": { "cross-fetch": "3.0.6" } }, "sha512-JzlfZmke8Rxug20VT/VpI2XsXlsqMlcORIUivF+Yucj7tFi7A0dXG7h+2UnD0WaZJw8BrUz2ABNkUnv89vbv1A=="],
-
     "@solana/subscribable": ["@solana/subscribable@2.1.0", "", { "dependencies": { "@solana/errors": "2.1.0" }, "peerDependencies": { "typescript": ">=5" } }, "sha512-xi12Cm889+uT5sRKnIzr7nLnHAp3hiR3dqIzrT1P7z7iEGp8OnqUQIQCHlgozFHM2cPW+6685NQXk1l1ImuJIw=="],
 
     "@solana/sysvars": ["@solana/sysvars@2.1.0", "", { "dependencies": { "@solana/accounts": "2.1.0", "@solana/codecs": "2.1.0", "@solana/errors": "2.1.0", "@solana/rpc-types": "2.1.0" }, "peerDependencies": { "typescript": ">=5" } }, "sha512-GXu9yS0zIebmM1Unqw/XFpYuvug03m42w98ioOPV/yiHzECggGRGpHGD9RLVYnkyz0eL4NRbnJ5dAEu/fvGe0A=="],
@@ -1926,7 +1930,7 @@
 
     "create-require": ["create-require@1.1.1", "", {}, "sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ=="],
 
-    "cross-fetch": ["cross-fetch@3.0.6", "", { "dependencies": { "node-fetch": "2.6.1" } }, "sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ=="],
+    "cross-fetch": ["cross-fetch@4.1.0", "", { "dependencies": { "node-fetch": "^2.7.0" } }, "sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 
@@ -3816,11 +3820,7 @@
 
     "@trezor/connect/bs58": ["bs58@6.0.0", "", { "dependencies": { "base-x": "^5.0.0" } }, "sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw=="],
 
-    "@trezor/connect/cross-fetch": ["cross-fetch@4.1.0", "", { "dependencies": { "node-fetch": "^2.7.0" } }, "sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw=="],
-
     "@trezor/protobuf/long": ["long@5.2.5", "", {}, "sha512-e0r9YBBgNCq1D1o5Dp8FMH0N5hsFtXDBiVa0qoJPHpakvZkmDKPRoGffZJII/XsHvj9An9blm+cRJ01yQqU+Dw=="],
-
-    "@trezor/transport/cross-fetch": ["cross-fetch@4.1.0", "", { "dependencies": { "node-fetch": "^2.7.0" } }, "sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw=="],
 
     "@trezor/utxo-lib/bech32": ["bech32@2.0.0", "", {}, "sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg=="],
 
@@ -3939,8 +3939,6 @@
     "concat-stream/readable-stream": ["readable-stream@2.3.8", "", { "dependencies": { "core-util-is": "~1.0.0", "inherits": "~2.0.3", "isarray": "~1.0.0", "process-nextick-args": "~2.0.0", "safe-buffer": "~5.1.1", "string_decoder": "~1.1.1", "util-deprecate": "~1.0.1" } }, "sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA=="],
 
     "create-ecdh/bn.js": ["bn.js@4.12.1", "", {}, "sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg=="],
-
-    "cross-fetch/node-fetch": ["node-fetch@2.6.1", "", {}, "sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw=="],
 
     "diffie-hellman/bn.js": ["bn.js@4.12.1", "", {}, "sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg=="],
 

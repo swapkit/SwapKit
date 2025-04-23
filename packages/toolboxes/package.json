@@ -17,10 +17,6 @@
     "@scure/base": "1.2.4",
     "@scure/bip32": "1.6.2",
     "@scure/bip39": "1.5.4",
-    "@solana/spl-memo": "0.2.5",
-    "@solana/spl-token": "0.4.13",
-    "@solana/spl-token-registry": "0.2.4574",
-    "@solana/web3.js": "1.98.0",
     "@swapkit/helpers": "workspace:*",
     "base64-js": "1.5.1",
     "bitcoinjs-lib": "6.1.7",
@@ -33,6 +29,11 @@
     "micro-key-producer": "0.7.5",
     "protobufjs": "7.4.0",
     "ts-pattern": "5.7.0"
+  },
+  "peerDependencies": {
+    "@solana/spl-memo": "0.2.5",
+    "@solana/spl-token": "0.4.13",
+    "@solana/web3.js": "1.98.0"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.8",
