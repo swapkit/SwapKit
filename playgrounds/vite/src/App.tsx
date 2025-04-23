@@ -24,7 +24,7 @@ const App = () => {
   const [keys, setKeys] = useState({
     swapKit: (import.meta.env.VITE_TEST_API_KEY || "") as string,
     walletConnectProjectId: "",
-    brokerEndpoint: "https://dev-api.swapkit.dev/channel",
+    brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
   });
 
   const [{ inputAsset, outputAsset }, setSwapAssets] = useState<{

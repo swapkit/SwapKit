@@ -1,26 +1,20 @@
-import {
-  BaseDecimal,
-  Chain,
-  ChainId,
-  ChainToExplorerUrl,
-  FeeOption,
-  SKConfig,
-} from "@swapkit/helpers";
-import type { BrowserProvider, JsonRpcProvider, TransactionRequest } from "ethers";
-import { Contract } from "ethers";
+import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, SKConfig } from "@swapkit/helpers";
+import type { BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
+import { Contract, HDNodeWallet } from "ethers";
 
 import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
+import { getProvider } from "../helpers";
 import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 const GAS_PRICE_ORACLE_ADDRESS = "0x420000000000000000000000000000000000000f";
 
-function connectGasPriceOracle<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
+function connectGasPriceOracle<P extends Provider>(provider: P) {
   return new Contract(GAS_PRICE_ORACLE_ADDRESS, gasOracleAbi, provider);
 }
 
-function getL1GasPriceFetcher<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
+export function getL1GasPriceFetcher<P extends Provider>(provider: P) {
   return function getL1GasPrice() {
     const gasPriceOracle = connectGasPriceOracle(provider);
 
@@ -93,52 +87,24 @@ const getNetworkParams = () => ({
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
 });
 
-function estimateGasPrices<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
-  return async function estimateGasPrices() {
-    try {
-      const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
-      const l1GasPrice = getL1GasPriceFetcher(provider)();
-      const price = gasPrice as bigint;
-
-      if (!(maxFeePerGas && maxPriorityFeePerGas)) {
-        throw new Error("No fee data available");
-      }
-
-      return {
-        [FeeOption.Average]: {
-          l1GasPrice,
-          gasPrice,
-          maxFeePerGas,
-          maxPriorityFeePerGas,
-        },
-        [FeeOption.Fast]: {
-          l1GasPrice: ((l1GasPrice || 0n) * 15n) / 10n,
-          gasPrice: (price * 15n) / 10n,
-          maxFeePerGas,
-          maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
-        },
-        [FeeOption.Fastest]: {
-          l1GasPrice: (l1GasPrice || 0n) * 2n,
-          gasPrice: price * 2n,
-          maxFeePerGas,
-          maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
-        },
-      };
-    } catch (error) {
-      throw new Error(
-        `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
-      );
-    }
-  };
-}
-
-export function OPToolbox({ provider, signer }: EVMToolboxParams) {
+export async function OPToolbox({
+  provider: providerParam,
+  ...toolboxSignerParams
+}: EVMToolboxParams) {
+  const chain = Chain.Optimism;
+  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const provider = providerParam || (await getProvider(chain, rpcUrl));
+  const signer =
+    "phrase" in toolboxSignerParams && toolboxSignerParams.phrase
+      ? HDNodeWallet.fromPhrase(toolboxSignerParams.phrase).connect(provider)
+      : "signer" in toolboxSignerParams
+        ? toolboxSignerParams.signer
+        : undefined;
   const evmToolbox = BaseEVMToolbox({ provider, signer });
   const getL1GasPrice = getL1GasPriceFetcher(provider);
 
   return {
     ...evmToolbox,
-    estimateGasPrices: estimateGasPrices(provider),
     estimateL1Gas: estimateL1Gas(provider),
     estimateL1GasCost: estimateL1GasCost(provider),
     estimateL2GasCost: estimateL2GasCost(provider),

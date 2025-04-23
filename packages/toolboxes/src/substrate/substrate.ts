@@ -10,6 +10,8 @@ import {
 import {
   AssetValue,
   Chain,
+  type DerivationPathArray,
+  type GenericCreateTransactionParams,
   SKConfig,
   type SubstrateChain,
   SwapKitError,
@@ -17,14 +19,21 @@ import {
 } from "@swapkit/helpers";
 
 import { getBalance } from "../utils";
-import { Network, type SubstrateNetwork, type SubstrateTransferParams } from "./types";
+import { SubstrateNetwork, type SubstrateTransferParams } from "./types";
 
-export const PolkadotToolbox = ({ signer, generic = false }: ToolboxParams = {}) => {
-  return createSubstrateToolbox({ chain: Chain.Polkadot, generic, signer });
+export const PolkadotToolbox = ({ generic = false, ...signerParams }: ToolboxParams = {}) => {
+  return createSubstrateToolbox({ chain: Chain.Polkadot, generic, ...signerParams });
 };
 
-export const ChainflipToolbox = async ({ signer, generic = false }: ToolboxParams = {}) => {
-  const toolbox = await createSubstrateToolbox({ chain: Chain.Chainflip, generic, signer });
+export const ChainflipToolbox = async ({
+  generic = false,
+  ...signerParams
+}: ToolboxParams = {}) => {
+  const toolbox = await createSubstrateToolbox({
+    chain: Chain.Chainflip,
+    generic,
+    ...signerParams,
+  });
 
   return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
 };
@@ -73,26 +82,24 @@ const validateAddress = (address: string, networkPrefix: number) => {
   }
 };
 
-const createTransfer = (
-  api: ApiPromise,
-  { recipient, amount }: { recipient: string; amount: number },
-) => api.tx.balances?.transferAllowDeath?.(recipient, amount);
+const createTransaction = (api: ApiPromise, { recipient, assetValue }: SubstrateTransferParams) =>
+  api.tx.balances?.transferAllowDeath?.(recipient, assetValue.getBaseValue("number"));
 
 const transfer = async (
   api: ApiPromise,
   signer: IKeyringPair | Signer,
-  { recipient, assetValue, from }: SubstrateTransferParams,
+  { recipient, assetValue, sender }: SubstrateTransferParams,
 ) => {
-  const transfer = createTransfer(api, {
+  const transfer = createTransaction(api, {
     recipient,
-    amount: assetValue.getBaseValue("number"),
+    assetValue,
   });
 
   const isKeyring = isKeyringPair(signer);
 
   if (!transfer) return;
 
-  const address = from || (isKeyring ? (signer as IKeyringPair).address : undefined);
+  const address = isKeyring ? (signer as IKeyringPair).address : sender;
   if (!address) throw new SwapKitError("core_transaction_invalid_sender_address");
 
   const nonce = await getNonce(api, address);
@@ -109,11 +116,11 @@ const estimateTransactionFee = async (
   api: ApiPromise,
   signer: IKeyringPair | Signer,
   gasAsset: AssetValue,
-  { recipient, assetValue, from }: SubstrateTransferParams,
+  { recipient, assetValue, sender }: SubstrateTransferParams,
 ) => {
-  const transfer = createTransfer(api, { recipient, amount: assetValue.getBaseValue("number") });
+  const transfer = createTransaction(api, { recipient, assetValue });
 
-  const address = from || (isKeyringPair(signer) && signer.address);
+  const address = isKeyringPair(signer) ? signer.address : sender;
   if (!address) return;
 
   const paymentInfo = (await transfer?.paymentInfo(address, {
@@ -220,8 +227,7 @@ export const BaseSubstrateToolbox = ({
 
     return isKeyringPair(keyringPair) ? keyringPair.address : undefined;
   },
-  createTransfer: ({ recipient, assetValue }: { recipient: string; assetValue: AssetValue }) =>
-    createTransfer(api, { recipient, amount: assetValue.getBaseValue("number") }),
+  createTransaction: (params: GenericCreateTransactionParams) => createTransaction(api, params),
   validateAddress: (address: string) => validateAddress(address, network.prefix),
   transfer: (params: SubstrateTransferParams) => {
     if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
@@ -268,27 +274,44 @@ export const substrateValidateAddress = ({
   address,
   chain,
 }: { address: string; chain: Chain.Polkadot | Chain.Chainflip }) => {
-  const { prefix } = chain === Chain.Polkadot ? Network.DOT : Network.FLIP;
+  const { prefix } = chain === Chain.Polkadot ? SubstrateNetwork.DOT : SubstrateNetwork.FLIP;
 
-  return validateAddress(address, prefix) || validateAddress(address, Network.GENERIC.prefix);
+  return (
+    validateAddress(address, prefix) || validateAddress(address, SubstrateNetwork.GENERIC.prefix)
+  );
 };
 
 export async function createSubstrateToolbox({
   generic,
   chain,
-  signer,
+  ...signerParams
 }: ToolboxParams & { chain: SubstrateChain }) {
   const { ApiPromise, WsProvider } = await import("@polkadot/api");
 
   const provider = new WsProvider(SKConfig.get("rpcUrls")[chain]);
   const api = await ApiPromise.create({ provider });
   const gasAsset = AssetValue.from({ chain });
-  const network = generic ? Network.GENERIC : Network[chain];
+  const network = generic ? SubstrateNetwork.GENERIC : SubstrateNetwork[chain];
+
+  const signer =
+    "phrase" in signerParams && signerParams.phrase
+      ? await createKeyring(signerParams.phrase, SubstrateNetwork[chain].prefix)
+      : "signer" in signerParams
+        ? signerParams.signer
+        : undefined;
 
   return BaseSubstrateToolbox({ api, signer, gasAsset, network });
 }
 
 export type ToolboxParams = {
   generic?: boolean;
-  signer?: KeyringPair | Signer;
-};
+} & (
+  | {
+      signer?: KeyringPair | Signer;
+    }
+  | {
+      phrase?: string;
+      derivationPath?: DerivationPathArray;
+      index?: number;
+    }
+);

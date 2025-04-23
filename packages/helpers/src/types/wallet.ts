@@ -1,6 +1,7 @@
 import type { CosmosWallets, ThorchainWallets } from "@swapkit/toolboxes/cosmos";
 import type { EVMToolboxes } from "@swapkit/toolboxes/evm";
 import type { RadixWallet } from "@swapkit/toolboxes/radix";
+import type { RippleWallet } from "@swapkit/toolboxes/ripple";
 import type { SolanaWallet } from "@swapkit/toolboxes/solana";
 import type { SubstrateToolboxes } from "@swapkit/toolboxes/substrate";
 import type { UTXOToolboxes } from "@swapkit/toolboxes/utxo";
@@ -104,6 +105,7 @@ export type FullWallet = BaseWallet<
     ThorchainWallets &
     SubstrateToolboxes & {
       [Chain.Radix]: RadixWallet;
+      [Chain.Ripple]: RippleWallet;
       [Chain.Solana]: SolanaWallet;
     }
 >;
@@ -140,10 +142,18 @@ export type ChainSigner<T, S> = {
   sign?: (message: string) => Promise<string>;
 };
 
-export type TransferParams = {
+export type GenericTransferParams = {
   recipient: string;
   assetValue: AssetValue;
   memo?: string;
   feeRate?: number;
   feeOptionKey?: FeeOption;
+};
+
+export type GenericCreateTransactionParams = Omit<
+  GenericTransferParams,
+  "feeOptionKey" & "feeRate"
+> & {
+  sender: string;
+  feeRate: number;
 };

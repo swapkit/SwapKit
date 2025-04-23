@@ -11,16 +11,16 @@ import {
   EVMChains,
   type FeeOption,
   type FullWallet,
+  type GenericTransferParams,
   ProviderName as PluginNameEnum,
   SKConfig,
   type SKConfigState,
   SwapKitError,
   type SwapParams,
-  type TransferParams,
   type createPlugin,
   type createWallet,
 } from "@swapkit/helpers";
-import type { TransferParams as EVMTransferParams } from "@swapkit/toolboxes/evm";
+import type { EVMCreateTransactionParams, EVMTransferParams } from "@swapkit/toolboxes/evm";
 
 import {
   getExplorerAddressUrl as getAddressUrl,
@@ -197,16 +197,20 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
+  async function getWalletWithBalance<T extends Chain>(
+    chain: T,
+    scamFilter = true,
+  ): Promise<ReturnType<typeof getWallet> & { balance: AssetValue[] }> {
     if (chain === Chain.Fiat || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
     const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat>);
     const defaultBalance = [AssetValue.from({ chain })];
+    wallet.balance = defaultBalance;
 
     if ("getBalance" in wallet) {
       const balance = await wallet.getBalance(wallet.address, scamFilter);
-      wallet.balance = balance?.length ? balance : defaultBalance;
+      wallet.balance = balance;
     }
 
     return wallet;
@@ -227,14 +231,13 @@ export function SwapKit<
     throw new SwapKitError("core_plugin_swap_not_found");
   }
 
-  function transfer({ assetValue, ...params }: TransferParams | EVMTransferParams) {
+  function transfer({ assetValue, ...params }: GenericTransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
     if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
     const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix>);
 
-    // @ts-expect-error TODO: right now it's inferred from toolboxes
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });
   }
@@ -262,7 +265,7 @@ export function SwapKit<
     switch (chain) {
       case Chain.THORChain: {
         const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-        const toolbox = getCosmosToolbox(chain);
+        const toolbox = await getCosmosToolbox(chain);
 
         return toolbox.verifySignature({ signature, message, address });
       }
@@ -279,7 +282,7 @@ export function SwapKit<
     params,
   }: (
     | { type: "swap"; params: SwapParams<T, QuoteResponseRoute> & { assetValue: AssetValue } }
-    | { type: "transfer"; params: EVMTransferParams | TransferParams }
+    | { type: "transfer"; params: EVMTransferParams | GenericTransferParams }
     | {
         type: "approve";
         params: {
@@ -306,7 +309,7 @@ export function SwapKit<
       case Chain.Polygon: {
         const wallet = getWallet(chain);
         if (type === "transfer") {
-          const txObject = await wallet.createTransferTx(params as EVMTransferParams);
+          const txObject = await wallet.createTransferTx(params as EVMCreateTransactionParams);
           return wallet.estimateTransactionFee({ ...txObject, chain, feeOption: feeOptionKey });
         }
 
@@ -325,7 +328,7 @@ export function SwapKit<
           const plugin = params.route.providers[0] as PluginNameEnum;
           if ([PluginNameEnum.CHAINFLIP, PluginNameEnum.CHAINFLIP_STREAMING].includes(plugin)) {
             const txObject = await wallet.createTransferTx({
-              from: wallet.address,
+              sender: wallet.address,
               recipient: wallet.address,
               assetValue,
             });
@@ -356,7 +359,7 @@ export function SwapKit<
       case Chain.Litecoin: {
         const { estimateTransactionFee, address: recipient } = getWallet(chain);
 
-        return estimateTransactionFee({ ...params, feeOptionKey, recipient, from: recipient });
+        return estimateTransactionFee({ ...params, feeOptionKey, recipient, sender: recipient });
       }
 
       case Chain.THORChain:
@@ -371,6 +374,12 @@ export function SwapKit<
         const { address, estimateTransactionFee } = getWallet(chain);
 
         return estimateTransactionFee({ ...params, recipient: address });
+      }
+
+      case Chain.Ripple: {
+        const { estimateTransactionFee } = getWallet(chain);
+
+        return estimateTransactionFee();
       }
 
       default:

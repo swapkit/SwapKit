@@ -59,6 +59,6 @@ describe("keystore - Reading balances", () => {
         console.error(failedChains.map((chain) => `${chain[0]}: ${chain[1]}`).join("\n"));
       }
     },
-    { timeout: 30000 },
+    { timeout: 120000, retry: 3 },
   );
 });

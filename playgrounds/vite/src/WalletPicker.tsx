@@ -71,7 +71,7 @@ export const availableChainsByWallet = {
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
   [WalletOption.CTRL]: AllChainsSupported,
-  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot],
+  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple],
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
@@ -341,6 +341,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             ...CosmosChains,
             ...UTXOChains,
             ...SubstrateChains,
+            Chain.Ripple,
             Chain.Solana,
             Chain.Radix,
           ]

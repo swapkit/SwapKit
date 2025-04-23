@@ -14,7 +14,7 @@ type RadixGetBalanceParams = {
   networkApi: GatewayApiClient;
 };
 // Could not find anything sync in SDK, ask Radix team
-export function validateAddress(address: string) {
+export function radixValidateAddress(address: string) {
   return address.startsWith("account_rdx1") && address.length === 66;
 }
 
@@ -142,7 +142,7 @@ export const RadixToolbox = async ({
     getAddress: () => "",
     getBalance: getBalance({ networkApi }),
     networkApi,
-    validateAddress,
+    validateAddress: radixValidateAddress,
     signAndBroadcast: (() => {
       throw new Error("Not implemented");
     }) as (params: any) => Promise<string>,

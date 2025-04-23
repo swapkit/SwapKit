@@ -1,5 +1,7 @@
 import { createSwapKit } from "@swapkit/sdk";
 
+let skClient: ReturnType<typeof createSwapKit> | undefined;
+
 export const getSwapKitClient = ({
   walletConnectProjectId,
   brokerEndpoint,
@@ -7,7 +9,10 @@ export const getSwapKitClient = ({
   walletConnectProjectId?: string;
   brokerEndpoint?: string;
 } = {}) => {
-  const skClient = createSwapKit({
+  if (skClient) {
+    return skClient;
+  }
+  skClient = createSwapKit({
     config: {
       apiKeys: {
         swapKit: process.env.TEST_API_KEY,

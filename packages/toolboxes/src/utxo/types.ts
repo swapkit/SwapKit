@@ -1,4 +1,8 @@
-import type { AssetValue, Witness } from "@swapkit/helpers";
+import type {
+  GenericCreateTransactionParams,
+  GenericTransferParams,
+  Witness,
+} from "@swapkit/helpers";
 
 import type { UTXOScriptType } from "./helpers";
 
@@ -26,13 +30,9 @@ export type UTXOCalculateTxSizeParams = {
   feeRate: number;
 };
 
-export type UTXOBuildTxParams = {
-  assetValue: AssetValue;
-  recipient: string;
-  memo?: string;
-  feeRate: number;
-  sender: string;
-};
+export type UTXOBuildTxParams = GenericCreateTransactionParams;
+
+export type UTXOTransferParams = GenericTransferParams;
 
 export type BchECPair = {
   getAddress: (index?: number) => string;

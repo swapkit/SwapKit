@@ -9,7 +9,7 @@ import {
 } from "../util";
 
 import { createDefaultAminoTypes, createDefaultRegistry } from "./registry";
-import type { ThorchainDepositTxParams, ThorchainTransferTxParams } from "./types/client-types";
+import type { ThorchainCreateTransactionParams } from "./types";
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
@@ -22,40 +22,40 @@ export const THORCHAIN_GAS_VALUE = getDefaultChainFee(Chain.THORChain).gas;
 export const MAYA_GAS_VALUE = getDefaultChainFee(Chain.Maya).gas;
 
 export const transferMsgAmino = ({
-  from,
+  sender,
   recipient,
   assetValue,
-  chain,
 }: {
-  from: string;
+  sender: string;
   recipient?: string;
   assetValue: AssetValue;
-  chain: Chain.THORChain | Chain.Maya;
-}) => ({
-  type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend` as const,
-  value: {
-    from_address: from,
-    to_address: recipient,
-    amount: [
-      {
-        amount: assetValue.getBaseValue("string"),
-        denom: getMsgSendDenom(assetValue.symbol, true),
-      },
-    ],
-  },
-});
+}) => {
+  const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
+  return {
+    type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend` as const,
+    value: {
+      from_address: sender,
+      to_address: recipient,
+      amount: [
+        {
+          amount: assetValue.getBaseValue("string"),
+          denom: getMsgSendDenom(assetValue.symbol, true),
+        },
+      ],
+    },
+  };
+};
 
 export const depositMsgAmino = ({
-  from,
+  sender,
   assetValue,
   memo = "",
-  chain,
 }: {
-  from: string;
+  sender: string;
   assetValue: AssetValue;
   memo?: string;
-  chain: Chain.THORChain | Chain.Maya;
 }) => {
+  const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
   return {
     type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgDeposit` as const,
     value: {
@@ -65,29 +65,27 @@ export const depositMsgAmino = ({
           asset: getDenomWithChain(assetValue),
         },
       ],
-      signer: from,
+      signer: sender,
       memo,
     },
   };
 };
 
 export const buildAminoMsg = ({
-  from,
+  sender,
   recipient,
   assetValue,
   memo,
-  chain,
 }: {
-  from: string;
+  sender: string;
   recipient?: string;
   assetValue: AssetValue;
   memo?: string;
-  chain: Chain.THORChain | Chain.Maya;
 }) => {
   const isDeposit = !recipient;
   const msg = isDeposit
-    ? depositMsgAmino({ from, assetValue, memo, chain })
-    : transferMsgAmino({ from, recipient, assetValue, chain });
+    ? depositMsgAmino({ sender, assetValue, memo })
+    : transferMsgAmino({ sender, recipient, assetValue });
 
   return msg;
 };
@@ -101,16 +99,9 @@ export const convertToSignable = async (
   return aminoTypes.fromAmino(msg);
 };
 
-const getAccount = async ({
-  rpcUrl,
-  from,
-}: {
-  from: string;
-  rpcUrl: string;
-}) => {
+const getAccount = async ({ rpcUrl, sender }: { sender: string; rpcUrl: string }) => {
   const client = await createStargateClient(rpcUrl);
-
-  const account = await client.getAccount(from);
+  const account = await client.getAccount(sender);
 
   if (!account) {
     throw new Error("Account does not exist");
@@ -119,24 +110,50 @@ const getAccount = async ({
   return account;
 };
 
+export function getCreateTransaction(rpcUrl: string) {
+  return function createTransaction(params: ThorchainCreateTransactionParams) {
+    const { assetValue, recipient, memo, sender, asSignable, asAminoMessage } = params;
+
+    if (recipient) {
+      return buildTransferTx(rpcUrl)({
+        sender,
+        recipient,
+        assetValue,
+        memo,
+        asSignable,
+        asAminoMessage,
+      });
+    }
+
+    return buildDepositTx(rpcUrl)({
+      sender,
+      assetValue,
+      memo,
+      asSignable,
+      asAminoMessage,
+    });
+  };
+}
+
 export const buildTransferTx =
   (rpcUrl: string) =>
   async ({
-    from,
+    sender,
     recipient,
     assetValue,
     memo = "",
-    chain,
     asSignable = true,
     asAminoMessage = false,
-  }: ThorchainTransferTxParams) => {
-    const account = await getAccount({ rpcUrl, from });
+    sequence,
+    accountNumber,
+  }: ThorchainCreateTransactionParams) => {
+    const account = await getAccount({ rpcUrl, sender });
+    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
     const transferMsg = transferMsgAmino({
-      from,
+      sender,
       recipient,
       assetValue,
-      chain,
     });
 
     const msg = asSignable
@@ -148,8 +165,8 @@ export const buildTransferTx =
 
     const transaction = {
       chainId: ChainToChainId[chain],
-      accountNumber: account.accountNumber,
-      sequence: account.sequence,
+      accountNumber: accountNumber || account.accountNumber,
+      sequence: sequence || account.sequence,
       msgs: [msg],
       fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
       memo,
@@ -161,16 +178,18 @@ export const buildTransferTx =
 export const buildDepositTx =
   (rpcUrl: string) =>
   async ({
-    from,
+    sender,
     assetValue,
     memo = "",
-    chain,
     asSignable = true,
     asAminoMessage = false,
-  }: ThorchainDepositTxParams) => {
-    const account = await getAccount({ rpcUrl, from });
+    sequence,
+    accountNumber,
+  }: ThorchainCreateTransactionParams) => {
+    const account = await getAccount({ rpcUrl, sender });
+    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
-    const depositMsg = depositMsgAmino({ from, assetValue, memo, chain });
+    const depositMsg = depositMsgAmino({ sender, assetValue, memo });
 
     const msg = asSignable
       ? await convertToSignable(
@@ -181,8 +200,8 @@ export const buildDepositTx =
 
     const transaction = {
       chainId: ChainToChainId[chain],
-      accountNumber: account.accountNumber,
-      sequence: account.sequence,
+      accountNumber: accountNumber || account.accountNumber,
+      sequence: sequence || account.sequence,
       msgs: [msg],
       fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
       memo,

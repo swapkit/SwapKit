@@ -2,14 +2,14 @@ import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
   ChainId,
+  type GenericTransferParams,
   SKConfig,
   SwapKitError,
-  type TransferParams,
   WalletOption,
   createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { DepositParam, getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
@@ -73,32 +73,11 @@ export const walletconnectWallet = createWallet({
           const address = getAddressByChain(chain, accounts);
           const toolbox = await getToolbox({ session, address, chain, walletconnect });
 
-          async function getAccount(accountAddress: string) {
-            const cosmosToolbox = toolbox as ReturnType<typeof getCosmosToolbox>;
-            const account = await cosmosToolbox.getAccount(accountAddress);
-
-            if (chain !== Chain.THORChain) {
-              return account;
-            }
-
-            const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
-              chainId: THORCHAIN_MAINNET_ID,
-              topic: session.topic,
-              request: {
-                method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
-                params: {},
-              },
-            })) as [{ address: string; algo: string; pubkey: string }];
-
-            return { ...account, address, pubkey: { type: algo, value: pubkey } };
-          }
-
           addChain({
             ...toolbox,
             address,
             chain,
             disconnect: walletconnect.disconnect,
-            getAccount,
             walletType: WalletOption.WALLETCONNECT,
           });
         }),
@@ -153,7 +132,29 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         getDefaultChainFee,
         parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = getCosmosToolbox(Chain.THORChain);
+      const toolbox = await getCosmosToolbox(Chain.THORChain);
+
+      async function getAccount(accountAddress: string) {
+        const cosmosToolbox = toolbox;
+        const account = await (
+          cosmosToolbox as Awaited<ReturnType<typeof createThorchainToolbox>>
+        ).getAccount(accountAddress);
+
+        if (chain !== Chain.THORChain) {
+          return account;
+        }
+
+        const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
+          chainId: THORCHAIN_MAINNET_ID,
+          topic: session.topic,
+          request: {
+            method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
+            params: {},
+          },
+        })) as [{ address: string; algo: string; pubkey: string }];
+
+        return { ...account, address, pubkey: { type: algo, value: pubkey } };
+      }
 
       const fee = getDefaultChainFee(chain);
 
@@ -171,7 +172,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         assetValue,
         memo,
         ...rest
-      }: TransferParams | DepositParam) {
+      }: GenericTransferParams | ThorchainDepositParams) {
         const account = await toolbox.getAccount(address);
         if (!account) {
           throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account } });
@@ -186,9 +187,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const { accountNumber, sequence = 0 } = account;
 
-        const msgs = [
-          buildAminoMsg({ chain: Chain.THORChain, assetValue, memo, from: address, ...rest }),
-        ];
+        const msgs = [buildAminoMsg({ assetValue, memo, sender: address, ...rest })];
 
         const chainId = ChainId.THORChain;
 
@@ -238,8 +237,9 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       return {
         ...toolbox,
-        transfer: (params: TransferParams) => thorchainTransfer(params),
-        deposit: (params: DepositParam) => thorchainTransfer(params),
+        transfer: (params: GenericTransferParams) => thorchainTransfer(params),
+        deposit: (params: ThorchainDepositParams) => thorchainTransfer(params),
+        getAccount,
       };
     }
     default:

@@ -38,6 +38,7 @@
     "test:ci": "bun --filter '*' test:ci",
     "test:coverage": "bun --filter '*' --elide-lines=0 test:ci",
     "type-check": "bun --filter '*' --elide-lines=0 type-check",
+    "type-check:go": "bun --filter '*' type-check:go",
     "version-bump": "bun changeset version"
   },
   "trustedDependencies": [

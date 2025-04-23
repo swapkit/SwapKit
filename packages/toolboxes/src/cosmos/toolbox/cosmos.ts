@@ -10,17 +10,21 @@ import {
   type CosmosChain,
   CosmosChainPrefixes,
   DerivationPath,
+  type DerivationPathArray,
   FeeOption,
+  type GenericTransferParams,
+  NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  type TransferParams,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
-  buildNativeTransferTx,
+  cosmosCreateTransaction,
   createSigningStargateClient,
   createStargateClient,
   getDenomWithChain,
@@ -42,10 +46,9 @@ export async function fetchFeeRateFromSwapKit(chainId: ChainId, safeDefault: num
 export async function getSignerFromPhrase({
   phrase,
   prefix,
-  index = 0,
   ...derivationParams
-}: { phrase: string; prefix?: string; index?: number } & (
-  | { chain: Chain }
+}: { phrase: string; prefix?: string } & (
+  | { chain: Chain; index?: number }
   | { derivationPath: string }
 )) {
   const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
@@ -53,8 +56,8 @@ export async function getSignerFromPhrase({
 
   const derivationPath =
     "derivationPath" in derivationParams
-      ? `${derivationParams.derivationPath}/${index}`
-      : `${DerivationPath[derivationParams.chain]}/${index}`;
+      ? derivationParams.derivationPath
+      : `${DerivationPath[derivationParams.chain]}/${derivationParams.index}`;
 
   return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
     prefix,
@@ -116,20 +119,41 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
   };
 }
 
-export function createCosmosToolbox({
-  chain,
-  derivationPath: paramsDerivationPath,
-  index = 0,
-  signer,
-}: CosmosToolboxParams) {
+export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToolboxParams) {
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const chainPrefix = CosmosChainPrefixes[chain];
-  const derivationPath = paramsDerivationPath ? paramsDerivationPath : DerivationPath[chain];
-  const getCosmosAccount = cosmosAccountGetter({ prefix: chainPrefix, derivationPath });
+
+  const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+  const derivationPath = derivationPathToString(
+    "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
+  );
+
+  const signer =
+    "phrase" in toolboxParams && toolboxParams.phrase
+      ? await getSignerFromPhrase({
+          phrase: toolboxParams.phrase,
+          prefix: chainPrefix,
+          derivationPath,
+        })
+      : "signer" in toolboxParams
+        ? toolboxParams.signer
+        : undefined;
 
   async function getAccount(address: string) {
     const client = await createStargateClient(rpcUrl);
     return client.getAccount(address);
+  }
+
+  async function getAddress() {
+    const accounts = await signer?.getAccounts();
+    return accounts?.[0]?.address;
+  }
+
+  async function getPubKey() {
+    const accounts = await signer?.getAccounts();
+    return accounts?.[0]?.pubkey;
   }
 
   async function transfer({
@@ -138,8 +162,8 @@ export function createCosmosToolbox({
     memo = "",
     feeRate,
     feeOptionKey = FeeOption.Fast,
-  }: TransferParams) {
-    const from = (await signer?.getAccounts())?.[0]?.address;
+  }: GenericTransferParams) {
+    const from = await getAddress();
 
     if (!(signer && from)) {
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
@@ -175,13 +199,17 @@ export function createCosmosToolbox({
 
   return {
     transfer,
+    getAddress,
+    getAccount,
     getBalance: getBalance(chain),
-    getSigner: getSigner({ prefix: chainPrefix, derivationPath }),
-    getSignerFromPhrase: async (phrase: string) =>
+    getSignerFromPhrase: async ({
+      phrase,
+      derivationPath,
+    }: { phrase: string; derivationPath: DerivationPathArray }) =>
       getSignerFromPhrase({
         phrase,
         prefix: chainPrefix,
-        derivationPath,
+        derivationPath: derivationPathToString(derivationPath),
         index,
       }),
     getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
@@ -189,23 +217,12 @@ export function createCosmosToolbox({
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
-    getAccount: async (address: string) => {
-      const client = await createStargateClient(rpcUrl);
-      return client.getAccount(address);
-    },
-    validateAddress: validateAddress(chainPrefix),
-    getAddressFromMnemonic: async (phrase: string) => {
-      const account = await getCosmosAccount(phrase);
-      return account.address;
-    },
-    getPubKeyFromMnemonic: async (phrase: string) => {
-      const account = await getCosmosAccount(phrase);
-      return base64.encode(account.pubkey);
-    },
+    validateAddress: getCosmosalidateAddress(chainPrefix),
+    getPubKey,
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
     fetchFeeRateFromSwapKit,
     getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
-    buildTransferTx: buildNativeTransferTx,
+    createTransaction: cosmosCreateTransaction,
     verifySignature: verifySignature(getAccount),
   };
 }
@@ -236,7 +253,7 @@ export function cosmosValidateAddress({
     throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
   }
 
-  return validateAddress(prefix)(address);
+  return getCosmosalidateAddress(prefix)(address);
 }
 
 export function estimateTransactionFee({
@@ -245,24 +262,6 @@ export function estimateTransactionFee({
   assetValue: AssetValue;
 }) {
   return AssetValue.from({ chain, value: getMinTransactionFee(chain) });
-}
-
-function getSigner({
-  prefix,
-  derivationPath,
-}: {
-  prefix: string;
-  derivationPath: string;
-}) {
-  return async function getSigner(phrase: string) {
-    const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
-    const { stringToPath } = await import("@cosmjs/crypto");
-
-    return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
-      prefix,
-      hdPaths: [stringToPath(derivationPath)],
-    });
-  };
 }
 
 function getPrefix<C extends CosmosChain>(chain?: C) {
@@ -286,7 +285,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function validateAddress(prefix: string) {
+function getCosmosalidateAddress(prefix: string) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 
@@ -312,32 +311,6 @@ function cosmosBalanceDenomsGetter(rpcUrl: string) {
     }));
 
     return balances;
-  };
-}
-
-function cosmosAccountGetter({
-  prefix,
-  derivationPath,
-}: {
-  prefix: string;
-  derivationPath: string;
-}) {
-  return async function getCosmosAccount(phrase: string) {
-    const { Secp256k1HdWallet } = await import("@cosmjs/amino");
-    const { stringToPath } = await import("@cosmjs/crypto");
-
-    const wallet = await Secp256k1HdWallet.fromMnemonic(phrase, {
-      prefix,
-      hdPaths: [stringToPath(derivationPath)],
-    });
-
-    const [account] = await wallet.getAccounts();
-
-    if (!account) {
-      throw new SwapKitError("toolbox_cosmos_no_accounts_found");
-    }
-
-    return account;
   };
 }
 

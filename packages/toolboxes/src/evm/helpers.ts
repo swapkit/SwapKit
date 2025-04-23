@@ -61,24 +61,24 @@ export const estimateMaxSendableAmount = async ({
           txOverrides,
         })
       : await toolbox.estimateGasLimit({
-          from,
+          sender: from,
           recipient: from,
           memo,
           assetValue,
         });
 
   const isFeeEIP1559Compatible = "maxFeePerGas" in gasRate;
-  const isFeeEVMLegacyCompatible = "gasPrice" in gasRate;
+  const isFeeEVMLegacyCompatible = "gasPrice" in gasRate && gasRate.gasPrice !== undefined;
 
-  if (!(isFeeEVMLegacyCompatible || isFeeEIP1559Compatible)) {
+  if (!(gasRate && (isFeeEVMLegacyCompatible || isFeeEIP1559Compatible))) {
     throw new Error("Could not fetch fee data");
   }
 
-  const fee =
-    gasLimit *
-    (isFeeEIP1559Compatible
-      ? (gasRate.maxFeePerGas || 1n) + (gasRate.maxPriorityFeePerGas || 1n)
-      : gasRate.gasPrice);
+  const gasPrice = isFeeEIP1559Compatible
+    ? (gasRate.maxFeePerGas || 1n) + (gasRate.maxPriorityFeePerGas || 1n)
+    : gasRate.gasPrice || 1n;
+
+  const fee = gasLimit * gasPrice;
   const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue("bigint")).sub(
     fee.toString(),
   );
@@ -93,13 +93,13 @@ export function toHexString(value: bigint) {
 export function getEstimateTransactionFee({
   provider,
   isEIP1559Compatible = true,
-}: { provider: Provider | BrowserProvider; isEIP1559Compatible?: boolean }) {
+}: { provider: Provider | BrowserProvider; isEIP1559Compatible?: boolean; chain: EVMChain }) {
   return async function estimateTransactionFee({
     feeOption = FeeOption.Fast,
     chain,
     ...txObject
   }: EIP1559TxParams & { feeOption: FeeOption; chain: EVMChain }) {
-    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible });
+    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible, chain });
     const gasPrices = await estimateGasPrices();
     const gasLimit = await provider.estimateGas(txObject);
 

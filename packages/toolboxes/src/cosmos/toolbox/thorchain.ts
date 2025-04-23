@@ -4,22 +4,23 @@ import {
   BaseDecimal,
   Chain,
   CosmosChainPrefixes,
-  DerivationPath,
   FeeOption,
+  type GenericTransferParams,
+  NetworkDerivationPath,
   RequestClient,
   SKConfig,
   SwapKitNumber,
-  type TransferParams,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
 
 import {
   buildAminoMsg,
-  buildDepositTx,
   buildEncodedTxBody,
-  buildTransferTx,
   convertToSignable,
   createDefaultAminoTypes,
   createDefaultRegistry,
+  getCreateTransaction,
   parseAminoMessageForDirectSigning,
 } from "../thorchainUtils";
 import type { ThorchainConstantsResponse } from "../thorchainUtils/types/client-types";
@@ -38,7 +39,7 @@ function secp256k1HdWalletFromMnemonic({
   derivationPath,
 }: {
   prefix: string;
-  derivationPath: string;
+  derivationPath?: string;
 }) {
   return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
     const { Secp256k1HdWallet } = await import("@cosmjs/amino");
@@ -165,26 +166,41 @@ async function signWithPrivateKey({
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
 
-export function createThorchainToolbox({
+export async function createThorchainToolbox({
   chain,
-  derivationPath: paramsDerivationPath,
-  index = 0,
-  signer,
-}: Omit<CosmosToolboxParams, "chain"> & { chain: Chain.THORChain | Chain.Maya }) {
+  ...toolboxParams
+}: CosmosToolboxParams<Chain.THORChain | Chain.Maya>) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = SKConfig.get("rpcUrls")[chain];
   const { isStagenet } = SKConfig.get("envs");
-
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;
-  const derivationPath = paramsDerivationPath || DerivationPath[chain];
 
-  const cosmosToolbox = createCosmosToolbox({
+  const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+
+  const derivationPath = derivationPathToString(
+    "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[chain], { index }),
+  );
+
+  const cosmosToolbox = await createCosmosToolbox({
     chain,
-    derivationPath,
-    signer,
-    index,
+    ...toolboxParams,
   });
+
+  const signer =
+    "phrase" in toolboxParams && toolboxParams.phrase
+      ? await cosmosToolbox.getSignerFromPhrase({
+          phrase: toolboxParams.phrase,
+          derivationPath:
+            toolboxParams.derivationPath ||
+            updateDerivationPath(NetworkDerivationPath[chain], { index }),
+        })
+      : "signer" in toolboxParams
+        ? toolboxParams.signer
+        : undefined;
+
   const defaultFee = getDefaultChainFee(chain);
 
   async function getFees() {
@@ -216,10 +232,10 @@ export function createThorchainToolbox({
     assetValue,
     memo = "",
     recipient,
-  }: Omit<TransferParams, "recipient"> & { recipient?: string }) {
+  }: Omit<GenericTransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
-    const from = (await signer?.getAccounts())?.[0]?.address;
-    if (!(from && signer)) throw new Error("Signer not defined");
+    const sender = (await signer?.getAccounts())?.[0]?.address;
+    if (!(sender && signer)) throw new Error("Signer not defined");
 
     const isAminoSigner = "signAmino" in signer;
     const registry = await createDefaultRegistry();
@@ -231,17 +247,16 @@ export function createThorchainToolbox({
 
     const aminoMessage = buildAminoMsg({
       assetValue,
-      from,
+      sender,
       recipient,
       memo,
-      chain,
     });
 
     if (isAminoSigner) {
       const msgSign = await convertToSignable(aminoMessage, chain);
 
       const { signatures, authInfoBytes } = await signingClient.sign(
-        from,
+        sender,
         [msgSign],
         defaultFee,
         memo,
@@ -264,7 +279,7 @@ export function createThorchainToolbox({
 
     const preparedMessage = parseAminoMessageForDirectSigning(aminoMessage);
     const msgSign = await convertToSignable(preparedMessage, chain);
-    const txResponse = await signingClient.signAndBroadcast(from, [msgSign], defaultFee, memo);
+    const txResponse = await signingClient.signAndBroadcast(sender, [msgSign], defaultFee, memo);
 
     return txResponse.transactionHash;
   }
@@ -273,13 +288,12 @@ export function createThorchainToolbox({
     ...cosmosToolbox,
     broadcastMultisigTx: broadcastMultisigTx({ prefix: chainPrefix, rpcUrl }),
     buildAminoMsg,
-    buildDepositTx: buildDepositTx(rpcUrl),
     buildEncodedTxBody,
-    buildTransferTx: buildTransferTx(rpcUrl),
     convertToSignable,
     createDefaultAminoTypes: () => createDefaultAminoTypes(chain),
     createDefaultRegistry,
     createMultisig,
+    createTransaction: getCreateTransaction(rpcUrl),
     deposit: transfer,
     getFees,
     importSignature,

@@ -1,4 +1,5 @@
 import type { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
+import type { GenericCreateTransactionParams, GenericTransferParams } from "@swapkit/helpers";
 import type { getSolanaToolbox } from "./toolbox";
 
 type DisplayEncoding = "utf8" | "hex";
@@ -21,7 +22,7 @@ interface ConnectOpts {
 
 export * from "./toolbox";
 
-export type SolanaWallet = ReturnType<typeof getSolanaToolbox>;
+export type SolanaWallet = Awaited<ReturnType<typeof getSolanaToolbox>>;
 
 export interface SolanaProvider {
   connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;
@@ -44,3 +45,11 @@ export interface SolanaProvider {
     transactions: T[],
   ) => Promise<T[]>;
 }
+
+export type SolanaCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {
+  isProgramDerivedAddress?: boolean;
+};
+
+export type SolanaTransferParams = Omit<GenericTransferParams, "feeRate"> & {
+  isProgramDerivedAddress?: boolean;
+};

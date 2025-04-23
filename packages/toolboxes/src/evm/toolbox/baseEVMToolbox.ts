@@ -8,7 +8,6 @@ import {
   FeeOption,
   SwapKitError,
   SwapKitNumber,
-  type WalletTxParams,
   isGasAsset,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
@@ -26,22 +25,24 @@ import {
   getAddress,
 } from "ethers";
 
-import { toHexString } from "../index";
+import { getL1GasPriceFetcher, toHexString } from "../index";
 import type {
   ApproveParams,
   CallParams,
   EIP1559TxParams,
+  EVMCreateTransactionParams,
+  EVMTransferParams,
   EVMTxParams,
   EstimateCallParams,
   IsApprovedParams,
   LegacyEVMTxParams,
-  TransferParams,
 } from "../types";
 
 type ToolboxWrapParams<P = Provider | BrowserProvider, T = {}> = T & {
   isEIP1559Compatible?: boolean;
   provider: P;
   signer?: Signer;
+  chain: EVMChain;
 };
 
 export const MAX_APPROVAL = BigInt(
@@ -51,32 +52,37 @@ export const MAX_APPROVAL = BigInt(
 export function BaseEVMToolbox<
   P extends Provider | BrowserProvider,
   S extends
-    | (ChainSigner<TransferParams, string> & Signer)
+    | (ChainSigner<EVMTransferParams, string> & Signer)
     | JsonRpcSigner
     | HDNodeWallet
     | undefined,
 >({
+  chain = Chain.Ethereum,
   provider,
   signer,
   isEIP1559Compatible = true,
-}: { signer: S; provider: P; isEIP1559Compatible?: boolean }) {
+}: { signer: S; provider: P; isEIP1559Compatible?: boolean; chain?: EVMChain }) {
   return {
-    call: getCall({ provider, signer, isEIP1559Compatible }),
+    getAddress: () => {
+      return signer ? signer.getAddress() : undefined;
+    },
+    call: getCall({ provider, signer, isEIP1559Compatible, chain }),
     estimateCall: getEstimateCall({ provider, signer }),
     EIP1193SendTransaction: getEIP1193SendTransaction(provider),
-    approve: getApprove({ provider, signer, isEIP1559Compatible }),
-    approvedAmount: getApprovedAmount({ provider }),
+    approve: getApprove({ provider, signer, isEIP1559Compatible, chain }),
+    approvedAmount: getApprovedAmount({ provider, chain }),
     broadcastTransaction: provider.broadcastTransaction,
-    createApprovalTx: getCreateApprovalTx(provider),
-    createContract: getCreateContract({ provider }),
-    createContractTxObject: getCreateContractTxObject(provider),
-    createTransferTx: getCreateTransferTx({ provider, signer }),
-    estimateGasLimit: getEstimateGasLimit({ provider, signer }),
-    estimateGasPrices: getEstimateGasPrices({ provider, isEIP1559Compatible }),
-    isApproved: getIsApproved({ provider }),
-    sendTransaction: getSendTransaction({ provider, signer, isEIP1559Compatible }),
+    createApprovalTx: getCreateApprovalTx({ provider, signer, chain }),
+    createContract: getCreateContract({ provider, chain }),
+    createContractTxObject: getCreateContractTxObject({ provider, chain }),
+    createTransferTx: getCreateTransferTx({ provider, signer, chain }),
+    createTransaction: getCreateTransferTx({ provider, signer, chain }),
+    estimateGasLimit: getEstimateGasLimit({ provider, signer, chain }),
+    estimateGasPrices: getEstimateGasPrices({ chain, provider, isEIP1559Compatible }),
+    isApproved: getIsApproved({ provider, chain }),
+    sendTransaction: getSendTransaction({ provider, signer, isEIP1559Compatible, chain }),
     signMessage: signer?.signMessage,
-    transfer: getTransfer({ provider, signer, isEIP1559Compatible }),
+    transfer: getTransfer({ provider, signer, isEIP1559Compatible, chain }),
     validateAddress: (address: string) => evmValidateAddress({ address }),
   };
 }
@@ -186,9 +192,76 @@ export function getCreateContractTxObject({ provider }: ToolboxWrapParams) {
 }
 
 export function getEstimateGasPrices({
+  chain,
   provider,
   isEIP1559Compatible = true,
-}: { provider: Provider; isEIP1559Compatible?: boolean }) {
+}: { provider: Provider; isEIP1559Compatible?: boolean; chain: EVMChain }): () => Promise<{
+  [key in FeeOption]: {
+    l1GasPrice?: bigint;
+    gasPrice?: bigint;
+    maxFeePerGas?: bigint;
+    maxPriorityFeePerGas?: bigint;
+  };
+}> {
+  if (chain === Chain.Arbitrum) {
+    return async function estimateGasPrices() {
+      try {
+        const { gasPrice } = await provider.getFeeData();
+
+        if (!gasPrice) throw new Error("No fee data available");
+
+        return {
+          [FeeOption.Average]: { gasPrice },
+          [FeeOption.Fast]: { gasPrice },
+          [FeeOption.Fastest]: { gasPrice },
+        };
+      } catch (error) {
+        throw new Error(
+          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
+        );
+      }
+    };
+  }
+
+  if (chain === Chain.Optimism) {
+    return async function estimateGasPrices() {
+      try {
+        const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
+        const l1GasPrice = getL1GasPriceFetcher(provider)();
+        const price = gasPrice as bigint;
+
+        if (!(maxFeePerGas && maxPriorityFeePerGas)) {
+          throw new Error("No fee data available");
+        }
+
+        return {
+          [FeeOption.Average]: {
+            l1GasPrice,
+            gasPrice: price,
+            maxFeePerGas,
+            maxPriorityFeePerGas,
+          },
+          [FeeOption.Fast]: {
+            l1GasPrice: ((l1GasPrice || 0n) * 15n) / 10n,
+            gasPrice: (price * 15n) / 10n,
+            maxFeePerGas,
+            maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
+          },
+          [FeeOption.Fastest]: {
+            l1GasPrice: (l1GasPrice || 0n) * 2n,
+            gasPrice: price * 2n,
+            maxFeePerGas,
+            maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
+          },
+        };
+      } catch (error) {
+        throw new Error(
+          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
+        );
+      }
+    };
+  }
+
   return async function estimateGasPrices() {
     try {
       const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
@@ -224,7 +297,7 @@ export function getEstimateGasPrices({
   };
 }
 
-function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
+function getCall({ provider, isEIP1559Compatible, signer, chain }: ToolboxWrapParams) {
   /**
    * @info call contract function
    * When using this method to make a non state changing call to the blockchain, like a isApproved call,
@@ -246,7 +319,7 @@ function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
     const isStateChanging = isStateChangingCall({ abi, funcName });
 
     if (isStateChanging && isBrowserProvider(contractProvider) && signer) {
-      const createTx = getCreateContractTxObject({ provider: contractProvider });
+      const createTx = getCreateContractTxObject({ provider: contractProvider, chain });
       const from = txOverrides?.from || (await signer?.getAddress());
       const txObject = await createTx({
         contractAddress,
@@ -269,7 +342,11 @@ function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
       if (!from) throw new SwapKitError("toolbox_evm_no_signer_address");
 
       const connectedContract = contract.connect(signer);
-      const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible });
+      const estimateGasPrices = getEstimateGasPrices({
+        provider,
+        isEIP1559Compatible,
+        chain: chain as Chain.Ethereum,
+      });
       const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = (await estimateGasPrices())[
         feeOption
       ];
@@ -299,9 +376,9 @@ function getCall({ provider, isEIP1559Compatible, signer }: ToolboxWrapParams) {
   };
 }
 
-function getApprovedAmount({ provider }: ToolboxWrapParams) {
+function getApprovedAmount({ provider, chain }: ToolboxWrapParams) {
   return function approveAmount({ assetAddress, spenderAddress, from }: IsApprovedParams) {
-    const call = getCall({ provider, isEIP1559Compatible: true });
+    const call = getCall({ provider, isEIP1559Compatible: true, chain });
 
     return call<bigint>({
       contractAddress: assetAddress,
@@ -312,14 +389,14 @@ function getApprovedAmount({ provider }: ToolboxWrapParams) {
   };
 }
 
-function getIsApproved({ provider }: ToolboxWrapParams) {
+function getIsApproved({ provider, chain }: ToolboxWrapParams) {
   return async function isApproved({
     assetAddress,
     spenderAddress,
     from,
     amount = MAX_APPROVAL,
   }: IsApprovedParams) {
-    const approvedAmount = await getApprovedAmount({ provider })({
+    const approvedAmount = await getApprovedAmount({ provider, chain })({
       assetAddress,
       spenderAddress,
       from,
@@ -329,17 +406,18 @@ function getIsApproved({ provider }: ToolboxWrapParams) {
   };
 }
 
-function getApprove({ signer, isEIP1559Compatible = true, provider }: ToolboxWrapParams) {
+function getApprove({ signer, isEIP1559Compatible = true, provider, chain }: ToolboxWrapParams) {
   return async function approve({
     assetAddress,
     spenderAddress,
     feeOptionKey = FeeOption.Fast,
     amount,
     gasLimitFallback,
-    from,
+    from: fromParam,
     nonce,
   }: ApproveParams) {
     const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+    const from = (await signer?.getAddress()) || fromParam;
 
     const functionCallParams = {
       contractAddress: assetAddress,
@@ -351,14 +429,14 @@ function getApprove({ signer, isEIP1559Compatible = true, provider }: ToolboxWra
     };
 
     if (isBrowserProvider(provider)) {
-      const createTx = getCreateContractTxObject(provider);
+      const createTx = getCreateContractTxObject({ provider, chain });
       const sendTx = getEIP1193SendTransaction(provider);
       const txObject = await createTx(functionCallParams);
 
       return sendTx(txObject);
     }
 
-    const call = getCall({ provider, isEIP1559Compatible });
+    const call = getCall({ provider, isEIP1559Compatible, signer, chain });
 
     return call<string>({
       ...functionCallParams,
@@ -379,46 +457,68 @@ function getTransfer({ signer, isEIP1559Compatible = true, provider }: ToolboxWr
     memo,
     recipient,
     feeOptionKey = FeeOption.Fast,
-    data,
-    from: fromOverride,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-    gasPrice,
+    sender,
+    // data,
+    // from: fromOverride,
+    // maxFeePerGas,
+    // maxPriorityFeePerGas,
+    // gasPrice,
     ...tx
-  }: TransferParams) {
+  }: EVMTransferParams) {
     const { hexlify, toUtf8Bytes } = await import("ethers");
     const txAmount = assetValue.getBaseValue("bigint");
     const chain = assetValue.chain as EVMChain;
-    const from = fromOverride || (await signer?.getAddress());
+    const from = sender || (await signer?.getAddress());
+    const sendTx = getSendTransaction({ provider, signer, isEIP1559Compatible, chain });
 
     if (!from) throw new SwapKitError("toolbox_evm_no_from_address");
 
     if (assetValue.isGasAsset) {
-      const sendTx = getSendTransaction({ provider, signer, isEIP1559Compatible });
-      const txObject = {
+      const transaction = {
         ...tx,
         from,
         to: recipient,
         value: txAmount,
-        data: data || hexlify(toUtf8Bytes(memo || "")),
+        data: hexlify(toUtf8Bytes(memo || "")),
         feeOptionKey,
       };
 
-      return sendTx(txObject);
+      return sendTx(transaction);
     }
 
-    const call = getCall({ signer, provider, isEIP1559Compatible });
+    // const call = getCall({ signer, provider, isEIP1559Compatible });
     const contractAddress = getTokenAddress(assetValue, chain);
     if (!contractAddress) throw new SwapKitError("toolbox_evm_no_contract_address");
 
-    return call<string>({
-      contractAddress,
-      abi: erc20ABI,
-      funcName: "transfer",
-      funcParams: [recipient, txAmount],
-      txOverrides: { from, maxFeePerGas, maxPriorityFeePerGas, gasPrice },
-      feeOption: feeOptionKey,
+    const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = (
+      await getEstimateGasPrices({
+        provider,
+        isEIP1559Compatible,
+        chain,
+      })()
+    )[feeOptionKey];
+
+    const transaction = await getCreateTransferTx({ provider, signer, chain })({
+      assetValue,
+      memo,
+      recipient,
+      data: hexlify(toUtf8Bytes(memo || "")),
+      sender: from,
+      maxFeePerGas,
+      maxPriorityFeePerGas,
+      gasPrice,
     });
+
+    return sendTx(transaction);
+
+    // return call<string>({
+    //   contractAddress,
+    //   abi: erc20ABI,
+    //   funcName: "transfer",
+    //   funcParams: [recipient, txAmount],
+    //   txOverrides: { from },
+    //   feeOption: feeOptionKey,
+    // });
   };
 }
 
@@ -447,11 +547,11 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
     assetValue,
     recipient,
     memo,
-    from,
+    sender,
     funcName,
     funcParams,
     txOverrides,
-  }: WalletTxParams & {
+  }: EVMTransferParams & {
     assetValue: AssetValue;
     funcName?: string;
     funcParams?: unknown[];
@@ -479,7 +579,7 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
     const { hexlify, toUtf8Bytes } = await import("ethers");
 
     return provider.estimateGas({
-      from,
+      from: sender,
       to: recipient,
       value,
       data: memo ? hexlify(toUtf8Bytes(memo)) : undefined,
@@ -492,7 +592,12 @@ const isEIP1559Transaction = (tx: EVMTxParams) =>
   !!(tx as EIP1559TxParams).maxFeePerGas ||
   !!(tx as EIP1559TxParams).maxPriorityFeePerGas;
 
-function getSendTransaction({ provider, signer, isEIP1559Compatible = true }: ToolboxWrapParams) {
+function getSendTransaction({
+  provider,
+  signer,
+  isEIP1559Compatible = true,
+  chain,
+}: ToolboxWrapParams) {
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO reduce complexity
   return async function sendTransaction({
     feeOptionKey = FeeOption.Fast,
@@ -522,7 +627,7 @@ function getSendTransaction({ provider, signer, isEIP1559Compatible = true }: To
     const chainId = (await provider.getNetwork()).chainId;
 
     const isEIP1559 = isEIP1559Transaction(parsedTxObject) || isEIP1559Compatible;
-    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible });
+    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible, chain });
 
     const feeData =
       (isEIP1559 &&
@@ -577,21 +682,18 @@ function getSendTransaction({ provider, signer, isEIP1559Compatible = true }: To
   };
 }
 
-function getCreateTransferTx({
-  provider,
-  signer,
-}: { provider: Provider | BrowserProvider; signer?: Signer }) {
+function getCreateTransferTx({ provider, signer }: ToolboxWrapParams) {
   return async function createTransferTx({
     assetValue,
     memo,
     recipient,
     data,
-    from: fromOverride,
+    sender: fromOverride,
     maxFeePerGas,
     maxPriorityFeePerGas,
     gasPrice,
     ...tx
-  }: TransferParams) {
+  }: EVMCreateTransactionParams) {
     const txAmount = assetValue.getBaseValue("bigint");
     const chain = assetValue.chain as EVMChain;
     const from = fromOverride || (await signer?.getAddress());
@@ -612,7 +714,7 @@ function getCreateTransferTx({
 
     const contractAddress = getTokenAddress(assetValue, chain);
     if (!contractAddress) throw new SwapKitError("toolbox_evm_no_contract_address");
-    const createTx = getCreateContractTxObject(provider);
+    const createTx = getCreateContractTxObject({ provider, chain: assetValue.chain as EVMChain });
 
     return createTx({
       contractAddress,
@@ -624,14 +726,16 @@ function getCreateTransferTx({
   };
 }
 
-function getCreateApprovalTx(provider: Provider) {
+function getCreateApprovalTx({ provider, signer, chain }: ToolboxWrapParams) {
   return async function createApprovalTx({
     assetAddress,
     spenderAddress,
     amount,
-    from,
+    from: fromParam,
   }: ApproveParams) {
-    const createTx = getCreateContractTxObject(provider);
+    const from = (await signer?.getAddress()) || fromParam;
+
+    const createTx = getCreateContractTxObject({ provider, chain });
     const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
 
     const txObject = await createTx({

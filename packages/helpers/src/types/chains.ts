@@ -18,6 +18,7 @@ export enum Chain {
   Chainflip = "FLIP",
   Polygon = "MATIC",
   Radix = "XRD",
+  Ripple = "XRP",
   THORChain = "THOR",
   Solana = "SOL",
 }
@@ -55,6 +56,7 @@ export enum ChainId {
   Polygon = "137",
   PolygonHex = "0x89",
   Radix = "radix-mainnet",
+  Ripple = "ripple",
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
@@ -88,6 +90,7 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.PolygonHex]: Chain.Polygon,
   [ChainId.Polygon]: Chain.Polygon,
   [ChainId.Radix]: Chain.Radix,
+  [ChainId.Ripple]: Chain.Ripple,
   [ChainId.THORChainStagenet]: Chain.THORChain,
   [ChainId.THORChain]: Chain.THORChain,
   [ChainId.Solana]: Chain.Solana,
@@ -119,6 +122,7 @@ export const BaseDecimal: Record<Chain, number> = {
   SOL: 9,
   THOR: 8,
   XRD: 18,
+  XRP: 6,
 };
 
 export const BlockTimes: Record<Partial<Chain>, number> = {
@@ -141,6 +145,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Polkadot]: 6,
   [Chain.Polygon]: 2.1,
   [Chain.Radix]: 5,
+  [Chain.Ripple]: 5,
   [Chain.Solana]: 0.4,
   [Chain.THORChain]: 6,
 };
@@ -231,6 +236,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Polkadot]: "wss://rpc.polkadot.io",
   [Chain.Polygon]: "https://polygon-rpc.com",
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
+  [Chain.Ripple]: "wss://xrpl.ws/",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
   [Chain.THORChain]: "https://rpc.thorswap.net",
   [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
@@ -283,6 +289,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   ],
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
+  [Chain.Ripple]: ["wss://s1.ripple.com/", "wss://s2.ripple.com/"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
@@ -308,6 +315,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Polkadot]: "https://polkadot.subscan.io",
   [Chain.Polygon]: "https://polygonscan.com",
   [Chain.Radix]: "https://dashboard.radixdlt.com",
+  [Chain.Ripple]: "https://livenet.xrpl.org/",
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
 };

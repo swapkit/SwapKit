@@ -1,20 +1,25 @@
 import type {
   Connection,
-  Keypair,
   PublicKey,
   Signer,
   Transaction,
+  TransactionInstruction,
   VersionedTransaction,
 } from "@solana/web3.js";
 import {
-  type AssetValue,
+  AssetValue,
+  BaseDecimal,
   Chain,
   DerivationPath,
+  type DerivationPathArray,
+  type GenericCreateTransactionParams,
+  NetworkDerivationPath,
   SKConfig,
   SwapKitError,
-  type TransferParams,
+  derivationPathToString,
+  updateDerivationPath,
 } from "@swapkit/helpers";
-import type { SolanaProvider } from ".";
+import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from ".";
 import { getBalance } from "../utils";
 
 type SolanaSigner = SolanaProvider | Signer;
@@ -32,18 +37,82 @@ export async function getSolanaAddressValidator() {
   };
 }
 
-export function getSolanaToolbox(params?: { signer?: SolanaSigner }) {
-  const { signer } = params || {};
+export async function getSolanaToolbox(
+  toolboxParams?:
+    | { signer?: SolanaSigner }
+    | { phrase?: string; index?: number; derivationPath?: DerivationPathArray },
+) {
+  const index = toolboxParams && "index" in toolboxParams ? toolboxParams.index || 0 : 0;
+  const derivationPath = derivationPathToString(
+    toolboxParams && "derivationPath" in toolboxParams && toolboxParams.derivationPath
+      ? toolboxParams.derivationPath
+      : updateDerivationPath(NetworkDerivationPath[Chain.Solana], { index }),
+  );
+
+  const signer = toolboxParams
+    ? "phrase" in toolboxParams && toolboxParams.phrase
+      ? await createKeysForPath({ phrase: toolboxParams.phrase, derivationPath })
+      : "signer" in toolboxParams
+        ? toolboxParams.signer
+        : undefined
+    : undefined;
+
+  function getAddress() {
+    return signer?.publicKey ? getAddressFromPubKey(signer.publicKey) : "";
+  }
+
   return {
     getConnection,
+    getAddress,
     createKeysForPath,
-    getAddressFromKeys,
-    createSolanaTransaction: createSolanaTransaction(getConnection),
+    getAddressFromPubKey,
+    getPubkeyFromAddress,
+    createTransaction: createTransaction(getConnection),
+    createTransactionFromInstructions,
     getBalance: getBalance(Chain.Solana),
     transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator: getSolanaAddressValidator,
-    signTransaction: signTransaction(signer),
+    signTransaction: signTransaction(getConnection, signer),
+    estimateTransactionFee: estimateTransactionFee(getConnection),
+  };
+}
+
+function estimateTransactionFee(getConnection: () => Promise<Connection>) {
+  return async ({
+    recipient,
+    assetValue,
+    memo,
+    isProgramDerivedAddress,
+    sender,
+  }: Omit<GenericCreateTransactionParams, "feeRate"> & {
+    isProgramDerivedAddress?: boolean;
+  }) => {
+    const connection = await getConnection();
+
+    const transaction = await createTransaction(getConnection)({
+      recipient,
+      assetValue,
+      memo,
+      isProgramDerivedAddress,
+      sender,
+    });
+
+    const message = transaction.compileMessage();
+    const feeInLamports = await connection.getFeeForMessage(message);
+
+    if (feeInLamports.value === null) {
+      throw new SwapKitError(
+        "toolbox_solana_fee_estimation_failed",
+        "Could not estimate Solana fee.",
+      );
+    }
+
+    return AssetValue.from({
+      chain: Chain.Solana,
+      value: feeInLamports.value,
+      fromBaseDecimal: BaseDecimal[Chain.Solana],
+    });
   };
 }
 
@@ -56,15 +125,11 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
   return async ({
     assetValue,
     recipient,
-    fromPubkey,
+    sender,
     isProgramDerivedAddress,
-  }: {
-    assetValue: AssetValue;
-    recipient: string;
-    fromPubkey: PublicKey;
-    isProgramDerivedAddress?: boolean;
-  }) => {
+  }: SolanaCreateTransactionParams) => {
     const connection = await getConnection();
+    const fromPubkey = await getPubkeyFromAddress(sender);
 
     if (assetValue.isGasAsset) {
       const { Transaction, SystemProgram, PublicKey } = await import("@solana/web3.js");
@@ -162,19 +227,17 @@ async function createSolanaTokenTransaction({
   return transaction;
 }
 
-function createSolanaTransaction(getConnection: () => Promise<Connection>) {
+function createTransaction(getConnection: () => Promise<Connection>) {
   return async ({
     recipient,
     assetValue,
     memo,
     isProgramDerivedAddress,
-    fromPubkey,
-  }: TransferParams & {
-    isProgramDerivedAddress?: boolean;
-    fromPubkey: PublicKey;
-  }) => {
+    sender,
+  }: SolanaCreateTransactionParams) => {
     const { createMemoInstruction } = await import("@solana/spl-memo");
 
+    const fromPubkey = await getPubkeyFromAddress(sender);
     const validateAddress = await getSolanaAddressValidator();
 
     if (!(isProgramDerivedAddress || validateAddress(recipient))) {
@@ -185,7 +248,7 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
     const transaction = await createAssetTransaction(getConnection)({
       assetValue,
       recipient,
-      fromPubkey,
+      sender,
       isProgramDerivedAddress,
     });
 
@@ -203,27 +266,35 @@ function createSolanaTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
+async function createTransactionFromInstructions({
+  instructions,
+}: { instructions: TransactionInstruction[]; isProgramDerivedAddress?: boolean }) {
+  const { Transaction } = await import("@solana/web3.js");
+  const transaction = new Transaction().add(...instructions);
+
+  if (!transaction) {
+    throw new SwapKitError("core_transaction_invalid_sender_address");
+  }
+
+  return transaction;
+}
+
 function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
-  return async ({
-    recipient,
-    assetValue,
-    memo,
-    isProgramDerivedAddress,
-  }: TransferParams & {
-    isProgramDerivedAddress?: boolean;
-  }) => {
+  return async ({ recipient, assetValue, memo, isProgramDerivedAddress }: SolanaTransferParams) => {
     if (!signer) {
       throw new SwapKitError("core_transaction_invalid_sender_address");
     }
 
-    const fromPubkey = signer.publicKey ?? (await (signer as SolanaProvider).connect()).publicKey;
+    const sender =
+      signer.publicKey?.toString() ??
+      (await (signer as SolanaProvider).connect()).publicKey.toString();
 
-    const transaction = await createSolanaTransaction(getConnection)({
+    const transaction = await createTransaction(getConnection)({
       recipient,
       assetValue,
       memo,
       isProgramDerivedAddress,
-      fromPubkey,
+      sender,
     });
 
     if ("connect" in signer) {
@@ -244,10 +315,19 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
-function signTransaction(signer?: SolanaSigner) {
+function signTransaction(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async (transaction: Transaction | VersionedTransaction) => {
+    const { VersionedTransaction } = await import("@solana/web3.js");
     if (!signer) {
       throw new SwapKitError("toolbox_solana_no_signer");
+    }
+
+    if (!(transaction instanceof VersionedTransaction)) {
+      const connection = await getConnection();
+
+      const blockHash = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockHash.blockhash;
+      transaction.feePayer = signer.publicKey || undefined;
     }
 
     if ("connect" in signer) {
@@ -273,6 +353,11 @@ export async function createKeysForPath({
   return Keypair.fromSeed(hdKey.derive(derivationPath, true).privateKey);
 }
 
-function getAddressFromKeys(keypair: Keypair) {
-  return keypair.publicKey.toString();
+function getAddressFromPubKey(publicKey: PublicKey) {
+  return publicKey.toString();
+}
+
+async function getPubkeyFromAddress(address: string) {
+  const { PublicKey } = await import("@solana/web3.js");
+  return new PublicKey(address);
 }

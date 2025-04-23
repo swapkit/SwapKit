@@ -28,7 +28,8 @@
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "lint": "biome check --write ./src",
-    "type-check": "tsc --noEmit"
+    "type-check": "bun tsc --noEmit",
+    "type-check:go": "tsgo"
   },
   "type": "module",
   "version": "2.2.17"
