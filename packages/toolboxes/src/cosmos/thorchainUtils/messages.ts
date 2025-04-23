@@ -9,10 +9,7 @@ import {
 } from "../util";
 
 import { createDefaultAminoTypes, createDefaultRegistry } from "./registry";
-import type {
-  ThorchainCreateDepositTransactionParams,
-  ThorchainCreateTransactionParams,
-} from "./types";
+import type { ThorchainCreateTransactionParams } from "./types";
 
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
@@ -188,7 +185,7 @@ export const buildDepositTx =
     asAminoMessage = false,
     sequence,
     accountNumber,
-  }: ThorchainCreateDepositTransactionParams) => {
+  }: ThorchainCreateTransactionParams) => {
     const account = await getAccount({ rpcUrl, sender });
     const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 

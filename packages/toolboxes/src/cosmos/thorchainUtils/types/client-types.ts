@@ -61,14 +61,13 @@ export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
   sequence?: number;
 };
 
-export type ThorchainCreateTransactionParams = Omit<CosmosCreateTransactionParams, "feeRate"> & {
+export type ThorchainCreateTransactionParams = Omit<
+  CosmosCreateTransactionParams,
+  "feeRate" | "recipient"
+> & {
+  recipient?: string;
   asSignable?: boolean;
   asAminoMessage?: boolean;
 };
-
-export type ThorchainCreateDepositTransactionParams = Omit<
-  ThorchainCreateTransactionParams,
-  "recipient"
->;
 
 export type ThorchainDepositParams = Omit<GenericTransferParams, "recipient">;

@@ -1,4 +1,3 @@
-import { VersionedTransaction } from "@solana/web3.js";
 import {
   AssetValue,
   Chain,
@@ -16,6 +15,7 @@ export const SolanaPlugin = createPlugin({
   },
   methods: ({ getWallet }) => ({
     swap: async function solanaSwap({ route }: SwapParams<"solana", QuoteResponseRoute>) {
+      const { VersionedTransaction } = await import("@solana/web3.js");
       const { tx, sellAsset } = route;
 
       const assetValue = await AssetValue.from({

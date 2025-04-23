@@ -1,9 +1,9 @@
-import {
-  type Connection,
+import type {
+  Connection,
   PublicKey,
-  type Signer,
+  Signer,
   Transaction,
-  type TransactionInstruction,
+  TransactionInstruction,
   VersionedTransaction,
 } from "@solana/web3.js";
 import {
@@ -129,7 +129,7 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
     isProgramDerivedAddress,
   }: SolanaCreateTransactionParams) => {
     const connection = await getConnection();
-    const fromPubkey = getPubkeyFromAddress(sender);
+    const fromPubkey = await getPubkeyFromAddress(sender);
 
     if (assetValue.isGasAsset) {
       const { Transaction, SystemProgram, PublicKey } = await import("@solana/web3.js");
@@ -237,7 +237,7 @@ function createTransaction(getConnection: () => Promise<Connection>) {
   }: SolanaCreateTransactionParams) => {
     const { createMemoInstruction } = await import("@solana/spl-memo");
 
-    const fromPubkey = getPubkeyFromAddress(sender);
+    const fromPubkey = await getPubkeyFromAddress(sender);
     const validateAddress = await getSolanaAddressValidator();
 
     if (!(isProgramDerivedAddress || validateAddress(recipient))) {
@@ -266,9 +266,10 @@ function createTransaction(getConnection: () => Promise<Connection>) {
   };
 }
 
-function createTransactionFromInstructions({
+async function createTransactionFromInstructions({
   instructions,
 }: { instructions: TransactionInstruction[]; isProgramDerivedAddress?: boolean }) {
+  const { Transaction } = await import("@solana/web3.js");
   const transaction = new Transaction().add(...instructions);
 
   if (!transaction) {
@@ -316,6 +317,7 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
 
 function signTransaction(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async (transaction: Transaction | VersionedTransaction) => {
+    const { VersionedTransaction } = await import("@solana/web3.js");
     if (!signer) {
       throw new SwapKitError("toolbox_solana_no_signer");
     }
@@ -355,6 +357,7 @@ function getAddressFromPubKey(publicKey: PublicKey) {
   return publicKey.toString();
 }
 
-function getPubkeyFromAddress(address: string) {
+async function getPubkeyFromAddress(address: string) {
+  const { PublicKey } = await import("@solana/web3.js");
   return new PublicKey(address);
 }
