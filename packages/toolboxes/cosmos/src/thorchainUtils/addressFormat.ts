@@ -3,7 +3,9 @@ import { base64, bech32 } from "@scure/base";
 import { fromByteArray, toByteArray } from "base64-js";
 
 export function bech32ToBase64(address: string) {
-  return base64.encode(Uint8Array.from(bech32.fromWords(bech32.decode(address).words)));
+  return base64.encode(
+    Uint8Array.from(bech32.fromWords(bech32.decode(address as `${string}1${string}`).words)),
+  );
 }
 
 export function base64ToBech32(address: string, prefix = "thor") {
