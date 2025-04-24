@@ -1,5 +1,28 @@
 # @swapkit/wallets
 
+## 2.0.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallet-bitget@1.2.10
+  - @swapkit/wallet-ctrl@2.2.10
+  - @swapkit/wallet-exodus@1.4.7
+  - @swapkit/wallet-keepkey@1.5.22
+  - @swapkit/wallet-keepkey-bex@1.3.9
+  - @swapkit/wallet-keystore@1.6.10
+  - @swapkit/wallet-ledger@1.12.8
+  - @swapkit/wallet-okx@1.5.9
+  - @swapkit/wallet-phantom@1.4.4
+  - @swapkit/wallet-trezor@1.5.6
+  - @swapkit/wallet-coinbase@1.4.5
+  - @swapkit/wallet-evm-extensions@1.3.6
+  - @swapkit/wallet-keplr@1.4.8
+  - @swapkit/wallet-polkadotjs@1.2.6
+  - @swapkit/wallet-radix@1.3.12
+  - @swapkit/wallet-talisman@1.5.6
+  - @swapkit/wallet-wc@1.8.7
+
 ## 2.0.35
 
 ### Patch Changes
