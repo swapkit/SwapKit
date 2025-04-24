@@ -1,13 +1,13 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@scure/bip39": "1.3.0",
+    "@scure/bip39": "1.5.4",
     "@solana/spl-memo": "0.2.5",
     "@solana/spl-token": "0.4.9",
     "@solana/spl-token-registry": "0.2.4574",
     "@solana/web3.js": "1.95.8",
     "@swapkit/helpers": "workspace:*",
-    "micro-key-producer": "0.7.1"
+    "micro-key-producer": "0.7.5"
   },
   "description": "SwapKit - Toolbox solana",
   "files": [
