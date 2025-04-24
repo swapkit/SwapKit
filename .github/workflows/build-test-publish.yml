@@ -83,8 +83,9 @@ jobs:
         with:
           title: ":tada: Publish ${{ steps.deployment-params.outputs.publishName }}"
           version: bun version-bump
-          publish: bun publish-packages
+          publish: bun publish-packages --no-git-tag
           setupGitUser: false
+          createGithubReleases: false
 
       - name: Publish Nightly to npm
         uses: changesets/action@v1
@@ -92,8 +93,9 @@ jobs:
         with:
           title: ":tada: Publish Nightly"
           version: bun version-bump
-          publish: bun publish-packages --tag nightly
+          publish: bun publish-packages --tag nightly --no-git-tag
           setupGitUser: false
+          createGithubReleases: false
 
   deploy-playground:
     if: contains(github.ref_name, 'develop')

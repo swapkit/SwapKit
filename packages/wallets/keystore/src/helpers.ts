@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { generateMnemonic, validateMnemonic } from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english";
-import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
+import blakejs from "blakejs";
 
 export type Keystore = {
   crypto: {
@@ -34,10 +34,10 @@ const blake256 = (initData: Buffer | string): string => {
     data = Buffer.from(data, "hex");
   }
 
-  const context = blake2bInit(32);
-  blake2bUpdate(context, data);
+  const context = blakejs.blake2bInit(32);
+  blakejs.blake2bUpdate(context, data);
 
-  return Array.from(blake2bFinal(context))
+  return Array.from(blakejs.blake2bFinal(context))
     .map((byte) => (byte < 0x10 ? `0${byte.toString(16)}` : byte.toString(16)))
     .join("");
 };

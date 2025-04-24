@@ -1,5 +1,23 @@
 # @swapkit/sdk
 
+## 2.2.32
+
+### Patch Changes
+
+- [#1248](https://github.com/thorswap/SwapKit/pull/1248) [`2f12818`](https://github.com/thorswap/SwapKit/commit/2f1281840300024410862dab5af7b9c3d3221859) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix version mismatch
+
+- Updated dependencies [[`2f12818`](https://github.com/thorswap/SwapKit/commit/2f1281840300024410862dab5af7b9c3d3221859)]:
+  - @swapkit/plugin-chainflip@2.1.6
+  - @swapkit/plugin-evm@1.3.27
+  - @swapkit/plugin-kado@0.2.19
+  - @swapkit/plugin-radix@1.3.21
+  - @swapkit/plugin-solana@0.1.2
+  - @swapkit/plugin-thorchain@2.3.18
+  - @swapkit/api@2.4.5
+  - @swapkit/core@3.2.31
+  - @swapkit/tokens@2.4.4
+  - @swapkit/wallets@2.0.35
+
 ## 2.2.31
 
 ### Patch Changes

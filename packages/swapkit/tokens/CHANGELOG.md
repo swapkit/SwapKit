@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.4.4
+
+### Patch Changes
+
+- [#1248](https://github.com/thorswap/SwapKit/pull/1248) [`2f12818`](https://github.com/thorswap/SwapKit/commit/2f1281840300024410862dab5af7b9c3d3221859) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix version mismatch
+
 ## 2.4.3
 
 ### Patch Changes

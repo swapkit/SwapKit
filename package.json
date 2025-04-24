@@ -11,14 +11,14 @@
     "@types/node": "22.10.5",
     "@types/react": "19.0.3",
     "@types/react-dom": "19.0.2",
-    "bun-types": "1.1.42",
+    "bun-types": "1.2.10",
     "lefthook": "1.10.1",
     "npm-check-updates": "17.1.13",
     "react": "19.0.0",
     "typescript": "5.7.2"
   },
   "name": "swapkit-monorepo",
-  "packageManager": "bun@^1.1.42",
+  "packageManager": "bun@^1.2.10",
   "private": true,
   "scripts": {
     "bootstrap": "bun clean; bun install --force; bun run build",
