@@ -58,6 +58,7 @@ export type UTXOBuildTxParams = {
   feeRate: number;
   sender: string;
   apiClient: BlockchairApiType;
+  fetchTxHex?: boolean;
 };
 
 export type UTXOTransferParams = {

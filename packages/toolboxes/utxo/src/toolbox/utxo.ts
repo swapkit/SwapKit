@@ -165,6 +165,7 @@ export const buildTx = async ({
   feeRate,
   sender,
   apiClient,
+  fetchTxHex = false,
 }: UTXOBuildTxParams): Promise<{
   psbt: Psbt;
   utxos: UTXOType[];
@@ -174,7 +175,7 @@ export const buildTx = async ({
   const compiledMemo = memo ? compileMemo(memo) : null;
   const chain = assetValue.chain as UTXOChain;
 
-  const isNonSegwitChain = nonSegwitChains.includes(chain);
+  const isNonSegwitChain = fetchTxHex || nonSegwitChains.includes(chain);
 
   const inputsAndOutputs = await getInputsAndTargetOutputs({
     assetValue,
