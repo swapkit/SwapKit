@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@scure/bip39": "1.3.0",
+    "@scure/bip39": "1.5.4",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolbox-cosmos": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
@@ -9,7 +9,7 @@
     "@swapkit/toolbox-substrate": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*",
     "blakejs": "1.2.1",
-    "micro-key-producer": "0.7.1"
+    "micro-key-producer": "0.7.5"
   },
   "description": "SwapKit Wallet - Keystore",
   "files": [
