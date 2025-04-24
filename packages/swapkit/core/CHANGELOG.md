@@ -1,5 +1,20 @@
 # @swapkit/core
 
+## 3.2.32
+
+### Patch Changes
+
+- Updated dependencies [[`b0e71f1`](https://github.com/thorswap/SwapKit/commit/b0e71f14e08a3c4ff9c9e1deca92cc9fcc74d653), [`4460344`](https://github.com/thorswap/SwapKit/commit/446034438d2efcf43944af81f51d1b41d2faaa16)]:
+  - @swapkit/toolbox-utxo@1.3.7
+  - @swapkit/helpers@2.5.6
+  - @swapkit/plugin-evm@1.3.28
+  - @swapkit/api@2.4.6
+  - @swapkit/toolbox-cosmos@1.10.7
+  - @swapkit/toolbox-evm@1.9.6
+  - @swapkit/toolbox-radix@1.2.40
+  - @swapkit/toolbox-solana@1.5.3
+  - @swapkit/toolbox-substrate@1.3.25
+
 ## 3.2.31
 
 ### Patch Changes

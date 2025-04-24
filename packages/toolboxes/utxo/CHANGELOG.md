@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.3.7
+
+### Patch Changes
+
+- [#1251](https://github.com/thorswap/SwapKit/pull/1251) [`b0e71f1`](https://github.com/thorswap/SwapKit/commit/b0e71f14e08a3c4ff9c9e1deca92cc9fcc74d653) Thanks [@towanTG](https://github.com/towanTG)! - Fixes a bug in wallets if they need the tx hex
+
+- Updated dependencies [[`4460344`](https://github.com/thorswap/SwapKit/commit/446034438d2efcf43944af81f51d1b41d2faaa16)]:
+  - @swapkit/helpers@2.5.6
+
 ## 1.3.6
 
 ### Patch Changes

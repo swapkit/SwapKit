@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.5.6
+
+### Patch Changes
+
+- [#1245](https://github.com/thorswap/SwapKit/pull/1245) [`4460344`](https://github.com/thorswap/SwapKit/commit/446034438d2efcf43944af81f51d1b41d2faaa16) Thanks [@SpatzlHD](https://github.com/SpatzlHD)! - Added the Fee Type SERVICE to the FeeTypeEnum of @swapkit/helpers as this fee type is present in the response from SwapKit. It is used to display the ammount that is charged by SwapKit
+
 ## 2.5.5
 
 ### Patch Changes
