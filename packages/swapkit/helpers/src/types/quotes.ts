@@ -170,4 +170,5 @@ export enum FeeTypeEnum {
   AFFILIATE = "affiliate",
   TAX = "tax",
   PRIORITY = "priority",
+  SERVICE = "service",
 }
