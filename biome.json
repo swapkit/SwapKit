@@ -51,7 +51,10 @@
       "security": { "all": true },
       "suspicious": {
         "noEvolvingTypes": "off",
-        "noConsole": { "level": "warn", "options": { "allow": ["info", "warn", "error"] } },
+        "noConsole": {
+          "level": "warn",
+          "options": { "allow": ["info", "warn", "error"] }
+        },
         "all": true,
         "useAwait": "error",
         "noExplicitAny": "off",

@@ -10,7 +10,7 @@ import {
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import type { UTXOType } from "@swapkit/toolboxes/utxo";
+import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
 import { getWalletSupportedChains } from "../utils";
 
@@ -164,17 +164,23 @@ async function getTrezorWallet<T extends Chain>({
           });
         }
 
-        const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
+        const toolbox = await getUtxoToolbox(chain);
 
         const feeRate =
           paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
 
-        const { psbt, inputs } = await toolbox.buildTx({
+        const createTxMethod =
+          chain === Chain.BitcoinCash
+            ? (toolbox as UTXOToolboxes["BCH"]).buildTx
+            : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
+
+        const { psbt, inputs } = await createTxMethod({
           ...rest,
           memo,
           recipient,
           feeRate,
           sender: address,
+          fetchTxHex: true,
         });
 
         const txHex = await signTransaction(psbt, inputs, memo);

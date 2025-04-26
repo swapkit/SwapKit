@@ -30,7 +30,7 @@ export type UTXOCalculateTxSizeParams = {
   feeRate: number;
 };
 
-export type UTXOBuildTxParams = GenericCreateTransactionParams;
+export type UTXOBuildTxParams = GenericCreateTransactionParams & { fetchTxHex?: boolean };
 
 export type UTXOTransferParams = GenericTransferParams;
 

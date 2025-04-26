@@ -113,6 +113,7 @@ async function getWalletMethods({
           feeRate,
           memo,
           sender: address,
+          fetchTxHex: true,
         });
         const txHex = await signer.signTransaction(psbt, inputs);
         const tx = await toolbox.broadcastTx(txHex);
