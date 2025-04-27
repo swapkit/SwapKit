@@ -57,13 +57,16 @@ async function getWeb3WalletMethods({
 
 export async function getWalletMethods(chain: Chain) {
   switch (chain) {
-    case Chain.Ethereum:
-    case Chain.Base:
-    case Chain.Avalanche:
     case Chain.Arbitrum:
+    case Chain.Aurora:
+    case Chain.Avalanche:
+    case Chain.Base:
+    case Chain.Berachain:
+    case Chain.BinanceSmartChain:
+    case Chain.Ethereum:
+    case Chain.Gnosis:
     case Chain.Optimism:
-    case Chain.Polygon:
-    case Chain.BinanceSmartChain: {
+    case Chain.Polygon: {
       if (!(window.okxwallet && "send" in window.okxwallet)) {
         throw new Error("No okxwallet found");
       }
