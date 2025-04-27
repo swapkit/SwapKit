@@ -20,6 +20,7 @@ export const ledgerWallet = createWallet({
   name: "connectLedger",
   supportedChains: [
     Chain.Arbitrum,
+    Chain.Aurora,
     Chain.Avalanche,
     Chain.Base,
     Chain.BinanceSmartChain,
@@ -29,6 +30,7 @@ export const ledgerWallet = createWallet({
     Chain.Dash,
     Chain.Dogecoin,
     Chain.Ethereum,
+    Chains.Gnosis,
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
@@ -129,7 +131,9 @@ async function getWalletMethods({
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.BinanceSmartChain:
-    case Chain.Base: {
+    case Chain.Base:
+    case Chain.Aurora:
+    case Chain.Gnosis: {
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
