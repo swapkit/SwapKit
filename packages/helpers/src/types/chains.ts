@@ -1,7 +1,9 @@
 export enum Chain {
   Arbitrum = "ARB",
+  Aurora = "AURORA",
   Avalanche = "AVAX",
   Base = "BASE",
+  Berachain = "BERA",
   BinanceSmartChain = "BSC",
   Bitcoin = "BTC",
   BitcoinCash = "BCH",
@@ -10,6 +12,7 @@ export enum Chain {
   Dogecoin = "DOGE",
   Ethereum = "ETH",
   Fiat = "FIAT",
+  Gnosis = "GNO",
   Kujira = "KUJI",
   Litecoin = "LTC",
   Maya = "MAYA",
@@ -31,10 +34,14 @@ export enum StagenetChain {
 export enum ChainId {
   Arbitrum = "42161",
   ArbitrumHex = "0xa4b1",
+  Aurora = "1313161554",
+  AuroraHex = "0x4e454152",
   Avalanche = "43114",
   AvalancheHex = "0xa86a",
   Base = "8453",
   BaseHex = "0x2105",
+  Berachain = "80094",
+  BerachainHex = "0x138de",
   BinanceSmartChain = "56",
   BinanceSmartChainHex = "0x38",
   Bitcoin = "bitcoin",
@@ -43,10 +50,12 @@ export enum ChainId {
   Cosmos = "cosmoshub-4",
   Dash = "dash",
   Dogecoin = "dogecoin",
-  Kujira = "kaiyo-1",
   Ethereum = "1",
   EthereumHex = "0x1",
   Fiat = "fiat",
+  Gnosis = "100",
+  GnosisHex = "0x64",
+  Kujira = "kaiyo-1",
   Litecoin = "litecoin",
   Maya = "mayachain-mainnet-v1",
   MayaStagenet = "mayachain-stagenet-v1",
@@ -65,10 +74,14 @@ export enum ChainId {
 export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.ArbitrumHex]: Chain.Arbitrum,
   [ChainId.Arbitrum]: Chain.Arbitrum,
+  [ChainId.AuroraHex]: Chain.Aurora,
+  [ChainId.Aurora]: Chain.Aurora,
   [ChainId.AvalancheHex]: Chain.Avalanche,
   [ChainId.Avalanche]: Chain.Avalanche,
   [ChainId.BaseHex]: Chain.Base,
   [ChainId.Base]: Chain.Base,
+  [ChainId.BerachainHex]: Chain.Berachain,
+  [ChainId.Berachain]: Chain.Berachain,
   [ChainId.BinanceSmartChainHex]: Chain.BinanceSmartChain,
   [ChainId.BinanceSmartChain]: Chain.BinanceSmartChain,
   [ChainId.BitcoinCash]: Chain.BitcoinCash,
@@ -79,6 +92,8 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Dogecoin]: Chain.Dogecoin,
   [ChainId.EthereumHex]: Chain.Ethereum,
   [ChainId.Fiat]: Chain.Fiat,
+  [ChainId.GnosisHex]: Chain.Gnosis,
+  [ChainId.Gnosis]: Chain.Gnosis,
   [ChainId.Kujira]: Chain.Kujira,
   [ChainId.Ethereum]: Chain.Ethereum,
   [ChainId.Litecoin]: Chain.Litecoin,
@@ -102,8 +117,10 @@ const chains = Object.values(Chain) as Chain[];
 
 export const BaseDecimal: Record<Chain, number> = {
   ARB: 18,
+  AURORA: 18,
   AVAX: 18,
   BASE: 18,
+  BERA: 18,
   BCH: 8,
   BSC: 18,
   BTC: 8,
@@ -114,6 +131,7 @@ export const BaseDecimal: Record<Chain, number> = {
   FIAT: 2,
   FLIP: 18,
   GAIA: 6,
+  GNO: 18,
   KUJI: 6,
   LTC: 8,
   MATIC: 18,
@@ -127,8 +145,10 @@ export const BaseDecimal: Record<Chain, number> = {
 
 export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Arbitrum]: 0.3,
+  [Chain.Aurora]: 1,
   [Chain.Avalanche]: 3,
   [Chain.Base]: 2,
+  [Chain.Berachain]: 2,
   [Chain.BinanceSmartChain]: 3,
   [Chain.Bitcoin]: 600,
   [Chain.BitcoinCash]: 600,
@@ -138,6 +158,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Dogecoin]: 600,
   [Chain.Ethereum]: 12.5,
   [Chain.Fiat]: 60,
+  [Chain.Gnosis]: 5.2,
   [Chain.Kujira]: 2.2,
   [Chain.Litecoin]: 150,
   [Chain.Maya]: 6,
@@ -155,19 +176,25 @@ export const SubstrateChains = [Chain.Polkadot, Chain.Chainflip];
 
 export type EVMChain =
   | Chain.Arbitrum
+  | Chain.Aurora
   | Chain.Avalanche
   | Chain.Base
+  | Chain.Berachain
   | Chain.BinanceSmartChain
   | Chain.Ethereum
+  | Chain.Gnosis
   | Chain.Optimism
   | Chain.Polygon;
 
 export const EVMChains = [
   Chain.Arbitrum,
+  Chain.Aurora,
   Chain.Avalanche,
   Chain.Base,
+  Chain.Berachain,
   Chain.BinanceSmartChain,
   Chain.Ethereum,
+  Chain.Gnosis,
   Chain.Optimism,
   Chain.Polygon,
 ] as const;
@@ -218,8 +245,10 @@ export const MAYASupportedChains = [
 
 export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
+  [Chain.Aurora]: "https://aurora-rpc.publicnode.com",
   [Chain.Avalanche]: "https://api.avax.network/ext/bc/C/rpc",
   [Chain.Base]: "https://base-rpc.publicnode.com",
+  [Chain.Berachain]: "https://berachain-rpc.publicnode.com",
   [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
   [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",
   [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
@@ -229,6 +258,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Dogecoin]: "https://node-router.thorswap.net/dogecoin",
   [Chain.Ethereum]: "https://ethereum-rpc.publicnode.com",
   [Chain.Fiat]: "",
+   [Chain.Gnosis]: "https://gnosis-rpc.publicnode.com",
   [Chain.Kujira]: "https://kujira-rpc.ibs.team",
   [Chain.Litecoin]: "https://node-router.thorswap.net/litecoin",
   [Chain.Maya]: "https://tendermint.mayachain.info",
@@ -253,16 +283,25 @@ export const NODE_URLS: Record<
   [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",
 };
 
+
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: [
     "https://arb-mainnet.g.alchemy.com/v2/demo",
     "https://arbitrum.blockpi.network/v1/rpc/public",
+  ],
+  [Chain.Aurora]: [
+    "https://1rpc.io/aurora",
+    "https://mainnet.aurora.dev",
   ],
   [Chain.Avalanche]: [
     "https://api.avax.network/ext/bc/C/rpc",
     "https://avalanche-c-chain-rpc.publicnode.com",
   ],
   [Chain.Base]: ["https://base.blockpi.network/v1/rpc/public", "https://1rpc.io/base"],
+  [Chain.Berachain]: [
+    "https://rpc.berachain.com",
+    "https://berachain.drpc.org",
+  ],
   [Chain.BinanceSmartChain]: [
     "https://bsc-rpc.gateway.pokt.network",
     "https://bsc-dataseed2.binance.org",
@@ -278,6 +317,10 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
   [Chain.Ethereum]: ["https://eth.llamarpc.com", "https://rpc.ankr.com/eth"],
   [Chain.Fiat]: [],
+  [Chain.Gnosis]: [
+    "https://gnosis.drpc.org",
+    "https://rpc.ankr.com/gnosis",
+  ],
   [Chain.Kujira]: ["https://kujira-rpc.polkachu.com", "https://rpc-kujira.synergynodes.com/"],
   [Chain.Litecoin]: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   [Chain.Maya]: ["https://tendermint.mayachain.info", "https://maya-tendermint.publicnode.com"],
@@ -297,8 +340,10 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
 
 export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Arbitrum]: "https://arbiscan.io",
+  [Chain.Aurora]: "https://explorer.mainnet.aurora.dev",
   [Chain.Avalanche]: "https://snowtrace.io",
   [Chain.Base]: "https://basescan.org",
+  [Chain.Berachain]: "https://berascan.com",
   [Chain.BinanceSmartChain]: "https://bscscan.com",
   [Chain.Bitcoin]: "https://blockchair.com/bitcoin",
   [Chain.BitcoinCash]: "https://www.blockchair.com/bitcoin-cash",
@@ -308,6 +353,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Dogecoin]: "https://blockchair.com/dogecoin",
   [Chain.Ethereum]: "https://etherscan.io",
   [Chain.Fiat]: "",
+  [Chain.Gnosis]: "https://gnosisscan.io",
   [Chain.Kujira]: "https://finder.kujira.network/kaiyo-1",
   [Chain.Litecoin]: "https://blockchair.com/litecoin",
   [Chain.Maya]: "https://www.mayascan.org",
@@ -325,10 +371,13 @@ let RPCUrlsMerged = RPC_URLS;
 const getRpcBody = (chain: Chain | StagenetChain) => {
   switch (chain) {
     case Chain.Arbitrum:
+    case Chain.Aurora:
     case Chain.Avalanche:
     case Chain.Base:
+    case Chain.Berachain:
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
+    case Chain.Gnosis:
     case Chain.Optimism:
     case Chain.Polygon:
       return { id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] };
