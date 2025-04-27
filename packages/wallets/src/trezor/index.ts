@@ -32,13 +32,15 @@ async function getTrezorWallet<T extends Chain>({
   derivationPath,
 }: { chain: T; derivationPath: DerivationPathArray }) {
   switch (chain) {
-    case Chain.BinanceSmartChain:
-    case Chain.Avalanche:
     case Chain.Arbitrum:
-    case Chain.Optimism:
-    case Chain.Polygon:
+    case Chain.Aurora:
+    case Chain.Avalanche:
     case Chain.Base:
-    case Chain.Ethereum: {
+    case Chain.BinanceSmartChain:
+    case Chain.Ethereum:
+    case Chain.Gnosis:
+    case Chain.Optimism:
+    case Chain.Polygon: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { getEVMSigner } = await import("./evmSigner");
 
@@ -201,6 +203,7 @@ export const trezorWallet = createWallet({
   walletType: WalletOption.TREZOR,
   supportedChains: [
     Chain.Arbitrum,
+    Chain.Aurora,
     Chain.Avalanche,
     Chain.Base,
     Chain.BinanceSmartChain,
@@ -209,6 +212,7 @@ export const trezorWallet = createWallet({
     Chain.Dash,
     Chain.Dogecoin,
     Chain.Ethereum,
+    Chain.Gnosis,
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
