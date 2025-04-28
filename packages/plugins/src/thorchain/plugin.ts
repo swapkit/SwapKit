@@ -34,8 +34,6 @@ import {
   TCBscDepositABI,
   TCEthereumVaultAbi,
 } from "@swapkit/helpers/contracts";
-
-import type { ApproveParams } from "@swapkit/toolboxes/evm";
 import { prepareTxParams, validateAddressType } from "./shared";
 import type {
   AddLiquidityParams,
@@ -251,12 +249,12 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       });
     }
 
-    function approveAssetValue(params: ApproveParams & { assetValue: AssetValue }) {
-      return approve({ ...params, type: ApproveMode.Approve });
+    function approveAssetValue({ assetValue }: { assetValue: AssetValue }) {
+      return approve({ assetValue, type: ApproveMode.Approve });
     }
 
-    function isAssetValueApproved(params: ApproveParams & { assetValue: AssetValue }) {
-      return approve({ ...params, type: ApproveMode.CheckOnly });
+    function isAssetValueApproved({ assetValue }: { assetValue: AssetValue }) {
+      return approve({ assetValue, type: ApproveMode.CheckOnly });
     }
 
     function registerName({ assetValue, ...params }: RegisterThornameParams) {

@@ -46,13 +46,13 @@ function getNameDetails(baseUrl: string) {
 
 function getNamesByAddress(baseUrl: string) {
   return function getNamesByAddress(address: string) {
-    return RequestClient.get<THORNameDetails>(`${baseUrl}/rlookup/${address}`);
+    return RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
   };
 }
 
 function getNamesByOwner(baseUrl: string) {
   return function getNamesByOwner(address: string) {
-    return RequestClient.get<THORNameDetails>(`${baseUrl}/owner/${address}`);
+    return RequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
   };
 }
 
