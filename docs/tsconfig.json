@@ -4,5 +4,5 @@
     "types": ["bun-types"]
   },
   "exclude": ["node_modules", "dist"],
-  "include": [".astro/types.d.ts", "./src", "../packages/**/*"]
+  "include": [".astro/types.d.ts", ".astro/content.d.ts", "./src", "../packages/**/*"]
 }
