@@ -54,8 +54,7 @@ export async function getAddressValidator() {
       .with(Chain.Radix, () => radixValidateAddress(address))
       .with(Chain.Ripple, () => rippleValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
-      .with(Chain.Fiat, () => false)
-      .exhaustive();
+      .otherwise(() => false);
 
     return isValid;
   };

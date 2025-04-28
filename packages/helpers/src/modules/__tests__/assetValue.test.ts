@@ -116,6 +116,20 @@ describe("AssetValue", () => {
         asset: "ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
       });
       expect(arbWeth.toString()).toBe("ARB.WETH-0x82af49447d8a07e3bd95bd0d56f35241523fbab1");
+
+      const baseAssetFromString = AssetValue.from({
+        asset: "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      });
+      expect(baseAssetFromString.toString()).toBe(
+        "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      );
+
+      const avaxSolanaAsset = AssetValue.from({
+        asset: "AVAX.SOL-0XFE6B19286885A4F7F55ADAD09C3CD1F906D2478F",
+      });
+      expect(avaxSolanaAsset.toString()).toBe(
+        "AVAX.SOL-0xfe6b19286885a4f7f55adad09c3cd1f906d2478f",
+      );
     });
   });
 
