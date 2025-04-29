@@ -8,4 +8,4 @@ runs:
     - uses: oven-sh/setup-bun@v2
     - name: Install packages
       shell: bash
-      run: bun install --frozen-lockfile
+      run: bun install

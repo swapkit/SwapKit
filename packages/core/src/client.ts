@@ -236,7 +236,7 @@ export function SwapKit<
     if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix>);
+    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix | Chain.Near>);
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });

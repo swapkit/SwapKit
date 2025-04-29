@@ -1,3 +1,4 @@
+import { derivationPathToString } from "../utils/derivationPath";
 import type { Chain } from "./chains";
 
 export enum ContractAddress {
@@ -8,31 +9,6 @@ export enum ContractAddress {
   BSC = "0x0000000000000000000000000000000000000000",
   MATIC = "0x0000000000000000000000000000000000001010",
   OP = "0x4200000000000000000000000000000000000042",
-}
-
-export enum DerivationPath {
-  ARB = "m/44'/60'/0'/0",
-  AVAX = "m/44'/60'/0'/0",
-  BASE = "m/44'/60'/0'/0",
-  BCH = "m/44'/145'/0'/0",
-  BSC = "m/44'/60'/0'/0",
-  BTC = "m/84'/0'/0'/0",
-  DASH = "m/44'/5'/0'/0",
-  DOGE = "m/44'/3'/0'/0",
-  DOT = "////",
-  ETH = "m/44'/60'/0'/0",
-  FLIP = "////",
-  GAIA = "m/44'/118'/0'/0",
-  KUJI = "m/44'/118'/0'/0",
-  LTC = "m/84'/2'/0'/0",
-  MATIC = "m/44'/60'/0'/0",
-  MAYA = "m/44'/931'/0'/0",
-  OP = "m/44'/60'/0'/0",
-  SOL = "m/44'/501'/0'/0",
-  THOR = "m/44'/931'/0'/0",
-  XRD = "////",
-  XRP = "m/44'/144'/0'/0/0",
-  FIAT = "////",
 }
 
 export type DerivationPathArray = [number, number, number, number, number?];
@@ -52,6 +28,7 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   LTC: [84, 2, 0, 0, 0],
   MATIC: [44, 60, 0, 0, 0],
   MAYA: [44, 931, 0, 0, 0],
+  NEAR: [44, 397, 0, 0, 0],
   OP: [44, 60, 0, 0, 0],
   SOL: [44, 501, 0, 0, 0],
   THOR: [44, 931, 0, 0, 0],
@@ -63,3 +40,11 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   XRD: [0, 0, 0, 0, 0],
   XRP: [44, 144, 0, 0, 0],
 };
+
+export const DerivationPath: Record<Chain, string> = Object.keys(NetworkDerivationPath).reduce(
+  (acc, key) => {
+    acc[key as Chain] = derivationPathToString(NetworkDerivationPath[key as Chain]);
+    return acc;
+  },
+  {} as Record<Chain, string>,
+);
