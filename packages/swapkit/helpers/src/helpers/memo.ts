@@ -108,6 +108,23 @@ export function getMemoForLoan(
   return addAffiliate(`${baseMemo}${minAmountPart}`, affiliate);
 }
 
+export function getMemoForTcyClaim(
+  memoType: MemoType.CLAIM_TCY,
+  { address }: WithAffiliate<{ address: string }>,
+) {
+  return `${memoType}:${address}`;
+}
+
+export function getMemoForTcyStake(
+  memoType: MemoType.STAKE_TCY | MemoType.UNSTAKE_TCY,
+  { unstakeBps, ...affiliate }: WithAffiliate<{ unstakeBps?: number }>,
+) {
+  const bps = unstakeBps ? `:${unstakeBps}` : "";
+  const baseMemo = `${memoType}${bps}`;
+
+  return addAffiliate(`${baseMemo}`, affiliate);
+}
+
 /**
  * Internal helpers
  */
