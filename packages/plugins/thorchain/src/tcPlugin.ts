@@ -1,4 +1,4 @@
-import type { QuoteResponseRoute } from "@swapkit/api";
+import type { InboundAddressesItem, QuoteResponseRoute } from "@swapkit/api";
 import {
   AssetValue,
   Chain,
@@ -15,6 +15,8 @@ import {
   TCEthereumVaultAbi,
   type UTXOChain,
   getMemoForLoan,
+  getMemoForTcyClaim,
+  getMemoForTcyStake,
 } from "@swapkit/helpers";
 
 import { basePlugin } from "./basePlugin";
@@ -214,10 +216,54 @@ function plugin({ getWallet, stagenet = false }: SwapKitPluginParams) {
     };
   }
 
+  async function claimTcy({ chain, thorAddress }: { chain: Chain; thorAddress: string }) {
+    const inboundData = (await getInboundDataByChain(chain)) as InboundAddressesItem;
+    const dust_threshold = inboundData.dust_threshold;
+
+    return deposit({
+      assetValue: AssetValue.from({
+        chain,
+        fromBaseDecimal: 8,
+        value: chain !== Chain.THORChain ? dust_threshold : 0,
+      }),
+      recipient: inboundData.address,
+      memo: getMemoForTcyClaim(MemoType.CLAIM_TCY, { address: thorAddress }),
+      router: inboundData.router,
+    });
+  }
+
+  function stakeTcyAction(
+    params: { type: "unstake"; unstakeBps: number } | { type: "stake"; assetValue: AssetValue },
+  ) {
+    if (params.type === "stake") {
+      if (params.assetValue.toString() !== "THOR.TCY") {
+        throw new SwapKitError("thorchain_asset_is_not_tcy");
+      }
+
+      return deposit({
+        assetValue: params.assetValue,
+        recipient: "",
+        memo: getMemoForTcyStake(MemoType.STAKE_TCY, {}),
+      });
+    }
+
+    return deposit({
+      assetValue: AssetValue.from({
+        chain: Chain.THORChain,
+      }),
+      recipient: "",
+      memo: getMemoForTcyStake(MemoType.UNSTAKE_TCY, {
+        unstakeBps: params.unstakeBps,
+      }),
+    });
+  }
+
   return {
     ...pluginMethods,
     addLiquidity,
     createLiquidity,
+    claimTcy,
+    stakeTcyAction,
     deposit,
     getInboundDataByChain,
     loan,

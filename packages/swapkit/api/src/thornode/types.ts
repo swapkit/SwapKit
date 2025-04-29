@@ -22,6 +22,7 @@ export type InboundAddressesItem = {
   halted: boolean;
   pub_key: string;
   router?: string;
+  dust_threshold: number;
 };
 
 export type LastBlockItem = {
