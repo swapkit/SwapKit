@@ -1,5 +1,21 @@
 # @swapkit/plugin-thorchain
 
+## 2.4.0
+
+### Minor Changes
+
+- [#1259](https://github.com/thorswap/SwapKit/pull/1259) [`49dbe36`](https://github.com/thorswap/SwapKit/commit/49dbe363aa01f770777734e14cf3c1adb571a78d) Thanks [@towanTG](https://github.com/towanTG)! - Adds TCY support
+
+### Patch Changes
+
+- Updated dependencies [[`49dbe36`](https://github.com/thorswap/SwapKit/commit/49dbe363aa01f770777734e14cf3c1adb571a78d)]:
+  - @swapkit/helpers@2.6.0
+  - @swapkit/api@2.5.0
+  - @swapkit/toolbox-cosmos@1.10.8
+  - @swapkit/toolbox-evm@1.9.7
+  - @swapkit/toolbox-substrate@1.3.26
+  - @swapkit/toolbox-utxo@1.3.8
+
 ## 2.3.19
 
 ### Patch Changes
