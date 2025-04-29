@@ -14,7 +14,6 @@ export async function getSkClient<W extends WalletOption, P extends PluginName[]
   }
 
   return {
-    // @ts-expect-error TODO: fix this
     client: SwapKit({ plugins: connectedPlugins, wallets: { ...walletPkg } }),
     connectMethod,
   };

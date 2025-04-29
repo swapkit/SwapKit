@@ -134,7 +134,10 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
 
   async function getPubKey() {
     const [account] = (await signer?.getAccounts()) || [];
-    return account?.pubkey;
+    if (!account?.pubkey) {
+      throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+    }
+    return base64.encode(account?.pubkey);
   }
 
   async function transfer({

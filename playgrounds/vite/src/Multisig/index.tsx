@@ -29,7 +29,7 @@ export default function Multisig({
 
   const loadPubKey = useCallback(async () => {
     if (phrase) {
-      const wallet = await toolbox.secp256k1HdWalletFromMnemonic(phrase);
+      const wallet = await (await toolbox).secp256k1HdWalletFromMnemonic(phrase);
       const [account] = await wallet.getAccounts();
 
       if (!account) return alert("No account found");
@@ -44,8 +44,8 @@ export default function Multisig({
   }, [loadPubKey, phrase]);
 
   const handleLoadMultisig = useCallback(async () => {
-    const pubkey = await toolbox.createMultisig(Object.values(pubkeys), threshold);
-    const address = await toolbox.pubkeyToAddress(pubkey);
+    const pubkey = await (await toolbox).createMultisig(Object.values(pubkeys), threshold);
+    const address = await (await toolbox).pubkeyToAddress(pubkey);
 
     setAddress(address);
   }, [toolbox, pubkeys, threshold]);
@@ -67,10 +67,9 @@ export default function Multisig({
   const handleCreateTransaction = useCallback(() => {
     if (!(inputAssetValue?.gt(0) && skClient)) return;
     const transferTx = buildAminoMsg({
-      chain: inputAssetValue.chain as Chain.THORChain,
       memo,
       recipient,
-      from: address,
+      sender: address,
       assetValue: inputAssetValue,
     });
 
@@ -79,8 +78,8 @@ export default function Multisig({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const handleSignTransaction = useCallback(async () => {
-    const wallet = await toolbox.secp256k1HdWalletFromMnemonic(phrase);
-    const { signature, bodyBytes } = await toolbox.signMultisigTx({
+    const wallet = await (await toolbox).secp256k1HdWalletFromMnemonic(phrase);
+    const { signature, bodyBytes } = await (await toolbox).signMultisigTx({
       wallet,
       tx: transaction,
     });
@@ -98,7 +97,7 @@ export default function Multisig({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const handleBroadcastTransaction = useCallback(async () => {
     setIsBroadcasting(true);
-    const txHash = await toolbox.broadcastMultisigTx(
+    const txHash = await (await toolbox).broadcastMultisigTx(
       JSON.stringify(transaction),
       Object.entries(signatures).map(([pubKey, signature]) => ({ pubKey, signature })),
       Object.values(pubkeys),

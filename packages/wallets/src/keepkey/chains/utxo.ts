@@ -10,6 +10,7 @@ import {
 } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
 
+import type { UTXOToolboxes } from "@swapkit/toolboxes/utxo";
 import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
 
 interface KeepKeyInputObject {
@@ -28,7 +29,7 @@ export const utxoWalletMethods = async ({
 }: { sdk: KeepKeySdk; chain: UTXOChain; derivationPath?: DerivationPathArray }) => {
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
   // This might not work for BCH
-  const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
+  const toolbox = await getUtxoToolbox(chain);
   const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain)
     ? ("p2wpkh" as const)
     : ("p2pkh" as const);
@@ -103,12 +104,18 @@ export const utxoWalletMethods = async ({
     if (!walletAddress) throw new Error("From address must be provided");
     if (!recipient) throw new Error("Recipient address must be provided");
 
-    const { psbt, inputs: rawInputs } = await toolbox.createTransaction({
+    const createTxMethod =
+      chain === Chain.BitcoinCash
+        ? (toolbox as UTXOToolboxes["BCH"]).buildTx
+        : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
+
+    const { psbt, inputs: rawInputs } = await createTxMethod({
       ...rest,
       memo,
       recipient,
       feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
       sender: walletAddress,
+      fetchTxHex: true,
     });
 
     const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({

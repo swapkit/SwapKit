@@ -32,7 +32,7 @@ async function blake256(initData: Buffer | string) {
 }
 
 export async function encryptToKeyStore(phrase: string, password: string) {
-  const { pbkdf2Sync, randomBytes, createCipheriv } = await import("crypto");
+  const { pbkdf2Sync, randomBytes, createCipheriv } = await import("node:crypto");
 
   const cipher = "aes-128-ctr";
   const iv = randomBytes(16);
@@ -71,7 +71,7 @@ export function validatePhrase(phrase: string) {
 }
 
 export async function decryptFromKeystore(keystore: Keystore, password: string) {
-  const { createDecipheriv, pbkdf2Sync } = await import("crypto");
+  const { createDecipheriv, pbkdf2Sync } = await import("node:crypto");
   const { SwapKitError } = await import("@swapkit/helpers");
 
   switch (keystore.version) {

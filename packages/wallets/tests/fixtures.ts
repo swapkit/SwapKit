@@ -19,6 +19,7 @@ export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[nu
   [Chain.Optimism]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
   [Chain.Polkadot]: "16kQVedQo7yYoFSp2MnQ78zP39xWnFGePnZps2APEyt9K9KZ",
   [Chain.Polygon]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
+  [Chain.Ripple]: "rhDQXdwWR2RstC7sLjLMbjCeWT3PuSAZVu",
   // [Chain.Radix]: "16kQVedQo7yYoFSp2MnQ78zP39xWnFGePnZps2APEyt9K9KZ",
   [Chain.Solana]: "4UHWuPwyV3XCcnwrpEdWAEW3WLUP1RDMaK3ANNsRUjfM",
   [Chain.THORChain]: "thor1hm0sdz9v2h5jwjuu0ssp8x98upvlc6py2uq4vz",

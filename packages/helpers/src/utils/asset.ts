@@ -175,8 +175,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     }))
     .with("MAYA.MAYA", () => ({ identifier: assetString, decimal: 4 }))
     // Just to be sure that we are not missing any chain
-    .with(Chain.Fiat, () => ({ identifier: assetString, decimal }))
-    .exhaustive();
+    .otherwise(() => ({ identifier: assetString, decimal }));
 
   return commonAssetInfo;
 };

@@ -96,6 +96,7 @@ async function createTransaction({
   memo,
   feeRate,
   sender,
+  fetchTxHex = false,
 }: UTXOBuildTxParams): Promise<{
   psbt: Psbt;
   utxos: UTXOType[];
@@ -111,6 +112,7 @@ async function createTransaction({
     recipient,
     memo,
     sender,
+    fetchTxHex,
   });
 
   const { inputs, outputs } = accumulative({ ...inputsAndOutputs, feeRate, chain });
@@ -484,10 +486,11 @@ async function getInputsAndTargetOutputs({
   recipient,
   memo,
   sender,
+  fetchTxHex: fetchTxOverwrite = false,
 }: Omit<UTXOBuildTxParams, "feeRate">) {
   const chain = assetValue.chain as UTXOChain;
 
-  const fetchTxHex = nonSegwitChains.includes(chain);
+  const fetchTxHex = fetchTxOverwrite || nonSegwitChains.includes(chain);
 
   const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex });
 
