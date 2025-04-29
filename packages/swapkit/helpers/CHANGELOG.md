@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.6.0
+
+### Minor Changes
+
+- [#1259](https://github.com/thorswap/SwapKit/pull/1259) [`49dbe36`](https://github.com/thorswap/SwapKit/commit/49dbe363aa01f770777734e14cf3c1adb571a78d) Thanks [@towanTG](https://github.com/towanTG)! - Adds TCY support
+
 ## 2.5.6
 
 ### Patch Changes
