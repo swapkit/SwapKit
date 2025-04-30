@@ -1,5 +1,13 @@
 # @swapkit/plugin-evm
 
+## 1.3.30
+
+### Patch Changes
+
+- Updated dependencies [[`59941a7`](https://github.com/thorswap/SwapKit/commit/59941a7b2581c339b6fef36636a59c76a684ca05)]:
+  - @swapkit/api@2.6.0
+  - @swapkit/helpers@2.6.0
+
 ## 1.3.29
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @swapkit/api
 
+## 2.6.0
+
+### Minor Changes
+
+- [#1262](https://github.com/thorswap/SwapKit/pull/1262) [`59941a7`](https://github.com/thorswap/SwapKit/commit/59941a7b2581c339b6fef36636a59c76a684ca05) Thanks [@towanTG](https://github.com/towanTG)! - Adds Thornode TCY endpoints
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.6.0
+
 ## 2.5.0
 
 ### Minor Changes
