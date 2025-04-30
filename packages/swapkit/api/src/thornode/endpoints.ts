@@ -6,6 +6,10 @@ import type {
   NodeItem,
   RunePoolInfo,
   RunePoolProviderInfo,
+  TCYClaimerResponse,
+  TCYClaimersResponse,
+  TCYStakerResponse,
+  TCYStakersResponse,
   THORNodeTNSDetails,
   ThornodeEndpointParams,
 } from "./types";
@@ -72,4 +76,20 @@ export function getRunePoolProviderInfo(params: ThornodeEndpointParams & { thorA
   return RequestClient.get<RunePoolProviderInfo>(
     `${baseUrl(params)}/rune_provider/${params.thorAddress}`,
   );
+}
+
+export function getTcyStaker(params: ThornodeEndpointParams & { address: string }) {
+  return RequestClient.get<TCYStakerResponse>(`${baseUrl(params)}/tcy_staker/${params.address}`);
+}
+
+export function getTcyStakers(params?: ThornodeEndpointParams) {
+  return RequestClient.get<TCYStakersResponse>(`${baseUrl(params)}/tcy_stakers`);
+}
+
+export function getTcyClaimer(params: ThornodeEndpointParams & { address: string }) {
+  return RequestClient.get<TCYClaimerResponse>(`${baseUrl(params)}/tcy_claimer/${params.address}`);
+}
+
+export function getTcyClaimers(params?: ThornodeEndpointParams) {
+  return RequestClient.get<TCYClaimersResponse>(`${baseUrl(params)}/tcy_claimers`);
 }
