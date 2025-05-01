@@ -34,7 +34,6 @@ beforeEach(async () => {
       swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
     },
   });
-
   context.provider = provider;
   context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
 });
