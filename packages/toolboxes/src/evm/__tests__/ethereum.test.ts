@@ -18,6 +18,12 @@ beforeAll(() => {
   hre.run("node");
 });
 
+SKConfig.set({
+  apiKeys: {
+    swapKit: process.env.TEST_API_KEY,
+  },
+});
+
 const context: {
   ethers: typeof ethers;
   provider: JsonRpcProvider;
