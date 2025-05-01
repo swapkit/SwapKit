@@ -14,7 +14,9 @@
     "@internal/playground-vite": "0.0.0",
     "@internal/tools-builder": "0.0.0",
     "@internal/tools-github": "0.0.0",
-    "@internal/tools-typescript": "0.0.0"
+    "@internal/tools-typescript": "0.0.0",
+    "@swapkit/ui": "0.0.1",
+    "@internal/playground-bun-react": "0.0.0"
   },
-  "changesets": []
+  "changesets": ["few-islands-ask", "tired-bikes-hang"]
 }
