@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.1
+
+### Patch Changes
+
+- [#1264](https://github.com/thorswap/SwapKit/pull/1264) [`590984f`](https://github.com/thorswap/SwapKit/commit/590984f4e4744e8f9dfe47734f760b3a3b6c5c23) Thanks [@towanTG](https://github.com/towanTG)! - Fixes lower case bug in AssetValue.from
+
 ## 3.0.0-beta.0
 
 ### Major Changes
