@@ -266,9 +266,9 @@ function safeValue(value: NumberPrimitives, decimal: number) {
 }
 
 function getAssetString(assetOrChain: AssetIdentifier) {
-  if ("chain" in assetOrChain) return assetOrChain.chain;
+  if ("chain" in assetOrChain) return assetOrChain.chain.toUpperCase();
 
-  const { chain, symbol } = assetFromString(assetOrChain.asset);
+  const { chain, symbol } = assetFromString(assetOrChain.asset.toUpperCase());
   const isNativeChain = getAssetType({ chain, symbol }) === "Native";
 
   return isNativeChain ? chain : assetOrChain.asset;
