@@ -124,22 +124,22 @@ export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) 
 export const getCommonAssetInfo = (assetString: CommonAssetString) => {
   const decimal = BaseDecimal[assetString as Chain];
 
-  const commonAssetInfo = match(assetString)
+  const commonAssetInfo = match(assetString.toUpperCase())
     .with(...ethGasChains, () => ({
-      identifier: `${assetString}.ETH`,
+      identifier: `${assetString.toUpperCase()}.ETH`,
       decimal,
     }))
     .with(Chain.THORChain, () => ({
-      identifier: `${assetString}.RUNE`,
+      identifier: `${assetString.toUpperCase()}.RUNE`,
       decimal,
     }))
-    .with(Chain.Cosmos, () => ({ identifier: `${assetString}.ATOM`, decimal }))
+    .with(Chain.Cosmos, () => ({ identifier: `${assetString.toUpperCase()}.ATOM`, decimal }))
     .with(Chain.Maya, () => ({
-      identifier: `${assetString}.CACAO`,
+      identifier: `${assetString.toUpperCase()}.CACAO`,
       decimal: 10,
     }))
     .with(Chain.BinanceSmartChain, () => ({
-      identifier: `${assetString}.BNB`,
+      identifier: `${assetString.toUpperCase()}.BNB`,
       decimal,
     }))
     .with(
@@ -149,13 +149,13 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       Chain.Kujira,
       Chain.Ripple,
       Chain.Polkadot,
-      () => ({ identifier: `${assetString}.${assetString}`, decimal }),
+      () => ({ identifier: `${assetString.toUpperCase()}.${assetString.toUpperCase()}`, decimal }),
     )
     .with(Chain.Radix, "XRD.XRD", () => ({
       identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
       decimal,
     }))
-    .with("KUJI.USK", () => ({ identifier: assetString, decimal: 6 }))
+    .with("KUJI.USK", () => ({ identifier: assetString.toUpperCase(), decimal: 6 }))
     .with("ETH.FLIP", () => ({
       identifier: "ETH.FLIP-0x826180541412D574cf1336d22c0C0a287822678A",
       decimal: BaseDecimal.ETH,
@@ -168,7 +168,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       identifier: "ETH.vTHOR-0x815c23eca83261b6ec689b60cc4a58b54bc24d8d",
       decimal: BaseDecimal.ETH,
     }))
-    .with("MAYA.MAYA", () => ({ identifier: assetString, decimal: 4 }))
+    .with("MAYA.MAYA", () => ({ identifier: assetString.toUpperCase(), decimal: 4 }))
     // Just to be sure that we are not missing any chain
     .otherwise(() => ({ identifier: assetString, decimal }));
 
@@ -177,6 +177,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
 
 export function getAssetType({ chain, symbol }: { chain: Chain; symbol: string }) {
   if (symbol.includes("/")) return "Synth";
+  if (symbol.includes("~")) return "Trade";
 
   const isNative = match(chain)
     .with(

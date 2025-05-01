@@ -314,6 +314,11 @@ describe("AssetValue", () => {
         asset: "eth.eth",
       });
       expect(eth.toString()).toBe("ETH.ETH");
+
+      const ethFromChain = await AssetValue.from({
+        chain: Chain.Ethereum,
+      });
+      expect(ethFromChain.toString()).toBe("ETH.ETH");
     });
   });
 

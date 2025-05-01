@@ -18,12 +18,6 @@ beforeAll(() => {
   hre.run("node");
 });
 
-SKConfig.set({
-  apiKeys: {
-    swapKit: process.env.TEST_API_KEY,
-  },
-});
-
 const context: {
   ethers: typeof ethers;
   provider: JsonRpcProvider;
@@ -34,6 +28,7 @@ beforeEach(async () => {
   context.ethers = hre.artifacts;
   const provider = await getProvider(Chain.Ethereum, "http://127.0.0.1:8545/");
   const signer = await hre.ethers.getImpersonatedSigner(testAddress);
+
   SKConfig.set({
     apiKeys: {
       swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
