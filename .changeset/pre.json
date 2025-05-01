@@ -18,5 +18,5 @@
     "@swapkit/ui": "0.0.1",
     "@internal/playground-bun-react": "0.0.0"
   },
-  "changesets": ["few-islands-ask", "tired-bikes-hang"]
+  "changesets": ["early-parrots-nail", "few-islands-ask", "tired-bikes-hang"]
 }
