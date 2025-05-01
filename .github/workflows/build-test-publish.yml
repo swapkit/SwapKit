@@ -2,6 +2,7 @@ name: Run build, test & publish
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+  TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
 
 on:
   workflow_dispatch:
