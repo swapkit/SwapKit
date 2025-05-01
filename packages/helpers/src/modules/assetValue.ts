@@ -133,6 +133,7 @@ export class AssetValue extends BigIntArithmetics {
         ? (unsafeIdentifier as TokenNames)
         : (unsafeIdentifier.toUpperCase() as TokenNames),
     );
+
     const tokenDecimal = token?.decimal || commonAssetDecimal;
 
     warnOnce(

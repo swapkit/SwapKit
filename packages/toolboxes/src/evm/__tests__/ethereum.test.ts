@@ -28,12 +28,12 @@ beforeEach(async () => {
   context.ethers = hre.artifacts;
   const provider = await getProvider(Chain.Ethereum, "http://127.0.0.1:8545/");
   const signer = await hre.ethers.getImpersonatedSigner(testAddress);
+
   SKConfig.set({
     apiKeys: {
       swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
     },
   });
-
   context.provider = provider;
   context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
 });

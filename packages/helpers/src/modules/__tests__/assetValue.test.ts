@@ -309,6 +309,16 @@ describe("AssetValue", () => {
         asyncTokenLookup: true,
       });
       expect(ethSynth.toString()).toBe("ETH/ETH");
+
+      const eth = await AssetValue.from({
+        asset: "eth.eth",
+      });
+      expect(eth.toString()).toBe("ETH.ETH");
+
+      const ethFromChain = await AssetValue.from({
+        chain: Chain.Ethereum,
+      });
+      expect(ethFromChain.toString()).toBe("ETH.ETH");
     });
   });
 
