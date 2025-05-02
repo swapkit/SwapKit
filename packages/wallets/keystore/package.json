@@ -5,6 +5,7 @@
     "@swapkit/toolbox-cosmos": "workspace:*",
     "@swapkit/toolbox-evm": "workspace:*",
     "@swapkit/toolbox-radix": "workspace:*",
+    "@swapkit/toolbox-ripple": "workspace:*",
     "@swapkit/toolbox-solana": "workspace:*",
     "@swapkit/toolbox-substrate": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*",

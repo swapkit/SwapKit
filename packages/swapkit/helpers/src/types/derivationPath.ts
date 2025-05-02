@@ -28,6 +28,7 @@ export enum DerivationPath {
   MATIC = "m/44'/60'/0'/0",
   MAYA = "m/44'/931'/0'/0",
   OP = "m/44'/60'/0'/0",
+  XRP = "m/44'/144'/0'/0",
   SOL = "m/44'/501'/0'/0",
   THOR = "m/44'/931'/0'/0",
   XRD = "////",
@@ -52,6 +53,7 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   MATIC: [44, 60, 0, 0, 0],
   MAYA: [44, 931, 0, 0, 0],
   OP: [44, 60, 0, 0, 0],
+  XRP: [44, 144, 0, 0, 0],
   SOL: [44, 501, 0, 0, 0],
   THOR: [44, 931, 0, 0, 0],
 

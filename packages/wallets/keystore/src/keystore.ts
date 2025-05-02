@@ -31,6 +31,7 @@ const KEYSTORE_SUPPORTED_CHAINS = [
   Chain.Polkadot,
   Chain.Chainflip,
   Chain.Solana,
+  Chain.Ripple,
 ] as const;
 
 type KeystoreOptions = {
@@ -211,6 +212,19 @@ const getWalletMethodsForChain = async ({
 
       return {
         address: toolbox.getAddressFromKeys(signer),
+        walletMethods: {
+          ...toolbox,
+        },
+      };
+    }
+
+    case Chain.Ripple: {
+      const { XRPToolbox, createSigner } = await import("@swapkit/toolbox-ripple");
+      const signer = createSigner(phrase);
+      const toolbox = XRPToolbox({ rpcUrl, signer });
+
+      return {
+        address: signer.address,
         walletMethods: {
           ...toolbox,
         },
