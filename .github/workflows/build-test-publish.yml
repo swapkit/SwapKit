@@ -107,8 +107,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-lint-test]
     permissions:
+      contents: read
       pages: write
       id-token: write
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup Repo
@@ -117,17 +119,23 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Build Docs
-        run: bun build:docs
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Install, build, and upload your site
+        uses: withastro/action@v4
         with:
-          name: docs
-          path: "./docs/dist"
+          path: ./docs
+          package-manager: bun
 
+  deploy:
+    needs: [build-docs]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: docs
-          token: ${{ secrets.GITHUB_TOKEN }}

@@ -8,6 +8,8 @@ const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
 
 // https://astro.build/config
 export default defineConfig({
+  site: process.env.REFERENCES ? "https://thorswap.github.io" : undefined,
+  base: process.env.REFERENCES ? "/SwapKit" : undefined,
   markdown: {
     syntaxHighlight: "shiki",
     shikiConfig: {
