@@ -10,7 +10,6 @@ import {
   WalletOption,
 } from "@swapkit/helpers";
 import type { ChainflipPlugin } from "@swapkit/plugin-chainflip";
-import type { KadoPlugin } from "@swapkit/plugin-kado";
 import type { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugin-thorchain";
 import { alchemyApi } from "@swapkit/toolbox-evm";
 import type { wallets } from "@swapkit/wallets";
@@ -26,7 +25,7 @@ type KeystoreFile = {
 
 const swapKitAtom = atom<ReturnType<
   typeof SwapKit<
-    typeof ThorchainPlugin & typeof ChainflipPlugin & typeof MayachainPlugin & typeof KadoPlugin,
+    typeof ThorchainPlugin & typeof ChainflipPlugin & typeof MayachainPlugin,
     typeof wallets
   >
 > | null>(null);
@@ -48,7 +47,6 @@ export const useSwapKit = () => {
     const loadSwapKit = async () => {
       const { SwapKit } = await import("@swapkit/core");
       const { ChainflipPlugin } = await import("@swapkit/plugin-chainflip");
-      const { KadoPlugin } = await import("@swapkit/plugin-kado");
       const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugin-thorchain");
       const { wallets } = await import("@swapkit/wallets");
 
@@ -85,7 +83,7 @@ export const useSwapKit = () => {
           },
         },
         wallets,
-        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin, ...KadoPlugin },
+        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin },
       });
 
       setSwapKit(swapKitClient);

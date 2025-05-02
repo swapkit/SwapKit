@@ -1,10 +1,10 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/api": "workspace:*",
-    "@swapkit/helpers": "workspace:*"
+    "@swapkit/helpers": "workspace:*",
+    "xrpl": "4.2.5"
   },
-  "description": "SwapKit Plugin - Kado",
+  "description": "SwapKit - Toolbox ripple",
   "files": [
     "src/",
     "dist/"
@@ -12,8 +12,7 @@
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
-  "name": "@swapkit/plugin-kado",
-  "react-native": "./src/index.ts",
+  "name": "@swapkit/toolbox-ripple",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorswap/SwapKit.git"
@@ -21,12 +20,12 @@
   "scripts": {
     "build": "bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
-    "lint": "biome check --write ./src",
+    "lint": "biome check --diagnostic-level=error --write ./src",
     "test": "echo 'bun test'",
     "test:coverage": "bun test --coverage",
     "type-check": "tsc --noEmit"
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "0.2.22"
+  "version": "0.0.0"
 }

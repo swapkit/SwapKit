@@ -14,6 +14,7 @@ export const LEDGER_SUPPORTED_CHAINS = [
   Chain.Litecoin,
   Chain.Optimism,
   Chain.Polygon,
+  Chain.Ripple,
   Chain.THORChain,
 ] as const;
 

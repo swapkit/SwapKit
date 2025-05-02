@@ -41,7 +41,6 @@ export default defineConfig({
 
       "@swapkit/plugin-chainflip": resolve("../../packages/plugins/chainflip/src"),
       "@swapkit/plugin-evm": resolve("../../packages/plugins/evm/src"),
-      "@swapkit/plugin-kado": resolve("../../packages/plugins/kado/src"),
       "@swapkit/plugin-radix": resolve("../../packages/plugins/radix/src"),
       "@swapkit/plugin-thorchain": resolve("../../packages/plugins/thorchain/src"),
 

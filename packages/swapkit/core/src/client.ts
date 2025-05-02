@@ -264,8 +264,8 @@ export function SwapKit<Plugins extends PluginsType, Wallets extends WalletsType
     if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix>);
-
+    const wallet = getWallet(chain as Chain.Ripple); //Exclude<Chain, Chain.Fiat | Chain.Radix>);
+    wallet;
     return wallet.transfer({ ...params, assetValue });
   }
 
