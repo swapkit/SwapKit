@@ -6,8 +6,8 @@ import {
   SwapKitError,
   SwapKitNumber,
 } from "@swapkit/helpers";
-import type { Transaction } from "xrpl";
-import { Client, type Payment, Wallet, isValidAddress, xrpToDrops } from "xrpl";
+import type { Payment, Transaction } from "xrpl";
+import { Client, Wallet, isValidAddress, xrpToDrops } from "xrpl";
 
 export type RippleWallet = { [Chain.Ripple]: Awaited<ReturnType<typeof XRPToolbox>> };
 

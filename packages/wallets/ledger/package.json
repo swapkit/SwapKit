@@ -20,7 +20,9 @@
     "@swapkit/toolbox-utxo": "workspace:*",
     "@types/ripemd160": "2.0.3",
     "cosmjs-types": "0.9.0",
-    "ripemd160": "2.0.2"
+    "ripemd160": "2.0.2",
+    "ripple-binary-codec": "2.3.0",
+    "xrpl": "4.2.5"
   },
   "description": "SwapKit Wallet - Ledger",
   "files": [

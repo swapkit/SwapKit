@@ -2,7 +2,8 @@
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport-webusb";
 import { NetworkDerivationPath, derivationPathToString } from "@swapkit/helpers";
-import { type AsyncXrpSigner, type Transaction, hashes } from "@swapkit/toolbox-ripple";
+import type { AsyncXrpSigner, Transaction } from "@swapkit/toolbox-ripple";
+import { hashes } from "@swapkit/toolbox-ripple";
 import { encode } from "ripple-binary-codec";
 
 function establishConnection(): Promise<Xrp> {
