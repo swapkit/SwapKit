@@ -1,5 +1,16 @@
 # @swapkit/toolbox-solana
 
+## 1.6.0
+
+### Minor Changes
+
+- [#1267](https://github.com/thorswap/SwapKit/pull/1267) [`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99) Thanks [@towanTG](https://github.com/towanTG)! - Adds XRP chain and support for Keystore and Ledger
+
+### Patch Changes
+
+- Updated dependencies [[`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99)]:
+  - @swapkit/helpers@2.7.0
+
 ## 1.5.4
 
 ### Patch Changes

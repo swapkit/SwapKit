@@ -1,5 +1,18 @@
 # @swapkit/plugin-evm
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1267](https://github.com/thorswap/SwapKit/pull/1267) [`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99) Thanks [@towanTG](https://github.com/towanTG)! - Adds XRP chain and support for Keystore and Ledger
+
+### Patch Changes
+
+- Updated dependencies [[`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99)]:
+  - @swapkit/helpers@2.7.0
+  - @swapkit/toolbox-evm@1.10.0
+  - @swapkit/api@2.7.0
+
 ## 1.3.30
 
 ### Patch Changes
