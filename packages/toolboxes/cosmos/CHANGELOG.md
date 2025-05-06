@@ -1,5 +1,15 @@
 # @swapkit/toolbox-cosmos
 
+## 1.11.2
+
+### Patch Changes
+
+- [`de8696c`](https://github.com/thorswap/SwapKit/commit/de8696c305268a287e7dec1b331de4369e486b7f) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes TCY deposit denom and updates tokenlist
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.1
+  - @swapkit/api@2.7.1
+
 ## 1.11.1
 
 ### Patch Changes
