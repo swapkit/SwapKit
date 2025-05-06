@@ -1,5 +1,15 @@
 # @swapkit/wallet-okx
 
+## 1.6.1
+
+### Patch Changes
+
+- [`c4bcc28`](https://github.com/thorswap/SwapKit/commit/c4bcc283e3382a3196a3a5d522ee84ec40ff7381) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes bugs in okx wallet BTC transfer, thorchain toolbox tcy balance and exports ripple hashes
+
+- Updated dependencies [[`c4bcc28`](https://github.com/thorswap/SwapKit/commit/c4bcc283e3382a3196a3a5d522ee84ec40ff7381)]:
+  - @swapkit/toolbox-cosmos@1.11.1
+  - @swapkit/helpers@2.7.0
+
 ## 1.6.0
 
 ### Minor Changes
