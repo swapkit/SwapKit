@@ -2,7 +2,7 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-04-08T08:01:02.232Z",
+  timestamp: "2025-05-06T12:03:48.376Z",
   version: {
     major: 1,
     minor: 0,
@@ -334,7 +334,7 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
+      identifier: "MAYA.ARB/WstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
       ticker: "wstETH",

@@ -46,12 +46,12 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
           sourceAddress,
           destinationAddress,
           slippage: 3,
-          affiliate: "t",
+          affiliate: "sk",
           affiliateFee: 0,
           includeTx: true,
         },
-        true,
-        "3974e4d9-f662-4e6e-a5b6-d44881902dcb",
+        false,
+        import.meta.env.VITE_SWAPKIT_API_KEY,
       );
 
       setRoutes(routes || []);

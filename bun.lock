@@ -87,7 +87,7 @@
     },
     "packages/swapkit/core": {
       "name": "@swapkit/core",
-      "version": "3.3.1",
+      "version": "3.3.2",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -120,7 +120,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.3.1",
+      "version": "2.3.2",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
@@ -139,7 +139,7 @@
     },
     "packages/swapkit/wallets": {
       "name": "@swapkit/wallets",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "dependencies": {
         "@swapkit/wallet-bitget": "workspace:*",
         "@swapkit/wallet-coinbase": "workspace:*",
@@ -209,7 +209,7 @@
     },
     "packages/toolboxes/ripple": {
       "name": "@swapkit/toolbox-ripple",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "dependencies": {
         "@scure/base": "1.2.4",
         "@swapkit/helpers": "workspace:*",
@@ -346,7 +346,7 @@
     },
     "packages/wallets/keystore": {
       "name": "@swapkit/wallet-keystore",
-      "version": "1.7.1",
+      "version": "1.7.2",
       "dependencies": {
         "@scure/bip39": "1.5.4",
         "@swapkit/helpers": "workspace:*",
@@ -363,7 +363,7 @@
     },
     "packages/wallets/ledger": {
       "name": "@swapkit/wallet-ledger",
-      "version": "1.13.1",
+      "version": "1.13.2",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@cosmjs/crypto": "0.32.4",

@@ -39,7 +39,6 @@ export const getSwapKitClient = (
 
   client = createSwapKit({
     config: {
-      swapkitApiKey: "3974e4d9-f662-4e6e-a5b6-d44881902dcb",
       ...params,
       keepkeyConfig: {
         apiKey: localStorage.getItem("keepkeyApiKey") || "1234",
