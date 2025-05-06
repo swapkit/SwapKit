@@ -1,5 +1,14 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.2
+
+### Patch Changes
+
+- [`472c134`](https://github.com/thorswap/SwapKit/commit/472c134a0a3fc5303101dd4262ccfef609f4ee2b) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Adds @scure/base dependency
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.0
+
 ## 1.0.1
 
 ### Patch Changes

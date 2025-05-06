@@ -1,5 +1,13 @@
 # @swapkit/wallets
 
+## 2.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallet-keystore@1.7.2
+  - @swapkit/wallet-ledger@1.13.2
+
 ## 2.1.1
 
 ### Patch Changes
