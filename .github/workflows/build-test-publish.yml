@@ -64,13 +64,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Create Pull Request or Publish to npm
-        id: changesets-v3
         uses: changesets/action@v1.4.10
         if: contains(github.ref_name, 'v3')
         with:
           title: ":tada: Publish v3"
           version: bun version-bump
-          publish: bun publish-packages --tag v3 --no-git-tag
+          publish: bun publish-packages --tag ver3 --no-git-tag
           setupGitUser: false
           createGithubReleases: false
 
