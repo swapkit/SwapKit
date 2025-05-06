@@ -19,7 +19,7 @@
     },
     "packages/plugins/chainflip": {
       "name": "@swapkit/plugin-chainflip",
-      "version": "2.1.9",
+      "version": "2.2.0",
       "dependencies": {
         "@chainflip/sdk": "1.6.7-rc.5",
         "@polkadot/keyring": "12.6.2",
@@ -37,7 +37,7 @@
     },
     "packages/plugins/evm": {
       "name": "@swapkit/plugin-evm",
-      "version": "1.3.30",
+      "version": "1.4.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -46,7 +46,7 @@
     },
     "packages/plugins/radix": {
       "name": "@swapkit/plugin-radix",
-      "version": "1.3.24",
+      "version": "1.4.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -54,7 +54,7 @@
     },
     "packages/plugins/solana": {
       "name": "@swapkit/plugin-solana",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -63,7 +63,7 @@
     },
     "packages/plugins/thorchain": {
       "name": "@swapkit/plugin-thorchain",
-      "version": "2.4.1",
+      "version": "2.5.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -75,7 +75,7 @@
     },
     "packages/swapkit/api": {
       "name": "@swapkit/api",
-      "version": "2.6.0",
+      "version": "2.7.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "zod": "3.24.1",
@@ -83,11 +83,11 @@
     },
     "packages/swapkit/contracts": {
       "name": "@swapkit/contracts",
-      "version": "1.1.1",
+      "version": "1.2.0",
     },
     "packages/swapkit/core": {
       "name": "@swapkit/core",
-      "version": "3.2.34",
+      "version": "3.3.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -103,7 +103,7 @@
     },
     "packages/swapkit/helpers": {
       "name": "@swapkit/helpers",
-      "version": "2.6.0",
+      "version": "2.7.0",
       "dependencies": {
         "@swapkit/contracts": "workspace:*",
         "@swapkit/tokens": "workspace:*",
@@ -120,7 +120,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.2.35",
+      "version": "2.3.0",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
@@ -135,11 +135,11 @@
     },
     "packages/swapkit/tokens": {
       "name": "@swapkit/tokens",
-      "version": "2.4.4",
+      "version": "2.5.0",
     },
     "packages/swapkit/wallets": {
       "name": "@swapkit/wallets",
-      "version": "2.0.38",
+      "version": "2.1.0",
       "dependencies": {
         "@swapkit/wallet-bitget": "workspace:*",
         "@swapkit/wallet-coinbase": "workspace:*",
@@ -162,7 +162,7 @@
     },
     "packages/toolboxes/cosmos": {
       "name": "@swapkit/toolbox-cosmos",
-      "version": "1.10.9",
+      "version": "1.11.0",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@cosmjs/crypto": "0.32.4",
@@ -184,7 +184,7 @@
     },
     "packages/toolboxes/evm": {
       "name": "@swapkit/toolbox-evm",
-      "version": "1.9.7",
+      "version": "1.10.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/tokens": "workspace:*",
@@ -198,7 +198,7 @@
     },
     "packages/toolboxes/radix": {
       "name": "@swapkit/toolbox-radix",
-      "version": "1.2.41",
+      "version": "1.3.0",
       "dependencies": {
         "@radixdlt/babylon-gateway-api-sdk": "1.6.1",
         "@radixdlt/radix-dapp-toolkit": "2.0.3",
@@ -209,15 +209,16 @@
     },
     "packages/toolboxes/ripple": {
       "name": "@swapkit/toolbox-ripple",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
+        "@scure/base": "1.2.4",
         "@swapkit/helpers": "workspace:*",
         "xrpl": "4.2.5",
       },
     },
     "packages/toolboxes/solana": {
       "name": "@swapkit/toolbox-solana",
-      "version": "1.5.4",
+      "version": "1.6.0",
       "dependencies": {
         "@scure/bip39": "1.5.4",
         "@solana/spl-memo": "0.2.5",
@@ -230,7 +231,7 @@
     },
     "packages/toolboxes/substrate": {
       "name": "@swapkit/toolbox-substrate",
-      "version": "1.3.26",
+      "version": "1.4.0",
       "dependencies": {
         "@polkadot/api": "12.1.1",
         "@polkadot/api-base": "12.1.1",
@@ -245,7 +246,7 @@
     },
     "packages/toolboxes/utxo": {
       "name": "@swapkit/toolbox-utxo",
-      "version": "1.3.8",
+      "version": "1.4.0",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "1.1.1",
         "@psf/bitcoincashjs-lib": "4.0.3",
@@ -261,7 +262,7 @@
     },
     "packages/wallets/bitget": {
       "name": "@swapkit/wallet-bitget",
-      "version": "1.2.12",
+      "version": "1.3.0",
       "dependencies": {
         "@solana/web3.js": "1.95.8",
         "@swapkit/helpers": "workspace:*",
@@ -273,7 +274,7 @@
     },
     "packages/wallets/coinbase": {
       "name": "@swapkit/wallet-coinbase",
-      "version": "1.4.6",
+      "version": "1.5.0",
       "dependencies": {
         "@coinbase/wallet-sdk": "4.3.0",
         "@swapkit/helpers": "workspace:*",
@@ -282,7 +283,7 @@
     },
     "packages/wallets/ctrl": {
       "name": "@swapkit/wallet-ctrl",
-      "version": "2.2.12",
+      "version": "2.3.0",
       "dependencies": {
         "@keplr-wallet/types": "0.12.110",
         "@swapkit/helpers": "workspace:*",
@@ -294,7 +295,7 @@
     },
     "packages/wallets/evm-extensions": {
       "name": "@swapkit/wallet-evm-extensions",
-      "version": "1.3.7",
+      "version": "1.4.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-evm": "workspace:*",
@@ -302,7 +303,7 @@
     },
     "packages/wallets/exodus": {
       "name": "@swapkit/wallet-exodus",
-      "version": "1.4.8",
+      "version": "1.5.0",
       "dependencies": {
         "@passkeys/core": "3.2.0",
         "@passkeys/react": "2.3.3",
@@ -314,7 +315,7 @@
     },
     "packages/wallets/keepkey": {
       "name": "@swapkit/wallet-keepkey",
-      "version": "1.5.24",
+      "version": "1.6.0",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@keepkey/keepkey-sdk": "0.2.57",
@@ -326,7 +327,7 @@
     },
     "packages/wallets/keepkey-bex": {
       "name": "@swapkit/wallet-keepkey-bex",
-      "version": "1.3.11",
+      "version": "1.4.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-cosmos": "workspace:*",
@@ -336,7 +337,7 @@
     },
     "packages/wallets/keplr": {
       "name": "@swapkit/wallet-keplr",
-      "version": "1.4.10",
+      "version": "1.5.0",
       "dependencies": {
         "@keplr-wallet/types": "0.12.110",
         "@swapkit/helpers": "workspace:*",
@@ -345,7 +346,7 @@
     },
     "packages/wallets/keystore": {
       "name": "@swapkit/wallet-keystore",
-      "version": "1.6.12",
+      "version": "1.7.0",
       "dependencies": {
         "@scure/bip39": "1.5.4",
         "@swapkit/helpers": "workspace:*",
@@ -362,7 +363,7 @@
     },
     "packages/wallets/ledger": {
       "name": "@swapkit/wallet-ledger",
-      "version": "1.12.10",
+      "version": "1.13.0",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@cosmjs/crypto": "0.32.4",
@@ -389,7 +390,7 @@
     },
     "packages/wallets/okx": {
       "name": "@swapkit/wallet-okx",
-      "version": "1.5.11",
+      "version": "1.6.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-cosmos": "workspace:*",
@@ -399,7 +400,7 @@
     },
     "packages/wallets/phantom": {
       "name": "@swapkit/wallet-phantom",
-      "version": "1.4.5",
+      "version": "1.5.0",
       "dependencies": {
         "@solana/web3.js": "1.95.8",
         "@swapkit/helpers": "workspace:*",
@@ -410,7 +411,7 @@
     },
     "packages/wallets/polkadotjs": {
       "name": "@swapkit/wallet-polkadotjs",
-      "version": "1.2.7",
+      "version": "1.3.0",
       "dependencies": {
         "@polkadot/util": "12.6.2",
         "@polkadot/util-crypto": "12.6.2",
@@ -420,7 +421,7 @@
     },
     "packages/wallets/radix": {
       "name": "@swapkit/wallet-radix",
-      "version": "1.3.13",
+      "version": "1.4.0",
       "dependencies": {
         "@radixdlt/babylon-gateway-api-sdk": "1.6.1",
         "@radixdlt/radix-dapp-toolkit": "2.0.3",
@@ -430,7 +431,7 @@
     },
     "packages/wallets/talisman": {
       "name": "@swapkit/wallet-talisman",
-      "version": "1.5.7",
+      "version": "1.6.0",
       "dependencies": {
         "@polkadot/util": "12.6.2",
         "@polkadot/util-crypto": "12.6.2",
@@ -441,7 +442,7 @@
     },
     "packages/wallets/trezor": {
       "name": "@swapkit/wallet-trezor",
-      "version": "1.5.7",
+      "version": "1.6.0",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-evm": "workspace:*",
@@ -451,7 +452,7 @@
     },
     "packages/wallets/wc": {
       "name": "@swapkit/wallet-wc",
-      "version": "1.8.9",
+      "version": "1.9.0",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@cosmjs/proto-signing": "0.32.4",

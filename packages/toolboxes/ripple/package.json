@@ -1,6 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
+    "@scure/base": "1.2.4",
     "@swapkit/helpers": "workspace:*",
     "xrpl": "4.2.5"
   },
