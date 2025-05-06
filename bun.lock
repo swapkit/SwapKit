@@ -394,6 +394,7 @@
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-cosmos": "workspace:*",
         "@swapkit/toolbox-evm": "workspace:*",
+        "@swapkit/toolbox-ripple": "workspace:*",
         "@swapkit/toolbox-utxo": "workspace:*",
         "@types/ripemd160": "2.0.3",
         "cosmjs-types": "0.9.0",
