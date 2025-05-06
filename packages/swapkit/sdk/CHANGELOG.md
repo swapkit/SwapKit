@@ -1,5 +1,24 @@
 # @swapkit/sdk
 
+## 2.3.0
+
+### Minor Changes
+
+- [#1267](https://github.com/thorswap/SwapKit/pull/1267) [`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99) Thanks [@towanTG](https://github.com/towanTG)! - Adds XRP chain and support for Keystore and Ledger
+
+### Patch Changes
+
+- Updated dependencies [[`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99)]:
+  - @swapkit/plugin-chainflip@2.2.0
+  - @swapkit/plugin-thorchain@2.5.0
+  - @swapkit/wallets@2.1.0
+  - @swapkit/plugin-solana@0.2.0
+  - @swapkit/tokens@2.5.0
+  - @swapkit/plugin-radix@1.4.0
+  - @swapkit/core@3.3.0
+  - @swapkit/plugin-evm@1.4.0
+  - @swapkit/api@2.7.0
+
 ## 2.2.35
 
 ### Patch Changes

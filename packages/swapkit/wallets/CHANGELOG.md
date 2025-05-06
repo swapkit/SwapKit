@@ -1,5 +1,32 @@
 # @swapkit/wallets
 
+## 2.1.0
+
+### Minor Changes
+
+- [#1267](https://github.com/thorswap/SwapKit/pull/1267) [`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99) Thanks [@towanTG](https://github.com/towanTG)! - Adds XRP chain and support for Keystore and Ledger
+
+### Patch Changes
+
+- Updated dependencies [[`28815f9`](https://github.com/thorswap/SwapKit/commit/28815f905d577ed012c7dc47ee871b5273308d99)]:
+  - @swapkit/wallet-evm-extensions@1.4.0
+  - @swapkit/wallet-keepkey-bex@1.4.0
+  - @swapkit/wallet-polkadotjs@1.3.0
+  - @swapkit/wallet-coinbase@1.5.0
+  - @swapkit/wallet-keystore@1.7.0
+  - @swapkit/wallet-talisman@1.6.0
+  - @swapkit/wallet-keepkey@1.6.0
+  - @swapkit/wallet-phantom@1.5.0
+  - @swapkit/wallet-bitget@1.3.0
+  - @swapkit/wallet-exodus@1.5.0
+  - @swapkit/wallet-ledger@1.13.0
+  - @swapkit/wallet-trezor@1.6.0
+  - @swapkit/wallet-keplr@1.5.0
+  - @swapkit/wallet-radix@1.4.0
+  - @swapkit/wallet-ctrl@2.3.0
+  - @swapkit/wallet-okx@1.6.0
+  - @swapkit/wallet-wc@1.9.0
+
 ## 2.0.38
 
 ### Patch Changes
