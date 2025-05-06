@@ -1,5 +1,12 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.2
+
 ## 1.0.4
 
 ### Patch Changes

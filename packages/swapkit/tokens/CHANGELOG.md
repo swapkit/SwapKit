@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.5.2
+
+### Patch Changes
+
+- [`c48059b`](https://github.com/thorswap/SwapKit/commit/c48059b9866c95df8e45f440bcc6864529f9d48b) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Refresh tokenlist
+
 ## 2.5.1
 
 ### Patch Changes
