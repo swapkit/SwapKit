@@ -1,5 +1,17 @@
 # @swapkit/plugin-thorchain
 
+## 2.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.2
+  - @swapkit/toolbox-evm@1.10.2
+  - @swapkit/api@2.7.2
+  - @swapkit/toolbox-cosmos@1.11.3
+  - @swapkit/toolbox-substrate@1.4.2
+  - @swapkit/toolbox-utxo@1.4.2
+
 ## 2.5.2
 
 ### Patch Changes
