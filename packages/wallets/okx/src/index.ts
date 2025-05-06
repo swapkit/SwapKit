@@ -19,6 +19,18 @@ declare global {
               psbtHex: string,
               { from, type }: { from: string; type: string },
             ) => Promise<string>;
+            send: ({
+              from,
+              to,
+              value,
+              memo,
+            }: {
+              from: string;
+              to: string;
+              value: string;
+              memo?: string;
+              memoPos?: number;
+            }) => Promise<{ txhash: string }>;
           };
           keplr: {
             enable: (chainId: string | string[]) => Promise<void>;

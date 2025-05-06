@@ -11,7 +11,7 @@ import {
 } from "@swapkit/helpers";
 import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
 import type { AlchemyApiType, CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
-import type { BTCToolbox, Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
+import type { BTCToolbox, Psbt, UTXOWalletTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
 const cosmosTransfer =
@@ -104,21 +104,29 @@ export const getWalletForChain = async ({
       }
       const { bitcoin: wallet } = window.okxwallet;
 
-      const { Psbt, BTCToolbox } = await import("@swapkit/toolbox-utxo");
+      const { BTCToolbox } = await import("@swapkit/toolbox-utxo");
 
       const api = apis?.[chain];
 
       const address = (await wallet.connect()).address;
 
       const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient: api });
-      const signTransaction = async (psbt: Psbt) => {
-        const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });
 
-        return Psbt.fromHex(signedPsbt);
-      };
+      const transfer = async ({
+        assetValue,
+        recipient,
+        memo,
+        from,
+      }: UTXOWalletTransferParams<Psbt, Psbt>) => {
+        const { txhash } = await wallet.send({
+          from,
+          to: recipient,
+          value: assetValue.getValue("string"),
+          memo,
+          memoPos: memo ? 2 : undefined,
+        });
 
-      const transfer = (transferParams: UTXOTransferParams) => {
-        return toolbox.transfer({ ...transferParams, signTransaction });
+        return txhash;
       };
 
       return { ...toolbox, transfer, address };

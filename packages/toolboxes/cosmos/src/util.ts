@@ -92,6 +92,11 @@ export const getAssetFromDenom = (denom: string, amount: string) => {
         chain: Chain.THORChain,
         value: Number.parseInt(amount) / 1e8,
       });
+    case "tcy":
+      return AssetValue.from({
+        asset: "THOR.TCY",
+        value: Number.parseInt(amount) / 1e8,
+      });
     case "uatom":
     case "atom":
       return AssetValue.from({

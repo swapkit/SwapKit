@@ -69,7 +69,8 @@ export const BaseCosmosToolbox = ({
         .filter(({ denom }) => denom && !denom.includes("IBC/"))
         .map(({ denom, amount }) => {
           const fullDenom =
-            [Chain.THORChain, Chain.Maya].includes(chain) && denom.includes("/")
+            [Chain.THORChain, Chain.Maya].includes(chain) &&
+            (denom.includes("/") || denom.includes("˜"))
               ? `${chain}.${denom}`
               : denom;
           return getAssetFromDenom(fullDenom, amount);

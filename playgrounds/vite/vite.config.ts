@@ -47,6 +47,7 @@ export default defineConfig({
       "@swapkit/toolbox-cosmos": resolve("../../packages/toolboxes/cosmos/src"),
       "@swapkit/toolbox-evm": resolve("../../packages/toolboxes/evm/src"),
       "@swapkit/toolbox-radix": resolve("../../packages/toolboxes/radix/src"),
+      "@swapkit/toolbox-ripple": resolve("../../packages/toolboxes/ripple/src"),
       "@swapkit/toolbox-solana": resolve("../../packages/toolboxes/solana/src"),
       "@swapkit/toolbox-substrate": resolve("../../packages/toolboxes/substrate/src"),
       "@swapkit/toolbox-utxo": resolve("../../packages/toolboxes/utxo/src"),
