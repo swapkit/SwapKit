@@ -1,5 +1,14 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.3
+
+### Patch Changes
+
+- [`a434d79`](https://github.com/thorswap/SwapKit/commit/a434d7927a7eb213619adcbacaf7e1b3e98f717e) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes externalising ripple lib
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.0
+
 ## 1.0.2
 
 ### Patch Changes
