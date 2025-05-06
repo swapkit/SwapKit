@@ -1,2 +1,2 @@
 export * from "./toolbox";
-export { hashes } from "xrpl";
+export { hashes, type Transaction } from "xrpl";
