@@ -2,14 +2,14 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-05-06T12:03:48.376Z",
+  timestamp: "2025-05-01T16:02:27.787Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 50,
+  count: 48,
   tokens: [
     {
       chain: "ARB",
@@ -334,7 +334,7 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/WstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
+      identifier: "MAYA.ARB/wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
       ticker: "wstETH",
@@ -456,28 +456,12 @@ export const list = {
       ticker: "RUNE",
     },
     {
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.XRD/XRD",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/xrd.xrd.png",
-      ticker: "XRD",
-    },
-    {
       chain: "THOR",
       chainId: "thorchain-1",
       decimals: 8,
       identifier: "THOR.RUNE",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/thor.rune.png",
       ticker: "RUNE",
-    },
-    {
-      chain: "XRD",
-      chainId: "radix-mainnet",
-      decimals: 18,
-      identifier: "XRD.XRD",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/xrd.xrd.png",
-      ticker: "XRD",
     },
   ],
 } as const;

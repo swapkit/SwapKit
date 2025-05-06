@@ -2,14 +2,14 @@ export const list = {
   provider: "PANCAKESWAP",
   chainId: "56",
   name: "PancakeSwap Extended",
-  timestamp: "2025-05-06T08:39:19.543Z",
+  timestamp: "2025-04-30T07:48:13.070Z",
   version: {
     major: 2,
     minor: 16,
-    patch: 363,
+    patch: 360,
   },
   keywords: ["pancakeswap", "extended"],
-  count: 520,
+  count: 517,
   tokens: [
     {
       address: "0x6EaDc05928ACd93eFB3FA0DFbC644D96C6Aa1Df8",
@@ -1042,16 +1042,6 @@ export const list = {
       ticker: "CAKEDOG",
     },
     {
-      address: "0x1a5f096d6D4F0Da25f2df00279cFf615c7F856fc",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.CAMILLE-0X1A5F096D6D4F0DA25F2DF00279CFF615C7F856FC",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/bsc.camille-0x1a5f096d6d4f0da25f2df00279cff615c7f856fc.png",
-      ticker: "CAMILLE",
-    },
-    {
       address: "0xFfBa7529AC181c2Ee1844548e6D7061c9A597dF4",
       chain: "BSC",
       chainId: "56",
@@ -1809,16 +1799,6 @@ export const list = {
       identifier: "BSC.FORM-0X25A528AF62E56512A19CE8C3CAB427807C28CC19",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/bsc.form-0x25a528af62e56512a19ce8c3cab427807c28cc19.png",
-      ticker: "FORM",
-    },
-    {
-      address: "0x5b73A93b4E5e4f1FD27D8b3F8C97D69908b5E284",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.FORM-0X5B73A93B4E5E4F1FD27D8B3F8C97D69908B5E284",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/bsc.form-0x5b73a93b4e5e4f1fd27d8b3f8c97d69908b5e284.png",
       ticker: "FORM",
     },
     {
@@ -3000,16 +2980,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/bsc.mx-0x9f882567a62a5560d147d64871776eea72df41d3.png",
       ticker: "MX",
-    },
-    {
-      address: "0xD82544bf0dfe8385eF8FA34D67e6e4940CC63e16",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.MYX-0XD82544BF0DFE8385EF8FA34D67E6E4940CC63E16",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/bsc.myx-0xd82544bf0dfe8385ef8fa34d67e6e4940cc63e16.png",
-      ticker: "MYX",
     },
     {
       address: "0x755f34709E369D37C6Fa52808aE84A32007d1155",
