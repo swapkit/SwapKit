@@ -2,35 +2,15 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-01-22T13:30:52.014Z",
+  timestamp: "2025-05-01T16:02:27.787Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 53,
+  count: 48,
   tokens: [
-    {
-      address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.ARB-0x912ce59144191c1204e64559fe8253a0e49e6548",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.arb-0x912ce59144191c1204e64559fe8253a0e49e6548.png",
-      ticker: "ARB",
-    },
-    {
-      address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.DAI-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.dai-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1.png",
-      ticker: "DAI",
-    },
     {
       chain: "ARB",
       chainId: "42161",
@@ -118,16 +98,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
       ticker: "WBTC",
-    },
-    {
-      address: "0x5979d7b546e38e414f7e9822514be443a4800529",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
-      ticker: "wstETH",
     },
     {
       address: "0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
@@ -486,28 +456,12 @@ export const list = {
       ticker: "RUNE",
     },
     {
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.XRD/XRD",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/xrd.xrd.png",
-      ticker: "XRD",
-    },
-    {
       chain: "THOR",
       chainId: "thorchain-1",
       decimals: 8,
       identifier: "THOR.RUNE",
       logoURI: "https://storage.googleapis.com/token-list-swapkit/images/thor.rune.png",
       ticker: "RUNE",
-    },
-    {
-      chain: "XRD",
-      chainId: "radix-mainnet",
-      decimals: 18,
-      identifier: "XRD.XRD",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/xrd.xrd.png",
-      ticker: "XRD",
     },
   ],
 } as const;

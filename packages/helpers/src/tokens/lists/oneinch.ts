@@ -1,14 +1,14 @@
 export const list = {
   provider: "ONEINCH",
   name: "ONEINCH",
-  timestamp: "2025-01-22T13:30:53.837Z",
+  timestamp: "2025-05-01T16:02:30.159Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
-  count: 1393,
+  count: 1073,
   tokens: [
     {
       address: "0xba5ddd1f9d7f570dc94a51479a000e3bce967196",
@@ -19,6 +19,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.aave-0xba5ddd1f9d7f570dc94a51479a000e3bce967196.png",
       ticker: "AAVE",
+    },
+    {
+      address: "0x37a645648df29205c6261289983fb04ecd70b4b3",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.ANIME-0x37a645648df29205c6261289983fb04ecd70b4b3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.anime-0x37a645648df29205c6261289983fb04ecd70b4b3.png",
+      ticker: "ANIME",
     },
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -259,6 +269,26 @@ export const list = {
       ticker: "GRT",
     },
     {
+      address: "0xb08d8becab1bf76a9ce3d2d5fa946f65ec1d3e83",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.GS-0xb08d8becab1bf76a9ce3d2d5fa946f65ec1d3e83",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.gs-0xb08d8becab1bf76a9ce3d2d5fa946f65ec1d3e83.png",
+      ticker: "GS",
+    },
+    {
+      address: "0x65c101e95d7dd475c7966330fa1a803205ff92ab",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.HOL-0x65c101e95d7dd475c7966330fa1a803205ff92ab",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.hol-0x65c101e95d7dd475c7966330fa1a803205ff92ab.png",
+      ticker: "HOL",
+    },
+    {
       address: "0x371c7ec6d8039ff7933a2aa28eb827ffe1f52f07",
       chain: "ARB",
       chainId: "42161",
@@ -459,16 +489,6 @@ export const list = {
       ticker: "SPELL",
     },
     {
-      address: "0xc19669a405067927865b40ea045a2baabbbe57f5",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.STAR-0xc19669a405067927865b40ea045a2baabbbe57f5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.star-0xc19669a405067927865b40ea045a2baabbbe57f5.png",
-      ticker: "STAR",
-    },
-    {
       address: "0x7cfadfd5645b50be87d546f42699d863648251ad",
       chain: "ARB",
       chainId: "42161",
@@ -487,6 +507,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.stg-0x6694340fc020c5e6b96567843da2df01b2ce1eb6.png",
       ticker: "STG",
+    },
+    {
+      address: "0xddb46999f8891663a8f2828d25298f70416d7610",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.sUSDS-0xddb46999f8891663a8f2828d25298f70416d7610",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.susds-0xddb46999f8891663a8f2828d25298f70416d7610.png",
+      ticker: "sUSDS",
     },
     {
       address: "0xd4d42f0b6def4ce0383636770ef773390d85c61a",
@@ -563,10 +593,20 @@ export const list = {
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.USDs-0xd74f5255d557944cf7dd0e45ff521520002d5748",
+      identifier: "ARB.USDs_2-0xd74f5255d557944cf7dd0e45ff521520002d5748",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usds-0xd74f5255d557944cf7dd0e45ff521520002d5748.png",
-      ticker: "USDs",
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.usds_2-0xd74f5255d557944cf7dd0e45ff521520002d5748.png",
+      ticker: "USDs_2",
+    },
+    {
+      address: "0x6491c05a82219b8d1479057361ff1654749b876b",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.USDS-0x6491c05a82219b8d1479057361ff1654749b876b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.usds-0x6491c05a82219b8d1479057361ff1654749b876b.png",
+      ticker: "USDS",
     },
     {
       address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
@@ -577,16 +617,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
-    },
-    {
-      address: "0x323665443cef804a3b5206103304bd4872ea4253",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 6,
-      identifier: "ARB.USDV-0x323665443cef804a3b5206103304bd4872ea4253",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdv-0x323665443cef804a3b5206103304bd4872ea4253.png",
-      ticker: "USDV",
     },
     {
       address: "0xb2f30a7c980f052f02563fb518dcc39e6bf38175",
@@ -807,16 +837,6 @@ export const list = {
       ticker: "AXIAL",
     },
     {
-      address: "0x18706c65b12595edb43643214eacdb4f618dd166",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.BAY-0x18706c65b12595edb43643214eacdb4f618dd166",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.bay-0x18706c65b12595edb43643214eacdb4f618dd166.png",
-      ticker: "BAY",
-    },
-    {
       address: "0xb262a485d98d8e19175818d47453e7812ca255a8",
       chain: "AVAX",
       chainId: "43114",
@@ -825,16 +845,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.bingo-0xb262a485d98d8e19175818d47453e7812ca255a8.png",
       ticker: "BINGO",
-    },
-    {
-      address: "0x0f34919404a290e71fc6a510cb4a6acb8d764b24",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.BLZZ-0x0f34919404a290e71fc6a510cb4a6acb8d764b24",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.blzz-0x0f34919404a290e71fc6a510cb4a6acb8d764b24.png",
-      ticker: "BLZZ",
     },
     {
       address: "0x264c1383ea520f73dd837f915ef3a732e204a493",
@@ -875,16 +885,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.cly-0xec3492a2508ddf4fdc0cd76f31f340b30d1793e6.png",
       ticker: "CLY",
-    },
-    {
-      address: "0xc3048e19e76cb9a3aa9d77d8c03c29fc906e2437",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.COMP-0xc3048e19e76cb9a3aa9d77d8c03c29fc906e2437",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.comp-0xc3048e19e76cb9a3aa9d77d8c03c29fc906e2437.png",
-      ticker: "COMP",
     },
     {
       address: "0x637afeff75ca669ff92e4570b14d6399a658902f",
@@ -935,16 +935,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.domi-0xfc6da929c031162841370af240dec19099861d3b.png",
       ticker: "DOMI",
-    },
-    {
-      address: "0x1db749847c4abb991d8b6032102383e6bfd9b1c7",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.DON-0x1db749847c4abb991d8b6032102383e6bfd9b1c7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.don-0x1db749847c4abb991d8b6032102383e6bfd9b1c7.png",
-      ticker: "DON",
     },
     {
       address: "0x7761e2338b35bceb6bda6ce477ef012bde7ae611",
@@ -1067,16 +1057,6 @@ export const list = {
       ticker: "HUSKY",
     },
     {
-      address: "0xf891214fdcf9cdaa5fdc42369ee4f27f226adad6",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.IME-0xf891214fdcf9cdaa5fdc42369ee4f27f226adad6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.ime-0xf891214fdcf9cdaa5fdc42369ee4f27f226adad6.png",
-      ticker: "IME",
-    },
-    {
       address: "0x544c42fbb96b39b21df61cf322b5edc285ee7429",
       chain: "AVAX",
       chainId: "43114",
@@ -1085,16 +1065,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.insur-0x544c42fbb96b39b21df61cf322b5edc285ee7429.png",
       ticker: "INSUR",
-    },
-    {
-      address: "0x3eefb18003d033661f84e48360ebecd181a84709",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.ISA-0x3eefb18003d033661f84e48360ebecd181a84709",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.isa-0x3eefb18003d033661f84e48360ebecd181a84709.png",
-      ticker: "ISA",
     },
     {
       address: "0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd",
@@ -1107,14 +1077,14 @@ export const list = {
       ticker: "JOE",
     },
     {
-      address: "0xb27c8941a7df8958a1778c0259f76d1f8b711c35",
+      address: "0xffff003a6bad9b743d658048742935fffe2b6ed7",
       chain: "AVAX",
       chainId: "43114",
       decimals: 18,
-      identifier: "AVAX.KLO-0xb27c8941a7df8958a1778c0259f76d1f8b711c35",
+      identifier: "AVAX.KET-0xffff003a6bad9b743d658048742935fffe2b6ed7",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.klo-0xb27c8941a7df8958a1778c0259f76d1f8b711c35.png",
-      ticker: "KLO",
+        "https://storage.googleapis.com/token-list-swapkit/images/avax.ket-0xffff003a6bad9b743d658048742935fffe2b6ed7.png",
+      ticker: "KET",
     },
     {
       address: "0x5947bb275c521040051d82396192181b413227a3",
@@ -1125,16 +1095,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.link.e-0x5947bb275c521040051d82396192181b413227a3.png",
       ticker: "LINK.e",
-    },
-    {
-      address: "0xff579d6259dedcc80488c9b89d2820bcb5609160",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.LVT-0xff579d6259dedcc80488c9b89d2820bcb5609160",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.lvt-0xff579d6259dedcc80488c9b89d2820bcb5609160.png",
-      ticker: "LVT",
     },
     {
       address: "0x4c9b4e1ac6f24cde3660d5e4ef1ebf77c710c084",
@@ -1177,16 +1137,6 @@ export const list = {
       ticker: "NXUSD",
     },
     {
-      address: "0x937e077abaea52d3abf879c9b9d3f2ebd15baa21",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.OH-0x937e077abaea52d3abf879c9b9d3f2ebd15baa21",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.oh-0x937e077abaea52d3abf879c9b9d3f2ebd15baa21.png",
-      ticker: "OH",
-    },
-    {
       address: "0xe896cdeaac9615145c0ca09c8cd5c25bced6384c",
       chain: "AVAX",
       chainId: "43114",
@@ -1205,16 +1155,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.pendle-0xfb98b335551a418cd0737375a2ea0ded62ea213b.png",
       ticker: "PENDLE",
-    },
-    {
-      address: "0x7b2b702706d9b361dfe3f00bd138c0cfda7fb2cf",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.PLN-0x7b2b702706d9b361dfe3f00bd138c0cfda7fb2cf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.pln-0x7b2b702706d9b361dfe3f00bd138c0cfda7fb2cf.png",
-      ticker: "PLN",
     },
     {
       address: "0x60781c2586d68229fde47564546784ab3faca982",
@@ -1245,26 +1185,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.qi-0x8729438eb15e2c8b576fcc6aecda6a148776c0f5.png",
       ticker: "QI",
-    },
-    {
-      address: "0x7086e045b78e1e72f741f25231c08d238812cf8a",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.RACEX-0x7086e045b78e1e72f741f25231c08d238812cf8a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.racex-0x7086e045b78e1e72f741f25231c08d238812cf8a.png",
-      ticker: "RACEX",
-    },
-    {
-      address: "0xc17c30e98541188614df99239cabd40280810ca3",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.RISE-0xc17c30e98541188614df99239cabd40280810ca3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.rise-0xc17c30e98541188614df99239cabd40280810ca3.png",
-      ticker: "RISE",
     },
     {
       address: "0xb2a85c5ecea99187a977ac34303b80acbddfa208",
@@ -1387,26 +1307,6 @@ export const list = {
       ticker: "TIC",
     },
     {
-      address: "0x564a341df6c126f90cf3ecb92120fd7190acb401",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 6,
-      identifier: "AVAX.TRYB-0x564a341df6c126f90cf3ecb92120fd7190acb401",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.tryb-0x564a341df6c126f90cf3ecb92120fd7190acb401.png",
-      ticker: "TRYB",
-    },
-    {
-      address: "0x4fbf0429599460d327bd5f55625e30e4fc066095",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.TSD-0x4fbf0429599460d327bd5f55625e30e4fc066095",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.tsd-0x4fbf0429599460d327bd5f55625e30e4fc066095.png",
-      ticker: "TSD",
-    },
-    {
       address: "0xf693248f96fe03422fea95ac0afbbbc4a8fdd172",
       chain: "AVAX",
       chainId: "43114",
@@ -1425,16 +1325,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.tusd-0x1c20e891bab6b1727d14da358fae2984ed9b59eb.png",
       ticker: "TUSD",
-    },
-    {
-      address: "0x8ebaf22b6f053dffeaf46f4dd9efa95d89ba8580",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.UNI.e-0x8ebaf22b6f053dffeaf46f4dd9efa95d89ba8580",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.uni.e-0x8ebaf22b6f053dffeaf46f4dd9efa95d89ba8580.png",
-      ticker: "UNI.e",
     },
     {
       address: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
@@ -1507,16 +1397,6 @@ export const list = {
       ticker: "WBTC.e",
     },
     {
-      address: "0xb1466d4cf0dcfc0bcddcf3500f473cdacb88b56d",
-      chain: "AVAX",
-      chainId: "43114",
-      decimals: 18,
-      identifier: "AVAX.WET-0xb1466d4cf0dcfc0bcddcf3500f473cdacb88b56d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/avax.wet-0xb1466d4cf0dcfc0bcddcf3500f473cdacb88b56d.png",
-      ticker: "WET",
-    },
-    {
       address: "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
       chain: "AVAX",
       chainId: "43114",
@@ -1585,17 +1465,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/avax.zro-0x6985884c4392d348587b19cb9eaaf157f13271cd.png",
       ticker: "ZRO",
-    },
-    {
-      address: "0xc4cb613947890ea300fedc509ac19f8efa0cdd14",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH. REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI-0xc4cb613947890ea300fedc509ac19f8efa0cdd14",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth. realtoken-s-10604-somerset-ave-detroit-mi-0xc4cb613947890ea300fedc509ac19f8efa0cdd14.png",
-      ticker: " REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI",
     },
     {
       address: "0x9d47894f8becb68b9cf3428d256311affe8b068b",
@@ -1746,16 +1615,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.abyss-0x0e8d6b471e332f140e7d9dbb99e5e3822f728da6.png",
       ticker: "ABYSS",
-    },
-    {
-      address: "0x9a0aba393aac4dfbff4333b06c407458002c6183",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.AC-0x9a0aba393aac4dfbff4333b06c407458002c6183",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.ac-0x9a0aba393aac4dfbff4333b06c407458002c6183.png",
-      ticker: "AC",
     },
     {
       address: "0xed04915c23f00a313a544955524eb7dbd823143d",
@@ -2288,16 +2147,6 @@ export const list = {
       ticker: "aMKR",
     },
     {
-      address: "0x1a2eb478fa07125c9935a77b3c03a82470801e30",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.AMO-0x1a2eb478fa07125c9935a77b3c03a82470801e30",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.amo-0x1a2eb478fa07125c9935a77b3c03a82470801e30.png",
-      ticker: "AMO",
-    },
-    {
       address: "0xff20817765cb7f73d4bde2e66e067e58d11095c2",
       chain: "ETH",
       chainId: "1",
@@ -2326,6 +2175,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.angle-0x31429d1856ad1377a8a0079410b297e1a9e214c2.png",
       ticker: "ANGLE",
+    },
+    {
+      address: "0x4dc26fc5854e7648a064a4abd590bbe71724c277",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.ANIME-0x4dc26fc5854e7648a064a4abd590bbe71724c277",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.anime-0x4dc26fc5854e7648a064a4abd590bbe71724c277.png",
+      ticker: "ANIME",
     },
     {
       address: "0xcd62b1c403fa761baadfc74c525ce2b51780b184",
@@ -2488,16 +2347,6 @@ export const list = {
       ticker: "ARCX_OLD",
     },
     {
-      address: "0x1321f1f1aa541a56c31682c57b80ecfccd9bb288",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.ARCX-0x1321f1f1aa541a56c31682c57b80ecfccd9bb288",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.arcx-0x1321f1f1aa541a56c31682c57b80ecfccd9bb288.png",
-      ticker: "ARCX",
-    },
-    {
       address: "0xcc12abe4ff81c9378d670de1b57f8e0dd228d77a",
       chain: "ETH",
       chainId: "1",
@@ -2636,16 +2485,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.atusd-0x101cc05f4a51c0319f570d5e146a8c625198e636.png",
       ticker: "aTUSD",
-    },
-    {
-      address: "0xa9b1eb5908cfc3cdf91f9b8b3a74108598009096",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.Auction-0xa9b1eb5908cfc3cdf91f9b8b3a74108598009096",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.auction-0xa9b1eb5908cfc3cdf91f9b8b3a74108598009096.png",
-      ticker: "Auction",
     },
     {
       address: "0x18aaa7115705e8be94bffebde57af9bfc265b998",
@@ -3028,6 +2867,16 @@ export const list = {
       ticker: "BEPRO",
     },
     {
+      address: "0x97ad75064b20fb2b2447fed4fa953bf7f007a706",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.beraSTONE-0x97ad75064b20fb2b2447fed4fa953bf7f007a706",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.berastone-0x97ad75064b20fb2b2447fed4fa953bf7f007a706.png",
+      ticker: "beraSTONE",
+    },
+    {
       address: "0xdc349913d53b446485e98b76800b6254f43df695",
       chain: "ETH",
       chainId: "1",
@@ -3076,16 +2925,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.bifi-0xb1f1ee126e9c96231cc3d3fad7c08b4cf873b1f1.png",
       ticker: "BIFI",
-    },
-    {
-      address: "0x64bc2ca1be492be7185faa2c8835d9b824c8a194",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.BIGTIME-0x64bc2ca1be492be7185faa2c8835d9b824c8a194",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.bigtime-0x64bc2ca1be492be7185faa2c8835d9b824c8a194.png",
-      ticker: "BIGTIME",
     },
     {
       address: "0x1a4b46696b2bb4794eb3d4c26f1c55f9170fa4c5",
@@ -3508,16 +3347,6 @@ export const list = {
       ticker: "CELL",
     },
     {
-      address: "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 8,
-      identifier: "ETH.cETH-0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.ceth-0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5.png",
-      ticker: "cETH",
-    },
-    {
       address: "0x63b4f3e3fa4e438698ce330e365e831f7ccd1ef4",
       chain: "ETH",
       chainId: "1",
@@ -3548,6 +3377,16 @@ export const list = {
       ticker: "CHAIN",
     },
     {
+      address: "0x9ce84f6a69986a83d92c324df10bc8e64771030f",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.CHEX-0x9ce84f6a69986a83d92c324df10bc8e64771030f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.chex-0x9ce84f6a69986a83d92c324df10bc8e64771030f.png",
+      ticker: "CHEX",
+    },
+    {
       address: "0x3506424f91fd33084466f402d5d97f05f8e3b4af",
       chain: "ETH",
       chainId: "1",
@@ -3556,16 +3395,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.chz-0x3506424f91fd33084466f402d5d97f05f8e3b4af.png",
       ticker: "CHZ",
-    },
-    {
-      address: "0xa01199c61841fce3b3dafb83fefc1899715c8756",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.CIRUS-0xa01199c61841fce3b3dafb83fefc1899715c8756",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.cirus-0xa01199c61841fce3b3dafb83fefc1899715c8756.png",
-      ticker: "CIRUS",
     },
     {
       address: "0x37fe0f067fa808ffbdd12891c0858532cfe7361d",
@@ -3842,20 +3671,20 @@ export const list = {
       chain: "ETH",
       chainId: "1",
       decimals: 18,
-      identifier: "ETH.CULT-0xf0f9d895aca5c8678f706fb8216fa22957685a13",
+      identifier: "ETH.CULT_2-0xf0f9d895aca5c8678f706fb8216fa22957685a13",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.cult-0xf0f9d895aca5c8678f706fb8216fa22957685a13.png",
-      ticker: "CULT",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cult_2-0xf0f9d895aca5c8678f706fb8216fa22957685a13.png",
+      ticker: "CULT_2",
     },
     {
-      address: "0x35a18000230da775cac24873d00ff85bccded550",
+      address: "0x0000000000c5dc95539589fbd24be07c6c14eca4",
       chain: "ETH",
       chainId: "1",
-      decimals: 8,
-      identifier: "ETH.cUNI-0x35a18000230da775cac24873d00ff85bccded550",
+      decimals: 18,
+      identifier: "ETH.CULT-0x0000000000c5dc95539589fbd24be07c6c14eca4",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.cuni-0x35a18000230da775cac24873d00ff85bccded550.png",
-      ticker: "cUNI",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cult-0x0000000000c5dc95539589fbd24be07c6c14eca4.png",
+      ticker: "CULT",
     },
     {
       address: "0x39aa39c021dfbae8fac545936693ac917d5e7563",
@@ -3876,6 +3705,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.cusdcv3-0xc3d688b66703497daa19211eedff47f25384cdc3.png",
       ticker: "cUSDCv3",
+    },
+    {
+      address: "0xad55aebc9b8c03fc43cd9f62260391c13c23e7c0",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.cUSDO-0xad55aebc9b8c03fc43cd9f62260391c13c23e7c0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.cusdo-0xad55aebc9b8c03fc43cd9f62260391c13c23e7c0.png",
+      ticker: "cUSDO",
     },
     {
       address: "0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9",
@@ -3928,16 +3767,6 @@ export const list = {
       ticker: "cvxCRV",
     },
     {
-      address: "0xc11b1268c1a384e55c48c2391d8d480264a3a7f4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 8,
-      identifier: "ETH.cWBTC-0xc11b1268c1a384e55c48c2391d8d480264a3a7f4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.cwbtc-0xc11b1268c1a384e55c48c2391d8d480264a3a7f4.png",
-      ticker: "cWBTC",
-    },
-    {
       address: "0x505b5eda5e25a67e1c24a2bf1a527ed9eb88bf04",
       chain: "ETH",
       chainId: "1",
@@ -3956,16 +3785,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.cwethv3-0xa17581a9e3356d9a858b789d68b4d866e593ae94.png",
       ticker: "cWETHv3",
-    },
-    {
-      address: "0xac0104cca91d167873b8601d2e71eb3d4d8c33e0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.CWS-0xac0104cca91d167873b8601d2e71eb3d4d8c33e0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.cws-0xac0104cca91d167873b8601d2e71eb3d4d8c33e0.png",
-      ticker: "CWS",
     },
     {
       address: "0xfc979087305a826c2b2a0056cfaba50aad3e6439",
@@ -4068,16 +3887,6 @@ export const list = {
       ticker: "DERC",
     },
     {
-      address: "0xa487bf43cf3b10dffc97a9a744cbb7036965d3b9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.DERI-0xa487bf43cf3b10dffc97a9a744cbb7036965d3b9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.deri-0xa487bf43cf3b10dffc97a9a744cbb7036965d3b9.png",
-      ticker: "DERI",
-    },
-    {
       address: "0xde5ed76e7c05ec5e4572cfc88d1acea165109e44",
       chain: "ETH",
       chainId: "1",
@@ -4086,6 +3895,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.deus-0xde5ed76e7c05ec5e4572cfc88d1acea165109e44.png",
       ticker: "DEUS",
+    },
+    {
+      address: "0x15700b564ca08d9439c58ca5053166e8317aa138",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.deUSD-0x15700b564ca08d9439c58ca5053166e8317aa138",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.deusd-0x15700b564ca08d9439c58ca5053166e8317aa138.png",
+      ticker: "deUSD",
     },
     {
       address: "0x5caf454ba92e6f2c929df14667ee360ed9fd5b26",
@@ -4136,16 +3955,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.df-0x431ad2ff6a9c365805ebad47ee021148d6f7dbe0.png",
       ticker: "DF",
-    },
-    {
-      address: "0x8fc8f8269ebca376d046ce292dc7eac40c8d358a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 8,
-      identifier: "ETH.DFI_2-0x8fc8f8269ebca376d046ce292dc7eac40c8d358a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.dfi_2-0x8fc8f8269ebca376d046ce292dc7eac40c8d358a.png",
-      ticker: "DFI_2",
     },
     {
       address: "0x888888435fde8e7d4c54cab67f206e4199454c60",
@@ -4376,16 +4185,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.drc_2-0xb78b3320493a4efaa1028130c5ba26f0b6085ef8.png",
       ticker: "DRC_2",
-    },
-    {
-      address: "0x341c05c0e9b33c0e38d64de76516b2ce970bb3be",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.dsETH-0x341c05c0e9b33c0e38d64de76516b2ce970bb3be",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.dseth-0x341c05c0e9b33c0e38d64de76516b2ce970bb3be.png",
-      ticker: "dsETH",
     },
     {
       address: "0x3affcca64c2a6f4e3b6bd9c64cd2c969efd1ecbe",
@@ -4666,6 +4465,16 @@ export const list = {
       ticker: "ETH",
     },
     {
+      address: "0xe72b141df173b999ae7c1adcbf60cc9833ce56a8",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.ETH+-0xe72b141df173b999ae7c1adcbf60cc9833ce56a8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.eth+-0xe72b141df173b999ae7c1adcbf60cc9833ce56a8.png",
+      ticker: "ETH+",
+    },
+    {
       address: "0xfe0c30065b384f05761f15d0cc899d4f9f9cc0eb",
       chain: "ETH",
       chainId: "1",
@@ -4896,6 +4705,16 @@ export const list = {
       ticker: "FLOKIPUP",
     },
     {
+      address: "0x6f40d4a6237c257fff2db00fa0510deeecd303eb",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.FLUID-0x6f40d4a6237c257fff2db00fa0510deeecd303eb",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.fluid-0x6f40d4a6237c257fff2db00fa0510deeecd303eb.png",
+      ticker: "FLUID",
+    },
+    {
       address: "0x6243d8cea23066d098a15582d81a598b4e8391f4",
       chain: "ETH",
       chainId: "1",
@@ -4914,16 +4733,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.flx-0x3ea8ea4237344c9931214796d9417af1a1180770.png",
       ticker: "FLX",
-    },
-    {
-      address: "0x7f280dac515121dcda3eac69eb4c13a52392cace",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.FNC-0x7f280dac515121dcda3eac69eb4c13a52392cace",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.fnc-0x7f280dac515121dcda3eac69eb4c13a52392cace.png",
-      ticker: "FNC",
     },
     {
       address: "0xdc5864ede28bd4405aa04d93e05a0531797d9d59",
@@ -5034,6 +4843,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.front-0xf8c3527cc04340b208c854e985240c02f7b7793f.png",
       ticker: "FRONT",
+    },
+    {
+      address: "0x5e8422345238f34275888049021821e8e08caa1f",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.FRXETH-0x5e8422345238f34275888049021821e8e08caa1f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.frxeth-0x5e8422345238f34275888049021821e8e08caa1f.png",
+      ticker: "FRXETH",
     },
     {
       address: "0xfffffffff15abf397da76f1dcc1a1604f45126db",
@@ -5356,6 +5175,16 @@ export const list = {
       ticker: "GRO",
     },
     {
+      address: "0x8390a1da07e376ef7add4be859ba74fb83aa02d5",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 9,
+      identifier: "ETH.GROK-0x8390a1da07e376ef7add4be859ba74fb83aa02d5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.grok-0x8390a1da07e376ef7add4be859ba74fb83aa02d5.png",
+      ticker: "GROK",
+    },
+    {
       address: "0xc944e90c64b2c07662a292be6244bdf05cda44a7",
       chain: "ETH",
       chainId: "1",
@@ -5596,16 +5425,6 @@ export const list = {
       ticker: "HOGE",
     },
     {
-      address: "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.HOP-0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.hop-0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc.png",
-      ticker: "HOP",
-    },
-    {
       address: "0xf5581dfefd8fb0e4aec526be659cfab1f8c781da",
       chain: "ETH",
       chainId: "1",
@@ -5736,16 +5555,6 @@ export const list = {
       ticker: "IDEX",
     },
     {
-      address: "0x875773784af8135ea0ef43b5a374aad105c5d39e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.IDLE-0x875773784af8135ea0ef43b5a374aad105c5d39e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.idle-0x875773784af8135ea0ef43b5a374aad105c5d39e.png",
-      ticker: "IDLE",
-    },
-    {
       address: "0x767fe9edc9e0df98e07454847909b5e959d7ca0e",
       chain: "ETH",
       chainId: "1",
@@ -5804,16 +5613,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.inj-0xe28b3b32b6c345a34ff64674606124dd5aceca30.png",
       ticker: "INJ",
-    },
-    {
-      address: "0x6f40d4a6237c257fff2db00fa0510deeecd303eb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.INST-0x6f40d4a6237c257fff2db00fa0510deeecd303eb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.inst-0x6f40d4a6237c257fff2db00fa0510deeecd303eb.png",
-      ticker: "INST",
     },
     {
       address: "0xf32aa187d5bc16a2c02a6afb7df1459d0d107574",
@@ -6166,6 +5965,16 @@ export const list = {
       ticker: "LBR",
     },
     {
+      address: "0x8236a87084f8b84306f72007f36f2618a5634494",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 8,
+      identifier: "ETH.LBTC-0x8236a87084f8b84306f72007f36f2618a5634494",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.lbtc-0x8236a87084f8b84306f72007f36f2618a5634494.png",
+      ticker: "LBTC",
+    },
+    {
       address: "0x037a54aab062628c9bbae1fdb1583c195585fe41",
       chain: "ETH",
       chainId: "1",
@@ -6204,16 +6013,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.lend-0x80fb784b7ed66730e8b1dbd9820afd29931aab03.png",
       ticker: "LEND",
-    },
-    {
-      address: "0xb620be8a1949aa9532e6a3510132864ef9bc3f82",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.LFT-0xb620be8a1949aa9532e6a3510132864ef9bc3f82",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.lft-0xb620be8a1949aa9532e6a3510132864ef9bc3f82.png",
-      ticker: "LFT",
     },
     {
       address: "0xae697f994fc5ebc000f8e22ebffee04612f98a0d",
@@ -6336,16 +6135,6 @@ export const list = {
       ticker: "LRC",
     },
     {
-      address: "0x8c1bed5b9a0928467c9b1341da1d7bd5e10b6549",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.LSETH-0x8c1bed5b9a0928467c9b1341da1d7bd5e10b6549",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.lseth-0x8c1bed5b9a0928467c9b1341da1d7bd5e10b6549.png",
-      ticker: "LSETH",
-    },
-    {
       address: "0x6033f7f88332b8db6ad452b7c6d5bb643990ae3f",
       chain: "ETH",
       chainId: "1",
@@ -6404,6 +6193,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.lusd-0x5f98805a4e8be255a32880fdec7f6728c6568ba0.png",
       ticker: "LUSD",
+    },
+    {
+      address: "0x7c1156e515aa1a2e851674120074968c905aaf37",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.lvlUSD-0x7c1156e515aa1a2e851674120074968c905aaf37",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.lvlusd-0x7c1156e515aa1a2e851674120074968c905aaf37.png",
+      ticker: "lvlUSD",
     },
     {
       address: "0xc690f7c7fcffa6a82b79fab7508c466fefdfc8c5",
@@ -6480,20 +6279,10 @@ export const list = {
       chain: "ETH",
       chainId: "1",
       decimals: 18,
-      identifier: "ETH.MASK_NTWRK-0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+      identifier: "ETH.MASK-0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.mask_ntwrk-0x69af81e73a73b40adf4f3d4223cd9b1ece623074.png",
-      ticker: "MASK_NTWRK",
-    },
-    {
-      address: "0x06f3c323f0238c72bf35011071f2b5b7f43a054c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.MASQ-0x06f3c323f0238c72bf35011071f2b5b7f43a054c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.masq-0x06f3c323f0238c72bf35011071f2b5b7f43a054c.png",
-      ticker: "MASQ",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.mask-0x69af81e73a73b40adf4f3d4223cd9b1ece623074.png",
+      ticker: "MASK",
     },
     {
       address: "0x08d967bb0134f2d07f7cfb6e246680c53927dd30",
@@ -6694,16 +6483,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.mir-0x09a3ecafa817268f77be1283176b946c4ff2e608.png",
       ticker: "MIR",
-    },
-    {
-      address: "0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.MIST-0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.mist-0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab.png",
-      ticker: "MIST",
     },
     {
       address: "0x5d285f735998f36631f678ff41fb56a10a4d0429",
@@ -7206,26 +6985,6 @@ export const list = {
       ticker: "OCEAN",
     },
     {
-      address: "0x7240ac91f01233baaf8b064248e80feaa5912ba3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.OCTO-0x7240ac91f01233baaf8b064248e80feaa5912ba3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.octo-0x7240ac91f01233baaf8b064248e80feaa5912ba3.png",
-      ticker: "OCTO",
-    },
-    {
-      address: "0xcd2828fc4d8e8a0ede91bb38cf64b1a81de65bf6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.ODDZ-0xcd2828fc4d8e8a0ede91bb38cf64b1a81de65bf6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.oddz-0xcd2828fc4d8e8a0ede91bb38cf64b1a81de65bf6.png",
-      ticker: "ODDZ",
-    },
-    {
       address: "0x856c4efb76c1d1ae02e20ceb03a2a6a08b0b8dc3",
       chain: "ETH",
       chainId: "1",
@@ -7474,6 +7233,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.ox-0xba0dda8762c24da9487f5fa026a9b64b695a07ea.png",
       ticker: "OX",
+    },
+    {
+      address: "0x4c1746a800d224393fe2470c70a35717ed4ea5f1",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.P-0x4c1746a800d224393fe2470c70a35717ed4ea5f1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.p-0x4c1746a800d224393fe2470c70a35717ed4ea5f1.png",
+      ticker: "P",
     },
     {
       address: "0xea7cc765ebc94c4805e3bff28d7e4ae48d06468a",
@@ -7876,6 +7645,16 @@ export const list = {
       ticker: "PRO",
     },
     {
+      address: "0x28d38df637db75533bd3f71426f3410a82041544",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.PROMPT-0x28d38df637db75533bd3f71426f3410a82041544",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.prompt-0x28d38df637db75533bd3f71426f3410a82041544.png",
+      ticker: "PROMPT",
+    },
+    {
       address: "0x8642a849d0dcb7a15a974794668adcfbe4794b56",
       chain: "ETH",
       chainId: "1",
@@ -7924,6 +7703,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.pufeth-0xd9a442856c234a39a81a089c06451ebaa4306a72.png",
       ticker: "PUFETH",
+    },
+    {
+      address: "0x0fd10b9899882a6f2fcb5c371e17e70fdee00c38",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.PUNDIX-0x0fd10b9899882a6f2fcb5c371e17e70fdee00c38",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.pundix-0x0fd10b9899882a6f2fcb5c371e17e70fdee00c38.png",
+      ticker: "PUNDIX",
     },
     {
       address: "0x269616d549d7e8eaa82dfb17028d0b212d11232a",
@@ -8106,3295 +7895,6 @@ export const list = {
       ticker: "RDT",
     },
     {
-      address: "0x5807ca447851c98569c567963b25b1c83d41bebc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-10024-10028-APPOLINE-ST-DETROIT-MI-0x5807ca447851c98569c567963b25b1c83d41bebc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-10024-10028-appoline-st-detroit-mi-0x5807ca447851c98569c567963b25b1c83d41bebc.png",
-      ticker: "REALTOKEN-10024-10028-APPOLINE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb5d30c28f87acf675ed5b9f343e5fff39ec9942c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-10024-28-APPOLINE-ST-DETROIT-MI-0xb5d30c28f87acf675ed5b9f343e5fff39ec9942c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-10024-28-appoline-st-detroit-mi-0xb5d30c28f87acf675ed5b9f343e5fff39ec9942c.png",
-      ticker: "REALTOKEN-10024-28-APPOLINE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe3902e329ef2d3fd7666022c139d75bcc984b7a5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-15048-FREELAND-ST-DETROIT-MI_1-0xe3902e329ef2d3fd7666022c139d75bcc984b7a5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-15048-freeland-st-detroit-mi_1-0xe3902e329ef2d3fd7666022c139d75bcc984b7a5.png",
-      ticker: "REALTOKEN-15048-FREELAND-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x67f2014293d641468161bbb0e6bd088fc0b8c381",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-15048-FREELAND-ST-DETROIT-MI-0x67f2014293d641468161bbb0e6bd088fc0b8c381",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-15048-freeland-st-detroit-mi-0x67f2014293d641468161bbb0e6bd088fc0b8c381.png",
-      ticker: "REALTOKEN-15048-FREELAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa81f77e8988b28fb74243b907ace3c83353dc80a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-15634-LIBERAL-ST-DETROIT-MI_1-0xa81f77e8988b28fb74243b907ace3c83353dc80a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-15634-liberal-st-detroit-mi_1-0xa81f77e8988b28fb74243b907ace3c83353dc80a.png",
-      ticker: "REALTOKEN-15634-LIBERAL-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xbecaea7aa3629d4b7ddccf3a973bef09ff34d4b6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-15634-LIBERAL-ST-DETROIT-MI-0xbecaea7aa3629d4b7ddccf3a973bef09ff34d4b6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-15634-liberal-st-detroit-mi-0xbecaea7aa3629d4b7ddccf3a973bef09ff34d4b6.png",
-      ticker: "REALTOKEN-15634-LIBERAL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x021bb23a45e9fc824260435e670fc383b7b8cbbb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-16200-FULLERTON-AVE-DETROIT-MI_1-0x021bb23a45e9fc824260435e670fc383b7b8cbbb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-16200-fullerton-ave-detroit-mi_1-0x021bb23a45e9fc824260435e670fc383b7b8cbbb.png",
-      ticker: "REALTOKEN-16200-FULLERTON-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0x22c8ecf727c23422f47093b562ec53c139805301",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-16200-FULLERTON-AVE-DETROIT-MI-0x22c8ecf727c23422f47093b562ec53c139805301",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-16200-fullerton-ave-detroit-mi-0x22c8ecf727c23422f47093b562ec53c139805301.png",
-      ticker: "REALTOKEN-16200-FULLERTON-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x21f1af3e751317a2f7de7df31d5d092e6a907bde",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-18276-APPOLINE-ST-DETROIT-MI_1-0x21f1af3e751317a2f7de7df31d5d092e6a907bde",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-18276-appoline-st-detroit-mi_1-0x21f1af3e751317a2f7de7df31d5d092e6a907bde.png",
-      ticker: "REALTOKEN-18276-APPOLINE-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xfc89f1b932079b462ef9c8757de5a28e387b847b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-18276-APPOLINE-ST-DETROIT-MI-0xfc89f1b932079b462ef9c8757de5a28e387b847b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-18276-appoline-st-detroit-mi-0xfc89f1b932079b462ef9c8757de5a28e387b847b.png",
-      ticker: "REALTOKEN-18276-APPOLINE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x9eb90ec3faafc22092c9b91559fddde538042093",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-18900-MANSFIELD-ST-DETROIT-MI_1-0x9eb90ec3faafc22092c9b91559fddde538042093",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-18900-mansfield-st-detroit-mi_1-0x9eb90ec3faafc22092c9b91559fddde538042093.png",
-      ticker: "REALTOKEN-18900-MANSFIELD-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x22cabb38295eaeccfede4e99af508052e3b74ca0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-18900-MANSFIELD-ST-DETROIT-MI-0x22cabb38295eaeccfede4e99af508052e3b74ca0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-18900-mansfield-st-detroit-mi-0x22cabb38295eaeccfede4e99af508052e3b74ca0.png",
-      ticker: "REALTOKEN-18900-MANSFIELD-ST-DETROIT-MI",
-    },
-    {
-      address: "0xeedc2f5f4d1226759b1acf9efa23a99661de6663",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-20200-LESURE-ST-DETROIT-MI_1-0xeedc2f5f4d1226759b1acf9efa23a99661de6663",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-20200-lesure-st-detroit-mi_1-0xeedc2f5f4d1226759b1acf9efa23a99661de6663.png",
-      ticker: "REALTOKEN-20200-LESURE-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x395c47a421c254ae42253764a7f56e0ee0cddac5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-20200-LESURE-ST-DETROIT-MI-0x395c47a421c254ae42253764a7f56e0ee0cddac5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-20200-lesure-st-detroit-mi-0x395c47a421c254ae42253764a7f56e0ee0cddac5.png",
-      ticker: "REALTOKEN-20200-LESURE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xf18cffb528eca0ea31d1d6b28bc80d2eca34d14d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-25097-ANDOVER-DR-DEARBORN-MI_1-0xf18cffb528eca0ea31d1d6b28bc80d2eca34d14d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-25097-andover-dr-dearborn-mi_1-0xf18cffb528eca0ea31d1d6b28bc80d2eca34d14d.png",
-      ticker: "REALTOKEN-25097-ANDOVER-DR-DEARBORN-MI_1",
-    },
-    {
-      address: "0x74d2cb65b1158300c3e6bea149d68509c7b2425d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-25097-ANDOVER-DR-DEARBORN-MI-0x74d2cb65b1158300c3e6bea149d68509c7b2425d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-25097-andover-dr-dearborn-mi-0x74d2cb65b1158300c3e6bea149d68509c7b2425d.png",
-      ticker: "REALTOKEN-25097-ANDOVER-DR-DEARBORN-MI",
-    },
-    {
-      address: "0xe9eace1313913888c364d8504ffc3b8d991c67c6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-272-NE-42ND-CT-DEERFIELDBEACH-FL-0xe9eace1313913888c364d8504ffc3b8d991c67c6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-272-ne-42nd-ct-deerfieldbeach-fl-0xe9eace1313913888c364d8504ffc3b8d991c67c6.png",
-      ticker: "REALTOKEN-272-NE-42ND-CT-DEERFIELDBEACH-FL",
-    },
-    {
-      address: "0xce111a198eb04f388aceb78c40ced6daf1b0514a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-272-NE42nd-COURT-DEERFIELDBEACH-FL-0xce111a198eb04f388aceb78c40ced6daf1b0514a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-272-ne42nd-court-deerfieldbeach-fl-0xce111a198eb04f388aceb78c40ced6daf1b0514a.png",
-      ticker: "REALTOKEN-272-NE42nd-COURT-DEERFIELDBEACH-FL",
-    },
-    {
-      address: "0x6db6d540f5614e6bab7475af3f430f46a0b083e2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-5942-AUDUBON-RD-DETROIT-MI_1-0x6db6d540f5614e6bab7475af3f430f46a0b083e2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-5942-audubon-rd-detroit-mi_1-0x6db6d540f5614e6bab7475af3f430f46a0b083e2.png",
-      ticker: "REALTOKEN-5942-AUDUBON-RD-DETROIT-MI_1",
-    },
-    {
-      address: "0x43688910273f199b8ae2ca018c13918fb3d37b58",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-5942-AUDUBON-RD-DETROIT-MI-0x43688910273f199b8ae2ca018c13918fb3d37b58",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-5942-audubon-rd-detroit-mi-0x43688910273f199b8ae2ca018c13918fb3d37b58.png",
-      ticker: "REALTOKEN-5942-AUDUBON-RD-DETROIT-MI",
-    },
-    {
-      address: "0x741857c07b100c9c0c1272d95845dddc4f1b67cb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-8342-SCHAEFER-HWY-DETROIT-MI_1-0x741857c07b100c9c0c1272d95845dddc4f1b67cb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-8342-schaefer-hwy-detroit-mi_1-0x741857c07b100c9c0c1272d95845dddc4f1b67cb.png",
-      ticker: "REALTOKEN-8342-SCHAEFER-HWY-DETROIT-MI_1",
-    },
-    {
-      address: "0x6fd016ccc4611f7bab1dd3267334cb0216ef47f9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-8342-SCHAEFER-HWY-DETROIT-MI-0x6fd016ccc4611f7bab1dd3267334cb0216ef47f9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-8342-schaefer-hwy-detroit-mi-0x6fd016ccc4611f7bab1dd3267334cb0216ef47f9.png",
-      ticker: "REALTOKEN-8342-SCHAEFER-HWY-DETROIT-MI",
-    },
-    {
-      address: "0x23684569c0636c9aea246551879d457d0a0e6f58",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-9336-PATTON-ST-DETROIT-MI_1-0x23684569c0636c9aea246551879d457d0a0e6f58",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-9336-patton-st-detroit-mi_1-0x23684569c0636c9aea246551879d457d0a0e6f58.png",
-      ticker: "REALTOKEN-9336-PATTON-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xed42cedcadbfbcaa3e6f411b09567c2c0b5ad28f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-9336-PATTON-ST-DETROIT-MI-0xed42cedcadbfbcaa3e6f411b09567c2c0b5ad28f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-9336-patton-st-detroit-mi-0xed42cedcadbfbcaa3e6f411b09567c2c0b5ad28f.png",
-      ticker: "REALTOKEN-9336-PATTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x57eadd2a542cfe9f00a37f55df4d5062f857c0e8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-9943-MARLOWE-ST-DETROIT-MI_1-0x57eadd2a542cfe9f00a37f55df4d5062f857c0e8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-9943-marlowe-st-detroit-mi_1-0x57eadd2a542cfe9f00a37f55df4d5062f857c0e8.png",
-      ticker: "REALTOKEN-9943-MARLOWE-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xe5f7ef61443fc36ae040650aa585b0395aef77c8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-9943-MARLOWE-ST-DETROIT-MI-0xe5f7ef61443fc36ae040650aa585b0395aef77c8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-9943-marlowe-st-detroit-mi-0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
-      ticker: "REALTOKEN-9943-MARLOWE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x67bc218f5ea919ff9003b28c1702d468312af302",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-D-10048-GRAYTON-ST-DETROIT-MI-0x67bc218f5ea919ff9003b28c1702d468312af302",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-d-10048-grayton-st-detroit-mi-0x67bc218f5ea919ff9003b28c1702d468312af302.png",
-      ticker: "REALTOKEN-D-10048-GRAYTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x1eb16ec378f0ce8f81449120629f52ba28961d47",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1000-FLORIDA-AVE-AKRON-OH_1-0x1eb16ec378f0ce8f81449120629f52ba28961d47",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1000-florida-ave-akron-oh_1-0x1eb16ec378f0ce8f81449120629f52ba28961d47.png",
-      ticker: "REALTOKEN-S-1000-FLORIDA-AVE-AKRON-OH_1",
-    },
-    {
-      address: "0xdbb13d3f745a64995ca76069f2cebf9a2d7b18c0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1000-FLORIDA-AVE-AKRON-OH-0xdbb13d3f745a64995ca76069f2cebf9a2d7b18c0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1000-florida-ave-akron-oh-0xdbb13d3f745a64995ca76069f2cebf9a2d7b18c0.png",
-      ticker: "REALTOKEN-S-1000-FLORIDA-AVE-AKRON-OH",
-    },
-    {
-      address: "0x4471962eeffec57a33fa4e0793efeec07684dffb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10003-PINEHURST-ST-DETROIT-MI-0x4471962eeffec57a33fa4e0793efeec07684dffb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10003-pinehurst-st-detroit-mi-0x4471962eeffec57a33fa4e0793efeec07684dffb.png",
-      ticker: "REALTOKEN-S-10003-PINEHURST-ST-DETROIT-MI",
-    },
-    {
-      address: "0x0954682ff1b512d3927d06c591942f50917e16a0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10021-GRAYTON-ST-DETROIT-MI-0x0954682ff1b512d3927d06c591942f50917e16a0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10021-grayton-st-detroit-mi-0x0954682ff1b512d3927d06c591942f50917e16a0.png",
-      ticker: "REALTOKEN-S-10021-GRAYTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0xdf7a80778a8be812e654291ffab21d61e9c21323",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10030-CADIEUX-RD-DETROIT-MI-0xdf7a80778a8be812e654291ffab21d61e9c21323",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10030-cadieux-rd-detroit-mi-0xdf7a80778a8be812e654291ffab21d61e9c21323.png",
-      ticker: "REALTOKEN-S-10030-CADIEUX-RD-DETROIT-MI",
-    },
-    {
-      address: "0xf793d1ba72e2914525205ca592dec2142e700cb4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10040-CADIEUX-RD-DETROIT-MI-0xf793d1ba72e2914525205ca592dec2142e700cb4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10040-cadieux-rd-detroit-mi-0xf793d1ba72e2914525205ca592dec2142e700cb4.png",
-      ticker: "REALTOKEN-S-10040-CADIEUX-RD-DETROIT-MI",
-    },
-    {
-      address: "0x92161385c9de8798ad5fb01c0be99ffcbc84dfd8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10084-GRAYTON-DETROIT-MI-0x92161385c9de8798ad5fb01c0be99ffcbc84dfd8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10084-grayton-detroit-mi-0x92161385c9de8798ad5fb01c0be99ffcbc84dfd8.png",
-      ticker: "REALTOKEN-S-10084-GRAYTON-DETROIT-MI",
-    },
-    {
-      address: "0xac1682ad8893ed96e7ec3379f3a212dc50f06d23",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10084-GRAYTON-ST-DETROIT-MI -0xac1682ad8893ed96e7ec3379f3a212dc50f06d23",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10084-grayton-st-detroit-mi -0xac1682ad8893ed96e7ec3379f3a212dc50f06d23.png",
-      ticker: "REALTOKEN-S-10084-GRAYTON-ST-DETROIT-MI ",
-    },
-    {
-      address: "0x9ea9b45a500dd4346163ce7483dea2294ae88d1d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10099-GREENSBORO-ST-DETROIT-MI-0x9ea9b45a500dd4346163ce7483dea2294ae88d1d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10099-greensboro-st-detroit-mi-0x9ea9b45a500dd4346163ce7483dea2294ae88d1d.png",
-      ticker: "REALTOKEN-S-10099-GREENSBORO-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4b293baa4703c5e7d480498bf3ccd8dc3d1297cd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10147-SOMERSET-AVE-DETROIT-MI-0x4b293baa4703c5e7d480498bf3ccd8dc3d1297cd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10147-somerset-ave-detroit-mi-0x4b293baa4703c5e7d480498bf3ccd8dc3d1297cd.png",
-      ticker: "REALTOKEN-S-10147-SOMERSET-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x4b9c173c81ea2b6804b99ac91846c62bdb74fe72",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10163-DUPREY-ST-DETROIT-MI-0x4b9c173c81ea2b6804b99ac91846c62bdb74fe72",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10163-duprey-st-detroit-mi-0x4b9c173c81ea2b6804b99ac91846c62bdb74fe72.png",
-      ticker: "REALTOKEN-S-10163-DUPREY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x07da3cdae2396aa826387a48deba5868d7deb7bc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10411-10421-CADIEUX-RD-DETROIT-MI-0x07da3cdae2396aa826387a48deba5868d7deb7bc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10411-10421-cadieux-rd-detroit-mi-0x07da3cdae2396aa826387a48deba5868d7deb7bc.png",
-      ticker: "REALTOKEN-S-10411-10421-CADIEUX-RD-DETROIT-MI",
-    },
-    {
-      address: "0x0d5d0b74c690170a82bf52e5d16388fc4fa29082",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10435-10445-CADIEUX-RD-DETROIT-MI-0x0d5d0b74c690170a82bf52e5d16388fc4fa29082",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10435-10445-cadieux-rd-detroit-mi-0x0d5d0b74c690170a82bf52e5d16388fc4fa29082.png",
-      ticker: "REALTOKEN-S-10435-10445-CADIEUX-RD-DETROIT-MI",
-    },
-    {
-      address: "0xbdc1f8ccd117fe4e34f6c78f5293cd126b0c0474",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10518-WOODLAND-AVE-CLEVELAND-OH-0xbdc1f8ccd117fe4e34f6c78f5293cd126b0c0474",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10518-woodland-ave-cleveland-oh-0xbdc1f8ccd117fe4e34f6c78f5293cd126b0c0474.png",
-      ticker: "REALTOKEN-S-10518-WOODLAND-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0x8626b38267e4fc0d8c92e0bb86f97acab3f6aa05",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI-0x8626b38267e4fc0d8c92e0bb86f97acab3f6aa05",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10604-somerset-ave-detroit-mi-0x8626b38267e4fc0d8c92e0bb86f97acab3f6aa05.png",
-      ticker: "REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x2e1db155a7b812f3fcb0dbc8ed3164b4705213b4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10610-BALFOUR-RD-DETROIT-MI-0x2e1db155a7b812f3fcb0dbc8ed3164b4705213b4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10610-balfour-rd-detroit-mi-0x2e1db155a7b812f3fcb0dbc8ed3164b4705213b4.png",
-      ticker: "REALTOKEN-S-10610-BALFOUR-RD-DETROIT-MI",
-    },
-    {
-      address: "0xd1c15cebfdcd16f00d91666bf64c8b66cbf5e9b5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10612-SOMERSET-AVE-DETROIT-MI_1-0xd1c15cebfdcd16f00d91666bf64c8b66cbf5e9b5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10612-somerset-ave-detroit-mi_1-0xd1c15cebfdcd16f00d91666bf64c8b66cbf5e9b5.png",
-      ticker: "REALTOKEN-S-10612-SOMERSET-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0xd4203d4f0f2c3ae21ce93f04ab00517262f65aa9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10612-SOMERSET-AVE-DETROIT-MI-0xd4203d4f0f2c3ae21ce93f04ab00517262f65aa9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10612-somerset-ave-detroit-mi-0xd4203d4f0f2c3ae21ce93f04ab00517262f65aa9.png",
-      ticker: "REALTOKEN-S-10612-SOMERSET-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xe5ce63ac9a08c1eb160889151cd84855f16c94d2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10616-McKINNEY-ST-DETROIT-MI_1-0xe5ce63ac9a08c1eb160889151cd84855f16c94d2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10616-mckinney-st-detroit-mi_1-0xe5ce63ac9a08c1eb160889151cd84855f16c94d2.png",
-      ticker: "REALTOKEN-S-10616-McKINNEY-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x53993d04758ee89bbe190e15a81c411688543aba",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10616-McKINNEY-ST-DETROIT-MI-0x53993d04758ee89bbe190e15a81c411688543aba",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10616-mckinney-st-detroit-mi-0x53993d04758ee89bbe190e15a81c411688543aba.png",
-      ticker: "REALTOKEN-S-10616-McKINNEY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x06d0e5aee443093ac5635b709c8a01342e59df19",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10617-HATHAWAY-AVE-CLEVELAND-OH-0x06d0e5aee443093ac5635b709c8a01342e59df19",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10617-hathaway-ave-cleveland-oh-0x06d0e5aee443093ac5635b709c8a01342e59df19.png",
-      ticker: "REALTOKEN-S-10617-HATHAWAY-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0xd5d1adf54fbf73a00b197ddcfdad7cc27d93002f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10629-MCKINNEY-ST-DETROIT-MI-0xd5d1adf54fbf73a00b197ddcfdad7cc27d93002f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10629-mckinney-st-detroit-mi-0xd5d1adf54fbf73a00b197ddcfdad7cc27d93002f.png",
-      ticker: "REALTOKEN-S-10629-MCKINNEY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4a99cc509f7facf58d7b67e99236db5e0921ef81",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10639-STRATMAN-ST-DETROIT-MI-0x4a99cc509f7facf58d7b67e99236db5e0921ef81",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10639-stratman-st-detroit-mi-0x4a99cc509f7facf58d7b67e99236db5e0921ef81.png",
-      ticker: "REALTOKEN-S-10639-STRATMAN-ST-DETROIT-MI",
-    },
-    {
-      address: "0x64d69276cc78adbb6d5fea95d3e6370b4844dc76",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10645-STRATMAN-ST-DETROIT-MI-0x64d69276cc78adbb6d5fea95d3e6370b4844dc76",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10645-stratman-st-detroit-mi-0x64d69276cc78adbb6d5fea95d3e6370b4844dc76.png",
-      ticker: "REALTOKEN-S-10645-STRATMAN-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe82cbb7c29d00a4296ee505d12a473c26cd9c423",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10700-WHITTIER-AVE-DETROIT-MI-0xe82cbb7c29d00a4296ee505d12a473c26cd9c423",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10700-whittier-ave-detroit-mi-0xe82cbb7c29d00a4296ee505d12a473c26cd9c423.png",
-      ticker: "REALTOKEN-S-10700-WHITTIER-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xa984e4c759bea433bef9239736d5f9a9af0e7389",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10703-MCKINNEY-ST-DETROIT-MI-0xa984e4c759bea433bef9239736d5f9a9af0e7389",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10703-mckinney-st-detroit-mi-0xa984e4c759bea433bef9239736d5f9a9af0e7389.png",
-      ticker: "REALTOKEN-S-10703-MCKINNEY-ST-DETROIT-MI",
-    },
-    {
-      address: "0xbabc257b4958556bda696e7705cf535f400d8b09",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10717-10719-BRYANT-AVE-CLEVELAND-OH-0xbabc257b4958556bda696e7705cf535f400d8b09",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10717-10719-bryant-ave-cleveland-oh-0xbabc257b4958556bda696e7705cf535f400d8b09.png",
-      ticker: "REALTOKEN-S-10717-10719-BRYANT-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0xd79e63912dbeb409ea350138503a9eb29d73728f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10862-MARNE-ST-DETROIT-MI-0xd79e63912dbeb409ea350138503a9eb29d73728f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10862-marne-st-detroit-mi-0xd79e63912dbeb409ea350138503a9eb29d73728f.png",
-      ticker: "REALTOKEN-S-10862-MARNE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x42b387cdf0951a0e08336d35651544c47cd05c95",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10974-WORDEN-ST-DETROIT-MI_1-0x42b387cdf0951a0e08336d35651544c47cd05c95",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10974-worden-st-detroit-mi_1-0x42b387cdf0951a0e08336d35651544c47cd05c95.png",
-      ticker: "REALTOKEN-S-10974-WORDEN-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x87645f94f6ea37f9f2f56d4521315e9c1ed89aa4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-10974-WORDEN-ST-DETROIT-MI-0x87645f94f6ea37f9f2f56d4521315e9c1ed89aa4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-10974-worden-st-detroit-mi-0x87645f94f6ea37f9f2f56d4521315e9c1ed89aa4.png",
-      ticker: "REALTOKEN-S-10974-WORDEN-ST-DETROIT-MI",
-    },
-    {
-      address: "0xd5fc0c4c4c5ff316e1e91494d963ff1d52ba25ff",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11078-LONGVIEW-ST-DETROIT-MI-0xd5fc0c4c4c5ff316e1e91494d963ff1d52ba25ff",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11078-longview-st-detroit-mi-0xd5fc0c4c4c5ff316e1e91494d963ff1d52ba25ff.png",
-      ticker: "REALTOKEN-S-11078-LONGVIEW-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb8403b7730368942a5bfe5aac04a31b44015b1cc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11078-WAYBURN-ST-DETROIT-MI-0xb8403b7730368942a5bfe5aac04a31b44015b1cc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11078-wayburn-st-detroit-mi-0xb8403b7730368942a5bfe5aac04a31b44015b1cc.png",
-      ticker: "REALTOKEN-S-11078-WAYBURN-ST-DETROIT-MI",
-    },
-    {
-      address: "0xf549b95362e6062999bdfe6c61e75e4547b8116d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11117-WORDEN-ST-DETROIT-MI-0xf549b95362e6062999bdfe6c61e75e4547b8116d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11117-worden-st-detroit-mi-0xf549b95362e6062999bdfe6c61e75e4547b8116d.png",
-      ticker: "REALTOKEN-S-11117-WORDEN-ST-DETROIT-MI",
-    },
-    {
-      address: "0xd2f69dcd1e26f51fbbce48f61426c724e65acf91",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1115-S.TROY-ST-CHICAGO-IL-0xd2f69dcd1e26f51fbbce48f61426c724e65acf91",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1115-s.troy-st-chicago-il-0xd2f69dcd1e26f51fbbce48f61426c724e65acf91.png",
-      ticker: "REALTOKEN-S-1115-S.TROY-ST-CHICAGO-IL",
-    },
-    {
-      address: "0x5e2a09064b2dca8c44aad8a5b69a69bb1854fe72",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11201-COLLEGE-ST-DETROIT-MI-0x5e2a09064b2dca8c44aad8a5b69a69bb1854fe72",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11201-college-st-detroit-mi-0x5e2a09064b2dca8c44aad8a5b69a69bb1854fe72.png",
-      ticker: "REALTOKEN-S-11201-COLLEGE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xcaf963cd253cf81664ecbcad71d043c47edf77fb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11217-BEACONSFIELD-ST-DETROIT-MI-0xcaf963cd253cf81664ecbcad71d043c47edf77fb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11217-beaconsfield-st-detroit-mi-0xcaf963cd253cf81664ecbcad71d043c47edf77fb.png",
-      ticker: "REALTOKEN-S-11217-BEACONSFIELD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x9b091105b9a9eb118f4e0da06a090d6d95463357",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11217-GREENWICH-AVE-CLEVELAND-OH-0x9b091105b9a9eb118f4e0da06a090d6d95463357",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11217-greenwich-ave-cleveland-oh-0x9b091105b9a9eb118f4e0da06a090d6d95463357.png",
-      ticker: "REALTOKEN-S-11217-GREENWICH-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0x9b5b4886033b4abc5eb0552fff7c15a67c3c47c7",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11300-ROXBURY-ST-DETROIT-MI-0x9b5b4886033b4abc5eb0552fff7c15a67c3c47c7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11300-roxbury-st-detroit-mi-0x9b5b4886033b4abc5eb0552fff7c15a67c3c47c7.png",
-      ticker: "REALTOKEN-S-11300-ROXBURY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x9abff92ddd896f3f7664ec232bb0a5db027d6724",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11310-ABINGTON-AVE-DETROIT-MI-0x9abff92ddd896f3f7664ec232bb0a5db027d6724",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11310-abington-ave-detroit-mi-0x9abff92ddd896f3f7664ec232bb0a5db027d6724.png",
-      ticker: "REALTOKEN-S-11310-ABINGTON-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x46b00b4bf04c2c94ae67576004a3a247b9400ade",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-116-MONTEREY-ST-HIGHLAND-PARK-MI-0x46b00b4bf04c2c94ae67576004a3a247b9400ade",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-116-monterey-st-highland-park-mi-0x46b00b4bf04c2c94ae67576004a3a247b9400ade.png",
-      ticker: "REALTOKEN-S-116-MONTEREY-ST-HIGHLAND-PARK-MI",
-    },
-    {
-      address: "0x31820af2d43c08bd82bd94b08974062482bd98d3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11653-NOTTINGHAM-RD-DETROIT-MI-0x31820af2d43c08bd82bd94b08974062482bd98d3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11653-nottingham-rd-detroit-mi-0x31820af2d43c08bd82bd94b08974062482bd98d3.png",
-      ticker: "REALTOKEN-S-11653-NOTTINGHAM-RD-DETROIT-MI",
-    },
-    {
-      address: "0xedcddc374c78bb8596352a28faf1eba9874aa2e1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11701-MORANG-AVE-DETROIT-MI-0xedcddc374c78bb8596352a28faf1eba9874aa2e1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11701-morang-ave-detroit-mi-0xedcddc374c78bb8596352a28faf1eba9874aa2e1.png",
-      ticker: "REALTOKEN-S-11701-MORANG-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xccca5323052435aa4b0ec94c1d0255f17e4f495c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11750-MORANG-AVE-DETROIT-MI-0xccca5323052435aa4b0ec94c1d0255f17e4f495c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11750-morang-ave-detroit-mi-0xccca5323052435aa4b0ec94c1d0255f17e4f495c.png",
-      ticker: "REALTOKEN-S-11750-MORANG-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xd3f7130940c7746298d9778f79e7bba4c552f176",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11758-CHRISTY-ST-DETROIT-MI-0xd3f7130940c7746298d9778f79e7bba4c552f176",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11758-christy-st-detroit-mi-0xd3f7130940c7746298d9778f79e7bba4c552f176.png",
-      ticker: "REALTOKEN-S-11758-CHRISTY-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa12a334f563c1a9fef29cf11fac7e148fd54463b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11830-CAMDEN-AVE-DETROIT-MI-0xa12a334f563c1a9fef29cf11fac7e148fd54463b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11830-camden-ave-detroit-mi-0xa12a334f563c1a9fef29cf11fac7e148fd54463b.png",
-      ticker: "REALTOKEN-S-11830-CAMDEN-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x4e2976a2fbaae5877a1272e57343460c25d9d408",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11845-CAMDEN-AVE-DETROIT-MI-0x4e2976a2fbaae5877a1272e57343460c25d9d408",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11845-camden-ave-detroit-mi-0x4e2976a2fbaae5877a1272e57343460c25d9d408.png",
-      ticker: "REALTOKEN-S-11845-CAMDEN-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xc1c1031e4a44b98707203480029e6576cb3267e3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11898-LAING-ST-DETROIT-MI-0xc1c1031e4a44b98707203480029e6576cb3267e3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11898-laing-st-detroit-mi-0xc1c1031e4a44b98707203480029e6576cb3267e3.png",
-      ticker: "REALTOKEN-S-11898-LAING-ST-DETROIT-MI",
-    },
-    {
-      address: "0xdd833d0eef6d5d7cec781b03c19f3b425f3039df",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11957-OLGA-ST-DETROIT-MI-0xdd833d0eef6d5d7cec781b03c19f3b425f3039df",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11957-olga-st-detroit-mi-0xdd833d0eef6d5d7cec781b03c19f3b425f3039df.png",
-      ticker: "REALTOKEN-S-11957-OLGA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x304bee450c2d116696d8b442981e7a300dfdf1cb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-11965-LAKEPOINTE-ST-DETROIT-MI-0x304bee450c2d116696d8b442981e7a300dfdf1cb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-11965-lakepointe-st-detroit-mi-0x304bee450c2d116696d8b442981e7a300dfdf1cb.png",
-      ticker: "REALTOKEN-S-11965-LAKEPOINTE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x83b16b1dcaaeb59caa13b96da260d8b15671822a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1204-E-MANHATTAN-BLVD-TOLEDO-OH-0x83b16b1dcaaeb59caa13b96da260d8b15671822a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1204-e-manhattan-blvd-toledo-oh-0x83b16b1dcaaeb59caa13b96da260d8b15671822a.png",
-      ticker: "REALTOKEN-S-1204-E-MANHATTAN-BLVD-TOLEDO-OH",
-    },
-    {
-      address: "0x06cc12368fa6a3d4dc0872c60331156a21cdcc9c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12318-IMPERIAL-AVE-CLEVELAND-OH-0x06cc12368fa6a3d4dc0872c60331156a21cdcc9c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12318-imperial-ave-cleveland-oh-0x06cc12368fa6a3d4dc0872c60331156a21cdcc9c.png",
-      ticker: "REALTOKEN-S-12318-IMPERIAL-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0xee2f2212a64ec3f6bc0f7580e10c53cb38b57508",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12334-LANSDOWNE-ST-DETROIT-MI_1-0xee2f2212a64ec3f6bc0f7580e10c53cb38b57508",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12334-lansdowne-st-detroit-mi_1-0xee2f2212a64ec3f6bc0f7580e10c53cb38b57508.png",
-      ticker: "REALTOKEN-S-12334-LANSDOWNE-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x033b186321fa88603e3ecc98821fb0932b2c0760",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12334-LANSDOWNE-ST-DETROIT-MI-0x033b186321fa88603e3ecc98821fb0932b2c0760",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12334-lansdowne-st-detroit-mi-0x033b186321fa88603e3ecc98821fb0932b2c0760.png",
-      ticker: "REALTOKEN-S-12334-LANSDOWNE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x9d918ee39a356be8ef99734599c7e70160db4db6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12405-SANTA-ROSA-DR-DETROIT-MI-0x9d918ee39a356be8ef99734599c7e70160db4db6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12405-santa-rosa-dr-detroit-mi-0x9d918ee39a356be8ef99734599c7e70160db4db6.png",
-      ticker: "REALTOKEN-S-12405-SANTA-ROSA-DR-DETROIT-MI",
-    },
-    {
-      address: "0x969d42ad7008e6651e1fd52742153f8743225d98",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12409-WHITEHILL-ST-DETROIT-MI-0x969d42ad7008e6651e1fd52742153f8743225d98",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12409-whitehill-st-detroit-mi-0x969d42ad7008e6651e1fd52742153f8743225d98.png",
-      ticker: "REALTOKEN-S-12409-WHITEHILL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x6bd094e39d0b839689e2f900bfdd180b10df62d7",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12410-HAMBURG-ST-DETROIT-MI-0x6bd094e39d0b839689e2f900bfdd180b10df62d7",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12410-hamburg-st-detroit-mi-0x6bd094e39d0b839689e2f900bfdd180b10df62d7.png",
-      ticker: "REALTOKEN-S-12410-HAMBURG-ST-DETROIT-MI",
-    },
-    {
-      address: "0x94fa7f8cb8453ad57cd133363b3012044647078c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1244-S.AVERS -ST-CHICAGO-IL-0x94fa7f8cb8453ad57cd133363b3012044647078c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1244-s.avers -st-chicago-il-0x94fa7f8cb8453ad57cd133363b3012044647078c.png",
-      ticker: "REALTOKEN-S-1244-S.AVERS -ST-CHICAGO-IL",
-    },
-    {
-      address: "0x3d2129d9ceed93992cea3ee7d8e44754faedc922",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12730-WADE-ST-DETROIT-MI-0x3d2129d9ceed93992cea3ee7d8e44754faedc922",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12730-wade-st-detroit-mi-0x3d2129d9ceed93992cea3ee7d8e44754faedc922.png",
-      ticker: "REALTOKEN-S-12730-WADE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa8ab830bfd0d91bc017cdec98a2a198b9938ea8d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12747-12749-NASHVILLE-ST-DETROIT-MI-0xa8ab830bfd0d91bc017cdec98a2a198b9938ea8d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12747-12749-nashville-st-detroit-mi-0xa8ab830bfd0d91bc017cdec98a2a198b9938ea8d.png",
-      ticker: "REALTOKEN-S-12747-12749-NASHVILLE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x96510c0bafc5b3305d2b468063f7b3f8e8389802",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12779-STRATHMOOR-ST-DETROIT-MI-0x96510c0bafc5b3305d2b468063f7b3f8e8389802",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12779-strathmoor-st-detroit-mi-0x96510c0bafc5b3305d2b468063f7b3f8e8389802.png",
-      ticker: "REALTOKEN-S-12779-STRATHMOOR-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5162d60b699a44b9f09b5fbfd8e6343cde9d7b22",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-128-E.WEBER-ST-TOLEDO-OH-0x5162d60b699a44b9f09b5fbfd8e6343cde9d7b22",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-128-e.weber-st-toledo-oh-0x5162d60b699a44b9f09b5fbfd8e6343cde9d7b22.png",
-      ticker: "REALTOKEN-S-128-E.WEBER-ST-TOLEDO-OH",
-    },
-    {
-      address: "0xb5dd2b6e0a0422e069e1d2cc3ed16533488a05e3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-12866-LAUDER-ST-DETROIT-MI-0xb5dd2b6e0a0422e069e1d2cc3ed16533488a05e3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-12866-lauder-st-detroit-mi-0xb5dd2b6e0a0422e069e1d2cc3ed16533488a05e3.png",
-      ticker: "REALTOKEN-S-12866-LAUDER-ST-DETROIT-MI",
-    },
-    {
-      address: "0xc7785a2575606d444cefbc8a22591600ae5aa9b4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13041-HAYES-ST-DETROIT-MI-0xc7785a2575606d444cefbc8a22591600ae5aa9b4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13041-hayes-st-detroit-mi-0xc7785a2575606d444cefbc8a22591600ae5aa9b4.png",
-      ticker: "REALTOKEN-S-13041-HAYES-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5600e25b4f24c63afa655c3bd96e3c178b654fa1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13045-WADE-ST-DETROIT-MI-0x5600e25b4f24c63afa655c3bd96e3c178b654fa1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13045-wade-st-detroit-mi-0x5600e25b4f24c63afa655c3bd96e3c178b654fa1.png",
-      ticker: "REALTOKEN-S-13045-WADE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x9f923653a19537b5a1b003854a1920fe67a8ffeb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13114-GLENFIELD-AVE-DETROIT-MI_1-0x9f923653a19537b5a1b003854a1920fe67a8ffeb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13114-glenfield-ave-detroit-mi_1-0x9f923653a19537b5a1b003854a1920fe67a8ffeb.png",
-      ticker: "REALTOKEN-S-13114-GLENFIELD-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0x434e3a92c43a98ff508ab44e023ea7638952ad21",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13114-GLENFIELD-AVE-DETROIT-MI-0x434e3a92c43a98ff508ab44e023ea7638952ad21",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13114-glenfield-ave-detroit-mi-0x434e3a92c43a98ff508ab44e023ea7638952ad21.png",
-      ticker: "REALTOKEN-S-13114-GLENFIELD-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x08ad1f3a48be1d23c723a6cc8486b247f5de935a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13116-KILBOURNE-AVE-DETROIT-MI_1-0x08ad1f3a48be1d23c723a6cc8486b247f5de935a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13116-kilbourne-ave-detroit-mi_1-0x08ad1f3a48be1d23c723a6cc8486b247f5de935a.png",
-      ticker: "REALTOKEN-S-13116-KILBOURNE-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0xba0d050bbb662c190bf99c61708b42ff9d8750e0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13116-KILBOURNE-AVE-DETROIT-MI-0xba0d050bbb662c190bf99c61708b42ff9d8750e0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13116-kilbourne-ave-detroit-mi-0xba0d050bbb662c190bf99c61708b42ff9d8750e0.png",
-      ticker: "REALTOKEN-S-13116-KILBOURNE-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x052ad78e3aa0b0f2d3912fd3b50a9a289cf2f7aa",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13245-MONICA-ST-DETROIT-MI-0x052ad78e3aa0b0f2d3912fd3b50a9a289cf2f7aa",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13245-monica-st-detroit-mi-0x052ad78e3aa0b0f2d3912fd3b50a9a289cf2f7aa.png",
-      ticker: "REALTOKEN-S-13245-MONICA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5b690b010944bdfa8b26116967fe3fb3c38cfaac",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13370-WILSHIRE-DR-DETROIT-MI-0x5b690b010944bdfa8b26116967fe3fb3c38cfaac",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13370-wilshire-dr-detroit-mi-0x5b690b010944bdfa8b26116967fe3fb3c38cfaac.png",
-      ticker: "REALTOKEN-S-13370-WILSHIRE-DR-DETROIT-MI",
-    },
-    {
-      address: "0x7085c30b97f1af202f8dfec174f1e07d8f8f887d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13430-TACOMA-ST-DETROIT-MI-0x7085c30b97f1af202f8dfec174f1e07d8f8f887d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13430-tacoma-st-detroit-mi-0x7085c30b97f1af202f8dfec174f1e07d8f8f887d.png",
-      ticker: "REALTOKEN-S-13430-TACOMA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4c0c0fe9ca9ad4bc748eb8f596ddcfd8707a5cd4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13445-TACOMA-ST-DETROIT-MI-0x4c0c0fe9ca9ad4bc748eb8f596ddcfd8707a5cd4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13445-tacoma-st-detroit-mi-0x4c0c0fe9ca9ad4bc748eb8f596ddcfd8707a5cd4.png",
-      ticker: "REALTOKEN-S-13445-TACOMA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x377d14927bbc274771daa9ffab0722935dafaffa",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13523-GLENSIDE-RD-CLEVELAND-OH-0x377d14927bbc274771daa9ffab0722935dafaffa",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13523-glenside-rd-cleveland-oh-0x377d14927bbc274771daa9ffab0722935dafaffa.png",
-      ticker: "REALTOKEN-S-13523-GLENSIDE-RD-CLEVELAND-OH",
-    },
-    {
-      address: "0x1707a9bad232d728afded75faced38ec90eaa41e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1354-W-64TH-ST-CHICAGO-IL-0x1707a9bad232d728afded75faced38ec90eaa41e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1354-w-64th-st-chicago-il-0x1707a9bad232d728afded75faced38ec90eaa41e.png",
-      ticker: "REALTOKEN-S-1354-W-64TH-ST-CHICAGO-IL",
-    },
-    {
-      address: "0x804f6baa10615c85e4b4a5bc4efe516d9f7a4365",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13606-WINTHROP-ST-DETROIT-MI-0x804f6baa10615c85e4b4a5bc4efe516d9f7a4365",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13606-winthrop-st-detroit-mi-0x804f6baa10615c85e4b4a5bc4efe516d9f7a4365.png",
-      ticker: "REALTOKEN-S-13606-WINTHROP-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe1c4610477da28f6852ced5666aa6f3ccbd73b02",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13628-TACOMA-ST-DETROIT-MI-0xe1c4610477da28f6852ced5666aa6f3ccbd73b02",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13628-tacoma-st-detroit-mi-0xe1c4610477da28f6852ced5666aa6f3ccbd73b02.png",
-      ticker: "REALTOKEN-S-13628-TACOMA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5d9eb5fc910176b08efa5f8d13812b85fdf3394b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13835-LA-SALLE-BLVD-DETROIT-MI-0x5d9eb5fc910176b08efa5f8d13812b85fdf3394b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13835-la-salle-blvd-detroit-mi-0x5d9eb5fc910176b08efa5f8d13812b85fdf3394b.png",
-      ticker: "REALTOKEN-S-13835-LA-SALLE-BLVD-DETROIT-MI",
-    },
-    {
-      address: "0x2fb7eeeece8498af2bf5b00ea29ca03005c35956",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1389-BIRD-AVE-BIRMINGHAM-MI-0x2fb7eeeece8498af2bf5b00ea29ca03005c35956",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1389-bird-ave-birmingham-mi-0x2fb7eeeece8498af2bf5b00ea29ca03005c35956.png",
-      ticker: "REALTOKEN-S-1389-BIRD-AVE-BIRMINGHAM-MI",
-    },
-    {
-      address: "0x6f442da588232dc57bf0096e8de48d6961d5cc83",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13895-SARATOGA-ST-DETROIT-MI-0x6f442da588232dc57bf0096e8de48d6961d5cc83",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13895-saratoga-st-detroit-mi-0x6f442da588232dc57bf0096e8de48d6961d5cc83.png",
-      ticker: "REALTOKEN-S-13895-SARATOGA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4e98493920b16dd6642e9d48497c8d0a49150f6f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13991-WARWICK-ST-DETROIT-MI_1-0x4e98493920b16dd6642e9d48497c8d0a49150f6f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13991-warwick-st-detroit-mi_1-0x4e98493920b16dd6642e9d48497c8d0a49150f6f.png",
-      ticker: "REALTOKEN-S-13991-WARWICK-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x4475ad655d6fa73db81cc52a5cf4585faa34a1dd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-13991-WARWICK-ST-DETROIT-MI-0x4475ad655d6fa73db81cc52a5cf4585faa34a1dd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-13991-warwick-st-detroit-mi-0x4475ad655d6fa73db81cc52a5cf4585faa34a1dd.png",
-      ticker: "REALTOKEN-S-13991-WARWICK-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe887dc4fcb5240c0c080aeab8870421d3ebd0b28",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14066-SANTA-ROSA-DR-DETROIT-MI-0xe887dc4fcb5240c0c080aeab8870421d3ebd0b28",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14066-santa-rosa-dr-detroit-mi-0xe887dc4fcb5240c0c080aeab8870421d3ebd0b28.png",
-      ticker: "REALTOKEN-S-14066-SANTA-ROSA-DR-DETROIT-MI",
-    },
-    {
-      address: "0x315699f1ba88383cff2f2f30fcad187adb2e4d72",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14078-CARLISLE-ST-DETROIT-MI-0x315699f1ba88383cff2f2f30fcad187adb2e4d72",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14078-carlisle-st-detroit-mi-0x315699f1ba88383cff2f2f30fcad187adb2e4d72.png",
-      ticker: "REALTOKEN-S-14078-CARLISLE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x7dfeee178fc1f929a88ad69e4e8d493600dd26d0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14117-MANNING-ST-DETROIT-MI-0x7dfeee178fc1f929a88ad69e4e8d493600dd26d0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14117-manning-st-detroit-mi-0x7dfeee178fc1f929a88ad69e4e8d493600dd26d0.png",
-      ticker: "REALTOKEN-S-14117-MANNING-ST-DETROIT-MI",
-    },
-    {
-      address: "0xfc5073816fe9671859ef1e6936efd23bb7814274",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1418-W-MARQUETTE-RD-CHICAGO-IL-0xfc5073816fe9671859ef1e6936efd23bb7814274",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1418-w-marquette-rd-chicago-il-0xfc5073816fe9671859ef1e6936efd23bb7814274.png",
-      ticker: "REALTOKEN-S-1418-W-MARQUETTE-RD-CHICAGO-IL",
-    },
-    {
-      address: "0x0c12f2b2c3ad5150d344b6d3abb901b4795d72d9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14215-HAMPSHIRE-ST-DETROIT-MI-0x0c12f2b2c3ad5150d344b6d3abb901b4795d72d9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14215-hampshire-st-detroit-mi-0x0c12f2b2c3ad5150d344b6d3abb901b4795d72d9.png",
-      ticker: "REALTOKEN-S-14215-HAMPSHIRE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb09850e2b93aa3aaa1476bf0c007cfc960e2de79",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14229-WILSHIRE-DR-DETROIT-MI-0xb09850e2b93aa3aaa1476bf0c007cfc960e2de79",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14229-wilshire-dr-detroit-mi-0xb09850e2b93aa3aaa1476bf0c007cfc960e2de79.png",
-      ticker: "REALTOKEN-S-14229-WILSHIRE-DR-DETROIT-MI",
-    },
-    {
-      address: "0x9528a7402c0fe85b817aa6e106eafa03a02924c4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14231-STRATHMOOR-ST-DETROIT-MI-0x9528a7402c0fe85b817aa6e106eafa03a02924c4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14231-strathmoor-st-detroit-mi-0x9528a7402c0fe85b817aa6e106eafa03a02924c4.png",
-      ticker: "REALTOKEN-S-14231-STRATHMOOR-ST-DETROIT-MI",
-    },
-    {
-      address: "0xd1095b31f41d3bdbb66a52b94a737b2d7ac17635",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14263-OHIO-ST-DETROIT-MI-0xd1095b31f41d3bdbb66a52b94a737b2d7ac17635",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14263-ohio-st-detroit-mi-0xd1095b31f41d3bdbb66a52b94a737b2d7ac17635.png",
-      ticker: "REALTOKEN-S-14263-OHIO-ST-DETROIT-MI",
-    },
-    {
-      address: "0x41599149f1b52035392402f9e311b1edb0c9f699",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14319-ROSEMARY-ST-DETROIT-MI-0x41599149f1b52035392402f9e311b1edb0c9f699",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14319-rosemary-st-detroit-mi-0x41599149f1b52035392402f9e311b1edb0c9f699.png",
-      ticker: "REALTOKEN-S-14319-ROSEMARY-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe5b46b4c5c7f974e55ded0b0099c02774f0023c1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14329-STRATHMOOR-ST-DETROIT-MI-0xe5b46b4c5c7f974e55ded0b0099c02774f0023c1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14329-strathmoor-st-detroit-mi-0xe5b46b4c5c7f974e55ded0b0099c02774f0023c1.png",
-      ticker: "REALTOKEN-S-14329-STRATHMOOR-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5b571d103e670848ce8cde37f93821c9c93c7c43",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14409-LINNHURST-ST-DETROIT-MI-0x5b571d103e670848ce8cde37f93821c9c93c7c43",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14409-linnhurst-st-detroit-mi-0x5b571d103e670848ce8cde37f93821c9c93c7c43.png",
-      ticker: "REALTOKEN-S-14409-LINNHURST-ST-DETROIT-MI",
-    },
-    {
-      address: "0x23bb1314b73aaaa888800b177ad5d9719a51195b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14432-WILSHIRE-DR-DETROIT-MI-0x23bb1314b73aaaa888800b177ad5d9719a51195b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14432-wilshire-dr-detroit-mi-0x23bb1314b73aaaa888800b177ad5d9719a51195b.png",
-      ticker: "REALTOKEN-S-14432-WILSHIRE-DR-DETROIT-MI",
-    },
-    {
-      address: "0xbb32de53a057f29280ad889a92fe99d69d470ef0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14439-LONGVIEW-ST-DETROIT-MI-0xbb32de53a057f29280ad889a92fe99d69d470ef0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14439-longview-st-detroit-mi-0xbb32de53a057f29280ad889a92fe99d69d470ef0.png",
-      ticker: "REALTOKEN-S-14439-LONGVIEW-ST-DETROIT-MI",
-    },
-    {
-      address: "0x2adc1cfa726a45264a328d9d2e2c692ceac97458",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14494-CHELSEA-AVE-DETROIT-MI-0x2adc1cfa726a45264a328d9d2e2c692ceac97458",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14494-chelsea-ave-detroit-mi-0x2adc1cfa726a45264a328d9d2e2c692ceac97458.png",
-      ticker: "REALTOKEN-S-14494-CHELSEA-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xa3bb6ea63c0fbf259e16ffe0586d84b2c83d7229",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14511-HOUSTON-WHITTIER-ST-DETROIT-MI-0xa3bb6ea63c0fbf259e16ffe0586d84b2c83d7229",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14511-houston-whittier-st-detroit-mi-0xa3bb6ea63c0fbf259e16ffe0586d84b2c83d7229.png",
-      ticker: "REALTOKEN-S-14511-HOUSTON-WHITTIER-ST-DETROIT-MI",
-    },
-    {
-      address: "0xdcfe90e59b574839e028ec28e78018b84b6fcdab",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14622-HUBBELL-AVE-DETROIT-MI-0xdcfe90e59b574839e028ec28e78018b84b6fcdab",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14622-hubbell-ave-detroit-mi-0xdcfe90e59b574839e028ec28e78018b84b6fcdab.png",
-      ticker: "REALTOKEN-S-14622-HUBBELL-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x9642a2379bc359c8b10ead2e06c4a4156bbb3f57",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14745-PLYMOUTH-RD-DETROIT-MI-0x9642a2379bc359c8b10ead2e06c4a4156bbb3f57",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14745-plymouth-rd-detroit-mi-0x9642a2379bc359c8b10ead2e06c4a4156bbb3f57.png",
-      ticker: "REALTOKEN-S-14745-PLYMOUTH-RD-DETROIT-MI",
-    },
-    {
-      address: "0x43fed9f9bf7deedcb314b432a8e38219dd62ce9e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14825-WILFRIED-ST-DETROIT-MI-0x43fed9f9bf7deedcb314b432a8e38219dd62ce9e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14825-wilfried-st-detroit-mi-0x43fed9f9bf7deedcb314b432a8e38219dd62ce9e.png",
-      ticker: "REALTOKEN-S-14825-WILFRIED-ST-DETROIT-MI",
-    },
-    {
-      address: "0x10c2c7a5342988818eb6726fae369299d8fb6328",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14839-WISCONSIN-ST-DETROIT-MI-0x10c2c7a5342988818eb6726fae369299d8fb6328",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14839-wisconsin-st-detroit-mi-0x10c2c7a5342988818eb6726fae369299d8fb6328.png",
-      ticker: "REALTOKEN-S-14839-WISCONSIN-ST-DETROIT-MI",
-    },
-    {
-      address: "0xf3c4c10ab96f9b6d7719de63f4219f69078df976",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14881-GREENFIELD-RD-DETROIT-MI-0xf3c4c10ab96f9b6d7719de63f4219f69078df976",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14881-greenfield-rd-detroit-mi-0xf3c4c10ab96f9b6d7719de63f4219f69078df976.png",
-      ticker: "REALTOKEN-S-14881-GREENFIELD-RD-DETROIT-MI",
-    },
-    {
-      address: "0x31aa5fa895fd186fde12347a6fcaf540875b6434",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14882-TROESTER-ST-DETROIT-MI-0x31aa5fa895fd186fde12347a6fcaf540875b6434",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14882-troester-st-detroit-mi-0x31aa5fa895fd186fde12347a6fcaf540875b6434.png",
-      ticker: "REALTOKEN-S-14882-TROESTER-ST-DETROIT-MI",
-    },
-    {
-      address: "0x328249efca026ae8596e9afe913c5f8775ef60ae",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14884-WARD-AVE-DETROIT-MI-0x328249efca026ae8596e9afe913c5f8775ef60ae",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14884-ward-ave-detroit-mi-0x328249efca026ae8596e9afe913c5f8775ef60ae.png",
-      ticker: "REALTOKEN-S-14884-WARD-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x63a1849b47ef5913ccc5adb0e2708b11a4ba6972",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-14918-JOY-RD-DETROIT-MI-0x63a1849b47ef5913ccc5adb0e2708b11a4ba6972",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-14918-joy-rd-detroit-mi-0x63a1849b47ef5913ccc5adb0e2708b11a4ba6972.png",
-      ticker: "REALTOKEN-S-14918-JOY-RD-DETROIT-MI",
-    },
-    {
-      address: "0x7e95b310724334ff74537dc08bfd3377d25e65ce",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15039-WARD-AVE-DETROIT-MI-0x7e95b310724334ff74537dc08bfd3377d25e65ce",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15039-ward-ave-detroit-mi-0x7e95b310724334ff74537dc08bfd3377d25e65ce.png",
-      ticker: "REALTOKEN-S-15039-WARD-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x9fef44fc4c571010bccd5b63e1cdc807d3b347bf",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15095-HARTWELL-ST-DETROIT-MI-0x9fef44fc4c571010bccd5b63e1cdc807d3b347bf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15095-hartwell-st-detroit-mi-0x9fef44fc4c571010bccd5b63e1cdc807d3b347bf.png",
-      ticker: "REALTOKEN-S-15095-HARTWELL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x78a9013b53d2d255935bbc43112d0dd3f475f3d3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15203-PARK-GROVE-ST-DETROIT-MI-0x78a9013b53d2d255935bbc43112d0dd3f475f3d3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15203-park-grove-st-detroit-mi-0x78a9013b53d2d255935bbc43112d0dd3f475f3d3.png",
-      ticker: "REALTOKEN-S-15203-PARK-GROVE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xef2b6234e376c3b152c5febe47e1ca3c73cdaa9f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15208-BRINGARD-DR-DETROIT-MI-0xef2b6234e376c3b152c5febe47e1ca3c73cdaa9f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15208-bringard-dr-detroit-mi-0xef2b6234e376c3b152c5febe47e1ca3c73cdaa9f.png",
-      ticker: "REALTOKEN-S-15208-BRINGARD-DR-DETROIT-MI",
-    },
-    {
-      address: "0x8c1c77c549a3f233fa8f8dea133ff5415d9bae11",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1521-1523-S.DRAKE-AVE-CHICAGO-IL-0x8c1c77c549a3f233fa8f8dea133ff5415d9bae11",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1521-1523-s.drake-ave-chicago-il-0x8c1c77c549a3f233fa8f8dea133ff5415d9bae11.png",
-      ticker: "REALTOKEN-S-1521-1523-S.DRAKE-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0x2f3640655d076b45d1fa10da0f6d880329c9d553",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15240-EDMORE-DR-DETROIT-MI-0x2f3640655d076b45d1fa10da0f6d880329c9d553",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15240-edmore-dr-detroit-mi-0x2f3640655d076b45d1fa10da0f6d880329c9d553.png",
-      ticker: "REALTOKEN-S-15240-EDMORE-DR-DETROIT-MI",
-    },
-    {
-      address: "0xda47bd33e8f5d17bb81b8752784bfb46c1c44b2a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15350-GREYDALE-ST-DETROIT-MI-0xda47bd33e8f5d17bb81b8752784bfb46c1c44b2a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15350-greydale-st-detroit-mi-0xda47bd33e8f5d17bb81b8752784bfb46c1c44b2a.png",
-      ticker: "REALTOKEN-S-15350-GREYDALE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4d0da4e75d40bd7d9c4f7a292bf883bcdf38c45d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15373-PARKSIDE-ST-DETROIT-MI-0x4d0da4e75d40bd7d9c4f7a292bf883bcdf38c45d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15373-parkside-st-detroit-mi-0x4d0da4e75d40bd7d9c4f7a292bf883bcdf38c45d.png",
-      ticker: "REALTOKEN-S-15373-PARKSIDE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x81cea1a7c83d5caed483dd4da59bfe98f24ef687",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15379-PATTON-ST-DETROIT-MI-0x81cea1a7c83d5caed483dd4da59bfe98f24ef687",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15379-patton-st-detroit-mi-0x81cea1a7c83d5caed483dd4da59bfe98f24ef687.png",
-      ticker: "REALTOKEN-S-15379-PATTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x69d1b42b20f3ded07bec322253d0140b04cbb6f5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1542-S.RIDGEWAY-AVE-CHICAGO-IL-0x69d1b42b20f3ded07bec322253d0140b04cbb6f5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1542-s.ridgeway-ave-chicago-il-0x69d1b42b20f3ded07bec322253d0140b04cbb6f5.png",
-      ticker: "REALTOKEN-S-1542-S.RIDGEWAY-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0x306044777e68ec5c323889468baacba6d2705994",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15440-15444-ST-CLAIR-AVE-CLEVELAND-OH-0x306044777e68ec5c323889468baacba6d2705994",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15440-15444-st-clair-ave-cleveland-oh-0x306044777e68ec5c323889468baacba6d2705994.png",
-      ticker: "REALTOKEN-S-15440-15444-ST-CLAIR-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0x2f4974a3be7355cf8915ab34099f35ed44293128",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15611-E-SEVEN-MILE-RD-DETROIT-MI-0x2f4974a3be7355cf8915ab34099f35ed44293128",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15611-e-seven-mile-rd-detroit-mi-0x2f4974a3be7355cf8915ab34099f35ed44293128.png",
-      ticker: "REALTOKEN-S-15611-E-SEVEN-MILE-RD-DETROIT-MI",
-    },
-    {
-      address: "0x8d1090df790ffafdaccda03015c05df3b4cc9c21",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15753-HARTWELL-ST-DETROIT-MI-0x8d1090df790ffafdaccda03015c05df3b4cc9c21",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15753-hartwell-st-detroit-mi-0x8d1090df790ffafdaccda03015c05df3b4cc9c21.png",
-      ticker: "REALTOKEN-S-15753-HARTWELL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x175cbd54d38f58b530785e01471a2ec0d4596eb5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15770-PREST-ST-DETROIT-MI-0x175cbd54d38f58b530785e01471a2ec0d4596eb5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15770-prest-st-detroit-mi-0x175cbd54d38f58b530785e01471a2ec0d4596eb5.png",
-      ticker: "REALTOKEN-S-15770-PREST-ST-DETROIT-MI",
-    },
-    {
-      address: "0xfe17c3c0b6f38cf3bd8ba872bee7a18ab16b43fb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15777-ARDMORE-ST-DETROIT-MI-0xfe17c3c0b6f38cf3bd8ba872bee7a18ab16b43fb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15777-ardmore-st-detroit-mi-0xfe17c3c0b6f38cf3bd8ba872bee7a18ab16b43fb.png",
-      ticker: "REALTOKEN-S-15777-ARDMORE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xf23b80216a10e6f0c0d3b5ad5c9349e9425cad40",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15778-MANOR-ST-DETROIT-MI_1-0xf23b80216a10e6f0c0d3b5ad5c9349e9425cad40",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15778-manor-st-detroit-mi_1-0xf23b80216a10e6f0c0d3b5ad5c9349e9425cad40.png",
-      ticker: "REALTOKEN-S-15778-MANOR-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x1105c20ac6f4de989faf05d17ab3f950963b75ad",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15778-MANOR-ST-DETROIT-MI-0x1105c20ac6f4de989faf05d17ab3f950963b75ad",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15778-manor-st-detroit-mi-0x1105c20ac6f4de989faf05d17ab3f950963b75ad.png",
-      ticker: "REALTOKEN-S-15778-MANOR-ST-DETROIT-MI",
-    },
-    {
-      address: "0x7f940b5509a22e81d29167581bdeea3fa5a0abee",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15784-MONTEVISTA-ST-DETROIT-MI_1-0x7f940b5509a22e81d29167581bdeea3fa5a0abee",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15784-montevista-st-detroit-mi_1-0x7f940b5509a22e81d29167581bdeea3fa5a0abee.png",
-      ticker: "REALTOKEN-S-15784-MONTEVISTA-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x438f9de51f51692a4b83696413062a040cc5cbd5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15784-MONTEVISTA-ST-DETROIT-MI-0x438f9de51f51692a4b83696413062a040cc5cbd5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15784-montevista-st-detroit-mi-0x438f9de51f51692a4b83696413062a040cc5cbd5.png",
-      ticker: "REALTOKEN-S-15784-MONTEVISTA-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb3d3c1bbcef737204aadb4fa6d90e974bc262197",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15796-HARTWELL-ST-DETROIT-MI-0xb3d3c1bbcef737204aadb4fa6d90e974bc262197",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15796-hartwell-st-detroit-mi-0xb3d3c1bbcef737204aadb4fa6d90e974bc262197.png",
-      ticker: "REALTOKEN-S-15796-HARTWELL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x8c3761c5d489ee5a5c30f874b5220c769a7c5a16",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15841-CORAM-ST-DETROIT-MI-0x8c3761c5d489ee5a5c30f874b5220c769a7c5a16",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15841-coram-st-detroit-mi-0x8c3761c5d489ee5a5c30f874b5220c769a7c5a16.png",
-      ticker: "REALTOKEN-S-15841-CORAM-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa9f30c907321718e655b74463ca665b690b78894",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15860-HARTWELL-ST-DETROIT-MI-0xa9f30c907321718e655b74463ca665b690b78894",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15860-hartwell-st-detroit-mi-0xa9f30c907321718e655b74463ca665b690b78894.png",
-      ticker: "REALTOKEN-S-15860-HARTWELL-ST-DETROIT-MI",
-    },
-    {
-      address: "0xca4e38439d5d86554431e15eced03b8bcf2abddd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15864-EASTBURN-ST-DETROIT-MI-0xca4e38439d5d86554431e15eced03b8bcf2abddd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15864-eastburn-st-detroit-mi-0xca4e38439d5d86554431e15eced03b8bcf2abddd.png",
-      ticker: "REALTOKEN-S-15864-EASTBURN-ST-DETROIT-MI",
-    },
-    {
-      address: "0x7facb63afb928ac5a4650acc6eab701d7a8becb5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-15894-TACOMA-ST-DETROIT-MI-0x7facb63afb928ac5a4650acc6eab701d7a8becb5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-15894-tacoma-st-detroit-mi-0x7facb63afb928ac5a4650acc6eab701d7a8becb5.png",
-      ticker: "REALTOKEN-S-15894-TACOMA-ST-DETROIT-MI",
-    },
-    {
-      address: "0xf13d215776dac65c9c1e80d8f3daf6d91cc062d5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16007-NELACREST-RD-EAST-CLEVELAND-OH-0xf13d215776dac65c9c1e80d8f3daf6d91cc062d5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16007-nelacrest-rd-east-cleveland-oh-0xf13d215776dac65c9c1e80d8f3daf6d91cc062d5.png",
-      ticker: "REALTOKEN-S-16007-NELACREST-RD-EAST-CLEVELAND-OH",
-    },
-    {
-      address: "0xe2fbdeadc82c71c1b8bff9ca4f9e7666224a362c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16085-E-SEVEN-MILE-DETROIT-MI-0xe2fbdeadc82c71c1b8bff9ca4f9e7666224a362c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16085-e-seven-mile-detroit-mi-0xe2fbdeadc82c71c1b8bff9ca4f9e7666224a362c.png",
-      ticker: "REALTOKEN-S-16085-E-SEVEN-MILE-DETROIT-MI",
-    },
-    {
-      address: "0xd88e8873e90f734c9d3e3519e9e87345478c1df2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1610-E-STATE-FAIR-AVE-DETROIT-MI-0xd88e8873e90f734c9d3e3519e9e87345478c1df2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1610-e-state-fair-ave-detroit-mi-0xd88e8873e90f734c9d3e3519e9e87345478c1df2.png",
-      ticker: "REALTOKEN-S-1610-E-STATE-FAIR-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xde9122799c313d5cc5c4385984156ad068cde331",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1612-DENVER-AVE-TOLEDO-OH-0xde9122799c313d5cc5c4385984156ad068cde331",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1612-denver-ave-toledo-oh-0xde9122799c313d5cc5c4385984156ad068cde331.png",
-      ticker: "REALTOKEN-S-1612-DENVER-AVE-TOLEDO-OH",
-    },
-    {
-      address: "0xf4657ab08681214bcb1893aa8e9c7613459250ec",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1617-S.AVERS-AVE-CHICAGO-IL-0xf4657ab08681214bcb1893aa8e9c7613459250ec",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1617-s.avers-ave-chicago-il-0xf4657ab08681214bcb1893aa8e9c7613459250ec.png",
-      ticker: "REALTOKEN-S-1617-S.AVERS-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0xe919df5f4eff1e6e6c6fe7c82471a5e6ce3437f1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1630-E-STATE-FAIR-AVE-DETROIT-MI-0xe919df5f4eff1e6e6c6fe7c82471a5e6ce3437f1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1630-e-state-fair-ave-detroit-mi-0xe919df5f4eff1e6e6c6fe7c82471a5e6ce3437f1.png",
-      ticker: "REALTOKEN-S-1630-E-STATE-FAIR-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x3113bb5e8bf9dc44ecdb111e5c4ab0818015a2e1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16520-ILENE-ST-DETROIT-MI-0x3113bb5e8bf9dc44ecdb111e5c4ab0818015a2e1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16520-ilene-st-detroit-mi-0x3113bb5e8bf9dc44ecdb111e5c4ab0818015a2e1.png",
-      ticker: "REALTOKEN-S-16520-ILENE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa6004ca1fab428152f27135355f21d6bcdf355bd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16767-GREENFIELD-RD-DETROIT-MI-0xa6004ca1fab428152f27135355f21d6bcdf355bd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16767-greenfield-rd-detroit-mi-0xa6004ca1fab428152f27135355f21d6bcdf355bd.png",
-      ticker: "REALTOKEN-S-16767-GREENFIELD-RD-DETROIT-MI",
-    },
-    {
-      address: "0xa14d2507a2b96adc13cb19642802fd4eaf9a8a32",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16810-BRINGARD-DR-DETROIT-MI-0xa14d2507a2b96adc13cb19642802fd4eaf9a8a32",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16810-bringard-dr-detroit-mi-0xa14d2507a2b96adc13cb19642802fd4eaf9a8a32.png",
-      ticker: "REALTOKEN-S-16810-BRINGARD-DR-DETROIT-MI",
-    },
-    {
-      address: "0x960e61f5c4107d71bd8936b010416738c250f91c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-16851-16881-GREENFIELD-RD-DETROIT-MI-0x960e61f5c4107d71bd8936b010416738c250f91c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-16851-16881-greenfield-rd-detroit-mi-0x960e61f5c4107d71bd8936b010416738c250f91c.png",
-      ticker: "REALTOKEN-S-16851-16881-GREENFIELD-RD-DETROIT-MI",
-    },
-    {
-      address: "0x0fd357ea71ad533c6b8a62520321ed286ed9a0c2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-17204-BRADFORD-AVE-DETROIT-MI-0x0fd357ea71ad533c6b8a62520321ed286ed9a0c2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-17204-bradford-ave-detroit-mi-0x0fd357ea71ad533c6b8a62520321ed286ed9a0c2.png",
-      ticker: "REALTOKEN-S-17204-BRADFORD-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x1fdb4015fd5e031c5641752c1e03b973ad5ea168",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-17500-EVERGREEN-RD-DETROIT-MI-0x1fdb4015fd5e031c5641752c1e03b973ad5ea168",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-17500-evergreen-rd-detroit-mi-0x1fdb4015fd5e031c5641752c1e03b973ad5ea168.png",
-      ticker: "REALTOKEN-S-17500-EVERGREEN-RD-DETROIT-MI",
-    },
-    {
-      address: "0x24a2558d0b0b2247a64eab7cf09d7244cb4c9597",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-17616-BELAND-ST-DETROIT-MI-0x24a2558d0b0b2247a64eab7cf09d7244cb4c9597",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-17616-beland-st-detroit-mi-0x24a2558d0b0b2247a64eab7cf09d7244cb4c9597.png",
-      ticker: "REALTOKEN-S-17616-BELAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0xba07997f594a52df179620284b52b50a4e66227d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-17809-CHAREST-ST-DETROIT-MI-0xba07997f594a52df179620284b52b50a4e66227d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-17809-charest-st-detroit-mi-0xba07997f594a52df179620284b52b50a4e66227d.png",
-      ticker: "REALTOKEN-S-17809-CHAREST-ST-DETROIT-MI",
-    },
-    {
-      address: "0x499a6c19f5537dd6005e2b5c6e1263103f558ba4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-17813-BRADFORD-ST-DETROIT-MI-0x499a6c19f5537dd6005e2b5c6e1263103f558ba4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-17813-bradford-st-detroit-mi-0x499a6c19f5537dd6005e2b5c6e1263103f558ba4.png",
-      ticker: "REALTOKEN-S-17813-BRADFORD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x8fcb39a25e639c8fbd28e8a018227d6570e02352",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1815-S.AVERS-AVE-CHICAGO-IL-0x8fcb39a25e639c8fbd28e8a018227d6570e02352",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1815-s.avers-ave-chicago-il-0x8fcb39a25e639c8fbd28e8a018227d6570e02352.png",
-      ticker: "REALTOKEN-S-1815-S.AVERS-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0x9856c5ca15a4ac9c65aac090c38a9f39eb3b5eec",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18273-MONTEVISTA-ST-DETROIT-MI-0x9856c5ca15a4ac9c65aac090c38a9f39eb3b5eec",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18273-montevista-st-detroit-mi-0x9856c5ca15a4ac9c65aac090c38a9f39eb3b5eec.png",
-      ticker: "REALTOKEN-S-18273-MONTEVISTA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x46f8a600337dec5cab03aa9b8f67f1d5b788ce28",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18433-FAUST-AVE-DETROIT-MI_1-0x46f8a600337dec5cab03aa9b8f67f1d5b788ce28",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18433-faust-ave-detroit-mi_1-0x46f8a600337dec5cab03aa9b8f67f1d5b788ce28.png",
-      ticker: "REALTOKEN-S-18433-FAUST-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0xbff3a3d79d0f9165cfcc1b369ee41f3c5c9ae398",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18433-FAUST-AVE-DETROIT-MI-0xbff3a3d79d0f9165cfcc1b369ee41f3c5c9ae398",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18433-faust-ave-detroit-mi-0xbff3a3d79d0f9165cfcc1b369ee41f3c5c9ae398.png",
-      ticker: "REALTOKEN-S-18433-FAUST-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x9a99f283e1f6c3b7f24901995624ef7b78e94471",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18466-FIELDING-ST-DETROIT-MI-0x9a99f283e1f6c3b7f24901995624ef7b78e94471",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18466-fielding-st-detroit-mi-0x9a99f283e1f6c3b7f24901995624ef7b78e94471.png",
-      ticker: "REALTOKEN-S-18466-FIELDING-ST-DETROIT-MI",
-    },
-    {
-      address: "0x75f06b482adbfb04b877d8ee683e2fcdf18ad153",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18481-WESTPHALIA-ST-DETROIT-MI-0x75f06b482adbfb04b877d8ee683e2fcdf18ad153",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18481-westphalia-st-detroit-mi-0x75f06b482adbfb04b877d8ee683e2fcdf18ad153.png",
-      ticker: "REALTOKEN-S-18481-WESTPHALIA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x940b60023484d593b8391521704abb063b5cccf0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18515-18517-KELLY-RD-DETROIT-MI-0x940b60023484d593b8391521704abb063b5cccf0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18515-18517-kelly-rd-detroit-mi-0x940b60023484d593b8391521704abb063b5cccf0.png",
-      ticker: "REALTOKEN-S-18515-18517-KELLY-RD-DETROIT-MI",
-    },
-    {
-      address: "0xd84d9c58a93e3d4b0acc5ab5a5aa5e2fa6b7ab75",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18527-18529-KELLY-RD-DETROIT-MI-0xd84d9c58a93e3d4b0acc5ab5a5aa5e2fa6b7ab75",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18527-18529-kelly-rd-detroit-mi-0xd84d9c58a93e3d4b0acc5ab5a5aa5e2fa6b7ab75.png",
-      ticker: "REALTOKEN-S-18527-18529-KELLY-RD-DETROIT-MI",
-    },
-    {
-      address: "0xa48ddf8d4f9b03c63d6340b5e0d2af293ab516ea",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18608-18612-MOROSS-RD-DETROIT-MI-0xa48ddf8d4f9b03c63d6340b5e0d2af293ab516ea",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18608-18612-moross-rd-detroit-mi-0xa48ddf8d4f9b03c63d6340b5e0d2af293ab516ea.png",
-      ticker: "REALTOKEN-S-18608-18612-MOROSS-RD-DETROIT-MI",
-    },
-    {
-      address: "0x945d833927380e25f402350667c6cd2d2615e7c2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18668-SAINT-LOUIS-ST-DETROIT-MI-0x945d833927380e25f402350667c6cd2d2615e7c2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18668-saint-louis-st-detroit-mi-0x945d833927380e25f402350667c6cd2d2615e7c2.png",
-      ticker: "REALTOKEN-S-18668-SAINT-LOUIS-ST-DETROIT-MI",
-    },
-    {
-      address: "0x2c6f00a020b613c9419bb6c1ac220036dbe9e622",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18776-SUNDERLAND-RD-DETROIT-MI-0x2c6f00a020b613c9419bb6c1ac220036dbe9e622",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18776-sunderland-rd-detroit-mi-0x2c6f00a020b613c9419bb6c1ac220036dbe9e622.png",
-      ticker: "REALTOKEN-S-18776-SUNDERLAND-RD-DETROIT-MI",
-    },
-    {
-      address: "0x7389ef988fae6b3bcf520000c535e1e2d94c5427",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18949-FENMORE-ST-DETROIT-MI-0x7389ef988fae6b3bcf520000c535e1e2d94c5427",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18949-fenmore-st-detroit-mi-0x7389ef988fae6b3bcf520000c535e1e2d94c5427.png",
-      ticker: "REALTOKEN-S-18949-FENMORE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x3839ab8550a64940964e0ecb02ed301005a96ffc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18980-FENTON-ST-DETROIT-MI-0x3839ab8550a64940964e0ecb02ed301005a96ffc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18980-fenton-st-detroit-mi-0x3839ab8550a64940964e0ecb02ed301005a96ffc.png",
-      ticker: "REALTOKEN-S-18980-FENTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0xad91999f534f4075b00ba4231c018e57bdebb342",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-18983-ALCOY-AVE-DETROIT-MI-0xad91999f534f4075b00ba4231c018e57bdebb342",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-18983-alcoy-ave-detroit-mi-0xad91999f534f4075b00ba4231c018e57bdebb342.png",
-      ticker: "REALTOKEN-S-18983-ALCOY-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xf7412e264fa85ae5e79ac3a4b64ce4669e32b98f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1900-FENTON-ST-DETROIT-MI-0xf7412e264fa85ae5e79ac3a4b64ce4669e32b98f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1900-fenton-st-detroit-mi-0xf7412e264fa85ae5e79ac3a4b64ce4669e32b98f.png",
-      ticker: "REALTOKEN-S-1900-FENTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x280e9ed3b20c580a2f4219657bb9332d80bc01f1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19020-ROSEMONT-AVE-DETROIT-MI-0x280e9ed3b20c580a2f4219657bb9332d80bc01f1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19020-rosemont-ave-detroit-mi-0x280e9ed3b20c580a2f4219657bb9332d80bc01f1.png",
-      ticker: "REALTOKEN-S-19020-ROSEMONT-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xafa816f7fff6f252e5cdbd40b80d9ef77b7e289b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19041-LENORE-AVE-DETROIT-MI-0xafa816f7fff6f252e5cdbd40b80d9ef77b7e289b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19041-lenore-ave-detroit-mi-0xafa816f7fff6f252e5cdbd40b80d9ef77b7e289b.png",
-      ticker: "REALTOKEN-S-19041-LENORE-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xa5fd99f142ebf4343974137a3200e5197bf0c81b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-1907-OTTAWA-DR-TOLEDO-OH-0xa5fd99f142ebf4343974137a3200e5197bf0c81b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-1907-ottawa-dr-toledo-oh-0xa5fd99f142ebf4343974137a3200e5197bf0c81b.png",
-      ticker: "REALTOKEN-S-1907-OTTAWA-DR-TOLEDO-OH",
-    },
-    {
-      address: "0x33722ea778df197f1b7b1cf0b124d7a962181d65",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19136-TRACEY-ST-DETROIT-MI-0x33722ea778df197f1b7b1cf0b124d7a962181d65",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19136-tracey-st-detroit-mi-0x33722ea778df197f1b7b1cf0b124d7a962181d65.png",
-      ticker: "REALTOKEN-S-19136-TRACEY-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe23a5fc3502976de653cb64e5c27dc01d700db36",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19144-RIOPELLE-ST-HIGHLAND-PARK-MI-0xe23a5fc3502976de653cb64e5c27dc01d700db36",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19144-riopelle-st-highland-park-mi-0xe23a5fc3502976de653cb64e5c27dc01d700db36.png",
-      ticker: "REALTOKEN-S-19144-RIOPELLE-ST-HIGHLAND-PARK-MI",
-    },
-    {
-      address: "0x1d5da20522b1b94e3b7d983c954075da429bbae1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19154-SHERWOOD-ST-DETROIT-MI-0x1d5da20522b1b94e3b7d983c954075da429bbae1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19154-sherwood-st-detroit-mi-0x1d5da20522b1b94e3b7d983c954075da429bbae1.png",
-      ticker: "REALTOKEN-S-19154-SHERWOOD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x4cc53ee5ef306a95d407321d4b4acc30814c04ee",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19163-MITCHELL-ST-DETROIT-MI-0x4cc53ee5ef306a95d407321d4b4acc30814c04ee",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19163-mitchell-st-detroit-mi-0x4cc53ee5ef306a95d407321d4b4acc30814c04ee.png",
-      ticker: "REALTOKEN-S-19163-MITCHELL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x584967356bad1499c10a8695522983f2fb7d88f3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19191-BRADFORD-AVE-DETROIT-MI-0x584967356bad1499c10a8695522983f2fb7d88f3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19191-bradford-ave-detroit-mi-0x584967356bad1499c10a8695522983f2fb7d88f3.png",
-      ticker: "REALTOKEN-S-19191-BRADFORD-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x211618fa0934910666f2c2731101f5a3ac013fd8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19200-STRASBURG-ST-DETROIT-MI-0x211618fa0934910666f2c2731101f5a3ac013fd8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19200-strasburg-st-detroit-mi-0x211618fa0934910666f2c2731101f5a3ac013fd8.png",
-      ticker: "REALTOKEN-S-19200-STRASBURG-ST-DETROIT-MI",
-    },
-    {
-      address: "0x830b0e9a5ecf36d0a886d21e1c20043cd2d16515",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19201-WESTPHALIA-ST-DETROIT-MI-0x830b0e9a5ecf36d0a886d21e1c20043cd2d16515",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19201-westphalia-st-detroit-mi-0x830b0e9a5ecf36d0a886d21e1c20043cd2d16515.png",
-      ticker: "REALTOKEN-S-19201-WESTPHALIA-ST-DETROIT-MI",
-    },
-    {
-      address: "0xc731eca970979cd2da2a1094a808f49894070d35",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19218-HOUGHTON-ST-DETROIT-MI-0xc731eca970979cd2da2a1094a808f49894070d35",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19218-houghton-st-detroit-mi-0xc731eca970979cd2da2a1094a808f49894070d35.png",
-      ticker: "REALTOKEN-S-19218-HOUGHTON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x062c208073c9b439d1973262cfe0ddd88f38afa8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19268-EUREKA-ST-DETROIT-MI-0x062c208073c9b439d1973262cfe0ddd88f38afa8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19268-eureka-st-detroit-mi-0x062c208073c9b439d1973262cfe0ddd88f38afa8.png",
-      ticker: "REALTOKEN-S-19268-EUREKA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x8a9f904b4ead6a97f3ab304d0d2196f5c602c807",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19311-KEYSTONE-ST-DETROIT-MI-0x8a9f904b4ead6a97f3ab304d0d2196f5c602c807",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19311-keystone-st-detroit-mi-0x8a9f904b4ead6a97f3ab304d0d2196f5c602c807.png",
-      ticker: "REALTOKEN-S-19311-KEYSTONE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x34ed9e71449529e034d0326cfbb3b5ccdca00cbc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19314-GABLE-ST-DETROIT-MI-0x34ed9e71449529e034d0326cfbb3b5ccdca00cbc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19314-gable-st-detroit-mi-0x34ed9e71449529e034d0326cfbb3b5ccdca00cbc.png",
-      ticker: "REALTOKEN-S-19314-GABLE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x419f97e6dcfbf89a70ea898b7f44472f75bf6137",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19317-GABLE-ST-DETROIT-MI-0x419f97e6dcfbf89a70ea898b7f44472f75bf6137",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19317-gable-st-detroit-mi-0x419f97e6dcfbf89a70ea898b7f44472f75bf6137.png",
-      ticker: "REALTOKEN-S-19317-GABLE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x24293ab20159cfc0f3d7c8727cd827fba63d4f64",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19333-MOENART-ST-DETROIT-MI-0x24293ab20159cfc0f3d7c8727cd827fba63d4f64",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19333-moenart-st-detroit-mi-0x24293ab20159cfc0f3d7c8727cd827fba63d4f64.png",
-      ticker: "REALTOKEN-S-19333-MOENART-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb80173756781960761aa59c9eeebe191f049f4c8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19391-GRANDVIEW-ST-DETROIT-MI-0xb80173756781960761aa59c9eeebe191f049f4c8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19391-grandview-st-detroit-mi-0xb80173756781960761aa59c9eeebe191f049f4c8.png",
-      ticker: "REALTOKEN-S-19391-GRANDVIEW-ST-DETROIT-MI",
-    },
-    {
-      address: "0xbf1a3181167e4979fd121ef247d9af4fc884cc46",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19400-HICKORY-ST-DETROIT-MI-0xbf1a3181167e4979fd121ef247d9af4fc884cc46",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19400-hickory-st-detroit-mi-0xbf1a3181167e4979fd121ef247d9af4fc884cc46.png",
-      ticker: "REALTOKEN-S-19400-HICKORY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x10cde9d1e1a2d3b703f037a6788e04bc139cdf6f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19530-HICKORY-ST-DETROIT-MI-0x10cde9d1e1a2d3b703f037a6788e04bc139cdf6f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19530-hickory-st-detroit-mi-0x10cde9d1e1a2d3b703f037a6788e04bc139cdf6f.png",
-      ticker: "REALTOKEN-S-19530-HICKORY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x3b22445411b429f665d12f7a55dd16dfac22c6ae",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19535-FAIRPORT-ST-DETROIT-MI-0x3b22445411b429f665d12f7a55dd16dfac22c6ae",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19535-fairport-st-detroit-mi-0x3b22445411b429f665d12f7a55dd16dfac22c6ae.png",
-      ticker: "REALTOKEN-S-19535-FAIRPORT-ST-DETROIT-MI",
-    },
-    {
-      address: "0xea91a67a23943984bc8017e20c9fd2e40fd38c3d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19539-HICKORY-ST-DETROIT-MI-0xea91a67a23943984bc8017e20c9fd2e40fd38c3d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19539-hickory-st-detroit-mi-0xea91a67a23943984bc8017e20c9fd2e40fd38c3d.png",
-      ticker: "REALTOKEN-S-19539-HICKORY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x3150f0ebc0efee280b5348b9c8c271ad44eb8b13",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19596-GOULBURN-ST-DETROIT-MI-0x3150f0ebc0efee280b5348b9c8c271ad44eb8b13",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19596-goulburn-st-detroit-mi-0x3150f0ebc0efee280b5348b9c8c271ad44eb8b13.png",
-      ticker: "REALTOKEN-S-19596-GOULBURN-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5d0436f003aef56990194f79a242bc185843aea5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19750-MARX-ST-HIGHLAND-PARK-MI-0x5d0436f003aef56990194f79a242bc185843aea5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19750-marx-st-highland-park-mi-0x5d0436f003aef56990194f79a242bc185843aea5.png",
-      ticker: "REALTOKEN-S-19750-MARX-ST-HIGHLAND-PARK-MI",
-    },
-    {
-      address: "0xac0d5dbfed881b3ffaebc7152bc2bc23464fe0cc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19751-MARX-ST-HIGHLAND-PARK-MI-0xac0d5dbfed881b3ffaebc7152bc2bc23464fe0cc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19751-marx-st-highland-park-mi-0xac0d5dbfed881b3ffaebc7152bc2bc23464fe0cc.png",
-      ticker: "REALTOKEN-S-19751-MARX-ST-HIGHLAND-PARK-MI",
-    },
-    {
-      address: "0x9d19b4d771ef67ea1da64699a388133b44eb434c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19962-WALTHAM-ST-DETROIT-MI-0x9d19b4d771ef67ea1da64699a388133b44eb434c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19962-waltham-st-detroit-mi-0x9d19b4d771ef67ea1da64699a388133b44eb434c.png",
-      ticker: "REALTOKEN-S-19962-WALTHAM-ST-DETROIT-MI",
-    },
-    {
-      address: "0x311fc485f1fea0c8cc9b5c783e79f4313ddfa720",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-19996-JOANN-AVE-DETROIT-MI-0x311fc485f1fea0c8cc9b5c783e79f4313ddfa720",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-19996-joann-ave-detroit-mi-0x311fc485f1fea0c8cc9b5c783e79f4313ddfa720.png",
-      ticker: "REALTOKEN-S-19996-JOANN-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x79e18a519d60c2ef7e18aac08d60ba0d4eee2511",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-20039-BLOOM-ST-DETROIT-MI-0x79e18a519d60c2ef7e18aac08d60ba0d4eee2511",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-20039-bloom-st-detroit-mi-0x79e18a519d60c2ef7e18aac08d60ba0d4eee2511.png",
-      ticker: "REALTOKEN-S-20039-BLOOM-ST-DETROIT-MI",
-    },
-    {
-      address: "0x529ff4d9b07acd6366d0c3eb077ebaa2b06e71c4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-20160-CONANT-ST-DETROIT-MI-0x529ff4d9b07acd6366d0c3eb077ebaa2b06e71c4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-20160-conant-st-detroit-mi-0x529ff4d9b07acd6366d0c3eb077ebaa2b06e71c4.png",
-      ticker: "REALTOKEN-S-20160-CONANT-ST-DETROIT-MI",
-    },
-    {
-      address: "0x6f5258feb5862b661829315841b0718d6e56ca2c",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-20257-MONICA-ST-DETROIT-MI-0x6f5258feb5862b661829315841b0718d6e56ca2c",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-20257-monica-st-detroit-mi-0x6f5258feb5862b661829315841b0718d6e56ca2c.png",
-      ticker: "REALTOKEN-S-20257-MONICA-ST-DETROIT-MI",
-    },
-    {
-      address: "0xc363ea8a468b3970ef93140d5d4ad9d124178f6e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-20418-ANDOVER-ST-DETROIT-MI-0xc363ea8a468b3970ef93140d5d4ad9d124178f6e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-20418-andover-st-detroit-mi-0xc363ea8a468b3970ef93140d5d4ad9d124178f6e.png",
-      ticker: "REALTOKEN-S-20418-ANDOVER-ST-DETROIT-MI",
-    },
-    {
-      address: "0x185e39d860cf86fbecf4a7c341bd1545ea3a41b9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-20552-WALTHAM-ST-DETROIT-MI-0x185e39d860cf86fbecf4a7c341bd1545ea3a41b9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-20552-waltham-st-detroit-mi-0x185e39d860cf86fbecf4a7c341bd1545ea3a41b9.png",
-      ticker: "REALTOKEN-S-20552-WALTHAM-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa1bbc683d5f401c3969469c77a3aa1dd3a0ee016",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-212-N-PARK-AVE-JACKSON-MI-0xa1bbc683d5f401c3969469c77a3aa1dd3a0ee016",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-212-n-park-ave-jackson-mi-0xa1bbc683d5f401c3969469c77a3aa1dd3a0ee016.png",
-      ticker: "REALTOKEN-S-212-N-PARK-AVE-JACKSON-MI",
-    },
-    {
-      address: "0x034ecb6dc0608b73765f2965771a003d940ee8b2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-22233-LYNDON-ST-DETROIT-MI-0x034ecb6dc0608b73765f2965771a003d940ee8b2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-22233-lyndon-st-detroit-mi-0x034ecb6dc0608b73765f2965771a003d940ee8b2.png",
-      ticker: "REALTOKEN-S-22233-LYNDON-ST-DETROIT-MI",
-    },
-    {
-      address: "0x06246100ba403608b98adfb006d82a7484f5d9ff",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-22512-W-MCNICHOLS-RD-DETROIT-MI-0x06246100ba403608b98adfb006d82a7484f5d9ff",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-22512-w-mcnichols-rd-detroit-mi-0x06246100ba403608b98adfb006d82a7484f5d9ff.png",
-      ticker: "REALTOKEN-S-22512-W-MCNICHOLS-RD-DETROIT-MI",
-    },
-    {
-      address: "0xf5aeab9d9c707b56311066e5172239686ab88110",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2318-2324-W.MARQUETTE-RD-CHICAGO-IL-0xf5aeab9d9c707b56311066e5172239686ab88110",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2318-2324-w.marquette-rd-chicago-il-0xf5aeab9d9c707b56311066e5172239686ab88110.png",
-      ticker: "REALTOKEN-S-2318-2324-W.MARQUETTE-RD-CHICAGO-IL",
-    },
-    {
-      address: "0xafd76591d02462cce1aa5b6c6430854aa9a17e56",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2550-GREENWAY-ST-TOLEDO-OH-0xafd76591d02462cce1aa5b6c6430854aa9a17e56",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2550-greenway-st-toledo-oh-0xafd76591d02462cce1aa5b6c6430854aa9a17e56.png",
-      ticker: "REALTOKEN-S-2550-GREENWAY-ST-TOLEDO-OH",
-    },
-    {
-      address: "0xb890b3cc0f2874b15b0dbf6377d39c106ca29fbf",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2626-2638-WREFORD-ST-DETROIT-MI-0xb890b3cc0f2874b15b0dbf6377d39c106ca29fbf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2626-2638-wreford-st-detroit-mi-0xb890b3cc0f2874b15b0dbf6377d39c106ca29fbf.png",
-      ticker: "REALTOKEN-S-2626-2638-WREFORD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x5e29f1b62c15658e76671e199a7f16afddc9ad76",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2661-2663-CORTLAND-ST-DETROIT-MI-0x5e29f1b62c15658e76671e199a7f16afddc9ad76",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2661-2663-cortland-st-detroit-mi-0x5e29f1b62c15658e76671e199a7f16afddc9ad76.png",
-      ticker: "REALTOKEN-S-2661-2663-CORTLAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0x994c698175e5dbe405a46df94fbd54999a3676c2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2703-2705-W-GRAND-ST-DETROIT-MI-0x994c698175e5dbe405a46df94fbd54999a3676c2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2703-2705-w-grand-st-detroit-mi-0x994c698175e5dbe405a46df94fbd54999a3676c2.png",
-      ticker: "REALTOKEN-S-2703-2705-W-GRAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0x7a684f6d9a34175d642eedb31fa545604d8d3acf",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2911-STURTEVANT-ST-DETROIT-MI-0x7a684f6d9a34175d642eedb31fa545604d8d3acf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2911-sturtevant-st-detroit-mi-0x7a684f6d9a34175d642eedb31fa545604d8d3acf.png",
-      ticker: "REALTOKEN-S-2911-STURTEVANT-ST-DETROIT-MI",
-    },
-    {
-      address: "0xcd7dc5e034b631331bc0cfc4ea71d2dc7b53c338",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-2950-2952-MONTEREY-ST-DETROIT-MI-0xcd7dc5e034b631331bc0cfc4ea71d2dc7b53c338",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-2950-2952-monterey-st-detroit-mi-0xcd7dc5e034b631331bc0cfc4ea71d2dc7b53c338.png",
-      ticker: "REALTOKEN-S-2950-2952-MONTEREY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x03cbe3dda83908ad48643d6a1b5b13d11acaf845",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-324-PIPER-BLVD-DETROIT-MI-0x03cbe3dda83908ad48643d6a1b5b13d11acaf845",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-324-piper-blvd-detroit-mi-0x03cbe3dda83908ad48643d6a1b5b13d11acaf845.png",
-      ticker: "REALTOKEN-S-324-PIPER-BLVD-DETROIT-MI",
-    },
-    {
-      address: "0x2089b1b815a2fd0187a48a1c66c511da828a8128",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3310-3312-STURTEVANT-ST-DETROIT-MI-0x2089b1b815a2fd0187a48a1c66c511da828a8128",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3310-3312-sturtevant-st-detroit-mi-0x2089b1b815a2fd0187a48a1c66c511da828a8128.png",
-      ticker: "REALTOKEN-S-3310-3312-STURTEVANT-ST-DETROIT-MI",
-    },
-    {
-      address: "0x009bab289f104699ae87e576294d18ed505faa61",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3323-WAVERLY-ST-DETROIT-MI-0x009bab289f104699ae87e576294d18ed505faa61",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3323-waverly-st-detroit-mi-0x009bab289f104699ae87e576294d18ed505faa61.png",
-      ticker: "REALTOKEN-S-3323-WAVERLY-ST-DETROIT-MI",
-    },
-    {
-      address: "0x2e1a7d86e4591ebe5662ce6b5e3601f19a626c22",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3344-E-140TH-ST-CLEVELAND-OH-0x2e1a7d86e4591ebe5662ce6b5e3601f19a626c22",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3344-e-140th-st-cleveland-oh-0x2e1a7d86e4591ebe5662ce6b5e3601f19a626c22.png",
-      ticker: "REALTOKEN-S-3344-E-140TH-ST-CLEVELAND-OH",
-    },
-    {
-      address: "0x4505f5bff6bada5a20b1a008c6db3cd9545027a4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-338-WILLARD-ST-TOLEDO-OH-0x4505f5bff6bada5a20b1a008c6db3cd9545027a4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-338-willard-st-toledo-oh-0x4505f5bff6bada5a20b1a008c6db3cd9545027a4.png",
-      ticker: "REALTOKEN-S-338-WILLARD-ST-TOLEDO-OH",
-    },
-    {
-      address: "0x400b5716b0c23b6f1f0f2a5fdb038949962b803e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3432-HARDING-ST-DETROIT-MI_1-0x400b5716b0c23b6f1f0f2a5fdb038949962b803e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3432-harding-st-detroit-mi_1-0x400b5716b0c23b6f1f0f2a5fdb038949962b803e.png",
-      ticker: "REALTOKEN-S-3432-HARDING-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xec2d495f20adf65cd26e9e250c8cd5d863609afd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3432-HARDING-ST-DETROIT-MI-0xec2d495f20adf65cd26e9e250c8cd5d863609afd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3432-harding-st-detroit-mi-0xec2d495f20adf65cd26e9e250c8cd5d863609afd.png",
-      ticker: "REALTOKEN-S-3432-HARDING-ST-DETROIT-MI",
-    },
-    {
-      address: "0x7909090541d646a262a3062639298772a2c79daa",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3510-EWALD-CIR-DETROIT-MI-0x7909090541d646a262a3062639298772a2c79daa",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3510-ewald-cir-detroit-mi-0x7909090541d646a262a3062639298772a2c79daa.png",
-      ticker: "REALTOKEN-S-3510-EWALD-CIR-DETROIT-MI",
-    },
-    {
-      address: "0x87b2fb660f790b936e42093036e0b519f0b50b24",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3588-OAKMAN-BLVD-DETROIT-MI-0x87b2fb660f790b936e42093036e0b519f0b50b24",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3588-oakman-blvd-detroit-mi-0x87b2fb660f790b936e42093036e0b519f0b50b24.png",
-      ticker: "REALTOKEN-S-3588-OAKMAN-BLVD-DETROIT-MI",
-    },
-    {
-      address: "0xcfe61eff2cde5c5885ba3a649ab092f56bd2830f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-3747-SCOVEL-PL-DETROIT-MI-0xcfe61eff2cde5c5885ba3a649ab092f56bd2830f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-3747-scovel-pl-detroit-mi-0xcfe61eff2cde5c5885ba3a649ab092f56bd2830f.png",
-      ticker: "REALTOKEN-S-3747-SCOVEL-PL-DETROIT-MI",
-    },
-    {
-      address: "0x934e4bed6f85295581697002fadd816b07c03406",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4000-TAYLOR-ST-DETROIT-MI-0x934e4bed6f85295581697002fadd816b07c03406",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4000-taylor-st-detroit-mi-0x934e4bed6f85295581697002fadd816b07c03406.png",
-      ticker: "REALTOKEN-S-4000-TAYLOR-ST-DETROIT-MI",
-    },
-    {
-      address: "0xe255caf8893382465368b8e1cd4ef8436acf0ade",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-402-S.KOSTNER-AVE-CHICAGO-IL-0xe255caf8893382465368b8e1cd4ef8436acf0ade",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-402-s.kostner-ave-chicago-il-0xe255caf8893382465368b8e1cd4ef8436acf0ade.png",
-      ticker: "REALTOKEN-S-402-S.KOSTNER-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0xd9e89bfebae447b42c1fa85c590716ec8820f737",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4061-GRAND-ST-DETROIT-MI-0xd9e89bfebae447b42c1fa85c590716ec8820f737",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4061-grand-st-detroit-mi-0xd9e89bfebae447b42c1fa85c590716ec8820f737.png",
-      ticker: "REALTOKEN-S-4061-GRAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0x8a25f83819fda66ff0fc6567c8327a5f154c2ec6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-425-STEWARD-AVE-JACKSON-MI-0x8a25f83819fda66ff0fc6567c8327a5f154c2ec6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-425-steward-ave-jackson-mi-0x8a25f83819fda66ff0fc6567c8327a5f154c2ec6.png",
-      ticker: "REALTOKEN-S-425-STEWARD-AVE-JACKSON-MI",
-    },
-    {
-      address: "0xa68b7779504b0ae372ddcc109f8786db9b91e93e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4340-EAST-71-CLEVELAND-OH_1-0xa68b7779504b0ae372ddcc109f8786db9b91e93e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4340-east-71-cleveland-oh_1-0xa68b7779504b0ae372ddcc109f8786db9b91e93e.png",
-      ticker: "REALTOKEN-S-4340-EAST-71-CLEVELAND-OH_1",
-    },
-    {
-      address: "0xee9a08fc54bf53353398f946db4cb2447276f850",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4340-EAST-71-CLEVELAND-OH-0xee9a08fc54bf53353398f946db4cb2447276f850",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4340-east-71-cleveland-oh-0xee9a08fc54bf53353398f946db4cb2447276f850.png",
-      ticker: "REALTOKEN-S-4340-EAST-71-CLEVELAND-OH",
-    },
-    {
-      address: "0xee2dacc1e9264cbcb19c46863373fbff4ba7a9bd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4342-4344-CORTLAND-ST-DETROIT-MI-0xee2dacc1e9264cbcb19c46863373fbff4ba7a9bd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4342-4344-cortland-st-detroit-mi-0xee2dacc1e9264cbcb19c46863373fbff4ba7a9bd.png",
-      ticker: "REALTOKEN-S-4342-4344-CORTLAND-ST-DETROIT-MI",
-    },
-    {
-      address: "0x96700ffae33c651bc329c3f3fbfe56e1f291f117",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4380-BEACONSFIELD-ST-DETROIT-MI-0x96700ffae33c651bc329c3f3fbfe56e1f291f117",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4380-beaconsfield-st-detroit-mi-0x96700ffae33c651bc329c3f3fbfe56e1f291f117.png",
-      ticker: "REALTOKEN-S-4380-BEACONSFIELD-ST-DETROIT-MI",
-    },
-    {
-      address: "0xefe82d6baf0db71f92889eb9d00721bd49121316",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4680-BUCKINGHAM-AVE-DETROIT-MI-0xefe82d6baf0db71f92889eb9d00721bd49121316",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4680-buckingham-ave-detroit-mi-0xefe82d6baf0db71f92889eb9d00721bd49121316.png",
-      ticker: "REALTOKEN-S-4680-BUCKINGHAM-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xe7b6de709ffc3bd237c2f2c800e1002f97a760f3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-4852-4854-W.CORTEZ-ST-CHICAGO-IL-0xe7b6de709ffc3bd237c2f2c800e1002f97a760f3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-4852-4854-w.cortez-st-chicago-il-0xe7b6de709ffc3bd237c2f2c800e1002f97a760f3.png",
-      ticker: "REALTOKEN-S-4852-4854-W.CORTEZ-ST-CHICAGO-IL",
-    },
-    {
-      address: "0xcdf955df8a7ae1264f3b4f8ee5fa68507e8528aa",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5278-5280-DREXEL-ST-DETROIT-MI-0xcdf955df8a7ae1264f3b4f8ee5fa68507e8528aa",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5278-5280-drexel-st-detroit-mi-0xcdf955df8a7ae1264f3b4f8ee5fa68507e8528aa.png",
-      ticker: "REALTOKEN-S-5278-5280-DREXEL-ST-DETROIT-MI",
-    },
-    {
-      address: "0x6133a54e3895f478ee6aae582d7dbc7bbb086b7d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5517-5519-ELMHURST-ST-DETROIT-MI-0x6133a54e3895f478ee6aae582d7dbc7bbb086b7d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5517-5519-elmhurst-st-detroit-mi-0x6133a54e3895f478ee6aae582d7dbc7bbb086b7d.png",
-      ticker: "REALTOKEN-S-5517-5519-ELMHURST-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa137d82197ea4cdfd5f008a91ba816b8324f59e1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5601-S.WOOD-ST-CHICAGO-IL-0xa137d82197ea4cdfd5f008a91ba816b8324f59e1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5601-s.wood-st-chicago-il-0xa137d82197ea4cdfd5f008a91ba816b8324f59e1.png",
-      ticker: "REALTOKEN-S-5601-S.WOOD-ST-CHICAGO-IL",
-    },
-    {
-      address: "0x43ab521302ff36039be6b425ddaea5ec30a0f8b5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5760-LAKEPOINTE-ST-DETROIT-MI-0x43ab521302ff36039be6b425ddaea5ec30a0f8b5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5760-lakepointe-st-detroit-mi-0x43ab521302ff36039be6b425ddaea5ec30a0f8b5.png",
-      ticker: "REALTOKEN-S-5760-LAKEPOINTE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x394d59797495848934acf61e680c1739a2cd8cfd",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5772-5774-CHALMERS-ST-DETROIT-MI-0x394d59797495848934acf61e680c1739a2cd8cfd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5772-5774-chalmers-st-detroit-mi-0x394d59797495848934acf61e680c1739a2cd8cfd.png",
-      ticker: "REALTOKEN-S-5772-5774-CHALMERS-ST-DETROIT-MI",
-    },
-    {
-      address: "0x062f0732a7daca652c3bd7d8ad51c3a920b25962",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-5846-CRANE-ST-DETROIT-MI-0x062f0732a7daca652c3bd7d8ad51c3a920b25962",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-5846-crane-st-detroit-mi-0x062f0732a7daca652c3bd7d8ad51c3a920b25962.png",
-      ticker: "REALTOKEN-S-5846-CRANE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x8a41b6b6177f35bfa6d677447d3fe0d5a0cec45e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-587-JEFFERSON-AVE-ROCHESTER-NY_1-0x8a41b6b6177f35bfa6d677447d3fe0d5a0cec45e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-587-jefferson-ave-rochester-ny_1-0x8a41b6b6177f35bfa6d677447d3fe0d5a0cec45e.png",
-      ticker: "REALTOKEN-S-587-JEFFERSON-AVE-ROCHESTER-NY_1",
-    },
-    {
-      address: "0xa29ae272bc89e5f315b2793925f700045f845d82",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-587-JEFFERSON-AVE-ROCHESTER-NY-0xa29ae272bc89e5f315b2793925f700045f845d82",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-587-jefferson-ave-rochester-ny-0xa29ae272bc89e5f315b2793925f700045f845d82.png",
-      ticker: "REALTOKEN-S-587-JEFFERSON-AVE-ROCHESTER-NY",
-    },
-    {
-      address: "0x2b683f8cc61de593f089bdddc01431c0d7ca2ee2",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-601-MILTON-ST-TOLEDO-OH-0x2b683f8cc61de593f089bdddc01431c0d7ca2ee2",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-601-milton-st-toledo-oh-0x2b683f8cc61de593f089bdddc01431c0d7ca2ee2.png",
-      ticker: "REALTOKEN-S-601-MILTON-ST-TOLEDO-OH",
-    },
-    {
-      address: "0x19a6a39b746c4647a01a3bf80751155969ddb15a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-616-E-131ST-ST-CLEVELAND-OH-0x19a6a39b746c4647a01a3bf80751155969ddb15a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-616-e-131st-st-cleveland-oh-0x19a6a39b746c4647a01a3bf80751155969ddb15a.png",
-      ticker: "REALTOKEN-S-616-E-131ST-ST-CLEVELAND-OH",
-    },
-    {
-      address: "0xdaf6b273691372e4eb2fe353624f8f4f768c2099",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-618-E-79TH-ST-CHICAGO-IL-0xdaf6b273691372e4eb2fe353624f8f4f768c2099",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-618-e-79th-st-chicago-il-0xdaf6b273691372e4eb2fe353624f8f4f768c2099.png",
-      ticker: "REALTOKEN-S-618-E-79TH-ST-CHICAGO-IL",
-    },
-    {
-      address: "0xd08d2b199e9e5df407427d4085877d1fdff3b1d6",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-6923-GREEVIEW-AVE-DETROIT-MI_1-0xd08d2b199e9e5df407427d4085877d1fdff3b1d6",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-6923-greeview-ave-detroit-mi_1-0xd08d2b199e9e5df407427d4085877d1fdff3b1d6.png",
-      ticker: "REALTOKEN-S-6923-GREEVIEW-AVE-DETROIT-MI_1",
-    },
-    {
-      address: "0x2830209f6573f10c481d946ba18b446429f30360",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-6923-GREEVIEW-AVE-DETROIT-MI-0x2830209f6573f10c481d946ba18b446429f30360",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-6923-greeview-ave-detroit-mi-0x2830209f6573f10c481d946ba18b446429f30360.png",
-      ticker: "REALTOKEN-S-6923-GREEVIEW-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x26ccc79ceeec918e01bbd5c04a64767919f9ec1a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-7109-7111-PILGRIM-ST-DETROIT-MI-0x26ccc79ceeec918e01bbd5c04a64767919f9ec1a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-7109-7111-pilgrim-st-detroit-mi-0x26ccc79ceeec918e01bbd5c04a64767919f9ec1a.png",
-      ticker: "REALTOKEN-S-7109-7111-PILGRIM-ST-DETROIT-MI",
-    },
-    {
-      address: "0x20170890ef210e402578f97d6b179784c45f3a1b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-7337-S-YALE-AVE-CHICAGO-IL-0x20170890ef210e402578f97d6b179784c45f3a1b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-7337-s-yale-ave-chicago-il-0x20170890ef210e402578f97d6b179784c45f3a1b.png",
-      ticker: "REALTOKEN-S-7337-S-YALE-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0x38de2858be53d603b1104f16aa67cf180002465d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-738-742-E.87TH-PL-CHICAGO-IL-0x38de2858be53d603b1104f16aa67cf180002465d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-738-742-e.87th-pl-chicago-il-0x38de2858be53d603b1104f16aa67cf180002465d.png",
-      ticker: "REALTOKEN-S-738-742-E.87TH-PL-CHICAGO-IL",
-    },
-    {
-      address: "0x950bc24510274163aabf83339424e7b49bf6a0c0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-7430-NETT-ST-DETROIT-MI-0x950bc24510274163aabf83339424e7b49bf6a0c0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-7430-nett-st-detroit-mi-0x950bc24510274163aabf83339424e7b49bf6a0c0.png",
-      ticker: "REALTOKEN-S-7430-NETT-ST-DETROIT-MI",
-    },
-    {
-      address: "0xc8ed28ce508811216030b96e2dc70883abad5408",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-7519-7521-WYKES-ST-DETROIT-MI-0xc8ed28ce508811216030b96e2dc70883abad5408",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-7519-7521-wykes-st-detroit-mi-0xc8ed28ce508811216030b96e2dc70883abad5408.png",
-      ticker: "REALTOKEN-S-7519-7521-WYKES-ST-DETROIT-MI",
-    },
-    {
-      address: "0x27c30545dc2ba4b3bfdcb9f807a0214f4b06f034",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8003-S-INGLESIDE-AVE-CHICAGO-IL-0x27c30545dc2ba4b3bfdcb9f807a0214f4b06f034",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8003-s-ingleside-ave-chicago-il-0x27c30545dc2ba4b3bfdcb9f807a0214f4b06f034.png",
-      ticker: "REALTOKEN-S-8003-S-INGLESIDE-AVE-CHICAGO-IL",
-    },
-    {
-      address: "0x8c60eccab34ffce7b54e985fc8b7ba280b45701d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8017-8019-S-PAULINA-ST-CHICAGO-IL-0x8c60eccab34ffce7b54e985fc8b7ba280b45701d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8017-8019-s-paulina-st-chicago-il-0x8c60eccab34ffce7b54e985fc8b7ba280b45701d.png",
-      ticker: "REALTOKEN-S-8017-8019-S-PAULINA-ST-CHICAGO-IL",
-    },
-    {
-      address: "0x7ad92301442b73bed8d9696d704ac24a0fef3b69",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8056-E-HOLLYWOOD-ST-DETROIT-MI-0x7ad92301442b73bed8d9696d704ac24a0fef3b69",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8056-e-hollywood-st-detroit-mi-0x7ad92301442b73bed8d9696d704ac24a0fef3b69.png",
-      ticker: "REALTOKEN-S-8056-E-HOLLYWOOD-ST-DETROIT-MI",
-    },
-    {
-      address: "0xb2960e73b260812e4326723c7136e7b1988a036a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8060-DREAMSICLE-DR-KISSIMMEE-FL-0xb2960e73b260812e4326723c7136e7b1988a036a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8060-dreamsicle-dr-kissimmee-fl-0xb2960e73b260812e4326723c7136e7b1988a036a.png",
-      ticker: "REALTOKEN-S-8060-DREAMSICLE-DR-KISSIMMEE-FL",
-    },
-    {
-      address: "0xe447e8ec034c9100c1ff9bc401b5cd2fe15c9dcc",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8065-LOST-SHAKER-LN-KISSIMMEE-FL-0xe447e8ec034c9100c1ff9bc401b5cd2fe15c9dcc",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8065-lost-shaker-ln-kissimmee-fl-0xe447e8ec034c9100c1ff9bc401b5cd2fe15c9dcc.png",
-      ticker: "REALTOKEN-S-8065-LOST-SHAKER-LN-KISSIMMEE-FL",
-    },
-    {
-      address: "0x92d31e19f88597f368825ba16410f263a844527a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8181-BLISS-ST-DETROIT-MI-0x92d31e19f88597f368825ba16410f263a844527a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8181-bliss-st-detroit-mi-0x92d31e19f88597f368825ba16410f263a844527a.png",
-      ticker: "REALTOKEN-S-8181-BLISS-ST-DETROIT-MI",
-    },
-    {
-      address: "0x2360fca74ed948ff4f962e369080a64a40a1300d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8366-SCHAEFER-HWY-DETROIT-MI-0x2360fca74ed948ff4f962e369080a64a40a1300d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8366-schaefer-hwy-detroit-mi-0x2360fca74ed948ff4f962e369080a64a40a1300d.png",
-      ticker: "REALTOKEN-S-8366-SCHAEFER-HWY-DETROIT-MI",
-    },
-    {
-      address: "0x690602eb0bf5607e3586f1d3e4c4601ef6e4a89f",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8531-INTERVALE-ST-DETROIT-MI-0x690602eb0bf5607e3586f1d3e4c4601ef6e4a89f",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8531-intervale-st-detroit-mi-0x690602eb0bf5607e3586f1d3e4c4601ef6e4a89f.png",
-      ticker: "REALTOKEN-S-8531-INTERVALE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x3c5654362fa005393ad9c793fe0fa74f0cd95bbb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8744-HOMER-ST-DETROIT-MI-0x3c5654362fa005393ad9c793fe0fa74f0cd95bbb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8744-homer-st-detroit-mi-0x3c5654362fa005393ad9c793fe0fa74f0cd95bbb.png",
-      ticker: "REALTOKEN-S-8744-HOMER-ST-DETROIT-MI",
-    },
-    {
-      address: "0x2a7c9f7719367006e9bd20d0555025efb86d7d5d",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-8809-BECKMAN-AVE-CLEVELAND-OH-0x2a7c9f7719367006e9bd20d0555025efb86d7d5d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-8809-beckman-ave-cleveland-oh-0x2a7c9f7719367006e9bd20d0555025efb86d7d5d.png",
-      ticker: "REALTOKEN-S-8809-BECKMAN-AVE-CLEVELAND-OH",
-    },
-    {
-      address: "0xa5c16ae5fd75f4f079f3e33f0124899bacf567f9",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-882-884-PINGREE-ST-DETROIT-MI-0xa5c16ae5fd75f4f079f3e33f0124899bacf567f9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-882-884-pingree-st-detroit-mi-0xa5c16ae5fd75f4f079f3e33f0124899bacf567f9.png",
-      ticker: "REALTOKEN-S-882-884-PINGREE-ST-DETROIT-MI",
-    },
-    {
-      address: "0xcb061ae1f9b618c44ac10a47a672bf438da01fd8",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-893-895-W.PHILADELPHIA-ST-DETROIT-MI-0xcb061ae1f9b618c44ac10a47a672bf438da01fd8",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-893-895-w.philadelphia-st-detroit-mi-0xcb061ae1f9b618c44ac10a47a672bf438da01fd8.png",
-      ticker: "REALTOKEN-S-893-895-W.PHILADELPHIA-ST-DETROIT-MI",
-    },
-    {
-      address: "0x76dbeb740ecd1f3b052a9afa302abc7eb4fb5390",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9133-DEVONSHIRE-RD-DETROIT-MI_1-0x76dbeb740ecd1f3b052a9afa302abc7eb4fb5390",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9133-devonshire-rd-detroit-mi_1-0x76dbeb740ecd1f3b052a9afa302abc7eb4fb5390.png",
-      ticker: "REALTOKEN-S-9133-DEVONSHIRE-RD-DETROIT-MI_1",
-    },
-    {
-      address: "0xec069eaa5c83763f288106506fecbd5dbe74d047",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9133-DEVONSHIRE-RD-DETROIT-MI-0xec069eaa5c83763f288106506fecbd5dbe74d047",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9133-devonshire-rd-detroit-mi-0xec069eaa5c83763f288106506fecbd5dbe74d047.png",
-      ticker: "REALTOKEN-S-9133-DEVONSHIRE-RD-DETROIT-MI",
-    },
-    {
-      address: "0x744ca59499be33f6a112eed3acca533954da1050",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9135-YORKSHIRE-RD-DETROIT-MI-0x744ca59499be33f6a112eed3acca533954da1050",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9135-yorkshire-rd-detroit-mi-0x744ca59499be33f6a112eed3acca533954da1050.png",
-      ticker: "REALTOKEN-S-9135-YORKSHIRE-RD-DETROIT-MI",
-    },
-    {
-      address: "0x964ee9e5d9d8abfc768f8d860cc6c33e75d37112",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9151-WHITTIER-AVE-DETROIT-MI-0x964ee9e5d9d8abfc768f8d860cc6c33e75d37112",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9151-whittier-ave-detroit-mi-0x964ee9e5d9d8abfc768f8d860cc6c33e75d37112.png",
-      ticker: "REALTOKEN-S-9151-WHITTIER-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xc1af55156b64da1d484fb13b1afdb1da8efa7733",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI -0xc1af55156b64da1d484fb13b1afdb1da8efa7733",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9165-kensington-ave-detroit-mi -0xc1af55156b64da1d484fb13b1afdb1da8efa7733.png",
-      ticker: "REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI ",
-    },
-    {
-      address: "0x3c56d5e887d8fa7ae1ba65bf7eccc25ec09eaf18",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI-0x3c56d5e887d8fa7ae1ba65bf7eccc25ec09eaf18",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9165-kensington-ave-detroit-mi-0x3c56d5e887d8fa7ae1ba65bf7eccc25ec09eaf18.png",
-      ticker: "REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xfd510a3c53666035900ceb4d4743bd869d98d57a",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI -0xfd510a3c53666035900ceb4d4743bd869d98d57a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9166-devonshire-rd-detroit-mi -0xfd510a3c53666035900ceb4d4743bd869d98d57a.png",
-      ticker: "REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI ",
-    },
-    {
-      address: "0xa69d7d4ddf397f3d1e7ebaf108555d1107b3b117",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI-0xa69d7d4ddf397f3d1e7ebaf108555d1107b3b117",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9166-devonshire-rd-detroit-mi-0xa69d7d4ddf397f3d1e7ebaf108555d1107b3b117.png",
-      ticker: "REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI",
-    },
-    {
-      address: "0x806690b7a093d2cf6419a515abedb7f28595bc5e",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9169-BOLEYN-ST-DETROIT-MI_1-0x806690b7a093d2cf6419a515abedb7f28595bc5e",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9169-boleyn-st-detroit-mi_1-0x806690b7a093d2cf6419a515abedb7f28595bc5e.png",
-      ticker: "REALTOKEN-S-9169-BOLEYN-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0x273a160eb5df613c8c99869f5ae4941f65bf94cb",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9169-BOLEYN-ST-DETROIT-MI-0x273a160eb5df613c8c99869f5ae4941f65bf94cb",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9169-boleyn-st-detroit-mi-0x273a160eb5df613c8c99869f5ae4941f65bf94cb.png",
-      ticker: "REALTOKEN-S-9169-BOLEYN-ST-DETROIT-MI",
-    },
-    {
-      address: "0x18e55343ecfc135e21916fcdb9788accb5b53caf",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9171-WHITTIER-AVE-DETROIT-MI-0x18e55343ecfc135e21916fcdb9788accb5b53caf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9171-whittier-ave-detroit-mi-0x18e55343ecfc135e21916fcdb9788accb5b53caf.png",
-      ticker: "REALTOKEN-S-9171-WHITTIER-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x53cebce6bd24f8e14da85ba0627a92336bd4f515",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9200-HARVARD-RD-DETROIT-MI-0x53cebce6bd24f8e14da85ba0627a92336bd4f515",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9200-harvard-rd-detroit-mi-0x53cebce6bd24f8e14da85ba0627a92336bd4f515.png",
-      ticker: "REALTOKEN-S-9200-HARVARD-RD-DETROIT-MI",
-    },
-    {
-      address: "0x1106d8755ffafb1f1820b3668e354336d9085a12",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9201-LONGACRE-ST-DETROIT-MI-0x1106d8755ffafb1f1820b3668e354336d9085a12",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9201-longacre-st-detroit-mi-0x1106d8755ffafb1f1820b3668e354336d9085a12.png",
-      ticker: "REALTOKEN-S-9201-LONGACRE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x67a83b28f6dd8c07301495ee2c6f83b73fd21092",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9309-COURVILLE-ST-DETROIT-MI_1-0x67a83b28f6dd8c07301495ee2c6f83b73fd21092",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9309-courville-st-detroit-mi_1-0x67a83b28f6dd8c07301495ee2c6f83b73fd21092.png",
-      ticker: "REALTOKEN-S-9309-COURVILLE-ST-DETROIT-MI_1",
-    },
-    {
-      address: "0xa9e8a9d9729e766a72763253f2afd1b1cf9053a0",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9309-COURVILLE-ST-DETROIT-MI-0xa9e8a9d9729e766a72763253f2afd1b1cf9053a0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9309-courville-st-detroit-mi-0xa9e8a9d9729e766a72763253f2afd1b1cf9053a0.png",
-      ticker: "REALTOKEN-S-9309-COURVILLE-ST-DETROIT-MI",
-    },
-    {
-      address: "0x65d81bf81a65b177012b323f14970071c5099226",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9415-9417-RAVENSWOOD-ST-DETROIT-MI-0x65d81bf81a65b177012b323f14970071c5099226",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9415-9417-ravenswood-st-detroit-mi-0x65d81bf81a65b177012b323f14970071c5099226.png",
-      ticker: "REALTOKEN-S-9415-9417-RAVENSWOOD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x750fa12ae51d1515c893c1aaabe2c135937a2c8b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9465-BEACONSFIELD-ST-DETROIT-MI-0x750fa12ae51d1515c893c1aaabe2c135937a2c8b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9465-beaconsfield-st-detroit-mi-0x750fa12ae51d1515c893c1aaabe2c135937a2c8b.png",
-      ticker: "REALTOKEN-S-9465-BEACONSFIELD-ST-DETROIT-MI",
-    },
-    {
-      address: "0x1e001730a23c7ebaff35bc8bc90da5a9b20804a4",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9481-WAYBURN-ST-DETROIT-MI-0x1e001730a23c7ebaff35bc8bc90da5a9b20804a4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9481-wayburn-st-detroit-mi-0x1e001730a23c7ebaff35bc8bc90da5a9b20804a4.png",
-      ticker: "REALTOKEN-S-9481-WAYBURN-ST-DETROIT-MI",
-    },
-    {
-      address: "0x219c820c2d25d8937601d8713235b556c4a37f62",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9585-ABINGTON-AVE-DETROIT-MI-0x219c820c2d25d8937601d8713235b556c4a37f62",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9585-abington-ave-detroit-mi-0x219c820c2d25d8937601d8713235b556c4a37f62.png",
-      ticker: "REALTOKEN-S-9585-ABINGTON-AVE-DETROIT-MI",
-    },
-    {
-      address: "0xf98be7ddab511622b5de91039c48f1f2e37d0bc1",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9624-ABINGTON-AVE-DETROIT-MI-0xf98be7ddab511622b5de91039c48f1f2e37d0bc1",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9624-abington-ave-detroit-mi-0xf98be7ddab511622b5de91039c48f1f2e37d0bc1.png",
-      ticker: "REALTOKEN-S-9624-ABINGTON-AVE-DETROIT-MI",
-    },
-    {
-      address: "0x73bde888664df8ddfd156b52e6999eeabab57c94",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9717-EVERTS-ST-DETROIT-MI-0x73bde888664df8ddfd156b52e6999eeabab57c94",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9717-everts-st-detroit-mi-0x73bde888664df8ddfd156b52e6999eeabab57c94.png",
-      ticker: "REALTOKEN-S-9717-EVERTS-ST-DETROIT-MI",
-    },
-    {
-      address: "0xef0c14c5d7da4d0447c28da7a9c8145d0a5a6f61",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9795-9797-CHENLOT-ST-DETROIT-MI-0xef0c14c5d7da4d0447c28da7a9c8145d0a5a6f61",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9795-9797-chenlot-st-detroit-mi-0xef0c14c5d7da4d0447c28da7a9c8145d0a5a6f61.png",
-      ticker: "REALTOKEN-S-9795-9797-CHENLOT-ST-DETROIT-MI",
-    },
-    {
-      address: "0xa2b2ae397492c7ed8a4c1e751ac72d2b59947e6b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier:
-        "ETH.REALTOKEN-S-9920-BISHOP-ST-DETROIT-MI-0xa2b2ae397492c7ed8a4c1e751ac72d2b59947e6b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.realtoken-s-9920-bishop-st-detroit-mi-0xa2b2ae397492c7ed8a4c1e751ac72d2b59947e6b.png",
-      ticker: "REALTOKEN-S-9920-BISHOP-ST-DETROIT-MI",
-    },
-    {
       address: "0xfe3e6a25e6b192a42a44ecddcd13796471735acf",
       chain: "ETH",
       chainId: "1",
@@ -11485,6 +7985,16 @@ export const list = {
       ticker: "rETH",
     },
     {
+      address: "0x57ab1e0003f623289cd798b1824be09a793e4bec",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.reUSD-0x57ab1e0003f623289cd798b1824be09a793e4bec",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.reusd-0x57ab1e0003f623289cd798b1824be09a793e4bec.png",
+      ticker: "reUSD",
+    },
+    {
       address: "0x557b933a7c2c45672b610f8954a3deb39a51a8ca",
       chain: "ETH",
       chainId: "1",
@@ -11543,16 +8053,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.ring-0x9469d013805bffb7d3debe5e7839237e535ec483.png",
       ticker: "RING",
-    },
-    {
-      address: "0xc17c30e98541188614df99239cabd40280810ca3",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.RISE-0xc17c30e98541188614df99239cabd40280810ca3",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.rise-0xc17c30e98541188614df99239cabd40280810ca3.png",
-      ticker: "RISE",
     },
     {
       address: "0x607f4c5bb672230e8672085532f7e901544a7375",
@@ -11745,16 +8245,6 @@ export const list = {
       ticker: "SAI",
     },
     {
-      address: "0xfa14fa6958401314851a17d6c5360ca29f74b57b",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SAITO-0xfa14fa6958401314851a17d6c5360ca29f74b57b",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.saito-0xfa14fa6958401314851a17d6c5360ca29f74b57b.png",
-      ticker: "SAITO",
-    },
-    {
       address: "0x4156d3342d5c385a87d264f90653733592000581",
       chain: "ETH",
       chainId: "1",
@@ -11863,6 +8353,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.sdt-0x73968b9a57c6e53d41345fd57a6e6ae27d6cdb2f.png",
       ticker: "SDT",
+    },
+    {
+      address: "0xbdf43ecadc5cef51b7d1772f722e40596bc1788b",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.SEI-0xbdf43ecadc5cef51b7d1772f722e40596bc1788b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.sei-0xbdf43ecadc5cef51b7d1772f722e40596bc1788b.png",
+      ticker: "SEI",
     },
     {
       address: "0x8be3460a480c80728a8c4d7a5d5303c85ba7b3b9",
@@ -13105,6 +9605,16 @@ export const list = {
       ticker: "USD0++",
     },
     {
+      address: "0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.USD1-0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usd1-0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d.png",
+      ticker: "USD1",
+    },
+    {
       address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       chain: "ETH",
       chainId: "1",
@@ -13185,6 +9695,26 @@ export const list = {
       ticker: "USDP",
     },
     {
+      address: "0xc83e27f270cce0a3a3a29521173a83f402c1768b",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.USDQ-0xc83e27f270cce0a3a3a29521173a83f402c1768b",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdq-0xc83e27f270cce0a3a3a29521173a83f402c1768b.png",
+      ticker: "USDQ",
+    },
+    {
+      address: "0x7b43e3875440b44613dc3bc08e7763e6da63c8f8",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.USDR-0x7b43e3875440b44613dc3bc08e7763e6da63c8f8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdr-0x7b43e3875440b44613dc3bc08e7763e6da63c8f8.png",
+      ticker: "USDR",
+    },
+    {
       address: "0xdc035d45d973e3ec169d2276ddab16f1e407384f",
       chain: "ETH",
       chainId: "1",
@@ -13213,6 +9743,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.ushi-0x6dca182ac5e3f99985bc4ee0f726d6472ab1ec55.png",
       ticker: "USHI",
+    },
+    {
+      address: "0x66a1e37c9b0eaddca17d3662d6c05f4decf3e110",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.USR-0x66a1e37c9b0eaddca17d3662d6c05f4decf3e110",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usr-0x66a1e37c9b0eaddca17d3662d6c05f4decf3e110.png",
+      ticker: "USR",
     },
     {
       address: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
@@ -13345,16 +9885,6 @@ export const list = {
       ticker: "VOICE",
     },
     {
-      address: "0x7db5af2b9624e1b3b4bb69d6debd9ad1016a58ac",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 9,
-      identifier: "ETH.VOLT-0x7db5af2b9624e1b3b4bb69d6debd9ad1016a58ac",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.volt-0x7db5af2b9624e1b3b4bb69d6debd9ad1016a58ac.png",
-      ticker: "VOLT",
-    },
-    {
       address: "0xf411903cbc70a74d22900a5de66a2dda66507255",
       chain: "ETH",
       chainId: "1",
@@ -13363,16 +9893,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.vra-0xf411903cbc70a74d22900a5de66a2dda66507255.png",
       ticker: "VRA",
-    },
-    {
-      address: "0x87de305311d5788e8da38d19bb427645b09cb4e5",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.VRX-0x87de305311d5788e8da38d19bb427645b09cb4e5",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.vrx-0x87de305311d5788e8da38d19bb427645b09cb4e5.png",
-      ticker: "VRX",
     },
     {
       address: "0x1b40183efb4dd766f11bda7a7c3ad8982e998421",
@@ -13433,6 +9953,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.w-0xb0ffa8000886e57f86dd5264b9582b2ad87b2b91.png",
       ticker: "W",
+    },
+    {
+      address: "0xd4fa2d31b7968e448877f69a96de69f5de8cd23e",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.waEthUSDC-0xd4fa2d31b7968e448877f69a96de69f5de8cd23e",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.waethusdc-0xd4fa2d31b7968e448877f69a96de69f5de8cd23e.png",
+      ticker: "waEthUSDC",
+    },
+    {
+      address: "0x7bc3485026ac48b6cf9baf0a377477fff5703af8",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 6,
+      identifier: "ETH.waEthUSDT-0x7bc3485026ac48b6cf9baf0a377477fff5703af8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.waethusdt-0x7bc3485026ac48b6cf9baf0a377477fff5703af8.png",
+      ticker: "waEthUSDT",
     },
     {
       address: "0x256d1fce1b1221e8398f65f9b36033ce50b2d497",
@@ -13515,13 +10055,13 @@ export const list = {
       ticker: "wCFG",
     },
     {
-      address: "0x61cc6af18c351351148815c5f4813a16dee7a7e4",
+      address: "0xef4461891dfb3ac8572ccf7c794664a8dd927945",
       chain: "ETH",
       chainId: "1",
       decimals: 18,
-      identifier: "ETH.WCT-0x61cc6af18c351351148815c5f4813a16dee7a7e4",
+      identifier: "ETH.WCT-0xef4461891dfb3ac8572ccf7c794664a8dd927945",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.wct-0x61cc6af18c351351148815c5f4813a16dee7a7e4.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.wct-0xef4461891dfb3ac8572ccf7c794664a8dd927945.png",
       ticker: "WCT",
     },
     {
@@ -13735,16 +10275,6 @@ export const list = {
       ticker: "X2Y2",
     },
     {
-      address: "0x70008f18fc58928dce982b0a69c2c21ff80dca54",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.X7R-0x70008f18fc58928dce982b0a69c2c21ff80dca54",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.x7r-0x70008f18fc58928dce982b0a69c2c21ff80dca54.png",
-      ticker: "X7R",
-    },
-    {
       address: "0x35e78b3982e87ecfd5b3f3265b601c046cdbe232",
       chain: "ETH",
       chainId: "1",
@@ -13785,6 +10315,16 @@ export const list = {
       ticker: "XCAD",
     },
     {
+      address: "0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.XCN-0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.xcn-0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18.png",
+      ticker: "XCN",
+    },
+    {
       address: "0x72b886d09c117654ab7da13a14d603001de0b777",
       chain: "ETH",
       chainId: "1",
@@ -13813,16 +10353,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.xeth-0xe063f04f280c60aeca68b38341c2eecbec703ae2.png",
       ticker: "xETH",
-    },
-    {
-      address: "0x76bc677d444f1e9d57daf5187ee2b7dc852745ae",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.XFT-0x76bc677d444f1e9d57daf5187ee2b7dc852745ae",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.xft-0x76bc677d444f1e9d57daf5187ee2b7dc852745ae.png",
-      ticker: "XFT",
     },
     {
       address: "0x892a6f9df0147e5f079b0993f486f9aca3c87881",
@@ -13855,16 +10385,6 @@ export const list = {
       ticker: "XMON",
     },
     {
-      address: "0x40fd72257597aa14c7231a7b1aaa29fce868f677",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.XOR-0x40fd72257597aa14c7231a7b1aaa29fce868f677",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.xor-0x40fd72257597aa14c7231a7b1aaa29fce868f677.png",
-      ticker: "XOR",
-    },
-    {
       address: "0xd7efb00d12c2c13131fd319336fdf952525da2af",
       chain: "ETH",
       chainId: "1",
@@ -13873,16 +10393,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.xpr-0xd7efb00d12c2c13131fd319336fdf952525da2af.png",
       ticker: "XPR",
-    },
-    {
-      address: "0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.xrETH-0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.xreth-0xbb22d59b73d7a6f3a8a83a214becc67eb3b511fe.png",
-      ticker: "xrETH",
     },
     {
       address: "0x7de91b204c1c737bcee6f000aaa6569cf7061cb7",
@@ -13923,16 +10433,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/eth.xyo-0x55296f69f40ea6d20e478533c15a6b08b654e758.png",
       ticker: "XYO",
-    },
-    {
-      address: "0x48f07301e9e29c3c38a80ae8d9ae771f224f1054",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.XZAR-0x48f07301e9e29c3c38a80ae8d9ae771f224f1054",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.xzar-0x48f07301e9e29c3c38a80ae8d9ae771f224f1054.png",
-      ticker: "XZAR",
     },
     {
       address: "0x0aacfbec6a24756c20d41914f2caba817c0d8521",

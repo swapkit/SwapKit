@@ -2,23 +2,23 @@ export const list = {
   provider: "THORCHAIN",
   chainId: "thorchain-1",
   name: "THORCHAIN",
-  timestamp: "2025-01-22T13:31:17.516Z",
+  timestamp: "2025-05-01T16:02:50.014Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 68,
+  count: 69,
   tokens: [
     {
       chain: "AVAX",
       chainId: "43114",
       decimals: 18,
-      identifier: "AVAX.AVAX",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/avax.avax.png",
+      identifier: "AVAX.ETH",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/avax.eth.png",
       shortCode: "a",
-      ticker: "AVAX",
+      ticker: "ETH",
     },
     {
       address: "0xfe6b19286885a4f7f55adad09c3cd1f906d2478f",
@@ -315,6 +315,16 @@ export const list = {
       ticker: "XRUNE",
     },
     {
+      address: "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.YFI-0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.yfi-0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e.png",
+      ticker: "YFI",
+    },
+    {
       chain: "GAIA",
       chainId: "cosmoshub-4",
       decimals: 6,
@@ -336,9 +346,9 @@ export const list = {
       chain: "THOR",
       chainId: "thorchain-1",
       decimals: 8,
-      identifier: "THOR.AVAX/AVAX",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/avax.avax.png",
-      ticker: "AVAX",
+      identifier: "THOR.AVAX/ETH",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/avax.eth.png",
+      ticker: "ETH",
     },
     {
       address: "0xfe6b19286885a4f7f55adad09c3cd1f906d2478f",
