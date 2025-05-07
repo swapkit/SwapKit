@@ -18,5 +18,10 @@
     "@swapkit/ui": "0.0.1",
     "@swapkit/wallets": "2.0.20"
   },
-  "changesets": ["early-parrots-nail", "few-islands-ask", "tired-bikes-hang"]
+  "changesets": [
+    "bumpy-falcons-invite",
+    "early-parrots-nail",
+    "few-islands-ask",
+    "tired-bikes-hang"
+  ]
 }

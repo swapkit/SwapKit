@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.2
+
+### Patch Changes
+
+- [#1276](https://github.com/thorswap/SwapKit/pull/1276) [`90539f9`](https://github.com/thorswap/SwapKit/commit/90539f947df9d424c6c3f0d0cc695e08285d2581) Thanks [@towanTG](https://github.com/towanTG)! - Updates token lists
+
 ## 3.0.0-beta.1
 
 ### Patch Changes
