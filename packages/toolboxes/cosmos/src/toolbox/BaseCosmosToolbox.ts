@@ -6,8 +6,7 @@ import {
   Chain,
   ChainId,
   ChainIdToChain,
-  RPC_URLS,
-  RPC_URLS,
+  type DerivationPath,
   RPC_URLS,
 } from "@swapkit/helpers";
 

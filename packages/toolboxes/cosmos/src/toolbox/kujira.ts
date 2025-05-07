@@ -1,6 +1,13 @@
 import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type { Account } from "@cosmjs/stargate";
-import { type AssetValue, BaseDecimal, ChainId, DerivationPath, RPC_URLS } from "@swapkit/helpers";
+import {
+  type AssetValue,
+  BaseDecimal,
+  ChainId,
+  DerivationPath,
+  RPC_URLS,
+  SwapKitNumber,
+} from "@swapkit/helpers";
 
 import { CosmosClient } from "../cosmosClient";
 import {
