@@ -1,7 +1,15 @@
 import { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } from "@cosmjs/crypto";
 import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { SwapKitApi } from "@swapkit/api";
-import { AssetValue, Chain, ChainId, ChainIdToChain, type DerivationPath } from "@swapkit/helpers";
+import {
+  AssetValue,
+  Chain,
+  ChainId,
+  ChainIdToChain,
+  RPC_URLS,
+  RPC_URLS,
+  RPC_URLS,
+} from "@swapkit/helpers";
 
 import { CosmosClient } from "../cosmosClient";
 import type { ToolboxParams } from "../index";
@@ -99,7 +107,7 @@ export const cosmosValidateAddress = ({
 
     case Chain.Kujira: {
       const client = new CosmosClient({
-        server: server || "https://lcd-kujira.synergynodes.com/",
+        server: server || RPC_URLS.KUJI,
         chainId: ChainId.Kujira,
         prefix: "kujira",
       });

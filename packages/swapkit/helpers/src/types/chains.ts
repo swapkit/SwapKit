@@ -222,7 +222,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Dogecoin]: "https://node-router.thorswap.net/dogecoin",
   [Chain.Ethereum]: "https://ethereum-rpc.publicnode.com",
   [Chain.Fiat]: "",
-  [Chain.Kujira]: "https://rpc-kujira.synergynodes.com/",
+  [Chain.Kujira]: "https://kujira-rpc.publicnode.com:443",
   [Chain.Litecoin]: "https://node-router.thorswap.net/litecoin",
   [Chain.Maya]: "https://tendermint.mayachain.info",
   [Chain.Optimism]: "https://mainnet.optimism.io",

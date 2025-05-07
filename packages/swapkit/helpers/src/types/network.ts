@@ -11,7 +11,7 @@ export enum RPCUrl {
   Dash = "https://dash-rpc.publicnode.com",
   Dogecoin = "https://node-router.thorswap.net/dogecoin",
   Ethereum = "https://ethereum-rpc.publicnode.com",
-  Kujira = "https://rpc-kujira.synergynodes.com/",
+  Kujira = "https://kujira-rpc.publicnode.com:443",
   Litecoin = "https://node-router.thorswap.net/litecoin",
   Maya = "https://tendermint.mayachain.info",
   MayaStagenet = "https://stagenet.tendermint.mayachain.info",

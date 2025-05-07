@@ -1,12 +1,6 @@
 import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type { Account } from "@cosmjs/stargate";
-import {
-  type AssetValue,
-  BaseDecimal,
-  ChainId,
-  DerivationPath,
-  SwapKitNumber,
-} from "@swapkit/helpers";
+import { type AssetValue, BaseDecimal, ChainId, DerivationPath, RPC_URLS } from "@swapkit/helpers";
 
 import { CosmosClient } from "../cosmosClient";
 import {
@@ -32,7 +26,7 @@ async function getFees(swapkitApiKey?: string) {
 
 export const KujiraToolbox = ({ server, swapkitApiKey }: ToolboxParams = {}): KujiraToolboxType => {
   const client = new CosmosClient({
-    server: server || "https://lcd-kujira.synergynodes.com/",
+    server: server || RPC_URLS.KUJI,
     chainId: ChainId.Kujira,
     prefix: "kujira",
   });
