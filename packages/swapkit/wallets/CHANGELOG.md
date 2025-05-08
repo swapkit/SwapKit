@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.1.7
+
+### Patch Changes
+
+- Updated dependencies [[`fb39d6a`](https://github.com/thorswap/SwapKit/commit/fb39d6a0c2f53945c7b1a87e5eb1f9547f6d0c26)]:
+  - @swapkit/wallet-ctrl@2.3.5
+
 ## 2.1.6
 
 ### Patch Changes
