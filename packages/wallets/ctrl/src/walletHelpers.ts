@@ -13,7 +13,12 @@ import {
   getRPCUrl,
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
-import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolbox-evm";
+import type {
+  ApproveParams,
+  CallParams,
+  TransferParams as EVMTransferParams,
+  EVMTxParams,
+} from "@swapkit/toolbox-evm";
 import type { PublicKey, SOLToolbox, SolanaProvider, Transaction } from "@swapkit/toolbox-solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
@@ -274,63 +279,30 @@ export async function solanaSignTransaction(transaction: Transaction) {
 }
 
 export function getCtrlMethods(provider: BrowserProvider) {
-  return {
-    call: async <T>({
-      contractAddress,
-      abi,
-      funcName,
-      funcParams = [],
-      txOverrides,
-    }: CallParams): Promise<T> => {
-      const contractProvider = provider;
-      if (!contractAddress) {
-        throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
-      }
-      const { createContract, createContractTxObject, isStateChangingCall, toHexString } =
-        await import("@swapkit/toolbox-evm");
+  const call = async <T>({
+    contractAddress,
+    abi,
+    funcName,
+    funcParams = [],
+    txOverrides,
+  }: CallParams): Promise<T> => {
+    const contractProvider = provider;
+    if (!contractAddress) {
+      throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
+    }
+    const { createContract, createContractTxObject, isStateChangingCall, toHexString } =
+      await import("@swapkit/toolbox-evm");
 
-      const isStateChanging = isStateChangingCall(abi, funcName);
+    const isStateChanging = isStateChangingCall(abi, funcName);
 
-      if (isStateChanging) {
-        const { value, from, to, data } = await createContractTxObject(contractProvider, {
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        });
-
-        return provider.send("eth_sendTransaction", [
-          {
-            value: toHexString(BigInt(value || 0)),
-            from,
-            to,
-            data: data || "0x",
-          } as any,
-        ]);
-      }
-      const contract = createContract(contractAddress, abi, contractProvider);
-
-      const result = await contract[funcName]?.(...funcParams);
-
-      return typeof result?.hash === "string" ? result?.hash : result;
-    },
-    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, createContractTxObject, toHexString } = await import(
-        "@swapkit/toolbox-evm"
-      );
-      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
-      const txOverrides = { from };
-
-      const functionCallParams = {
-        contractAddress: assetAddress,
-        abi: erc20ABI,
-        funcName: "approve",
+    if (isStateChanging) {
+      const { value, from, to, data } = await createContractTxObject(contractProvider, {
+        contractAddress,
+        abi,
+        funcName,
         funcParams,
         txOverrides,
-      };
-
-      const { value, to, data } = await createContractTxObject(provider, functionCallParams);
+      });
 
       return provider.send("eth_sendTransaction", [
         {
@@ -340,23 +312,110 @@ export function getCtrlMethods(provider: BrowserProvider) {
           data: data || "0x",
         } as any,
       ]);
-    },
-    sendTransaction: async (tx: EVMTxParams) => {
-      const { from, to, data, value } = tx;
-      if (!to) {
-        throw new SwapKitError("wallet_ctrl_send_transaction_no_address");
-      }
+    }
+    const contract = createContract(contractAddress, abi, contractProvider);
 
-      const { toHexString } = await import("@swapkit/toolbox-evm");
+    const result = await contract[funcName]?.(...funcParams);
 
-      return provider.send("eth_sendTransaction", [
-        {
-          value: toHexString(BigInt(value || 0)),
-          from,
-          to,
-          data: data || "0x",
-        } as any,
-      ]);
-    },
+    return typeof result?.hash === "string" ? result?.hash : result;
+  };
+
+  const approve = async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
+    const { MAX_APPROVAL, createContractTxObject, toHexString } = await import(
+      "@swapkit/toolbox-evm"
+    );
+    const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+    const txOverrides = { from };
+
+    const functionCallParams = {
+      contractAddress: assetAddress,
+      abi: erc20ABI,
+      funcName: "approve",
+      funcParams,
+      txOverrides,
+    };
+
+    const { value, to, data } = await createContractTxObject(provider, functionCallParams);
+
+    return provider.send("eth_sendTransaction", [
+      {
+        value: toHexString(BigInt(value || 0)),
+        from,
+        to,
+        data: data || "0x",
+      } as any,
+    ]);
+  };
+
+  const sendTransaction = async (tx: EVMTxParams) => {
+    const { from, to, data, value } = tx;
+    if (!to) {
+      throw new SwapKitError("wallet_ctrl_send_transaction_no_address");
+    }
+
+    const { toHexString } = await import("@swapkit/toolbox-evm");
+
+    return provider.send("eth_sendTransaction", [
+      {
+        value: toHexString(BigInt(value || 0)),
+        from,
+        to,
+        data: data || "0x",
+      } as any,
+    ]);
+  };
+
+  const transfer = async (params: EVMTransferParams) => {
+    const {
+      assetValue,
+      recipient,
+      memo,
+      from,
+      maxFeePerGas,
+      maxPriorityFeePerGas,
+      gasPrice,
+      feeOptionKey,
+      data,
+    } = params;
+
+    const txAmount = assetValue.getBaseValue("bigint");
+    const chain = assetValue.chain as EVMChain;
+
+    if (!from) throw new SwapKitError("toolbox_evm_no_from_address");
+
+    if (!assetValue.isGasAsset) {
+      const { getTokenAddress } = await import("@swapkit/toolbox-evm");
+      const contractAddress = getTokenAddress(assetValue, chain);
+      if (!contractAddress) throw new SwapKitError("toolbox_evm_no_contract_address");
+
+      // Transfer ERC20
+      return call<string>({
+        contractAddress,
+        abi: erc20ABI,
+        funcName: "transfer",
+        funcParams: [recipient, txAmount],
+        txOverrides: { from, maxFeePerGas, maxPriorityFeePerGas, gasPrice },
+        feeOption: feeOptionKey,
+      });
+    }
+
+    const { hexlify, toUtf8Bytes } = await import("ethers");
+
+    // Transfer ETH
+    const txObject = {
+      from,
+      to: recipient,
+      value: txAmount,
+      data: data || hexlify(toUtf8Bytes(memo || "")),
+    };
+
+    return sendTransaction(txObject);
+  };
+
+  return {
+    call,
+    approve,
+    sendTransaction,
+    transfer,
   };
 }
