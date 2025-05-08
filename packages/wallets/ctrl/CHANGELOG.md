@@ -1,5 +1,11 @@
 # @swapkit/wallet-xdefi
 
+## 2.3.5
+
+### Patch Changes
+
+- [#1278](https://github.com/thorswap/SwapKit/pull/1278) [`fb39d6a`](https://github.com/thorswap/SwapKit/commit/fb39d6a0c2f53945c7b1a87e5eb1f9547f6d0c26) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Transfer for ctrl wallet
+
 ## 2.3.4
 
 ### Patch Changes
