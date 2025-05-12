@@ -20,14 +20,9 @@ import {
   getMemoForTcyStake,
 } from "@swapkit/helpers";
 
-import { basePlugin } from "./basePlugin.ts";
-import { prepareTxParams, validateAddressType } from "./shared.ts";
-import type {
-  AddLiquidityParams,
-  CoreTxParams,
-  CreateLiquidityParams,
-  LoanParams,
-} from "./types.ts";
+import { basePlugin } from "./basePlugin";
+import { prepareTxParams, validateAddressType } from "./shared";
+import type { AddLiquidityParams, CoreTxParams, CreateLiquidityParams, LoanParams } from "./types";
 
 type SupportedChain = EVMChain | Chain.THORChain | UTXOChain | Chain.Cosmos;
 
