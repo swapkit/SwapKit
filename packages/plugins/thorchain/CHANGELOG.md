@@ -1,5 +1,11 @@
 # @swapkit/plugin-thorchain
 
+## 2.5.5
+
+### Patch Changes
+
+- [#1280](https://github.com/thorswap/SwapKit/pull/1280) [`3b5c029`](https://github.com/thorswap/SwapKit/commit/3b5c0290e196a812c3d7f2e800dcb34d0a8101ff) Thanks [@towanTG](https://github.com/towanTG)! - Fixes dust threshhold if chain has less decimals than thorchain
+
 ## 2.5.4
 
 ### Patch Changes
