@@ -1,6 +1,7 @@
 import type { InboundAddressesItem, QuoteResponseRoute } from "@swapkit/api";
 import {
   AssetValue,
+  BaseDecimal,
   Chain,
   type EVMChain,
   type ErrorKeys,
@@ -19,9 +20,14 @@ import {
   getMemoForTcyStake,
 } from "@swapkit/helpers";
 
-import { basePlugin } from "./basePlugin";
-import { prepareTxParams, validateAddressType } from "./shared";
-import type { AddLiquidityParams, CoreTxParams, CreateLiquidityParams, LoanParams } from "./types";
+import { basePlugin } from "./basePlugin.ts";
+import { prepareTxParams, validateAddressType } from "./shared.ts";
+import type {
+  AddLiquidityParams,
+  CoreTxParams,
+  CreateLiquidityParams,
+  LoanParams,
+} from "./types.ts";
 
 type SupportedChain = EVMChain | Chain.THORChain | UTXOChain | Chain.Cosmos;
 
@@ -101,8 +107,7 @@ function plugin({ getWallet, stagenet = false }: SwapKitPluginParams) {
               getChecksumAddressFromAsset({ chain, symbol, ticker }, chain),
               assetValue.getBaseValue("string"),
               params.memo,
-              rest.expiration ||
-                Number.parseInt(`${(new Date().getTime() + 15 * 60 * 1000) / 1000}`),
+              rest.expiration || Number.parseInt(`${(Date.now() + 15 * 60 * 1000) / 1000}`),
             ],
             txOverrides: {
               from: params.from,
@@ -223,7 +228,7 @@ function plugin({ getWallet, stagenet = false }: SwapKitPluginParams) {
     return deposit({
       assetValue: AssetValue.from({
         chain,
-        fromBaseDecimal: 8,
+        fromBaseDecimal: Math.min(BaseDecimal[chain], BaseDecimal[Chain.THORChain]),
         value: chain !== Chain.THORChain ? dust_threshold : 0,
       }),
       recipient: inboundData.address,
