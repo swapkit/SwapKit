@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.3
+
+### Minor Changes
+
+- [#1282](https://github.com/thorswap/SwapKit/pull/1282) [`54fb82a`](https://github.com/thorswap/SwapKit/commit/54fb82a0a13e63a22ba208af3ab76efe59d9a20e) Thanks [@towanTG](https://github.com/towanTG)! - Fix Avax common asset info
+
+- [#1282](https://github.com/thorswap/SwapKit/pull/1282) [`54fb82a`](https://github.com/thorswap/SwapKit/commit/54fb82a0a13e63a22ba208af3ab76efe59d9a20e) Thanks [@towanTG](https://github.com/towanTG)! - Update more avax ug logic
+
 ## 3.0.0-beta.2
 
 ### Patch Changes
