@@ -142,6 +142,10 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       identifier: `${assetString.toUpperCase()}.BNB`,
       decimal,
     }))
+    .with(Chain.Avalanche, () => ({
+      identifier: `${assetString.toUpperCase()}.AVAX`,
+      decimal,
+    }))
     .with(
       ...UTXOChains,
       Chain.Solana,
