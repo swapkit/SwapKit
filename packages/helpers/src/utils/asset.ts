@@ -23,7 +23,6 @@ export const CommonAssetStrings = [
 
 const ethGasChains = [
   Chain.Arbitrum,
-  Chain.Avalanche,
   Chain.Base,
   Chain.Ethereum,
   Chain.Optimism,
@@ -113,6 +112,7 @@ export function getGasAsset({ chain }: { chain: Chain }) {
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
   return match(chain)
     .with(...ethGasChains, () => symbol === "ETH")
+    .with(Chain.Avalanche, () => symbol === "AVAX")
     .with(Chain.BinanceSmartChain, () => symbol === "BNB")
     .with(Chain.Maya, () => symbol === "CACAO")
     .with(Chain.Cosmos, () => symbol === "ATOM")
