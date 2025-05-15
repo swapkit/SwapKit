@@ -40,7 +40,7 @@
     },
     "packages/core": {
       "name": "@swapkit/core",
-      "version": "4.0.0-beta.3",
+      "version": "4.0.0-beta.4",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
@@ -48,7 +48,7 @@
     },
     "packages/helpers": {
       "name": "@swapkit/helpers",
-      "version": "3.0.0-beta.3",
+      "version": "3.0.0-beta.4",
       "dependencies": {
         "ts-pattern": "5.7.0",
         "zod": "3.24.3",
@@ -60,7 +60,7 @@
     },
     "packages/plugins": {
       "name": "@swapkit/plugins",
-      "version": "1.0.0-beta.3",
+      "version": "1.0.0-beta.4",
       "dependencies": {
         "@polkadot/keyring": "13.4.4",
         "@polkadot/util": "13.4.4",
@@ -72,7 +72,7 @@
     },
     "packages/sdk": {
       "name": "@swapkit/sdk",
-      "version": "3.0.0-beta.3",
+      "version": "3.0.0-beta.4",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -82,7 +82,7 @@
     },
     "packages/toolboxes": {
       "name": "@swapkit/toolboxes",
-      "version": "1.0.0-beta.3",
+      "version": "1.0.0-beta.4",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "1.2.0",
         "@cosmjs/amino": "0.33.1",
@@ -128,7 +128,7 @@
     },
     "packages/ui": {
       "name": "@swapkit/ui",
-      "version": "0.1.0-beta.3",
+      "version": "0.1.0-beta.4",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -142,7 +142,7 @@
     },
     "packages/wallets": {
       "name": "@swapkit/wallets",
-      "version": "3.0.0-beta.3",
+      "version": "3.0.0-beta.4",
       "dependencies": {
         "@coinbase/wallet-sdk": "4.3.2",
         "@cosmjs/amino": "0.33.1",
