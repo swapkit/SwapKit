@@ -34,8 +34,8 @@ function getNameServiceBaseUrl(type?: THORNodeType) {
   return `${baseUrl(type)}/${nsType}`;
 }
 
-export function getLastBlock(type?: THORNodeType) {
-  return RequestClient.get<LastBlockItem[]>(`${baseUrl(type)}/lastblock`);
+export function getLastBlock<T extends THORNodeType = "thorchain">(type: T = "thorchain" as T) {
+  return RequestClient.get<LastBlockItem<T>[]>(`${baseUrl(type)}/lastblock`);
 }
 
 export function getThorchainQueue(type?: THORNodeType) {
@@ -54,8 +54,26 @@ export function getInboundAddresses(type?: THORNodeType) {
   return RequestClient.get<InboundAddressesItem[]>(`${baseUrl(type)}/inbound_addresses`);
 }
 
-export function getTHORNodeTNSDetails({ type, name }: { type?: THORNodeType; name: string }) {
-  return RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(type)}/${name}`);
+export async function getTHORNodeTNSDetails({
+  type,
+  name,
+}: { type?: THORNodeType; name: string }): Promise<THORNodeTNSDetails> {
+  try {
+    const result = await RequestClient.get<THORNodeTNSDetails>(
+      `${getNameServiceBaseUrl(type)}/${name}`,
+    );
+    return result;
+  } catch (_error) {
+    // If we get an error, the name doesn't exist and is available for registration
+    return {
+      name,
+      expire_block_height: 0,
+      owner: "",
+      preferred_asset: "",
+      affiliate_collector_rune: "",
+      aliases: [],
+    };
+  }
 }
 
 export async function getTNSPreferredAsset({ type, tns }: { type?: THORNodeType; tns: string }) {

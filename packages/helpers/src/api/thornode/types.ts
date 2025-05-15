@@ -21,11 +21,12 @@ export type InboundAddressesItem = {
   router?: string;
 };
 
-export type LastBlockItem = {
+export type LastBlockItem<T extends THORNodeType = "thorchain"> = {
   chain: string;
   last_observed_in: number;
   last_signed_out: number;
-  thorchain: number;
+} & {
+  [K in T]: number;
 };
 
 export type NodeItem = {
