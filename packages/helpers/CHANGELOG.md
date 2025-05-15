@@ -1,5 +1,15 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.4
+
+### Minor Changes
+
+- [#1284](https://github.com/thorswap/SwapKit/pull/1284) [`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d) Thanks [@towanTG](https://github.com/towanTG)! - Adds setStaticAssets method to assetValue to manually overwrite the tokenlist used
+
+### Patch Changes
+
+- [#1284](https://github.com/thorswap/SwapKit/pull/1284) [`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d) Thanks [@towanTG](https://github.com/towanTG)! - Improves typing of thorname related methods and switched node:crypto back to crypto
+
 ## 3.0.0-beta.3
 
 ### Minor Changes

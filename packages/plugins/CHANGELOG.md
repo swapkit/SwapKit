@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 1.0.0-beta.4
+
+### Patch Changes
+
+- [#1284](https://github.com/thorswap/SwapKit/pull/1284) [`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d) Thanks [@towanTG](https://github.com/towanTG)! - Moves solana dependency from peer to dependencies
+
+- Updated dependencies [[`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d), [`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d), [`3c195cb`](https://github.com/thorswap/SwapKit/commit/3c195cba593ff75a1eccf3a79712f538c08a617d)]:
+  - @swapkit/toolboxes@1.0.0-beta.4
+  - @swapkit/helpers@3.0.0-beta.4
+
 ## 1.0.0-beta.3
 
 ### Patch Changes
