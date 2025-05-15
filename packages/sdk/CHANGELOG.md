@@ -1,5 +1,15 @@
 # @swapkit/sdk
 
+## 3.0.0-beta.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.0-beta.5
+  - @swapkit/plugins@1.0.0-beta.5
+  - @swapkit/toolboxes@1.0.0-beta.5
+  - @swapkit/wallets@3.0.0-beta.5
+
 ## 3.0.0-beta.4
 
 ### Patch Changes

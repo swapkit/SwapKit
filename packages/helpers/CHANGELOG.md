@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.5
+
+### Patch Changes
+
+- [#1286](https://github.com/thorswap/SwapKit/pull/1286) [`299401a`](https://github.com/thorswap/SwapKit/commit/299401a194a8c31f9909f5da3f61f605ed1e41ac) Thanks [@towanTG](https://github.com/towanTG)! - Improves tokenmap handling when setting static assets
+
 ## 3.0.0-beta.4
 
 ### Minor Changes

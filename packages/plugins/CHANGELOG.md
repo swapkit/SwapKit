@@ -1,5 +1,13 @@
 # @swapkit/plugins
 
+## 1.0.0-beta.5
+
+### Patch Changes
+
+- Updated dependencies [[`299401a`](https://github.com/thorswap/SwapKit/commit/299401a194a8c31f9909f5da3f61f605ed1e41ac)]:
+  - @swapkit/helpers@3.0.0-beta.5
+  - @swapkit/toolboxes@1.0.0-beta.5
+
 ## 1.0.0-beta.4
 
 ### Patch Changes
