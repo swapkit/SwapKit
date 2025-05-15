@@ -18,7 +18,7 @@ import { SwapKitError } from "./swapKitError";
 import type { SwapKitValueType } from "./swapKitNumber";
 
 const staticTokensMap = new Map<
-  TokenNames,
+  TokenNames | string,
   { tax?: TokenTax; decimal: number; identifier: string }
 >();
 
@@ -176,6 +176,16 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       }
     }
 
+    return true;
+  }
+
+  static setStaticAssets(
+    tokenMap: Map<string, { tax?: TokenTax; decimal: number; identifier: string }>,
+  ) {
+    staticTokensMap.clear();
+    for (const [key, value] of tokenMap.entries()) {
+      staticTokensMap.set(key, value);
+    }
     return true;
   }
 }
