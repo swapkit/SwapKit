@@ -169,7 +169,9 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
 
     for (const { tokens } of Object.values(lists)) {
       for (const { identifier, chain, ...rest } of tokens) {
-        const tokenKey = (chain === "SOL" ? identifier : identifier.toUpperCase()) as TokenNames;
+        const tokenKey = (
+          chain === Chain.Solana ? identifier : identifier.toUpperCase()
+        ) as TokenNames;
         const tokenDecimal = "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain];
 
         staticTokensMap.set(tokenKey, { identifier, decimal: tokenDecimal });
@@ -180,11 +182,21 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
   }
 
   static setStaticAssets(
-    tokenMap: Map<string, { tax?: TokenTax; decimal: number; identifier: string }>,
+    tokenMap: Map<
+      string,
+      { tax?: TokenTax; identifier: string; chain: Chain } & (
+        | { decimal: number }
+        | { decimals: number }
+      )
+    >,
   ) {
     staticTokensMap.clear();
     for (const [key, value] of tokenMap.entries()) {
-      staticTokensMap.set(key, value);
+      const tokenKey = (
+        value.chain === Chain.Solana ? value.identifier : value.identifier.toUpperCase()
+      ) as TokenNames;
+      const tokenDecimal = "decimals" in value ? value.decimals : value.decimal;
+      staticTokensMap.set(key, { ...value, decimal: tokenDecimal, identifier: tokenKey });
     }
     return true;
   }
