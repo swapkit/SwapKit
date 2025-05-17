@@ -69,7 +69,7 @@ jobs:
         with:
           title: ":tada: Publish v3"
           version: bun version-bump
-          publish: bun publish-packages --tag ver3 --no-git-tag
+          publish: bun publish-packages --tag ver3 --tag latest --no-git-tag
           setupGitUser: false
           createGithubReleases: false
 

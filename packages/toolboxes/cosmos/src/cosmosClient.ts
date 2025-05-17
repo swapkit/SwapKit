@@ -1,17 +1,10 @@
 import { type AccountData, Secp256k1HdWallet } from "@cosmjs/amino";
-import type { StdFee } from "@cosmjs/stargate";
 import { base64, bech32 } from "@scure/base";
 import { type ChainId, SwapKitError } from "@swapkit/helpers";
 
 import { stringToPath } from "@cosmjs/crypto";
 import type { CosmosSDKClientParams, TransferParams } from "./types";
-import {
-  DEFAULT_COSMOS_FEE_MAINNET,
-  createSigningStargateClient,
-  createStargateClient,
-  getMsgSendDenom,
-  getRPC,
-} from "./util";
+import { createSigningStargateClient, createStargateClient, getMsgSendDenom, getRPC } from "./util";
 
 export class CosmosClient {
   server: string;
@@ -71,14 +64,7 @@ export class CosmosClient {
     return client.getAccount(address);
   };
 
-  transfer = async ({
-    from,
-    recipient,
-    assetValue,
-    memo = "",
-    fee = DEFAULT_COSMOS_FEE_MAINNET,
-    signer,
-  }: TransferParams) => {
+  transfer = async ({ from, recipient, assetValue, memo = "", fee, signer }: TransferParams) => {
     if (!signer) {
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
     }
@@ -93,7 +79,7 @@ export class CosmosClient {
           amount: assetValue.getBaseValue("string"),
         },
       ],
-      fee as StdFee,
+      fee || 2,
       memo,
     );
 
