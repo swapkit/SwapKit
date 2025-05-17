@@ -1,5 +1,14 @@
 # @swapkit/toolbox-cosmos
 
+## 1.11.5
+
+### Patch Changes
+
+- [#1288](https://github.com/thorswap/SwapKit/pull/1288) [`aff5161`](https://github.com/thorswap/SwapKit/commit/aff51610619810c039b31cba2a780c1c607c014d) Thanks [@towanTG](https://github.com/towanTG)! - Uses auto gas fee estimation if no fee is specified for cosmos transfer
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.3
+
 ## 1.11.4
 
 ### Patch Changes
