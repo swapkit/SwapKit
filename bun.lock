@@ -63,7 +63,7 @@
     },
     "packages/plugins/thorchain": {
       "name": "@swapkit/plugin-thorchain",
-      "version": "2.5.4",
+      "version": "2.5.5",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -120,7 +120,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.3.7",
+      "version": "2.3.8",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
