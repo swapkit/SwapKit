@@ -3,7 +3,6 @@ import {
   BaseDecimal,
   Chain,
   type ChainSigner,
-  type GenericCreateTransactionParams,
   type GenericTransferParams,
   SKConfig,
   SwapKitError,
@@ -111,10 +110,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     recipient,
     memo,
     sender,
-  }: Omit<GenericCreateTransactionParams, "feeRate">) => {
-    if (!signer) {
-      throw new SwapKitError({ errorKey: "toolbox_ripple_signer_not_found" });
-    }
+  }: { assetValue: AssetValue; recipient: string; sender?: string; memo?: string }) => {
     if (!rippleValidateAddress(recipient)) {
       throw new SwapKitError({ errorKey: "core_transaction_invalid_recipient_address" });
     }
