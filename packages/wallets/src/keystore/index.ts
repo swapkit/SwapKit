@@ -23,6 +23,7 @@ export const keystoreWallet = createWallet({
     Chain.Chainflip,
     Chain.Ripple,
     Chain.Solana,
+    Chain.Cardano,
   ],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectKeystore(

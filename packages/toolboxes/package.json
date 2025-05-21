@@ -32,7 +32,9 @@
     "micro-key-producer": "0.7.5",
     "protobufjs": "7.4.0",
     "ts-pattern": "5.7.0",
-    "xrpl": "4.2.0"
+    "xrpl": "4.2.0",
+    "@emurgo/cardano-serialization-lib-nodejs": "^12.0.0"
+    
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.8",
@@ -48,6 +50,11 @@
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
       "types": "./src/index.ts"
+    },
+    "./cardano": {
+      "default": "./dist/cardano/index.js",
+      "require": "./dist/cardano/index.cjs",
+      "types": "./src/cardano/index.ts"
     },
     "./cosmos": {
       "default": "./dist/cosmos/index.js",
