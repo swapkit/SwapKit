@@ -298,7 +298,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Polkadot]: "https://polkadot.subscan.io",
   [Chain.Polygon]: "https://polygonscan.com",
   [Chain.Radix]: "https://dashboard.radixdlt.com",
-  [Chain.Ripple]: "https://livenet.xrpl.org/",
+  [Chain.Ripple]: "https://livenet.xrpl.org",
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
 };

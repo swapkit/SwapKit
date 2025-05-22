@@ -28,6 +28,9 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
     case Chain.Radix:
       return `${baseUrl}/transaction/${txHash.toLowerCase()}`;
 
+    case Chain.Ripple:
+      return `${baseUrl}/transactions/${txHash.toLowerCase()}`;
+
     default:
       throw new SwapKitError({ errorKey: "core_explorer_unsupported_chain", info: { chain } });
   }
@@ -40,6 +43,9 @@ export function getExplorerAddressUrl({ chain, address }: { address: string; cha
     case Chain.Solana:
     case Chain.Radix:
       return `${baseUrl}/account/${address}`;
+
+    case Chain.Ripple:
+      return `${baseUrl}/accounts/${address}`;
 
     default:
       return `${baseUrl}/address/${address}`;
