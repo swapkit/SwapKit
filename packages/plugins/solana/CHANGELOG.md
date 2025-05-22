@@ -1,5 +1,14 @@
 # @swapkit/plugin-solana
 
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies [[`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a), [`9caf9bc`](https://github.com/thorswap/SwapKit/commit/9caf9bcef54ce50118c120091cb6f4bb4d7c6ea8)]:
+  - @swapkit/helpers@2.7.4
+  - @swapkit/api@2.8.0
+  - @swapkit/toolbox-solana@1.6.4
+
 ## 0.2.3
 
 ### Patch Changes
