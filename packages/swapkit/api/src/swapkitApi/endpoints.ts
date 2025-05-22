@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import * as crypto from "node:crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 
 import {

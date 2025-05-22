@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import * as crypto from "node:crypto";
 import type Transport from "@ledgerhq/hw-transport";
 /** ******************************************************************************
  *  (c) 2019 ZondaX GmbH
