@@ -1,5 +1,16 @@
 # @swapkit/api
 
+## 2.8.0
+
+### Minor Changes
+
+- [`9caf9bc`](https://github.com/thorswap/SwapKit/commit/9caf9bcef54ce50118c120091cb6f4bb4d7c6ea8) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Changes crypto import to node:crypto
+
+### Patch Changes
+
+- Updated dependencies [[`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a)]:
+  - @swapkit/helpers@2.7.4
+
 ## 2.7.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @swapkit/wallet-coinbase
 
+## 1.5.4
+
+### Patch Changes
+
+- Updated dependencies [[`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a)]:
+  - @swapkit/helpers@2.7.4
+  - @swapkit/toolbox-evm@1.10.4
+
 ## 1.5.3
 
 ### Patch Changes

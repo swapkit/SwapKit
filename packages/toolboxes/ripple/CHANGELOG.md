@@ -1,5 +1,14 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.7
+
+### Patch Changes
+
+- [`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes ripple rpc and explorer urls
+
+- Updated dependencies [[`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a)]:
+  - @swapkit/helpers@2.7.4
+
 ## 1.0.6
 
 ### Patch Changes

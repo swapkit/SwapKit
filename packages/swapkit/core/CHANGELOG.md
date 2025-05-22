@@ -1,5 +1,23 @@
 # @swapkit/core
 
+## 3.3.8
+
+### Patch Changes
+
+- [`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes ripple rpc and explorer urls
+
+- Updated dependencies [[`113c363`](https://github.com/thorswap/SwapKit/commit/113c3636da7adac6e74ca9ddca1bbf829ad7aa9a), [`9caf9bc`](https://github.com/thorswap/SwapKit/commit/9caf9bcef54ce50118c120091cb6f4bb4d7c6ea8)]:
+  - @swapkit/toolbox-ripple@1.0.7
+  - @swapkit/helpers@2.7.4
+  - @swapkit/api@2.8.0
+  - @swapkit/plugin-evm@1.4.4
+  - @swapkit/toolbox-cosmos@1.11.6
+  - @swapkit/toolbox-evm@1.10.4
+  - @swapkit/toolbox-radix@1.3.4
+  - @swapkit/toolbox-solana@1.6.4
+  - @swapkit/toolbox-substrate@1.4.4
+  - @swapkit/toolbox-utxo@1.4.4
+
 ## 3.3.7
 
 ### Patch Changes
