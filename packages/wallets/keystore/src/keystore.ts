@@ -221,7 +221,7 @@ const getWalletMethodsForChain = async ({
     case Chain.Ripple: {
       const { XRPToolbox, createSigner } = await import("@swapkit/toolbox-ripple");
       const signer = createSigner(phrase);
-      const toolbox = XRPToolbox({ rpcUrl, signer });
+      const toolbox = await XRPToolbox({ rpcUrl, signer });
 
       return {
         address: signer.address,
