@@ -1,5 +1,14 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.12
+
+### Patch Changes
+
+- [`730ff1d`](https://github.com/thorswap/SwapKit/commit/730ff1d9303dcbc151b8ab0a52bf2fe9e5e0b5d0) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fix for Ripple rpc url
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.7
+
 ## 1.0.11
 
 ### Patch Changes

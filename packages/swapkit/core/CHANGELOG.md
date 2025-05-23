@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 3.3.14
+
+### Patch Changes
+
+- Updated dependencies [[`730ff1d`](https://github.com/thorswap/SwapKit/commit/730ff1d9303dcbc151b8ab0a52bf2fe9e5e0b5d0)]:
+  - @swapkit/toolbox-ripple@1.0.12
+  - @swapkit/helpers@2.7.7
+
 ## 3.3.13
 
 ### Patch Changes
