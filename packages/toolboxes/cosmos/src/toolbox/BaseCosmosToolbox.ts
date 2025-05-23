@@ -116,7 +116,7 @@ export const cosmosValidateAddress = ({
       const client = new CosmosClient({
         server: stagenet
           ? "https://stagenet-thornode.ninerealms.com"
-          : "https://thornode.thorswap.net",
+          : "https://thornode.ninerealms.com",
         chainId: stagenet ? ChainId.THORChainStagenet : ChainId.THORChain,
         prefix: `${stagenet ? "s" : ""}thor`,
         stagenet,
