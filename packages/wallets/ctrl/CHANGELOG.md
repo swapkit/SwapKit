@@ -1,5 +1,18 @@
 # @swapkit/wallet-xdefi
 
+## 2.3.10
+
+### Patch Changes
+
+- [`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Built for bun.
+
+- Updated dependencies [[`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429)]:
+  - @swapkit/toolbox-cosmos@1.11.9
+  - @swapkit/toolbox-solana@1.6.6
+  - @swapkit/helpers@2.7.6
+  - @swapkit/toolbox-utxo@1.4.6
+  - @swapkit/toolbox-evm@1.10.6
+
 ## 2.3.9
 
 ### Patch Changes
