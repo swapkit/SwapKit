@@ -1,5 +1,16 @@
 # @swapkit/plugin-evm
 
+## 1.4.7
+
+### Patch Changes
+
+- [`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Built for bun.
+
+- Updated dependencies [[`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429)]:
+  - @swapkit/helpers@2.7.6
+  - @swapkit/toolbox-evm@1.10.6
+  - @swapkit/api@2.8.3
+
 ## 1.4.6
 
 ### Patch Changes

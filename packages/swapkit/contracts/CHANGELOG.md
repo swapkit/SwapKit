@@ -1,5 +1,11 @@
 # @swapkit/contracts
 
+## 1.2.1
+
+### Patch Changes
+
+- [`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Built for bun.
+
 ## 1.2.0
 
 ### Minor Changes

@@ -1,5 +1,22 @@
 # @swapkit/sdk
 
+## 2.3.13
+
+### Patch Changes
+
+- [`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Built for bun.
+
+- Updated dependencies [[`52f9e01`](https://github.com/thorswap/SwapKit/commit/52f9e0198599f2c958cbd972b3a3aeb9ae837429)]:
+  - @swapkit/plugin-chainflip@2.2.7
+  - @swapkit/plugin-thorchain@2.5.10
+  - @swapkit/wallets@2.1.12
+  - @swapkit/plugin-solana@0.2.7
+  - @swapkit/tokens@2.5.3
+  - @swapkit/plugin-radix@1.4.7
+  - @swapkit/core@3.3.11
+  - @swapkit/plugin-evm@1.4.7
+  - @swapkit/api@2.8.3
+
 ## 2.3.12
 
 ### Patch Changes
