@@ -1,5 +1,16 @@
 # @swapkit/wallet-bitget
 
+## 1.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`0e600ac`](https://github.com/thorswap/SwapKit/commit/0e600ac7042cdf538fc47c7e9dc796c6ce36c0c2)]:
+  - @swapkit/toolbox-cosmos@1.11.7
+  - @swapkit/helpers@2.7.5
+  - @swapkit/toolbox-evm@1.10.5
+  - @swapkit/toolbox-solana@1.6.5
+  - @swapkit/toolbox-utxo@1.4.5
+
 ## 1.3.6
 
 ### Patch Changes
