@@ -9,8 +9,9 @@ export async function buildPackage({
   entrypoints?: string[];
   dependencies: Record<string, string>;
 }) {
-  const external = Object.keys(dependencies).concat(["crypto", "node:crypto"]);
+  const external = ["node:crypto", "crypto", "stream", "buffer", ...Object.keys(dependencies)];
   const result = await Bun.build({
+    packages: "external",
     entrypoints,
     outdir: "./dist",
     minify: true,
