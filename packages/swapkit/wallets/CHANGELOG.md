@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.1.16
+
+### Patch Changes
+
+- Updated dependencies [[`f3802ee`](https://github.com/thorswap/SwapKit/commit/f3802ee2bf751249801de0d5754e7497e6208bae)]:
+  - @swapkit/wallet-keystore@1.8.7
+
 ## 2.1.15
 
 ### Patch Changes
