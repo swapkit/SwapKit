@@ -11,7 +11,6 @@ export async function buildPackage({
 }) {
   const external = Object.keys(dependencies).concat(["crypto", "node:crypto"]);
   const result = await Bun.build({
-    target: "bun",
     entrypoints,
     outdir: "./dist",
     minify: true,
