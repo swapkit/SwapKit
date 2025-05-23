@@ -34,7 +34,7 @@ export type SyncXrpSigner = {
 type RippleToolboxParams = { signer?: SyncXrpSigner | AsyncXrpSigner; rpcUrl?: string };
 
 export const XRPToolbox = async ({ signer, rpcUrl }: RippleToolboxParams) => {
-  if (!rpcUrl || RPC_URLS.XRP) {
+  if (!(rpcUrl && RPC_URLS.XRP)) {
     throw new SwapKitError({
       errorKey: "toolbox_ripple_rpc_not_configured",
       info: { chain: Chain.Ripple },
