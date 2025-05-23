@@ -1,4 +1,4 @@
-import * as crypto from "node:crypto";
+import { createHash } from "node:crypto";
 import { ProviderName, RequestClient, SwapKitError } from "@swapkit/helpers";
 
 import {
@@ -67,7 +67,7 @@ export const computeHashForGet = ({
   url: string;
   apiKey: string;
 }): string => {
-  return crypto.createHash("sha256").update(`${url}${apiKey}`, "utf8").digest("hex");
+  return createHash("sha256").update(`${url}${apiKey}`, "utf8").digest("hex");
 };
 
 export const computeHashForPost = ({
@@ -78,7 +78,7 @@ export const computeHashForPost = ({
   payload: any;
 }): string => {
   const normalizedBody = JSON.stringify(payload);
-  return crypto.createHash("sha256").update(`${normalizedBody}${apiKey}`, "utf8").digest("hex");
+  return createHash("sha256").update(`${normalizedBody}${apiKey}`, "utf8").digest("hex");
 };
 
 export function getTrackerDetails(payload: TrackerParams, apiKey?: string, referer?: string) {

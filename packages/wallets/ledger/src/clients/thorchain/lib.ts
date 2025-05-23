@@ -1,4 +1,4 @@
-import * as crypto from "node:crypto";
+import { createHash } from "node:crypto";
 import type Transport from "@ledgerhq/hw-transport";
 /** ******************************************************************************
  *  (c) 2019 ZondaX GmbH
@@ -66,7 +66,7 @@ export class THORChainApp {
       throw new Error("expected compressed public key [31 bytes]");
     }
     // @ts-ignore
-    const hashSha256 = crypto.createHash("sha256").update(pk).digest();
+    const hashSha256 = createHash("sha256").update(pk).digest();
     // @ts-ignore
     const hashRip = new Ripemd160().update(hashSha256).digest();
     // @ts-ignore

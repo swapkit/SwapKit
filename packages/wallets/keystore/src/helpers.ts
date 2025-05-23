@@ -1,4 +1,4 @@
-import * as crypto from "node:crypto";
+import { createCipheriv, createDecipheriv, pbkdf2, randomBytes } from "node:crypto";
 import { generateMnemonic, validateMnemonic } from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english";
 import blakejs from "blakejs";
@@ -50,7 +50,7 @@ const pbkdf2Async = (
   digest: string,
 ) =>
   new Promise<Buffer>((resolve, reject) => {
-    crypto.pbkdf2(passphrase, salt, iterations, keylen, digest, (error, drived) => {
+    pbkdf2(passphrase, salt, iterations, keylen, digest, (error, drived) => {
       if (error) {
         reject(error);
       } else {
@@ -60,8 +60,8 @@ const pbkdf2Async = (
   });
 
 export const encryptToKeyStore = async (phrase: string, password: string) => {
-  const salt = crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
+  const salt = randomBytes(32);
+  const iv = randomBytes(16);
   const kdfParams = { c: 262144, prf: "hmac-sha256", dklen: 32, salt: salt.toString("hex") };
   const cipher = "aes-128-ctr";
 
@@ -72,7 +72,7 @@ export const encryptToKeyStore = async (phrase: string, password: string) => {
     kdfParams.dklen,
     "sha256",
   );
-  const cipherIV = crypto.createCipheriv(cipher, derivedKey.subarray(0, 16), iv);
+  const cipherIV = createCipheriv(cipher, derivedKey.subarray(0, 16), iv);
   const ciphertext = Buffer.concat([
     cipherIV.update(Buffer.from(phrase, "utf8")),
     cipherIV.final(),
@@ -116,7 +116,7 @@ export const decryptFromKeystore = async (keystore: Keystore, password: string) 
       const mac = blake256(Buffer.concat([derivedKey.subarray(16, 32), ciphertext]));
 
       if (mac !== keystore.crypto.mac) throw new Error("Invalid password");
-      const decipher = crypto.createDecipheriv(
+      const decipher = createDecipheriv(
         keystore.crypto.cipher,
         derivedKey.subarray(0, 16),
         Buffer.from(keystore.crypto.cipherparams.iv, "hex"),
