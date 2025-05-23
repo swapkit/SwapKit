@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.7.5
+
+### Patch Changes
+
+- [#1295](https://github.com/thorswap/SwapKit/pull/1295) [`0e600ac`](https://github.com/thorswap/SwapKit/commit/0e600ac7042cdf538fc47c7e9dc796c6ce36c0c2) Thanks [@towanTG](https://github.com/towanTG)! - Changes thorchain endpoints to use ninerealms infra
+
 ## 2.7.4
 
 ### Patch Changes
