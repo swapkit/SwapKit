@@ -230,7 +230,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Polygon]: "https://polygon-rpc.com",
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.Ripple]: "wss://xrpl.ws/",
-  [Chain.THORChain]: "https://rpc.thorswap.net",
+  [Chain.THORChain]: "https://rpc.ninerealms.com",
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
   [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
@@ -273,7 +273,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
   [Chain.Ripple]: ["wss://s1.ripple.com/", "wss://s2.ripple.com/"],
-  [Chain.THORChain]: ["https://thornode.ninerealms.com", "https://thornode.thorswap.net"],
+  [Chain.THORChain]: ["https://rpc.thorswap.net"],
   [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
 };

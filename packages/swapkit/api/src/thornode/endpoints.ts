@@ -23,7 +23,7 @@ function baseUrl({ type = "thorchain", stagenet = false }: ThornodeEndpointParam
     default:
       return stagenet
         ? "https://stagenet-thornode.ninerealms.com/thorchain"
-        : "https://thornode.thorswap.net/thorchain";
+        : "https://thornode.ninerealms.com/thorchain";
   }
 }
 
