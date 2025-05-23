@@ -1,5 +1,11 @@
 # @swapkit/wallet-keystore
 
+## 1.8.7
+
+### Patch Changes
+
+- [`f3802ee`](https://github.com/thorswap/SwapKit/commit/f3802ee2bf751249801de0d5754e7497e6208bae) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes ripple toolbox promise await
+
 ## 1.8.6
 
 ### Patch Changes
