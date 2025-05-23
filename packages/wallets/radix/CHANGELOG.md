@@ -1,5 +1,16 @@
 # @swapkit/wallet-radix
 
+## 1.4.7
+
+### Patch Changes
+
+- [#1299](https://github.com/thorswap/SwapKit/pull/1299) [`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005) Thanks [@github-actions](https://github.com/apps/github-actions)! - Revert last release.
+
+- [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Externalises dependencies and node libs
+
+- Updated dependencies [[`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005), [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6)]:
+  - @swapkit/helpers@2.7.7
+
 ## 1.4.6
 
 ### Patch Changes

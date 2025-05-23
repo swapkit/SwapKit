@@ -1,5 +1,24 @@
 # @swapkit/sdk
 
+## 2.3.14
+
+### Patch Changes
+
+- [#1299](https://github.com/thorswap/SwapKit/pull/1299) [`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005) Thanks [@github-actions](https://github.com/apps/github-actions)! - Revert last release.
+
+- [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Externalises dependencies and node libs
+
+- Updated dependencies [[`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005), [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6)]:
+  - @swapkit/plugin-chainflip@2.2.8
+  - @swapkit/plugin-thorchain@2.5.11
+  - @swapkit/wallets@2.1.13
+  - @swapkit/plugin-solana@0.2.8
+  - @swapkit/tokens@2.5.4
+  - @swapkit/plugin-radix@1.4.8
+  - @swapkit/core@3.3.12
+  - @swapkit/plugin-evm@1.4.8
+  - @swapkit/api@2.8.4
+
 ## 2.3.13
 
 ### Patch Changes

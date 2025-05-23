@@ -1,5 +1,32 @@
 # @swapkit/wallets
 
+## 2.1.13
+
+### Patch Changes
+
+- [#1299](https://github.com/thorswap/SwapKit/pull/1299) [`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005) Thanks [@github-actions](https://github.com/apps/github-actions)! - Revert last release.
+
+- [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Externalises dependencies and node libs
+
+- Updated dependencies [[`b29d484`](https://github.com/thorswap/SwapKit/commit/b29d484a3b4d908dedabf24b2af5a2ce621db005), [`0422ded`](https://github.com/thorswap/SwapKit/commit/0422ded3c29a581b1aa5a0f1c8ef6332ba82aeb6)]:
+  - @swapkit/wallet-evm-extensions@1.4.7
+  - @swapkit/wallet-keepkey-bex@1.4.10
+  - @swapkit/wallet-polkadotjs@1.3.7
+  - @swapkit/wallet-coinbase@1.5.7
+  - @swapkit/wallet-keystore@1.8.4
+  - @swapkit/wallet-talisman@1.6.7
+  - @swapkit/wallet-keepkey@1.6.10
+  - @swapkit/wallet-phantom@1.5.7
+  - @swapkit/wallet-bitget@1.3.10
+  - @swapkit/wallet-exodus@1.5.7
+  - @swapkit/wallet-ledger@1.14.4
+  - @swapkit/wallet-trezor@1.6.7
+  - @swapkit/wallet-keplr@1.5.10
+  - @swapkit/wallet-radix@1.4.7
+  - @swapkit/wallet-ctrl@2.3.11
+  - @swapkit/wallet-okx@1.6.10
+  - @swapkit/wallet-wc@1.9.10
+
 ## 2.1.12
 
 ### Patch Changes
