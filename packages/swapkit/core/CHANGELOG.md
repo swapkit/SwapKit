@@ -1,5 +1,15 @@
 # @swapkit/core
 
+## 3.3.10
+
+### Patch Changes
+
+- Updated dependencies [[`689b1b4`](https://github.com/thorswap/SwapKit/commit/689b1b41260970dac3c6b07175ae83e798bf8f05)]:
+  - @swapkit/api@2.8.2
+  - @swapkit/plugin-evm@1.4.6
+  - @swapkit/toolbox-cosmos@1.11.8
+  - @swapkit/helpers@2.7.5
+
 ## 3.3.9
 
 ### Patch Changes
