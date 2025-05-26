@@ -19,6 +19,7 @@
     "@swapkit/wallets": "2.0.20"
   },
   "changesets": [
+    "breezy-walls-film",
     "bumpy-falcons-invite",
     "early-parrots-nail",
     "fair-paws-cover",
