@@ -288,7 +288,22 @@ function safeValue(value: NumberPrimitives, decimal: number) {
     : value;
 }
 
+function validateAssetChain(assetOrChain: AssetIdentifier) {
+  const chain =
+    "chain" in assetOrChain ? assetOrChain.chain : assetFromString(assetOrChain.asset).chain;
+
+  // TODO: move to SKConfig chains once we support it throughout sdk
+  if (!(chain in Chain)) {
+    throw new SwapKitError({
+      errorKey: "helpers_invalid_asset_identifier",
+      info: { message: "Please use the AssetValue constructor for unsupported chains" },
+    });
+  }
+}
+
 function getAssetString(assetOrChain: AssetIdentifier) {
+  validateAssetChain(assetOrChain);
+
   if ("chain" in assetOrChain) return assetOrChain.chain;
 
   const { chain, symbol } = assetFromString(assetOrChain.asset);
