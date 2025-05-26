@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.6
+
+### Patch Changes
+
+- [#1303](https://github.com/thorswap/SwapKit/pull/1303) [`8e2340d`](https://github.com/thorswap/SwapKit/commit/8e2340d290b149bfad25e57f76e0495c769d4bfd) Thanks [@towanTG](https://github.com/towanTG)! - Throws error if AssetValue.from encounters an unknown chain
+
 ## 3.0.0-beta.5
 
 ### Patch Changes
