@@ -1,5 +1,15 @@
 # @swapkit/core
 
+## 3.3.15
+
+### Patch Changes
+
+- [#1305](https://github.com/thorswap/SwapKit/pull/1305) [`efb1bb6`](https://github.com/thorswap/SwapKit/commit/efb1bb6a8dda9e160e4c874d76644354446b8923) Thanks [@towanTG](https://github.com/towanTG)! - Changes to XRP Ledger support and adds address validation
+
+- Updated dependencies [[`3c9433e`](https://github.com/thorswap/SwapKit/commit/3c9433e5c65f65348a5f24a8d27c3daac8836e9a)]:
+  - @swapkit/toolbox-ripple@1.0.13
+  - @swapkit/helpers@2.7.7
+
 ## 3.3.14
 
 ### Patch Changes

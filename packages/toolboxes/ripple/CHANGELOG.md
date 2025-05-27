@@ -1,5 +1,14 @@
 # @swapkit/toolbox-ripple
 
+## 1.0.13
+
+### Patch Changes
+
+- [`3c9433e`](https://github.com/thorswap/SwapKit/commit/3c9433e5c65f65348a5f24a8d27c3daac8836e9a) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes broadcast transaction
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.7.7
+
 ## 1.0.12
 
 ### Patch Changes
