@@ -1,5 +1,13 @@
 # @swapkit/wallet-keystore
 
+## 1.8.8
+
+### Patch Changes
+
+- Updated dependencies [[`3c9433e`](https://github.com/thorswap/SwapKit/commit/3c9433e5c65f65348a5f24a8d27c3daac8836e9a)]:
+  - @swapkit/toolbox-ripple@1.0.13
+  - @swapkit/helpers@2.7.7
+
 ## 1.8.7
 
 ### Patch Changes
