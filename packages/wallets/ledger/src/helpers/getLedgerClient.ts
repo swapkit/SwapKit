@@ -1,4 +1,5 @@
 import { Chain, type DerivationPathArray, SwapKitError, WalletOption } from "@swapkit/helpers";
+import type { AsyncXrpSigner } from "@swapkit/toolbox-ripple";
 
 import { CosmosLedger } from "../clients/cosmos";
 import {
@@ -35,7 +36,7 @@ type LedgerSignerMap = {
   [Chain.Litecoin]: ReturnType<typeof LitecoinLedger>;
   [Chain.Optimism]: ReturnType<typeof OptimismLedger>;
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
-  [Chain.Ripple]: ReturnType<typeof LedgerXrpSigner>;
+  [Chain.Ripple]: AsyncXrpSigner;
   [Chain.THORChain]: THORChainLedger;
 };
 
@@ -62,7 +63,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
     case Chain.Litecoin:
       return LitecoinLedger(derivationPath) as LedgerSignerMap[T];
     case Chain.Ripple:
-      return LedgerXrpSigner() as LedgerSignerMap[T];
+      return LedgerXrpSigner() as Promise<LedgerSignerMap[T]>;
 
     case Chain.Arbitrum:
     case Chain.Avalanche:
