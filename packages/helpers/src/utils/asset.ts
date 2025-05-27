@@ -156,7 +156,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       () => ({ identifier: `${assetString.toUpperCase()}.${assetString.toUpperCase()}`, decimal }),
     )
     .with(Chain.Radix, "XRD.XRD", () => ({
-      identifier: "XRD.XRD-resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
+      identifier: "XRD.XRD",
       decimal,
     }))
     .with("KUJI.USK", () => ({ identifier: assetString.toUpperCase(), decimal: 6 }))
