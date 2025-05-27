@@ -1,5 +1,13 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.8
+
+### Patch Changes
+
+- Updated dependencies [[`983ca27`](https://github.com/thorswap/SwapKit/commit/983ca27d7c47279b01a0bdaba53636023f455ba5)]:
+  - @swapkit/helpers@3.0.0-beta.7
+  - @swapkit/toolboxes@1.0.0-beta.8
+
 ## 3.0.0-beta.7
 
 ### Patch Changes

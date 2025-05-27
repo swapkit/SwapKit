@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.7
+
+### Patch Changes
+
+- [#1307](https://github.com/thorswap/SwapKit/pull/1307) [`983ca27`](https://github.com/thorswap/SwapKit/commit/983ca27d7c47279b01a0bdaba53636023f455ba5) Thanks [@towanTG](https://github.com/towanTG)! - Changes XRD.XRD identifier
+
 ## 3.0.0-beta.6
 
 ### Patch Changes
