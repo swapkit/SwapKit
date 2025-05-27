@@ -1,36 +1,57 @@
-// import Transport from "@ledgerhq/hw-transport-u2f"; // for browser
 import Xrp from "@ledgerhq/hw-app-xrp";
-import Transport from "@ledgerhq/hw-transport-webusb";
-import { NetworkDerivationPath, derivationPathToString } from "@swapkit/helpers";
-import type { AsyncXrpSigner, Transaction } from "@swapkit/toolbox-ripple";
+import type Transport from "@ledgerhq/hw-transport";
 import { hashes } from "@swapkit/toolbox-ripple";
+import type { AsyncXrpSigner, Transaction } from "@swapkit/toolbox-ripple";
 import { encode } from "ripple-binary-codec";
+import type { Payment } from "xrpl";
+import { getLedgerTransport } from "../helpers";
 
-function establishConnection(): Promise<Xrp> {
-  return Transport.create().then((transport) => new Xrp(transport));
+function cleanTransactionObject(obj: Record<string, any>): Record<string, any> {
+  const cleaned: Record<string, any> = {};
+  for (const key in obj) {
+    if (obj[key] !== null && obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned;
 }
 
-function fetchAddress(xrp: Xrp) {
-  return xrp.getAddress("44'/144'/0'/0/0");
+function establishConnection(transport: Transport): Xrp {
+  return new Xrp(transport);
+}
+
+function fetchAddressAndPublicKey(xrpInstance: Xrp) {
+  return xrpInstance.getAddress("44'/144'/0'/0/0");
 }
 
 export const LedgerXrpSigner = async (): Promise<AsyncXrpSigner> => {
-  const connection = await establishConnection();
+  const transport = await getLedgerTransport();
+  const xrpInstance = await establishConnection(transport);
 
-  const { address } = await fetchAddress(connection);
+  const { address, publicKey } = await fetchAddressAndPublicKey(xrpInstance);
 
-  async function sign(tx: Transaction) {
-    const transactionBlob = encode(tx);
+  async function sign(transaction: Payment | Transaction) {
+    const cleanedTxWithPubKey = cleanTransactionObject(transaction);
+    const transactionJSON = {
+      ...cleanedTxWithPubKey,
+      Flags: transaction.Flags || 2147483648, // default to tfFullyCanonicalSig
+      SigningPubKey: publicKey.toUpperCase(),
+    };
 
-    const signedBlob = await connection.signTransaction(
-      derivationPathToString(NetworkDerivationPath.XRP),
-      transactionBlob,
+    const transactionToSignOnLedger = encode(transactionJSON);
+
+    const txnSignature = await xrpInstance.signTransaction(
+      "44'/144'/0'/0/0",
+      transactionToSignOnLedger,
     );
 
-    return {
-      tx_blob: signedBlob,
-      hash: hashes.hashSignedTx(signedBlob),
-    };
+    const signedTx = { ...transactionJSON, TxnSignature: txnSignature };
+
+    const tx_blob = encode(signedTx);
+
+    const hash = hashes.hashSignedTx(tx_blob);
+
+    return { tx_blob, hash };
   }
 
   return { address, sign };
