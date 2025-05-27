@@ -255,6 +255,16 @@ const getToolbox = async ({
       return { ...toolbox, address, deposit, transfer, signMessage };
     }
 
+    case Chain.Ripple: {
+      const { XRPToolbox } = await import("@swapkit/toolbox-ripple");
+      const signer = await getLedgerClient({ chain, derivationPath });
+      // Address is part of the signer for XRP
+      const address = signer.address;
+      const toolbox = await XRPToolbox({ signer, rpcUrl: rpcUrl || getRPCUrl(Chain.Ripple) });
+
+      return { ...toolbox, address };
+    }
+
     default:
       throw new Error("Unsupported chain");
   }
