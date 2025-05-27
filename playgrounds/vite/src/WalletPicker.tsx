@@ -54,7 +54,7 @@ export const availableChainsByWallet = {
   [WalletOption.EIP6963]: EVMChains,
   [WalletOption.KEPLR]: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
   [WalletOption.LEAP]: [Chain.Cosmos, Chain.Kujira],
-  [WalletOption.LEDGER]: AllChainsSupported,
+  [WalletOption.LEDGER]: [...AllChainsSupported, Chain.Ripple],
   [WalletOption.METAMASK]: EVMChains,
   [WalletOption.OKX_MOBILE]: EVMChains,
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
@@ -313,6 +313,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             ...SubstrateChains,
             Chain.Solana,
             Chain.Radix,
+            Chain.Ripple,
           ]
             .sort()
             .map((chain) => (
