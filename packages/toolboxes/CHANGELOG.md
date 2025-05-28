@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.9
+
+### Patch Changes
+
+- [#1309](https://github.com/thorswap/SwapKit/pull/1309) [`bf4d792`](https://github.com/thorswap/SwapKit/commit/bf4d792ade9cab35f3f0e54f14d7864f36bbd53a) Thanks [@towanTG](https://github.com/towanTG)! - Allows EVM gas estimation on transaction with a data property and improves BCH Transaction typing
+
+- Updated dependencies [[`bf4d792`](https://github.com/thorswap/SwapKit/commit/bf4d792ade9cab35f3f0e54f14d7864f36bbd53a)]:
+  - @swapkit/helpers@3.0.0-beta.8
+
 ## 1.0.0-beta.8
 
 ### Patch Changes
