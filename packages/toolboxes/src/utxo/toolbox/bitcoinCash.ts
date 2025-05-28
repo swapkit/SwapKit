@@ -160,7 +160,7 @@ async function createTransaction({
   // .inputs and .outputs will be undefined if no solution was found
   if (!(inputs && outputs)) throw new Error("Balance insufficient for transaction");
   const getNetwork = await getUtxoNetwork();
-  const builder = new TransactionBuilder(getNetwork(chain));
+  const builder = new TransactionBuilder(getNetwork(chain)) as TransactionBuilderType;
 
   await Promise.all(
     inputs.map(async (utxo: UTXOType) => {

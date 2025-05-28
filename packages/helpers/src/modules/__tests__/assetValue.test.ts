@@ -13,7 +13,7 @@ describe("AssetValue", () => {
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
       });
       expect(fakeAvaxUSDCAsset.toString()).toBe(
-        "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+        "AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
       );
 
       const ethSynth = new AssetValue({
@@ -115,20 +115,20 @@ describe("AssetValue", () => {
       const arbWeth = AssetValue.from({
         asset: "ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
       });
-      expect(arbWeth.toString()).toBe("ARB.WETH-0x82af49447d8a07e3bd95bd0d56f35241523fbab1");
+      expect(arbWeth.toString()).toBe("ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1");
 
       const baseAssetFromString = AssetValue.from({
         asset: "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
       });
       expect(baseAssetFromString.toString()).toBe(
-        "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "BASE.USDC-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
       );
 
       const avaxSolanaAsset = AssetValue.from({
         asset: "AVAX.SOL-0XFE6B19286885A4F7F55ADAD09C3CD1F906D2478F",
       });
       expect(avaxSolanaAsset.toString()).toBe(
-        "AVAX.SOL-0xfe6b19286885a4f7f55adad09c3cd1f906d2478f",
+        "AVAX.SOL-0xFE6B19286885a4F7F55AdAD09C3Cd1f906D2478F",
       );
     });
   });
@@ -190,11 +190,11 @@ describe("AssetValue", () => {
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
       });
       expect(fakeAvaxUSDCAsset.toUrl()).toBe(
-        "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+        "AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
       );
 
       const thor = AssetValue.from({ asset: "ETH.THOR" });
-      expect(thor.toUrl()).toBe("ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
+      expect(thor.toUrl()).toBe("ETH.THOR-0xa5f2211B9b8170F694421f2046281775E8468044");
 
       const ethSynth = new AssetValue({
         chain: Chain.THORChain,
@@ -299,10 +299,10 @@ describe("AssetValue", () => {
         chain: Chain.Avalanche,
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
       });
-      expect(avaxUSDCAsset.toString()).toBe("AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e");
+      expect(avaxUSDCAsset.toString()).toBe("AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E");
 
       const thor = AssetValue.from({ asset: "ETH.THOR" });
-      expect(thor.toString()).toBe("ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
+      expect(thor.toString()).toBe("ETH.THOR-0xa5f2211B9b8170F694421f2046281775E8468044");
 
       const ethSynth = await AssetValue.from({
         asset: "ETH/ETH",
@@ -331,12 +331,12 @@ describe("AssetValue", () => {
 
       expect(avaxUSDCAsset).toEqual(
         expect.objectContaining({
-          address: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+          address: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
           chain: Chain.Avalanche,
           decimal: 6,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+          symbol: "USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
           ticker: "USDC",
         }),
       );
@@ -465,7 +465,7 @@ describe("AssetValue", () => {
 
       expect(synthETH.toString()).toBe("ETH/ETH");
       expect(eth.toString()).toBe("ETH.ETH");
-      expect(thor.toString()).toBe("ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
+      expect(thor.toString()).toBe("ETH.THOR-0xa5f2211B9b8170F694421f2046281775E8468044");
       expect(synthThor.toString()).toBe("ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
       expect(synthDashes.toString()).toBe("ETH/PENDLE-LPT-0x1234");
     });
@@ -481,12 +481,12 @@ describe("AssetValue", () => {
       expect(thor).toBeDefined();
       expect(thor).toEqual(
         expect.objectContaining({
-          address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
           chain: Chain.Arbitrum,
           decimal: 6,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "USDT-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          symbol: "USDT-0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
           ticker: "USDT",
         }),
       );
@@ -503,12 +503,12 @@ describe("AssetValue", () => {
       expect(thor).toBeDefined();
       expect(thor).toEqual(
         expect.objectContaining({
-          address: "0xa5f2211b9b8170f694421f2046281775e8468044",
+          address: "0xa5f2211B9b8170F694421f2046281775E8468044",
           chain: Chain.Ethereum,
           decimal: 18,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
+          symbol: "THOR-0xa5f2211B9b8170F694421f2046281775E8468044",
           ticker: "THOR",
         }),
       );
@@ -519,12 +519,12 @@ describe("AssetValue", () => {
       expect(usdc).toBeDefined();
       expect(usdc).toEqual(
         expect.objectContaining({
-          address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
           chain: Chain.Ethereum,
           decimal: 6,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "USDC-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          symbol: "USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
           ticker: "USDC",
         }),
       );
@@ -580,12 +580,12 @@ describe("AssetValue", () => {
       expect(AvaxBTCb).toBeDefined();
       expect(AvaxBTCb).toEqual(
         expect.objectContaining({
-          address: "0x152b9d0fdc40c096757f570a51e494bd4b943e50",
+          address: "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
           chain: Chain.Avalanche,
           decimal: 8,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "BTC.B-0x152b9d0fdc40c096757f570a51e494bd4b943e50",
+          symbol: "BTC.B-0x152b9d0FdC40C096757F570A51E494bd4b943E50",
           ticker: "BTC.B",
         }),
       );
@@ -655,12 +655,12 @@ describe("AssetValue", () => {
       expect(AvaxUSDC).toBeDefined();
       expect(AvaxUSDC).toEqual(
         expect.objectContaining({
-          address: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+          address: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
           chain: Chain.Avalanche,
           decimal: 6,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+          symbol: "USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
           ticker: "USDC",
         }),
       );
@@ -731,12 +731,12 @@ describe("AssetValue", () => {
       const thor = AssetValue.from({ asset: "ETH.THOR" });
       expect(thor).toEqual(
         expect.objectContaining({
-          address: "0xa5f2211b9b8170f694421f2046281775e8468044",
+          address: "0xa5f2211B9b8170F694421f2046281775E8468044",
           chain: Chain.Ethereum,
           decimal: 18,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
+          symbol: "THOR-0xa5f2211B9b8170F694421f2046281775E8468044",
           ticker: "THOR",
         }),
       );

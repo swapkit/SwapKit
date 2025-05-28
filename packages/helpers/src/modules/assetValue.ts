@@ -1,4 +1,11 @@
-import { BaseDecimal, Chain, type ChainId, ChainToChainId } from "../types/chains";
+import {
+  BaseDecimal,
+  Chain,
+  type ChainId,
+  ChainToChainId,
+  type EVMChain,
+  EVMChains,
+} from "../types/chains";
 import type { TokenNames, TokenTax } from "../types/tokens";
 import {
   type CommonAssetString,
@@ -12,6 +19,7 @@ import { warnOnce } from "../utils/others";
 import { type TokenListName, loadTokenLists } from "../utils/tokens";
 import { validateIdentifier } from "../utils/validators";
 
+import { getAddress } from "ethers";
 import type { NumberPrimitives } from "./bigIntArithmetics";
 import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics";
 import { SwapKitError } from "./swapKitError";
@@ -345,12 +353,23 @@ function getAssetInfo(identifier: string) {
   const assetSymbol = isSynthOrTrade ? synthSymbol : rest.join(".");
 
   const { address, ticker } = getAssetBaseInfo({ symbol: assetSymbol, chain });
+
+  let formattedAddress: string | undefined;
+  try {
+    formattedAddress =
+      address && EVMChains.includes(chain as EVMChain) && getAddress(address)
+        ? getAddress(address)
+        : address;
+  } catch (_error) {
+    formattedAddress = address;
+  }
+
   const symbol =
     (isSynthOrTrade ? `${synthChain}${assetSeparator}` : "") +
-    (address ? `${ticker}-${address ?? ""}` : assetSymbol);
+    (formattedAddress ? `${ticker}-${formattedAddress ?? ""}` : assetSymbol);
 
   return {
-    address,
+    address: formattedAddress,
     chain,
     isSynthOrTrade,
     isSynthetic,

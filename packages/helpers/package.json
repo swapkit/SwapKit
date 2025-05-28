@@ -1,6 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
+    "ethers": "6.13.5",
     "ts-pattern": "5.7.0",
     "zod": "3.24.3",
     "zustand": "5.0.3"

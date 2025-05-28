@@ -52,4 +52,6 @@ export type TransactionBuilderType = {
     signatureAlgorithm?: string,
   ): void;
   build(): TransactionType;
+  addOutput(addressOrScriptBuffer: string | Buffer, value: number): void;
+  addInput(txHash: string | Buffer, vout: number, sequence?: number, prevOutScript?: Buffer): void;
 };

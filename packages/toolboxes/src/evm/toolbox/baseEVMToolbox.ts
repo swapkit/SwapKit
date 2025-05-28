@@ -538,6 +538,7 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
     assetValue,
     recipient,
     memo,
+    data,
     sender,
     funcName,
     funcParams,
@@ -547,6 +548,7 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
     funcName?: string;
     funcParams?: unknown[];
     txOverrides?: EVMTxParams;
+    data?: string;
   }) {
     // const value = assetValue.getBaseValue("bigint");
     const value = assetValue.bigIntValue;
@@ -573,7 +575,7 @@ function getEstimateGasLimit({ provider, signer }: ToolboxWrapParams) {
       from: sender,
       to: recipient,
       value,
-      data: memo ? hexlify(toUtf8Bytes(memo)) : undefined,
+      data: data ? data : memo ? hexlify(toUtf8Bytes(memo)) : undefined,
     });
   };
 }
