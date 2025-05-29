@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.7.8
+
+### Patch Changes
+
+- [#1311](https://github.com/thorswap/SwapKit/pull/1311) [`273d6cb`](https://github.com/thorswap/SwapKit/commit/273d6cb6c120b04c6772e2b92e978010c97b1142) Thanks [@towanTG](https://github.com/towanTG)! - Align AssetValue address behaviour with v4 - EVM addresses will be used checksummed
+
 ## 2.7.7
 
 ### Patch Changes
