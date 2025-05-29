@@ -2,6 +2,7 @@
   "author": "swapkit-oss",
   "description": "SwapKit - Helpers",
   "dependencies": {
+    "ethers": "6.13.5",
     "@swapkit/contracts": "workspace:*",
     "@swapkit/tokens": "workspace:*"
   },

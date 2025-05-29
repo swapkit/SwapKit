@@ -14,6 +14,7 @@ export type ConditionalAssetValueReturn<T extends boolean> = T extends true
 
 export const CommonAssetStrings = [
   `${Chain.Maya}.MAYA`,
+  `${Chain.Maya}.CACAO`,
   `${Chain.Ethereum}.THOR`,
   `${Chain.Ethereum}.vTHOR`,
   `${Chain.Kujira}.USK`,
@@ -176,6 +177,8 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     case Chain.Radix:
       return { identifier: `${Chain.Radix}.XRD`, decimal: BaseDecimal[assetString] };
 
+    case `${Chain.Maya}.CACAO`:
+      return { identifier: assetString, decimal: 10 };
     case `${Chain.Maya}.MAYA`:
       return { identifier: assetString, decimal: 4 };
     case `${Chain.Kujira}.USK`:
