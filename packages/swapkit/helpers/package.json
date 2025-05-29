@@ -2,9 +2,9 @@
   "author": "swapkit-oss",
   "description": "SwapKit - Helpers",
   "dependencies": {
-    "ethers": "6.13.5",
     "@swapkit/contracts": "workspace:*",
-    "@swapkit/tokens": "workspace:*"
+    "@swapkit/tokens": "workspace:*",
+    "ethers": "6.13.5"
   },
   "devDependencies": {
     "@swapkit/toolbox-cosmos": "workspace:*",

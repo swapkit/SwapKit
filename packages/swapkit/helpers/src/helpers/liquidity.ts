@@ -95,8 +95,12 @@ export function getSymmetricPoolShare({
   assetDepth: string;
 }>) {
   return {
-    assetAmount: toTCSwapKitNumber(assetDepth).mul(liquidityUnits).div(poolUnits),
-    runeAmount: toTCSwapKitNumber(runeDepth).mul(liquidityUnits).div(poolUnits),
+    assetAmount: toTCSwapKitNumber(assetDepth)
+      .mul(liquidityUnits)
+      .div(poolUnits || "1"),
+    runeAmount: toTCSwapKitNumber(runeDepth)
+      .mul(liquidityUnits)
+      .div(poolUnits || "1"),
   };
 }
 
