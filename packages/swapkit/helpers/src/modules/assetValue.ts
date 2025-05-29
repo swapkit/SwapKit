@@ -1,3 +1,4 @@
+import { getAddress } from "ethers";
 import {
   type CommonAssetString,
   CommonAssetStrings,
@@ -8,7 +9,14 @@ import {
 } from "../helpers/asset";
 import { warnOnce } from "../helpers/others";
 import { validateIdentifier } from "../helpers/validators";
-import { BaseDecimal, Chain, type ChainId, ChainToChainId } from "../types/chains";
+import {
+  BaseDecimal,
+  Chain,
+  type ChainId,
+  ChainToChainId,
+  type EVMChain,
+  EVMChains,
+} from "../types/chains";
 import type { TokenNames, TokenTax } from "../types/tokens";
 
 import type { NumberPrimitives } from "./bigIntArithmetics";
@@ -379,15 +387,28 @@ function getAssetInfo(identifier: string) {
 
   const address = chain === Chain.Solana ? unformattedAddress : unformattedAddress?.toLowerCase();
 
+  let formattedAddress: string | undefined;
+
+  try {
+    formattedAddress =
+      address && EVMChains.includes(chain as EVMChain) && getAddress(address)
+        ? getAddress(address)
+        : address;
+  } catch (_error) {
+    formattedAddress = address;
+  }
+
+  const formattedSymbol =
+    (isSynthOrTradeAsset ? `${synthChain}${assetSeperator}` : "") +
+    (formattedAddress ? `${ticker.toUpperCase()}-${formattedAddress ?? ""}` : symbol);
+
   return {
-    address,
+    address: formattedAddress,
     chain,
     isGasAsset: isGasAsset({ chain, symbol }),
     isSynthetic,
     isTradeAsset,
     ticker,
-    symbol:
-      (isSynthOrTradeAsset ? `${synthChain}${assetSeperator}` : "") +
-      (address ? `${ticker}-${address ?? ""}` : symbol),
+    symbol: formattedSymbol,
   };
 }
