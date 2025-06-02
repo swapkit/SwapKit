@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.8.0
+
+### Minor Changes
+
+- [`69b1d7a`](https://github.com/thorswap/SwapKit/commit/69b1d7a9ea0dde10b84f6d60e90b565cbf109dff) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Adds SwapkitApi getBalance as EVM balance provider
+
 ## 2.7.8
 
 ### Patch Changes
