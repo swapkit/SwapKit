@@ -17,6 +17,7 @@ export {
 export * from "./api/alchemyApi";
 export * from "./api/covalentApi";
 export * from "./api/ethplorerApi";
+export * from "./api/swapkitApi";
 export * from "./helpers";
 export * from "./provider";
 export * from "./toolbox/EVMToolbox";

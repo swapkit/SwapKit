@@ -11,6 +11,7 @@ import {
 } from "@swapkit/helpers";
 import type { BrowserProvider, JsonRpcProvider, Provider } from "ethers";
 
+import type { SwapkitApiType } from "./api/swapkitApi";
 import {
   type AlchemyApiType,
   type CovalentApiType,
@@ -89,7 +90,7 @@ export const getBalance = async ({
   potentialScamFilter,
 }: {
   provider: JsonRpcProvider | BrowserProvider;
-  api: CovalentApiType | EthplorerApiType | AlchemyApiType;
+  api: CovalentApiType | EthplorerApiType | AlchemyApiType | SwapkitApiType;
   address: string;
   chain: EVMChain;
   potentialScamFilter?: boolean;
