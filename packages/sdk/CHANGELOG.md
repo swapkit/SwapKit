@@ -1,5 +1,15 @@
 # @swapkit/sdk
 
+## 3.0.0-beta.11
+
+### Patch Changes
+
+- Updated dependencies [[`737100a`](https://github.com/thorswap/SwapKit/commit/737100abfe512eb5037047a7ae24876e4e87cb3a), [`e08470a`](https://github.com/thorswap/SwapKit/commit/e08470a0e7c72cfd93736ed556fcf90e64d9e64b)]:
+  - @swapkit/toolboxes@1.0.0-beta.11
+  - @swapkit/wallets@3.0.0-beta.11
+  - @swapkit/plugins@1.0.0-beta.11
+  - @swapkit/core@4.0.0-beta.11
+
 ## 3.0.0-beta.10
 
 ### Patch Changes

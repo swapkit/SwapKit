@@ -1,5 +1,17 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.11
+
+### Patch Changes
+
+- [`737100a`](https://github.com/thorswap/SwapKit/commit/737100abfe512eb5037047a7ae24876e4e87cb3a) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Moves bitcoinjs lib imports to esm type
+
+- [`e08470a`](https://github.com/thorswap/SwapKit/commit/e08470a0e7c72cfd93736ed556fcf90e64d9e64b) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Use ESM @solana imports instead of commonjs
+
+- Updated dependencies [[`737100a`](https://github.com/thorswap/SwapKit/commit/737100abfe512eb5037047a7ae24876e4e87cb3a), [`e08470a`](https://github.com/thorswap/SwapKit/commit/e08470a0e7c72cfd93736ed556fcf90e64d9e64b)]:
+  - @swapkit/toolboxes@1.0.0-beta.11
+  - @swapkit/helpers@3.0.0-beta.9
+
 ## 3.0.0-beta.10
 
 ### Patch Changes
