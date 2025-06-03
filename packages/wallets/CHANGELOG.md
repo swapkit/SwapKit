@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.12
+
+### Patch Changes
+
+- [`ca3af62`](https://github.com/thorswap/SwapKit/commit/ca3af62b11fb61c8c316ac97d3c4474f718ef079) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Changes @psf/\* imports to commonjs default
+
+- Updated dependencies [[`ca3af62`](https://github.com/thorswap/SwapKit/commit/ca3af62b11fb61c8c316ac97d3c4474f718ef079)]:
+  - @swapkit/toolboxes@1.0.0-beta.12
+  - @swapkit/helpers@3.0.0-beta.9
+
 ## 3.0.0-beta.11
 
 ### Patch Changes
