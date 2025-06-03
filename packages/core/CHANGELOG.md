@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 4.0.0-beta.13
+
+### Patch Changes
+
+- Updated dependencies [[`dbf4faa`](https://github.com/thorswap/SwapKit/commit/dbf4faad491b69d7bb034a21aadfa02ce18c280d)]:
+  - @swapkit/toolboxes@1.0.0-beta.13
+  - @swapkit/helpers@3.0.0-beta.9
+
 ## 4.0.0-beta.12
 
 ### Patch Changes
