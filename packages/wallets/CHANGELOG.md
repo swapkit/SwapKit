@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.13
+
+### Patch Changes
+
+- [`dbf4faa`](https://github.com/thorswap/SwapKit/commit/dbf4faad491b69d7bb034a21aadfa02ce18c280d) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Changes coininfo import
+
+- Updated dependencies [[`dbf4faa`](https://github.com/thorswap/SwapKit/commit/dbf4faad491b69d7bb034a21aadfa02ce18c280d)]:
+  - @swapkit/toolboxes@1.0.0-beta.13
+  - @swapkit/helpers@3.0.0-beta.9
+
 ## 3.0.0-beta.12
 
 ### Patch Changes
