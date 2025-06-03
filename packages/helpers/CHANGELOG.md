@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.9
+
+### Patch Changes
+
+- [`4a38b18`](https://github.com/thorswap/SwapKit/commit/4a38b18df4c508bdfa5803a69ba99e7d56a17639) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Changes async import style to accomodate commonjs packages
+
 ## 3.0.0-beta.8
 
 ### Patch Changes

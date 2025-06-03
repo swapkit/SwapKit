@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 1.0.0-beta.10
+
+### Patch Changes
+
+- [`4a38b18`](https://github.com/thorswap/SwapKit/commit/4a38b18df4c508bdfa5803a69ba99e7d56a17639) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Changes async import style to accomodate commonjs packages
+
+- Updated dependencies [[`4a38b18`](https://github.com/thorswap/SwapKit/commit/4a38b18df4c508bdfa5803a69ba99e7d56a17639)]:
+  - @swapkit/toolboxes@1.0.0-beta.10
+  - @swapkit/helpers@3.0.0-beta.9
+
 ## 1.0.0-beta.9
 
 ### Patch Changes
