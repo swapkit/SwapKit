@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 2.1.21
+
+### Patch Changes
+
+- Updated dependencies [[`a96036e`](https://github.com/thorswap/SwapKit/commit/a96036effac1a58e90d3540f686f310f6c5f5424)]:
+  - @swapkit/wallet-phantom@1.5.11
+  - @swapkit/wallet-bitget@1.3.14
+  - @swapkit/wallet-ctrl@2.3.15
+  - @swapkit/wallet-keystore@1.8.12
+
 ## 2.1.20
 
 ### Patch Changes

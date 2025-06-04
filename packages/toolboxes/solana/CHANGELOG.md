@@ -1,5 +1,14 @@
 # @swapkit/toolbox-solana
 
+## 1.6.11
+
+### Patch Changes
+
+- [`a96036e`](https://github.com/thorswap/SwapKit/commit/a96036effac1a58e90d3540f686f310f6c5f5424) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Improves Sol get balance method to use new token list
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.9.0
+
 ## 1.6.10
 
 ### Patch Changes
