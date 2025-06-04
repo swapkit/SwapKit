@@ -5,8 +5,7 @@ export type TokenTax = { buy: number; sell: number };
 export type TokenNames =
   | (typeof tokenLists)["CaviarV1List"]["tokens"][number]["identifier"]
   | (typeof tokenLists)["ChainflipList"]["tokens"][number]["identifier"]
-  //   | (typeof tokenLists)["JupiterList"]["tokens"][number]["identifier"]
-  | (typeof tokenLists)["KadoList"]["tokens"][number]["identifier"]
+  | (typeof tokenLists)["JupiterList"]["tokens"][number]["identifier"]
   | (typeof tokenLists)["MayaList"]["tokens"][number]["identifier"]
   // | (typeof tokenLists)['OciswapV1List']["tokens"][number]["identifier"]
   | (typeof tokenLists)["OneInchList"]["tokens"][number]["identifier"]

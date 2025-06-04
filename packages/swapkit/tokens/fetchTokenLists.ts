@@ -1,6 +1,8 @@
 import { SwapKitApi } from "@swapkit/api";
 import { Chain, ChainId, ProviderName } from "@swapkit/helpers";
 
+const SK_API_KEY = process.env.SWAPKIT_API_KEY || Bun.env.SWAPKIT_API_KEY || "";
+
 function parseChain(chain: string) {
   if (chain === "ARBITRUM") return Chain.Arbitrum;
   return chain;
@@ -13,7 +15,7 @@ function parseIdentifier(identifier: string) {
   return identifier;
 }
 
-const providers = (await SwapKitApi.getTokenListProvidersV2(false, "")).filter(
+const providers = (await SwapKitApi.getTokenListProvidersV2(true, SK_API_KEY)).filter(
   (provider) =>
     ![
       ProviderName.CHAINFLIP_STREAMING,
@@ -33,7 +35,7 @@ console.info(
 
 for (const { provider } of providers) {
   try {
-    const tokenList = await SwapKitApi.getTokenList(provider, false, "");
+    const tokenList = await SwapKitApi.getTokenList(provider, true, SK_API_KEY);
     if (!tokenList) continue;
 
     console.info(`✅ ${provider} token list fetched (${tokenList.tokens.length} tokens)`);
