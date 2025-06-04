@@ -7,7 +7,6 @@ import {
   getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import { type TokenInfo, TokenListProvider } from "@solana/spl-token-registry";
 import {
   Connection,
   Keypair,
@@ -28,6 +27,34 @@ import {
   getRPCUrl,
 } from "@swapkit/helpers";
 import { HDKey } from "micro-key-producer/slip10.js";
+
+type JupTokenMetadata = {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoURI: string;
+  tags: string[];
+  daily_volume: number;
+  created_at: string;
+  freeze_authority: null | string;
+  mint_authority: null | string;
+  permanent_delegate: null | string;
+  minted_at: string;
+  extensions: {
+    [k in string]: string;
+  };
+};
+
+async function fetchTokenMetaData(mintAddress: string): Promise<JupTokenMetadata | null> {
+  try {
+    const response = await fetch(`https://lite-api.jup.ag/tokens/v1/token/${mintAddress}`);
+    if (!response.ok) return null;
+    return (await response.json()) as JupTokenMetadata;
+  } catch {
+    return null;
+  }
+}
 
 export function validateAddress(address: string) {
   try {
@@ -62,46 +89,42 @@ async function getTokenBalances({
   connection: Connection;
   address: string;
 }) {
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
-    programId: TOKEN_PROGRAM_ID,
-  });
-  const tokenListProvider = new TokenListProvider();
-  const tokenListContainer = await tokenListProvider.resolve();
-  const tokenList = tokenListContainer.filterByChainId(101).getList();
-
-  // Group token balances by mint address
-  const tokenBalanceMap = new Map<string, { amount: bigint; decimal: number; symbol: string }>();
-
-  for await (const tokenAccountInfo of tokenAccounts.value) {
-    const accountInfo = tokenAccountInfo.account.data.parsed.info;
-    const mintAddress = accountInfo.mint;
-    const decimal = accountInfo.tokenAmount.decimals;
-    const amount = BigInt(accountInfo.tokenAmount.amount);
-
-    if (amount <= BigInt(0)) continue;
-
-    const tokenInfo = tokenList.find((token: TokenInfo) => token.address === mintAddress);
-    const tokenSymbol = tokenInfo?.symbol ?? "UNKNOWN";
-    const existing = tokenBalanceMap.get(mintAddress);
-
-    tokenBalanceMap.set(mintAddress, {
-      amount: existing ? existing.amount + amount : amount,
-      decimal,
-      symbol: tokenSymbol,
+  try {
+    // Get token accounts from Solana RPC
+    const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(address), {
+      programId: TOKEN_PROGRAM_ID,
     });
-  }
 
-  // Convert grouped balances to AssetValue array
-  const tokenBalances: AssetValue[] = Array.from(tokenBalanceMap.entries()).map(
-    ([mintAddress, { amount, decimal, symbol }]) =>
-      new AssetValue({
+    // Process each token account and fetch metadata from Jupiter API
+    const tokenBalances: AssetValue[] = [];
+
+    for (const tokenAccountInfo of tokenAccounts.value) {
+      const accountInfo = tokenAccountInfo.account.data.parsed.info;
+      const mintAddress = accountInfo.mint;
+      const decimal = accountInfo.tokenAmount.decimals;
+      const amount = BigInt(accountInfo.tokenAmount.amount);
+
+      if (amount <= BigInt(0)) continue;
+
+      // Fetch metadata from Jupiter API for each token
+      const jupiterMetadata = await fetchTokenMetaData(mintAddress);
+      const symbol = jupiterMetadata?.symbol ?? "UNKNOWN";
+
+      // Create AssetValue with Jupiter metadata
+      const assetValue = new AssetValue({
         value: SwapKitNumber.fromBigInt(amount, decimal),
         decimal,
-        identifier: `${Chain.Solana}.${symbol}${mintAddress ? `-${mintAddress.toString()}` : ""}`,
-      }),
-  );
+        identifier: `${Chain.Solana}.${symbol}-${mintAddress}`,
+      });
 
-  return tokenBalances;
+      tokenBalances.push(assetValue);
+    }
+
+    return tokenBalances;
+  } catch (error) {
+    console.warn("Failed to fetch token balances:", error);
+    return [];
+  }
 }
 
 function getBalance(connection: Connection) {

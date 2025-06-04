@@ -4,8 +4,7 @@
     "@scure/bip39": "1.5.4",
     "@solana/spl-memo": "0.2.5",
     "@solana/spl-token": "0.4.9",
-    "@solana/spl-token-registry": "0.2.4574",
-    "@solana/web3.js": "1.95.8",
+    "@solana/web3.js": "1.98.2",
     "@swapkit/helpers": "workspace:*",
     "micro-key-producer": "0.7.5"
   },
