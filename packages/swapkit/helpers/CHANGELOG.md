@@ -1,5 +1,16 @@
 # @swapkit/helpers
 
+## 2.9.0
+
+### Minor Changes
+
+- [#1319](https://github.com/thorswap/SwapKit/pull/1319) [`f947743`](https://github.com/thorswap/SwapKit/commit/f9477433e1375831690c464e5284b98b96947bab) Thanks [@towanTG](https://github.com/towanTG)! - Makes AssetValue case sensitive to accomodate Solana
+
+### Patch Changes
+
+- Updated dependencies [[`f947743`](https://github.com/thorswap/SwapKit/commit/f9477433e1375831690c464e5284b98b96947bab)]:
+  - @swapkit/tokens@2.6.0
+
 ## 2.8.0
 
 ### Minor Changes
