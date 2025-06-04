@@ -59,6 +59,7 @@ const errorCodes = {
   core_transaction_user_rejected: 10315,
   core_transaction_failed: 10316,
   core_transaction_invalid_recipient_address: 10317,
+  core_transaction_invalid_asset: 10318,
   /**
    * Wallets
    */

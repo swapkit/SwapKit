@@ -143,11 +143,7 @@ export class AssetValue extends BigIntArithmetics {
       : { identifier: assetOrChain, decimal: undefined };
 
     const { chain, isSynthetic, isTradeAsset } = getAssetInfo(unsafeIdentifier);
-    const token = staticTokensMap.get(
-      chain === Chain.Solana
-        ? (unsafeIdentifier as TokenNames)
-        : (unsafeIdentifier.toUpperCase() as TokenNames),
-    );
+    const token = staticTokensMap.get(unsafeIdentifier);
     const tokenDecimal = token?.decimal || commonAssetDecimal;
 
     warnOnce(
@@ -183,13 +179,10 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
           import("@swapkit/tokens").then((tokenPackage) => {
             for (const tokenList of Object.values(tokenPackage.tokenLists)) {
               for (const { identifier, chain, ...rest } of tokenList.tokens) {
-                staticTokensMap.set(
-                  chain === "SOL" ? identifier : (identifier.toUpperCase() as TokenNames),
-                  {
-                    identifier,
-                    decimal: "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain],
-                  },
-                );
+                staticTokensMap.set(identifier as TokenNames, {
+                  identifier,
+                  decimal: "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain],
+                });
               }
             }
 
@@ -301,11 +294,7 @@ export function getMinAmountByChain(chain: Chain) {
 async function createAssetValue(identifier: string, value: NumberPrimitives = 0) {
   validateIdentifier(identifier);
 
-  const isCaseSensitiveChain = identifier.includes("SOL.");
-
-  const modifiedIdentifier = isCaseSensitiveChain
-    ? (identifier as TokenNames)
-    : (identifier.toUpperCase() as TokenNames);
+  const modifiedIdentifier = identifier;
 
   const staticToken = staticTokensMap.get(modifiedIdentifier);
   const decimal = staticToken?.decimal || (await getDecimal(getAssetInfo(identifier)));
@@ -400,7 +389,7 @@ function getAssetInfo(identifier: string) {
 
   const formattedSymbol =
     (isSynthOrTradeAsset ? `${synthChain}${assetSeperator}` : "") +
-    (formattedAddress ? `${ticker.toUpperCase()}-${formattedAddress ?? ""}` : symbol);
+    (formattedAddress ? `${ticker}-${formattedAddress ?? ""}` : symbol);
 
   return {
     address: formattedAddress,

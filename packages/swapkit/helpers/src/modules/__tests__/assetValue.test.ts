@@ -580,7 +580,7 @@ describe("AssetValue", () => {
           decimal: 8,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "BTC.B-0x152b9d0FdC40C096757F570A51E494bd4b943E50",
+          symbol: "BTC.b-0x152b9d0FdC40C096757F570A51E494bd4b943E50",
           ticker: "BTC.b",
         }),
       );
