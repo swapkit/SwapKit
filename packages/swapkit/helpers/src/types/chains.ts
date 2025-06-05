@@ -56,7 +56,7 @@ export enum ChainId {
   Polygon = "137",
   PolygonHex = "0x89",
   Radix = "radix-mainnet",
-  Ripple = "1600",
+  Ripple = "ripple",
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
