@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 2.7.0
+
+### Minor Changes
+
+- [#1322](https://github.com/thorswap/SwapKit/pull/1322) [`e660f10`](https://github.com/thorswap/SwapKit/commit/e660f10f5d3759a388333e47cc7b4ec7edcc9384) Thanks [@towanTG](https://github.com/towanTG)! - Adds Near Provider support
+
 ## 2.6.0
 
 ### Minor Changes

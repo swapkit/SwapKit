@@ -1,5 +1,25 @@
 # @swapkit/sdk
 
+## 2.4.0
+
+### Minor Changes
+
+- [#1322](https://github.com/thorswap/SwapKit/pull/1322) [`e660f10`](https://github.com/thorswap/SwapKit/commit/e660f10f5d3759a388333e47cc7b4ec7edcc9384) Thanks [@towanTG](https://github.com/towanTG)! - Adds Near Provider support
+
+### Patch Changes
+
+- Updated dependencies [[`e660f10`](https://github.com/thorswap/SwapKit/commit/e660f10f5d3759a388333e47cc7b4ec7edcc9384), [`e660f10`](https://github.com/thorswap/SwapKit/commit/e660f10f5d3759a388333e47cc7b4ec7edcc9384), [`e660f10`](https://github.com/thorswap/SwapKit/commit/e660f10f5d3759a388333e47cc7b4ec7edcc9384)]:
+  - @swapkit/plugin-near@1.0.0
+  - @swapkit/tokens@2.7.0
+  - @swapkit/core@3.4.0
+  - @swapkit/api@2.9.0
+  - @swapkit/plugin-chainflip@2.2.12
+  - @swapkit/plugin-evm@1.4.12
+  - @swapkit/plugin-radix@1.4.12
+  - @swapkit/plugin-solana@0.2.13
+  - @swapkit/plugin-thorchain@2.5.15
+  - @swapkit/wallets@2.1.22
+
 ## 2.3.22
 
 ### Patch Changes
