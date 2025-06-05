@@ -297,7 +297,11 @@ export const PriceRequestSchema = z.object({
 
 export type PriceRequest = z.infer<typeof PriceRequestSchema>;
 
-export const BrokerDepositChannelParamsSchema = z.object({
+export const DepositChannelParamsSchema = z.object({
+  destinationAddress: z.string(),
+});
+
+export const BrokerDepositChannelParamsSchema = DepositChannelParamsSchema.extend({
   sellAsset: z.object({
     chain: z.string(), // identifier of the asset
     asset: z.string(), // identifier of the asset
@@ -306,7 +310,6 @@ export const BrokerDepositChannelParamsSchema = z.object({
     chain: z.string(), // identifier of the asset
     asset: z.string(), // identifier of the asset
   }),
-  destinationAddress: z.string(),
   channelMetadata: z
     .object({
       cfParameters: z.string().optional(),
@@ -345,6 +348,53 @@ export const DepositChannelResponseSchema = z.object({
   channelId: z.string(),
   depositAddress: z.string(),
 });
+
+export const NearDepositChannelParamsSchema = DepositChannelParamsSchema.extend({
+  sellAsset: z.string(),
+  buyAsset: z.string(),
+  sourceAddress: z.string(),
+  sellAmount: z.string(),
+  affiliateFees: z
+    .object({
+      nearId: z.string(),
+      feeBps: z.number(),
+    })
+    .optional(),
+  slippage: z.coerce.number(),
+});
+
+export type NearDepositChannelParams = z.infer<typeof NearDepositChannelParamsSchema>;
+
+const NearQuoteResponseSchema = z.object({
+  amountIn: z.string(),
+  amountInFormatted: z.string(),
+  amountInUsd: z.string(),
+  minAmountIn: z.string(),
+  amountOut: z.string(),
+  amountOutFormatted: z.string(),
+  amountOutUsd: z.string(),
+  minAmountOut: z.string(),
+  deadline: z.string().optional(),
+  timeWhenInactive: z.string().optional(),
+  timeEstimate: z.number().optional(),
+});
+
+export const NearDepositChannelResultSchema = NearQuoteResponseSchema.extend({
+  timestamp: z.string(),
+  signature: z.string(),
+  quote: NearQuoteResponseSchema,
+  tx: z.unknown(),
+  depositAddress: z.string(),
+});
+
+export type NearDepositChannelResult = z.infer<typeof NearDepositChannelResultSchema>;
+
+export const NearSwapResponseSchema = NearQuoteResponseSchema.extend({
+  depositAddress: z.string(),
+  tx: z.unknown(),
+});
+
+export type NearSwapResponse = z.infer<typeof NearSwapResponseSchema>;
 
 export type DepositChannelResponse = z.infer<typeof DepositChannelResponseSchema>;
 
@@ -624,27 +674,29 @@ export const ChainflipMetadataSchema = BrokerDepositChannelParamsSchema;
 export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
 
 export const RouteQuoteMetadataSchema = z.object({
+  assets: z.optional(z.array(RouteQuoteMetadataAssetSchema)),
+  tags: z.array(z.nativeEnum(PriorityLabel)),
+  streamingInterval: z.number().optional(),
+  maxStreamingQuantity: z.number().optional(),
+  referrer: z.string().optional(),
+});
+
+export const RouteQuoteMetadataV2Schema = RouteQuoteMetadataSchema.extend({
   priceImpact: z.optional(
     z.number({
       description: "Price impact",
     }),
   ),
-  assets: z.optional(z.array(RouteQuoteMetadataAssetSchema)),
   approvalAddress: z.optional(
     z.string({
       description: "Approval address for swap",
     }),
   ),
-  streamingInterval: z.number().optional(),
-  maxStreamingQuantity: z.number().optional(),
-  tags: z.array(z.nativeEnum(PriorityLabel)),
-
-  affiliate: z.optional(z.string()),
+  affiliate: z.optional(z.string()), // NOTE - should deprecate, check with Thorswap if this is used
   affiliateFee: z.optional(z.string()),
-
   txType: z.optional(z.nativeEnum(RouteQuoteTxType)),
-  chainflip: z.optional(ChainflipMetadataSchema),
-  referrer: z.optional(z.string()),
+  chainflip: ChainflipMetadataSchema.optional(),
+  near: NearDepositChannelParamsSchema.optional(),
 });
 
 export const RouteQuoteWarningSchema = z.array(
@@ -729,7 +781,7 @@ const QuoteResponseRouteItem = z.object({
   }),
   legs: z.array(QuoteResponseRouteLegItem),
   warnings: RouteQuoteWarningSchema,
-  meta: RouteQuoteMetadataSchema,
+  meta: RouteQuoteMetadataV2Schema,
 });
 
 export const QuoteResponseSchema = z.object({
