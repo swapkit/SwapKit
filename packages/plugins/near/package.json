@@ -4,9 +4,6 @@
     "@swapkit/api": "workspace:*",
     "@swapkit/helpers": "workspace:*"
   },
-  "devDependencies": {
-    "@types/bs58": "4.0.4"
-  },
   "description": "SwapKit Plugin - Near",
   "files": [
     "src/",
