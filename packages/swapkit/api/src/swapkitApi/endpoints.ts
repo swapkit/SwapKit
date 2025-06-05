@@ -7,6 +7,9 @@ import {
   DepositChannelResponseSchema,
   type GasResponse,
   GasResponseSchema,
+  type NearDepositChannelParams,
+  type NearDepositChannelResult,
+  NearDepositChannelResultSchema,
   type PriceRequest,
   type PriceResponse,
   PriceResponseSchema,
@@ -376,6 +379,40 @@ export async function getChainflipDepositChannel({
 
   try {
     const parsedResponse = DepositChannelResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+    }
+
+    return parsedResponse.data;
+  } catch (error) {
+    throw new SwapKitError("api_v2_invalid_response", error);
+  }
+}
+
+export async function getNearDepositChannel({
+  isDev = false,
+  body,
+  apiKey,
+}: {
+  isDev?: boolean;
+  apiKey?: string;
+  body: NearDepositChannelParams;
+}) {
+  const { destinationAddress } = body;
+
+  if (!destinationAddress) {
+    throw new SwapKitError("chainflip_broker_invalid_params");
+  }
+  const url = `${getBaseUrl(isDev)}/near/channel`;
+
+  const response = await RequestClient.post<NearDepositChannelResult>(url, {
+    json: body,
+    headers: getAuthHeaders({ apiKey }),
+  });
+
+  try {
+    const parsedResponse = NearDepositChannelResultSchema.safeParse(response);
 
     if (!parsedResponse.success) {
       throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);

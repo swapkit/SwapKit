@@ -1,6 +1,7 @@
 import { type PluginsType, SwapKit, type SwapKitParams, type WalletsType } from "@swapkit/core";
 import { ChainflipPlugin } from "@swapkit/plugin-chainflip";
 import { EVMPlugin } from "@swapkit/plugin-evm";
+import { NearPlugin } from "@swapkit/plugin-near";
 import { RadixPlugin } from "@swapkit/plugin-radix";
 import { SolanaPlugin } from "@swapkit/plugin-solana";
 import { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugin-thorchain";
@@ -16,6 +17,7 @@ export const defaultPlugins = {
   ...ThorchainPlugin,
   ...SolanaPlugin,
   ...RadixPlugin,
+  ...NearPlugin,
 };
 
 export const createSwapKit = <

@@ -41,8 +41,10 @@ export default defineConfig({
 
       "@swapkit/plugin-chainflip": resolve("../../packages/plugins/chainflip/src"),
       "@swapkit/plugin-evm": resolve("../../packages/plugins/evm/src"),
+      "@swapkit/plugin-near": resolve("../../packages/plugins/near/src"),
       "@swapkit/plugin-radix": resolve("../../packages/plugins/radix/src"),
       "@swapkit/plugin-thorchain": resolve("../../packages/plugins/thorchain/src"),
+      "@swapkit/plugin-solana": resolve("../../packages/plugins/solana/src"),
 
       "@swapkit/toolbox-cosmos": resolve("../../packages/toolboxes/cosmos/src"),
       "@swapkit/toolbox-evm": resolve("../../packages/toolboxes/evm/src"),

@@ -47,6 +47,9 @@ export const useSwapKit = () => {
     const loadSwapKit = async () => {
       const { SwapKit } = await import("@swapkit/core");
       const { ChainflipPlugin } = await import("@swapkit/plugin-chainflip");
+      const { NearPlugin } = await import("@swapkit/plugin-near");
+      const { EVMPlugin } = await import("@swapkit/plugin-evm");
+      const { SolanaPlugin } = await import("@swapkit/plugin-solana");
       const { ThorchainPlugin, MayachainPlugin } = await import("@swapkit/plugin-thorchain");
       const { wallets } = await import("@swapkit/wallets");
 
@@ -83,7 +86,14 @@ export const useSwapKit = () => {
           },
         },
         wallets,
-        plugins: { ...ThorchainPlugin, ...ChainflipPlugin, ...MayachainPlugin },
+        plugins: {
+          ...ThorchainPlugin,
+          ...ChainflipPlugin,
+          ...MayachainPlugin,
+          ...EVMPlugin,
+          ...NearPlugin,
+          ...SolanaPlugin,
+        },
       });
 
       setSwapKit(swapKitClient);
