@@ -45,6 +45,7 @@ function plugin({
     }
 
     const { depositAddress } = await swapkitApiEndpoints.getNearDepositChannel({
+      isDev: swapkitConfig?.isDev,
       body: {
         ...near,
       },

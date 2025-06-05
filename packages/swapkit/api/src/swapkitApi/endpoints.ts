@@ -8,8 +8,8 @@ import {
   type GasResponse,
   GasResponseSchema,
   type NearDepositChannelParams,
-  type NearDepositChannelResult,
-  NearDepositChannelResultSchema,
+  type NearSwapResponse,
+  NearSwapResponseSchema,
   type PriceRequest,
   type PriceResponse,
   PriceResponseSchema,
@@ -406,13 +406,13 @@ export async function getNearDepositChannel({
   }
   const url = `${getBaseUrl(isDev)}/near/channel`;
 
-  const response = await RequestClient.post<NearDepositChannelResult>(url, {
+  const response = await RequestClient.post<NearSwapResponse>(url, {
     json: body,
     headers: getAuthHeaders({ apiKey }),
   });
 
   try {
-    const parsedResponse = NearDepositChannelResultSchema.safeParse(response);
+    const parsedResponse = NearSwapResponseSchema.safeParse(response);
 
     if (!parsedResponse.success) {
       throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);

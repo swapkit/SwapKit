@@ -391,6 +391,7 @@ export type NearDepositChannelResult = z.infer<typeof NearDepositChannelResultSc
 
 export const NearSwapResponseSchema = NearQuoteResponseSchema.extend({
   depositAddress: z.string(),
+  depositAsset: z.string(),
   tx: z.unknown(),
 });
 
