@@ -28,7 +28,7 @@ function plugin({
       },
     } = swapParams;
 
-    if (!(sellAssetString && buyAssetString)) {
+    if (!(sellAssetString && buyAssetString && near?.sellAsset)) {
       throw new SwapKitError("core_swap_asset_not_recognized");
     }
 
