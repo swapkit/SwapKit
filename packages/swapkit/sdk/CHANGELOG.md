@@ -1,5 +1,20 @@
 # @swapkit/sdk
 
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`3beb306`](https://github.com/thorswap/SwapKit/commit/3beb306d3e8c9e7110f474e13a564bb888c59c42)]:
+  - @swapkit/plugin-near@1.0.1
+  - @swapkit/api@2.9.1
+  - @swapkit/plugin-chainflip@2.2.13
+  - @swapkit/plugin-evm@1.4.13
+  - @swapkit/plugin-radix@1.4.13
+  - @swapkit/plugin-solana@0.2.14
+  - @swapkit/plugin-thorchain@2.5.16
+  - @swapkit/core@3.4.1
+  - @swapkit/wallets@2.1.23
+
 ## 2.4.0
 
 ### Minor Changes

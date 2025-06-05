@@ -1,5 +1,14 @@
 # @swapkit/api
 
+## 2.9.1
+
+### Patch Changes
+
+- [#1324](https://github.com/thorswap/SwapKit/pull/1324) [`3beb306`](https://github.com/thorswap/SwapKit/commit/3beb306d3e8c9e7110f474e13a564bb888c59c42) Thanks [@github-actions](https://github.com/apps/github-actions)! - Updates Near Deposit Channel response typing and enables dev mode for near plugin
+
+- Updated dependencies [[`c6021b5`](https://github.com/thorswap/SwapKit/commit/c6021b556e363d2d57ed55f486b9355da3503949)]:
+  - @swapkit/helpers@2.10.1
+
 ## 2.9.0
 
 ### Minor Changes
