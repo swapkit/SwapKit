@@ -22,9 +22,78 @@ import {
 import { P } from "ts-pattern";
 import { match } from "ts-pattern";
 import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from ".";
-import { getBalance } from "../utils";
 
 type SolanaSigner = SolanaProvider | Signer;
+
+type TokenMetadata = {
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoURI?: string;
+  tags?: string[];
+  daily_volume?: number;
+};
+
+async function fetchTokenMetaData(mintAddress: string): Promise<TokenMetadata | null> {
+  try {
+    const response = await fetch(`https://lite-api.jup.ag/tokens/v1/token/${mintAddress}`);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+async function getSolanaBalance(address: string) {
+  const connection = await getConnection();
+  const { PublicKey } = await import("@solana/web3.js");
+  const { TOKEN_PROGRAM_ID } = await import("@solana/spl-token");
+  const publicKey = new PublicKey(address);
+
+  const balances: AssetValue[] = [];
+
+  // Get SOL balance
+  const solBalance = await connection.getBalance(publicKey);
+  if (solBalance > 0) {
+    balances.push(
+      AssetValue.from({
+        chain: Chain.Solana,
+        value: solBalance,
+        fromBaseDecimal: BaseDecimal[Chain.Solana],
+      }),
+    );
+  }
+
+  // Get token balances
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
+    programId: TOKEN_PROGRAM_ID,
+  });
+
+  for (const { account } of tokenAccounts.value) {
+    const tokenInfo = account.data.parsed.info;
+    const mintAddress = tokenInfo.mint;
+    const amount = tokenInfo.tokenAmount.amount;
+
+    if (Number(amount) === 0) continue;
+
+    // Fetch token metadata from Jupiter
+    const metadata = await fetchTokenMetaData(mintAddress);
+    const symbol = metadata?.symbol || "UNKNOWN";
+    const decimals = metadata?.decimals || tokenInfo.tokenAmount.decimals;
+
+    balances.push(
+      AssetValue.from({
+        chain: Chain.Solana,
+        symbol,
+        address: mintAddress,
+        value: amount,
+        fromBaseDecimal: decimals,
+      }),
+    );
+  }
+
+  return balances;
+}
 
 export async function getSolanaAddressValidator() {
   const { PublicKey } = await import("@solana/web3.js");
@@ -68,7 +137,11 @@ export async function getSolanaToolbox(
     getPubkeyFromAddress,
     createTransaction: createTransaction(getConnection),
     createTransactionFromInstructions,
-    getBalance: getBalance(Chain.Solana),
+    getBalance: (addressParam?: string) => {
+      const address = addressParam || getAddress();
+      if (!address) throw new SwapKitError("core_wallet_connection_not_found");
+      return getSolanaBalance(address);
+    },
     transfer: transfer(getConnection, signer),
     broadcastTransaction: broadcastTransaction(getConnection),
     getAddressValidator: getSolanaAddressValidator,

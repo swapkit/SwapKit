@@ -35,7 +35,7 @@ beforeEach(async () => {
     },
   });
   context.provider = provider;
-  context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer });
+  context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer: signer as any });
 });
 
 afterEach(async () => {

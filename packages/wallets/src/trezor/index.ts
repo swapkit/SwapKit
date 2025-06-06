@@ -233,7 +233,17 @@ export const trezorWallet = createWallet({
       const { success } = await TrezorConnect.getDeviceState();
 
       if (!success) {
-        const manifest = SKConfig.get("integrations").trezor || { appUrl: "", email: "" };
+        const trezorConfig = SKConfig.get("integrations").trezor;
+        const manifest = trezorConfig
+          ? {
+              ...trezorConfig,
+              appName: (trezorConfig as any).appName || "SwapKit",
+            }
+          : {
+              appUrl: "",
+              email: "",
+              appName: "SwapKit",
+            };
         TrezorConnect.init({ lazyLoad: true, manifest });
       }
 

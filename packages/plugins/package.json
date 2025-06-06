@@ -1,12 +1,12 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@polkadot/keyring": "13.4.4",
-    "@polkadot/util": "13.4.4",
+    "@polkadot/keyring": "13.5.1",
+    "@polkadot/util": "13.5.1",
     "@solana/web3.js": "1.98.2",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "ts-pattern": "5.7.0"
+    "ts-pattern": "5.7.1"
   },
   "description": "SwapKit Plugin - ChainFlip",
   "exports": {
@@ -24,6 +24,11 @@
       "default": "./dist/evm/index.js",
       "require": "./dist/evm/index.cjs",
       "types": "./src/evm/index.ts"
+    },
+    "./near": {
+      "default": "./dist/near/index.js",
+      "require": "./dist/near/index.cjs",
+      "types": "./src/near/index.ts"
     },
     "./radix": {
       "default": "./dist/radix/index.js",

@@ -148,22 +148,15 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
 
   const broadcastTransaction = async (signedTxHex: string) => {
     const submitResult = await client.submitAndWait(signedTxHex);
-    // Cast result to any to bypass potential type mismatches in xrpl.js definitions
-    const result: any = submitResult.result;
+    const result = submitResult.result;
 
-    // Check engine_result directly on result
-    if (result.engine_result === "tesSUCCESS" || result.engine_result === "terQUEUED") {
-      // Access hash from tx_json if available, otherwise fallback to result.hash
-      return result.tx_json?.hash || result.hash;
+    if (result.validated) {
+      return result.hash;
     }
-
-    const message = result.engine_result_message || "Unknown error";
-    const code = result.engine_result || "Unknown code";
 
     throw new SwapKitError({
       errorKey: "toolbox_ripple_broadcast_error",
-      info: { chain: Chain.Ripple, message, code, result },
-      // Remove explicit message when using object format
+      info: { chain: Chain.Ripple },
     });
   };
 
@@ -177,9 +170,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     return broadcastTransaction(signedTx.tx_blob);
   };
 
-  // Disconnect client on demand or handle elsewhere?
-  // For now, let's assume connection is managed outside or persists.
-  // const disconnect = () => client.disconnect();
+  const disconnect = () => client.disconnect();
 
   return {
     // Signer related
@@ -194,6 +185,6 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     broadcastTransaction,
     transfer,
     estimateTransactionFee,
-    // disconnect, // Optional: expose disconnect
+    disconnect,
   };
 };

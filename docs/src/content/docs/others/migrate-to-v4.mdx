@@ -1,178 +1,151 @@
 ---
 title: Migrate to v4
-description: A guide to migrate to v4 and update your codebase.
+description: Guide for upgrading from SwapKit v3 to v4
 ---
 
-```ts twoslash
-import { getUtxoToolbox } from "@swapkit/toolboxes/utxo"
-import { getEvmToolbox } from "@swapkit/toolboxes/evm"
-import { Chain, createSwapKit, DerivationPath } from "@swapkit/sdk"
+# Migrating from SwapKit v3 to v4
 
-const btc = await getUtxoToolbox(Chain.Bitcoin)
-const eth = await getEvmToolbox(Chain.Ethereum)
-const avax = await getEvmToolbox(Chain.Avalanche)
+This guide helps you upgrade your SwapKit integration from v3 to v4.
 
-const avaxNetwork = avax.getNetworkParams()
+## Breaking Changes
 
-const btcKeys = await btc.createKeysForPath({
-  phrase: "...",
-  derivationPath: `${DerivationPath.BTC}/0`,
-})
+### 1. Package Structure
 
-const publicKey = btcKeys.getPublicKey?.();
+v4 consolidates multiple packages into monolithic packages with submodule exports:
 
-const skClient = createSwapKit()
+```diff
+// v3
+- import { NearPlugin } from "@swapkit/plugin-near";
+- import { getToolboxByChain } from "@swapkit/toolbox-cosmos";
+- import { keystoreWallet } from "@swapkit/wallet-keystore";
 
-skClient.swap
-//       ^|
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// v4
++ import { NearPlugin } from "@swapkit/plugins/near";
++ import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
++ import { keystoreWallet } from "@swapkit/wallets/keystore";
 ```
 
-# MIGRATE FROM CORE v3 to v4
+### 2. Import Path Changes
 
-> [!IMPORTANT]Read before continue
-> We migrated to combined functionality packages to simplify developer experience. You will have to change imports to use the new version of the packages.
->
-> To help with migration we noted how imports changed in the following sections with the format:
->
-> `swapkitPackage => migratedSwapkitPackage`
+All imports must be updated to use the new submodule syntax:
 
+| v3 Package | v4 Import |
+|------------|-----------|
+| `@swapkit/plugin-*` | `@swapkit/plugins/*` |
+| `@swapkit/toolbox-*` | `@swapkit/toolboxes/*` |
+| `@swapkit/wallet-*` | `@swapkit/wallets/*` |
 
-### <font color="magenta">Package Migrations</font>
+### 3. Plugin Interface Changes
 
-#### Installation
+The plugin initialization has changed:
 
-_before_
+```diff
+// v3
+- function plugin({ getWallet, config }: SwapKitPluginParams<ConnectConfig>) {
+-   return { swap, supportedSwapkitProviders: [ProviderName.NEAR] };
+- }
+
+// v4
++ export function NearPlugin({ getWallet }: { getWallet: (chain: any) => any }) {
++   return { swap, supportedSwapkitProviders: [ProviderName.NEAR] };
++ }
+```
+
+### 4. Missing Features
+
+Some v3 features are not yet available in v4:
+
+- **NEAR Support**: Plugin created but requires API endpoint implementation
+- **EVM API Balance**: Different architecture in v4, use standard balance methods
+
+## Migration Steps
+
+### Step 1: Update Dependencies
+
 ```bash
-# Toolboxes
-$ bun install @swapkit/toolbox-cosmos @swapkit/toolbox-evm @swapkit/toolbox-radix @swapkit/toolbox-solana @swapkit/toolbox-substrate @swapkit/toolbox-utxo
+# Remove v3 packages
+bun remove @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
 
-# Plugins
-$ bun install @swapkit/plugin-chainflip @swapkit/plugin-evm @swapkit/plugin-kado @swapkit/plugin-radix @swapkit/plugin-thorchain
-
-# Wallets
-$ bun install @swapkit/wallet-bitget @swapkit/wallet-coinbase @swapkit/wallet-ctrl @swapkit/wallet-evm-extensions @swapkit/wallet-exodus @swapkit/wallet-keepkey @swapkit/wallet-keepkey-bex @swapkit/wallet-ledger @swapkit/wallet-okx @swapkit/wallet-phantom @swapkit/wallet-polkadotjs @swapkit/wallet-radix @swapkit/wallet-tailsman @swapkit/wallet-trezor @swapkit/wallet-wc
-
-# Helpers and others
-$ bun install @swapkit/helpers @swapkit/api @swapkit/contracts @swapkit/tokens
-```
-_after_
-```bash
-# Toolboxes
-$ bun install @swapkit/toolboxes
-
-# Plugins
-$ bun install @swapkit/plugins
-
-# Wallets
-$ bun install @swapkit/wallets
-
-# Helpers and others
-$ bun install @swapkit/helpers
+# Install v4 packages
+bun add @swapkit/sdk
+# or individual packages
+bun add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
 ```
 
-#### Imports
-| Old                            | New                             |
-| ------------------------------ | ------------------------------- |
-| @swapkit/api                   | @swapkit/helpers/api            |
-| @swapkit/contracts             | @swapkit/helpers/contracts      |
-| @swapkit/tokens                | @swapkit/helpers/tokens         |
-| @swapkit/plugin-chainflip      | @swapkit/plugins/chainflip      |
-| @swapkit/plugin-evm            | @swapkit/plugins/evm            |
-| @swapkit/plugin-kado           | @swapkit/plugins/kado           |
-| @swapkit/plugin-radix          | @swapkit/plugins/radix          |
-| @swapkit/plugin-thorchain      | @swapkit/plugins/thorchain      |
-| @swapkit/toolbox-cosmos        | @swapkit/toolboxes/cosmos       |
-| @swapkit/toolbox-evm           | @swapkit/toolboxes/evm          |
-| @swapkit/toolbox-radix         | @swapkit/toolboxes/radix        |
-| @swapkit/toolbox-solana        | @swapkit/toolboxes/solana       |
-| @swapkit/toolbox-substrate     | @swapkit/toolboxes/substrate    |
-| @swapkit/toolbox-utxo          | @swapkit/toolboxes/utxo         |
-| @swapkit/wallet-bitget         | @swapkit/wallets/bitget         |
-| @swapkit/wallet-coinbase       | @swapkit/wallets/coinbase       |
-| @swapkit/wallet-ctrl           | @swapkit/wallets/ctrl           |
-| @swapkit/wallet-evm-extensions | @swapkit/wallets/evm-extensions |
-| @swapkit/wallet-exodus         | @swapkit/wallets/exodus         |
-| @swapkit/wallet-keepkey        | @swapkit/wallets/keepkey        |
-| @swapkit/wallet-keepkey-bex    | @swapkit/wallets/keepkey-bex    |
-| @swapkit/wallet-ledger         | @swapkit/wallets/ledger         |
-| @swapkit/wallet-okx            | @swapkit/wallets/okx            |
-| @swapkit/wallet-phantom        | @swapkit/wallets/phantom        |
-| @swapkit/wallet-polkadotjs     | @swapkit/wallets/polkadotjs     |
-| @swapkit/wallet-radix          | @swapkit/wallets/radix          |
-| @swapkit/wallet-tailsman       | @swapkit/wallets/tailsman       |
-| @swapkit/wallet-trezor         | @swapkit/wallets/trezor         |
-| @swapkit/wallet-wc             | @swapkit/wallets/walletconnect  |
+### Step 2: Update Imports
 
-### <font color="lightGreen">Added</font>
+Replace all v3 imports with v4 equivalents:
 
-#### @swapkit/helpers
+```typescript
+// Before (v3)
+import { THORChainPlugin } from "@swapkit/plugin-thorchain";
+import { EVMToolbox } from "@swapkit/toolbox-evm";
+import { ledgerWallet } from "@swapkit/wallet-ledger";
 
-- `SKConfig` - configuration module for handling api keys and other configuration options
-- `createPlugin` - factory function to create a new plugin
-- Now combines `@swapkit/api`, `@swapkit/contracts`, `@swapkit/tokens` under a single package
+// After (v4)
+import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { ledgerWallet } from "@swapkit/wallets/ledger";
+```
 
-#### @swapkit/plugins
+### Step 3: Update Client Initialization
 
-- Now combines `@swapkit/plugin-chainflip`, `@swapkit/plugin-evm`, `@swapkit/plugin-kado`, `@swapkit/plugin-radix`, `@swapkit/plugin-thorchain` under a single package
+```typescript
+// v3
+import { SwapKitCore } from "@swapkit/core";
 
+const client = new SwapKitCore({
+  // config
+});
 
-#### @swapkit/toolboxes
+// v4
+import { createSwapKit } from "@swapkit/sdk";
 
-- Now combines `@swapkit/toolbox-evm`, `@swapkit/toolbox-cosmos`, `@swapkit/toolbox-solana`, `@swapkit/toolbox-substrate`, `@swapkit/toolbox-utxo` under a single package
+const client = createSwapKit({
+  // config
+});
+```
 
-### <font color="pink">Removed</font>
+### Step 4: Update Wallet Connections
 
-#### @swapkit/api => @swapkit/helpers/api
+The wallet connection pattern remains similar but uses the new import paths:
 
-Methods were scoped under `SwapKitApi` object and split into related api endpoints.
+```typescript
+// Connect wallet (same pattern, new imports)
+await client.connectEVMWallet(Chain.Ethereum);
+await client.connectKeystore(chains, phrase);
+```
 
-- `getSwapQuoteV2` -> use `getSwapQuote` directly
-- `getTokenListV2` -> use `getTokenList` directly
-- for thornode requests use `SwapKitApi.thornode`
-- for mayachain midgard requests use `SwapKitApi.mayachainMidgard`
-- for thorchain midgard requests use `SwapKitApi.thorchainMidgard`
-- for microgard requests use `SwapKitApi.microgard`
+## New Features in v4
 
+### Enhanced Solana Support
 
-#### @swapkit/core
+v4 includes improved Solana token balance fetching with Jupiter API integration for real-time token metadata.
 
-- `validateAddress` -> Migrated to `@swapkit/toolboxes` -> use `getAddressValidator` directly
-- `api` -> use `SwapKitApi` directly. For configuration use `SKConfig`
+### Dynamic Cosmos Fees
 
-#### @swapkit/helpers
+Cosmos toolbox now supports dynamic fee estimation when no fee is provided.
 
-- `ensureEVMApiKeys` -> removed
-- `setRequestClientConfig` -> removed - use `SKConfig` directly -->
+## Common Issues
+
+### TypeScript Errors
+
+If you encounter type errors after migration:
+
+1. Ensure all imports use the new paths
+2. Update plugin interfaces to match v4 signatures
+3. Check that wallet connection methods match the new types
+
+### Missing Functionality
+
+If a v3 feature is missing:
+
+1. Check if it's been moved to a different module
+2. Some features may need different implementation approaches in v4
+3. Refer to the API documentation for alternatives
+
+## Need Help?
+
+- Check the [API documentation](/docs/api-reference)
+- Report issues on [GitHub](https://github.com/thorswap/SwapKit/issues)
+- Join our community for support

@@ -1,5 +1,11 @@
 import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, SKConfig } from "@swapkit/helpers";
-import type { BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
+import type {
+  Authorization,
+  BrowserProvider,
+  JsonRpcProvider,
+  Provider,
+  TransactionRequest,
+} from "ethers";
 import { Contract, HDNodeWallet } from "ethers";
 
 import { P } from "ts-pattern";
@@ -33,13 +39,13 @@ function serializeTx<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
     const { Transaction } = await import("ethers");
 
     if (!to) throw new Error("Missing to address");
-    const txParams = {
+
+    return Transaction.from({
       ...tx,
+      authorizationList: tx.authorizationList as Authorization[],
       to: to as string,
       nonce: nonce ? nonce : from ? await provider.getTransactionCount(from) : 0,
-    };
-
-    return Transaction.from(txParams).serialized;
+    }).serialized;
   };
 }
 
