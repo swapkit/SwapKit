@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 4.0.0-beta.15
+
+### Patch Changes
+
+- Updated dependencies [[`bf6e25c`](https://github.com/thorswap/SwapKit/commit/bf6e25c14a86db6f7c371bbd472b267a9107c9c6)]:
+  - @swapkit/helpers@3.0.0-beta.10
+  - @swapkit/toolboxes@1.0.0-beta.15
+
 ## 4.0.0-beta.14
 
 ### Patch Changes

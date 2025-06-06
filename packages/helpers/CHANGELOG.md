@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.10
+
+### Patch Changes
+
+- [`bf6e25c`](https://github.com/thorswap/SwapKit/commit/bf6e25c14a86db6f7c371bbd472b267a9107c9c6) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes CTRL browser provider usage
+
 ## 3.0.0-beta.9
 
 ### Patch Changes
