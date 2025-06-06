@@ -1,5 +1,12 @@
 # @swapkit/ui
 
+## 0.1.0-beta.15
+
+### Patch Changes
+
+- Updated dependencies [[`afca172`](https://github.com/thorswap/SwapKit/commit/afca172a172d726365efc56ad50ad8b96b9a55da)]:
+  - @swapkit/wallets@3.0.0-beta.15
+
 ## 0.1.0-beta.14
 
 ### Patch Changes

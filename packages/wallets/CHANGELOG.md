@@ -1,5 +1,11 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.15
+
+### Patch Changes
+
+- [`afca172`](https://github.com/thorswap/SwapKit/commit/afca172a172d726365efc56ad50ad8b96b9a55da) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes import for ledger devices lib
+
 ## 3.0.0-beta.14
 
 ### Patch Changes
