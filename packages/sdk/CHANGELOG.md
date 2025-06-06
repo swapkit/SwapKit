@@ -1,5 +1,12 @@
 # @swapkit/sdk
 
+## 3.0.0-beta.16
+
+### Patch Changes
+
+- Updated dependencies [[`a1bdbc9`](https://github.com/thorswap/SwapKit/commit/a1bdbc979e3edbd36b2cfc0ca2e61d8c0c19d017)]:
+  - @swapkit/wallets@3.0.0-beta.16
+
 ## 3.0.0-beta.15
 
 ### Patch Changes
