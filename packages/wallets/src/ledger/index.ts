@@ -32,6 +32,7 @@ export const ledgerWallet = createWallet({
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.Ripple,
     Chain.THORChain,
   ],
   walletType: WalletOption.LEDGER,
@@ -265,6 +266,15 @@ async function getWalletMethods({
       const deposit = (params: ThorchainDepositParams) => thorchainTransfer(params);
 
       return { ...toolbox, address, deposit, transfer, signMessage };
+    }
+
+    case Chain.Ripple: {
+      const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
+      const signer = await getLedgerClient({ chain, derivationPath });
+      const address = signer.address;
+      const toolbox = await getRippleToolbox({ signer });
+
+      return { ...toolbox, address };
     }
 
     default:

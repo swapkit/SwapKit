@@ -14,6 +14,7 @@ export type ConditionalAssetValueReturn<T extends boolean> = T extends true
 
 export const CommonAssetStrings = [
   `${Chain.Maya}.MAYA`,
+  `${Chain.Maya}.CACAO`,
   `${Chain.Ethereum}.THOR`,
   `${Chain.Ethereum}.vTHOR`,
   `${Chain.Kujira}.USK`,
@@ -125,27 +126,12 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
   const decimal = BaseDecimal[assetString as Chain];
 
   const commonAssetInfo = match(assetString.toUpperCase())
-    .with(...ethGasChains, () => ({
-      identifier: `${assetString.toUpperCase()}.ETH`,
-      decimal,
-    }))
-    .with(Chain.THORChain, () => ({
-      identifier: `${assetString.toUpperCase()}.RUNE`,
-      decimal,
-    }))
-    .with(Chain.Cosmos, () => ({ identifier: `${assetString.toUpperCase()}.ATOM`, decimal }))
-    .with(Chain.Maya, () => ({
-      identifier: `${assetString.toUpperCase()}.CACAO`,
-      decimal: 10,
-    }))
-    .with(Chain.BinanceSmartChain, () => ({
-      identifier: `${assetString.toUpperCase()}.BNB`,
-      decimal,
-    }))
-    .with(Chain.Avalanche, () => ({
-      identifier: `${assetString.toUpperCase()}.AVAX`,
-      decimal,
-    }))
+    .with(...ethGasChains, (asset) => ({ identifier: `${asset}.ETH`, decimal }))
+    .with(Chain.THORChain, (asset) => ({ identifier: `${asset}.RUNE`, decimal }))
+    .with(Chain.Cosmos, (asset) => ({ identifier: `${asset}.ATOM`, decimal }))
+    .with(Chain.Maya, (asset) => ({ identifier: `${asset}.CACAO`, decimal: 10 }))
+    .with(Chain.BinanceSmartChain, (asset) => ({ identifier: `${asset}.BNB`, decimal }))
+    .with(Chain.Avalanche, (asset) => ({ identifier: `${asset}.AVAX`, decimal }))
     .with(
       ...UTXOChains,
       Chain.Solana,
@@ -153,13 +139,11 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       Chain.Kujira,
       Chain.Ripple,
       Chain.Polkadot,
-      () => ({ identifier: `${assetString.toUpperCase()}.${assetString.toUpperCase()}`, decimal }),
+      (asset) => ({ identifier: `${asset}.${asset}`, decimal }),
     )
-    .with(Chain.Radix, "XRD.XRD", () => ({
-      identifier: "XRD.XRD",
-      decimal,
-    }))
-    .with("KUJI.USK", () => ({ identifier: assetString.toUpperCase(), decimal: 6 }))
+    .with(Chain.Radix, "XRD.XRD", () => ({ identifier: "XRD.XRD", decimal }))
+
+    .with("KUJI.USK", (asset) => ({ identifier: asset, decimal: 6 }))
     .with("ETH.FLIP", () => ({
       identifier: "ETH.FLIP-0x826180541412D574cf1336d22c0C0a287822678A",
       decimal: BaseDecimal.ETH,
@@ -172,7 +156,8 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       identifier: "ETH.vTHOR-0x815c23eca83261b6ec689b60cc4a58b54bc24d8d",
       decimal: BaseDecimal.ETH,
     }))
-    .with("MAYA.MAYA", () => ({ identifier: assetString.toUpperCase(), decimal: 4 }))
+    .with("MAYA.CACAO", (identifier) => ({ identifier, decimal: 10 }))
+    .with("MAYA.MAYA", (identifier) => ({ identifier, decimal: 4 }))
     // Just to be sure that we are not missing any chain
     .otherwise(() => ({ identifier: assetString, decimal }));
 

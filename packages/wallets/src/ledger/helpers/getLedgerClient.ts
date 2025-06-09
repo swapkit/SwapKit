@@ -18,6 +18,7 @@ import {
   DogecoinLedger,
   LitecoinLedger,
 } from "../clients/utxo";
+import { XRPLedger } from "../clients/xrp";
 
 type LedgerSignerMap = {
   [Chain.Arbitrum]: ReturnType<typeof ArbitrumLedger>;
@@ -33,6 +34,7 @@ type LedgerSignerMap = {
   [Chain.Litecoin]: ReturnType<typeof LitecoinLedger>;
   [Chain.Optimism]: ReturnType<typeof OptimismLedger>;
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
+  [Chain.Ripple]: ReturnType<typeof XRPLedger>;
   [Chain.THORChain]: THORChainLedger;
 };
 
@@ -60,6 +62,8 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
       return DogecoinLedger(derivationPath) as LedgerSignerMap[T];
     case Chain.Litecoin:
       return LitecoinLedger(derivationPath) as LedgerSignerMap[T];
+    case Chain.Ripple:
+      return XRPLedger(derivationPath) as LedgerSignerMap[T];
 
     case Chain.Arbitrum:
     case Chain.Avalanche:

@@ -111,6 +111,10 @@ export async function getFeeEstimator<T extends keyof CreateTransactionParams>(c
         );
       }
 
+      case Chain.Ripple: {
+        return (toolbox as Awaited<ReturnType<typeof getRippleToolbox>>).estimateTransactionFee();
+      }
+
       default:
         return AssetValue.from({ chain });
     }
@@ -151,6 +155,7 @@ type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams }
   [key in SubstrateChain]: GenericCreateTransactionParams;
 } & {
   [Chain.Radix]: GenericCreateTransactionParams;
+  [Chain.Ripple]: GenericCreateTransactionParams;
   [Chain.Solana]: SolanaCreateTransactionParams;
 };
 

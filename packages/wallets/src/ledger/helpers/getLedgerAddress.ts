@@ -1,15 +1,19 @@
 import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
 
+import type { XRPLedger } from "../clients/xrp";
 import type { LEDGER_SUPPORTED_CHAINS } from "../index";
 import type { CosmosLedgerClients, EVMLedgerClients, UTXOLedgerClients } from "../types";
 import type { getLedgerClient } from "./getLedgerClient";
 
-export const getLedgerAddress = async ({
+export const getLedgerAddress = async <
+  T extends (typeof LEDGER_SUPPORTED_CHAINS)[number],
+  L extends Awaited<ReturnType<typeof getLedgerClient<T>>>,
+>({
   chain,
   ledgerClient,
 }: {
-  chain: (typeof LEDGER_SUPPORTED_CHAINS)[number];
-  ledgerClient: Awaited<ReturnType<typeof getLedgerClient>>;
+  chain: T;
+  ledgerClient: L;
 }) => {
   if (!ledgerClient) return "";
 
@@ -40,6 +44,11 @@ export const getLedgerAddress = async ({
 
       return chain === Chain.BitcoinCash ? address.replace("bitcoincash:", "") : address;
     }
+
+    case Chain.Ripple: {
+      return (ledgerClient as Awaited<ReturnType<typeof XRPLedger>>).address;
+    }
+
     default:
       throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.LEDGER, chain });
   }
