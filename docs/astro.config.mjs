@@ -76,7 +76,7 @@ function createDocs() {
     { label: "/helpers/api", entrypoint: "helpers/src/api/index.ts" },
   ]);
 
-  const pluginNames = ["chainflip", "evm", "kado", "radix", "thorchain"];
+  const pluginNames = ["chainflip", "evm", "radix", "thorchain"];
   const toolboxNames = ["cosmos", "evm", "radix", "ripple", "solana", "substrate", "utxo"];
   const walletNames = [
     "bitget",
