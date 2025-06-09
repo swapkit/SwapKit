@@ -327,9 +327,21 @@ const errorCodes = {
   toolbox_tron_invalid_token_identifier: 50802,
   toolbox_tron_token_transfer_failed: 50803,
   /**
+   * Toolboxes - Near
+   */
+  toolbox_near_no_signer: 50901,
+  toolbox_near_invalid_address: 50902,
+  toolbox_near_invalid_amount: 50903,
+  toolbox_near_transfer_failed: 50904,
+  toolbox_near_access_key_error: 50905,
+  toolbox_near_no_rpc_url: 50906,
+  toolbox_near_missing_contract_address: 50907,
+  toolbox_near_empty_batch: 50908,
+  toolbox_near_balance_failed: 50909,
+  /**
    * Toolboxes - General
    */
-  toolbox_not_supported: 50801,
+  toolbox_not_supported: 59901,
   /**
    * SwapKit API
    */
