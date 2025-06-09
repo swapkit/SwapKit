@@ -7,7 +7,9 @@
     "clean": "rm -rf .astro dist node_modules ./src/content/docs/references",
     "sync": "bun astro sync",
     "build": "bun sync; REFERENCES=true astro build",
+    "build:no-refs": "bun sync; astro build",
     "dev": "astro dev",
+    "dev:refs": "REFERENCES=true astro dev",
     "preview": "astro preview"
   },
   "dependencies": {

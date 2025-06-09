@@ -1,10 +1,434 @@
 ---
-title: Getting started with SwapKit
-description: Learn how to get started with SwapKit
+title: Getting Started with SwapKit
+description: A comprehensive guide to building your first cross-chain DeFi application with SwapKit
 ---
 
-SwapKit is a library that allows you to build DeFi applications on multiple chains. This guide will help you get started with SwapKit.
+import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
+
+SwapKit is a comprehensive SDK that unifies blockchain interactions across 20+ chains. This guide will walk you through installation, setup, and building your first cross-chain application.
+
+## Prerequisites
+
+Before starting, ensure you have:
+- Node.js 18+ or Bun installed
+- Basic knowledge of JavaScript/TypeScript
+- A code editor (VS Code recommended)
 
 ## Installation
-# TODO
 
+<Tabs>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add @swapkit/sdk
+    ```
+  </TabItem>
+</Tabs>
+
+## Basic Setup
+
+### 1. Import and Initialize SwapKit
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+
+// Create a SwapKit instance with default configuration
+const swapKit = createSwapKit();
+```
+
+### 2. Configure SwapKit (Optional)
+
+For production applications, you'll want to add your own API keys:
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      // For WalletConnect v2 support
+      walletConnectProjectId: 'your-project-id',
+      // For UTXO chains (Bitcoin, Litecoin, etc.)
+      blockchair: 'your-blockchair-key',
+      // For SwapKit API features
+      swapKit: 'your-swapkit-key',
+    },
+    // Custom RPC URLs (optional)
+    rpcUrls: {
+      ETH: 'https://eth-mainnet.g.alchemy.com/v2/your-key',
+      AVAX: 'https://api.avax.network/ext/bc/C/rpc',
+    }
+  }
+});
+```
+
+## Core Concepts
+
+### 1. Chains
+SwapKit uses a unified chain identifier system:
+
+```typescript
+// @noErrorValidation
+import { Chain } from '@swapkit/helpers';
+
+// Examples of supported chains
+const ethereum = Chain.Ethereum; // "ETH"
+const bitcoin = Chain.Bitcoin;   // "BTC"
+const cosmos = Chain.Cosmos;     // "COSMOS"
+const thorchain = Chain.THORChain; // "THOR"
+```
+
+### 2. Assets
+Assets are identified by their chain and symbol:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from '@swapkit/helpers';
+
+// Native assets use the asset string format
+const eth = AssetValue.from({ asset: 'ETH.ETH', value: 1 }); // 1 ETH
+const btc = AssetValue.from({ asset: 'BTC.BTC', value: 0.1 }); // 0.1 BTC
+
+// Token assets include the contract address
+const usdc = AssetValue.from({
+  asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  value: 1000
+}); // 1000 USDC on Ethereum
+```
+
+### 3. Wallets
+SwapKit supports 20+ wallet types:
+
+```typescript
+// @noErrorValidation
+import { WalletOption } from '@swapkit/helpers';
+
+// Browser extension wallets
+const metamask = WalletOption.METAMASK;
+const keplr = WalletOption.KEPLR;
+
+// Mobile wallets
+const walletconnect = WalletOption.WALLETCONNECT;
+
+// Hardware wallets
+const ledger = WalletOption.LEDGER;
+const trezor = WalletOption.TREZOR;
+
+// Software wallets
+const keystore = WalletOption.KEYSTORE;
+```
+
+## Common Use Cases
+
+### Connect a Wallet
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+import { Chain, WalletOption } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+
+// Connect Keystore wallet (mnemonic phrase)
+await swapKit.connectKeystore(
+  [Chain.Ethereum, Chain.Bitcoin],
+  'your twelve word mnemonic phrase here'
+);
+
+// Connect MetaMask (EVM chains only)
+await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+// Connect Keplr (Cosmos chains)
+await swapKit.connectKeplr([Chain.Cosmos, Chain.THORChain]);
+
+// Get all connected wallets
+const wallets = swapKit.getAllWallets();
+```
+
+### Get Wallet Balances
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+import { Chain } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+
+// Get balance for a specific chain
+const ethBalance = await swapKit.getBalance(Chain.Ethereum);
+const btcBalance = await swapKit.getBalance(Chain.Bitcoin);
+
+// Force refresh balance (bypass cache)
+const freshBalance = await swapKit.getBalance(Chain.Ethereum, true);
+
+// Get wallet with balance
+const walletWithBalance = await swapKit.getWalletWithBalance(Chain.Ethereum);
+console.log(`Address: ${walletWithBalance.address}`);
+console.log(`Balance: ${walletWithBalance.balance}`);
+```
+
+### Perform a Swap
+
+```typescript
+// @noErrorValidation
+import { createSwapKit, SwapKitApi } from '@swapkit/sdk';
+import { Chain, FeeOption } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+
+// Step 1: Get a quote
+const quoteParams = {
+  sellAsset: 'ETH.ETH',
+  sellAmount: '1000000000000000000', // 1 ETH in wei
+  buyAsset: 'BTC.BTC',
+  sourceAddress: swapKit.getAddress(Chain.Ethereum),
+  destinationAddress: swapKit.getAddress(Chain.Bitcoin),
+  slippage: 3, // 3% slippage tolerance
+};
+
+const { routes } = await SwapKitApi.getSwapQuote(quoteParams);
+
+// Step 2: Review the quote
+const bestRoute = routes[0];
+console.log(`Expected output: ${bestRoute.expectedOutput}`);
+console.log(`Fees: ${bestRoute.totalFees}`);
+
+// Step 3: Execute the swap
+const txHash = await swapKit.swap({
+  route: bestRoute,
+  feeOptionKey: FeeOption.Fast
+});
+
+console.log(`Swap transaction: ${txHash}`);
+```
+
+### Send Transactions
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+import { AssetValue, FeeOption } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+
+// Simple ETH transfer
+const ethAmount = AssetValue.from({ asset: 'ETH.ETH', value: '0.1' });
+
+const txHash = await swapKit.transfer({
+  assetValue: ethAmount,
+  recipient: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321',
+  memo: 'Payment for services', // Optional
+  feeOptionKey: FeeOption.Fast
+});
+
+// Bitcoin transfer with custom fee
+const btcAmount = AssetValue.from({ asset: 'BTC.BTC', value: '0.001' });
+
+const btcTxHash = await swapKit.transfer({
+  assetValue: btcAmount,
+  recipient: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+  feeOptionKey: FeeOption.Average
+});
+```
+
+## Advanced Usage
+
+### Using Core + Plugins (Modular Approach)
+
+For smaller bundle sizes, use only the components you need:
+
+```typescript
+// @noErrorValidation
+import { SwapKit } from '@swapkit/core';
+import { ThorchainPlugin } from '@swapkit/plugins/thorchain';
+import { keystoreWallet } from '@swapkit/wallets/keystore';
+import { ledgerWallet } from '@swapkit/wallets/ledger';
+
+const swapKit = SwapKit({
+  plugins: {
+    ...ThorchainPlugin,
+  },
+  wallets: {
+    ...keystoreWallet,
+    ...ledgerWallet,
+  },
+});
+```
+
+### Direct Toolbox Usage
+
+For low-level blockchain operations:
+
+```typescript
+// @noErrorValidation
+import { getToolbox } from '@swapkit/toolboxes';
+import { Chain } from '@swapkit/helpers';
+
+// Get Bitcoin toolbox
+const btcToolbox = await getToolbox(Chain.Bitcoin);
+
+// Validate address
+const isValid = btcToolbox.validateAddress(
+  'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'
+);
+
+// Get balance
+const balance = await btcToolbox.getBalance(
+  'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'
+);
+```
+
+### Custom Plugin Development
+
+Create your own plugin to extend SwapKit:
+
+```typescript
+// @noErrors
+import { SwapKit } from '@swapkit/core';
+import type { SwapParams } from '@swapkit/helpers';
+
+const MyCustomPlugin = {
+  myCustomMethod: async (params: any) => {
+    // Your custom logic here
+    return { success: true };
+  },
+
+  // Override existing methods
+  swap: async (params: SwapParams) => {
+    // Custom swap logic
+    console.log('Using custom swap logic');
+    // ... implementation
+    return 'tx-hash';
+  }
+};
+
+const swapKit = SwapKit({
+  plugins: MyCustomPlugin,
+});
+
+// Use your custom method
+await swapKit.myCustomMethod({ /* params */ });
+```
+
+## Error Handling
+
+SwapKit uses typed errors for better debugging:
+
+```typescript
+// @noErrors
+import { createSwapKit } from '@swapkit/sdk';
+import { SwapKitError } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+
+try {
+  const quote = { /* your quote object */ };
+  await swapKit.swap(quote);
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    console.error('SwapKit Error:', error.message);
+    // Error code and details may be available
+    if ('code' in error) console.error('Error Code:', error.code);
+    if ('details' in error) console.error('Details:', error.details);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+## Best Practices
+
+### 1. Always Validate Addresses
+```typescript
+// @noErrorValidation
+import { getAddressValidator } from '@swapkit/toolboxes';
+import { Chain } from '@swapkit/helpers';
+
+const validateAddress = await getAddressValidator();
+
+const address = '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321';
+const isValid = validateAddress({
+  address,
+  chain: Chain.Ethereum
+});
+
+if (!isValid) {
+  throw new Error('Invalid address');
+}
+```
+
+### 2. Handle Network Errors
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+import { Chain } from '@swapkit/helpers';
+
+const swapKit = createSwapKit();
+const MAX_RETRIES = 3;
+let retries = 0;
+
+while (retries < MAX_RETRIES) {
+  try {
+    const balance = await swapKit.getBalance(Chain.Ethereum);
+    break; // Success, exit loop
+  } catch (error) {
+    retries++;
+    if (retries === MAX_RETRIES) throw error;
+    await new Promise(r => setTimeout(r, 1000 * retries)); // Exponential backoff
+  }
+}
+```
+
+### 3. Use TypeScript for Better DX
+```typescript
+// @noErrorValidation
+import type { Chain, AssetValue, SwapParams } from '@swapkit/helpers';
+
+// Type-safe chain usage
+function getChainName(chain: Chain): string {
+  return chain; // TypeScript knows this is a valid chain
+}
+
+// Type-safe swap parameters
+const swapParams = {
+  sellAsset: 'ETH.ETH',
+  buyAsset: 'BTC.BTC',
+  sellAmount: '1',
+  // TypeScript will help with autocompletion
+} as const;
+```
+
+## Next Steps
+
+Now that you understand the basics:
+
+1. **[Connect Wallets](/guides/actions/connect-wallet)** - Deep dive into wallet integration
+2. **[Perform Swaps](/guides/actions/swap)** - Advanced swapping techniques
+3. **[Create Custom Plugin](/guides/create-plugin)** - Extend SwapKit functionality
+4. **[Framework Integration](/guides/integrations/nextjs)** - Use with Next.js, Vite, etc.
+
+## Need Help?
+
+- 💬 [Join our Discord](https://discord.gg/swapkit) for community support
+- 🐛 [Report issues on GitHub](https://github.com/thorswap/swapkit/issues)
+- 📚 [Browse the API Reference](/references) for detailed documentation
+
+---
+
+Happy building with SwapKit! 🚀

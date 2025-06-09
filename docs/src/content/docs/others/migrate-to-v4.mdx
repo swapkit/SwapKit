@@ -104,8 +104,19 @@ The wallet connection pattern remains similar but uses the new import paths:
 
 ```typescript
 // @noErrorValidation
-// Connect wallet (same pattern, new imports)
-await client.connectEVMWallet(Chain.Ethereum);
+import { createSwapKit } from "@swapkit/sdk";
+import { Chain } from "@swapkit/helpers";
+
+const client = createSwapKit({
+  // your config
+});
+
+// Connect EVM wallet
+await client.connectEVMWallet([Chain.Ethereum]);
+
+// Connect keystore wallet
+const chains = [Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos];
+const phrase = "your mnemonic phrase here";
 await client.connectKeystore(chains, phrase);
 ```
 

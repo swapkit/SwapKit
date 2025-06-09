@@ -1,9 +1,170 @@
 ---
-title: Welcome to SwapKit Docs
-description: Get started building your blockchain app with SwapKit.
+title: SwapKit - Multi-Chain DeFi SDK
+description: Build powerful cross-chain applications with a unified API for 20+ blockchains
 hero:
+  title: SwapKit
+  tagline: The Ultimate Multi-Chain SDK for DeFi Applications
+  image:
+    dark: '../../assets/swapkit-logo.jpg'
+    light: '../../assets/swapkit-logo-light.jpg'
+    alt: SwapKit logo
   actions:
     - text: Get Started
-      link: /getting-started
+      link: /guides/getting-started
       icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/thorswap/swapkit
+      icon: external
 ---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<div class="hero-section">
+
+## Build Cross-Chain DeFi in Minutes
+
+SwapKit provides everything you need to integrate blockchain functionality into your application with a single, unified API.
+
+<CardGrid stagger>
+  <Card title="20+ Blockchains" icon="rocket">
+    Support for EVM chains, Bitcoin, Cosmos ecosystem, Solana, and more - all through one consistent interface.
+  </Card>
+  <Card title="Multi-Wallet Support" icon="open">
+    Connect with 20+ wallets including MetaMask, WalletConnect, Ledger, Keystore, and hardware wallets.
+  </Card>
+  <Card title="DeFi Protocols" icon="puzzle">
+    Built-in integrations with THORChain, Chainflip, 1inch, and other leading DeFi protocols.
+  </Card>
+  <Card title="Type-Safe & Modern" icon="document">
+    Built with TypeScript for complete type safety and excellent developer experience.
+  </Card>
+</CardGrid>
+
+## Quick Start
+
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain, SwapKitApi } from '@swapkit/sdk';
+
+// Initialize SwapKit
+const swapKit = createSwapKit();
+
+// Connect a keystore wallet
+await swapKit.connectKeystore([Chain.Ethereum, Chain.Bitcoin], 'your mnemonic phrase');
+
+// Get wallet balances
+const ethBalance = await swapKit.getBalance(Chain.Ethereum);
+const btcBalance = await swapKit.getBalance(Chain.Bitcoin);
+
+// Get a swap quote
+const { routes } = await SwapKitApi.getSwapQuote({
+  sellAsset: 'ETH.ETH',
+  sellAmount: '1000000000000000000', // 1 ETH in wei
+  buyAsset: 'BTC.BTC',
+  sourceAddress: swapKit.getAddress(Chain.Ethereum),
+  destinationAddress: swapKit.getAddress(Chain.Bitcoin),
+  slippage: 3
+});
+
+// Execute the swap
+const txHash = await swapKit.swap({ route: routes[0] });
+```
+
+## Why SwapKit?
+
+<CardGrid>
+  <Card title="Unified API" icon="setting">
+    One consistent API for all chains and protocols. No need to learn different interfaces for each blockchain.
+  </Card>
+  <Card title="Production Ready" icon="star">
+    Battle-tested in production by THORSwap and other leading DeFi applications.
+  </Card>
+  <Card title="Modular Design" icon="puzzle">
+    Use only what you need - from lightweight toolboxes to the full SDK.
+  </Card>
+  <Card title="Active Development" icon="github">
+    Regular updates, new chain integrations, and responsive community support.
+  </Card>
+</CardGrid>
+
+## Features at a Glance
+
+- **🔗 Cross-Chain Swaps**: Seamlessly swap assets across different blockchains
+- **💰 Multi-Chain Wallets**: Manage wallets and balances across all supported chains
+- **🔐 Hardware Wallet Support**: Full support for Ledger, Trezor, and KeepKey
+- **📊 Real-Time Quotes**: Get accurate swap quotes from multiple DEX aggregators
+- **🛠️ Toolbox System**: Low-level utilities for direct blockchain interactions
+- **🔌 Plugin Architecture**: Extend functionality with custom plugins
+- **📱 Mobile Ready**: Works in React Native and mobile environments
+- **⚡ Optimized Performance**: Efficient caching and request batching
+
+## Get Started in 3 Steps
+
+### 1. Install SwapKit
+
+```bash
+bun add @swapkit/sdk
+```
+
+### 2. Initialize the SDK
+
+```typescript
+// @noErrorValidation
+import { createSwapKit } from '@swapkit/sdk';
+
+const swapKit = createSwapKit({
+  config: {
+    // Optional: Add your API keys for enhanced functionality
+    apiKeys: {
+      walletConnectProjectId: 'your-project-id',
+      blockchair: 'your-api-key',
+    }
+  }
+});
+```
+
+### 3. Start Building
+
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain, AssetValue, FeeOption } from '@swapkit/sdk';
+
+// Initialize SwapKit
+const swapKit = createSwapKit();
+
+// Connect EVM wallet (MetaMask)
+await swapKit.connectEVMWallet([Chain.Ethereum]);
+
+// Get wallet balance
+const balance = await swapKit.getBalance(Chain.Ethereum);
+
+// Transfer ETH
+const assetValue = AssetValue.from({
+  asset: 'ETH.ETH',
+  value: '0.1'
+});
+
+const txHash = await swapKit.transfer({
+  assetValue,
+  recipient: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321',
+  feeOptionKey: FeeOption.Fast
+});
+```
+
+## Join the Community
+
+<CardGrid>
+  <Card title="Discord" icon="open">
+    Join our Discord server for support and discussions with the community.
+
+    [Join Discord →](https://discord.gg/swapkit)
+  </Card>
+  <Card title="GitHub" icon="github">
+    Contribute to SwapKit development or report issues on GitHub.
+
+    [View on GitHub →](https://github.com/thorswap/swapkit)
+  </Card>
+</CardGrid>
+
+</div>

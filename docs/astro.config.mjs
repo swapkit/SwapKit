@@ -14,7 +14,11 @@ export default defineConfig({
     syntaxHighlight: "shiki",
     shikiConfig: {
       theme: "github-dark",
-      transformers: [transformerTwoslash({ renderer: rendererRich() })],
+      transformers: [
+        transformerTwoslash({
+          renderer: rendererRich(),
+        }),
+      ],
       wrap: true,
     },
   },
@@ -120,6 +124,7 @@ function createTypeDoc(docs, nest = "") {
       acc.plugins.push(
         typeDoc({
           sidebar: { label, collapsed: true },
+          pagination: true,
           entryPoints: [`../packages/${entrypoint}`],
           output: `references${nest}${label}`,
         }),
