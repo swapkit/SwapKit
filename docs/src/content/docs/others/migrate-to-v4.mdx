@@ -76,32 +76,24 @@ bun add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
 
 Replace all v3 imports with v4 equivalents:
 
-```typescript
-// Before (v3)
-import { THORChainPlugin } from "@swapkit/plugin-thorchain";
-import { EVMToolbox } from "@swapkit/toolbox-evm";
-import { ledgerWallet } from "@swapkit/wallet-ledger";
+```diff
+-import { THORChainPlugin } from "@swapkit/plugin-thorchain";
+-import { EVMToolbox } from "@swapkit/toolbox-evm";
+-import { ledgerWallet } from "@swapkit/wallet-ledger";
 
-// After (v4)
-import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
-import { ledgerWallet } from "@swapkit/wallets/ledger";
++import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
++import { getEvmToolbox } from "@swapkit/toolboxes/evm";
++import { ledgerWallet } from "@swapkit/wallets/ledger";
 ```
 
 ### Step 3: Update Client Initialization
 
-```typescript
-// v3
-import { SwapKitCore } from "@swapkit/core";
+```diff
+-import { SwapKitCore } from "@swapkit/core";
++import { createSwapKit } from "@swapkit/sdk";
 
-const client = new SwapKitCore({
-  // config
-});
-
-// v4
-import { createSwapKit } from "@swapkit/sdk";
-
-const client = createSwapKit({
+-const client = new SwapKitCore({
++const client = createSwapKit({
   // config
 });
 ```
@@ -111,6 +103,7 @@ const client = createSwapKit({
 The wallet connection pattern remains similar but uses the new import paths:
 
 ```typescript
+// @noErrorValidation
 // Connect wallet (same pattern, new imports)
 await client.connectEVMWallet(Chain.Ethereum);
 await client.connectKeystore(chains, phrase);
