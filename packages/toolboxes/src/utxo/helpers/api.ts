@@ -59,6 +59,8 @@ function getDefaultTxFeeByChain(chain: Chain) {
       return 10000;
     case Chain.Litecoin:
       return 1;
+    case Chain.Zcash:
+      return 1;
     default:
       return 2;
   }
@@ -74,6 +76,8 @@ function mapChainToBlockchairChain(chain: Chain) {
       return "dash";
     case Chain.Dogecoin:
       return "dogecoin";
+    case Chain.Zcash:
+      return "zcash";
     case Chain.Polkadot:
       return "polkadot";
     default:
@@ -288,6 +292,8 @@ export function getUtxoNetwork() {
         return coininfo.dash.main.toBitcoinJS();
       case Chain.Litecoin:
         return coininfo.litecoin.main.toBitcoinJS();
+      case Chain.Zcash:
+        return coininfo.zcash.main.toBitcoinJS();
 
       case Chain.Dogecoin: {
         const bip32 = { private: 0x04358394, public: 0x043587cf };

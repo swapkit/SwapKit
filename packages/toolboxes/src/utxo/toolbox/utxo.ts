@@ -42,6 +42,7 @@ import secp256k1 from "@bitcoinerlab/secp256k1";
 import { ECPair, HDNode } from "@psf/bitcoincashjs-lib";
 import { HDKey } from "@scure/bip32";
 import { mnemonicToSeedSync } from "@scure/bip39";
+import { validateZcashAddress } from "./zcash";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
 
@@ -153,6 +154,10 @@ export async function getUTXOAddressValidator() {
       return bchValidateAddress(address);
     }
 
+    if (chain === Chain.Zcash) {
+      return validateZcashAddress(address);
+    }
+
     try {
       initEccLib(secp256k1);
       btcLibAddress.toOutputScript(address, getNetwork(chain));
@@ -207,6 +212,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
 
+  debugger;
   const signer = phrase
     ? await createSignerWithKeys({ chain, phrase, derivationPath })
     : "signer" in toolboxParams
@@ -351,6 +357,7 @@ type CreateKeysForPathReturnType = {
   [Chain.Dash]: ECPairInterface;
   [Chain.Dogecoin]: ECPairInterface;
   [Chain.Litecoin]: ECPairInterface;
+  [Chain.Zcash]: ECPairInterface;
 };
 
 export async function getCreateKeysForPath<T extends keyof CreateKeysForPathReturnType>(
@@ -395,6 +402,7 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
     case Chain.Bitcoin:
     case Chain.Dogecoin:
     case Chain.Litecoin:
+    case Chain.Zcash:
     case Chain.Dash: {
       return function createKeysForPath({
         phrase,

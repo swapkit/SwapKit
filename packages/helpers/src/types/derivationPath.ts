@@ -33,6 +33,7 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   SOL: [44, 501, 0, 0, 0],
   THOR: [44, 931, 0, 0, 0],
   TRX: [44, 195, 0, 0, 0],
+  ZEC: [44, 133, 0, 0, 0],
 
   // Polkadot and related network derivation path is not number based
   DOT: [0, 0, 0, 0, 0],

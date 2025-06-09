@@ -27,7 +27,11 @@ export const utxoWalletMethods = async ({
   sdk,
   chain,
   derivationPath,
-}: { sdk: KeepKeySdk; chain: UTXOChain; derivationPath?: DerivationPathArray }) => {
+}: {
+  sdk: KeepKeySdk;
+  chain: Exclude<UTXOChain, Chain.Zcash>;
+  derivationPath?: DerivationPathArray;
+}) => {
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
   // This might not work for BCH
   const toolbox = await getUtxoToolbox(chain);

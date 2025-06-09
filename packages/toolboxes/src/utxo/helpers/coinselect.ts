@@ -20,6 +20,8 @@ export const getDustThreshold = (chain: UTXOChain) => {
       return 5500;
     case Chain.Dogecoin:
       return 100000;
+    case Chain.Zcash:
+      return 546;
     default:
       throw new SwapKitError("toolbox_utxo_not_supported", { chain });
   }

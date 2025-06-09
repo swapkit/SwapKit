@@ -192,6 +192,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       Chain.Dogecoin,
       Chain.BitcoinCash,
       Chain.Bitcoin,
+      Chain.Zcash,
       async () => {
         const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
         const utxoToolbox = await getUtxoToolbox(

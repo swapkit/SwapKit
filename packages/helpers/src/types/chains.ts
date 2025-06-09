@@ -26,6 +26,7 @@ export enum Chain {
   THORChain = "THOR",
   Solana = "SOL",
   Tron = "TRX",
+  Zcash = "ZEC",
 }
 
 export enum StagenetChain {
@@ -68,6 +69,7 @@ export enum ChainId {
   Solana = "solana",
   Tron = "728126428",
   TronHex = "0x2b6653dc",
+  Zcash = "zcash",
 }
 
 export const ChainIdToChain: Record<ChainId, Chain> = {
@@ -105,6 +107,7 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.THORChain]: Chain.THORChain,
   [ChainId.Tron]: Chain.Tron,
   [ChainId.TronHex]: Chain.Tron,
+  [ChainId.Zcash]: Chain.Zcash,
 };
 
 type ChainNameType = keyof typeof Chain;
@@ -136,6 +139,7 @@ export const BaseDecimal: Record<Chain, number> = {
   TRX: 6,
   XRD: 18,
   XRP: 6,
+  ZEC: 8,
 };
 
 export const BlockTimes: Record<Partial<Chain>, number> = {
@@ -163,6 +167,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Solana]: 0.4,
   [Chain.THORChain]: 6,
   [Chain.Tron]: 3,
+  [Chain.Zcash]: 150,
 };
 
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
@@ -192,13 +197,15 @@ export type UTXOChain =
   | Chain.BitcoinCash
   | Chain.Dash
   | Chain.Dogecoin
-  | Chain.Litecoin;
+  | Chain.Litecoin
+  | Chain.Zcash;
 export const UTXOChains = [
   Chain.Bitcoin,
   Chain.BitcoinCash,
   Chain.Dash,
   Chain.Dogecoin,
   Chain.Litecoin,
+  Chain.Zcash,
 ] as const;
 
 export type CosmosChain = Chain.Cosmos | Chain.THORChain | Chain.Maya | Chain.Kujira;
@@ -256,6 +263,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
   [Chain.THORChain]: "https://rpc.thorswap.net",
   [Chain.Tron]: "https://tron-rpc.publicnode.com",
+  [Chain.Zcash]: "https://api.blockchair.com/zcash",
   [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
@@ -319,6 +327,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
     "https://solana-mainnet.rpc.extrnode.com",
   ],
   [Chain.Tron]: ["https://api.tronstack.io", "https://api.tron.network"],
+  [Chain.Zcash]: ["https://api.blockchair.com/zcash"],
 };
 
 export const EXPLORER_URLS: Record<Chain, string> = {
@@ -346,6 +355,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
   [Chain.Tron]: "https://tronscan.org",
+  [Chain.Zcash]: "https://blockchair.com/zcash",
 };
 
 let RPCUrlsMerged = RPC_URLS;
@@ -363,12 +373,20 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
       Chain.Tron,
       () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }),
     )
-    .with(Chain.Bitcoin, Chain.Dogecoin, Chain.BitcoinCash, Chain.Dash, Chain.Litecoin, () => ({
-      id: "test",
-      jsonrpc: "1.0",
-      method: "getblockchaininfo",
-      params: [],
-    }))
+    .with(
+      Chain.Bitcoin,
+      Chain.Dogecoin,
+      Chain.BitcoinCash,
+      Chain.Dash,
+      Chain.Litecoin,
+      Chain.Zcash,
+      () => ({
+        id: "test",
+        jsonrpc: "1.0",
+        method: "getblockchaininfo",
+        params: [],
+      }),
+    )
     .with(
       Chain.Cosmos,
       Chain.Kujira,
