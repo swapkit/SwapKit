@@ -32,8 +32,8 @@ const App = () => {
     alchemyApiKey: import.meta.env.VITE_ALCHEMY_API_KEY || import.meta.env.ALCHEMY_API_KEY || "",
     ethplorerApiKey: import.meta.env.VITE_ETHPLORER_API_KEY || "freekey",
     swapkitApiKey: import.meta.env.VITE_SWAPKIT_API_KEY || "",
-    xamanApiKey: import.meta.env.VITE_XAMAN_API_KEY || "0073f779-98f8-4378-af87-c935d2b01f48",
-    xamanApiSecret: import.meta.env.VITE_XAMAN_API_SECRET || "4b9eb972-4452-4284-a6bf-d20f47c40533",
+    xamanApiKey: import.meta.env.VITE_XAMAN_API_KEY || "",
+    xamanApiSecret: import.meta.env.VITE_XAMAN_API_SECRET || "",
     walletConnectProjectId: "",
     brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
   });
