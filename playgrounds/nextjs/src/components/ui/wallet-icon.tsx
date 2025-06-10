@@ -36,6 +36,7 @@ const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.KEYSTORE]: Coins,
   [WalletOption.CTRL]: Wallet,
   [WalletOption.RADIX_WALLET]: Wallet,
+  [WalletOption.XAMAN]: Wallet,
 };
 
 export function WalletIcon({

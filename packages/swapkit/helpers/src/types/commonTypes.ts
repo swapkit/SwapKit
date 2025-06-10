@@ -83,6 +83,14 @@ export type ConnectConfig = SwapkitConfig & {
    * @optional for setting the kado api key
    */
   kadoApiKey?: string;
+
+  /**
+   * @optional for Xaman wallet integration
+   */
+  xamanConfig?: {
+    apiSecret?: string;
+    apiKey?: string;
+  };
 };
 
 export type ConnectWalletParams<M = { [key in string]: any }> = {

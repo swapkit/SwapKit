@@ -13,6 +13,8 @@ export const getSwapKitClient = (
     alchemyApiKey?: string;
     blockchairApiKey?: string;
     swapkitApiKey?: string;
+    xamanApiKey?: string;
+    xamanApiSecret?: string;
     walletConnectProjectId?: string;
     stagenet?: boolean;
     brokerEndpoint?: string;
@@ -51,6 +53,10 @@ export const getSwapKitClient = (
         },
       },
       chainflipBrokerUrl: params.brokerEndpoint,
+      xamanConfig: {
+        apiKey: params.xamanApiKey,
+        apiSecret: params.xamanApiSecret,
+      },
     },
     apis,
   });

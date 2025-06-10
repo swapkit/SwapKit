@@ -14,6 +14,7 @@ import { radixWallet } from "@swapkit/wallet-radix";
 import { talismanWallet } from "@swapkit/wallet-talisman";
 import { trezorWallet } from "@swapkit/wallet-trezor";
 import { walletconnectWallet } from "@swapkit/wallet-wc";
+import { xamanWallet } from "@swapkit/wallet-xaman";
 
 export const wallets = {
   ...bitgetWallet,
@@ -32,4 +33,5 @@ export const wallets = {
   ...trezorWallet,
   ...walletconnectWallet,
   ...ctrlWallet,
+  ...xamanWallet,
 };
