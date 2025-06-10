@@ -11,32 +11,7 @@ Building production-ready applications with SwapKit requires careful attention t
 
 ### API Key Management
 
-Never expose API keys in client-side code:
-
-```typescript
-import { createSwapKit } from '@swapkit/sdk';
-
-// ❌ BAD - Exposed in browser
-const swapKit = createSwapKit({
-  config: {
-    apiKeys: {
-      swapKit: 'sk_prod_abcd1234' // Visible in browser!
-    }
-  }
-});
-
-// ✅ GOOD - Use environment variables
-const swapKit = createSwapKit({
-  config: {
-    apiKeys: {
-      swapKit: process.env.SWAPKIT_API_KEY,
-      blockchair: process.env.BLOCKCHAIR_API_KEY
-    }
-  }
-});
-```
-
-For frontend applications, use a backend proxy:
+For frontend applications, use a backend proxy to keep API keys secure:
 
 ```typescript
 // Frontend
@@ -63,19 +38,17 @@ export async function POST(request: Request) {
 
 ### Private Key Handling
 
-Never store or transmit private keys:
+Always use secure wallet connections instead of handling private keys directly:
 
 ```typescript
-import { ethers } from 'ethers';
-import { Chain } from '@swapkit/sdk';
+import { createSwapKit, Chain } from '@swapkit/sdk';
 
-// ❌ NEVER do this
-const privateKey = localStorage.getItem('privateKey');
-const wallet = new ethers.Wallet(privateKey);
+const swapKit = createSwapKit();
 
 // ✅ Use secure wallet connections
 await swapKit.connectEVMWallet([Chain.Ethereum]); // MetaMask
 await swapKit.connectLedger([Chain.Bitcoin]);      // Hardware wallet
+await swapKit.connectTrezor([Chain.Bitcoin]);      // Trezor wallet
 ```
 
 ### Input Validation
@@ -83,23 +56,31 @@ await swapKit.connectLedger([Chain.Bitcoin]);      // Hardware wallet
 Always validate user inputs:
 
 ```typescript
-import { SwapKitError } from '@swapkit/sdk';
+import { createSwapKit, SwapKitError } from '@swapkit/sdk';
 
-function validateSwapInput(params: SwapParams): void {
+const swapKit = createSwapKit();
+
+function validateSwapInput(params: any): void {
   // Validate addresses
   if (!swapKit.validateAddress(params.recipient, params.chain)) {
-    throw new SwapKitError('Invalid recipient address');
+    throw new SwapKitError('core_swap_invalid_params', {
+      message: 'Invalid recipient address'
+    });
   }
   
   // Validate amounts
   const amount = Number(params.amount);
   if (isNaN(amount) || amount <= 0) {
-    throw new SwapKitError('Invalid amount');
+    throw new SwapKitError('core_swap_invalid_params', {
+      message: 'Invalid amount'
+    });
   }
   
   // Validate slippage
   if (params.slippage < 0 || params.slippage > 50) {
-    throw new SwapKitError('Slippage must be between 0 and 50%');
+    throw new SwapKitError('core_swap_invalid_params', {
+      message: 'Slippage must be between 0 and 50%'
+    });
   }
 }
 ```

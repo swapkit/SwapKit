@@ -13,7 +13,10 @@ The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and o
 import { SwapKitApi } from '@swapkit/sdk';
 
 // All methods are static - no initialization needed
-const price = await SwapKitApi.getPrice('ETH');
+const price = await SwapKitApi.getPrice({
+  identifier: 'ETH.ETH',
+  currency: 'USD'
+});
 ```
 
 ## Swap Quotes
@@ -68,21 +71,31 @@ const { routes } = await SwapKitApi.getSwapQuote({
 
 ### getPrice
 
-Get current asset prices in USD:
+Get current asset prices:
 
 ```typescript
-// Single asset
-const ethPrice = await SwapKitApi.getPrice('ETH');
-// Returns: 2500.50
+// Single asset price
+const priceData = await SwapKitApi.getPrice({
+  identifier: 'ETH.ETH',
+  currency: 'USD'  // Optional, defaults to USD
+});
+// Returns: [{ identifier: 'ETH.ETH', price: 2500.50 }]
 
 // Multiple assets
-const prices = await SwapKitApi.getPrice(['ETH', 'BTC', 'AVAX']);
-// Returns: { ETH: 2500.50, BTC: 45000.00, AVAX: 35.20 }
+const prices = await SwapKitApi.getPrice({
+  identifiers: ['ETH.ETH', 'BTC.BTC', 'AVAX.AVAX'],
+  currency: 'USD'
+});
+// Returns: [
+//   { identifier: 'ETH.ETH', price: 2500.50 },
+//   { identifier: 'BTC.BTC', price: 45000.00 },
+//   { identifier: 'AVAX.AVAX', price: 35.20 }
+// ]
 
-// With specific identifiers
-const tokenPrice = await SwapKitApi.getPrice(
-  'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-);
+// With specific token addresses
+const tokenPrice = await SwapKitApi.getPrice({
+  identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+});
 ```
 
 ## Balance Operations
@@ -94,22 +107,21 @@ Get all token balances for an address on a specific chain with scam filtering:
 ```typescript
 const balances = await SwapKitApi.getChainBalance({
   chain: 'ETH',
-  address: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321'
+  address: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321',
+  scamFilter: true  // Optional, defaults to true
 });
 
 // Response includes native and token balances
 [
   {
-    asset: 'ETH.ETH',
+    identifier: 'ETH.ETH',
     value: '1500000000000000000', // 1.5 ETH
-    decimal: 18,
-    price: 2500.50
+    decimal: 18
   },
   {
-    asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     value: '1000000000', // 1000 USDC
-    decimal: 6,
-    price: 1.00
+    decimal: 6
   }
 ]
 ```
@@ -124,16 +136,23 @@ Get current gas rates for supported chains:
 // Get gas rates for all chains
 const gasRates = await SwapKitApi.getGasRate();
 
-// Get gas rate for specific chain
-const ethGasRate = await SwapKitApi.getGasRate('ETH');
-// Returns: '25' (gwei)
-
-// Response format varies by chain
+// Response format
 {
-  ETH: '25',        // Gwei
-  BTC: '10',        // Satoshis per byte
-  AVAX: '25',       // nAVAX
-  THOR: '0.02'      // RUNE
+  ETH: {
+    low: '20',      // Gwei
+    average: '25',  // Gwei
+    high: '30'      // Gwei
+  },
+  BTC: {
+    low: '5',       // Satoshis per byte
+    average: '10',  // Satoshis per byte
+    high: '15'      // Satoshis per byte
+  },
+  AVAX: {
+    low: '25',      // nAVAX
+    average: '30',  // nAVAX
+    high: '35'      // nAVAX
+  }
 }
 ```
 
@@ -141,27 +160,25 @@ const ethGasRate = await SwapKitApi.getGasRate('ETH');
 
 ### getTokenList
 
-Get comprehensive token metadata:
+Get comprehensive token metadata from a specific provider:
 
 ```typescript
-// Get token by identifier
-const token = await SwapKitApi.getTokenList('ETH.USDC');
-
-// Get multiple tokens
-const tokens = await SwapKitApi.getTokenList(['ETH.USDC', 'AVAX.USDC']);
+// Get tokens from a specific provider
+const tokens = await SwapKitApi.getTokenList('thorswap');
 
 // Response structure
-{
-  chain: 'ETH',
-  symbol: 'USDC',
-  ticker: 'USDC',
-  identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  decimals: 6,
-  logoURL: 'https://...',
-  name: 'USD Coin',
-  isNative: false
-}
+[
+  {
+    chain: 'ETH',
+    symbol: 'USDC',
+    ticker: 'USDC',
+    identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    decimals: 6,
+    logoURL: 'https://...',
+    name: 'USD Coin'
+  }
+]
 ```
 
 ### getTokenListProviders
@@ -173,9 +190,10 @@ const providers = await SwapKitApi.getTokenListProviders();
 
 // Returns available providers
 [
+  { name: 'thorswap', url: 'https://...' },
   { name: '1inch', url: 'https://...' },
-  { name: 'CoinGecko', url: 'https://...' },
-  { name: 'Uniswap', url: 'https://...' }
+  { name: 'coingecko', url: 'https://...' },
+  { name: 'uniswap', url: 'https://...' }
 ]
 ```
 
@@ -188,7 +206,9 @@ Track transaction status and progress:
 ```typescript
 const status = await SwapKitApi.getTrackerDetails({
   txHash: '0x123...',
-  chain: 'ETH'
+  chain: 'ETH',
+  provider: 'thorchain',  // Optional: specific provider
+  actionId: 'swap_123'    // Optional: action identifier
 });
 
 // Response for swap transactions
@@ -206,35 +226,162 @@ const status = await SwapKitApi.getTrackerDetails({
 }
 ```
 
-## Provider-Specific APIs
+## Static Asset Data
 
-### THORChain/Maya
+### getStaticTokenList
 
-Access THORChain and Maya protocol data:
+Get token list from static Thorswap CDN:
 
 ```typescript
-// Get liquidity position
-const position = await SwapKitApi.thorchainMidgard.getLiquidityPosition(
-  'thor1...'
-);
+// Get specific token list
+const tokens = await SwapKitApi.getStaticTokenList('thorswap');
 
-// Get saver position
-const saverPosition = await SwapKitApi.thorchainMidgard.getSaverPosition(
-  'thor1...'
-);
+// Response contains comprehensive token data
+[
+  {
+    chain: 'ETH',
+    symbol: 'USDC',
+    ticker: 'USDC',
+    identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    decimals: 6,
+    logoURL: 'https://static.thorswap.net/token-list/images/eth.usdc.png',
+    name: 'USD Coin'
+  }
+]
+```
 
+### getLogoForAsset
+
+Get logo URL for any asset:
+
+```typescript
+// Get asset logo
+const logoUrl = SwapKitApi.getLogoForAsset('ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48');
+// Returns: 'https://static.thorswap.net/token-list/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
+
+// Native assets
+const ethLogo = SwapKitApi.getLogoForAsset('ETH.ETH');
+// Returns: 'https://static.thorswap.net/token-list/images/eth.eth.png'
+```
+
+### getChainLogoForAsset
+
+Get chain logo for any asset:
+
+```typescript
+// Get chain logo
+const chainLogo = SwapKitApi.getChainLogoForAsset('ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48');
+// Returns: 'https://static.thorswap.net/token-list/images/eth.png'
+```
+
+### getProviderLogo
+
+Get logo URL for token list providers:
+
+```typescript
+const providerLogo = await SwapKitApi.getProviderLogo('1inch');
+// Returns: 'https://...'
+```
+
+## Provider-Specific APIs
+
+### Microgard API
+
+Access THORChain microgard services:
+
+```typescript
 // Get THORName details
-const thorname = await SwapKitApi.thorchainMidgard.getTHORNameDetails(
-  'myname'
-);
+const thorname = await SwapKitApi.microgard.getTHORNameDetails('myname');
+
+// Get THORNames by owner
+const names = await SwapKitApi.microgard.getTHORNamesByOwner('thor1...');
+
+// Get THORNames by address
+const names = await SwapKitApi.microgard.getTHORNamesByAddress('0x...');
+
+// Get THORChain pools
+const pools = await SwapKitApi.microgard.getTHORChainPools('7d'); // '1h', '24h', '7d', '30d', '365d'
+
+// Get liquidity positions
+const positions = await SwapKitApi.microgard.getLiquidityPositions(['thor1...', 'thor2...']);
+
+// Get TNS chain address
+const address = await SwapKitApi.microgard.getTNSChainAddress({
+  chain: 'ETH',
+  tns: 'myname'
+});
+```
+
+### THORNode API
+
+Direct access to THORChain node data:
+
+```typescript
+// Get last block
+const lastBlock = await SwapKitApi.thornode.getLastBlock('thorchain'); // or 'mayachain'
+
+// Get THORChain queue
+const queue = await SwapKitApi.thornode.getThorchainQueue();
+
+// Get node list
+const nodes = await SwapKitApi.thornode.getNodes();
+
+// Get Mimir settings
+const mimir = await SwapKitApi.thornode.getMimirInfo();
 
 // Get inbound addresses
-const inboundAddresses = await SwapKitApi.thorchainMidgard.getInboundAddresses();
+const inboundAddresses = await SwapKitApi.thornode.getInboundAddresses();
 
-// Maya equivalents
-const mayaPosition = await SwapKitApi.mayachainMidgard.getLiquidityPosition(
-  'maya1...'
-);
+// Get THORNode TNS details
+const tnsDetails = await SwapKitApi.thornode.getTHORNodeTNSDetails({
+  name: 'myname',
+  type: 'thorchain' // or 'mayachain'
+});
+
+// Get TNS preferred asset
+const preferredAsset = await SwapKitApi.thornode.getTNSPreferredAsset({
+  tns: 'myname',
+  type: 'thorchain'
+});
+
+// Get RUNEPool info
+const runePool = await SwapKitApi.thornode.getRunePoolInfo();
+
+// Get RUNEPool provider info
+const providerInfo = await SwapKitApi.thornode.getRunePoolProviderInfo({
+  thorAddress: 'thor1...'
+});
+```
+
+### Midgard APIs
+
+Access THORChain and Maya midgard data:
+
+```typescript
+// THORChain Midgard
+// Get liquidity position
+const thorLiquidity = await SwapKitApi.thorchainMidgard.getLiquidityPosition('thor1...');
+
+// Get saver details
+const thorSavers = await SwapKitApi.thorchainMidgard.getSaversDetail('thor1...');
+
+// Get borrower details
+const thorBorrower = await SwapKitApi.thorchainMidgard.getBorrowerDetail('thor1...');
+
+// Get THORName details
+const thorName = await SwapKitApi.thorchainMidgard.getNameDetails('myname');
+
+// Get THORNames by address
+const namesByAddress = await SwapKitApi.thorchainMidgard.getNamesByAddress('0x...');
+
+// Get THORNames by owner
+const namesByOwner = await SwapKitApi.thorchainMidgard.getNamesByOwner('thor1...');
+
+// Maya Midgard - same methods available
+const mayaLiquidity = await SwapKitApi.mayachainMidgard.getLiquidityPosition('maya1...');
+const mayaSavers = await SwapKitApi.mayachainMidgard.getSaversDetail('maya1...');
+const mayaName = await SwapKitApi.mayachainMidgard.getNameDetails('myname');
 ```
 
 ### Chainflip
@@ -243,18 +390,48 @@ Create deposit channels for Chainflip swaps:
 
 ```typescript
 const channel = await SwapKitApi.getChainflipDepositChannel({
-  sellAsset: 'ETH.ETH',
-  buyAsset: 'BTC.BTC',
+  sellAsset: {
+    chain: 'ETH',
+    asset: 'ETH'
+  },
+  buyAsset: {
+    chain: 'BTC',
+    asset: 'BTC'
+  },
   destinationAddress: 'bc1q...',
-  brokerCommissionBps: 100 // 1% commission
+  brokerCommissionBps: 100, // Optional: 1% commission
+  affiliateFees: [          // Optional: affiliate fees
+    {
+      brokerAddress: '0x...',
+      feeBps: 50
+    }
+  ],
+  channelMetadata: {        // Optional: additional parameters
+    cfParameters: '...',
+    gasBudget: '1000000',
+    message: 'Swap via SwapKit'
+  },
+  refundParameters: {       // Optional: refund settings
+    minPrice: '0.01',
+    refundAddress: '0x...',
+    retryDuration: 3600
+  },
+  dcaParameters: {          // Optional: DCA settings
+    numberOfChunks: 10,
+    chunkInterval: 600
+  },
+  maxBoostFeeBps: 200      // Optional: max boost fee
 });
 
 // Response
 {
+  depositChannelId: '123456',
   depositAddress: '0x...', // Send funds here
   brokerCommissionBps: 100,
+  estimatedExpiryTime: 1234567890,
   expiryBlock: 123456,
-  channelId: 'channel_123'
+  issuedBlock: 123400,
+  sourceChainExpiryBlock: 234567
 }
 ```
 

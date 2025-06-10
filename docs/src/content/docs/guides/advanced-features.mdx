@@ -38,12 +38,21 @@ const allAssets = balances
   .filter(asset => asset.getValue('number') > 0.01);
 
 // Calculate total USD value
-const prices = await SwapKitApi.getPrice(
-  allAssets.map(a => a.asset.toString())
-);
+const priceData = await SwapKitApi.getPrice({
+  tokens: allAssets.map(a => ({ identifier: a.toString() })),
+  metadata: false
+});
+
+// Convert array response to a map for easier lookup
+const prices = priceData.reduce((acc, item) => {
+  if (item.identifier && item.price_usd) {
+    acc[item.identifier] = item.price_usd;
+  }
+  return acc;
+}, {} as Record<string, number>);
 
 const totalValue = allAssets.reduce((sum, asset) => {
-  const price = prices[asset.asset.toString()] || 0;
+  const price = prices[asset.toString()] || 0;
   return sum + (asset.getValue('number') * price);
 }, 0);
 ```
@@ -196,22 +205,33 @@ const loanCloseMemo = 'LOAN-:ETH.ETH:0x...';
 ### Building Custom Memos
 
 ```typescript
-import { getMemoFor } from '@swapkit/sdk';
+import { getMemoForDeposit, getMemoForWithdraw, getMemoForLoan, MemoType } from '@swapkit/sdk';
 
-// Build swap memo
-const swapMemo = getMemoFor('swap', {
-  targetAsset: 'BTC.BTC',
-  targetAddress: 'bc1q...',
-  limit: '50000000', // Min output
-  affiliate: 'ss',   // Affiliate code
-  affiliateBps: '50' // 0.5% fee
+// Build deposit (liquidity) memo
+const depositMemo = getMemoForDeposit({
+  chain: Chain.Bitcoin,
+  symbol: 'BTC',
+  address: 'bc1q...', // Optional: asymmetric add
+  affiliateAddress: 'ss',
+  affiliateBasisPoints: 50 // 0.5% fee
 });
 
-// Build liquidity memo
-const liquidityMemo = getMemoFor('add', {
-  targetAsset: 'ETH.ETH',
-  targetAddress: '0x...',
-  affiliateBps: '100'
+// Build withdraw memo
+const withdrawMemo = getMemoForWithdraw({
+  chain: Chain.Bitcoin,
+  symbol: 'BTC',
+  ticker: 'BTC',
+  basisPoints: 10000, // 100%
+  targetAsset: 'ETH.ETH' // Optional: withdraw to different asset
+});
+
+// Build loan memo
+const loanOpenMemo = getMemoForLoan(MemoType.OPEN_LOAN, {
+  asset: 'ETH.ETH',
+  address: '0x...',
+  minAmount: '1000000000000000000', // 1 ETH minimum
+  affiliateAddress: 'ss',
+  affiliateBasisPoints: 25
 });
 ```
 
@@ -261,14 +281,25 @@ await swapKit.swap({ route: modifiedRoute });
 Optimize gas usage across different chains:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+import { SwapKitApi, ChainToChainId, Chain } from '@swapkit/sdk';
 
 // Get current gas rates
-const gasRates = await SwapKitApi.getGasRate();
+const gasRatesArray = await SwapKitApi.getGasRate();
+
+// Convert to a map for easier lookup
+const gasRates = gasRatesArray.reduce((acc, rate) => {
+  acc[rate.chainId] = rate;
+  return acc;
+}, {} as Record<string, typeof gasRatesArray[0]>);
 
 // Dynamic fee calculation
 async function getOptimalFeeOption(chain: Chain, urgency: 'low' | 'medium' | 'high') {
-  const gasRate = gasRates[chain];
+  const chainId = ChainToChainId[chain];
+  const gasRate = gasRates[chainId];
+  
+  if (!gasRate) {
+    throw new Error(`Gas rate not found for chain ${chain}`);
+  }
   
   // Custom fee multipliers
   const multipliers = {
@@ -277,13 +308,15 @@ async function getOptimalFeeOption(chain: Chain, urgency: 'low' | 'medium' | 'hi
     high: 1.5
   };
   
+  const baseRate = Number(gasRate.value);
+  
   return {
     [Chain.Ethereum]: {
-      maxFeePerGas: Math.floor(Number(gasRate) * multipliers[urgency]),
-      maxPriorityFeePerGas: Math.floor(Number(gasRate) * 0.1 * multipliers[urgency])
+      maxFeePerGas: Math.floor(baseRate * multipliers[urgency]),
+      maxPriorityFeePerGas: Math.floor(baseRate * 0.1 * multipliers[urgency])
     },
     [Chain.Bitcoin]: {
-      feeRate: Math.floor(Number(gasRate) * multipliers[urgency])
+      feeRate: Math.floor(baseRate * multipliers[urgency])
     }
   }[chain];
 }
@@ -302,47 +335,77 @@ const tx = await swapKit.transfer({
 Manage custom token lists and metadata:
 
 ```typescript
-import { SwapKitApi, TokenInfo } from '@swapkit/sdk';
+import { SwapKitApi, AssetValue, ProviderName } from '@swapkit/sdk';
 
-// Get token metadata
-async function getTokenInfo(identifier: string): Promise<TokenInfo> {
-  const cached = localStorage.getItem(`token_${identifier}`);
-  if (cached) return JSON.parse(cached);
-  
-  const token = await SwapKitApi.getTokenList(identifier);
-  localStorage.setItem(`token_${identifier}`, JSON.stringify(token));
-  
-  return token;
+// Get token lists from providers
+async function loadTokenList(provider: ProviderName) {
+  const tokenList = await SwapKitApi.getTokenList(provider);
+  return tokenList.tokens;
 }
 
-// Custom token registry
+// Custom token registry with caching
 class TokenRegistry {
-  private tokens: Map<string, TokenInfo> = new Map();
+  private tokens: Map<string, any> = new Map();
+  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cacheTTL = 3600000; // 1 hour
   
-  async addCustomToken(token: TokenInfo) {
-    this.tokens.set(token.identifier, token);
-  }
-  
-  async getToken(identifier: string): Promise<TokenInfo> {
-    // Check custom tokens first
-    if (this.tokens.has(identifier)) {
-      return this.tokens.get(identifier)!;
+  async loadProviderTokens(provider: ProviderName) {
+    const cacheKey = `provider_${provider}`;
+    const cached = this.cache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
+      return cached.data;
     }
     
-    // Fallback to API
-    return SwapKitApi.getTokenList(identifier);
+    const tokenList = await SwapKitApi.getTokenList(provider);
+    this.cache.set(cacheKey, { data: tokenList, timestamp: Date.now() });
+    
+    // Index tokens by identifier
+    tokenList.tokens.forEach(token => {
+      this.tokens.set(token.identifier, token);
+    });
+    
+    return tokenList;
+  }
+  
+  addCustomToken(token: {
+    chain: string;
+    identifier: string;
+    symbol: string;
+    decimals: number;
+    name?: string;
+    logoURI?: string;
+    address?: string;
+  }) {
+    this.tokens.set(token.identifier, token);
+    
+    // Register with AssetValue for proper decimal handling
+    AssetValue.setStaticAssets(new Map([[token.identifier, {
+      identifier: token.identifier,
+      chain: token.chain as any,
+      decimal: token.decimals
+    }]]));
+  }
+  
+  getToken(identifier: string) {
+    return this.tokens.get(identifier);
   }
 }
 
 // Usage
 const registry = new TokenRegistry();
-await registry.addCustomToken({
+
+// Load tokens from a provider
+await registry.loadProviderTokens(ProviderName.UNISWAP);
+
+// Add custom token
+registry.addCustomToken({
   chain: 'ETH',
-  identifier: 'ETH.CUSTOM-0x...',
+  identifier: 'ETH.CUSTOM-0x1234567890123456789012345678901234567890',
   symbol: 'CUSTOM',
   decimals: 18,
   name: 'Custom Token',
-  logoURL: 'https://...'
+  logoURI: 'https://example.com/token.png'
 });
 ```
 
@@ -351,7 +414,7 @@ await registry.addCustomToken({
 Implement advanced transaction tracking:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+import { SwapKitApi, ChainToChainId } from '@swapkit/sdk';
 
 class TransactionTracker {
   private pendingTxs: Map<string, any> = new Map();
@@ -362,7 +425,8 @@ class TransactionTracker {
     // Poll for updates
     const interval = setInterval(async () => {
       try {
-        const status = await SwapKitApi.getTrackerDetails({ txHash, chain });
+        const chainId = ChainToChainId[chain];
+        const status = await SwapKitApi.getTrackerDetails({ hash: txHash, chainId });
         
         if (status.status === 'completed') {
           this.pendingTxs.set(txHash, { ...status, chain });
@@ -421,7 +485,7 @@ class SwapKitRetry {
         
         // Don't retry user rejections
         if (error instanceof SwapKitError && 
-            error.code === 'wallet_transaction_rejected') {
+            error.message === 'wallet_connection_rejected_by_user') {
           throw error;
         }
         

@@ -305,10 +305,12 @@ SwapKit operations that require wallet connections must be performed in client c
 import { AssetValue, SwapKitApi } from '@swapkit/sdk';
 
 export async function TokenPrice({ symbol }: { symbol: string }) {
-  const api = new SwapKitApi();
-  const price = await api.getTokenPrice(symbol);
+  const price = await SwapKitApi.getPrice({
+    identifier: symbol,
+    currency: 'USD'
+  });
   
-  return <div>Price: ${price}</div>;
+  return <div>Price: ${price.price_usd}</div>;
 }
 ```
 
