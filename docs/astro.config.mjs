@@ -73,14 +73,6 @@ export default defineConfig({
             { label: "Production Best Practices", link: "/guides/production-best-practices" },
             { label: "Create custom plugin", link: "/guides/create-plugin" },
             { label: "Create custom wallet", link: "/guides/create-wallet" },
-            {
-              label: "Actions",
-              autogenerate: { directory: "guides/actions", collapsed: true },
-            },
-            {
-              label: "Integrations",
-              autogenerate: { directory: "guides/integrations", collapsed: true },
-            },
           ],
         },
         { label: "Actions", collapsed: true, autogenerate: { directory: "guides/actions" } },
@@ -94,9 +86,7 @@ export default defineConfig({
         {
           label: "References",
           collapsed: true,
-          items: [
-            ...(process.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : []),
-          ],
+          items: process.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : [],
         },
       ],
     }),

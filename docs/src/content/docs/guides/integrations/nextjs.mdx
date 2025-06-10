@@ -393,29 +393,9 @@ export function CosmosWalletButton() {
 
 ## Common Issues
 
-### Module not found errors
-
-If you encounter module resolution errors, ensure all polyfills are installed and the webpack configuration is properly set up.
-
-### Hydration errors
-
-Make sure wallet-related components are marked as client components with `'use client'` directive.
-
 ### WebAssembly errors
 
-The webpack configuration should handle WebAssembly modules. If issues persist, check that `experiments.asyncWebAssembly` is enabled.
-
-### Build errors with TypeScript
-
-You may need to add SwapKit types to your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "types": ["@swapkit/sdk"]
-  }
-}
-```
+The webpack configuration should handle WebAssembly modules. If issues persist, check that `experiments.asyncWebAssembly` is enabled in your `next.config.js`.
 
 ## Example Repository
 

@@ -190,35 +190,6 @@ If you encounter WebAssembly-related errors, ensure you have the required plugin
   </TabItem>
 </Tabs>
 
-### Buffer is not defined
-
-This error occurs when Node.js globals aren't properly polyfilled. Make sure `nodePolyfills` is configured with `globals.Buffer: true`.
-
-### Crypto module errors
-
-The crypto polyfills are automatically handled by `vite-plugin-node-polyfills`. If you still encounter issues, you may need to add:
-
-```typescript
-// @noErrorValidation
-resolve: {
-  alias: {
-    crypto: 'crypto-browserify',
-  },
-},
-```
-
-## Production Build
-
-For production builds, ensure your build target supports modern JavaScript:
-
-```typescript
-// @noErrorValidation
-build: {
-  target: 'esnext',
-  // Enable source maps for debugging
-  sourcemap: true,
-}
-```
 
 ## Example Repository
 
