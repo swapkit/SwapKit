@@ -19,7 +19,7 @@ hero:
       variant: secondary
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
 
 <div class="hero-section">
 
@@ -46,9 +46,7 @@ SwapKit provides everything you need to integrate blockchain functionality into 
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { createSwapKit, Chain, SwapKitApi } from '@swapkit/sdk';
 
 // Initialize SwapKit
 const swapKit = createSwapKit();
@@ -73,7 +71,8 @@ const { routes } = await SwapKitApi.getSwapQuote({
 
 // Execute the swap
 if (routes.length > 0) {
-  const txHash = await swapKit.swap({ route: routes[0] });
+  const txHash = await swapKit
+    .swap({ route: routes[0] });
 }
 ```
 
@@ -109,9 +108,28 @@ if (routes.length > 0) {
 
 ### 1. Install SwapKit
 
-```bash
-bun add @swapkit/sdk
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk
+    ```
+  </TabItem>
+</Tabs>
 
 ### 2. Initialize the SDK
 

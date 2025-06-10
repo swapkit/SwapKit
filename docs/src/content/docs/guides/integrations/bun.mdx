@@ -7,11 +7,30 @@ This guide will help you integrate SwapKit into your Bun-powered React applicati
 
 ## Installation
 
-Install SwapKit using Bun:
+Install SwapKit:
 
-```bash
-bun add @swapkit/sdk @swapkit/ui
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk
+    ```
+  </TabItem>
+</Tabs>
 
 ## Project Setup
 
@@ -74,8 +93,7 @@ Create your main React application with SwapKit:
 // @noErrorValidation
 // src/App.tsx
 import { useState } from 'react';
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain, WalletOption } from '@swapkit/helpers';
+import { createSwapKit, Chain, WalletOption } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -85,16 +103,11 @@ export function App() {
 
   const connectWallet = async () => {
     try {
-      const connectedChains = await swapKit.connectWallet(
-        WalletOption.METAMASK,
-        [Chain.Ethereum]
-      );
+      await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
       
-      if (connectedChains.length > 0) {
-        setIsConnected(true);
-        const ethAddress = await swapKit.getAddress(Chain.Ethereum);
-        setAddress(ethAddress);
-      }
+      setIsConnected(true);
+      const ethAddress = await swapKit.getAddress(Chain.Ethereum);
+      setAddress(ethAddress);
     } catch (error) {
       console.error('Failed to connect wallet:', error);
     }
@@ -205,13 +218,12 @@ Add useful scripts to your `package.json`:
 
 ## Using SwapKit UI Components
 
-If you're using `@swapkit/ui`, you can leverage pre-built components:
+SwapKit SDK includes pre-built UI components:
 
 ```tsx
 // @noErrorValidation
 // src/Widget.tsx
-import { SwapWidget } from '@swapkit/ui';
-import { createSwapKit } from '@swapkit/sdk';
+import { SwapWidget, createSwapKit } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -239,7 +251,7 @@ Access them in your code:
 
 ```typescript
 // @noErrorValidation
-import { SKConfig } from '@swapkit/helpers';
+import { SKConfig } from '@swapkit/sdk';
 
 if (process.env.BUN_PUBLIC_SWAPKIT_API_KEY) {
   SKConfig.setApiKey('swapKit', process.env.BUN_PUBLIC_SWAPKIT_API_KEY);

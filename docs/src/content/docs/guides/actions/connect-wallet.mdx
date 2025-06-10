@@ -11,8 +11,7 @@ You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages:
    ```ts
-   import { SwapKit } from "@swapkit/core";
-   import { keystoreWallet } from "@swapkit/wallets/keystore";
+   import { SwapKit, keystoreWallet } from "@swapkit/sdk";
    ```
 
 2. **All-in-one approach** - Import everything from the SDK (better for backend/Node.js):
@@ -29,10 +28,7 @@ The granular approach is recommended for frontend applications as it results in 
 ```ts twoslash
 // @noErrorValidation
 
-import { SwapKit } from "@swapkit/core";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
-import { ledgerWallet } from "@swapkit/wallets/ledger";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { SwapKit, keystoreWallet, ledgerWallet, evmWallet } from "@swapkit/sdk";
 
 // Initialize the SwapKit client with specific wallets
 const swapKit = SwapKit({
@@ -70,10 +66,7 @@ const swapKit = createSwapKit({
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
-import { decryptFromKeystore, type Keystore } from "@swapkit/wallets/keystore";
+import { Chain, SwapKit, keystoreWallet, decryptFromKeystore, type Keystore } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -117,9 +110,7 @@ await connectWithKeystore(keystoreFile, password, chains);
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { createSwapKit } from "@swapkit/sdk";
-import { decryptFromKeystore, type Keystore } from "@swapkit/wallets/keystore";
+import { Chain, createSwapKit, decryptFromKeystore, type Keystore } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = createSwapKit();
@@ -151,9 +142,7 @@ async function connectWithKeystore(
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { ledgerWallet } from "@swapkit/wallets/ledger";
+import { Chain, SwapKit, ledgerWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit with Ledger wallet
 const swapKit = SwapKit({
@@ -181,9 +170,7 @@ async function connectLedger(chains: Chain[]) {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain, NetworkDerivationPath } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { trezorWallet } from "@swapkit/wallets/trezor";
+import { Chain, NetworkDerivationPath, SwapKit, trezorWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit with Trezor wallet
 const swapKit = SwapKit({
@@ -213,9 +200,7 @@ async function connectTrezor(chains: Chain[]) {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { Chain, SwapKit, evmWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -243,9 +228,7 @@ async function connectEVMWallet() {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keplrWallet } from "@swapkit/wallets/keplr";
+import { Chain, SwapKit, keplrWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -267,14 +250,39 @@ async function connectKeplr() {
 }
 ```
 
+### Cosmostation (Cosmos) Wallet
+
+```ts twoslash
+// @noErrorValidation
+
+import { Chain, SwapKit, cosmostationWallet } from "@swapkit/sdk";
+
+// Initialize SwapKit
+const swapKit = SwapKit({
+  wallets: { ...cosmostationWallet },
+});
+
+// Connect to Cosmostation
+async function connectCosmostation() {
+  try {
+    await swapKit.connectCosmostation([Chain.Cosmos, Chain.THORChain]);
+
+    // Get the Cosmos address
+    const address = swapKit.getAddress(Chain.Cosmos);
+
+    return { success: true, address };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
 ### Phantom (Solana) Wallet
 
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { phantomWallet } from "@swapkit/wallets/phantom";
+import { Chain, SwapKit, phantomWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -301,9 +309,7 @@ async function connectPhantom() {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { Chain, SwapKit, evmWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -332,9 +338,7 @@ function disconnectAll() {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { Chain, SwapKit, evmWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -373,9 +377,7 @@ async function getAllBalances(chains: Chain[]) {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { walletconnectWallet } from "@swapkit/wallets/walletconnect";
+import { Chain, SwapKit, walletconnectWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit with WalletConnect
 const swapKit = SwapKit({
@@ -411,11 +413,7 @@ async function connectWalletConnect() {
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { keplrWallet } from "@swapkit/wallets/keplr";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { Chain, SwapKit, evmWallet, keplrWallet, keystoreWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit with multiple wallet types
 const swapKit = SwapKit({

@@ -9,7 +9,7 @@ import { SwapKitApi } from "@swapkit/helpers/api";
 import type { NearDepositChannelParams, NearSwapResponse, NearSwapRoute } from "./types";
 
 export const NearPlugin = createPlugin({
-  name: "nearPlugin",
+  name: "near",
   properties: {
     supportedSwapkitProviders: [ProviderName.NEAR],
   },

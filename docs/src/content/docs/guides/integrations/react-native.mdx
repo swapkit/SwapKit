@@ -23,90 +23,131 @@ React Native support is currently under development and will be available in a f
 
 Install SwapKit and its dependencies:
 
-```bash
-# Using bun
-bun add @swapkit/sdk
-
-# Using pnpm
-pnpm add @swapkit/sdk
-
-# Using npm
-npm install @swapkit/sdk
-
-# Using yarn
-yarn add @swapkit/sdk
-
-# Using Expo
-expo install @swapkit/sdk
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="expo">
+    ```bash
+    expo install @swapkit/sdk
+    ```
+  </TabItem>
+</Tabs>
 
 ## Required Polyfills
 
 React Native requires several polyfills for crypto and Node.js functionality:
 
-```bash
-# Core polyfills
-bun add \
-  react-native-crypto \
-  react-native-randombytes \
-  react-native-get-random-values \
-  events \
-  stream-browserify \
-  readable-stream \
-  buffer \
-  process
-# or
-pnpm add \
-  react-native-crypto \
-  react-native-randombytes \
-  react-native-get-random-values \
-  events \
-  stream-browserify \
-  readable-stream \
-  buffer \
-  process
-# or
-npm install --save \
-  react-native-crypto \
-  react-native-randombytes \
-  react-native-get-random-values \
-  events \
-  stream-browserify \
-  readable-stream \
-  buffer \
-  process
-# or
-yarn add \
-  react-native-crypto \
-  react-native-randombytes \
-  react-native-get-random-values \
-  events \
-  stream-browserify \
-  readable-stream \
-  buffer \
-  process
+Core polyfills:
 
-# Additional dependencies for wallet connections
-bun add \
-  @walletconnect/react-native-compat \
-  react-native-modal \
-  react-native-svg
-# or
-pnpm add \
-  @walletconnect/react-native-compat \
-  react-native-modal \
-  react-native-svg
-# or
-npm install --save \
-  @walletconnect/react-native-compat \
-  react-native-modal \
-  react-native-svg
-# or
-yarn add \
-  @walletconnect/react-native-compat \
-  react-native-modal \
-  react-native-svg
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add \
+      react-native-crypto \
+      react-native-randombytes \
+      react-native-get-random-values \
+      events \
+      stream-browserify \
+      readable-stream \
+      buffer \
+      process
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add \
+      react-native-crypto \
+      react-native-randombytes \
+      react-native-get-random-values \
+      events \
+      stream-browserify \
+      readable-stream \
+      buffer \
+      process
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install --save \
+      react-native-crypto \
+      react-native-randombytes \
+      react-native-get-random-values \
+      events \
+      stream-browserify \
+      readable-stream \
+      buffer \
+      process
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add \
+      react-native-crypto \
+      react-native-randombytes \
+      react-native-get-random-values \
+      events \
+      stream-browserify \
+      readable-stream \
+      buffer \
+      process
+    ```
+  </TabItem>
+</Tabs>
+
+Additional dependencies for wallet connections:
+
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add \
+      @walletconnect/react-native-compat \
+      react-native-modal \
+      react-native-svg
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add \
+      @walletconnect/react-native-compat \
+      react-native-modal \
+      react-native-svg
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install --save \
+      @walletconnect/react-native-compat \
+      react-native-modal \
+      react-native-svg
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add \
+      @walletconnect/react-native-compat \
+      react-native-modal \
+      react-native-svg
+    ```
+  </TabItem>
+</Tabs>
 
 ## Metro Configuration
 
