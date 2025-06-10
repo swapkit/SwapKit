@@ -25,9 +25,9 @@ import {
   NetworkDerivationPath,
   createWallet,
   type ChainWallet,
-  type EVMChain
-} from "@swapkit/helpers";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+  type EVMChain,
+  getEvmToolbox
+} from "@swapkit/sdk";
 
 
 // Create a basic EVM wallet adapter
@@ -108,10 +108,10 @@ import {
   NetworkDerivationPath,
   WalletOption,
   createWallet,
-  type ChainWallet
-} from "@swapkit/helpers";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
-import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+  type ChainWallet,
+  getEvmToolbox,
+  getUtxoToolbox
+} from "@swapkit/sdk";
 
 export const customHardwareWallet = createWallet({
   name: "connectCustomHardware",
@@ -225,7 +225,7 @@ To use your custom wallet adapter with SwapKit:
 
 ```ts twoslash
 // @noErrors
-import { SwapKit, Chain } from "@swapkit/core";
+import { SwapKit, Chain } from "@swapkit/sdk";
 import { myCustomWallet } from "./my-custom-wallet";
 
 // Initialize SwapKit with your wallet adapter
@@ -249,8 +249,7 @@ Test your wallet adapter thoroughly before using it in production:
 ```ts twoslash
 // @noErrors
 import { describe, jest, it, expect, beforeEach } from "bun:test";
-import { Chain, AssetValue } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
+import { Chain, AssetValue, SwapKit } from "@swapkit/sdk";
 import { myCustomWallet } from "./my-custom-wallet";
 
 describe("MyCustomWallet", () => {

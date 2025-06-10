@@ -86,8 +86,7 @@ Without this key, UTXO chain functionality is limited. Get your key at [blockcha
 SwapKit provides default RPC URLs for all supported chains, but you can override them:
 
 ```typescript
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
+import { createSwapKit, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit({
   config: {
@@ -106,7 +105,7 @@ const swapKit = createSwapKit({
 You can update configuration after initialization using `SKConfig`:
 
 ```typescript
-import { SKConfig, Chain } from '@swapkit/helpers';
+import { SKConfig, Chain } from '@swapkit/sdk';
 
 // Update a specific RPC URL
 SKConfig.setRpcUrl(Chain.Ethereum, 'https://new-rpc-url.com');
@@ -173,7 +172,7 @@ SKConfig.setIntegrationConfig('chainflip', {
 Provide custom API implementations for specific chains:
 
 ```typescript
-import { Chain } from '@swapkit/helpers';
+import { Chain } from '@swapkit/sdk';
 
 // Custom Bitcoin API implementation
 const customBitcoinApi = {
@@ -267,8 +266,7 @@ const swapKit = createSwapKit({
 Here's a production-ready configuration example:
 
 ```typescript
-import { createSwapKit, SKConfig } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
+import { createSwapKit, SKConfig, Chain } from '@swapkit/sdk';
 
 // Load environment variables
 const config = {
@@ -335,7 +333,7 @@ SKConfig.setRpcUrl(Chain.Ethereum, 'https://cloudflare-eth.com');
 Verify your API keys are working:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 // Test SwapKit API key
 try {

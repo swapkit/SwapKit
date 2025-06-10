@@ -11,8 +11,7 @@ You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages (recommended for frontend):
    ```ts
-   import { SwapKit } from "@swapkit/core";
-   import { evmWallet } from "@swapkit/wallets/evm-extensions";
+   import { SwapKit, evmWallet } from "@swapkit/sdk";
    ```
 
 2. **All-in-one approach** - Import everything from the SDK (better for backend/Node.js):
@@ -28,9 +27,7 @@ Signing messages is useful for authentication, proving ownership of an address, 
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { Chain, SwapKit, evmWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -63,8 +60,7 @@ async function signMessageExample() {
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { createSwapKit } from "@swapkit/sdk";
+import { Chain, createSwapKit } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = createSwapKit();
@@ -97,10 +93,7 @@ Different blockchains have different message signing formats:
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { Chain, SwapKit, evmWallet, keystoreWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -142,9 +135,7 @@ After signing a message, you or others may want to verify the signature:
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { Chain, SwapKit, keystoreWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -188,9 +179,7 @@ For more control over the signing process, you can use toolboxes directly:
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
-import { ethers } from "ethers";
+import { Chain, getEvmToolbox, ethers } from "@swapkit/sdk";
 
 // Create and sign an Ethereum transaction manually
 async function signEthereumTransaction() {
@@ -232,8 +221,7 @@ For UTXO chains like Bitcoin, the process involves creating inputs and outputs:
 
 ```ts twoslash
 // @noErrorValidation
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
 
 async function signBitcoinTransaction() {
   // Get the Bitcoin toolbox
@@ -285,9 +273,7 @@ Hardware wallets like Ledger or Trezor have special requirements for signing:
 
 ```ts twoslash
 // @noErrorValidation
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { ledgerWallet } from "@swapkit/wallets/ledger";
+import { AssetValue, Chain, FeeOption, SwapKit, ledgerWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -324,8 +310,7 @@ For complete control over the signing process, you can use toolbox-specific meth
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import { Chain, getCosmosToolbox } from "@swapkit/sdk";
 
 async function cosmosWallet() {
   // Get Cosmos toolbox

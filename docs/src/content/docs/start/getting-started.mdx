@@ -83,7 +83,7 @@ SwapKit supports 20+ blockchain networks with a unified [Chain](/start/core-conc
 
 ```typescript
 // @noErrorValidation
-import { Chain } from '@swapkit/helpers';
+import { Chain } from '@swapkit/sdk';
 
 // Examples of supported chains
 const ethereum = Chain.Ethereum;   // "ETH"
@@ -97,7 +97,7 @@ const thorchain = Chain.THORChain; // "THOR"
 
 ```typescript
 // @noErrorValidation
-import { AssetValue } from '@swapkit/helpers';
+import { AssetValue } from '@swapkit/sdk';
 
 // Native assets
 const eth = AssetValue.from({ asset: 'ETH.ETH', value: 1 }); // 1 ETH
@@ -115,7 +115,7 @@ SwapKit supports 20+ [wallet types](/start/core-concepts#wallet-types):
 
 ```typescript
 // @noErrorValidation
-import { WalletOption } from '@swapkit/helpers';
+import { WalletOption } from '@swapkit/sdk';
 
 // Browser extension wallets
 const metamask = WalletOption.METAMASK;
@@ -134,8 +134,7 @@ const keystore = WalletOption.KEYSTORE;
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain, WalletOption } from '@swapkit/helpers';
+import { createSwapKit, Chain, WalletOption } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -151,6 +150,9 @@ await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
 // Connect Keplr (Cosmos chains)
 await swapKit.connectKeplr([Chain.Cosmos, Chain.THORChain]);
 
+// Connect Cosmostation (Cosmos chains)
+await swapKit.connectCosmostation([Chain.Cosmos, Chain.THORChain]);
+
 // Get all connected wallets
 const wallets = swapKit.getAllWallets();
 ```
@@ -159,8 +161,7 @@ const wallets = swapKit.getAllWallets();
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
+import { createSwapKit, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -183,8 +184,7 @@ Use the [SwapKit API](/guides/api-reference) to get quotes and execute swaps:
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit, SwapKitApi } from '@swapkit/sdk';
-import { Chain, FeeOption } from '@swapkit/helpers';
+import { createSwapKit, Chain, FeeOption, SwapKitApi } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -218,8 +218,7 @@ console.log(`Swap transaction: ${txHash}`);
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
-import { AssetValue, FeeOption } from '@swapkit/helpers';
+import { createSwapKit, AssetValue, FeeOption, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -261,10 +260,7 @@ For smaller bundle sizes, use only the components you need:
 
 ```typescript
 // @noErrorValidation
-import { SwapKit } from '@swapkit/core';
-import { ThorchainPlugin } from '@swapkit/plugins/thorchain';
-import { keystoreWallet } from '@swapkit/wallets/keystore';
-import { ledgerWallet } from '@swapkit/wallets/ledger';
+import { SwapKit, ThorchainPlugin, keystoreWallet, ledgerWallet } from '@swapkit/sdk';
 
 const swapKit = SwapKit({
   plugins: {
@@ -283,12 +279,10 @@ For low-level blockchain operations:
 
 ```typescript
 // @noErrorValidation
-import { getToolbox } from '@swapkit/toolboxes';
-import { Chain } from '@swapkit/helpers';
-
+import { getToolbox, Chain } from '@swapkit/sdk';
 
 const address = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
-const btcToolbox = await getToolbox(Chain.Bitcoin);
+const btcToolbox = getToolbox(Chain.Bitcoin);
 
 const isValid = btcToolbox.validateAddress(address);
 
@@ -300,9 +294,8 @@ const balance = await btcToolbox.getBalance(address);
 Create your own plugin to extend SwapKit:
 
 ```typescript
-// @noErrors
-import { SwapKit } from '@swapkit/core';
-import type { SwapParams } from '@swapkit/helpers';
+// @noErrorValidation
+import { SwapKit } from '@swapkit/sdk';
 
 const MyCustomPlugin = {
   myCustomMethod: async (params: any) => {
@@ -310,21 +303,22 @@ const MyCustomPlugin = {
     return { success: true };
   },
 
-  // Override existing methods
-  swap: async (params: SwapParams) => {
-    // Custom swap logic
-    console.log('Using custom swap logic');
-    // ... implementation
-    return 'tx-hash';
+  // Add custom functionality
+  getCustomData: async () => {
+    console.log('Fetching custom data');
+    return { data: 'custom-data' };
   }
 };
 
 const swapKit = SwapKit({
-  plugins: MyCustomPlugin,
+  plugins: {
+    ...MyCustomPlugin,
+  },
 });
 
 // Use your custom method
-await swapKit.myCustomMethod({ /* params */ });
+await swapKit.myCustomMethod({ customParam: 'value' });
+await swapKit.getCustomData();
 ```
 
 ## Error Handling
@@ -332,21 +326,28 @@ await swapKit.myCustomMethod({ /* params */ });
 SwapKit uses typed errors for better debugging:
 
 ```typescript
-// @noErrors
-import { createSwapKit } from '@swapkit/sdk';
-import { SwapKitError } from '@swapkit/helpers';
+// @noErrorValidation
+import { createSwapKit, SwapKitError, FeeOption } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
 try {
-  const route = { /* your route object */ };
-  await swapKit.swap(route);
+  // Example: attempting a swap with a route object
+  const route = { 
+    sellAsset: 'ETH.ETH',
+    buyAsset: 'BTC.BTC',
+    expectedBuyAmount: '0.001',
+    // ... other route properties
+  };
+  await swapKit.swap({
+    route,
+    feeOptionKey: FeeOption.Fast
+  });
 } catch (error) {
   if (error instanceof SwapKitError) {
     console.error('SwapKit Error:', error.message);
-    // Error code and details may be available
-    if ('code' in error) console.error('Error Code:', error.code);
-    if ('details' in error) console.error('Details:', error.details);
+    // Error may have additional properties
+    console.error('Full error:', error);
   } else {
     console.error('Unexpected error:', error);
   }

@@ -193,15 +193,52 @@ Several type imports have changed:
 
 ### Step 1: Update Dependencies
 
-```bash
-# Remove v3 packages
-bun remove @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    # Remove v3 packages
+    bun remove @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
 
-# Install v4 packages
-bun add @swapkit/sdk
-# or individual packages
-bun add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
-```
+    # Install v4 packages
+    bun add @swapkit/sdk
+    # or individual packages
+    bun add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    # Remove v3 packages
+    pnpm remove @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
+
+    # Install v4 packages
+    pnpm add @swapkit/sdk
+    # or individual packages
+    pnpm add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    # Remove v3 packages
+    npm uninstall @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
+
+    # Install v4 packages
+    npm install @swapkit/sdk
+    # or individual packages
+    npm install @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    # Remove v3 packages
+    yarn remove @swapkit/plugin-* @swapkit/toolbox-* @swapkit/wallet-*
+
+    # Install v4 packages
+    yarn add @swapkit/sdk
+    # or individual packages
+    yarn add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
+    ```
+  </TabItem>
+</Tabs>
 
 ### Step 2: Update Imports
 
@@ -235,8 +272,7 @@ The wallet connection pattern remains similar but uses the new import paths:
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from "@swapkit/sdk";
-import { Chain } from "@swapkit/helpers";
+import { createSwapKit, Chain } from "@swapkit/sdk";
 
 const client = createSwapKit({
   // your config
@@ -274,8 +310,7 @@ const client2 = SwapKit({
 
 #### v4 Approach (Runtime Updates)
 ```typescript
-import { createSwapKit } from '@swapkit/sdk';
-import { SKConfig, Chain } from '@swapkit/helpers';
+import { createSwapKit, SKConfig, Chain } from '@swapkit/sdk';
 
 // Create client once
 const swapKit = createSwapKit({
@@ -424,7 +459,7 @@ console.log(apiKeys.blockchair); // "key2"
 // Error: Module '@swapkit/api' has no exported member 'SwapKitApi'
 
 // Solution: Update import
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { SwapKitApi } from "@swapkit/sdk";
 ```
 
 ### 2. Missing RPC URL Parameter
@@ -434,8 +469,7 @@ import { SwapKitApi } from "@swapkit/helpers/api";
 // Error: Argument of type '{ signer }' is not assignable...
 
 // Solution: Configure via SKConfig
-import { SKConfig, Chain } from "@swapkit/helpers";
-import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { SKConfig, Chain, getEvmToolbox } from "@swapkit/sdk";
 
 SKConfig.set({ rpcUrls: { [Chain.Ethereum]: "https://..." } });
 const signer = /* your signer instance */;
@@ -449,7 +483,7 @@ const toolbox = getEvmToolbox(Chain.Ethereum, { signer });
 // Error: Type '{ swap }' is not assignable...
 
 // Solution: Use createPlugin helper
-import { createPlugin } from "@swapkit/helpers";
+import { createPlugin } from "@swapkit/sdk";
 
 const swap = async (params) => { /* implementation */ };
 

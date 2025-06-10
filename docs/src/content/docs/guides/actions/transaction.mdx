@@ -11,8 +11,7 @@ You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages (recommended for frontend):
    ```ts
-   import { SwapKit } from "@swapkit/core";
-   import { evmWallet } from "@swapkit/wallets/evm-extensions";
+   import { SwapKit, evmWallet } from "@swapkit/sdk";
    ```
 
 2. **All-in-one approach** - Import everything from the SDK (better for backend/Node.js):
@@ -29,9 +28,7 @@ The most common transaction is transferring assets from one address to another.
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { AssetValue, Chain, FeeOption, SwapKit, keystoreWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit with specific wallets
 const swapKit = SwapKit({
@@ -81,8 +78,7 @@ async function transferAsset() {
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { createSwapKit } from "@swapkit/sdk";
+import { AssetValue, Chain, FeeOption, createSwapKit } from "@swapkit/sdk";
 
 // Initialize the SwapKit client with all wallets included
 const swapKit = createSwapKit();
@@ -123,9 +119,7 @@ async function transferAsset() {
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
+import { AssetValue, Chain, FeeOption, SwapKit, evmWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
@@ -161,9 +155,7 @@ async function transferERC20() {
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { AssetValue, Chain, FeeOption, SwapKit, keystoreWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
@@ -198,9 +190,7 @@ async function transferBitcoin() {
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { keplrWallet } from "@swapkit/wallets/keplr";
+import { AssetValue, Chain, FeeOption, SwapKit, keplrWallet } from "@swapkit/sdk";
 
 // Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
@@ -239,8 +229,7 @@ For lower-level control, you can use the toolboxes directly instead of SwapKit's
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { getProvider, getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { AssetValue, Chain, FeeOption, getProvider, getEvmToolbox } from "@swapkit/sdk";
 import { ethers } from "ethers";
 
 async function directEVMTransfer() {
@@ -275,8 +264,7 @@ async function directEVMTransfer() {
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption } from "@swapkit/helpers";
-import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
 
 async function directBitcoinTransfer() {
   const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
@@ -325,10 +313,8 @@ For EVM chains, you can interact with smart contracts using the EVM toolbox:
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain } from "@swapkit/helpers";
-import { getEvmToolbox, getProvider } from "@swapkit/toolboxes/evm";
+import { Chain, getEvmToolbox, getProvider, erc20ABI } from "@swapkit/sdk";
 import { ethers } from "ethers";
-import { erc20ABI } from "@swapkit/helpers/contracts";
 
 
 async function interactWithContract() {
