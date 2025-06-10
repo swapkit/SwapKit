@@ -6,6 +6,7 @@ import {
   type GenericTransferParams,
   SKConfig,
   StagenetChain,
+  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -149,7 +150,7 @@ async function getWalletMethods({
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
       const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
-        if (!assetValue) throw new Error("invalid asset");
+        if (!assetValue) throw new SwapKitError("wallet_ledger_invalid_asset");
 
         const sendCoinsMessage = {
           amount: [
@@ -209,9 +210,9 @@ async function getWalletMethods({
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
       }: GenericTransferParams | ThorchainDepositParams) => {
         const account = await toolbox.getAccount(address);
-        if (!account) throw new Error("invalid account");
-        if (!assetValue) throw new Error("invalid asset");
-        if (!value) throw new Error("Account pubkey not found");
+        if (!account) throw new SwapKitError("wallet_ledger_invalid_account");
+        if (!assetValue) throw new SwapKitError("wallet_ledger_invalid_asset");
+        if (!value) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 
         const { accountNumber, sequence: sequenceNumber } = account;
         const sequence = (sequenceNumber || 0).toString();
@@ -231,7 +232,7 @@ async function getWalletMethods({
         });
 
         const signatures = await signTransaction(rawSendTx, sequence);
-        if (!signatures) throw new Error("tx signing failed");
+        if (!signatures) throw new SwapKitError("wallet_ledger_signing_error");
 
         const pubkey = encodePubkey({ type: "tendermint/PubKeySecp256k1", value });
         const msgs = orderedMessages.map(parseAminoMessageForDirectSigning);
@@ -278,6 +279,6 @@ async function getWalletMethods({
     }
 
     default:
-      throw new Error("Unsupported chain");
+      throw new SwapKitError("wallet_ledger_chain_not_supported", { chain });
   }
 }

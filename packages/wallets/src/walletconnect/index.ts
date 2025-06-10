@@ -296,8 +296,8 @@ async function getWalletconnect(
     };
 
     return { session, accounts, client, disconnect };
-  } catch (e) {
-    console.error(e);
+  } catch (_e) {
+    // Errors are handled by returning undefined
   } finally {
     if (modal) {
       // @ts-expect-error wrong typing

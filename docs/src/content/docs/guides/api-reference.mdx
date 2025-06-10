@@ -5,12 +5,12 @@ description: Complete reference for SwapKit API methods and endpoints
 
 import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
-The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/sdk` import.
+The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/helpers/api` import.
 
 ## Getting Started
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+import { SwapKitApi } from '@swapkit/helpers/api';
 
 // All methods are static - no initialization needed
 const price = await SwapKitApi.getPrice({

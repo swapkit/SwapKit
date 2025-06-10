@@ -1,5 +1,5 @@
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
-import { AssetValue, Chain, ChainToChainId } from "@swapkit/helpers";
+import { AssetValue, Chain, ChainToChainId, SwapKitError } from "@swapkit/helpers";
 
 import {
   createStargateClient,
@@ -104,7 +104,7 @@ const getAccount = async ({ rpcUrl, sender }: { sender: string; rpcUrl: string }
   const account = await client.getAccount(sender);
 
   if (!account) {
-    throw new Error("Account does not exist");
+    throw new SwapKitError("toolbox_cosmos_account_not_found", { sender });
   }
 
   return account;

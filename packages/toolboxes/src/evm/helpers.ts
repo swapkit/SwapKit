@@ -8,6 +8,7 @@ import {
   FeeOption,
   type NetworkParams,
   SKConfig,
+  SwapKitError,
   SwapKitNumber,
 } from "@swapkit/helpers";
 import type { BrowserProvider, Provider } from "ethers";
@@ -71,7 +72,7 @@ export const estimateMaxSendableAmount = async ({
   const isFeeEVMLegacyCompatible = "gasPrice" in gasRate && gasRate.gasPrice !== undefined;
 
   if (!(gasRate && (isFeeEVMLegacyCompatible || isFeeEIP1559Compatible))) {
-    throw new Error("Could not fetch fee data");
+    throw new SwapKitError("toolbox_evm_no_fee_data");
   }
 
   const gasPrice = isFeeEIP1559Compatible
@@ -116,7 +117,7 @@ export function getEstimateTransactionFee({
       return assetValue.set(SwapKitNumber.fromBigInt(fee, assetValue.decimal));
     }
 
-    throw new Error("No gas price found");
+    throw new SwapKitError("toolbox_evm_no_gas_price");
   };
 }
 
@@ -168,6 +169,6 @@ function getNetworkInfo<C extends EVMChain>({ chain }: { chain: C }) {
         nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals },
       };
     default:
-      throw new Error(`Chain ${chain} is not supported`);
+      throw new SwapKitError("toolbox_evm_not_supported", { chain });
   }
 }

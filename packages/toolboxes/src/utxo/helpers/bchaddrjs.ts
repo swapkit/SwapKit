@@ -1,3 +1,4 @@
+import { SwapKitError } from "@swapkit/helpers";
 import base58check from "bs58check";
 // @ts-expect-error
 import cashaddr from "cashaddrjs";
@@ -83,7 +84,7 @@ function decodeAddress(address: string) {
   } catch (_error) {
     // Try to decode as bitpay if cashaddr decoding fails.
   }
-  throw new Error("Received an invalid Bitcoin Cash address as input.");
+  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
 }
 
 function decodeBase58Address(address: string) {
@@ -91,8 +92,7 @@ function decodeBase58Address(address: string) {
     const payload = base58check.decode(address);
 
     // BASE_58_CHECK_PAYLOAD_LENGTH
-    if (payload.length !== 21)
-      throw new Error("Received an invalid Bitcoin Cash address as input.");
+    if (payload.length !== 21) throw new SwapKitError("toolbox_utxo_invalid_address", { address });
     const versionByte = payload[0];
     const hash = Array.prototype.slice.call(payload, 1);
 
@@ -116,10 +116,10 @@ function decodeBase58Address(address: string) {
         return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       default:
-        throw new Error("Received an invalid Bitcoin Cash address as input.");
+        throw new SwapKitError("toolbox_utxo_invalid_address", { address });
     }
   } catch (_error) {
-    throw new Error("Received an invalid Bitcoin Cash address as input.");
+    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
   }
 }
 
@@ -141,7 +141,7 @@ function decodeCashAddress(address: string) {
     }
   }
 
-  throw new Error("Received an invalid Bitcoin Cash address as input.");
+  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
 }
 
 function decodeCashAddressWithPrefix(address: string): DecodedType {
@@ -155,7 +155,7 @@ function decodeCashAddressWithPrefix(address: string): DecodedType {
       type: type === "P2PKH" ? Type.P2PKH : Type.P2SH,
     };
   } catch (_error) {
-    throw new Error("Received an invalid Bitcoin Cash address as input.");
+    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
   }
 }
 

@@ -83,11 +83,11 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
 
       // @ts-expect-error assumed available connection
       const signer = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(ChainIdToChain[chain]);
-      if (!signer) throw new Error("Could not load signer");
+      if (!signer) throw new SwapKitError("wallet_keepkey_signer_not_found");
       const toolbox = getCosmosToolbox(chain, { signer });
 
       const accounts = await signer.getAccounts();
-      if (!accounts?.[0]?.address) throw new Error("No accounts found");
+      if (!accounts?.[0]?.address) throw new SwapKitError("wallet_keepkey_no_accounts");
 
       const [{ address }] = accounts;
 
@@ -103,18 +103,13 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const toolbox = await getUtxoToolbox(chain);
 
       const getBalance = async () => {
-        try {
-          const providerChain = getProviderNameFromChain(chain);
-          // @ts-expect-error We assuming there chains via switch
-          const balance = await window?.keepkey?.[providerChain]?.request({
-            method: "request_balance",
-          });
-          const assetValue = AssetValue.from({ chain, value: balance[0].balance });
-          return [assetValue];
-        } catch (error) {
-          console.error("Error fetching balance:", error);
-          throw error;
-        }
+        const providerChain = getProviderNameFromChain(chain);
+        // @ts-expect-error We assuming there chains via switch
+        const balance = await window?.keepkey?.[providerChain]?.request({
+          method: "request_balance",
+        });
+        const assetValue = AssetValue.from({ chain, value: balance[0].balance });
+        return [assetValue];
       };
 
       return { ...toolbox, getBalance, transfer: walletTransfer };

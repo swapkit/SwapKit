@@ -1,3 +1,5 @@
+import { SwapKitError } from "../modules/swapKitError";
+
 export enum Chain {
   Arbitrum = "ARB",
   Avalanche = "AVAX",
@@ -370,7 +372,7 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
     case Chain.Radix:
       return "";
     default:
-      throw new Error(`Unsupported chain: ${chain}`);
+      throw new SwapKitError("helpers_chain_not_supported", { chain });
   }
 };
 

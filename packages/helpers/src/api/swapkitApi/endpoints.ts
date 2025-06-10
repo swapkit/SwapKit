@@ -47,9 +47,8 @@ export async function getSwapQuote(json: QuoteRequest) {
     }
 
     return parsedResponse.data;
-  } catch (error) {
+  } catch (_error) {
     // throw new SwapKitError("api_v2_invalid_response", error);
-    console.warn(error);
     return response;
   }
 }

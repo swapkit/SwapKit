@@ -1,3 +1,5 @@
+import { SwapKitError } from "@swapkit/helpers";
+
 export interface Coin {
   readonly denom: string;
   readonly amount: string;
@@ -57,12 +59,14 @@ export class AminoTypes {
   toAmino({ typeUrl, value }: EncodeObject): AminoMsg {
     const converter = this.register[typeUrl];
     if (converter === "not_supported_by_chain") {
-      throw new Error(
-        `The message type '${typeUrl}' cannot be signed using the Amino JSON sign mode because this is not supported by chain.`,
-      );
+      throw new SwapKitError("wallet_ledger_chain_not_supported", {
+        reason: `The message type '${typeUrl}' cannot be signed using the Amino JSON sign mode because this is not supported by chain.`,
+      });
     }
     if (!converter) {
-      throw new Error(`Type URL '${typeUrl}' does not exist in the Amino message type register. `);
+      throw new SwapKitError("wallet_ledger_invalid_params", {
+        reason: `Type URL '${typeUrl}' does not exist in the Amino message type register.`,
+      });
     }
     return {
       type: converter.aminoType,
@@ -76,18 +80,18 @@ export class AminoTypes {
       .filter(([_typeUrl, { aminoType }]) => aminoType === type);
 
     if (matches.length === 0) {
-      throw new Error(
-        `Amino type identifier '${type}' does not exist in the Amino message type register.`,
-      );
+      throw new SwapKitError("wallet_ledger_invalid_params", {
+        reason: `Amino type identifier '${type}' does not exist in the Amino message type register.`,
+      });
     }
 
     if (matches.length > 1) {
-      throw new Error(
-        `Multiple types are registered with Amino type identifier '${type}': '${matches
+      throw new SwapKitError("wallet_ledger_invalid_params", {
+        reason: `Multiple types are registered with Amino type identifier '${type}': '${matches
           .map(([key, _value]) => key)
           .sort()
           .join("', '")}'. Thus fromAmino cannot be performed.`,
-      );
+      });
     }
 
     const [typeUrl, converter] = matches[0] as [string, AminoConverter];

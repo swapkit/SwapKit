@@ -6,6 +6,7 @@ import {
   FeeOption,
   type GenericCreateTransactionParams,
   type SubstrateChain,
+  SwapKitError,
   type UTXOChain,
 } from "@swapkit/helpers";
 import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
@@ -256,6 +257,6 @@ export async function getToolbox<T extends keyof Toolboxes>(
     }
 
     default:
-      throw new Error(`Chain ${chain} is not supported`);
+      throw new SwapKitError("toolbox_not_supported", { chain });
   }
 }

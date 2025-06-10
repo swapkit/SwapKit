@@ -9,6 +9,7 @@ import {
   NetworkDerivationPath,
   RequestClient,
   SKConfig,
+  SwapKitError,
   SwapKitNumber,
   derivationPathToString,
   updateDerivationPath,
@@ -210,7 +211,7 @@ export async function createThorchainToolbox({
       } = await RequestClient.get<ThorchainConstantsResponse>(constantsUrl);
 
       if (!nativeFee || Number.isNaN(nativeFee) || nativeFee < 0) {
-        throw new Error(`Invalid nativeFee: ${nativeFee.toString()}`);
+        throw new SwapKitError("toolbox_cosmos_invalid_fee", { nativeFee: nativeFee.toString() });
       }
 
       fee = new SwapKitNumber(nativeFee);
@@ -231,7 +232,7 @@ export async function createThorchainToolbox({
   }: Omit<GenericTransferParams, "recipient"> & { recipient?: string }) {
     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
     const sender = (await signer?.getAccounts())?.[0]?.address;
-    if (!(sender && signer)) throw new Error("Signer not defined");
+    if (!(sender && signer)) throw new SwapKitError("toolbox_cosmos_no_signer");
 
     const isAminoSigner = "signAmino" in signer;
     const registry = await createDefaultRegistry();

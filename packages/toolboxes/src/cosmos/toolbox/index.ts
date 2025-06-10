@@ -1,4 +1,4 @@
-import { Chain, type CosmosChain } from "@swapkit/helpers";
+import { Chain, type CosmosChain, SwapKitError } from "@swapkit/helpers";
 
 import type { CosmosToolboxParams } from "../types";
 import { createCosmosToolbox } from "./cosmos";
@@ -25,7 +25,7 @@ export const getCosmosToolbox = <T extends CosmosChain>(
       return createThorchainToolbox({ chain, ...params }) as CosmosToolboxes[T];
 
     default:
-      throw new Error(`Chain ${chain} is not supported`);
+      throw new SwapKitError("toolbox_cosmos_not_supported", { chain });
   }
 };
 

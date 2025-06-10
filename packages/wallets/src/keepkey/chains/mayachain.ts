@@ -7,6 +7,7 @@ import {
   type DerivationPathArray,
   type GenericTransferParams,
   SKConfig,
+  SwapKitError,
   derivationPathToString,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
@@ -48,7 +49,7 @@ export const mayachainWalletMethods = async ({
     const { getDenomWithChain } = await import("@swapkit/toolboxes/cosmos");
 
     const account = await toolbox.getAccount(sender);
-    if (!account) throw new Error("Account not found");
+    if (!account) throw new SwapKitError("wallet_keepkey_account_not_found");
     const { accountNumber, sequence = 0 } = account;
     const amount = assetValue.getBaseValue("string");
 

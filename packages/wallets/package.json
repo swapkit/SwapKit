@@ -1,6 +1,4 @@
 {
-  "description": "SwapKit - Wallets",
-  "files": ["src/", "dist/"],
   "dependencies": {
     "@coinbase/wallet-sdk": "4.3.4",
     "@cosmjs/amino": "0.33.1",
@@ -35,6 +33,7 @@
     "sats-connect": "3.5.0",
     "ts-pattern": "5.7.1"
   },
+  "description": "SwapKit - Wallets",
   "devDependencies": {
     "@walletconnect/logger": "2.1.2",
     "@walletconnect/types": "2.21.2"
@@ -54,6 +53,11 @@
       "default": "./dist/src/coinbase/index.js",
       "require": "./dist/src/coinbase/index.cjs",
       "types": "./src/coinbase/index.ts"
+    },
+    "./cosmostation": {
+      "default": "./dist/src/cosmostation/index.js",
+      "require": "./dist/src/cosmostation/index.cjs",
+      "types": "./src/cosmostation/index.ts"
     },
     "./ctrl": {
       "default": "./dist/src/ctrl/index.js",
@@ -136,6 +140,7 @@
       "types": "./src/walletconnect/index.ts"
     }
   },
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",

@@ -3,6 +3,7 @@ import {
   ChainId,
   type EVMChain,
   SKConfig,
+  SwapKitError,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -13,7 +14,7 @@ const cosmosTransfer =
   () =>
   async ({ from, recipient, amount, asset, memo }: any) => {
     if (!(window.okxwallet && "keplr" in window.okxwallet)) {
-      throw new Error("No cosmos okxwallet found");
+      throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Cosmos });
     }
     const { createSigningStargateClient } = await import("@swapkit/toolboxes/cosmos");
 
@@ -39,7 +40,7 @@ async function getWeb3WalletMethods({
 }: { walletProvider: Eip1193Provider | undefined; chain: EVMChain }) {
   const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
-  if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
+  if (!walletProvider) throw new SwapKitError("wallet_okx_not_found");
 
   const provider = new BrowserProvider(walletProvider, "any");
   const signer = await provider.getSigner();
@@ -50,7 +51,7 @@ async function getWeb3WalletMethods({
       await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
   } catch (_error) {
-    throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
+    throw new SwapKitError("wallet_okx_failed_to_switch_network", { chain });
   }
 
   return prepareNetworkSwitch({ toolbox, provider, chain });
@@ -66,7 +67,7 @@ export async function getWalletMethods(chain: Chain) {
     case Chain.Polygon:
     case Chain.BinanceSmartChain: {
       if (!(window.okxwallet && "send" in window.okxwallet)) {
-        throw new Error("No okxwallet found");
+        throw new SwapKitError("wallet_okx_not_found", { chain });
       }
 
       const evmWallet = await getWeb3WalletMethods({
@@ -80,7 +81,7 @@ export async function getWalletMethods(chain: Chain) {
 
     case Chain.Bitcoin: {
       if (!(window.okxwallet && "bitcoin" in window.okxwallet)) {
-        throw new Error("No bitcoin okxwallet found");
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Bitcoin });
       }
 
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
@@ -107,13 +108,13 @@ export async function getWalletMethods(chain: Chain) {
 
     case Chain.Cosmos: {
       if (!(window.okxwallet && "keplr" in window.okxwallet)) {
-        throw new Error("No bitcoin okxwallet found");
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Cosmos });
       }
       const { keplr: wallet } = window.okxwallet;
 
       await wallet.enable(ChainId.Cosmos);
       const accounts = await wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos).getAccounts();
-      if (!accounts?.[0]) throw new Error("No cosmos account found");
+      if (!accounts?.[0]) throw new SwapKitError("wallet_okx_no_accounts", { chain: Chain.Cosmos });
 
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const [{ address }] = accounts;
@@ -123,6 +124,6 @@ export async function getWalletMethods(chain: Chain) {
     }
 
     default:
-      throw new Error(`No wallet for chain ${chain}`);
+      throw new SwapKitError("wallet_okx_chain_not_supported", { chain });
   }
 }

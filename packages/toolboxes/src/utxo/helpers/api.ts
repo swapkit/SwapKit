@@ -1,4 +1,11 @@
-import { Chain, RequestClient, SKConfig, type UTXOChain, warnOnce } from "@swapkit/helpers";
+import {
+  Chain,
+  RequestClient,
+  SKConfig,
+  SwapKitError,
+  type UTXOChain,
+  warnOnce,
+} from "@swapkit/helpers";
 import { networks } from "bitcoinjs-lib";
 import { uniqid } from "../../utils";
 
@@ -28,11 +35,13 @@ async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string
   }>(rpcUrl, { headers: { "Content-Type": "application/json" }, body });
 
   if (response.error) {
-    throw new Error(`failed to broadcast a transaction: ${response.error?.message}`);
+    throw new SwapKitError("toolbox_utxo_broadcast_failed", { error: response.error?.message });
   }
 
   if (response.result.includes('"code":-26')) {
-    throw new Error("Invalid transaction: the transaction amount was too low");
+    throw new SwapKitError("toolbox_utxo_invalid_transaction", {
+      error: "Transaction amount was too low",
+    });
   }
 
   return response.result;
@@ -93,7 +102,8 @@ async function getSuggestedTxFee(chain: Chain) {
 async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
   try {
     const response = await RequestClient.get<BlockchairResponse<T>>(url);
-    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
+    if (!response || response.context.code !== 200)
+      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
 
     return response.data as T;
   } catch (error) {
@@ -102,14 +112,16 @@ async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
       `${url}${apiKey ? `&key=${apiKey}` : ""}`,
     );
 
-    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
+    if (!response || response.context.code !== 200)
+      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
 
     return response.data as T;
   }
 }
 
 async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
-  if (!address) throw new Error("address is required");
+  if (!address)
+    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
   try {
     const response = await blockchairRequest<BlockchairAddressResponse>(
@@ -134,7 +146,8 @@ async function getUnconfirmedBalance({
 }
 
 async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
-  if (!txHash) throw new Error("txHash is required");
+  if (!txHash)
+    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "TxHash is required" });
 
   try {
     const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
@@ -143,7 +156,7 @@ async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
     );
     return rawTxResponse?.[txHash]?.raw_transaction || "";
   } catch (error) {
-    console.error(error);
+    console.error("Failed to fetch raw transaction:", error);
     return "";
   }
 }
@@ -181,7 +194,8 @@ async function getUnspentUtxos({
   offset = 0,
   limit = 100,
 }: BlockchairFetchUnspentUtxoParams): Promise<Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>> {
-  if (!address) throw new Error("address is required");
+  if (!address)
+    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
   try {
     const txs = await fetchUnspentUtxoBatch({ chain, address, apiKey, offset, limit });
@@ -198,7 +212,7 @@ async function getUnspentUtxos({
 
     return [...txs, ...nextBatch];
   } catch (error) {
-    console.error(error);
+    console.error("Failed to fetch unspent UTXOs:", error);
     return [];
   }
 }
@@ -282,7 +296,7 @@ export function getUtxoNetwork() {
         return coininfo.dogecoin.main.toBitcoinJS();
       }
       default:
-        throw new Error("Invalid chain");
+        throw new SwapKitError("toolbox_utxo_not_supported", { chain });
     }
   };
 }
