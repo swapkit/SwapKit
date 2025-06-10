@@ -121,6 +121,11 @@ export async function getCtrlAddress(chain: Chain) {
   }
 
   if (EVMChains.includes(chain as EVMChain)) {
+    // For CTRL wallet, we need to use the request method directly on the provider
+    if ("request" in eipProvider && typeof eipProvider.request === "function") {
+      const accounts = await eipProvider.request({ method: "eth_requestAccounts" });
+      return accounts[0];
+    }
     const { BrowserProvider } = await import("ethers");
     const provider = new BrowserProvider(eipProvider, "any");
     const [response] = await providerRequest({
@@ -128,7 +133,6 @@ export async function getCtrlAddress(chain: Chain) {
       method: "eth_requestAccounts",
       params: [],
     });
-
     return response;
   }
 
@@ -139,10 +143,14 @@ export async function getCtrlAddress(chain: Chain) {
     return accounts.publicKey.toString();
   }
 
-  const { BrowserProvider } = await import("ethers");
-  const provider = new BrowserProvider(eipProvider, "any");
-
   try {
+    // For CTRL wallet, try direct request method first
+    if ("request" in eipProvider && typeof eipProvider.request === "function") {
+      const accounts = await eipProvider.request({ method: "eth_requestAccounts" });
+      return accounts[0];
+    }
+    const { BrowserProvider } = await import("ethers");
+    const provider = new BrowserProvider(eipProvider, "any");
     const [response] = await providerRequest({
       provider,
       method: "eth_requestAccounts",
@@ -204,8 +212,9 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
       if (!contractAddress) {
         throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
       }
-      const { createContract, getCreateContractTxObject, isStateChangingCall, toHexString } =
-        await import("@swapkit/toolboxes/evm");
+      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import(
+        "@swapkit/toolboxes/evm"
+      );
 
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
@@ -219,14 +228,14 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
           txOverrides,
         });
 
-        return provider.send("eth_sendTransaction", [
-          {
-            value: toHexString(BigInt(value || 0)),
-            from,
-            to,
-            data: data || "0x",
-          } as any,
-        ]);
+        const signer = await provider.getSigner();
+        const tx = await signer.sendTransaction({
+          value: BigInt(value || 0),
+          from,
+          to,
+          data: data || "0x",
+        });
+        return tx.hash as T;
       }
       const contract = createContract(contractAddress, abi, provider);
 
@@ -235,9 +244,7 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
       return typeof result?.hash === "string" ? result?.hash : result;
     },
     approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, getCreateContractTxObject, toHexString } = await import(
-        "@swapkit/toolboxes/evm"
-      );
+      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
       const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
       const txOverrides = { from };
 
@@ -252,31 +259,29 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
       const createTx = getCreateContractTxObject({ provider, chain });
       const { value, to, data } = await createTx(functionCallParams);
 
-      return provider.send("eth_sendTransaction", [
-        {
-          value: toHexString(BigInt(value || 0)),
-          from,
-          to,
-          data: data || "0x",
-        } as any,
-      ]);
+      const signer = await provider.getSigner();
+      const tx = await signer.sendTransaction({
+        value: BigInt(value || 0),
+        from,
+        to,
+        data: data || "0x",
+      });
+      return tx.hash;
     },
-    sendTransaction: async (tx: EVMTxParams) => {
-      const { from, to, data, value } = tx;
+    sendTransaction: async (txParams: EVMTxParams) => {
+      const { from, to, data, value } = txParams;
       if (!to) {
         throw new SwapKitError("wallet_ctrl_send_transaction_no_address");
       }
 
-      const { toHexString } = await import("@swapkit/toolboxes/evm");
-
-      return provider.send("eth_sendTransaction", [
-        {
-          value: toHexString(BigInt(value || 0)),
-          from,
-          to,
-          data: data || "0x",
-        } as any,
-      ]);
+      const signer = await provider.getSigner();
+      const tx = await signer.sendTransaction({
+        value: BigInt(value || 0),
+        from,
+        to,
+        data: data || "0x",
+      });
+      return tx.hash;
     },
   };
 }
