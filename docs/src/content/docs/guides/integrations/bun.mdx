@@ -3,6 +3,8 @@ title: Bun + React
 description: A guide to integrate SwapKit with Bun and React applications.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 This guide will help you integrate SwapKit into your Bun-powered React application. Bun is a fast JavaScript runtime that includes a bundler, test runner, and package manager.
 
 ## Installation
@@ -258,61 +260,6 @@ if (process.env.BUN_PUBLIC_SWAPKIT_API_KEY) {
 }
 ```
 
-## Performance Tips
-
-### Hot Module Replacement
-
-Bun supports HMR out of the box. Use the `--hot` flag:
-
-```bash
-bun --hot src/server.tsx
-```
-
-### Bundle Optimization
-
-Bun's bundler is highly optimized. For production builds:
-
-```typescript
-// @noErrorValidation
-// build.ts with optimization
-await build({
-  entrypoints: ["./pages/index.tsx"],
-  outdir: "./dist",
-  target: "browser",
-  minify: {
-    whitespace: true,
-    identifiers: true,
-    syntax: true,
-  },
-  splitting: true,
-  sourcemap: "external",
-  // Tree-shake unused code
-  treeShaking: true,
-});
-```
-
-## Testing
-
-Bun includes a built-in test runner:
-
-```typescript
-// @noErrorValidation
-// src/App.test.tsx
-import { expect, test } from "bun:test";
-import { render } from '@testing-library/react';
-import { App } from './App';
-
-test("renders without crashing", () => {
-  const { container } = render(<App />);
-  expect(container).toBeDefined();
-});
-```
-
-Run tests:
-
-```bash
-bun test
-```
 
 ## Common Issues
 

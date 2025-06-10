@@ -2,6 +2,7 @@ import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import { rendererRich, transformerTwoslash } from "@shikijs/twoslash";
 import { defineConfig } from "astro/config";
+import starlightOpenAPI, { openAPISidebarGroups } from "starlight-openapi";
 import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 
 const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
@@ -38,7 +39,10 @@ export default defineConfig({
       disable404Route: true,
       expressiveCode: false,
       lastUpdated: true,
-      plugins: [...docsPlugins],
+      plugins: [
+        ...docsPlugins,
+        starlightOpenAPI([{ base: "api", schema: "https://api.swapkit.dev/docs/json" }]),
+      ],
       title: "",
       logo: {
         dark: "./src/assets/logo-vertical-white.png",
@@ -68,26 +72,23 @@ export default defineConfig({
             { label: "Production Best Practices", link: "/guides/production-best-practices" },
             { label: "Create custom plugin", link: "/guides/create-plugin" },
             { label: "Create custom wallet", link: "/guides/create-wallet" },
-            {
-              label: "Actions",
-              autogenerate: { directory: "guides/actions", collapsed: true },
-            },
-            {
-              label: "Integrations",
-              autogenerate: { directory: "guides/integrations", collapsed: true },
-            },
           ],
         },
-        { label: "Others", autogenerate: { directory: "others" } },
-        ...(process.env.REFERENCES
-          ? [
-              {
-                label: "References",
-                collapsed: true,
-                items: [{ label: "@swapkit", items: docsSidebarItems }],
-              },
-            ]
-          : []),
+        { label: "Actions", collapsed: true, autogenerate: { directory: "guides/actions" } },
+        {
+          label: "Integrations",
+          collapsed: true,
+          autogenerate: { directory: "guides/integrations" },
+        },
+        { label: "Others", autogenerate: { directory: "others" }, collapsed: true },
+        ...openAPISidebarGroups,
+        {
+          label: "References",
+          collapsed: true,
+          items: [
+            ...(process.env.REFERENCES ? { label: "@swapkit", items: docsSidebarItems } : []),
+          ],
+        },
       ],
     }),
   ],
