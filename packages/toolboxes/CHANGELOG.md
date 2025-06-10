@@ -1,5 +1,16 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.16
+
+### Minor Changes
+
+- [#1328](https://github.com/thorswap/SwapKit/pull/1328) [`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Upstream near and solana changes
+
+### Patch Changes
+
+- Updated dependencies [[`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1)]:
+  - @swapkit/helpers@3.0.0-beta.11
+
 ## 1.0.0-beta.15
 
 ### Patch Changes
