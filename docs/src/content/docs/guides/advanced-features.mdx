@@ -85,7 +85,7 @@ const transactions = [
 
 // Execute all transactions
 const results = await Promise.allSettled(
-  transactions.map(tx => 
+  transactions.map(tx =>
     swapKit.transfer({
       ...tx,
       feeOptionKey: FeeOption.Fast
@@ -132,8 +132,8 @@ const mintQuote = await SwapKitApi.getSwapQuote({
 });
 
 // Execute mint
-const mintTx = await swapKit.swap({ 
-  route: mintQuote.routes[0] 
+const mintTx = await swapKit.swap({
+  route: mintQuote.routes[0]
 });
 ```
 
@@ -153,8 +153,8 @@ const synthSwapQuote = await SwapKitApi.getSwapQuote({
 });
 
 // This swap is instant!
-const swapTx = await swapKit.swap({ 
-  route: synthSwapQuote.routes[0] 
+const swapTx = await swapKit.swap({
+  route: synthSwapQuote.routes[0]
 });
 ```
 
@@ -173,8 +173,8 @@ const redeemQuote = await SwapKitApi.getSwapQuote({
   slippage: 3
 });
 
-const redeemTx = await swapKit.swap({ 
-  route: redeemQuote.routes[0] 
+const redeemTx = await swapKit.swap({
+  route: redeemQuote.routes[0]
 });
 ```
 
@@ -196,16 +196,12 @@ const withdrawMemo = '-:BTC.BTC:10000'; // Basis points
 
 // THORName registration
 const thornameeMemo = '~:name:chain:address';
-
-// Loan operations
-const loanOpenMemo = 'LOAN+:ETH.ETH:0x...';
-const loanCloseMemo = 'LOAN-:ETH.ETH:0x...';
 ```
 
 ### Building Custom Memos
 
 ```typescript
-import { getMemoForDeposit, getMemoForWithdraw, getMemoForLoan, MemoType } from '@swapkit/sdk';
+import { getMemoForDeposit, getMemoForWithdraw, MemoType } from '@swapkit/sdk';
 
 // Build deposit (liquidity) memo
 const depositMemo = getMemoForDeposit({
@@ -223,15 +219,6 @@ const withdrawMemo = getMemoForWithdraw({
   ticker: 'BTC',
   basisPoints: 10000, // 100%
   targetAsset: 'ETH.ETH' // Optional: withdraw to different asset
-});
-
-// Build loan memo
-const loanOpenMemo = getMemoForLoan(MemoType.OPEN_LOAN, {
-  asset: 'ETH.ETH',
-  address: '0x...',
-  minAmount: '1000000000000000000', // 1 ETH minimum
-  affiliateAddress: 'ss',
-  affiliateBasisPoints: 25
 });
 ```
 
@@ -255,13 +242,13 @@ const { routes } = await SwapKitApi.getSwapQuote({
 const customRoute = routes.find(route => {
   // Prefer THORChain for cross-chain
   if (route.providers.includes('THORCHAIN')) return true;
-  
+
   // Use 1inch for same-chain swaps
-  if (route.providers.includes('1INCH') && 
+  if (route.providers.includes('1INCH') &&
       route.sellAsset.split('.')[0] === route.buyAsset.split('.')[0]) {
     return true;
   }
-  
+
   return false;
 });
 
@@ -296,20 +283,20 @@ const gasRates = gasRatesArray.reduce((acc, rate) => {
 async function getOptimalFeeOption(chain: Chain, urgency: 'low' | 'medium' | 'high') {
   const chainId = ChainToChainId[chain];
   const gasRate = gasRates[chainId];
-  
+
   if (!gasRate) {
     throw new Error(`Gas rate not found for chain ${chain}`);
   }
-  
+
   // Custom fee multipliers
   const multipliers = {
     low: 0.8,
     medium: 1.0,
     high: 1.5
   };
-  
+
   const baseRate = Number(gasRate.value);
-  
+
   return {
     [Chain.Ethereum]: {
       maxFeePerGas: Math.floor(baseRate * multipliers[urgency]),
@@ -348,26 +335,26 @@ class TokenRegistry {
   private tokens: Map<string, any> = new Map();
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private cacheTTL = 3600000; // 1 hour
-  
+
   async loadProviderTokens(provider: ProviderName) {
     const cacheKey = `provider_${provider}`;
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
       return cached.data;
     }
-    
+
     const tokenList = await SwapKitApi.getTokenList(provider);
     this.cache.set(cacheKey, { data: tokenList, timestamp: Date.now() });
-    
+
     // Index tokens by identifier
     tokenList.tokens.forEach(token => {
       this.tokens.set(token.identifier, token);
     });
-    
+
     return tokenList;
   }
-  
+
   addCustomToken(token: {
     chain: string;
     identifier: string;
@@ -378,7 +365,7 @@ class TokenRegistry {
     address?: string;
   }) {
     this.tokens.set(token.identifier, token);
-    
+
     // Register with AssetValue for proper decimal handling
     AssetValue.setStaticAssets(new Map([[token.identifier, {
       identifier: token.identifier,
@@ -386,7 +373,7 @@ class TokenRegistry {
       decimal: token.decimals
     }]]));
   }
-  
+
   getToken(identifier: string) {
     return this.tokens.get(identifier);
   }
@@ -418,16 +405,16 @@ import { SwapKitApi, ChainToChainId } from '@swapkit/sdk';
 
 class TransactionTracker {
   private pendingTxs: Map<string, any> = new Map();
-  
+
   async trackTransaction(txHash: string, chain: Chain) {
     this.pendingTxs.set(txHash, { chain, status: 'pending' });
-    
+
     // Poll for updates
     const interval = setInterval(async () => {
       try {
         const chainId = ChainToChainId[chain];
         const status = await SwapKitApi.getTrackerDetails({ hash: txHash, chainId });
-        
+
         if (status.status === 'completed') {
           this.pendingTxs.set(txHash, { ...status, chain });
           clearInterval(interval);
@@ -442,12 +429,12 @@ class TransactionTracker {
       }
     }, 10000); // Check every 10 seconds
   }
-  
+
   private onComplete(txHash: string, status: any) {
     console.log(`Transaction ${txHash} completed!`);
     // Update UI, send notifications, etc.
   }
-  
+
   private onFailed(txHash: string, status: any) {
     console.error(`Transaction ${txHash} failed!`);
     // Handle failure
@@ -476,28 +463,28 @@ class SwapKitRetry {
     backoff = 1000
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error as Error;
-        
+
         // Don't retry user rejections
-        if (error instanceof SwapKitError && 
+        if (error instanceof SwapKitError &&
             error.message === 'wallet_connection_rejected_by_user') {
           throw error;
         }
-        
+
         // Wait before retry with exponential backoff
         if (i < maxRetries - 1) {
-          await new Promise(resolve => 
+          await new Promise(resolve =>
             setTimeout(resolve, backoff * Math.pow(2, i))
           );
         }
       }
     }
-    
+
     throw lastError!;
   }
 }
@@ -518,20 +505,20 @@ const result = await retry.executeWithRetry(async () => {
 class SwapKitCache {
   private cache = new Map<string, { data: any, timestamp: number }>();
   private ttl = 60000; // 1 minute
-  
+
   set(key: string, data: any) {
     this.cache.set(key, { data, timestamp: Date.now() });
   }
-  
+
   get(key: string) {
     const entry = this.cache.get(key);
     if (!entry) return null;
-    
+
     if (Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return entry.data;
   }
 }
@@ -543,7 +530,7 @@ async function getCachedQuote(params: any) {
   const key = JSON.stringify(params);
   const cached = cache.get(key);
   if (cached) return cached;
-  
+
   const quote = await SwapKitApi.getSwapQuote(params);
   cache.set(key, quote);
   return quote;

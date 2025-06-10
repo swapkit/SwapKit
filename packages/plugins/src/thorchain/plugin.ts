@@ -18,8 +18,6 @@ import {
   getMemoForLeaveAndBond,
   getMemoForNamePreferredAssetRegister,
   getMemoForNameRegister,
-  getMemoForSaverDeposit,
-  getMemoForSaverWithdraw,
   getMemoForUnbond,
   getMemoForWithdraw,
   getMinAmountByChain,
@@ -42,7 +40,6 @@ import type {
   CreateLiquidityParams,
   NodeActionParams,
   RegisterThornameParams,
-  SavingsParams,
   WithdrawParams,
 } from "./types";
 
@@ -394,23 +391,6 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       return { baseAssetTx, assetTx };
     }
 
-    function savings({ assetValue, memo, percent, type }: SavingsParams) {
-      const { chain, symbol } = assetValue;
-      const isDeposit = type === "add";
-      const memoString = isDeposit
-        ? getMemoForSaverDeposit({ symbol, chain })
-        : getMemoForSaverWithdraw({
-            basisPoints: Math.min(10000, Math.round(percent * 100)),
-            symbol,
-            chain,
-          });
-
-      return depositToPool({
-        memo: memo || memoString,
-        assetValue: isDeposit ? assetValue : getMinAmountByChain(chain),
-      });
-    }
-
     function withdraw({ memo, assetValue, percent, from, to }: WithdrawParams) {
       const targetAsset =
         to === "baseAsset" && from !== "baseAsset"
@@ -482,7 +462,6 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       nodeAction,
       registerName,
       registerPreferredAsset,
-      savings,
       swap,
       withdraw,
     };

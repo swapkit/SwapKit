@@ -16,14 +16,6 @@ export function getMemoForRunePoolDeposit(affiliate?: WithAffiliate<{}>) {
   return addAffiliate(MemoType.RUNEPOOL_DEPOSIT, affiliate);
 }
 
-export function getMemoForSaverDeposit({
-  chain,
-  symbol,
-  ...affiliate
-}: WithAffiliate<{ chain: Chain; symbol: string }>) {
-  return addAffiliate(`${MemoType.DEPOSIT}:${chain}/${symbol}`, affiliate);
-}
-
 export function getMemoForDeposit({
   chain,
   symbol,
@@ -43,14 +35,6 @@ export function getMemoForDeposit({
 /**
  * Withdraw
  */
-export function getMemoForSaverWithdraw({
-  chain,
-  symbol,
-  basisPoints,
-}: { chain: Chain; symbol: string; basisPoints: number }) {
-  return `${MemoType.WITHDRAW}:${chain}/${symbol}:${basisPoints}`;
-}
-
 export function getMemoForWithdraw({
   chain,
   symbol,
@@ -90,21 +74,6 @@ export function getMemoForNamePreferredAssetRegister({
   owner,
 }: PreferredAssetRegisterParams) {
   return `${MemoType.NAME_REGISTER}:${name}:${chain}:${payout}:${owner}:${asset}`;
-}
-
-export function getMemoForLoan(
-  memoType: MemoType.OPEN_LOAN | MemoType.CLOSE_LOAN,
-  {
-    asset,
-    address,
-    minAmount,
-    ...affiliate
-  }: WithAffiliate<{ address: string; asset: string; minAmount?: string }>,
-) {
-  const baseMemo = `${memoType}:${asset}:${address}`;
-  const minAmountPart = minAmount ? `:${minAmount}` : "";
-
-  return addAffiliate(`${baseMemo}${minAmountPart}`, affiliate);
 }
 
 /**

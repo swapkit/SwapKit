@@ -8,28 +8,8 @@ import {
   getMemoForNameRegister,
   getMemoForRunePoolDeposit,
   getMemoForRunePoolWithdraw,
-  getMemoForSaverDeposit,
-  getMemoForSaverWithdraw,
   getMemoForWithdraw,
 } from "../memo";
-
-describe("getMemoForSaverDeposit", () => {
-  test("returns correct memo for single side", () => {
-    const result = getMemoForSaverDeposit({ chain: Chain.Ethereum, symbol: "ETH" });
-    expect(result).toBe("+:ETH/ETH");
-  });
-});
-
-describe("getMemoForSaverWithdraw", () => {
-  test("returns correct memo for single side", () => {
-    const result = getMemoForSaverWithdraw({
-      basisPoints: 5000,
-      chain: Chain.Ethereum,
-      symbol: "ETH",
-    });
-    expect(result).toBe("-:ETH/ETH:5000");
-  });
-});
 
 describe("getMemoForLeaveAndBond", () => {
   test("returns correct memo for Leave", () => {

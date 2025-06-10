@@ -32,21 +32,9 @@ export type CoreTxParams = {
   expiration?: number;
 };
 
-export type LoanParams = {
-  assetValue: AssetValue;
-  memo?: string;
-  minAmount: AssetValue;
-  type: "open" | "close";
-};
-
 export type NodeActionParams = { address: string } & (
   | { type: MemoType.BOND | MemoType.UNBOND; assetValue: AssetValue }
   | { type: MemoType.LEAVE; assetValue?: undefined }
-);
-
-export type SavingsParams = { assetValue: AssetValue; memo?: string } & (
-  | { type: "add"; percent?: undefined }
-  | { type: "withdraw"; percent: number }
 );
 
 export type RegisterThornameParams = {

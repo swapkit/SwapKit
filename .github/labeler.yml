@@ -69,11 +69,6 @@ chainflip:
     any-glob-to-any-file:
       - 'packages/plugins/src/chainflip/**/*'
 
-kado:
-- changed-files:
-    any-glob-to-any-file:
-      - 'packages/plugins/src/kado/**/*'
-
 cosmos:
 - changed-files:
     any-glob-to-any-file:

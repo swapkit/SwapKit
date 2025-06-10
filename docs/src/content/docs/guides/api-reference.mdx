@@ -363,12 +363,6 @@ Access THORChain and Maya midgard data:
 // Get liquidity position
 const thorLiquidity = await SwapKitApi.thorchainMidgard.getLiquidityPosition('thor1...');
 
-// Get saver details
-const thorSavers = await SwapKitApi.thorchainMidgard.getSaversDetail('thor1...');
-
-// Get borrower details
-const thorBorrower = await SwapKitApi.thorchainMidgard.getBorrowerDetail('thor1...');
-
 // Get THORName details
 const thorName = await SwapKitApi.thorchainMidgard.getNameDetails('myname');
 
@@ -380,7 +374,6 @@ const namesByOwner = await SwapKitApi.thorchainMidgard.getNamesByOwner('thor1...
 
 // Maya Midgard - same methods available
 const mayaLiquidity = await SwapKitApi.mayachainMidgard.getLiquidityPosition('maya1...');
-const mayaSavers = await SwapKitApi.mayachainMidgard.getSaversDetail('maya1...');
 const mayaName = await SwapKitApi.mayachainMidgard.getNameDetails('myname');
 ```
 
@@ -448,7 +441,7 @@ try {
   if (error instanceof SwapKitError) {
     // Handle SwapKit-specific errors
     console.error('API Error:', error.message);
-    
+
     // Check for rate limiting
     if (error.code === 'api_rate_limit') {
       // Wait and retry
@@ -470,14 +463,14 @@ const { routes } = await SwapKitApi.getSwapQuote({...});
 
 if (routes.length > 0) {
   const bestRoute = routes[0];
-  
+
   // Check if route meets your requirements
   const minOutput = AssetValue.from({
     asset: bestRoute.buyAsset,
     value: bestRoute.expectedBuyAmountMaxSlippage,
     fromBaseDecimal: true
   });
-  
+
   if (minOutput.gte(requiredAmount)) {
     await swapKit.swap({ route: bestRoute });
   }

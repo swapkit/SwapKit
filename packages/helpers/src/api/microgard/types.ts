@@ -17,9 +17,6 @@ export type PoolDetail = {
   liquidityUnits: string;
   poolAPY: string;
   runeDepth: string;
-  saversAPR: string;
-  saversDepth: string;
-  saversUnits: string;
   status: string;
   synthSupply: string;
   synthUnits: string;

@@ -34,8 +34,6 @@ export enum MemoType {
   LEAVE = "LEAVE",
   UNBOND = "UNBOND",
   WITHDRAW = "-",
-  OPEN_LOAN = "$+",
-  CLOSE_LOAN = "$-",
   RUNEPOOL_DEPOSIT = "POOL+",
   RUNEPOOL_WITHDRAW = "POOL-",
 }

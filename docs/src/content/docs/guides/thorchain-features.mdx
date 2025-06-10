@@ -1,6 +1,6 @@
 ---
 title: THORChain Features
-description: Advanced THORChain features - liquidity, savings, THORNames, and node operations
+description: Advanced THORChain features - liquidity, THORNames, and node operations
 ---
 
 import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -161,8 +161,8 @@ if (details.owner) {
 }
 
 // Calculate registration fee (1 RUNE per year + network fee)
-const registrationFee = AssetValue.from({ 
-  asset: 'THOR.RUNE', 
+const registrationFee = AssetValue.from({
+  asset: 'THOR.RUNE',
   value: years + 0.02  // 1 RUNE/year + ~0.02 network fee
 });
 
@@ -183,9 +183,9 @@ Configure which asset you want to receive when someone sends to your THORName:
 
 ```typescript
 // Set preferred asset to USDC
-const preferredAsset = AssetValue.from({ 
+const preferredAsset = AssetValue.from({
   asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  value: 0 
+  value: 0
 });
 
 const setPreferredTx = await swapKit.thorchain.registerPreferredAsset({
@@ -310,21 +310,21 @@ For EVM chains, THORChain requires token approvals before deposits:
 ```typescript
 // Check if token is approved
 const isApproved = await swapKit.thorchain.isAssetValueApproved({
-  assetValue: AssetValue.from({ 
+  assetValue: AssetValue.from({
     asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    value: 1000 
+    value: 1000
   })
 });
 
 if (!isApproved) {
   // Approve token for THORChain router
   const approveTx = await swapKit.thorchain.approveAssetValue({
-    assetValue: AssetValue.from({ 
+    assetValue: AssetValue.from({
       asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      value: 1000 
+      value: 1000
     })
   });
-  
+
   console.log('Approval tx:', approveTx);
 }
 ```
@@ -335,11 +335,6 @@ Maya is a fork of THORChain with similar features. SwapKit supports Maya through
 
 ```typescript
 // Maya operations use the same interface
-const mayaSavings = await swapKit.mayachain.deposit({
-  assetValue: AssetValue.from({ asset: 'BTC.BTC', value: 0.01 }),
-  memo: '+:BTC/BTC'
-});
-
 // Check Maya positions
 const mayaPosition = await SwapKitApi.mayachainMidgard.getLiquidityPosition(
   swapKit.getAddress(Chain.Maya)
@@ -430,9 +425,6 @@ Here's a complete list of THORChain plugin methods:
 - `addLiquidityPart()` - Add liquidity with granular control
 - `createLiquidity()` - Bootstrap new liquidity pools
 - `withdraw()` - Withdraw liquidity positions
-
-### Savings Methods
-- `savings()` - Deposit or withdraw from savers vaults
 
 ### THORName Methods
 - `registerName()` - Register or update THORNames
