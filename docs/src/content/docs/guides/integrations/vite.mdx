@@ -9,15 +9,28 @@ This guide will help you integrate SwapKit into your Vite application with prope
 
 Install SwapKit and required dependencies:
 
-```bash
-bun add @swapkit/sdk vite-plugin-node-polyfills
-# or
-pnpm add @swapkit/sdk vite-plugin-node-polyfills
-# or
-npm install @swapkit/sdk vite-plugin-node-polyfills
-# or
-yarn add @swapkit/sdk vite-plugin-node-polyfills
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add @swapkit/sdk vite-plugin-node-polyfills
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk vite-plugin-node-polyfills
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk vite-plugin-node-polyfills
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk vite-plugin-node-polyfills
+    ```
+  </TabItem>
+</Tabs>
 
 ## Vite Configuration
 
@@ -82,7 +95,7 @@ Here's a basic example of using SwapKit in a React component:
 // src/App.tsx
 import { useState, useEffect } from 'react';
 import { swapKitClient } from './swapKitClient';
-import { Chain, WalletOption } from '@swapkit/helpers';
+import { Chain, WalletOption } from '@swapkit/sdk';
 
 function App() {
   const [isConnected, setIsConnected] = useState(false);
@@ -90,16 +103,11 @@ function App() {
 
   const connectWallet = async () => {
     try {
-      const connectedChains = await swapKitClient.connectWallet(
-        WalletOption.METAMASK,
-        [Chain.Ethereum]
-      );
+      await swapKitClient.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
       
-      if (connectedChains.length > 0) {
-        setIsConnected(true);
-        const ethAddress = await swapKitClient.getAddress(Chain.Ethereum);
-        setAddress(ethAddress);
-      }
+      setIsConnected(true);
+      const ethAddress = await swapKitClient.getAddress(Chain.Ethereum);
+      setAddress(ethAddress);
     } catch (error) {
       console.error('Failed to connect wallet:', error);
     }
@@ -143,8 +151,7 @@ Then configure SwapKit:
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
-import { SKConfig } from '@swapkit/helpers';
+import { createSwapKit, SKConfig } from '@swapkit/sdk';
 
 // Configure API keys
 SKConfig.setApiKey('swapKit', import.meta.env.VITE_SWAPKIT_API_KEY);
@@ -159,15 +166,28 @@ export const swapKitClient = createSwapKit();
 
 If you encounter WebAssembly-related errors, ensure you have the required plugins installed:
 
-```bash
-bun add -D vite-plugin-wasm vite-plugin-top-level-await
-# or
-pnpm add -D vite-plugin-wasm vite-plugin-top-level-await
-# or
-npm install -D vite-plugin-wasm vite-plugin-top-level-await
-# or
-yarn add -D vite-plugin-wasm vite-plugin-top-level-await
-```
+<Tabs syncKey="package-manager">
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add -D vite-plugin-wasm vite-plugin-top-level-await
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add -D vite-plugin-wasm vite-plugin-top-level-await
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install -D vite-plugin-wasm vite-plugin-top-level-await
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add -D vite-plugin-wasm vite-plugin-top-level-await
+    ```
+  </TabItem>
+</Tabs>
 
 ### Buffer is not defined
 

@@ -5,12 +5,12 @@ description: Complete reference for SwapKit API methods and endpoints
 
 import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
-The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/helpers/api` import.
+The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/sdk` import.
 
 ## Getting Started
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 // All methods are static - no initialization needed
 const price = await SwapKitApi.getPrice('ETH');
@@ -263,7 +263,7 @@ const channel = await SwapKitApi.getChainflipDepositChannel({
 All API methods can throw errors that should be handled:
 
 ```typescript
-import { SwapKitError } from '@swapkit/helpers';
+import { SwapKitError } from '@swapkit/sdk';
 
 try {
   const quote = await SwapKitApi.getSwapQuote({...});
@@ -287,6 +287,8 @@ try {
 When getting swap quotes, the first route is typically the best:
 
 ```typescript
+import { AssetValue } from '@swapkit/sdk';
+
 const { routes } = await SwapKitApi.getSwapQuote({...});
 
 if (routes.length > 0) {
@@ -356,6 +358,8 @@ The SwapKit API has rate limits that vary by endpoint:
 Configure your API key in [Configuration](/start/configuration):
 
 ```typescript
+import { createSwapKit } from '@swapkit/sdk';
+
 const swapKit = createSwapKit({
   config: {
     apiKeys: {

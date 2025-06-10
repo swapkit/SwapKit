@@ -201,7 +201,7 @@ For developers who need more control and custom configurations.
         </Tabs>
 
         Install to add integrations with specific wallets.
-        Import specific wallet integrations as needed (e.g., `@swapkit/wallets/keystore`).
+        Import specific wallet integrations as needed (e.g., `keystoreWallet` from `@swapkit/sdk`).
         Supports around 20+ wallets, including Ledger, Trezor, Coinbase, WalletConnect and more.
       </TabItem>
 
@@ -230,7 +230,7 @@ For developers who need more control and custom configurations.
         </Tabs>
 
         Install for interactions with specific protocols or products.
-        Install the main plugins package below; you can then import specific plugin integrations as needed (e.g., `@swapkit/plugins/thorchain`).
+        Install the main plugins package below; you can then import specific plugin integrations as needed (e.g., `ThorchainPlugin` from `@swapkit/sdk`).
         By building your own plugins, you can extend SwapKit to support new protocols, products or actions.
         Currently SwapKit includes plugins for Chainflip, Thorchain, EVM, Radix, and more.
       </TabItem>
@@ -247,15 +247,7 @@ For developers who need more control and custom configurations.
 
    ```typescript
    // @noErrorValidation
-   import { SwapKit, Chain } from '@swapkit/core';
-
-   // Import only the plugins you need
-   import { ThorchainPlugin } from '@swapkit/plugins/thorchain';
-   import { EVMPlugin } from '@swapkit/plugins/evm';
-
-   // Import only the wallets you need
-   import { keystoreWallet } from '@swapkit/wallets/keystore';
-   import { ledgerWallet } from '@swapkit/wallets/ledger';
+   import { SwapKit, Chain, ThorchainPlugin, EVMPlugin, keystoreWallet, ledgerWallet } from '@swapkit/sdk';
 
    const swapKit = SwapKit({
       config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
@@ -282,7 +274,7 @@ No matter which implementation you choose, you can use these common patterns:
   <Card title="Check Balances" icon="seti:database">
     ```typescript
     // @noErrorValidation
-    import { SwapKit, Chain } from '@swapkit/core';
+    import { SwapKit, Chain } from '@swapkit/sdk';
 
     const swapKit = SwapKit({
       config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
@@ -298,8 +290,7 @@ No matter which implementation you choose, you can use these common patterns:
   <Card title="Transfer Assets" icon="seti:send">
     ```typescript
     // @noErrorValidation
-    import { AssetValue, Chain, SwapKit } from '@swapkit/core';
-    import { keystoreWallet } from '@swapkit/wallets/keystore';
+    import { AssetValue, Chain, SwapKit, keystoreWallet } from '@swapkit/sdk';
 
     // Initialize SwapKit
     const swapKit = SwapKit({
@@ -328,8 +319,7 @@ No matter which implementation you choose, you can use these common patterns:
   <Card title="Perform Swaps" icon="seti:swap">
     ```typescript
     // @noErrorValidation
-    import { AssetValue, Chain, SwapKitApi, SwapKit } from '@swapkit/core';
-    import { keystoreWallet } from '@swapkit/wallets/keystore';
+    import { AssetValue, Chain, SwapKitApi, SwapKit, keystoreWallet } from '@swapkit/sdk';
 
     // Initialize SwapKit
     const swapKit = SwapKit({

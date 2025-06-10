@@ -16,8 +16,7 @@ SwapKit excels at coordinating operations across multiple blockchains simultaneo
 Fetch balances across all connected chains efficiently:
 
 ```typescript
-import { createSwapKit, SwapKitApi } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
+import { createSwapKit, SwapKitApi, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -54,7 +53,7 @@ const totalValue = allAssets.reduce((sum, asset) => {
 Execute multiple transactions across different chains:
 
 ```typescript
-import { AssetValue, FeeOption } from '@swapkit/helpers';
+import { AssetValue, FeeOption } from '@swapkit/sdk';
 
 // Prepare multiple transactions
 const transactions = [
@@ -197,7 +196,7 @@ const loanCloseMemo = 'LOAN-:ETH.ETH:0x...';
 ### Building Custom Memos
 
 ```typescript
-import { getMemoFor } from '@swapkit/helpers';
+import { getMemoFor } from '@swapkit/sdk';
 
 // Build swap memo
 const swapMemo = getMemoFor('swap', {
@@ -303,8 +302,7 @@ const tx = await swapKit.transfer({
 Manage custom token lists and metadata:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
-import { TokenInfo } from '@swapkit/sdk';
+import { SwapKitApi, TokenInfo } from '@swapkit/sdk';
 
 // Get token metadata
 async function getTokenInfo(identifier: string): Promise<TokenInfo> {

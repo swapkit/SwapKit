@@ -26,6 +26,10 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     )
     .with(WalletOption.KEPLR, WalletOption.LEAP, async () => (await import("./keplr")).keplrWallet)
     .with(
+      WalletOption.COSMOSTATION,
+      async () => (await import("./cosmostation")).cosmostationWallet,
+    )
+    .with(
       WalletOption.BRAVE,
       WalletOption.COINBASE_WEB,
       WalletOption.EIP6963,

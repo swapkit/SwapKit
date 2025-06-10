@@ -14,8 +14,7 @@ To use THORChain features, you need:
 2. SwapKit initialized with the THORChain plugin (included by default)
 
 ```typescript
-import { createSwapKit } from '@swapkit/sdk';
-import { Chain } from '@swapkit/helpers';
+import { createSwapKit, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -32,7 +31,7 @@ THORChain uses an asymmetric liquidity model where you can provide single-sided 
 #### Symmetrical Liquidity (RUNE + Asset)
 
 ```typescript
-import { AssetValue } from '@swapkit/helpers';
+import { AssetValue } from '@swapkit/sdk';
 
 // Add ETH/RUNE liquidity
 const runeAmount = AssetValue.from({ asset: 'THOR.RUNE', value: 100 });
@@ -85,7 +84,7 @@ const withdrawTx = await swapKit.thorchain.withdraw({
 ### Check Liquidity Position
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 const thorAddress = swapKit.getAddress(Chain.THORChain);
 const position = await SwapKitApi.thorchainMidgard.getLiquidityPosition(thorAddress);

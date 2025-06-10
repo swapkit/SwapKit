@@ -13,9 +13,7 @@ You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages (recommended for frontend):
    ```ts
-   import { SwapKit } from "@swapkit/core";
-   import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
-   import { evmWallet } from "@swapkit/wallets/evm-extensions";
+   import { SwapKit, ThorchainPlugin, evmWallet } from "@swapkit/sdk";
    ```
 
 2. **All-in-one approach** - Import everything from the SDK (better for backend/Node.js):
@@ -38,12 +36,7 @@ The typical flow for performing a swap consists of these steps:
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
-import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
-import { EVMPlugin } from "@swapkit/plugins/evm";
+import { Chain, SwapKit, evmWallet, keystoreWallet, ThorchainPlugin, EVMPlugin } from "@swapkit/sdk";
 
 // Initialize SwapKit with necessary plugins and wallets
 const swapKit = SwapKit({
@@ -75,8 +68,7 @@ async function connectWallets() {
 
 ```ts twoslash
 // @noErrorValidation
-import { Chain } from "@swapkit/helpers";
-import { createSwapKit } from "@swapkit/sdk";
+import { Chain, createSwapKit } from "@swapkit/sdk";
 
 // Initialize SwapKit with all plugins and wallets included
 const swapKit = createSwapKit({
@@ -105,7 +97,7 @@ Before executing a swap, you need to get a quote to see available routes, prices
 
 ```ts twoslash
 // @noErrorValidation
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { SwapKitApi } from "@swapkit/sdk";
 
 // Basic swap quote
 async function getSwapQuote() {
@@ -142,7 +134,7 @@ async function getSwapQuote() {
 
 // Get quotes from a specific provider
 async function getProviderQuote() {
-  const { ProviderName } = await import("@swapkit/helpers");
+  const { ProviderName } = await import("@swapkit/sdk");
 
   // For example, get quotes only from Uniswap V3
   const quoteResponse = await SwapKitApi.getSwapQuote({
@@ -170,11 +162,11 @@ import {
   Chain,
   FeeOption,
   ProviderName,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { EVMPlugin } from "@swapkit/plugins/evm";
+  SwapKitApi,
+  SwapKit,
+  evmWallet,
+  EVMPlugin,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit with necessary plugins and wallets
 const swapKit = SwapKit({
@@ -249,9 +241,9 @@ import {
   AssetValue,
   Chain,
   FeeOption,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { createSwapKit } from "@swapkit/sdk";
+  SwapKitApi,
+  createSwapKit,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = createSwapKit();
@@ -300,11 +292,11 @@ import {
   Chain,
   FeeOption,
   ProviderName,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
+  SwapKitApi,
+  SwapKit,
+  evmWallet,
+  ChainflipPlugin,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit with necessary plugins
 const swapKit = SwapKit({
@@ -367,12 +359,12 @@ import {
   Chain,
   FeeOption,
   ProviderName,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { keystoreWallet } from "@swapkit/wallets/keystore";
-import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
+  SwapKitApi,
+  SwapKit,
+  evmWallet,
+  keystoreWallet,
+  ThorchainPlugin,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -430,11 +422,11 @@ import {
   AssetValue,
   Chain,
   FeeOption,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { EVMPlugin } from "@swapkit/plugins/evm";
+  SwapKitApi,
+  SwapKit,
+  evmWallet,
+  EVMPlugin,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({
@@ -497,12 +489,12 @@ import {
   Chain,
   FeeOption,
   ProviderName,
-} from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
-import { SwapKit } from "@swapkit/core";
-import { evmWallet } from "@swapkit/wallets/evm-extensions";
-import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
-import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
+  SwapKitApi,
+  SwapKit,
+  evmWallet,
+  ThorchainPlugin,
+  ChainflipPlugin,
+} from "@swapkit/sdk";
 
 // Initialize SwapKit
 const swapKit = SwapKit({

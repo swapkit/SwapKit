@@ -14,7 +14,7 @@ Before diving into SwapKit's features, it's essential to understand its core con
 ### Creating AssetValue
 
 ```typescript
-import { AssetValue } from '@swapkit/helpers';
+import { AssetValue } from '@swapkit/sdk';
 
 // From decimal value (what users see)
 const oneEth = AssetValue.from({ 
@@ -131,7 +131,7 @@ synthEth.isSynthetic();   // true - synthetic asset
 `SwapKitNumber` provides utilities for safe numeric operations with BigInt support:
 
 ```typescript
-import { SwapKitNumber } from '@swapkit/helpers';
+import { SwapKitNumber } from '@swapkit/sdk';
 
 // Create from various inputs
 const num1 = new SwapKitNumber(123.456);
@@ -152,7 +152,7 @@ num1.toFixed(2); // "123.46"
 SwapKit uses consistent chain identifiers across the entire SDK:
 
 ```typescript
-import { Chain } from '@swapkit/helpers';
+import { Chain } from '@swapkit/sdk';
 
 // EVM Chains
 Chain.Ethereum         // "ETH"
@@ -194,7 +194,7 @@ SwapKit uses a typed error system for better debugging:
 The base error class with additional context:
 
 ```typescript
-import { SwapKitError } from '@swapkit/helpers';
+import { SwapKitError } from '@swapkit/sdk';
 
 try {
   await swapKit.swap({ route });
@@ -256,7 +256,7 @@ catch (error) {
 SwapKit supports various wallet types through the `WalletOption` enum:
 
 ```typescript
-import { WalletOption } from '@swapkit/helpers';
+import { WalletOption } from '@swapkit/sdk';
 
 // Browser Extension Wallets
 WalletOption.METAMASK
@@ -268,6 +268,7 @@ WalletOption.EXODUS
 // Cosmos Wallets
 WalletOption.KEPLR
 WalletOption.LEAP
+WalletOption.COSMOSTATION
 
 // Hardware Wallets
 WalletOption.LEDGER
@@ -297,7 +298,7 @@ WalletOption.RADIX_MOBILE
 Control transaction fees with the `FeeOption` enum:
 
 ```typescript
-import { FeeOption } from '@swapkit/helpers';
+import { FeeOption } from '@swapkit/sdk';
 
 // Available fee options
 FeeOption.Average  // Standard fee
@@ -317,7 +318,7 @@ await swapKit.transfer({
 SwapKit integrates with multiple swap providers:
 
 ```typescript
-import { ProviderName } from '@swapkit/helpers';
+import { ProviderName } from '@swapkit/sdk';
 
 ProviderName.THORCHAIN
 ProviderName.CHAINFLIP

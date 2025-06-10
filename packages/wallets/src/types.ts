@@ -12,6 +12,7 @@ import type { BrowserProvider, Eip1193Provider } from "ethers";
 import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
 import type { bitgetWallet } from "./bitget";
 import type { coinbaseWallet } from "./coinbase";
+import type { cosmostationWallet } from "./cosmostation";
 import type { ctrlWallet } from "./ctrl";
 import type { evmWallet } from "./evm-extensions";
 import type { exodusWallet } from "./exodus";
@@ -34,6 +35,7 @@ export type SKWallets = {
   [WalletOption.BRAVE]: typeof evmWallet;
   [WalletOption.COINBASE_MOBILE]: typeof coinbaseWallet;
   [WalletOption.COINBASE_WEB]: typeof evmWallet;
+  [WalletOption.COSMOSTATION]: typeof cosmostationWallet;
   [WalletOption.CTRL]: typeof ctrlWallet;
   [WalletOption.EIP6963]: typeof evmWallet;
   [WalletOption.EXODUS]: typeof exodusWallet;
@@ -64,6 +66,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.BRAVE]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.COINBASE_MOBILE]: typeof coinbaseWallet.connectCoinbaseWallet.supportedChains;
   [WalletOption.COINBASE_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
+  [WalletOption.COSMOSTATION]: typeof cosmostationWallet.connectCosmostation.supportedChains;
   [WalletOption.CTRL]: typeof ctrlWallet.connectCtrl.supportedChains;
   [WalletOption.EIP6963]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.EXODUS]: typeof exodusWallet.connectExodusWallet.supportedChains;
