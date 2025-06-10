@@ -1,5 +1,21 @@
 # @swapkit/core
 
+## 3.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`dd757aa`](https://github.com/thorswap/SwapKit/commit/dd757aa7cda6602344747b1501569fea3878fe37)]:
+  - @swapkit/helpers@2.10.2
+  - @swapkit/plugin-evm@1.4.14
+  - @swapkit/api@2.9.2
+  - @swapkit/toolbox-cosmos@1.11.16
+  - @swapkit/toolbox-evm@1.11.4
+  - @swapkit/toolbox-radix@1.3.13
+  - @swapkit/toolbox-ripple@1.0.19
+  - @swapkit/toolbox-solana@1.6.14
+  - @swapkit/toolbox-substrate@1.4.13
+  - @swapkit/toolbox-utxo@1.4.13
+
 ## 3.4.1
 
 ### Patch Changes

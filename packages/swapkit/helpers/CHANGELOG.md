@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.10.2
+
+### Patch Changes
+
+- [#1330](https://github.com/thorswap/SwapKit/pull/1330) [`dd757aa`](https://github.com/thorswap/SwapKit/commit/dd757aa7cda6602344747b1501569fea3878fe37) Thanks [@towanTG](https://github.com/towanTG)! - Adds xaman wallets support
+
 ## 2.10.1
 
 ### Patch Changes
