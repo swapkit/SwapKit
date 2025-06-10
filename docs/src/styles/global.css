@@ -418,11 +418,17 @@ pre {
 
 /* Primary button - Enhanced gradient with more life in dark mode */
 .hero .sl-link-button.primary {
-  background: linear-gradient(135deg, var(--sk-accent-green) 0%, var(--sk-logo-green) 50%, #59fca1 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--sk-accent-green) 0%,
+    var(--sk-logo-green) 50%,
+    #59fca1 100%
+  ) !important;
   color: var(--sk-black) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(32, 212, 131, 0.3), 0 16px 32px
-    rgba(32, 212, 131, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), 
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(32, 212, 131, 0.3), 0 16px 32px
+    rgba(32, 212, 131, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
@@ -432,7 +438,7 @@ pre {
 
 /* Add animated gradient overlay for more life */
 .hero .sl-link-button.primary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -455,10 +461,16 @@ pre {
 
 .hero .sl-link-button.primary:hover {
   transform: translateY(-4px) scale(1.02) !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(32, 212, 131, 0.4), 0 24px 48px
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(32, 212, 131, 0.4), 0 24px 48px
     rgba(32, 212, 131, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
-  background: linear-gradient(135deg, var(--sk-accent-green) 0%, var(--sk-logo-green) 30%, #59fca1 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--sk-accent-green) 0%,
+    var(--sk-logo-green) 30%,
+    #59fca1 100%
+  ) !important;
 }
 
 .hero .sl-link-button.primary:active {
@@ -481,7 +493,7 @@ pre {
 
 /* Add subtle shimmer effect to secondary button */
 .hero .sl-link-button.secondary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -671,7 +683,7 @@ nav [aria-current="page"] {
 
 /* Clean border indicator without cutting into content */
 nav [aria-current="page"]::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -896,7 +908,7 @@ nav a:not([aria-current="page"]):hover {
 
 /* Animated border indicator with glow */
 .right-sidebar a[aria-current="true"]::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -1px;
   top: 50%;
@@ -911,7 +923,8 @@ nav a:not([aria-current="page"]):hover {
 
 /* Pulse animation for active item */
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 12px rgba(32, 212, 131, 0.2);
   }
   50% {
@@ -954,7 +967,8 @@ nav a:not([aria-current="page"]):hover {
 }
 
 @keyframes pulse-glow-light {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 12px rgba(0, 109, 53, 0.15);
   }
   50% {
@@ -1156,14 +1170,24 @@ html {
 }
 
 /* Enhance scroll-to-section behavior with subtle highlights */
-h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+h1[id],
+h2[id],
+h3[id],
+h4[id],
+h5[id],
+h6[id] {
   scroll-margin-top: 2rem;
   transition: all 0.3s ease;
   position: relative;
 }
 
 /* Subtle flash animation when navigating to section */
-h1[id]:target, h2[id]:target, h3[id]:target, h4[id]:target, h5[id]:target, h6[id]:target {
+h1[id]:target,
+h2[id]:target,
+h3[id]:target,
+h4[id]:target,
+h5[id]:target,
+h6[id]:target {
   animation: section-highlight 2s ease-out;
 }
 
@@ -1178,11 +1202,11 @@ h1[id]:target, h2[id]:target, h3[id]:target, h4[id]:target, h5[id]:target, h6[id
   }
 }
 
-:root[data-theme="light"] h1[id]:target, 
-:root[data-theme="light"] h2[id]:target, 
-:root[data-theme="light"] h3[id]:target, 
-:root[data-theme="light"] h4[id]:target, 
-:root[data-theme="light"] h5[id]:target, 
+:root[data-theme="light"] h1[id]:target,
+:root[data-theme="light"] h2[id]:target,
+:root[data-theme="light"] h3[id]:target,
+:root[data-theme="light"] h4[id]:target,
+:root[data-theme="light"] h5[id]:target,
 :root[data-theme="light"] h6[id]:target {
   animation: section-highlight-light 2s ease-out;
 }
