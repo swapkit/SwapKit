@@ -17,7 +17,8 @@
     "@swapkit/wallet-radix": "workspace:*",
     "@swapkit/wallet-talisman": "workspace:*",
     "@swapkit/wallet-trezor": "workspace:*",
-    "@swapkit/wallet-wc": "workspace:*"
+    "@swapkit/wallet-wc": "workspace:*",
+    "@swapkit/wallet-xaman": "workspace:*"
   },
   "files": [
     "src/",

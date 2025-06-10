@@ -95,6 +95,12 @@ const errorCodes = {
   wallet_keepkey_contract_address_not_provided: 20902,
   wallet_keepkey_send_transaction_no_address: 20903,
   wallet_bitkeep_not_found: 21001,
+  wallet_xaman_not_configured: 21101,
+  wallet_xaman_not_connected: 21102,
+  wallet_xaman_auth_failed: 21103,
+  wallet_xaman_connection_failed: 21104,
+  wallet_xaman_transaction_failed: 21105,
+  wallet_xaman_monitoring_failed: 21106,
   /**
    * Chainflip
    */

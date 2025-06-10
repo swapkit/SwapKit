@@ -15,4 +15,4 @@ coverage/
 .npmrc
 bunfig.toml
 .aider*
-CLAUDE.md
+CLAUDE*
