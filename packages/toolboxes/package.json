@@ -46,48 +46,48 @@
   },
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "require": "./dist/index.cjs",
+      "default": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
       "types": "./src/index.ts"
     },
     "./cosmos": {
-      "default": "./dist/cosmos/index.js",
-      "require": "./dist/cosmos/index.cjs",
+      "default": "./dist/src/cosmos/index.js",
+      "require": "./dist/src/cosmos/index.cjs",
       "types": "./src/cosmos/index.ts"
     },
     "./evm": {
-      "default": "./dist/evm/index.js",
-      "require": "./dist/evm/index.cjs",
+      "default": "./dist/src/evm/index.js",
+      "require": "./dist/src/evm/index.cjs",
       "types": "./src/evm/index.ts"
     },
     "./radix": {
-      "default": "./dist/radix/index.js",
-      "require": "./dist/radix/index.cjs",
+      "default": "./dist/src/radix/index.js",
+      "require": "./dist/src/radix/index.cjs",
       "types": "./src/radix/index.ts"
     },
     "./ripple": {
-      "default": "./dist/ripple/index.js",
-      "require": "./dist/ripple/index.cjs",
+      "default": "./dist/src/ripple/index.js",
+      "require": "./dist/src/ripple/index.cjs",
       "types": "./src/ripple/index.ts"
     },
     "./solana": {
-      "default": "./dist/solana/index.js",
-      "require": "./dist/solana/index.cjs",
+      "default": "./dist/src/solana/index.js",
+      "require": "./dist/src/solana/index.cjs",
       "types": "./src/solana/index.ts"
     },
     "./substrate": {
-      "default": "./dist/substrate/index.js",
-      "require": "./dist/substrate/index.cjs",
+      "default": "./dist/src/substrate/index.js",
+      "require": "./dist/src/substrate/index.cjs",
       "types": "./src/substrate/index.ts"
     },
     "./tron": {
-      "default": "./dist/tron/index.js",
-      "require": "./dist/tron/index.cjs",
+      "default": "./dist/src/tron/index.js",
+      "require": "./dist/src/tron/index.cjs",
       "types": "./src/tron/index.ts"
     },
     "./utxo": {
-      "default": "./dist/utxo/index.js",
-      "require": "./dist/utxo/index.cjs",
+      "default": "./dist/src/utxo/index.js",
+      "require": "./dist/src/utxo/index.cjs",
       "types": "./src/utxo/index.ts"
     }
   },

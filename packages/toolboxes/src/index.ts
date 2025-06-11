@@ -65,70 +65,51 @@ export async function getAddressValidator() {
   };
 }
 
-export async function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: T) {
-  const toolbox = await getToolbox(chain);
-
+export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: T) {
   return async function estimateFee(params: CreateTransactionParams[T]) {
-    switch (chain) {
-      case Chain.Arbitrum:
-      case Chain.Avalanche:
-      case Chain.Optimism:
-      case Chain.BinanceSmartChain:
-      case Chain.Base:
-      case Chain.Polygon:
-      case Chain.Ethereum: {
-        const txObject = await (
-          toolbox as Awaited<ReturnType<typeof ETHToolbox>>
-        ).createTransaction(params as EVMCreateTransactionParams);
-        return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
-          ...txObject,
-          feeOption: params.feeOptionKey || FeeOption.Fast,
-          chain,
-        });
-      }
-      case Chain.Bitcoin:
-      case Chain.BitcoinCash:
-      case Chain.Dogecoin:
-      case Chain.Dash:
-      case Chain.Litecoin: {
-        return (toolbox as Awaited<ReturnType<typeof getUtxoToolbox>>).estimateTransactionFee(
-          params as CreateTransactionParams[Chain.Bitcoin],
-        );
-      }
+    const { match } = await import("ts-pattern");
 
-      case Chain.THORChain:
-      case Chain.Maya:
-      case Chain.Kujira:
-      case Chain.Cosmos: {
+    return match(chain as Chain)
+      .returnType<Promise<AssetValue>>()
+      .with(
+        Chain.Arbitrum,
+        Chain.Avalanche,
+        Chain.Optimism,
+        Chain.BinanceSmartChain,
+        Chain.Base,
+        Chain.Polygon,
+        Chain.Ethereum,
+        async (chain) => {
+          const toolbox = await getToolbox(chain);
+          const txObject = await toolbox.createTransaction(params);
+
+          return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
+            ...txObject,
+            feeOption: params.feeOptionKey || FeeOption.Fast,
+            chain,
+          });
+        },
+      )
+      .with(
+        Chain.Bitcoin,
+        Chain.BitcoinCash,
+        Chain.Dogecoin,
+        Chain.Dash,
+        Chain.Litecoin,
+        Chain.Polkadot,
+        Chain.Solana,
+        Chain.Ripple,
+        Chain.Tron,
+        async (chain) => {
+          const toolbox = await getToolbox(chain);
+          return toolbox.estimateTransactionFee(params) as Promise<AssetValue>;
+        },
+      )
+      .with(Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Cosmos, async () => {
         const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
         return estimateTransactionFee(params);
-      }
-
-      case Chain.Polkadot: {
-        return (
-          toolbox as Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Polkadot>>>
-        ).estimateTransactionFee(params);
-      }
-
-      case Chain.Solana: {
-        return (toolbox as Awaited<ReturnType<typeof getSolanaToolbox>>).estimateTransactionFee(
-          params as CreateTransactionParams[Chain.Solana],
-        );
-      }
-
-      case Chain.Ripple: {
-        return (toolbox as Awaited<ReturnType<typeof getRippleToolbox>>).estimateTransactionFee();
-      }
-
-      case Chain.Tron: {
-        return (toolbox as Awaited<ReturnType<typeof createTronToolbox>>).estimateTransactionFee(
-          params as CreateTransactionParams[Chain.Tron],
-        );
-      }
-
-      default:
-        return AssetValue.from({ chain });
-    }
+      })
+      .otherwise(async () => AssetValue.from({ chain }));
   };
 }
 
@@ -177,86 +158,83 @@ export async function getToolbox<T extends keyof Toolboxes>(
   chain: T,
   params?: ToolboxParams[T],
 ): Promise<Toolboxes[T]> {
-  switch (chain) {
-    case Chain.Arbitrum:
-    case Chain.Avalanche:
-    case Chain.Optimism:
-    case Chain.BinanceSmartChain:
-    case Chain.Base:
-    case Chain.Polygon:
-    case Chain.Ethereum: {
-      const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
-      const evmToolbox = await getEvmToolbox(chain, params as Parameters<typeof getEvmToolbox>[1]);
-      return evmToolbox as Toolboxes[T];
-    }
+  const { match } = await import("ts-pattern");
 
-    case Chain.Litecoin:
-    case Chain.Dash:
-    case Chain.Dogecoin:
-    case Chain.BitcoinCash:
-    case Chain.Bitcoin: {
-      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const utxoToolbox = await getUtxoToolbox(
-        chain,
-        params as Parameters<typeof getUtxoToolbox>[1],
-      );
-      return utxoToolbox as Toolboxes[T];
-    }
-
-    case Chain.Cosmos:
-    case Chain.Kujira:
-    case Chain.Maya:
-    case Chain.THORChain: {
+  return match(chain as Chain)
+    .returnType<Promise<Toolboxes[T]>>()
+    .with(
+      Chain.Arbitrum,
+      Chain.Avalanche,
+      Chain.Optimism,
+      Chain.BinanceSmartChain,
+      Chain.Base,
+      Chain.Polygon,
+      Chain.Ethereum,
+      async () => {
+        const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+        const evmToolbox = await getEvmToolbox(
+          chain as EVMChain,
+          params as Parameters<typeof getEvmToolbox>[1],
+        );
+        return evmToolbox as Toolboxes[T];
+      },
+    )
+    .with(
+      Chain.Litecoin,
+      Chain.Dash,
+      Chain.Dogecoin,
+      Chain.BitcoinCash,
+      Chain.Bitcoin,
+      async () => {
+        const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+        const utxoToolbox = await getUtxoToolbox(
+          chain as UTXOChain,
+          params as Parameters<typeof getUtxoToolbox>[1],
+        );
+        return utxoToolbox as Toolboxes[T];
+      },
+    )
+    .with(Chain.Cosmos, Chain.Kujira, Chain.Maya, Chain.THORChain, async () => {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const cosmosToolbox = await getCosmosToolbox(
-        chain,
+        chain as CosmosChain,
         params as Parameters<typeof getCosmosToolbox>[1],
       );
-
       return cosmosToolbox as Toolboxes[T];
-    }
-
-    case Chain.Chainflip:
-    case Chain.Polkadot: {
+    })
+    .with(Chain.Chainflip, Chain.Polkadot, async () => {
       const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
       const substrateToolbox = await getSubstrateToolbox(
-        chain,
+        chain as SubstrateChain,
         params as Parameters<typeof getSubstrateToolbox>[1],
       );
       return substrateToolbox as Toolboxes[T];
-    }
-
-    case Chain.Radix: {
+    })
+    .with(Chain.Radix, async () => {
       const { RadixToolbox } = await import("@swapkit/toolboxes/radix");
       const radixToolbox = await RadixToolbox(params as Parameters<typeof RadixToolbox>[0]);
       return radixToolbox as Toolboxes[T];
-    }
-
-    case Chain.Ripple: {
+    })
+    .with(Chain.Ripple, async () => {
       const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
       const rippleToolbox = await getRippleToolbox(
         params as Parameters<typeof getRippleToolbox>[0],
       );
       return rippleToolbox as Toolboxes[T];
-    }
-
-    case Chain.Solana: {
+    })
+    .with(Chain.Solana, async () => {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
       const solanaToolbox = await getSolanaToolbox(
         params as Parameters<typeof getSolanaToolbox>[0],
       );
       return solanaToolbox as Toolboxes[T];
-    }
-
-    case Chain.Tron: {
+    })
+    .with(Chain.Tron, async () => {
       const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
-      const tronToolbox = await createTronToolbox(
-        params as Parameters<typeof createTronToolbox>[0],
-      );
+      const tronToolbox = await createTronToolbox(params);
       return tronToolbox as Toolboxes[T];
-    }
-
-    default:
+    })
+    .otherwise(() => {
       throw new SwapKitError("toolbox_not_supported", { chain });
-  }
+    });
 }

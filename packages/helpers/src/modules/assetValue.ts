@@ -1,3 +1,6 @@
+import { getAddress } from "ethers";
+import { match } from "ts-pattern";
+
 import {
   BaseDecimal,
   Chain,
@@ -19,7 +22,6 @@ import { warnOnce } from "../utils/others";
 import { type TokenListName, loadTokenLists } from "../utils/tokens";
 import { validateIdentifier } from "../utils/validators";
 
-import { getAddress } from "ethers";
 import type { NumberPrimitives } from "./bigIntArithmetics";
 import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics";
 import { SwapKitError } from "./swapKitError";
@@ -213,33 +215,15 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
 export function getMinAmountByChain(chain: Chain) {
   const asset = AssetValue.from({ chain });
 
-  switch (chain) {
-    case Chain.Bitcoin:
-    case Chain.Litecoin:
-    case Chain.BitcoinCash:
-    case Chain.Dash:
-      return asset.set(0.00010001);
-
-    case Chain.Dogecoin:
-      return asset.set(1.00000001);
-
-    case Chain.Avalanche:
-    case Chain.Ethereum:
-    case Chain.Arbitrum:
-    case Chain.BinanceSmartChain:
-      return asset.set(0.00000001);
-
-    case Chain.THORChain:
-    case Chain.Maya:
-      return asset.set(0);
-
-    case Chain.Cosmos:
-    case Chain.Kujira:
-      return asset.set(0.000001);
-
-    default:
-      return asset.set(0.00000001);
-  }
+  return match(chain)
+    .with(Chain.Bitcoin, Chain.Litecoin, Chain.BitcoinCash, Chain.Dash, () => asset.set(0.00010001))
+    .with(Chain.Dogecoin, () => asset.set(1.00000001))
+    .with(Chain.Avalanche, Chain.Ethereum, Chain.Arbitrum, Chain.BinanceSmartChain, () =>
+      asset.set(0.00000001),
+    )
+    .with(Chain.THORChain, Chain.Maya, () => asset.set(0))
+    .with(Chain.Cosmos, Chain.Kujira, () => asset.set(0.000001))
+    .otherwise(() => asset.set(0.00000001));
 }
 
 async function createAssetValue(identifier: string, value: NumberPrimitives = 0) {

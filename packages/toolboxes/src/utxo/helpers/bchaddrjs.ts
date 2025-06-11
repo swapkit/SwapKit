@@ -1,6 +1,6 @@
 import { SwapKitError } from "@swapkit/helpers";
 import base58check from "bs58check";
-// @ts-expect-error
+// @ts-ignore
 import cashaddr from "cashaddrjs";
 
 enum Format {

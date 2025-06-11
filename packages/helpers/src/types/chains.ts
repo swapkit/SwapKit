@@ -1,3 +1,4 @@
+import { match } from "ts-pattern";
 import { SwapKitError } from "../modules/swapKitError";
 
 export enum Chain {
@@ -341,48 +342,43 @@ export const EXPLORER_URLS: Record<Chain, string> = {
 let RPCUrlsMerged = RPC_URLS;
 
 const getRpcBody = (chain: Chain | StagenetChain) => {
-  switch (chain) {
-    case Chain.Arbitrum:
-    case Chain.Avalanche:
-    case Chain.Base:
-    case Chain.BinanceSmartChain:
-    case Chain.Ethereum:
-    case Chain.Optimism:
-    case Chain.Polygon:
-      return { id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] };
-    case Chain.Bitcoin:
-    case Chain.Dogecoin:
-    case Chain.BitcoinCash:
-    case Chain.Dash:
-    case Chain.Litecoin:
-      return { id: "test", jsonrpc: "1.0", method: "getblockchaininfo", params: [] };
-    case Chain.Cosmos:
-    case Chain.Kujira:
-    case Chain.Maya:
-    case Chain.THORChain:
-    case StagenetChain.Maya:
-    case StagenetChain.THORChain:
-      return { id: 1, jsonrpc: "2.0", method: "status", params: {} };
-    case Chain.Polkadot:
-      return { id: 1, jsonrpc: "2.0", method: "system_health", params: [] };
-    case Chain.Solana:
-      return { id: 1, jsonrpc: "2.0", method: "getHealth" };
-    case Chain.Tron:
-      return { id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] };
-    case Chain.Radix:
-      return "";
-    default:
+  return match(chain)
+    .with(
+      Chain.Arbitrum,
+      Chain.Avalanche,
+      Chain.Base,
+      Chain.BinanceSmartChain,
+      Chain.Ethereum,
+      Chain.Optimism,
+      Chain.Polygon,
+      Chain.Tron,
+      () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }),
+    )
+    .with(Chain.Bitcoin, Chain.Dogecoin, Chain.BitcoinCash, Chain.Dash, Chain.Litecoin, () => ({
+      id: "test",
+      jsonrpc: "1.0",
+      method: "getblockchaininfo",
+      params: [],
+    }))
+    .with(
+      Chain.Cosmos,
+      Chain.Kujira,
+      Chain.Maya,
+      Chain.THORChain,
+      StagenetChain.Maya,
+      StagenetChain.THORChain,
+      () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }),
+    )
+    .with(Chain.Polkadot, () => ({ id: 1, jsonrpc: "2.0", method: "system_health", params: [] }))
+    .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
+    .with(Chain.Radix, () => "")
+    .otherwise(() => {
       throw new SwapKitError("helpers_chain_not_supported", { chain });
-  }
+    });
 };
 
 function getChainStatusEndpoint(chain: Chain | StagenetChain) {
-  switch (chain) {
-    case Chain.Radix:
-      return "/status/network-configuration";
-    default:
-      return "";
-  }
+  return chain === Chain.Radix ? "/status/network-configuration" : "";
 }
 
 const testRPCConnection = async (chain: Chain | StagenetChain, url: string) => {
