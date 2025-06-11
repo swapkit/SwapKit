@@ -1,5 +1,19 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.18
+
+### Minor Changes
+
+- [#1328](https://github.com/thorswap/SwapKit/pull/1328) [`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Upstream near and solana changes
+
+### Patch Changes
+
+- [#1334](https://github.com/thorswap/SwapKit/pull/1334) [`b48d865`](https://github.com/thorswap/SwapKit/commit/b48d8657a4bb389d7637027fac174bead16785c6) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Ctrl Wallet provider communication
+
+- Updated dependencies [[`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1)]:
+  - @swapkit/toolboxes@1.0.0-beta.16
+  - @swapkit/helpers@3.0.0-beta.11
+
 ## 3.0.0-beta.17
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @swapkit/sdk
 
+## 3.0.0-beta.18
+
+### Minor Changes
+
+- [#1328](https://github.com/thorswap/SwapKit/pull/1328) [`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Upstream near and solana changes
+
+### Patch Changes
+
+- Updated dependencies [[`b48d865`](https://github.com/thorswap/SwapKit/commit/b48d8657a4bb389d7637027fac174bead16785c6), [`ae58e58`](https://github.com/thorswap/SwapKit/commit/ae58e5813ba5e8d2372b449b09b1c813659a93c1)]:
+  - @swapkit/wallets@3.0.0-beta.18
+  - @swapkit/toolboxes@1.0.0-beta.16
+  - @swapkit/plugins@1.0.0-beta.16
+  - @swapkit/core@4.0.0-beta.16
+
 ## 3.0.0-beta.17
 
 ### Patch Changes
