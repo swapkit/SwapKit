@@ -389,10 +389,15 @@ export const NearDepositChannelResultSchema = NearQuoteResponseSchema.extend({
 
 export type NearDepositChannelResult = z.infer<typeof NearDepositChannelResultSchema>;
 
-export const NearSwapResponseSchema = NearQuoteResponseSchema.extend({
+export const NearSwapResponseSchema = z.object({
   depositAddress: z.string(),
   depositAsset: z.string(),
+  depositAmount: z.string(),
+  buyAsset: z.string(),
+  buyAssetAmount: z.string(),
+  buyAssetAmountMaxSlippage: z.string(),
   tx: z.unknown(),
+  deadline: z.string().optional(),
 });
 
 export type NearSwapResponse = z.infer<typeof NearSwapResponseSchema>;
