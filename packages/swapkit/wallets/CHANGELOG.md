@@ -1,5 +1,20 @@
 # @swapkit/wallets
 
+## 2.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallet-bitget@1.3.18
+  - @swapkit/wallet-ctrl@2.3.19
+  - @swapkit/wallet-keepkey@1.6.17
+  - @swapkit/wallet-keepkey-bex@1.4.17
+  - @swapkit/wallet-keplr@1.5.17
+  - @swapkit/wallet-keystore@1.8.16
+  - @swapkit/wallet-ledger@1.14.14
+  - @swapkit/wallet-okx@1.6.17
+  - @swapkit/wallet-wc@1.9.17
+
 ## 2.1.24
 
 ### Patch Changes

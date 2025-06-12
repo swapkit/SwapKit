@@ -1,5 +1,13 @@
 # @swapkit/wallet-xdefi
 
+## 2.3.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/toolbox-cosmos@1.11.17
+  - @swapkit/helpers@2.10.2
+
 ## 2.3.18
 
 ### Patch Changes

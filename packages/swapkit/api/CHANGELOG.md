@@ -1,5 +1,14 @@
 # @swapkit/api
 
+## 2.9.3
+
+### Patch Changes
+
+- [`5f6e7cc`](https://github.com/thorswap/SwapKit/commit/5f6e7ccb50708db0a97d4de2000d3b247f8c9b76) Thanks [@towanTG](https://github.com/towanTG)! - Updates NearSwapResponseSchema
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.10.2
+
 ## 2.9.2
 
 ### Patch Changes
