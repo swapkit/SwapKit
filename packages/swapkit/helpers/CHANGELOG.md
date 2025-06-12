@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.10.3
+
+### Patch Changes
+
+- [`b9eaab0`](https://github.com/thorswap/SwapKit/commit/b9eaab01f2348a7b5b2073b36a07752d39533e93) Thanks [@towanTG](https://github.com/towanTG)! - Changes BTC node rpc url
+
 ## 2.10.2
 
 ### Patch Changes
