@@ -214,7 +214,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Avalanche]: "https://avalanche-c-chain-rpc.publicnode.com",
   [Chain.Base]: "https://base-rpc.publicnode.com",
   [Chain.BinanceSmartChain]: "https://bsc-dataseed.binance.org",
-  [Chain.Bitcoin]: "https://bitcoin-rpc.publicnode.com",
+  [Chain.Bitcoin]: "https://node-router.thorswap.net/bitcoin",
   [Chain.BitcoinCash]: "https://node-router.thorswap.net/bitcoin-cash",
   [Chain.Chainflip]: "wss://mainnet-archive.chainflip.io",
   [Chain.Cosmos]: "https://node-router.thorswap.net/cosmos/rpc",
