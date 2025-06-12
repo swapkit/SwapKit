@@ -1,5 +1,13 @@
 # @swapkit/wallet-bitget
 
+## 1.3.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/toolbox-cosmos@1.11.17
+  - @swapkit/helpers@2.10.2
+
 ## 1.3.17
 
 ### Patch Changes
