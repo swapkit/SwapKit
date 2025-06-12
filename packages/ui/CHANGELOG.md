@@ -1,5 +1,12 @@
 # @swapkit/ui
 
+## 0.1.0-beta.19
+
+### Patch Changes
+
+- Updated dependencies [[`f95efef`](https://github.com/thorswap/SwapKit/commit/f95efef7a9d9047ff12b7c6dc3c929eca057718e)]:
+  - @swapkit/wallets@3.0.0-beta.19
+
 ## 0.1.0-beta.18
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.19
+
+### Patch Changes
+
+- [`f95efef`](https://github.com/thorswap/SwapKit/commit/f95efef7a9d9047ff12b7c6dc3c929eca057718e) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Ctrl getAddress provider communication
+
 ## 3.0.0-beta.18
 
 ### Minor Changes
