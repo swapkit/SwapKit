@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.12
+
+### Patch Changes
+
+- [#1343](https://github.com/thorswap/SwapKit/pull/1343) [`feadd9a`](https://github.com/thorswap/SwapKit/commit/feadd9ab64f4b56d0127a924f4cebf3e87e003c4) Thanks [@towanTG](https://github.com/towanTG)! - Adds SKConfig functionality to set headers on midgard endpoints
+
 ## 3.0.0-beta.11
 
 ### Minor Changes

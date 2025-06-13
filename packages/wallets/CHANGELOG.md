@@ -1,5 +1,13 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.20
+
+### Patch Changes
+
+- Updated dependencies [[`feadd9a`](https://github.com/thorswap/SwapKit/commit/feadd9ab64f4b56d0127a924f4cebf3e87e003c4)]:
+  - @swapkit/helpers@3.0.0-beta.12
+  - @swapkit/toolboxes@1.0.0-beta.17
+
 ## 3.0.0-beta.19
 
 ### Patch Changes
