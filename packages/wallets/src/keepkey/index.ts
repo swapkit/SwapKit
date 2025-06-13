@@ -44,14 +44,21 @@ export const keepkeyWallet = createWallet({
       derivationPathMap?: Record<Chain, DerivationPathArray>,
     ) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-      const config = SKConfig.get("integrations").keepKey;
+      const pairingInfo = SKConfig.get("integrations").keepKey;
+      if (!pairingInfo) throw new Error("KeepKey config not found");
 
-      if (!config) throw new Error("KeepKey config not found");
+      const initialApiKey = SKConfig.get("apiKeys").keepKey || "1234";
 
       await checkAndLaunch();
 
-      const keepkeyConfig = { ...config, apiKey: SKConfig.get("apiKeys").keepKey };
+      // Conform to the expected { apiKey, pairingInfo } structure
+      const keepkeyConfig = { apiKey: initialApiKey, pairingInfo };
       const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
+
+      // Persist the new API key via SKConfig after pairing
+      if (keepkeyConfig.apiKey && keepkeyConfig.apiKey !== initialApiKey) {
+        SKConfig.setApiKey("keepKey", keepkeyConfig.apiKey);
+      }
 
       await Promise.all(
         filteredChains.map(async (chain) => {
@@ -84,6 +91,7 @@ async function getWalletMethods({
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.Avalanche:
+    case Chain.Base:
     case Chain.Ethereum: {
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
@@ -112,7 +120,7 @@ async function getWalletMethods({
   }
 }
 
-// kk-sdk docs: https://medium.com/@highlander_35968/building-on-the-keepkey-sdk-2023fda41f38
+// kk-sdk docs: https://keepkey.com/blog/building_on_the_keepkey_sdk
 // test spec: if offline, launch keepkey-bridge
 async function checkAndLaunch(attempts = 0) {
   if (attempts >= 3) {

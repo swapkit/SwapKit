@@ -2,6 +2,7 @@ import {
   Chain,
   CosmosChains,
   EVMChains,
+  SKConfig,
   SubstrateChains,
   UTXOChains,
   WalletOption,
@@ -75,6 +76,7 @@ export const availableChainsByWallet = {
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
+    Chain.Base,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -189,7 +191,10 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           );
 
           await skClient.connectKeepkey?.(chains, derivationPaths);
-          localStorage.setItem("keepkeyApiKey", "1234");
+          const kkKey = SKConfig.get("apiKeys").keepKey;
+          if (kkKey) {
+            localStorage.setItem("keepkeyApiKey", kkKey);
+          }
           return true;
         }
         case WalletOption.KEEPKEY_BEX:

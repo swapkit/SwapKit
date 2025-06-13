@@ -36,14 +36,14 @@ export const useSwapKit = () => {
           apiKeys: {
             swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
             walletConnectProjectId: "",
-            keepKey: localStorage.getItem("keepkeyApiKey") || "",
+            keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
           },
           integrations: {
             keepKey: {
               name: "THORSwap",
               imageUrl: "https://www.thorswap.finance/logo.png",
-              basePath: "swap",
-              url: "https://app.thorswap.finance",
+              basePath: "http://localhost:1646/spec/swagger.json",
+              url: "http://localhost:1646",
             },
           },
         },
