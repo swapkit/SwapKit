@@ -1,8 +1,32 @@
-import { AssetValue, BaseDecimal, Chain, RequestClient, SwapKitNumber } from "@swapkit/helpers";
+import {
+  AssetValue,
+  BaseDecimal,
+  Chain,
+  RequestClient,
+  SKConfig,
+  StagenetChain,
+  SwapKitNumber,
+} from "@swapkit/helpers";
 import type { MemberDetailsMayachain, MemberDetailsThorchain, THORNameDetails } from "./types";
 
+// Create extended RequestClient instances for each API
+const getMidgardRequestClient = () => {
+  const apiHeaders = SKConfig.get("apiHeaders");
+  return RequestClient.extend({
+    headers: apiHeaders.midgard || {},
+  });
+};
+
 function getMidgardBaseUrl(isThorchain = true) {
-  return isThorchain ? "https://midgard.ninerealms.com" : "https://midgard.mayachain.info";
+  const { isStagenet } = SKConfig.get("envs");
+  const midgardUrls = SKConfig.get("midgardUrls");
+
+  if (isThorchain) {
+    const chain = isStagenet ? StagenetChain.THORChain : Chain.THORChain;
+    return midgardUrls[chain] || "https://midgard.ninerealms.com";
+  }
+  const chain = isStagenet ? StagenetChain.Maya : Chain.Maya;
+  return midgardUrls[chain] || "https://midgard.mayachain.info";
 }
 
 function getNameServiceBaseUrl(isThorchain = true) {
@@ -14,7 +38,8 @@ function getLiquidityPositionRaw<Chain extends Chain.THORChain | Chain.Maya>(bas
   return function getLiquidityPosition(
     address: string,
   ): Promise<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain> {
-    return RequestClient.get<
+    const MidgardRequestClient = getMidgardRequestClient();
+    return MidgardRequestClient.get<
       Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain
     >(`${baseUrl}/v2/member/${address}`);
   };
@@ -22,19 +47,22 @@ function getLiquidityPositionRaw<Chain extends Chain.THORChain | Chain.Maya>(bas
 
 function getNameDetails(baseUrl: string) {
   return function getNameDetails(name: string) {
-    return RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
+    const MidgardRequestClient = getMidgardRequestClient();
+    return MidgardRequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
   };
 }
 
 function getNamesByAddress(baseUrl: string) {
   return function getNamesByAddress(address: string) {
-    return RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
+    const MidgardRequestClient = getMidgardRequestClient();
+    return MidgardRequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
   };
 }
 
 function getNamesByOwner(baseUrl: string) {
   return function getNamesByOwner(address: string) {
-    return RequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
+    const MidgardRequestClient = getMidgardRequestClient();
+    return MidgardRequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
   };
 }
 
