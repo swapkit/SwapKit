@@ -23,10 +23,23 @@ function getMidgardBaseUrl(isThorchain = true) {
 
   if (isThorchain) {
     const chain = isStagenet ? StagenetChain.THORChain : Chain.THORChain;
-    return midgardUrls[chain] || "https://midgard.ninerealms.com";
+    // Use the configured URL if available, otherwise use defaults
+    if (midgardUrls[chain]) {
+      return midgardUrls[chain];
+    }
+    // Default URLs based on environment
+    return isStagenet
+      ? "https://stagenet-midgard.ninerealms.com"
+      : "https://midgard.ninerealms.com";
   }
+
   const chain = isStagenet ? StagenetChain.Maya : Chain.Maya;
-  return midgardUrls[chain] || "https://midgard.mayachain.info";
+  // Use the configured URL if available, otherwise use defaults
+  if (midgardUrls[chain]) {
+    return midgardUrls[chain];
+  }
+  // Default URLs based on environment
+  return isStagenet ? "https://stagenet-midgard.mayachain.info" : "https://midgard.mayachain.info";
 }
 
 function getNameServiceBaseUrl(isThorchain = true) {

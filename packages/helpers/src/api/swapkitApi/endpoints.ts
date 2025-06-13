@@ -9,6 +9,14 @@ import {
   isGasAsset,
 } from "@swapkit/helpers";
 
+// Create extended RequestClient for swapkitApi with custom headers
+const getSwapkitApiRequestClient = () => {
+  const apiHeaders = SKConfig.get("apiHeaders");
+  return RequestClient.extend({
+    headers: apiHeaders.swapkitApi || {},
+  });
+};
+
 import {
   type BalanceResponse,
   type BrokerDepositChannelParams,
@@ -29,11 +37,13 @@ import {
 } from "./types";
 
 export function getTrackerDetails(json: TrackerParams) {
-  return RequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
+  return SwapkitApiRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
 }
 
 export async function getSwapQuote(json: QuoteRequest) {
-  const response = await RequestClient.post<QuoteResponse>(getApiUrl("/quote"), { json });
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
+  const response = await SwapkitApiRequestClient.post<QuoteResponse>(getApiUrl("/quote"), { json });
 
   if (response.error) {
     throw new SwapKitError("api_v2_server_error", { message: response.error });
@@ -59,26 +69,30 @@ export async function getChainBalance<T extends Chain>({
   address,
   scamFilter = true,
 }: { chain: T; address: string; scamFilter?: boolean }) {
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = getApiUrl(`/balance?chain=${chain}&address=${address}`);
-  const balanceResponse = await RequestClient.get<BalanceResponse>(url);
+  const balanceResponse = await SwapkitApiRequestClient.get<BalanceResponse>(url);
   const balances = Array.isArray(balanceResponse) ? balanceResponse : [];
 
   return scamFilter ? filterAssets(balances) : balances;
 }
 
 export function getTokenListProviders() {
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = getApiUrl("/providers");
-  return RequestClient.get<TokenListProvidersResponse>(url);
+  return SwapkitApiRequestClient.get<TokenListProvidersResponse>(url);
 }
 
 export function getTokenList(provider: ProviderName) {
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = getApiUrl(`/tokens?provider=${provider}`);
-  return RequestClient.get<TokensResponseV2>(url);
+  return SwapkitApiRequestClient.get<TokensResponseV2>(url);
 }
 
 export async function getPrice(body: PriceRequest) {
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = getApiUrl("/price");
-  const response = await RequestClient.post<PriceResponse>(url, {
+  const response = await SwapkitApiRequestClient.post<PriceResponse>(url, {
     json: body,
   });
 
@@ -96,8 +110,9 @@ export async function getPrice(body: PriceRequest) {
 }
 
 export async function getGasRate() {
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = getApiUrl("/gas");
-  const response = await RequestClient.get<GasResponse>(url);
+  const response = await SwapkitApiRequestClient.get<GasResponse>(url);
 
   try {
     const parsedResponse = GasResponseSchema.safeParse(response);
@@ -118,9 +133,10 @@ export async function getChainflipDepositChannel(body: BrokerDepositChannelParam
   if (!destinationAddress) {
     throw new SwapKitError("chainflip_broker_invalid_params");
   }
+  const SwapkitApiRequestClient = getSwapkitApiRequestClient();
   const url = SKConfig.get("integrations").chainflip?.brokerUrl || getApiUrl("/channel");
 
-  const response = await RequestClient.post<DepositChannelResponse>(url, { json: body });
+  const response = await SwapkitApiRequestClient.post<DepositChannelResponse>(url, { json: body });
 
   try {
     const parsedResponse = DepositChannelResponseSchema.safeParse(response);

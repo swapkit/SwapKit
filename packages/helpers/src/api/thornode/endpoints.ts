@@ -10,6 +10,14 @@ import type {
   THORNodeType,
 } from "./types";
 
+// Create extended RequestClient for thornode with custom headers
+const getThornodeRequestClient = () => {
+  const apiHeaders = SKConfig.get("apiHeaders");
+  return RequestClient.extend({
+    headers: apiHeaders.thornode || {},
+  });
+};
+
 function baseUrl(type?: THORNodeType) {
   const { isStagenet } = SKConfig.get("envs");
   const nodeUrls = SKConfig.get("nodeUrls");
@@ -35,23 +43,28 @@ function getNameServiceBaseUrl(type?: THORNodeType) {
 }
 
 export function getLastBlock<T extends THORNodeType = "thorchain">(type: T = "thorchain" as T) {
-  return RequestClient.get<LastBlockItem<T>[]>(`${baseUrl(type)}/lastblock`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<LastBlockItem<T>[]>(`${baseUrl(type)}/lastblock`);
 }
 
 export function getThorchainQueue(type?: THORNodeType) {
-  return RequestClient.get(`${baseUrl(type)}/queue`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get(`${baseUrl(type)}/queue`);
 }
 
 export function getNodes(type?: THORNodeType) {
-  return RequestClient.get<NodeItem[]>(`${baseUrl(type)}/nodes`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<NodeItem[]>(`${baseUrl(type)}/nodes`);
 }
 
 export function getMimirInfo(type?: THORNodeType) {
-  return RequestClient.get<MimirData>(`${baseUrl(type)}/mimir`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<MimirData>(`${baseUrl(type)}/mimir`);
 }
 
 export function getInboundAddresses(type?: THORNodeType) {
-  return RequestClient.get<InboundAddressesItem[]>(`${baseUrl(type)}/inbound_addresses`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<InboundAddressesItem[]>(`${baseUrl(type)}/inbound_addresses`);
 }
 
 export async function getTHORNodeTNSDetails({
@@ -59,7 +72,8 @@ export async function getTHORNodeTNSDetails({
   name,
 }: { type?: THORNodeType; name: string }): Promise<THORNodeTNSDetails> {
   try {
-    const result = await RequestClient.get<THORNodeTNSDetails>(
+    const ThornodeRequestClient = getThornodeRequestClient();
+    const result = await ThornodeRequestClient.get<THORNodeTNSDetails>(
       `${getNameServiceBaseUrl(type)}/${name}`,
     );
     return result;
@@ -85,12 +99,16 @@ export async function getTNSPreferredAsset({ type, tns }: { type?: THORNodeType;
 }
 
 export function getRunePoolInfo(type?: THORNodeType) {
-  return RequestClient.get<RunePoolInfo>(`${baseUrl(type)}/runepool`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<RunePoolInfo>(`${baseUrl(type)}/runepool`);
 }
 
 export function getRunePoolProviderInfo({
   type,
   thorAddress,
 }: { type?: THORNodeType; thorAddress: string }) {
-  return RequestClient.get<RunePoolProviderInfo>(`${baseUrl(type)}/rune_provider/${thorAddress}`);
+  const ThornodeRequestClient = getThornodeRequestClient();
+  return ThornodeRequestClient.get<RunePoolProviderInfo>(
+    `${baseUrl(type)}/rune_provider/${thorAddress}`,
+  );
 }

@@ -15,6 +15,8 @@ SwapKit's configuration is managed through the `SKConfig` store, which handles:
 - Environment settings
 - Integration configurations
 - Custom API implementations
+- Midgard API URLs for THORChain/Maya
+- Custom API headers for authentication
 
 ## Basic Configuration
 
@@ -35,6 +37,18 @@ const swapKit = createSwapKit({
     rpcUrls: {
       ETH: 'https://eth-mainnet.g.alchemy.com/v2/your-key',
       AVAX: 'https://api.avax.network/ext/bc/C/rpc'
+    },
+    // Custom Midgard URLs (optional)
+    midgardUrls: {
+      THOR: 'https://custom-midgard.com',
+      MAYA: 'https://custom-maya-midgard.com'
+    },
+    // Custom API headers for authentication
+    apiHeaders: {
+      midgard: {
+        'Authorization': 'Bearer your-token',
+        'X-Custom-Header': 'custom-value'
+      }
     }
   }
 });
@@ -97,6 +111,147 @@ const swapKit = createSwapKit({
       [Chain.Polygon]: 'https://polygon-rpc.com'
     }
   }
+});
+```
+
+## Midgard API Configuration
+
+Midgard provides historical data and liquidity information for THORChain and Maya. SwapKit allows you to configure custom Midgard endpoints and authentication headers.
+
+### Custom Midgard URLs
+
+Override the default Midgard endpoints:
+
+```typescript
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit({
+  config: {
+    midgardUrls: {
+      [Chain.THORChain]: 'https://your-midgard.com',
+      [Chain.Maya]: 'https://your-maya-midgard.com'
+    }
+  }
+});
+
+// Note: When isStagenet is true, SwapKit automatically uses stagenet URLs:
+// - THORChain: https://stagenet-midgard.ninerealms.com  
+// - Maya: https://stagenet-midgard.mayachain.info
+// You can override these by setting stagenet-specific URLs in midgardUrls
+```
+
+### API Headers for Authentication
+
+Add custom headers for Midgard API authentication:
+
+```typescript
+import { SKConfig } from '@swapkit/sdk';
+
+// Set headers for Midgard APIs
+SKConfig.setApiHeaders('midgard', {
+  'X-Client-ID': 'your-client-id'
+});
+
+// Headers can also be set during initialization
+const swapKit = createSwapKit({
+  config: {
+    apiHeaders: {
+      midgard: {
+        'X-Client-ID': 'your-client-id'
+      },
+      thornode: {
+        'X-Client-ID': 'your-client-id'
+      },
+      swapkitApi: {
+        'X-API-Key': 'additional-api-key'
+        // Note: x-api-key is automatically added from apiKeys.swapKit
+      }
+    }
+  }
+});
+```
+
+### Runtime Updates
+
+Update Midgard configuration at runtime:
+
+```typescript
+import { SKConfig, Chain } from '@swapkit/sdk';
+
+// Update a specific Midgard URL
+SKConfig.setMidgardUrl(Chain.THORChain, 'https://new-midgard-url.com');
+
+// Update Midgard headers
+SKConfig.setApiHeaders('midgard', {
+  'X-Client-ID': 'new-client-id'
+});
+
+// Get current Midgard configuration
+const midgardUrls = SKConfig.get('midgardUrls');
+const apiHeaders = SKConfig.get('apiHeaders');
+```
+
+## API Headers Configuration
+
+SwapKit supports custom headers for all API endpoints (Midgard, THORNode, and SwapKit API). This is useful for:
+- Authentication with private API instances
+- Custom client identification
+- Additional API key management
+
+### Supported APIs
+
+1. **Midgard API** (`midgard`): Historical data and liquidity information
+2. **THORNode API** (`thornode`): Direct blockchain node access
+3. **SwapKit API** (`swapkitApi`): Swap quotes, prices, and token data
+
+### Setting Headers
+
+```typescript
+import { SKConfig } from '@swapkit/sdk';
+
+// Set headers for all APIs
+SKConfig.set({
+  apiHeaders: {
+    midgard: {
+      'X-Client-ID': 'your-client-id'
+    },
+    thornode: {
+      'X-Client-ID': 'your-client-id'
+    },
+    swapkitApi: {
+      'X-API-Key': 'additional-api-key'
+    }
+  }
+});
+
+// Or set headers for individual APIs
+SKConfig.setApiHeaders('midgard', {
+  'X-Client-ID': 'new-client-id'
+});
+```
+
+### Common Use Cases
+
+#### Private Instance Access
+```typescript
+// Use your private Midgard instance
+SKConfig.setMidgardUrl(Chain.THORChain, 'https://your-midgard.com');
+SKConfig.setApiHeaders('midgard', {
+  'X-Client-ID': 'your-client-id'
+});
+
+// Access your private THORNode
+SKConfig.setApiHeaders('thornode', {
+  'X-Client-ID': 'your-client-id'
+});
+```
+
+#### Additional API Keys
+```typescript
+// Add additional API key for SwapKit API
+// Note: The primary API key is still set via apiKeys.swapKit
+SKConfig.setApiHeaders('swapkitApi', {
+  'X-API-Key': 'secondary-api-key'
 });
 ```
 
@@ -288,6 +443,26 @@ const config = {
     [Chain.Ethereum]: process.env.ETH_RPC_URL || 'https://eth.llamarpc.com',
     [Chain.Avalanche]: process.env.AVAX_RPC_URL || 'https://api.avax.network/ext/bc/C/rpc',
     [Chain.BinanceSmartChain]: process.env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org'
+  },
+  
+  // Custom Midgard URLs if using private instances
+  // Note: Stagenet URLs are automatically used when isStagenet is true
+  midgardUrls: process.env.MIDGARD_URL ? {
+    [Chain.THORChain]: process.env.MIDGARD_URL,
+    [Chain.Maya]: process.env.MAYA_MIDGARD_URL || process.env.MIDGARD_URL
+  } : undefined,
+  
+  // API headers for authenticated endpoints
+  apiHeaders: {
+    midgard: process.env.CLIENT_ID ? {
+      'X-Client-ID': process.env.CLIENT_ID
+    } : undefined,
+    thornode: process.env.CLIENT_ID ? {
+      'X-Client-ID': process.env.CLIENT_ID
+    } : undefined,
+    swapkitApi: process.env.ADDITIONAL_API_KEY ? {
+      'X-API-Key': process.env.ADDITIONAL_API_KEY
+    } : undefined
   }
 };
 
