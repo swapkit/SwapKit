@@ -1,5 +1,11 @@
 # @swapkit/wallet-xaman
 
+## 1.0.3
+
+### Patch Changes
+
+- [`33e257a`](https://github.com/thorswap/SwapKit/commit/33e257a440e8ada784a98bdbfe451df77e55c530) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes xaman api key usage
+
 ## 1.0.2
 
 ### Patch Changes

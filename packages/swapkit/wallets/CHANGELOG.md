@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`33e257a`](https://github.com/thorswap/SwapKit/commit/33e257a440e8ada784a98bdbfe451df77e55c530)]:
+  - @swapkit/wallet-xaman@1.0.3
+
 ## 2.1.27
 
 ### Patch Changes
