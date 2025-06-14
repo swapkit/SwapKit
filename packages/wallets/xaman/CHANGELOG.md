@@ -1,5 +1,11 @@
 # @swapkit/wallet-xaman
 
+## 1.0.2
+
+### Patch Changes
+
+- [`356921a`](https://github.com/thorswap/SwapKit/commit/356921a254f5b4eb9378312217632af35aa8e83c) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes xaman sign transaction
+
 ## 1.0.1
 
 ### Patch Changes
