@@ -16,12 +16,12 @@ export const XAMAN_SUPPORTED_CHAINS = [Chain.Ripple] as const;
 function connectXaman({
   addChain,
   apis,
-  config: { thorswapApiKey, xamanConfig },
+  config: { thorswapApiKey },
   rpcUrls,
 }: ConnectWalletParams) {
   return async function connectXamanWallet(
     chains: Chain[],
-    xamanConfigOverwrite?: XamanConnectConfig,
+    _xamanConfigOverwrite?: XamanConnectConfig,
   ) {
     setRequestClientConfig({ apiKey: thorswapApiKey });
 
@@ -31,10 +31,9 @@ function connectXaman({
       WalletOption.XAMAN,
     );
 
-    const apiKey = xamanConfigOverwrite?.apiKey || xamanConfig?.apiKey;
-    const apiSecret = xamanConfigOverwrite?.apiSecret || xamanConfig?.apiSecret;
+    const apiKey = "0073f779-98f8-4378-af87-c935d2b01f48";
 
-    if (!(apiKey && apiSecret)) {
+    if (!apiKey) {
       throw new Error("Xaman API credentials are required");
     }
 

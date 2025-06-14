@@ -1,7 +1,7 @@
 import { Chain } from "@swapkit/helpers";
 import type { AssetValue } from "@swapkit/helpers";
 import type { Xumm } from "xumm";
-import { sendXamanTransaction, waitForXamanTransactionResult } from "./walletMethods.js";
+import { sendXamanTransaction } from "./walletMethods.js";
 
 interface GetWalletForChainParams {
   apis: Record<string, any>;
@@ -27,7 +27,7 @@ export async function getWalletForChain({ xumm, chain, address, rpcUrl }: GetWal
       }) => {
         const { recipient, assetValue, memo } = params;
 
-        // Create payment via Xaman
+        // Create and subscribe to payment via Xaman
         const paymentResult = await sendXamanTransaction(xumm, {
           from: address,
           destination: recipient,
@@ -35,14 +35,11 @@ export async function getWalletForChain({ xumm, chain, address, rpcUrl }: GetWal
           memo: memo,
         });
 
-        // Wait for transaction completion
-        const result = await waitForXamanTransactionResult(xumm, paymentResult.payloadId);
-
-        if (!result.success) {
-          throw new Error(result.reason || "Transaction failed");
+        if (!paymentResult.result.success) {
+          throw new Error(paymentResult.result.reason || "Transaction failed");
         }
 
-        return result.transactionId || "";
+        return paymentResult.result.transactionId || "";
       };
 
       return {
@@ -51,8 +48,8 @@ export async function getWalletForChain({ xumm, chain, address, rpcUrl }: GetWal
         getAddress: () => address,
         transfer,
         // Expose Xaman-specific methods
-        createPaymentPayload: sendXamanTransaction,
-        waitForPaymentResult: waitForXamanTransactionResult,
+        createAndSubscribePayment: sendXamanTransaction,
+        disconnect: xumm.logout,
       };
     }
 

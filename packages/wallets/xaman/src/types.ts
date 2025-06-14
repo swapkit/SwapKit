@@ -2,7 +2,6 @@ import type { Chain } from "@swapkit/helpers";
 
 export interface XamanConfig {
   apiKey: string;
-  apiSecret: string;
 }
 
 export interface XamanConnectConfig extends XamanConfig {
@@ -22,6 +21,7 @@ export interface XamanPaymentResult {
   qrCode: string;
   deepLink: string;
   websocketUrl: string;
+  result: XamanTransactionResult;
 }
 
 export interface XamanTransactionResult {
@@ -29,10 +29,4 @@ export interface XamanTransactionResult {
   transactionId?: string;
   account?: string;
   reason?: string;
-}
-
-export interface XamanWalletState {
-  isConnected: boolean;
-  address: string | null;
-  config: XamanConfig | null;
 }
