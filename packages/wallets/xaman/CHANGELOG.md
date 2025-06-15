@@ -1,5 +1,11 @@
 # @swapkit/wallet-xaman
 
+## 1.0.4
+
+### Patch Changes
+
+- [`20c03ef`](https://github.com/thorswap/SwapKit/commit/20c03efc4e0e076560ef81de8615a1a219e9cc77) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes transaction id propagation
+
 ## 1.0.3
 
 ### Patch Changes
