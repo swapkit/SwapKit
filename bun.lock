@@ -129,7 +129,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.4.4",
+      "version": "2.4.5",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
@@ -149,7 +149,7 @@
     },
     "packages/swapkit/wallets": {
       "name": "@swapkit/wallets",
-      "version": "2.1.26",
+      "version": "2.1.27",
       "dependencies": {
         "@swapkit/wallet-bitget": "workspace:*",
         "@swapkit/wallet-coinbase": "workspace:*",
@@ -483,7 +483,7 @@
     },
     "packages/wallets/xaman": {
       "name": "@swapkit/wallet-xaman",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-ripple": "workspace:*",

@@ -22,10 +22,7 @@ export const connectXamanWallet = async (xumm: Xumm) => {
   }
 };
 
-export const createAndSubscribeXamanTransaction = async (
-  xumm: Xumm,
-  params: XamanPaymentParams,
-) => {
+export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParams) => {
   try {
     // Validate required parameters
     if (!(params.destination && params.amount && params.from)) {
@@ -52,65 +49,68 @@ export const createAndSubscribeXamanTransaction = async (
       }),
     };
 
-    // Create and subscribe to payload
-    const { created, resolved } = (await xumm.payload?.createAndSubscribe(transaction)) || {
-      created: null,
-      resolved: null,
-    };
+    // Create and subscribe to payload following the official example
+    const subscription = await xumm.payload?.createAndSubscribe(transaction, (event) => {
+      if ("signed" in event.data) {
+        // Return event.data to close subscription and resolve promise
+        return event.data; // { signed: true|false, payload_uuidv4: '...' }
+      }
+      return undefined;
+    });
 
-    if (!created) {
+    if (!subscription) {
       throw new SwapKitError("wallet_xaman_transaction_failed");
     }
 
-    // Running in web browser - open payload URL
-    if (created.pushed && created.next?.no_push_msg_received) {
-      // Open the no-push fallback URL
-      if (typeof window !== "undefined") {
-        window.open(created.next.no_push_msg_received);
-      }
-    } else if (created.next?.always) {
-      // Open the standard payload URL
-      if (typeof window !== "undefined") {
-        window.open(created.next.always);
-      }
+    const { created } = subscription;
+
+    // Handle payload presentation based on runtime environment
+    if (xumm.runtime?.xapp) {
+      xumm.xapp?.openSignRequest(created);
+    } else if (typeof window !== "undefined") {
+      const url =
+        created.pushed && created.next?.no_push_msg_received
+          ? created.next.no_push_msg_received
+          : created.next?.always;
+      if (url) window.open(url);
     }
 
-    // Wait for resolution
-    const resolveData = await resolved;
+    debugger;
+    // Wait until the user signed/rejected
+    const resolved = await subscription.resolved;
 
-    // Get transaction details after resolution
-    let transactionId = "";
-    let account = "";
-    let isSuccess = false;
-    let isRejected = false;
-
-    if (resolveData) {
-      // Get full payload details to extract transaction information
-      const payloadDetails = await xumm.payload?.get(created.uuid || "");
-
-      if (payloadDetails?.response) {
-        // A successful transaction will have txid and hex populated
-        isSuccess = !!(payloadDetails.response.txid && payloadDetails.response.hex);
-        // Check if the payload was explicitly rejected (no txid but resolved)
-        isRejected = !payloadDetails.response.txid && !!payloadDetails.response.resolved_at;
-        transactionId = payloadDetails.response.txid || "";
-        account = payloadDetails.response.account || "";
-      }
+    if (!resolved || typeof resolved !== "object" || !("signed" in resolved) || !resolved.signed) {
+      throw new SwapKitError("wallet_xaman_transaction_failed");
     }
 
-    // Return both creation info and result
+    // Fetch the full payload result using the UUID from resolved data
+    const payloadDetails = await xumm.payload?.get((resolved as any).payload_uuidv4);
+
+    if (!payloadDetails) {
+      throw new SwapKitError("wallet_xaman_monitoring_failed");
+    }
+
+    // Extract transaction ID from response
+    const transactionId = payloadDetails.response?.txid || "";
+    const account = payloadDetails.response?.account || "";
+
+    if (!transactionId) {
+      throw new SwapKitError("wallet_xaman_transaction_failed");
+    }
+
+    // Return comprehensive result
     return {
       // Initial payload info for QR codes, deep links, etc.
       payloadId: created.uuid || "",
       qrCode: created.refs?.qr_png || "",
       deepLink: created.next?.always || "",
       websocketUrl: created.refs?.websocket_status || "",
-      // Final transaction result
+      // Final transaction result - SUCCESS with tx hash
       result: {
-        success: isSuccess,
+        success: true,
         transactionId,
         account,
-        reason: isRejected ? "Transaction was rejected or cancelled by user" : undefined,
+        reason: undefined,
       },
     };
   } catch (error) {
@@ -121,6 +121,3 @@ export const createAndSubscribeXamanTransaction = async (
     throw new SwapKitError("wallet_xaman_transaction_failed");
   }
 };
-
-// Alias for the main function to maintain API compatibility
-export const sendXamanTransaction = createAndSubscribeXamanTransaction;

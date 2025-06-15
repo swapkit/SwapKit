@@ -35,11 +35,13 @@ export async function getWalletForChain({ xumm, chain, address, rpcUrl }: GetWal
           memo: memo,
         });
 
-        if (!paymentResult.result.success) {
+        // If not successful or no transaction ID, throw error
+        if (!paymentResult.result.success || !paymentResult.result.transactionId) {
           throw new Error(paymentResult.result.reason || "Transaction failed");
         }
 
-        return paymentResult.result.transactionId || "";
+        // Return the transaction ID string
+        return paymentResult.result.transactionId;
       };
 
       return {
