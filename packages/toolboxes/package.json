@@ -31,6 +31,7 @@
     "ethers": "6.14.3",
     "micro-key-producer": "0.7.6",
     "protobufjs": "7.5.3",
+    "tronweb": "6.0.3",
     "ts-pattern": "5.7.1",
     "xrpl": "4.3.0"
   },
@@ -78,6 +79,11 @@
       "default": "./dist/substrate/index.js",
       "require": "./dist/substrate/index.cjs",
       "types": "./src/substrate/index.ts"
+    },
+    "./tron": {
+      "default": "./dist/tron/index.js",
+      "require": "./dist/tron/index.cjs",
+      "types": "./src/tron/index.ts"
     },
     "./utxo": {
       "default": "./dist/utxo/index.js",

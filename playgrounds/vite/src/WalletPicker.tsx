@@ -71,8 +71,8 @@ export const availableChainsByWallet = {
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
+  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple, Chain.Tron],
   [WalletOption.CTRL]: AllChainsSupported,
-  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple],
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
@@ -155,7 +155,6 @@ export const availableChainsByWallet = {
     Chain.Polkadot,
   ],
   [WalletOption.EXODUS]: [Chain.Ethereum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Bitcoin],
-  [WalletOption.LEDGER_LIVE]: [],
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.COSMOSTATION]: [],
 };
@@ -308,7 +307,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
       chains.length > 0
         ? !chains.every((chain) =>
             // @ts-ignore
-            availableChainsByWallet[wallet].includes(chain),
+            availableChainsByWallet[wallet]?.includes(chain),
           )
         : false,
     [chains],
@@ -350,6 +349,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             Chain.Ripple,
             Chain.Solana,
             Chain.Radix,
+            Chain.Tron,
           ]
             .sort()
             .map((chain) => (

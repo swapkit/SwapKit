@@ -155,6 +155,9 @@ const errorCodes = {
   toolbox_ripple_asset_not_supported: 90503,
   toolbox_ripple_broadcast_error: 90504,
   toolbox_ripple_get_balance_error: 90505,
+  toolbox_tron_no_signer: 90601,
+  toolbox_tron_invalid_token_identifier: 90602,
+  toolbox_tron_token_transfer_failed: 90603,
   /**
    * Helpers
    */

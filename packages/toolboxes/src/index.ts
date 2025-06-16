@@ -15,6 +15,7 @@ import type { RadixToolbox } from "@swapkit/toolboxes/radix";
 import type { getRippleToolbox } from "@swapkit/toolboxes/ripple";
 import type { SolanaCreateTransactionParams, getSolanaToolbox } from "@swapkit/toolboxes/solana";
 import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
+import type { createTronToolbox } from "@swapkit/toolboxes/tron";
 import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 
 export async function getAddressValidator() {
@@ -26,9 +27,11 @@ export async function getAddressValidator() {
   const { getSolanaAddressValidator } = await import("@swapkit/toolboxes/solana");
   const { rippleValidateAddress } = await import("@swapkit/toolboxes/ripple");
   const { radixValidateAddress } = await import("@swapkit/toolboxes/radix");
+  const { getTronAddressValidator } = await import("@swapkit/toolboxes/tron");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
   const utxoValidateAddress = await getUTXOAddressValidator();
+  const tronValidateAddress = await getTronAddressValidator();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     const isValid = match(chain)
@@ -54,6 +57,7 @@ export async function getAddressValidator() {
       .with(Chain.Radix, () => radixValidateAddress(address))
       .with(Chain.Ripple, () => rippleValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
+      .with(Chain.Tron, () => tronValidateAddress(address))
       .otherwise(() => false);
 
     return isValid;
@@ -115,6 +119,12 @@ export async function getFeeEstimator<T extends keyof CreateTransactionParams>(c
         return (toolbox as Awaited<ReturnType<typeof getRippleToolbox>>).estimateTransactionFee();
       }
 
+      case Chain.Tron: {
+        return (toolbox as Awaited<ReturnType<typeof createTronToolbox>>).estimateTransactionFee(
+          params as CreateTransactionParams[Chain.Tron],
+        );
+      }
+
       default:
         return AssetValue.from({ chain });
     }
@@ -133,6 +143,7 @@ type Toolboxes = {
   [Chain.Radix]: Awaited<ReturnType<typeof RadixToolbox>>;
   [Chain.Ripple]: Awaited<ReturnType<typeof getRippleToolbox>>;
   [Chain.Solana]: Awaited<ReturnType<typeof getSolanaToolbox>>;
+  [Chain.Tron]: Awaited<ReturnType<typeof createTronToolbox>>;
 };
 
 type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } & {
@@ -145,6 +156,7 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
   [Chain.Radix]: Parameters<typeof RadixToolbox>[0];
   [Chain.Ripple]: Parameters<typeof getRippleToolbox>[0];
   [Chain.Solana]: Parameters<typeof getSolanaToolbox>[0];
+  [Chain.Tron]: Parameters<typeof createTronToolbox>[0];
 };
 
 type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams } & {
@@ -157,6 +169,7 @@ type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams }
   [Chain.Radix]: GenericCreateTransactionParams;
   [Chain.Ripple]: GenericCreateTransactionParams;
   [Chain.Solana]: SolanaCreateTransactionParams;
+  [Chain.Tron]: GenericCreateTransactionParams;
 };
 
 export async function getToolbox<T extends keyof Toolboxes>(
@@ -232,6 +245,14 @@ export async function getToolbox<T extends keyof Toolboxes>(
         params as Parameters<typeof getSolanaToolbox>[0],
       );
       return solanaToolbox as Toolboxes[T];
+    }
+
+    case Chain.Tron: {
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const tronToolbox = await createTronToolbox(
+        params as Parameters<typeof createTronToolbox>[0],
+      );
+      return tronToolbox as Toolboxes[T];
     }
 
     default:

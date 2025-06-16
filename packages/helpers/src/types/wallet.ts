@@ -4,6 +4,7 @@ import type { RadixWallet } from "@swapkit/toolboxes/radix";
 import type { RippleWallet } from "@swapkit/toolboxes/ripple";
 import type { SolanaWallet } from "@swapkit/toolboxes/solana";
 import type { SubstrateToolboxes } from "@swapkit/toolboxes/substrate";
+import type { TronWallet } from "@swapkit/toolboxes/tron";
 import type { UTXOToolboxes } from "@swapkit/toolboxes/utxo";
 import type { BrowserProvider } from "ethers";
 import type { Eip1193Provider } from "ethers";
@@ -108,6 +109,7 @@ export type FullWallet = BaseWallet<
       [Chain.Radix]: RadixWallet;
       [Chain.Ripple]: RippleWallet;
       [Chain.Solana]: SolanaWallet;
+      [Chain.Tron]: TronWallet;
     }
 >;
 

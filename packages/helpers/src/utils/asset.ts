@@ -139,6 +139,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       Chain.Kujira,
       Chain.Ripple,
       Chain.Polkadot,
+      Chain.Tron,
       (asset) => ({ identifier: `${asset}.${asset}`, decimal }),
     )
     .with(Chain.Radix, "XRD.XRD", () => ({ identifier: "XRD.XRD", decimal }))
