@@ -794,6 +794,32 @@ describe("AssetValue", () => {
           type: "Native",
         }),
       );
+
+      const trxAsset = AssetValue.from({ chain: Chain.Tron });
+      expect(trxAsset).toEqual(
+        expect.objectContaining({
+          chain: Chain.Tron,
+          decimal: BaseDecimal.TRX,
+          isGasAsset: true,
+          isSynthetic: false,
+          symbol: "TRX",
+          ticker: "TRX",
+          type: "Native",
+        }),
+      );
+
+      const trxAssetFromString = AssetValue.from({ asset: "TRX.TRX" });
+      expect(trxAssetFromString).toEqual(
+        expect.objectContaining({
+          chain: Chain.Tron,
+          decimal: BaseDecimal.TRX,
+          isGasAsset: true,
+          isSynthetic: false,
+          symbol: "TRX",
+          ticker: "TRX",
+          type: "Native",
+        }),
+      );
     });
 
     test("keep SOL address casing", () => {
@@ -808,6 +834,22 @@ describe("AssetValue", () => {
           isSynthetic: false,
           symbol: "USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
           ticker: "USDC",
+        }),
+      );
+    });
+
+    test("TRC20 tokens are not marked as gas assets", () => {
+      const tronUsdt = AssetValue.from({
+        asset: "TRX.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      });
+      expect(tronUsdt).toEqual(
+        expect.objectContaining({
+          address: "tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+          chain: Chain.Tron,
+          isGasAsset: false,
+          isSynthetic: false,
+          symbol: "USDT-tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+          ticker: "USDT",
         }),
       );
     });
