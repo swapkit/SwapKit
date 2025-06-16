@@ -1,5 +1,5 @@
 import { base64 } from "@scure/base";
-import { type DerivationPathArray, NetworkDerivationPath } from "@swapkit/helpers";
+import { type DerivationPathArray, NetworkDerivationPath, SwapKitError } from "@swapkit/helpers";
 
 import { CosmosLedgerInterface } from "../../interfaces/CosmosLedgerInterface";
 import type { GetAddressAndPubKeyResponse } from "../../types";
@@ -64,7 +64,7 @@ export class THORChainLedger extends CosmosLedgerInterface {
       rawTx,
     );
 
-    if (!this.pubKey) throw new Error("Public Key not found");
+    if (!this.pubKey) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 
     this.validateResponse(return_code, error_message);
 
@@ -85,7 +85,7 @@ export class THORChainLedger extends CosmosLedgerInterface {
       message,
     );
 
-    if (!this.pubKey) throw new Error("Public Key not found");
+    if (!this.pubKey) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 
     this.validateResponse(return_code, error_message);
 

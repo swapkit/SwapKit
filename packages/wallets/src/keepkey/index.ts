@@ -3,6 +3,7 @@ import {
   type DerivationPathArray,
   NetworkDerivationPath,
   SKConfig,
+  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -116,7 +117,7 @@ async function getWalletMethods({
       return utxoWalletMethods({ sdk, chain, derivationPath });
     }
     default:
-      throw new Error(`Chain not supported ${chain}`);
+      throw new SwapKitError("wallet_keepkey_chain_not_supported", { chain });
   }
 }
 
@@ -141,8 +142,7 @@ async function checkKeepkeyAvailability(spec = "http://localhost:1646/spec/swagg
   try {
     const response = await fetch(spec);
     return response.status === 200;
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
     return false;
   }
 }

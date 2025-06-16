@@ -1,6 +1,7 @@
 import {
   type DerivationPathArray,
   NetworkDerivationPath,
+  SwapKitError,
   derivationPathToString,
 } from "@swapkit/helpers";
 import { CosmosLedgerInterface } from "../interfaces/CosmosLedgerInterface";
@@ -41,7 +42,7 @@ export class CosmosLedger extends CosmosLedgerInterface {
       rawTx,
     );
 
-    if (!this.pubKey) throw new Error("Public Key not found");
+    if (!this.pubKey) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 
     this.validateResponse(return_code, error_message);
 
@@ -61,7 +62,7 @@ export class CosmosLedger extends CosmosLedgerInterface {
     const accountIndex = accounts.findIndex((account) => account.address === signerAddress);
 
     if (accountIndex === -1) {
-      throw new Error(`Address ${signerAddress} not found in wallet`);
+      throw new SwapKitError("wallet_ledger_address_not_found", { address: signerAddress });
     }
 
     const { encodeSecp256k1Signature, serializeSignDoc } = (await import("@cosmjs/amino")).default;

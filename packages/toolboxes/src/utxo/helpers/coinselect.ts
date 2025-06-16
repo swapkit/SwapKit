@@ -1,4 +1,4 @@
-import { Chain, type UTXOChain } from "@swapkit/helpers";
+import { Chain, SwapKitError, type UTXOChain } from "@swapkit/helpers";
 
 import {
   TX_OVERHEAD,
@@ -21,7 +21,7 @@ export const getDustThreshold = (chain: UTXOChain) => {
     case Chain.Dogecoin:
       return 100000;
     default:
-      throw new Error("Invalid Chain");
+      throw new SwapKitError("toolbox_utxo_not_supported", { chain });
   }
 };
 

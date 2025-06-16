@@ -10,6 +10,7 @@ import {
   type DerivationPathArray,
   FeeOption,
   NetworkDerivationPath,
+  SwapKitError,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
@@ -137,7 +138,8 @@ async function createTransaction({
   feeRate,
   sender,
 }: UTXOBuildTxParams) {
-  if (!bchValidateAddress(recipient)) throw new Error("Invalid address");
+  if (!bchValidateAddress(recipient))
+    throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipient });
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
     fetchTxHex: true,
@@ -159,7 +161,8 @@ async function createTransaction({
   });
 
   // .inputs and .outputs will be undefined if no solution was found
-  if (!(inputs && outputs)) throw new Error("Balance insufficient for transaction");
+  if (!(inputs && outputs))
+    throw new SwapKitError("toolbox_utxo_insufficient_balance", { sender, assetValue });
   const getNetwork = await getUtxoNetwork();
   const builder = new TransactionBuilder(getNetwork(chain)) as TransactionBuilderType;
 
@@ -204,8 +207,11 @@ function transfer({
     ...rest
   }: UTXOTransferParams) {
     const from = await signer?.getAddress();
-    if (!(signer && from)) throw new Error("Signer must provider address");
-    if (!recipient) throw new Error("Recipient address must be provided");
+    if (!(signer && from)) throw new SwapKitError("toolbox_utxo_no_signer");
+    if (!recipient)
+      throw new SwapKitError("toolbox_utxo_invalid_params", {
+        error: "Recipient address must be provided",
+      });
 
     const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey];
 
@@ -228,7 +234,8 @@ function transfer({
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
 async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
   const recipientCashAddress = toCashAddress(recipient);
-  if (!bchValidateAddress(recipientCashAddress)) throw new Error("Invalid address");
+  if (!bchValidateAddress(recipientCashAddress))
+    throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipientCashAddress });
 
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
@@ -259,7 +266,8 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
   });
 
   // .inputs and .outputs will be undefined if no solution was found
-  if (!(inputs && outputs)) throw new Error("Balance insufficient for transaction");
+  if (!(inputs && outputs))
+    throw new SwapKitError("toolbox_utxo_insufficient_balance", { sender, assetValue });
   const getNetwork = await getUtxoNetwork();
   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
 

@@ -1,4 +1,5 @@
 import { SKConfig, type SwapKit, type WalletOption, warnOnce } from "@swapkit/core";
+import { SwapKitError } from "@swapkit/helpers";
 import type { PluginName } from "@swapkit/plugins";
 import type { SKWalletsSupportedChains } from "@swapkit/wallets";
 import {
@@ -22,10 +23,10 @@ type SwapKitContextType<P extends PluginName[] = []> = {
 
 const SwapKitContext = createContext<SwapKitContextType>({
   connect: () => {
-    throw new Error("SwapKitProvider not found");
+    throw new SwapKitError("helpers_not_found_provider", { provider: "SwapKitProvider" });
   },
   getClient: () => {
-    throw new Error("SwapKitProvider not found");
+    throw new SwapKitError("helpers_not_found_provider", { provider: "SwapKitProvider" });
   },
 });
 
@@ -75,7 +76,7 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
 export function useSwapKit<P extends PluginName[]>() {
   const context = useContext(SwapKitContext);
   if (!context) {
-    throw new Error("SwapKitProvider not found");
+    throw new SwapKitError("helpers_not_found_provider", { provider: "SwapKitProvider" });
   }
 
   return context as SwapKitContextType<P>;

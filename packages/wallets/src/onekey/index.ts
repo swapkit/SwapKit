@@ -22,10 +22,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
   switch (chain) {
     case Chain.Bitcoin: {
       if (!window.$onekey?.btc) {
-        throw new SwapKitError({
-          errorKey: "wallet_onekey_not_found",
-          info: { chain },
-        });
+        throw new SwapKitError({ errorKey: "wallet_onekey_not_found", info: { chain } });
       }
 
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
@@ -38,8 +35,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
 
       let address = "";
 
-      const getProvider: () => Promise<BitcoinProvider | undefined> = () =>
-        new Promise((res) => res(window.$onekey?.btc as BitcoinProvider));
+      const getProvider = () => new Promise<BitcoinProvider>((res) => res(window.$onekey?.btc));
 
       const getAddressOptions: GetAddressOptions = {
         getProvider,

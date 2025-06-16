@@ -61,7 +61,7 @@ export const getLedgerTransport = async () => {
 
   const Transport = (await import("@ledgerhq/hw-transport-webusb")).default;
   const isSupported = await Transport.isSupported();
-  if (!isSupported) throw new Error("WebUSB not supported");
+  if (!isSupported) throw new SwapKitError("wallet_ledger_webusb_not_supported");
 
   const { DisconnectedDevice } = await import("@ledgerhq/errors");
 

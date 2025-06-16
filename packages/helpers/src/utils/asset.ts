@@ -53,7 +53,7 @@ async function getContractDecimals({ chain, to }: { chain: EVMChain; to: string 
 
     return Number.parseInt(BigInt(result || BaseDecimal[chain]).toString());
   } catch (error) {
-    console.error(error);
+    console.error(`Failed to fetch contract decimals for ${to} on ${chain}:`, error);
     return BaseDecimal[chain];
   }
 }
@@ -77,7 +77,7 @@ async function getRadixAssetDecimal(symbol: string) {
 
     return manager.divisibility.value.divisibility;
   } catch (error) {
-    console.error(error);
+    console.error(`Failed to fetch Radix asset decimal for ${symbol}:`, error);
     return BaseDecimal[Chain.Radix];
   }
 }

@@ -208,7 +208,7 @@ export function getEstimateGasPrices({
       try {
         const { gasPrice } = await provider.getFeeData();
 
-        if (!gasPrice) throw new Error("No fee data available");
+        if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
 
         return {
           [FeeOption.Average]: { gasPrice },
@@ -216,9 +216,9 @@ export function getEstimateGasPrices({
           [FeeOption.Fastest]: { gasPrice },
         };
       } catch (error) {
-        throw new Error(
-          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
-        );
+        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+          error: (error as any).msg ?? (error as any).toString(),
+        });
       }
     };
   }
@@ -231,7 +231,7 @@ export function getEstimateGasPrices({
         const price = gasPrice as bigint;
 
         if (!(maxFeePerGas && maxPriorityFeePerGas)) {
-          throw new Error("No fee data available");
+          throw new SwapKitError("toolbox_evm_no_fee_data");
         }
 
         return {
@@ -255,9 +255,9 @@ export function getEstimateGasPrices({
           },
         };
       } catch (error) {
-        throw new Error(
-          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
-        );
+        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+          error: (error as any).msg ?? (error as any).toString(),
+        });
       }
     };
   }
@@ -290,9 +290,9 @@ export function getEstimateGasPrices({
         [FeeOption.Fastest]: { gasPrice: gasPrice * 2n },
       };
     } catch (error) {
-      throw new Error(
-        `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
-      );
+      throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+        error: (error as any).msg ?? (error as any).toString(),
+      });
     }
   };
 }
@@ -314,7 +314,10 @@ function getCall({ provider, isEIP1559Compatible, signer, chain }: ToolboxWrapPa
     feeOption = FeeOption.Fast,
   }: CallParams): Promise<T> {
     const contractProvider = callProvider || provider;
-    if (!contractAddress) throw new Error("contractAddress must be provided");
+    if (!contractAddress)
+      throw new SwapKitError("toolbox_evm_invalid_params", {
+        error: "contractAddress must be provided",
+      });
 
     const isStateChanging = isStateChangingCall({ abi, funcName });
 

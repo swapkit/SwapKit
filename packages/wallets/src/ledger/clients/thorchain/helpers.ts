@@ -1,3 +1,4 @@
+import { SwapKitError } from "@swapkit/helpers";
 import {
   CLA,
   ERROR_CODE,
@@ -10,10 +11,10 @@ import {
 
 export function serializePathv1(path: number[]) {
   if (path == null || path.length < 3) {
-    throw new Error("Invalid path.");
+    throw new SwapKitError("wallet_ledger_invalid_params", { reason: "Path too short" });
   }
   if (path.length > 10) {
-    throw new Error("Invalid path. Length should be <= 10");
+    throw new SwapKitError("wallet_ledger_invalid_params", { reason: "Path too long" });
   }
   const buf = Buffer.alloc(1 + 4 * path.length);
   buf.writeUInt8(path.length, 0);
@@ -61,7 +62,9 @@ export async function signSendChunkv1(
 
 function compressPublicKey(publicKey: Buffer) {
   if (publicKey.length !== 65) {
-    throw new Error("decompressed public key length should be 65 bytes");
+    throw new SwapKitError("wallet_ledger_invalid_params", {
+      reason: "decompressed public key length should be 65 bytes",
+    });
   }
   const y = publicKey.slice(33, 65);
 
@@ -90,7 +93,9 @@ export async function publicKeyv1(app: any, data: Buffer) {
 
 export function serializePathv2(path: number[]) {
   if (!path || path.length !== 5) {
-    throw new Error("Invalid path.");
+    throw new SwapKitError("wallet_ledger_invalid_params", {
+      reason: "Path must be exactly 5 elements",
+    });
   }
 
   const buf = Buffer.alloc(20);

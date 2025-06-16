@@ -2,6 +2,7 @@ import {
   Chain,
   ChainId,
   ChainToChainId,
+  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -28,19 +29,19 @@ export const keplrWallet = createWallet({
 
           if (!keplrSupportedChainIds.includes(chainId)) {
             const chainConfig = chainRegistry.get(chainId);
-            if (!chainConfig) throw new Error(`Unsupported chain ${chain}`);
+            if (!chainConfig) throw new SwapKitError("wallet_keplr_chain_not_supported", { chain });
 
             await keplrClient.experimentalSuggestChain(chainConfig);
           }
 
           keplrClient?.enable(chainId);
           const signer = keplrClient?.getOfflineSignerOnlyAmino(chainId);
-          if (!signer) throw new Error("Could not load signer");
+          if (!signer) throw new SwapKitError("wallet_keplr_signer_not_found");
 
           const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
           const accounts = await signer.getAccounts();
-          if (!accounts?.[0]?.address) throw new Error("No accounts found");
+          if (!accounts?.[0]?.address) throw new SwapKitError("wallet_keplr_no_accounts");
 
           const [{ address }] = accounts;
           const toolbox = getCosmosToolbox(chain, { signer });

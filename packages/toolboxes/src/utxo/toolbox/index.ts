@@ -2,6 +2,7 @@ import {
   Chain,
   type ChainSigner,
   type DerivationPathArray,
+  SwapKitError,
   type UTXOChain,
 } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
@@ -65,7 +66,7 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
     }
 
     default:
-      throw new Error(`Chain ${chain} is not supported`);
+      throw new SwapKitError("toolbox_utxo_not_supported", { chain });
   }
 }
 

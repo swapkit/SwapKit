@@ -53,7 +53,7 @@ export function getSubstrateToolbox<T extends SubstrateChain>(chain: T, params?:
       return PolkadotToolbox(params);
     }
     default:
-      throw new Error(`Chain ${chain} is not supported`);
+      throw new SwapKitError("toolbox_substrate_not_supported", { chain });
   }
 }
 

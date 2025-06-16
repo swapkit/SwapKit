@@ -190,9 +190,9 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           );
 
           await skClient.connectKeepkey?.(chains, derivationPaths);
-          const kkKey = SKConfig.get("apiKeys").keepKey;
-          if (kkKey) {
-            localStorage.setItem("keepkeyApiKey", kkKey);
+          const { keepKey } = SKConfig.get("apiKeys");
+          if (keepKey) {
+            localStorage.setItem("keepkeyApiKey", keepKey);
           }
           return true;
         }

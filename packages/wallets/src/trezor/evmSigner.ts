@@ -74,7 +74,7 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
     };
 
     signTypedData(): Promise<string> {
-      throw new Error("Not implemented");
+      throw new SwapKitError("wallet_trezor_method_not_supported", { method: "signTypedData" });
     }
 
     signTransaction = async ({

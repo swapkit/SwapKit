@@ -1,6 +1,13 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
-import { AssetValue, Chain, ChainId, type CosmosChain, SKConfig } from "@swapkit/helpers";
+import {
+  AssetValue,
+  Chain,
+  ChainId,
+  type CosmosChain,
+  SKConfig,
+  SwapKitError,
+} from "@swapkit/helpers";
 
 import type { CosmosCreateTransactionParams } from "./thorchainUtils";
 
@@ -126,7 +133,7 @@ const getTransferMsgTypeByChain = (chain: CosmosChain) => {
     case Chain.Kujira:
       return "/cosmos.bank.v1beta1.MsgSend";
     default:
-      throw new Error("Unsupported chain");
+      throw new SwapKitError("toolbox_cosmos_not_supported", { chain });
   }
 };
 
@@ -149,7 +156,7 @@ export const cosmosCreateTransaction = async ({
   const accountOnChain = await client.getAccount(sender);
 
   if (!accountOnChain) {
-    throw new Error("Account does not exist");
+    throw new SwapKitError("toolbox_cosmos_account_not_found", { sender });
   }
 
   const gasAsset = AssetValue.from({ chain });

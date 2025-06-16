@@ -60,7 +60,7 @@ export const getProviderNameFromChain = (chain: Chain): string => {
     case Chain.Litecoin:
       return "litecoin";
     default:
-      throw new Error("Unsupported chain");
+      throw new SwapKitError("wallet_keepkey_chain_not_supported", { chain });
   }
 };
 

@@ -23,8 +23,12 @@ export default defineConfig({
           twoslashOptions: {
             handbookOptions: { noErrorValidation: true, showEmit: false },
             filterNode: (node) => {
-              for (const keyword of ["console", "error", "HTML"]) {
-                if (node.text?.includes(keyword)) return false;
+              if (node.type === "hover") {
+                for (const keyword of ["console", "(local var) error: unknown", "HTML"]) {
+                  if (node.text?.includes(keyword)) {
+                    return false;
+                  }
+                }
               }
 
               return true;
@@ -43,6 +47,7 @@ export default defineConfig({
       disable404Route: true,
       expressiveCode: false,
       lastUpdated: true,
+      pagination: true,
       plugins: [openApiPlugin, ...docsPlugins],
       title: "",
       logo: {
@@ -75,11 +80,11 @@ export default defineConfig({
             { label: "Create custom wallet", link: "/guides/create-wallet" },
           ],
         },
-        { label: "Actions", collapsed: true, autogenerate: { directory: "guides/actions" } },
+        { label: "Actions", autogenerate: { directory: "guides/actions" }, collapsed: true },
         {
           label: "Integrations",
-          collapsed: true,
           autogenerate: { directory: "guides/integrations" },
+          collapsed: true,
         },
         { label: "Others", autogenerate: { directory: "others" }, collapsed: true },
         ...openAPISidebarGroups,

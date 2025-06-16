@@ -131,7 +131,7 @@ const toAssetOnly = await swapKit.thorchain.withdraw({
 ### Check Liquidity Position
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+import { SwapKitApi } from '@swapkit/helpers/api';
 
 const thorAddress = swapKit.getAddress(Chain.THORChain);
 const position = await SwapKitApi.thorchainMidgard.getLiquidityPosition(thorAddress);

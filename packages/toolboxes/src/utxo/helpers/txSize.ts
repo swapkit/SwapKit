@@ -1,3 +1,4 @@
+import { SwapKitError } from "@swapkit/helpers";
 import { opcodes, script } from "bitcoinjs-lib";
 import type {
   TargetOutput,
@@ -60,7 +61,7 @@ export const getScriptTypeForAddress = (address: string) => {
   ) {
     return UTXOScriptType.P2PKH;
   }
-  throw new Error("Invalid address");
+  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
 };
 
 export const calculateTxSize = ({ inputs, outputs, feeRate }: UTXOCalculateTxSizeParams) => {

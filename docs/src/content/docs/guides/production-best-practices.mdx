@@ -21,7 +21,7 @@ const quote = await fetch('/api/swap-quote', {
 }).then(r => r.json());
 
 // Backend API route
-import { SwapKitApi } from '@swapkit/sdk';
+import { SwapKitApi } from '@swapkit/helpers/api';
 
 export async function POST(request: Request) {
   const params = await request.json();
@@ -175,7 +175,10 @@ const cache = new SwapKitCache();
 const price = await cache.get(
   `price_${asset}`,
   'price',
-  () => SwapKitApi.getPrice(asset)
+  async () => {
+    const { SwapKitApi } = await import('@swapkit/helpers/api');
+    return SwapKitApi.getPrice(asset);
+  }
 );
 ```
 

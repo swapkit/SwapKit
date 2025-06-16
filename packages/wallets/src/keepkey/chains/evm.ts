@@ -4,6 +4,7 @@ import {
   ChainToChainId,
   type DerivationPathArray,
   NetworkDerivationPath,
+  SwapKitError,
   derivationPathToString,
 } from "@swapkit/helpers";
 import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
@@ -35,7 +36,7 @@ export class KeepKeySigner extends AbstractSigner {
   }
 
   signTypedData(): Promise<string> {
-    throw new Error("this method is not implemented");
+    throw new SwapKitError("wallet_keepkey_method_not_supported", { method: "signTypedData" });
   }
 
   getAddress = async () => {
@@ -62,14 +63,21 @@ export class KeepKeySigner extends AbstractSigner {
     gasPrice,
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
   }: TransactionRequest) => {
-    if (!to) throw new Error("Missing to address");
-    if (!gasLimit) throw new Error("Missing gasLimit");
-    if (!data) throw new Error("Missing data");
+    if (!to)
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing to address" });
+    if (!gasLimit)
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing gasLimit" });
+    if (!data) throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing data" });
 
     const isEIP1559 = !!((maxFeePerGas || maxPriorityFeePerGas) && !gasPrice);
-    if (isEIP1559 && !maxFeePerGas) throw new Error("Missing maxFeePerGas");
-    if (isEIP1559 && !maxPriorityFeePerGas) throw new Error("Missing maxFeePerGas");
-    if (!(isEIP1559 || gasPrice)) throw new Error("Missing gasPrice");
+    if (isEIP1559 && !maxFeePerGas)
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing maxFeePerGas" });
+    if (isEIP1559 && !maxPriorityFeePerGas)
+      throw new SwapKitError("wallet_keepkey_invalid_params", {
+        reason: "Missing maxPriorityFeePerGas",
+      });
+    if (!(isEIP1559 || gasPrice))
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing gasPrice" });
 
     const { toHexString } = await import("@swapkit/toolboxes/evm");
 
@@ -100,7 +108,7 @@ export class KeepKeySigner extends AbstractSigner {
   };
 
   sendTransaction = async (tx: TransactionRequest): Promise<any> => {
-    if (!this.provider) throw new Error("No provider set");
+    if (!this.provider) throw new SwapKitError("wallet_keepkey_no_provider");
 
     const signedTxHex = await this.signTransaction(tx);
 

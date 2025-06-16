@@ -1,3 +1,4 @@
+import { match } from "ts-pattern";
 import { Chain } from "../types/chains";
 import { MemoType } from "../types/sdk";
 
@@ -95,17 +96,10 @@ function getPoolIdentifier({
   chain: Chain;
   symbol: string;
 }) {
-  switch (chain) {
-    case Chain.Bitcoin:
-    case Chain.Dogecoin:
-    case Chain.Litecoin:
-      return chain.slice(0, 1).toLowerCase();
-    case Chain.BitcoinCash:
-      return "c";
-
-    default:
-      return `${chain}.${symbol}`;
-  }
+  return match(chain)
+    .with(Chain.Bitcoin, Chain.Dogecoin, Chain.Litecoin, () => chain.slice(0, 1).toLowerCase())
+    .with(Chain.BitcoinCash, () => "c")
+    .otherwise(() => `${chain}.${symbol}`);
 }
 
 type WithAffiliate<T extends {}> = T & {

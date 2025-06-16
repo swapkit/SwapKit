@@ -5,6 +5,7 @@ import {
   type DerivationPathArray,
   FeeOption,
   type GenericTransferParams,
+  SwapKitError,
   type UTXOChain,
   derivationPathToString,
 } from "@swapkit/helpers";
@@ -101,8 +102,14 @@ export const utxoWalletMethods = async ({
     memo,
     ...rest
   }: GenericTransferParams) => {
-    if (!walletAddress) throw new Error("From address must be provided");
-    if (!recipient) throw new Error("Recipient address must be provided");
+    if (!walletAddress)
+      throw new SwapKitError("wallet_keepkey_invalid_params", {
+        reason: "From address must be provided",
+      });
+    if (!recipient)
+      throw new SwapKitError("wallet_keepkey_invalid_params", {
+        reason: "Recipient address must be provided",
+      });
 
     const createTxMethod =
       chain === Chain.BitcoinCash

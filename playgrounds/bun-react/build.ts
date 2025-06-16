@@ -165,7 +165,6 @@ const outputTable = result.outputs.map((output) => ({
   Size: formatFileSize(output.size),
 }));
 
-// biome-ignore lint/suspicious/noConsole: skip
 console.table(outputTable);
 const buildTime = (end - start).toFixed(2);
 
