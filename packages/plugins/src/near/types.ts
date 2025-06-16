@@ -53,3 +53,15 @@ export type NearSwapResponse = {
   srcChain: string;
   srcToken: string;
 };
+
+export type NearNameInfo = {
+  owner: string;
+  price?: string;
+  expiresAt?: string;
+  registeredAt?: string;
+};
+
+export type NearNameRegistrationParams = {
+  name: string;
+  publicKey?: string;
+};

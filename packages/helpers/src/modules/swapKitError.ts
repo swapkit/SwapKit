@@ -329,19 +329,30 @@ const errorCodes = {
   /**
    * Toolboxes - Near
    */
-  toolbox_near_no_signer: 50901,
-  toolbox_near_invalid_address: 50902,
-  toolbox_near_invalid_amount: 50903,
-  toolbox_near_transfer_failed: 50904,
-  toolbox_near_access_key_error: 50905,
-  toolbox_near_no_rpc_url: 50906,
-  toolbox_near_missing_contract_address: 50907,
-  toolbox_near_empty_batch: 50908,
-  toolbox_near_balance_failed: 50909,
+  toolbox_near_no_signer: 90601,
+  toolbox_near_invalid_address: 90602,
+  toolbox_near_invalid_amount: 90603,
+  toolbox_near_transfer_failed: 90604,
+  toolbox_near_access_key_error: 90605,
+  toolbox_near_no_rpc_url: 90606,
+  toolbox_near_empty_batch: 90607,
+  toolbox_near_balance_failed: 90608,
+  toolbox_near_invalid_name: 90609,
+  toolbox_near_missing_contract_address: 90610,
+  toolbox_near_no_account: 90611,
+  toolbox_near_invalid_gas_params: 90612,
   /**
    * Toolboxes - General
    */
   toolbox_not_supported: 59901,
+  /**
+   * NEAR Plugin
+   */
+  plugin_near_invalid_name: 41001,
+  plugin_near_no_connection: 41002,
+  plugin_near_name_unavailable: 41003,
+  plugin_near_registration_failed: 41004,
+  plugin_near_transfer_failed: 41005,
   /**
    * SwapKit API
    */

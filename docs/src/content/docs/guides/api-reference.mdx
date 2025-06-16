@@ -699,12 +699,38 @@ if (userPrefersTestnet) {
 }
 ```
 
+### Fee Multiplier System
+
+SwapKit provides a unified fee multiplier system across all chains:
+
+```typescript
+import { FeeOption, getFeeMultiplier } from '@swapkit/sdk';
+
+// Get fee multiplier for different options
+const slowMultiplier = getFeeMultiplier(FeeOption.Slow);      // 0.75x
+const avgMultiplier = getFeeMultiplier(FeeOption.Average);    // 1x (default)
+const fastMultiplier = getFeeMultiplier(FeeOption.Fast);      // 1.5x
+const fastestMultiplier = getFeeMultiplier(FeeOption.Fastest); // 2.25x
+
+// Apply to fee calculations
+const baseFee = 1000000; // Base fee in smallest unit
+const fastFee = Math.floor(baseFee * getFeeMultiplier(FeeOption.Fast));
+
+// Use in transfers
+await wallet.transfer({
+  recipient: "0x...",
+  assetValue: AssetValue.from({ chain: Chain.Ethereum, value: "1" }),
+  feeOptionKey: FeeOption.Fast // Automatically applies 1.5x multiplier
+});
+```
+
 ### Key Features
 
 - **Automatic Stagenet Support**: When `isStagenet` is true, appropriate stagenet URLs are used automatically
 - **Custom Headers**: Set authentication headers for Midgard, THORNode, and SwapKit APIs
 - **Runtime Updates**: All configuration can be updated dynamically without recreating SwapKit instances
 - **Environment-Based Config**: Easily switch between development, staging, and production environments
+- **Unified Fee System**: Consistent fee multipliers across all supported chains
 
 ## Next Steps
 

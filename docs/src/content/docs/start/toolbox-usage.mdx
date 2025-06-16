@@ -27,6 +27,7 @@ SwapKit provides specialized toolboxes for different blockchain ecosystems:
 - **Substrate Toolbox**: For Polkadot, Chainflip, etc.
 - **Radix Toolbox**: For Radix ecosystem
 - **Ripple Toolbox**: For XRP Ledger
+- **NEAR Toolbox**: For NEAR Protocol
 
 Each toolbox can be imported individually, which is preferred for frontend applications to minimize bundle size.
 
@@ -614,6 +615,86 @@ async function getRippleData() {
   const isValid = rippleValidateAddress(address);
 
   return { balance, isValid };
+}
+```
+
+## NEAR Toolbox
+
+### Importing and Initializing
+
+```ts twoslash
+// @noErrorValidation
+import { getNearToolbox } from "@swapkit/sdk";
+
+// Initialize with mnemonic phrase (creates implicit account)
+const nearToolbox = await getNearToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+  // Optional: custom derivation path
+  derivationPath: [44, 397, 0, 0, 0]
+});
+
+// Or with existing signer and account
+const nearWithAccount = await getNearToolbox({
+  signer: nearSigner,
+  accountId: "alice.near"
+});
+```
+
+### Transfers and Balances
+
+```ts twoslash
+// @noErrorValidation
+import { AssetValue, Chain, FeeOption, getNearToolbox } from "@swapkit/sdk";
+
+async function nearOperations() {
+  const nearToolbox = await getNearToolbox({
+    phrase: "your twelve word mnemonic phrase here"
+  });
+
+  // Get account ID (implicit accounts are hex strings)
+  const accountId = nearToolbox.getAddress();
+  
+  // Transfer NEAR
+  const txHash = await nearToolbox.transfer({
+    recipient: "receiver.near",
+    assetValue: AssetValue.from({ chain: Chain.Near, value: "1.5" }),
+    memo: "Payment"
+  });
+
+  // Get balance
+  const balance = await nearToolbox.getBalance(accountId);
+  
+  return { txHash, balance };
+}
+```
+
+### Contract Interactions
+
+```ts twoslash
+// @noErrorValidation
+import { getNearToolbox } from "@swapkit/sdk";
+
+async function nearContracts() {
+  const nearToolbox = await getNearToolbox({
+    phrase: "your twelve word mnemonic phrase here"
+  });
+
+  // Call a view function (read-only)
+  const result = await nearToolbox.viewFunction(
+    "contract.near",
+    "get_value",
+    { key: "myKey" }
+  );
+
+  // Call a change function
+  const txHash = await nearToolbox.callFunction({
+    contractId: "contract.near",
+    methodName: "set_value",
+    args: { key: "myKey", value: "myValue" },
+    attachedDeposit: "1000000000000000000000000" // 1 NEAR
+  });
+
+  return { result, txHash };
 }
 ```
 

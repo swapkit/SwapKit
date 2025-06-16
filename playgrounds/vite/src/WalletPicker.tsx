@@ -71,7 +71,13 @@ export const availableChainsByWallet = {
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
-  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple, Chain.Tron],
+  [WalletOption.KEYSTORE]: [
+    ...AllChainsSupported,
+    Chain.Polkadot,
+    Chain.Ripple,
+    Chain.Tron,
+    Chain.Near,
+  ],
   [WalletOption.CTRL]: AllChainsSupported,
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
@@ -350,6 +356,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             Chain.Solana,
             Chain.Radix,
             Chain.Tron,
+            Chain.Near,
           ]
             .sort()
             .map((chain) => (

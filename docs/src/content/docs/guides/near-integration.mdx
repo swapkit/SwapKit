@@ -1,0 +1,454 @@
+---
+title: NEAR Integration
+description: Complete guide to integrating NEAR Protocol with SwapKit
+---
+
+import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
+
+This guide covers the NEAR Protocol integration in SwapKit, including the NEAR toolbox for direct blockchain operations and the NEAR plugin for enhanced features like NEAR Names service.
+
+## Overview
+
+The NEAR integration provides:
+
+- **NEAR Toolbox**: Core blockchain operations (transfers, balance queries, contract interactions)
+- **NEAR Plugin**: NEAR Names service and cross-chain swaps via NEAR
+- **NEP-141 Support**: Full support for NEAR's fungible token standard
+- **Implicit Accounts**: Support for NEAR's unique implicit account system
+- **Contract Factory**: Type-safe contract interactions
+
+## Getting Started
+
+### Installation
+
+```bash
+# Using the full SDK (recommended)
+npm install @swapkit/sdk
+
+# Or individual packages for smaller bundles  
+npm install @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+import { createSwapKit } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+// Access NEAR functionality
+const nearWallet = await swapKit.getWallet(Chain.Near);
+```
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+import { getNearToolbox } from '@swapkit/toolboxes/near';
+
+// Initialize with mnemonic phrase
+const nearToolbox = await getNearToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+  // Optional: custom derivation path
+  derivationPath: [44, 397, 0, 0, 0]
+});
+
+// Or with existing signer
+const nearToolbox = await getNearToolbox({
+  signer: customNearSigner,
+  accountId: "your-account.near"
+});
+```
+</TabItem>
+</Tabs>
+
+## NEAR Toolbox
+
+### Account Management
+
+NEAR supports two types of accounts:
+- **Named accounts**: Human-readable names like `alice.near`
+- **Implicit accounts**: 64-character hex strings derived from public keys
+
+```typescript
+// Create implicit account from mnemonic
+const toolbox = await getNearToolbox({
+  phrase: "your mnemonic phrase"
+});
+
+// Get account ID (implicit accounts are hex representation of public key)
+const accountId = toolbox.getAddress();
+console.log(accountId); // e.g., "8fac9c5b1f4e8b4c9a7d2e6f1a3b5c7d9e2f4a6b8c1d3e5f7a9b1c3d5e7f9a1b"
+
+// Get public key
+const publicKey = await toolbox.getPublicKey();
+console.log(publicKey); // e.g., "ed25519:7PGsQbUgqmgB5jcbYKGqDptL1RchLmaPJdTTKgNBpqtv"
+```
+
+### Native NEAR Transfers
+
+```typescript
+import { AssetValue } from '@swapkit/sdk';
+
+// Transfer NEAR tokens
+const txHash = await toolbox.transfer({
+  recipient: "receiver.near",
+  assetValue: AssetValue.from({ 
+    chain: Chain.Near, 
+    value: "1.5" // 1.5 NEAR
+  }),
+  memo: "Payment for services"
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### NEP-141 Token Transfers
+
+NEP-141 is NEAR's fungible token standard, similar to ERC-20 on Ethereum.
+
+```typescript
+// Transfer USDC tokens
+const usdcTransfer = await toolbox.transfer({
+  recipient: "receiver.near",
+  assetValue: AssetValue.from({
+    chain: Chain.Near,
+    symbol: "USDC",
+    address: "usdc.near", // Token contract
+    value: "100" // 100 USDC
+  })
+});
+
+// Advanced NEP-141 operations
+const usdcToken = await toolbox.nep141("usdc.near");
+
+// Get token metadata
+const metadata = await usdcToken.getMetadata();
+console.log(metadata); // { name, symbol, decimals, icon }
+
+// Check storage balance (required for NEP-141)
+const storage = await usdcToken.getStorageBalance("receiver.near");
+if (!storage || storage.total === "0") {
+  // Register storage for new recipient
+  await usdcToken.storageDeposit({
+    accountId: "receiver.near",
+    registrationOnly: true
+  });
+}
+
+// Transfer with all checks
+await usdcToken.ftTransfer({
+  receiverId: "receiver.near",
+  amount: "100000000", // Amount in base units
+  memo: "USDC transfer"
+});
+```
+
+### Smart Contract Interactions
+
+The NEAR toolbox provides multiple ways to interact with smart contracts:
+
+#### Direct Function Calls
+
+```typescript
+// Call a contract function
+const result = await toolbox.callFunction({
+  contractId: "my-contract.near",
+  methodName: "set_value",
+  args: { key: "name", value: "Alice" },
+  attachedDeposit: "1000000000000000000000000" // 1 NEAR in yoctoNEAR
+});
+
+// View function (read-only, no gas required)
+const value = await toolbox.viewFunction(
+  "my-contract.near",
+  "get_value",
+  { key: "name" }
+);
+```
+
+#### Typed Contract Interface
+
+For better type safety and developer experience:
+
+```typescript
+// Define contract interface
+const contractInterface = {
+  contractId: "my-dapp.near",
+  viewMethods: ["get_balance", "get_user_info"],
+  changeMethods: ["deposit", "withdraw", "transfer"]
+};
+
+// Create typed contract
+const contract = await toolbox.createContract(contractInterface);
+
+// Now you have type-safe methods
+const balance = await contract.get_balance({ account: "alice.near" });
+const txResult = await contract.deposit({}, "1000000000000000000000000"); // 1 NEAR
+```
+
+### Sub-Account Management
+
+NEAR allows creating sub-accounts under your main account:
+
+```typescript
+// Create a sub-account
+const subAccountId = `sub.${accountId}.near`;
+const subAccountPubKey = "ed25519:..."; // Public key for the sub-account
+
+const txHash = await toolbox.createSubAccount(
+  subAccountId,
+  subAccountPubKey,
+  "5" // Initial balance in NEAR
+);
+
+console.log(`Created sub-account: ${subAccountId}`);
+```
+
+### Gas Estimation
+
+NEAR uses a fixed gas price determined by the network, so there's no concept of fee priority:
+
+```typescript
+// Simple transfer fee estimation
+const transferFee = await toolbox.estimateTransactionFee({
+  recipient: "receiver.near",
+  assetValue: AssetValue.from({ chain: Chain.Near, value: "1" })
+});
+
+// Advanced gas estimation for contracts
+import { estimateGas } from '@swapkit/toolboxes/near';
+
+const gasEstimate = await estimateGas({
+  sender: accountId,
+  receiver: "contract.near",
+  actions: [{
+    type: "FunctionCall",
+    methodName: "complex_operation",
+    args: { /* ... */ },
+    attachedDeposit: "0"
+  }]
+}, account);
+
+console.log(`Estimated gas: ${gasEstimate} TGas`);
+```
+
+## NEAR Plugin
+
+The NEAR plugin extends SwapKit with NEAR-specific features:
+
+### NEAR Names Service
+
+NEAR Names is a decentralized naming service similar to ENS on Ethereum:
+
+```typescript
+import { SwapKit } from '@swapkit/sdk';
+
+const swapKit = SwapKit.create();
+
+// Check if a name is available
+const isAvailable = await swapKit.nearNames.isAvailable("myname");
+
+// Register a new NEAR name
+if (isAvailable) {
+  const txHash = await swapKit.nearNames.register({
+    name: "myname",
+    // Optional: specify a different public key
+    publicKey: "ed25519:..."
+  });
+  console.log(`Registered myname.near: ${txHash}`);
+}
+
+// Resolve a name to get the owner
+const owner = await swapKit.nearNames.resolve("alice");
+console.log(`alice.near is owned by: ${owner}`);
+
+// Get detailed information about a name
+const info = await swapKit.nearNames.getInfo("alice");
+console.log(info); // { owner, publicKey, ... }
+
+// Lookup all names owned by an account
+const names = await swapKit.nearNames.lookupNames("8fac9c5b1f4e8b4c9a7d2e6f1a3b5c7d9e2f4a6b8c1d3e5f7a9b1c3d5e7f9a1b");
+console.log(`Names owned: ${names}`); // ["alice.near", "bob.near"]
+
+// Transfer ownership of a name
+const transferTx = await swapKit.nearNames.transfer(
+  "myname",
+  "new-owner.near"
+);
+```
+
+### Cross-Chain Swaps via NEAR
+
+The NEAR plugin supports cross-chain swaps using NEAR as an intermediary:
+
+```typescript
+// Get swap quote
+const quote = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "0.1",
+  buyAsset: "NEAR.NEAR",
+  senderAddress: "0x...",
+  recipientAddress: "receiver.near"
+});
+
+// Execute swap
+const swapTx = await swapKit.swap({
+  route: quote.routes[0],
+  recipient: "receiver.near"
+});
+```
+
+## Fee Rate Configuration
+
+NEAR Protocol uses a fixed gas price determined by the network validators. Unlike some other chains, NEAR doesn't support fee priority or multipliers - all transactions pay the same gas price:
+
+```typescript
+// Fee estimation returns the actual network cost
+const fee = await toolbox.estimateTransactionFee({
+  recipient: "receiver.near",
+  assetValue: AssetValue.from({ chain: Chain.Near, value: "1" })
+});
+
+// The fee is calculated as:
+// totalGas = baseTransferCost + receiptCreationCost
+// totalFee = totalGas * currentGasPrice
+// where currentGasPrice is set by the network
+```
+
+## Error Handling
+
+NEAR operations can throw specific errors that should be handled:
+
+```typescript
+import { SwapKitError } from '@swapkit/sdk';
+
+try {
+  await toolbox.transfer({ /* ... */ });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_near_no_signer":
+        console.error("No signer available");
+        break;
+      case "toolbox_near_invalid_address":
+        console.error("Invalid NEAR address");
+        break;
+      case "toolbox_near_invalid_amount":
+        console.error("Invalid transfer amount");
+        break;
+      case "toolbox_near_transfer_failed":
+        console.error("Transfer failed:", error.cause);
+        break;
+      case "plugin_near_invalid_name":
+        console.error("Invalid NEAR name format");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Advanced Features
+
+### Custom Signer Implementation
+
+You can provide your own signer implementation:
+
+```typescript
+import { KeyPair } from 'near-api-js/lib/utils';
+
+const customSigner = {
+  keyPair: KeyPair.fromString("ed25519:..."),
+  
+  async getPublicKey() {
+    return this.keyPair.getPublicKey();
+  },
+  
+  async signMessage(message: Uint8Array) {
+    const signature = this.keyPair.sign(message);
+    return { signature: signature.signature };
+  }
+};
+
+const toolbox = await getNearToolbox({
+  signer: customSigner,
+  accountId: "custom.near"
+});
+```
+
+### Working with Test Networks
+
+To use NEAR testnet:
+
+```typescript
+import { SKConfig } from '@swapkit/sdk';
+
+// Configure for testnet
+SKConfig.setEnv('isStagenet', true);
+SKConfig.setRpcUrl(Chain.Near, 'https://rpc.testnet.near.org');
+
+// Now all NEAR operations will use testnet
+const toolbox = await getNearToolbox({ phrase: "..." });
+```
+
+### Gas Helper Functions
+
+The toolbox provides utility functions for gas calculations:
+
+```typescript
+import { tgasToGas, gasToTGas } from '@swapkit/toolboxes/near';
+
+// Convert TGas to gas units
+const gasUnits = tgasToGas("30"); // 30 TGas = "30000000000000"
+
+// Convert gas units to TGas
+const tgas = gasToTGas("30000000000000"); // "30"
+```
+
+## Best Practices
+
+1. **Always validate addresses** before sending transactions:
+   ```typescript
+   import { validateNearAddress } from '@swapkit/toolboxes/near';
+   
+   if (!validateNearAddress(recipient)) {
+     throw new Error("Invalid NEAR address");
+   }
+   ```
+
+2. **Check storage deposits** for NEP-141 tokens:
+   ```typescript
+   const token = await toolbox.nep141("token.near");
+   const storage = await token.getStorageBalance(recipient);
+   
+   if (!storage || BigInt(storage.total) === 0n) {
+     await token.storageDeposit({ accountId: recipient });
+   }
+   ```
+
+3. **Use appropriate gas amounts** for contract calls:
+   ```typescript
+   // Simple calls: 30 TGas
+   // Complex operations: 100-300 TGas
+   const gas = tgasToGas("100"); // For complex operations
+   ```
+
+4. **Handle implicit accounts** carefully:
+   ```typescript
+   // Implicit accounts need to be funded before they can be used
+   const implicitAccount = "8fac9c5b1f4e8b4c9a7d2e6f1a3b5c7d9e2f4a6b8c1d3e5f7a9b1c3d5e7f9a1b";
+   
+   try {
+     const balance = await toolbox.getBalance(implicitAccount);
+   } catch {
+     // Account doesn't exist yet - needs initial funding
+   }
+   ```
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) using NEAR
+- Explore [Advanced Features](/guides/advanced-features) for complex integrations
+- Check the [API Reference](/guides/api-reference) for all available methods

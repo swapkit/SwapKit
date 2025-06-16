@@ -1,5 +1,6 @@
 import type { CosmosWallets, ThorchainWallets } from "@swapkit/toolboxes/cosmos";
 import type { EVMToolboxes } from "@swapkit/toolboxes/evm";
+import type { NearWallet } from "@swapkit/toolboxes/near";
 import type { RadixWallet } from "@swapkit/toolboxes/radix";
 import type { RippleWallet } from "@swapkit/toolboxes/ripple";
 import type { SolanaWallet } from "@swapkit/toolboxes/solana";
@@ -110,6 +111,7 @@ export type FullWallet = BaseWallet<
       [Chain.Ripple]: RippleWallet;
       [Chain.Solana]: SolanaWallet;
       [Chain.Tron]: TronWallet;
+      [Chain.Near]: NearWallet;
     }
 >;
 

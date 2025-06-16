@@ -1,4 +1,4 @@
 {
   "extends": "../../tools/typescript/base.json",
-  "include": ["src", "./build.ts", "hardhat.config.js"]
+  "include": ["src", "./build.ts", "hardhat.config.js", "../plugins/src/near/types/intents.ts"]
 }

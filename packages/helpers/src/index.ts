@@ -7,6 +7,7 @@ export * from "./modules/requestClient";
 export * from "./modules/swapKitError";
 export * from "./modules/swapKitNumber";
 export * from "./modules/swapKitConfig";
+export * from "./modules/feeMultiplier";
 
 /**
  * Utils

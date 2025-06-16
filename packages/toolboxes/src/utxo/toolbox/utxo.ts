@@ -9,6 +9,7 @@ import {
   SwapKitError,
   SwapKitNumber,
   type UTXOChain,
+  applyFeeMultiplier,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
@@ -483,8 +484,8 @@ async function getFeeRates(chain: UTXOChain) {
 
   return {
     [FeeOption.Average]: suggestedFeeRate,
-    [FeeOption.Fast]: suggestedFeeRate * 1.5,
-    [FeeOption.Fastest]: suggestedFeeRate * 2.0,
+    [FeeOption.Fast]: applyFeeMultiplier(suggestedFeeRate, FeeOption.Fast),
+    [FeeOption.Fastest]: applyFeeMultiplier(suggestedFeeRate, FeeOption.Fastest),
   };
 }
 

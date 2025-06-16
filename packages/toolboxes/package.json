@@ -1,9 +1,6 @@
 {
   "description": "SwapKit - Toolboxes",
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
     "@cosmjs/amino": "0.33.1",

@@ -8,6 +8,7 @@ import {
   FeeOption,
   SwapKitError,
   SwapKitNumber,
+  applyFeeMultiplierToBigInt,
   isGasAsset,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
@@ -242,16 +243,19 @@ export function getEstimateGasPrices({
             maxPriorityFeePerGas,
           },
           [FeeOption.Fast]: {
-            l1GasPrice: ((l1GasPrice || 0n) * 15n) / 10n,
-            gasPrice: (price * 15n) / 10n,
+            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fast),
+            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fast),
             maxFeePerGas,
-            maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
+            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
           },
           [FeeOption.Fastest]: {
-            l1GasPrice: (l1GasPrice || 0n) * 2n,
-            gasPrice: price * 2n,
+            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fastest),
+            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fastest),
             maxFeePerGas,
-            maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
+            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(
+              maxPriorityFeePerGas,
+              FeeOption.Fastest,
+            ),
           },
         };
       } catch (error) {
@@ -273,12 +277,15 @@ export function getEstimateGasPrices({
         return {
           [FeeOption.Average]: { maxFeePerGas, maxPriorityFeePerGas },
           [FeeOption.Fast]: {
-            maxFeePerGas: (maxFeePerGas * 15n) / 10n,
-            maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
+            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fast),
+            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
           },
           [FeeOption.Fastest]: {
-            maxFeePerGas: maxFeePerGas * 2n,
-            maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
+            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fastest),
+            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(
+              maxPriorityFeePerGas,
+              FeeOption.Fastest,
+            ),
           },
         };
       }
@@ -286,8 +293,8 @@ export function getEstimateGasPrices({
 
       return {
         [FeeOption.Average]: { gasPrice },
-        [FeeOption.Fast]: { gasPrice: (gasPrice * 15n) / 10n },
-        [FeeOption.Fastest]: { gasPrice: gasPrice * 2n },
+        [FeeOption.Fast]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fast) },
+        [FeeOption.Fastest]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fastest) },
       };
     } catch (error) {
       throw new SwapKitError("toolbox_evm_gas_estimation_error", {

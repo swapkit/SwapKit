@@ -17,6 +17,7 @@ import {
   SKConfig,
   SwapKitError,
   SwapKitNumber,
+  applyFeeMultiplier,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
@@ -260,8 +261,14 @@ async function getFees(chain: Chain, safeDefault: number) {
   const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
   return {
     average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
-    fast: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 1.5)), BaseDecimal[chain]),
-    fastest: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 2)), BaseDecimal[chain]),
+    fast: SwapKitNumber.fromBigInt(
+      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)),
+      BaseDecimal[chain],
+    ),
+    fastest: SwapKitNumber.fromBigInt(
+      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)),
+      BaseDecimal[chain],
+    ),
   } as { [key in FeeOption]: SwapKitNumber };
 }
 

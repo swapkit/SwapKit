@@ -24,6 +24,10 @@ export async function loadPlugin<P extends PluginName>(pluginName: P) {
       const { SolanaPlugin } = await import("./solana");
       return SolanaPlugin;
     })
+    .with("near", async () => {
+      const { NearPlugin } = await import("./near");
+      return NearPlugin;
+    })
     .exhaustive();
 
   return plugin as unknown as SKPlugins[P];
