@@ -27,11 +27,11 @@ describe("SwapKitNumber", () => {
 
       const skNumber5 = new SwapKitNumber({ value: 0.1005, decimal: 3 });
       expect(skNumber5.getValue("string")).toBe("0.101");
-      expect(skNumber5.getBaseValue("bigint")).toBe(100n);
+      expect(skNumber5.getBaseValue("bigint")).toBe(101n);
 
       const skNumber6 = new SwapKitNumber({ value: -0.1005, decimal: 3 });
       expect(skNumber6.getValue("string")).toBe("-0.101");
-      expect(skNumber6.getBaseValue("bigint")).toBe(-100n);
+      expect(skNumber6.getBaseValue("bigint")).toBe(-101n);
       expect(skNumber6.decimal).toBe(3);
       expect(skNumber6.getValue("number")).toBe(-0.101);
       expect(skNumber6.decimalMultiplier).toBe(100000000n);
@@ -355,9 +355,8 @@ describe("SwapKitNumber", () => {
 
       const result = skNumber1.mul(skNumber2);
 
-      // The exact result of 1.23 * 4.56 is 5.6088
       expect(result.getValue("string")).toBe("5.609");
-      expect(result.getBaseValue("bigint")).toBe(5608n);
+      expect(result.getBaseValue("bigint")).toBe(5609n);
 
       const skNumber3 = new SwapKitNumber({ decimal: 2, value: 1.23 });
       const skNumber4 = new SwapKitNumber(-1.234567891);
@@ -367,7 +366,7 @@ describe("SwapKitNumber", () => {
       // The exact result of 1.23 * -1.234567891 is -1,518518505
       // If we round it to 2 decimal places, we should get 5.61
       expect(result2.getValue("string")).toBe("-1.52");
-      expect(result2.getBaseValue("bigint")).toBe(-151n);
+      expect(result2.getBaseValue("bigint")).toBe(-152n);
     });
   });
 
