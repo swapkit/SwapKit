@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.13
+
+### Patch Changes
+
+- [#1350](https://github.com/thorswap/SwapKit/pull/1350) [`6690e59`](https://github.com/thorswap/SwapKit/commit/6690e595541eac0785e56d50024f8628a4173f6f) Thanks [@towanTG](https://github.com/towanTG)! - Fixes the precision of baseValue when returned by getBaseValue by rounding the bigint value correctly
+
 ## 3.0.0-beta.12
 
 ### Patch Changes
