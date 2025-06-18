@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.14
+
+### Patch Changes
+
+- [`586d96e`](https://github.com/thorswap/SwapKit/commit/586d96e7118476cd0bc45ad5581b60e5cf77e4cb) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes web3 wallet method wrapper
+
 ## 3.0.0-beta.13
 
 ### Patch Changes
