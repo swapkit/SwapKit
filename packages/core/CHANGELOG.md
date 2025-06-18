@@ -1,5 +1,11 @@
 # @swapkit/core
 
+## 4.0.0-beta.19
+
+### Patch Changes
+
+- [`79a8b64`](https://github.com/thorswap/SwapKit/commit/79a8b643709a3dba5c3a5746b8c660439470d2d5) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes plugin selection
+
 ## 4.0.0-beta.18
 
 ### Patch Changes
