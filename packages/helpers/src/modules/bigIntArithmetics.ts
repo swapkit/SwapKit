@@ -54,6 +54,17 @@ export function formatBigIntToSafeValue({
   );
 }
 
+function divideBigIntWithRounding(n: bigint, d: bigint) {
+  if (d === 0n) {
+    throw new Error("Cannot divide by zero");
+  }
+  const half = d / 2n;
+  if ((n >= 0n && d >= 0n) || (n < 0n && d < 0n)) {
+    return (n + half) / d;
+  }
+  return (n - half) / d;
+}
+
 export class BigIntArithmetics {
   decimalMultiplier: bigint = 10n ** 8n;
   bigIntValue = 0n;
@@ -153,7 +164,7 @@ export class BigIntArithmetics {
   getBaseValue<T extends AllowedNumberTypes>(type: T, decimal?: number): NumberPrimitivesType[T] {
     const divisor =
       this.decimalMultiplier / toMultiplier(decimal || this.decimal || BaseDecimal.THOR);
-    const baseValue = this.bigIntValue / divisor;
+    const baseValue = divideBigIntWithRounding(this.bigIntValue, divisor);
 
     switch (type) {
       case "number":

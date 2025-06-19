@@ -110,7 +110,7 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   provider: BrowserProvider,
   chain: Chain,
 ) {
-  (async (...args: any[]) => {
+  return (async (...args: any[]) => {
     try {
       await switchEVMWalletNetwork(provider, chain);
     } catch (error) {

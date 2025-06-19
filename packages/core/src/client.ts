@@ -74,8 +74,11 @@ export function SwapKit<
   );
 
   function getSwapKitPlugin<T extends PluginName>(pluginName?: T) {
-    const availablePlugin = pluginName && availablePlugins[pluginName];
-    const plugin = availablePlugin || Object.values(availablePlugins)[0];
+    const pluginByName = pluginName && availablePlugins[pluginName];
+    const pluginByProvider = Object.values(availablePlugins).find((plugin) =>
+      plugin.supportedSwapkitProviders?.includes(pluginName),
+    );
+    const plugin = pluginByName || pluginByProvider;
 
     if (!plugin) {
       throw new SwapKitError("core_plugin_not_found");
