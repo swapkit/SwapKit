@@ -52,6 +52,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.POLKADOT_JS, async () => (await import("./polkadotjs")).polkadotWallet)
     .with(WalletOption.RADIX_WALLET, async () => (await import("./radix")).radixWallet)
     .with(WalletOption.TALISMAN, async () => (await import("./talisman")).talismanWallet)
+    .with(WalletOption.XAMAN, async () => (await import("./xaman")).xamanWallet)
     .exhaustive();
 
   return wallet as SKWallets[W];

@@ -39,6 +39,7 @@ const initialState = {
     keepKey: "",
     swapKit: "",
     walletConnectProjectId: "",
+    xaman: "",
   },
 
   envs: {

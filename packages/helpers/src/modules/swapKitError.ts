@@ -231,6 +231,15 @@ const errorCodes = {
   wallet_keystore_invalid_password: 21901,
   wallet_keystore_unsupported_version: 21902,
   /**
+   * Wallets - Xaman
+   */
+  wallet_xaman_not_configured: 22001,
+  wallet_xaman_not_connected: 22002,
+  wallet_xaman_auth_failed: 22003,
+  wallet_xaman_connection_failed: 22004,
+  wallet_xaman_transaction_failed: 22005,
+  wallet_xaman_monitoring_failed: 22006,
+  /**
    * Chainflip
    */
   chainflip_channel_error: 30001,
