@@ -238,6 +238,15 @@ const errorCodes = {
   wallet_near_extensions_not_found: 22003,
   wallet_near_method_not_supported: 22003,
   /**
+   * Wallets - Xaman
+   */
+  wallet_xaman_not_configured: 23001,
+  wallet_xaman_not_connected: 23002,
+  wallet_xaman_auth_failed: 23003,
+  wallet_xaman_connection_failed: 23004,
+  wallet_xaman_transaction_failed: 23005,
+  wallet_xaman_monitoring_failed: 23006,
+  /**
    * Chainflip
    */
   chainflip_channel_error: 30001,

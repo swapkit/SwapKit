@@ -77,6 +77,7 @@ export enum WalletOption {
   TALISMAN = "TALISMAN",
   TRUSTWALLET_WEB = "TRUSTWALLET_WEB",
   WALLETCONNECT = "WALLETCONNECT",
+  XAMAN = "XAMAN",
 }
 
 export enum LedgerErrorCode {

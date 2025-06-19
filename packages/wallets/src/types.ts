@@ -30,6 +30,7 @@ import type { radixWallet } from "./radix";
 import type { talismanWallet } from "./talisman";
 import type { trezorWallet } from "./trezor";
 import type { walletconnectWallet } from "./walletconnect";
+import type { xamanWallet } from "./xaman";
 
 export type SKWallets = {
   [WalletOption.BITGET]: typeof bitgetWallet;
@@ -58,6 +59,7 @@ export type SKWallets = {
   [WalletOption.TREZOR]: typeof trezorWallet;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
+  [WalletOption.XAMAN]: typeof xamanWallet;
 };
 
 export type SKConnectWallets = SKWallets[keyof SKWallets];
@@ -89,6 +91,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.TREZOR]: typeof trezorWallet.connectTrezor.supportedChains;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet.connectWalletconnect.supportedChains;
+  [WalletOption.XAMAN]: typeof xamanWallet.connectXaman.supportedChains;
 };
 
 type UnisatToSignInputs = {

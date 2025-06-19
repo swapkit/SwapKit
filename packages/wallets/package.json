@@ -75,7 +75,8 @@
     "near-api-js": "6.1.0",
     "ripple-binary-codec": "2.4.1",
     "sats-connect": "3.5.0",
-    "ts-pattern": "5.7.1"
+    "ts-pattern": "5.7.1",
+    "xumm": "1.8.0"
   },
   "exports": {
     ".": {
@@ -177,6 +178,11 @@
       "default": "./dist/src/walletconnect/index.js",
       "require": "./dist/src/walletconnect/index.cjs",
       "types": "./src/walletconnect/index.ts"
+    },
+    "./xaman": {
+      "default": "./dist/src/xaman/index.js",
+      "require": "./dist/src/xaman/index.cjs",
+      "types": "./src/xaman/index.ts"
     }
   },
   "files": ["src/", "dist/"],
