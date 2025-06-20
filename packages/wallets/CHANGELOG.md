@@ -1,5 +1,34 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.23
+
+### Minor Changes
+
+- [#1354](https://github.com/swapkit/SwapKit/pull/1354) [`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5) Thanks [@towanTG](https://github.com/towanTG)! - Add NEAR Protocol support to multiple wallets
+
+  - Add NEAR support to Ledger hardware wallet using @ledgerhq/hw-app-near
+  - Add NEAR support to OKX browser extension wallet
+  - Add NEAR support to WalletConnect v2 protocol
+  - Add NEAR support to CTRL (formerly XDEFI) browser extension wallet
+  - Create shared NEAR signer utilities for consistent wallet integration
+  - Add NEAR chain IDs and configuration for mainnet/testnet
+  - Update window type definitions to include NEAR providers
+
+  Each wallet implementation includes:
+
+  - Address retrieval and management
+  - Transaction signing capabilities
+  - Integration with NEAR toolbox
+  - Proper error handling
+
+  Note: Message signing support varies by wallet due to hardware/protocol limitations.
+
+### Patch Changes
+
+- Updated dependencies [[`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5), [`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5)]:
+  - @swapkit/toolboxes@1.0.0-beta.20
+  - @swapkit/helpers@3.0.0-beta.15
+
 ## 3.0.0-beta.22
 
 ### Patch Changes

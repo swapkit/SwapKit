@@ -19,6 +19,7 @@
     "@swapkit/wallets": "2.0.20"
   },
   "changesets": [
+    "all-garlics-battle",
     "breezy-walls-film",
     "bumpy-areas-clean",
     "bumpy-falcons-invite",
@@ -38,6 +39,7 @@
     "loud-hoops-cough",
     "loud-kiwis-spend",
     "lovely-places-sneeze",
+    "near-wallet-integrations",
     "rare-dragons-sleep",
     "sad-teams-cheat",
     "sharp-rooms-obey",

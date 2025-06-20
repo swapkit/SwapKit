@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.20
+
+### Patch Changes
+
+- [#1354](https://github.com/swapkit/SwapKit/pull/1354) [`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5) Thanks [@towanTG](https://github.com/towanTG)! - Updates near libs and improves toolbox structure
+
+- Updated dependencies [[`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5)]:
+  - @swapkit/helpers@3.0.0-beta.15
+
 ## 1.0.0-beta.19
 
 ### Patch Changes
