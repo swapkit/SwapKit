@@ -78,7 +78,9 @@ export const getDenomWithChain = ({ symbol, chain }: AssetValue) => {
   }
   if (chain === Chain.THORChain) {
     return (
-      ["RUNE", "TCY"].includes(symbol.toUpperCase()) ? `${Chain.THORChain}.${symbol}` : symbol
+      ["RUNE", "TCY", "RUJI"].includes(symbol.toUpperCase())
+        ? `${Chain.THORChain}.${symbol}`
+        : symbol
     ).toUpperCase();
   }
   return getMsgSendDenom(symbol, false);
