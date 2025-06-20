@@ -1,5 +1,14 @@
 # @swapkit/toolbox-cosmos
 
+## 1.11.19
+
+### Patch Changes
+
+- [`44c87c7`](https://github.com/swapkit/SwapKit/commit/44c87c72bf2985fef33bae8c6627d54339b1d993) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes RUJI denom
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.10.3
+
 ## 1.11.18
 
 ### Patch Changes

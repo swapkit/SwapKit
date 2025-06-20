@@ -1,5 +1,13 @@
 # @swapkit/wallet-keplr
 
+## 1.5.19
+
+### Patch Changes
+
+- Updated dependencies [[`44c87c7`](https://github.com/swapkit/SwapKit/commit/44c87c72bf2985fef33bae8c6627d54339b1d993)]:
+  - @swapkit/toolbox-cosmos@1.11.19
+  - @swapkit/helpers@2.10.3
+
 ## 1.5.18
 
 ### Patch Changes
