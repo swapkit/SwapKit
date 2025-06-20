@@ -20,5 +20,5 @@ export type {
 } from "./types/nep141";
 
 export { createNEP141Token } from "./helpers/nep141";
-export { estimateGas, tgasToGas, gasToTGas } from "./helpers/gasEstimation";
+export { tgasToGas, gasToTGas } from "./helpers/gasEstimation";
 export { createNearContract } from "./helpers/contractFactory";

@@ -12,11 +12,12 @@ export const getSwapKitClient = ({
   if (skClient) {
     return skClient;
   }
+
   skClient = createSwapKit({
     config: {
       apiKeys: {
         swapKit: process.env.TEST_API_KEY,
-        walletConnectProjectId,
+        walletConnectProjectId: walletConnectProjectId,
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
       },
       integrations: {

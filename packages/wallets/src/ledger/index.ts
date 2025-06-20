@@ -31,6 +31,7 @@ export const ledgerWallet = createWallet({
     Chain.Dogecoin,
     Chain.Ethereum,
     Chain.Litecoin,
+    Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
     Chain.Ripple,
@@ -267,6 +268,15 @@ async function getWalletMethods({
       const deposit = (params: ThorchainDepositParams) => thorchainTransfer(params);
 
       return { ...toolbox, address, deposit, transfer, signMessage };
+    }
+
+    case Chain.Near: {
+      const { getNearToolbox } = await import("@swapkit/toolboxes/near");
+      const signer = await getLedgerClient({ chain, derivationPath });
+      const accountId = await signer.getAddress();
+      const toolbox = await getNearToolbox({ signer });
+
+      return { ...toolbox, address: accountId };
     }
 
     case Chain.Ripple: {

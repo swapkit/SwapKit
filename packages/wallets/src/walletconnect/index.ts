@@ -10,8 +10,10 @@ import {
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
+import type { NearSigner } from "@swapkit/toolboxes/near";
 import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
+import type { Transaction } from "near-api-js/lib/transaction";
 
 import { getWalletSupportedChains } from "../utils";
 import {
@@ -40,6 +42,7 @@ export const walletconnectWallet = createWallet({
     Chain.Ethereum,
     Chain.Kujira,
     Chain.Maya,
+    Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
     Chain.THORChain,
@@ -242,6 +245,71 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         getAccount,
       };
     }
+
+    case Chain.Near: {
+      const { getNearToolbox } = await import("@swapkit/toolboxes/near");
+      const { DEFAULT_NEAR_METHODS } = await import("./constants");
+
+      // Create a NEAR signer that uses WalletConnect
+      const signer = {
+        getPublicKey() {
+          // WalletConnect NEAR doesn't expose public key directly
+          return Promise.reject(
+            new SwapKitError("wallet_walletconnect_method_not_supported", {
+              method: "getPublicKey",
+            }),
+          );
+        },
+
+        signNep413Message(
+          _message: string,
+          _accountId: string,
+          _recipient: string,
+          _nonce: Uint8Array,
+          _callbackUrl?: string,
+        ) {
+          // WalletConnect NEAR spec doesn't include NEP-413 message signing
+          return Promise.reject(
+            new SwapKitError("wallet_walletconnect_method_not_supported", {
+              method: "signNep413Message",
+            }),
+          );
+        },
+
+        async signTransaction(transaction: Transaction) {
+          if (!walletconnect) {
+            throw new SwapKitError("wallet_walletconnect_connection_not_established");
+          }
+          // WalletConnect signs and sends in one operation
+          const result = await walletconnect.client.request({
+            topic: session.topic,
+            chainId: chainToChainId(Chain.Near),
+            request: {
+              method: DEFAULT_NEAR_METHODS.NEAR_SIGN_AND_SEND_TRANSACTION,
+              params: { transaction },
+            },
+          });
+          // Return dummy hash and result
+          return [new Uint8Array(32), result];
+        },
+
+        signDelegateAction(_delegateAction: any) {
+          return Promise.reject(
+            new SwapKitError("wallet_walletconnect_method_not_supported", {
+              method: "signDelegateAction",
+            }),
+          );
+        },
+
+        getAddress() {
+          return Promise.resolve(address);
+        },
+      } as NearSigner;
+
+      const toolbox = await getNearToolbox({ signer });
+      return toolbox;
+    }
+
     default:
       throw new SwapKitError({
         errorKey: "wallet_chain_not_supported",

@@ -1,5 +1,6 @@
 import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
 
+import type { getNearLedgerClient } from "../clients/near";
 import type { XRPLedger } from "../clients/xrp";
 import type { LEDGER_SUPPORTED_CHAINS } from "../index";
 import type { CosmosLedgerClients, EVMLedgerClients, UTXOLedgerClients } from "../types";
@@ -43,6 +44,10 @@ export const getLedgerAddress = async <
       const address = await ledger.getAddress();
 
       return chain === Chain.BitcoinCash ? address.replace("bitcoincash:", "") : address;
+    }
+
+    case Chain.Near: {
+      return await (ledgerClient as Awaited<ReturnType<typeof getNearLedgerClient>>).getAddress();
     }
 
     case Chain.Ripple: {

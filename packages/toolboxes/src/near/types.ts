@@ -4,19 +4,24 @@ import type {
   GenericCreateTransactionParams,
   GenericTransferParams,
 } from "@swapkit/helpers";
-import type { transactions } from "near-api-js";
-import type { Signer } from "near-api-js/lib/signer";
-import type { KeyPair } from "near-api-js/lib/utils";
+import type { KeyPairSigner, Signer, transactions } from "near-api-js";
 
-// Extend both ChainSigner and NEAR's Signer class, omitting signTransaction
-export interface NearSigner
-  extends Omit<
+interface NearKeyPairSigner
+  extends KeyPairSigner,
+    Omit<
       ChainSigner<transactions.Transaction, transactions.SignedTransaction>,
       "signTransaction"
-    >,
-    Signer {
-  keyPair: KeyPair;
-}
+    > {}
+
+interface NearGeneralSigner
+  extends Signer,
+    Omit<
+      ChainSigner<transactions.Transaction, transactions.SignedTransaction>,
+      "signTransaction"
+    > {}
+
+// Extend both ChainSigner and NEAR's Signer class, omitting signTransaction
+export type NearSigner = NearKeyPairSigner | NearGeneralSigner;
 
 export type NearToolboxParams =
   | { signer?: NearSigner; accountId?: string }
@@ -35,8 +40,9 @@ export interface NearConfig {
 export interface NearFunctionCallParams {
   contractId: string;
   methodName: string;
-  args?: object;
-  attachedDeposit?: string;
+  args: Uint8Array | Record<string, any>;
+  deposit?: bigint | string | number;
+  gas?: bigint | string | number;
 }
 
 export interface NearCreateTransactionParams extends GenericCreateTransactionParams {
@@ -49,10 +55,4 @@ export interface NearCreateTransactionParams extends GenericCreateTransactionPar
     args: object;
     attachedDeposit: string;
   };
-}
-
-// Additional types for better type safety
-export interface NearAccessKeyInfo {
-  nonce: number;
-  permission: string | object;
 }

@@ -11,7 +11,6 @@ import type { NearWallet } from "@swapkit/toolboxes/near";
 import { calculateNearNameCost, validateNearName } from "./nearNames";
 import type {
   NearDepositChannelParams,
-  NearNameInfo,
   NearNameRegistrationParams,
   NearSwapResponse,
   NearSwapRoute,
@@ -83,7 +82,7 @@ export const NearPlugin = createPlugin({
 
     // NEAR Names functionality
     nearNames: {
-      async resolve(name: string): Promise<string | null> {
+      async resolve(name: string) {
         try {
           const normalizedName = name.toLowerCase().replace(/\.near$/, "");
 
@@ -91,14 +90,13 @@ export const NearPlugin = createPlugin({
             throw new SwapKitError("plugin_near_invalid_name");
           }
 
-          const wallet = getWallet(Chain.Near) as NearWallet;
-          const near = await wallet.getConnection();
+          const wallet = getWallet(Chain.Near);
 
-          if (!near) {
+          if (!wallet) {
             throw new SwapKitError("plugin_near_no_connection");
           }
 
-          const result = await near.connection.provider.query({
+          const result = await wallet.provider.query({
             request_type: "call_function",
             finality: "final",
             account_id: "near",
@@ -113,12 +111,12 @@ export const NearPlugin = createPlugin({
         }
       },
 
-      async isAvailable(name: string): Promise<boolean> {
+      async isAvailable(name: string) {
         const owner = await this.resolve(name);
         return owner === null;
       },
 
-      async getInfo(name: string): Promise<NearNameInfo | null> {
+      async getInfo(name: string) {
         try {
           const normalizedName = name.toLowerCase().replace(/\.near$/, "");
 
@@ -126,14 +124,13 @@ export const NearPlugin = createPlugin({
             throw new SwapKitError("plugin_near_invalid_name");
           }
 
-          const wallet = getWallet(Chain.Near) as NearWallet;
-          const near = await wallet.getConnection();
+          const wallet = getWallet(Chain.Near);
 
-          if (!near) {
+          if (!wallet) {
             throw new SwapKitError("plugin_near_no_connection");
           }
 
-          const result = await near.connection.provider.query({
+          const result = await wallet.provider.query({
             request_type: "call_function",
             finality: "final",
             account_id: "near",
@@ -148,16 +145,15 @@ export const NearPlugin = createPlugin({
         }
       },
 
-      async lookupNames(accountId: string): Promise<string[]> {
+      async lookupNames(accountId: string) {
         try {
-          const wallet = getWallet(Chain.Near) as NearWallet;
-          const near = await wallet.getConnection();
+          const wallet = getWallet(Chain.Near);
 
-          if (!near) {
+          if (!wallet) {
             throw new SwapKitError("plugin_near_no_connection");
           }
 
-          const result = await near.connection.provider.query({
+          const result = await wallet.provider.query({
             request_type: "call_function",
             finality: "final",
             account_id: "near",
@@ -172,7 +168,7 @@ export const NearPlugin = createPlugin({
         }
       },
 
-      async register(params: NearNameRegistrationParams): Promise<string> {
+      async register(params: NearNameRegistrationParams) {
         const { name, publicKey: publicKeyOverwrite } = params;
         const normalizedName = name.toLowerCase().replace(/\.near$/, "");
 
@@ -193,11 +189,11 @@ export const NearPlugin = createPlugin({
             new_account_id: `${normalizedName}.near`,
             new_public_key: newPublicKey,
           },
-          attachedDeposit: cost,
+          deposit: cost,
         });
       },
 
-      transfer(name: string, newOwner: string): Promise<string> {
+      transfer(name: string, newOwner: string) {
         const normalizedName = name.toLowerCase().replace(/\.near$/, "");
 
         if (!validateNearName(normalizedName)) {
@@ -213,7 +209,7 @@ export const NearPlugin = createPlugin({
             name: normalizedName,
             new_owner: newOwner,
           },
-          attachedDeposit: "1",
+          deposit: "1",
         });
       },
     },

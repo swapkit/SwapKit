@@ -16,6 +16,7 @@ import {
   OptimismLedger,
   PolygonLedger,
 } from "../clients/evm";
+import { getNearLedgerClient } from "../clients/near";
 import { THORChainLedger } from "../clients/thorchain";
 import {
   BitcoinCashLedger,
@@ -25,6 +26,7 @@ import {
   LitecoinLedger,
 } from "../clients/utxo";
 import { XRPLedger } from "../clients/xrp";
+import { getLedgerTransport } from "./getLedgerTransport";
 
 type LedgerSignerMap = {
   [Chain.Arbitrum]: ReturnType<typeof ArbitrumLedger>;
@@ -38,6 +40,7 @@ type LedgerSignerMap = {
   [Chain.Dogecoin]: ReturnType<typeof DogecoinLedger>;
   [Chain.Ethereum]: ReturnType<typeof EthereumLedger>;
   [Chain.Litecoin]: ReturnType<typeof LitecoinLedger>;
+  [Chain.Near]: Awaited<ReturnType<typeof getNearLedgerClient>>;
   [Chain.Optimism]: ReturnType<typeof OptimismLedger>;
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
   [Chain.Ripple]: ReturnType<typeof XRPLedger>;
@@ -75,6 +78,10 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
       Promise.resolve(LitecoinLedger(derivationPath) as LedgerSignerMap[T]),
     )
     .with(Chain.Ripple, () => Promise.resolve(XRPLedger(derivationPath) as LedgerSignerMap[T]))
+    .with(Chain.Near, async () => {
+      const transport = await getLedgerTransport();
+      return getNearLedgerClient(transport, derivationPath) as unknown as LedgerSignerMap[T];
+    })
     .with(
       Chain.Arbitrum,
       Chain.Avalanche,

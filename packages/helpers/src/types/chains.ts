@@ -288,7 +288,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
     "wss://archive-1.mainnet.chainflip.io",
     "wss://archive-2.mainnet.chainflip.io",
   ],
-  [Chain.Cosmos]: ["https://cosmos-rpc.quickapi.com", "https://cosmos-rpc.publicnode.com"],
+  [Chain.Cosmos]: ["https://cosmos-rpc.publicnode.com"],
   [Chain.Dash]: ["https://dash-rpc.publicnode.com"],
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
   [Chain.Ethereum]: ["https://eth.llamarpc.com", "https://cloudflare-eth.com"],

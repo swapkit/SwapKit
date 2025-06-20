@@ -16,6 +16,7 @@ import type { cosmostationWallet } from "./cosmostation";
 import type { ctrlWallet } from "./ctrl";
 import type { evmWallet } from "./evm-extensions";
 import type { exodusWallet } from "./exodus";
+import type { NearBrowserWalletProvider } from "./helpers/near";
 import type { keepkeyWallet } from "./keepkey";
 import type { keepkeyBexWallet } from "./keepkey-bex";
 import type { keplrWallet } from "./keplr";
@@ -122,6 +123,7 @@ declare global {
       thorchain: Eip1193Provider;
       mayachain: Eip1193Provider;
       solana: SolanaProvider & { isXDEFI: boolean };
+      near: NearBrowserWalletProvider;
     };
 
     bitkeep?: {
@@ -195,6 +197,15 @@ declare global {
               signature: StdSignature,
             ) => Promise<boolean>;
             getOfflineSignerOnlyAmino: (chainId: string) => OfflineAminoSigner;
+          };
+          near: NearBrowserWalletProvider & {
+            requestSignIn: (params?: {
+              contractId?: string;
+              methodNames?: string[];
+            }) => Promise<{ accountId: string; accessKey?: any }>;
+            requestSignTransactions: (params: {
+              transactions: any[];
+            }) => Promise<any>;
           };
         }
       | EthereumWindowProvider;

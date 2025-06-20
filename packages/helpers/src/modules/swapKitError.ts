@@ -231,6 +231,13 @@ const errorCodes = {
   wallet_keystore_invalid_password: 21901,
   wallet_keystore_unsupported_version: 21902,
   /**
+   * Wallets - Near Extensions
+   */
+  wallet_near_extensions_failed_to_switch_network: 22001,
+  wallet_near_extensions_no_provider: 22002,
+  wallet_near_extensions_not_found: 22003,
+  wallet_near_method_not_supported: 22003,
+  /**
    * Chainflip
    */
   chainflip_channel_error: 30001,

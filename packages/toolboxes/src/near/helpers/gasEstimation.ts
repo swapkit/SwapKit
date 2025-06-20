@@ -1,9 +1,8 @@
-import { AssetValue, Chain, SwapKitError } from "@swapkit/helpers";
 import type { Account } from "near-api-js";
 import type { NearGasEstimateParams } from "../types/contract";
 
 // Gas constants (in TGas - 10^12 gas units)
-const GAS_COSTS = {
+export const GAS_COSTS = {
   SIMPLE_TRANSFER: "1", // 1 TGas
   TOKEN_TRANSFER: "100", // 100 TGas
   CONTRACT_CALL: "100", // 100 TGas base
@@ -16,13 +15,13 @@ const GAS_COSTS = {
 } as const;
 
 // Type guards for discriminated union
-function isSimpleTransfer(
+export function isSimpleTransfer(
   params: NearGasEstimateParams,
 ): params is { recipient: string; amount: string } {
   return "recipient" in params && "amount" in params && !("contractId" in params);
 }
 
-function isContractCall(params: NearGasEstimateParams): params is {
+export function isContractCall(params: NearGasEstimateParams): params is {
   contractId: string;
   methodName: string;
   args?: Record<string, any>;
@@ -31,31 +30,31 @@ function isContractCall(params: NearGasEstimateParams): params is {
   return "contractId" in params && "methodName" in params;
 }
 
-function isBatchTransaction(params: NearGasEstimateParams): params is { actions: any[] } {
+export function isBatchTransaction(params: NearGasEstimateParams): params is { actions: any[] } {
   return "actions" in params;
 }
 
-function isAccountCreation(params: NearGasEstimateParams): params is {
+export function isAccountCreation(params: NearGasEstimateParams): params is {
   newAccountId: string;
   publicKey?: string;
 } {
   return "newAccountId" in params;
 }
 
-function isContractDeployment(
+export function isContractDeployment(
   params: NearGasEstimateParams,
 ): params is { contractCode: Uint8Array } {
   return "contractCode" in params;
 }
 
-function isCustomEstimator(params: NearGasEstimateParams): params is {
+export function isCustomEstimator(params: NearGasEstimateParams): params is {
   customEstimator: (account: Account) => Promise<string>;
 } {
   return "customEstimator" in params;
 }
 
 // Helper function to estimate gas for batch actions
-function estimateBatchGas(actions: any[]): string {
+export function estimateBatchGas(actions: any[]) {
   let totalGas = 0;
 
   for (const action of actions) {
@@ -90,7 +89,7 @@ function estimateBatchGas(actions: any[]): string {
 }
 
 // Helper function to get gas cost for contract methods
-function getContractMethodGas(methodName: string): string {
+export function getContractMethodGas(methodName: string) {
   if (methodName === "ft_transfer" || methodName === "ft_transfer_call") {
     return GAS_COSTS.TOKEN_TRANSFER;
   }
@@ -98,66 +97,6 @@ function getContractMethodGas(methodName: string): string {
     return GAS_COSTS.STORAGE_DEPOSIT;
   }
   return GAS_COSTS.CONTRACT_CALL;
-}
-
-export async function estimateGas(
-  params: NearGasEstimateParams,
-  account?: Account,
-): Promise<AssetValue> {
-  let gasInTGas: string;
-
-  if (isSimpleTransfer(params)) {
-    gasInTGas = GAS_COSTS.SIMPLE_TRANSFER;
-  } else if (isContractCall(params)) {
-    gasInTGas = getContractMethodGas(params.methodName);
-  } else if (isBatchTransaction(params)) {
-    gasInTGas = estimateBatchGas(params.actions);
-  } else if (isAccountCreation(params)) {
-    gasInTGas = GAS_COSTS.ACCOUNT_CREATION;
-  } else if (isContractDeployment(params)) {
-    gasInTGas = GAS_COSTS.CONTRACT_DEPLOYMENT;
-  } else if (isCustomEstimator(params)) {
-    if (!account) {
-      throw new SwapKitError("toolbox_near_no_account");
-    }
-    gasInTGas = await params.customEstimator(account);
-  } else {
-    throw new SwapKitError("toolbox_near_invalid_gas_params");
-  }
-
-  // Convert TGas to gas price in NEAR
-  const gasPrice = await getGasPrice(account);
-  const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12); // Convert TGas to gas units
-  const costInYoctoNear = gasInUnits * BigInt(gasPrice);
-
-  // Convert yoctoNEAR to NEAR
-  const { utils } = await import("near-api-js");
-  const costInNear = utils.format.formatNearAmount(costInYoctoNear.toString());
-
-  return AssetValue.from({
-    chain: Chain.Near,
-    value: Number(costInNear),
-  });
-}
-
-// Get current gas price from network
-async function getGasPrice(account?: Account): Promise<string> {
-  if (!account) {
-    // Default gas price if no account available
-    return "100000000"; // 0.1 Gwei
-  }
-
-  try {
-    // Get the latest block to fetch current gas price
-    const status = await account.connection.provider.status();
-    const blockId = status.sync_info.latest_block_hash;
-
-    const result = await account.connection.provider.gasPrice(blockId);
-    return result.gas_price || "100000000";
-  } catch (_error) {
-    // Fallback to default
-    return "100000000";
-  }
 }
 
 // Convert TGas string to gas units

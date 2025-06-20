@@ -1,34 +1,7 @@
 import type { Provider } from "@near-js/providers";
-import {
-  Chain,
-  type DerivationPathArray,
-  SKConfig,
-  SwapKitError,
-  derivationPathToString,
-} from "@swapkit/helpers";
-import type { KeyPair, PublicKey } from "near-api-js/lib/utils";
-import type { NearConfig } from "../types";
-
-export async function createNearConnection() {
-  const { connect } = await import("near-api-js");
-
-  const rpcUrl = SKConfig.get("rpcUrls")[Chain.Near];
-  const { isStagenet } = SKConfig.get("envs");
-
-  const networkId = isStagenet ? "testnet" : "mainnet";
-  const nodeUrl = rpcUrl;
-
-  if (!nodeUrl) {
-    throw new SwapKitError("toolbox_near_no_rpc_url");
-  }
-
-  const config: NearConfig = {
-    networkId,
-    nodeUrl,
-  };
-
-  return connect(config);
-}
+import { type DerivationPathArray, SwapKitError, derivationPathToString } from "@swapkit/helpers";
+import { type KeyPair, KeyPairSigner } from "near-api-js";
+import type { NearSigner } from "../types";
 
 export async function validateNearAddress(address: string) {
   // Use the official NEAR SDK validation function if available
@@ -36,15 +9,10 @@ export async function validateNearAddress(address: string) {
     const { validateAccountId } = await import("near-sdk-js");
     return validateAccountId(address);
   } catch {
-    return validateNearAddressManual(address);
+    const ACCOUNT_ID_REGEX = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
+
+    return address.length >= 2 && address.length <= 64 && ACCOUNT_ID_REGEX.test(address);
   }
-}
-
-function validateNearAddressManual(address: string) {
-  // Official NEAR validation logic from near-sdk-js
-  const ACCOUNT_ID_REGEX = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
-
-  return address.length >= 2 && address.length <= 64 && ACCOUNT_ID_REGEX.test(address);
 }
 
 export async function getNearSignerFromPhrase(params: {
@@ -53,7 +21,7 @@ export async function getNearSignerFromPhrase(params: {
   index?: number;
 }) {
   const { parseSeedPhrase } = await import("near-seed-phrase");
-  const { KeyPair } = await import("near-api-js/lib/utils");
+  const { KeyPair } = await import("near-api-js");
 
   // Handle derivation path logic here
   // NEAR uses a 3-level derivation path: m/44'/397'/index'
@@ -63,50 +31,38 @@ export async function getNearSignerFromPhrase(params: {
     : `m/44'/397'/${index}'`;
 
   const { secretKey } = parseSeedPhrase(params.phrase, derivationPath);
-  const keyPair = KeyPair.fromString(secretKey);
+  const keyPair = KeyPair.fromString(secretKey as any);
 
   return createNearSignerFromKeyPair(keyPair);
 }
 
 export async function getNearSignerFromPrivateKey(privateKey: string) {
   const { KeyPair } = await import("near-api-js/lib/utils");
-  const keyPair = KeyPair.fromString(privateKey);
+  const keyPair = KeyPair.fromString(privateKey as any);
   return createNearSignerFromKeyPair(keyPair);
 }
 
-function createNearSignerFromKeyPair(keyPair: KeyPair) {
-  const signer = {
-    createKey(_accountId: string, _networkId: string): Promise<PublicKey> {
-      // For our use case, we return the existing public key
-      return Promise.resolve(keyPair.getPublicKey());
-    },
-    getPublicKey(_accountId?: string, _networkId?: string): Promise<PublicKey> {
-      return Promise.resolve(keyPair.getPublicKey());
-    },
-    async signMessage(
-      message: Uint8Array,
-      _accountId?: string,
-      _networkId?: string,
-    ): Promise<{ signature: Uint8Array; publicKey: PublicKey }> {
-      const hash = await crypto.subtle.digest("SHA-256", message);
-      const signature = keyPair.sign(new Uint8Array(hash));
+class SKKeyPairSigner extends KeyPairSigner {
+  #keyPair: KeyPair;
 
-      return {
-        signature: signature.signature,
-        publicKey: keyPair.getPublicKey(),
-      };
-    },
-    getAddress: () => {
-      // For implicit accounts, derive account ID from public key
-      // NEAR implicit accounts use hex representation of the public key
-      const publicKey = keyPair.getPublicKey();
-      const hexAddress = Buffer.from(publicKey.data).toString("hex");
-      return Promise.resolve(hexAddress);
-    },
-    keyPair,
-  };
+  constructor(keyPair: KeyPair) {
+    super(keyPair);
+    this.#keyPair = keyPair;
+  }
 
-  return signer;
+  getAddress(): Promise<string> {
+    // For implicit accounts, derive account ID from public key
+    // NEAR implicit accounts use hex representation of the public key
+    const publicKey = this.#keyPair.getPublicKey();
+    const hexAddress = Buffer.from(publicKey.data).toString("hex");
+    return Promise.resolve(hexAddress);
+  }
+}
+
+function createNearSignerFromKeyPair(keyPair: KeyPair): NearSigner {
+  const keyPairSigner = new SKKeyPairSigner(keyPair);
+
+  return keyPairSigner;
 }
 
 export async function getFullAccessPublicKey(provider: Provider, accountId: string) {

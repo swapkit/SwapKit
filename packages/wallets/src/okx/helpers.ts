@@ -123,6 +123,22 @@ export async function getWalletMethods(chain: Chain) {
       return { ...toolbox, address, transfer: cosmosTransfer() };
     }
 
+    case Chain.Near: {
+      if (!(window.okxwallet && "near" in window.okxwallet)) {
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Near });
+      }
+
+      const { createNearSignerFromProvider } = await import("../helpers/near");
+      const { getNearToolbox } = await import("@swapkit/toolboxes/near");
+
+      const provider = window.okxwallet.near;
+      const signer = await createNearSignerFromProvider(provider, "OKX");
+      const accountId = await signer.getAddress();
+      const toolbox = await getNearToolbox({ signer });
+
+      return { ...toolbox, address: accountId };
+    }
+
     default:
       throw new SwapKitError("wallet_okx_chain_not_supported", { chain });
   }

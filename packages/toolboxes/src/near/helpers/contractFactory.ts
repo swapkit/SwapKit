@@ -17,5 +17,6 @@ export async function createNearContract<T extends Contract>({
   return new Contract(account, contractId, {
     viewMethods,
     changeMethods,
+    useLocalViewExecution: true, // Enable local view execution for efficiency
   }) as T;
 }
