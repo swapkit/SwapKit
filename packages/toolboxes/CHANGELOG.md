@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.21
+
+### Patch Changes
+
+- [`08e32d1`](https://github.com/swapkit/SwapKit/commit/08e32d1f74f08083f22bf8d7d64ae17df49ef123) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes near export path in package json
+
+- Updated dependencies []:
+  - @swapkit/helpers@3.0.0-beta.15
+
 ## 1.0.0-beta.20
 
 ### Patch Changes
