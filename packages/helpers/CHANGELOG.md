@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.16
+
+### Patch Changes
+
+- [`96346ac`](https://github.com/swapkit/SwapKit/commit/96346acf03f1cd80ce073b95c52bc85ee13ef443) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Correct Tron ChainId and cleans toolbox code
+
 ## 3.0.0-beta.15
 
 ### Patch Changes
