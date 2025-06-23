@@ -1,5 +1,13 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.26
+
+### Patch Changes
+
+- Updated dependencies [[`97fb9d4`](https://github.com/swapkit/SwapKit/commit/97fb9d4399d4eb55981f72017aa802d70579e6d7)]:
+  - @swapkit/toolboxes@1.0.0-beta.23
+  - @swapkit/helpers@3.0.0-beta.16
+
 ## 3.0.0-beta.25
 
 ### Patch Changes
