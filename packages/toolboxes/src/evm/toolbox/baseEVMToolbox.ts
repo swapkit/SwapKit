@@ -90,10 +90,7 @@ export function BaseEVMToolbox<
 
 export function evmValidateAddress({ address }: { address: string }) {
   try {
-    console.log("Validating EVM address:", address);
-    console.log("Address length:", getAddress(address));
     getAddress(address);
-
     return true;
   } catch (_error) {
     return false;
