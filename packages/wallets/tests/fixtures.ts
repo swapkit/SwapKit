@@ -24,9 +24,9 @@ export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[nu
   [Chain.Solana]: "4UHWuPwyV3XCcnwrpEdWAEW3WLUP1RDMaK3ANNsRUjfM",
   [Chain.THORChain]: "thor1hm0sdz9v2h5jwjuu0ssp8x98upvlc6py2uq4vz",
   [Chain.Tron]: "THr473cZqHwBLEmTWUUR1WTotxijWWbRGD",
-  [Chain.Near]: "towanovic.near",
-  // TBD setup keystore address for Zcash
-  [Chain.Zcash]: "towanovic.near",
+  // TBD setup keystore address for Zcash + NEAR
+  [Chain.Near]: "",
+  [Chain.Zcash]: "",
 };
 
 export const testKeystoreWalletData = {
