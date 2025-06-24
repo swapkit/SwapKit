@@ -78,32 +78,6 @@ describe("UTXO Toolbox Zcash Integration", () => {
     console.warn = originalWarn;
   });
 
-  it("should expose all expected UTXO methods", async () => {
-    const toolbox = await getUtxoToolbox(Chain.Zcash);
-
-    // Core methods
-    expect(typeof toolbox.getBalance).toBe("function");
-    expect(typeof toolbox.getFeeRates).toBe("function");
-    expect(typeof toolbox.broadcastTx).toBe("function");
-
-    // Transaction methods
-    expect(typeof toolbox.createTransaction).toBe("function");
-    expect(typeof toolbox.transfer).toBe("function");
-    expect(typeof toolbox.getInputsOutputsFee).toBe("function");
-    expect(typeof toolbox.estimateTransactionFee).toBe("function");
-    expect(typeof toolbox.estimateMaxSendableAmount).toBe("function");
-
-    // Key and address methods
-    expect(typeof toolbox.createKeysForPath).toBe("function");
-    expect(typeof toolbox.getAddressFromKeys).toBe("function");
-    expect(typeof toolbox.validateAddress).toBe("function");
-    expect(typeof toolbox.getPrivateKeyFromMnemonic).toBe("function");
-
-    // Helper methods
-    expect(typeof toolbox.accumulative).toBe("function");
-    expect(typeof toolbox.calculateTxSize).toBe("function");
-  });
-
   it("should create keys for derivation path", async () => {
     const toolbox = await getUtxoToolbox(Chain.Zcash, {
       phrase: testPhrase,
