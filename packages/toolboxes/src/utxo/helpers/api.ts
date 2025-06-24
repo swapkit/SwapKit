@@ -281,6 +281,31 @@ export function getUtxoApi(chain: UTXOChain) {
   return utxoApi(chain);
 }
 
+// Define Zcash network objects that match ECPair's expected interface
+const ZCASH_MAINNET = {
+  messagePrefix: "\x19Zcash Signed Message:\n",
+  bech32: "zc",
+  bip32: {
+    public: 0x0488b21e,
+    private: 0x0488ade4,
+  },
+  pubKeyHash: 0x1c, // 28 in decimal - correct for Zcash mainnet
+  scriptHash: 0x1c, // 28 in decimal
+  wif: 0x80, // 128 in decimal
+};
+
+const ZCASH_TESTNET = {
+  messagePrefix: "\x19Zcash Signed Message:\n",
+  bech32: "ztestsapling",
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x1d, // 29 in decimal - correct for Zcash testnet
+  scriptHash: 0x1c, // 28 in decimal
+  wif: 0xef, // 239 in decimal
+};
+
 export function getUtxoNetwork() {
   return function getNetwork(chain: Chain) {
     switch (chain) {
@@ -292,8 +317,6 @@ export function getUtxoNetwork() {
         return coininfo.dash.main.toBitcoinJS();
       case Chain.Litecoin:
         return coininfo.litecoin.main.toBitcoinJS();
-      case Chain.Zcash:
-        return coininfo.zcash.main.toBitcoinJS();
 
       case Chain.Dogecoin: {
         const bip32 = { private: 0x04358394, public: 0x043587cf };
@@ -301,6 +324,13 @@ export function getUtxoNetwork() {
         test.versions.bip32 = bip32;
         return coininfo.dogecoin.main.toBitcoinJS();
       }
+
+      case Chain.Zcash: {
+        // Get Zcash network configuration using our custom objects
+        const { isStagenet } = SKConfig.get("envs");
+        return isStagenet ? ZCASH_TESTNET : ZCASH_MAINNET;
+      }
+
       default:
         throw new SwapKitError("toolbox_utxo_not_supported", { chain });
     }

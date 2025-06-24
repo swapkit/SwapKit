@@ -3,7 +3,6 @@
   "files": ["src/", "dist/"],
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
-    "@bitgo/utxo-lib": "^11.4.0",
     "@cosmjs/amino": "0.33.1",
     "@cosmjs/crypto": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",

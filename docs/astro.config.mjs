@@ -74,6 +74,7 @@ export default defineConfig({
           items: [
             { label: "API Reference", link: "/guides/api-reference" },
             { label: "THORChain Features", link: "/guides/thorchain-features" },
+            { label: "Zcash Integration", link: "/guides/zcash-integration" },
             { label: "Advanced Features", link: "/guides/advanced-features" },
             { label: "Production Best Practices", link: "/guides/production-best-practices" },
             { label: "Create custom plugin", link: "/guides/create-plugin" },

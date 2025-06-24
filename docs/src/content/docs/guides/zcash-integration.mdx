@@ -1,0 +1,568 @@
+---
+title: Zcash Integration
+description: Complete guide to integrating Zcash transparent addresses with SwapKit
+---
+
+SwapKit provides comprehensive support for Zcash through the UTXO toolbox with specialized handling for Zcash transparent addresses. This guide covers everything you need to know about working with Zcash in your applications.
+
+## Overview
+
+The Zcash integration in SwapKit supports:
+- **Transparent addresses only** (t1... for mainnet, t3... for testnet)
+- **Custom address generation** with 2-byte prefixes
+- **PSBT-based transaction building** for compatibility
+- **Full UTXO management** and fee estimation
+- **Memo support** via OP_RETURN outputs
+- **bitcoinjs-lib + ecpair** for cryptographic operations (BitGo-free)
+
+## Key Features
+
+### Transparent Address Support
+SwapKit supports Zcash transparent addresses which provide Bitcoin-like functionality on the Zcash network:
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function validateZcashAddresses() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  // Valid mainnet transparent address (starts with t1)
+  const mainnetValid = zcashToolbox.validateAddress("t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F");
+  console.log("Mainnet address valid:", mainnetValid); // true
+  
+  // Valid testnet transparent address (starts with t3)  
+  const testnetValid = zcashToolbox.validateAddress("t3Vz22vK5z2LcKEdg16Yv4FFneEL1zg9ojd");
+  console.log("Testnet address valid:", testnetValid); // true (when in testnet mode)
+  
+  // Shielded addresses are rejected with warning
+  const shieldedValid = zcashToolbox.validateAddress("zs1z7rejlpsa98s2rrrfkwmaxu2xldqmfq5nj2m3hq6s7r8qjq8eqqqq9p4e7x");
+  console.log("Shielded address valid:", shieldedValid); // false + warning
+  
+  return { mainnetValid, testnetValid, shieldedValid };
+}
+```
+
+### Custom Address Generation
+Zcash uses 2-byte version prefixes for addresses, which requires custom generation logic:
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function generateZcashAddress() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+  });
+  
+  // Generate address from the toolbox
+  const address = await zcashToolbox.getAddress();
+  console.log("Generated address:", address); // t1... address
+  
+  // Create keys for custom derivation path
+  const keys = await zcashToolbox.createKeysForPath({
+    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    derivationPath: "m/44'/133'/0'/0/0" // Standard Zcash path
+  });
+  
+  const customAddress = zcashToolbox.getAddressFromKeys(keys);
+  console.log("Custom path address:", customAddress);
+  
+  return { address, customAddress };
+}
+```
+
+## Setting Up Zcash Operations
+
+### Basic Initialization
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+// Read-only toolbox (no signing capability)
+const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+
+// Toolbox with mnemonic (can sign transactions)
+const signingToolbox = await getUtxoToolbox(Chain.Zcash, {
+  phrase: "your twelve word mnemonic phrase here",
+  index: 0 // Account index (optional, defaults to 0)
+});
+
+// Toolbox with custom derivation path
+const customToolbox = await getUtxoToolbox(Chain.Zcash, {
+  phrase: "your twelve word mnemonic phrase here",
+  derivationPath: [44, 133, 0, 0, 5] // Custom path array
+});
+```
+
+### Address and Key Management
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function zcashKeyManagement() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+  });
+  
+  // Get the primary address
+  const address = await zcashToolbox.getAddress();
+  
+  // Create keys for specific derivation path
+  const keys = await zcashToolbox.createKeysForPath({
+    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    derivationPath: "m/44'/133'/0'/0/0"
+  });
+  
+  // Extract different key formats
+  const publicKey = keys.publicKey;
+  const privateKey = keys.privateKey;
+  const wifKey = keys.toWIF();
+  
+  // Get WIF directly from mnemonic
+  const wifFromMnemonic = await zcashToolbox.getPrivateKeyFromMnemonic({
+    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    derivationPath: "m/44'/133'/0'/0/0"
+  });
+  
+  return {
+    address,
+    publicKey,
+    privateKey,
+    wifKey,
+    wifFromMnemonic
+  };
+}
+```
+
+## Transaction Operations
+
+### Basic Transfer
+
+```ts twoslash
+import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
+
+async function sendZcash() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "your twelve word mnemonic phrase here"
+  });
+  
+  // Create the transfer amount
+  const amount = AssetValue.from({
+    chain: Chain.Zcash,
+    value: "0.001" // 0.001 ZEC
+  });
+  
+  // Send the transaction
+  const txHash = await zcashToolbox.transfer({
+    recipient: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
+    assetValue: amount,
+    feeOptionKey: FeeOption.Fast,
+    memo: "Payment for services" // Optional memo
+  });
+  
+  console.log("Transaction sent:", txHash);
+  return txHash;
+}
+```
+
+### Transfer with Memo
+
+Zcash supports memos via OP_RETURN outputs in transparent transactions:
+
+```ts twoslash
+import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
+
+async function sendZcashWithMemo() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "your twelve word mnemonic phrase here"
+  });
+  
+  const amount = AssetValue.from({
+    chain: Chain.Zcash,
+    value: "0.005"
+  });
+  
+  // Transfer with memo
+  const txHash = await zcashToolbox.transfer({
+    recipient: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
+    assetValue: amount,
+    feeOptionKey: FeeOption.Average,
+    memo: "Invoice #12345 - Payment for development work"
+  });
+  
+  return txHash;
+}
+```
+
+### Manual Transaction Building
+
+For advanced use cases, you can build transactions manually:
+
+```ts twoslash
+import { AssetValue, Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function buildZcashTransaction() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "your twelve word mnemonic phrase here"
+  });
+  
+  const senderAddress = await zcashToolbox.getAddress();
+  
+  // Get current fee rates
+  const feeRates = await zcashToolbox.getFeeRates();
+  
+  // Build the transaction (PSBT)
+  const { psbt, utxos, inputs } = await zcashToolbox.createTransaction({
+    recipient: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
+    assetValue: AssetValue.from({ chain: Chain.Zcash, value: "0.002" }),
+    sender: senderAddress,
+    feeRate: feeRates.fast,
+    memo: "Manual transaction"
+  });
+  
+  // The PSBT can be signed externally or used with the toolbox
+  console.log("PSBT created with", inputs.length, "inputs");
+  console.log("UTXOs used:", utxos.length);
+  
+  return { psbt, utxos, inputs };
+}
+```
+
+## Fee Management
+
+### Getting Fee Rates
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function getZcashFees() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  // Get current network fee rates
+  const feeRates = await zcashToolbox.getFeeRates();
+  
+  console.log("Fee rates (satoshis per byte):");
+  console.log("Average:", feeRates.average);
+  console.log("Fast:", feeRates.fast);
+  console.log("Fastest:", feeRates.fastest);
+  
+  return feeRates;
+}
+```
+
+### Estimating Transaction Fees
+
+```ts twoslash
+import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
+
+async function estimateZcashFees() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  const senderAddress = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+  const amount = AssetValue.from({ chain: Chain.Zcash, value: "0.001" });
+  
+  // Estimate fee for different options
+  const averageFee = await zcashToolbox.estimateTransactionFee({
+    sender: senderAddress,
+    recipient: "t1YourRecipientAddressHere",
+    assetValue: amount,
+    feeOptionKey: FeeOption.Average,
+    memo: "Test transaction"
+  });
+  
+  const fastFee = await zcashToolbox.estimateTransactionFee({
+    sender: senderAddress,
+    recipient: "t1YourRecipientAddressHere", 
+    assetValue: amount,
+    feeOptionKey: FeeOption.Fast
+  });
+  
+  console.log("Average fee:", averageFee.toString());
+  console.log("Fast fee:", fastFee.toString());
+  
+  return { averageFee, fastFee };
+}
+```
+
+### Maximum Sendable Amount
+
+```ts twoslash
+import { Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
+
+async function getMaxSendable() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  const address = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+  
+  // Get maximum sendable amount (balance minus fees)
+  const maxAmount = await zcashToolbox.estimateMaxSendableAmount({
+    from: address,
+    feeOptionKey: FeeOption.Fast,
+    recipients: 1, // Number of outputs
+    memo: "Maximum transfer" // Optional memo
+  });
+  
+  console.log("Maximum sendable:", maxAmount.toString());
+  return maxAmount;
+}
+```
+
+## Balance and UTXO Management
+
+### Checking Balances
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function getZcashBalance() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  const address = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+  
+  // Get total balance
+  const balance = await zcashToolbox.getBalance(address);
+  console.log("Balance:", balance.toString(), "ZEC");
+  
+  return balance;
+}
+```
+
+### Advanced UTXO Operations
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function analyzeUtxos() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  const address = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+  
+  // Get inputs and outputs for a potential transaction
+  const { inputs, outputs, fee } = await zcashToolbox.getInputsOutputsFee({
+    sender: address,
+    recipient: "t1RecipientAddress",
+    assetValue: AssetValue.from({ chain: Chain.Zcash, value: "0.001" }),
+    feeOptionKey: FeeOption.Average
+  });
+  
+  console.log("Selected inputs:", inputs?.length || 0);
+  console.log("Generated outputs:", outputs?.length || 0);
+  console.log("Estimated fee:", fee, "satoshis");
+  
+  return { inputs, outputs, fee };
+}
+```
+
+## Network Configuration
+
+### Mainnet vs Testnet
+
+The Zcash toolbox automatically detects network based on SwapKit configuration:
+
+```ts twoslash
+import { Chain, SKConfig, getUtxoToolbox } from "@swapkit/sdk";
+
+// Configure for mainnet (default)
+SKConfig.set({
+  envs: { isStagenet: false }
+});
+
+const mainnetToolbox = await getUtxoToolbox(Chain.Zcash, {
+  phrase: "your mnemonic here"
+});
+
+const mainnetAddress = await mainnetToolbox.getAddress();
+console.log("Mainnet address:", mainnetAddress); // Starts with t1
+
+// Configure for testnet
+SKConfig.set({
+  envs: { isStagenet: true }
+});
+
+const testnetToolbox = await getUtxoToolbox(Chain.Zcash, {
+  phrase: "your mnemonic here"
+});
+
+const testnetAddress = await testnetToolbox.getAddress();
+console.log("Testnet address:", testnetAddress); // Starts with t3
+```
+
+## Error Handling and Best Practices
+
+### Common Error Patterns
+
+```ts twoslash
+import { AssetValue, Chain, SwapKitError, getUtxoToolbox } from "@swapkit/sdk";
+
+async function handleZcashErrors() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "your mnemonic here"
+  });
+  
+  try {
+    // Attempt transfer
+    const txHash = await zcashToolbox.transfer({
+      recipient: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
+      assetValue: AssetValue.from({ chain: Chain.Zcash, value: "1000" }) // Large amount
+    });
+    
+    return txHash;
+  } catch (error) {
+    if (error instanceof SwapKitError) {
+      switch (error.errorKey) {
+        case "toolbox_utxo_insufficient_balance":
+          console.error("Insufficient balance for transaction");
+          break;
+        case "toolbox_utxo_invalid_address":
+          console.error("Invalid recipient address");
+          break;
+        case "toolbox_utxo_broadcast_failed":
+          console.error("Failed to broadcast transaction");
+          break;
+        default:
+          console.error("SwapKit error:", error.message);
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
+  }
+}
+```
+
+### Validation Best Practices
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function validateInputs() {
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  // Always validate addresses before use
+  function isValidZcashAddress(address: string): boolean {
+    const isValid = zcashToolbox.validateAddress(address);
+    
+    if (!isValid) {
+      console.warn(`Invalid Zcash address: ${address}`);
+      return false;
+    }
+    
+    // Check address type matches expected network
+    const isMainnet = address.startsWith("t1");
+    const isTestnet = address.startsWith("t3");
+    
+    if (!(isMainnet || isTestnet)) {
+      console.warn(`Unsupported address format: ${address}`);
+      return false;
+    }
+    
+    return true;
+  }
+  
+  // Validate before operations
+  const recipientAddress = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+  
+  if (!isValidZcashAddress(recipientAddress)) {
+    throw new Error("Invalid recipient address");
+  }
+  
+  return { valid: true };
+}
+```
+
+## Integration with Other Chains
+
+### Cross-Chain Operations
+
+```ts twoslash
+import { AssetValue, Chain, getUtxoToolbox, getEvmToolbox } from "@swapkit/sdk";
+
+async function crossChainExample() {
+  // Initialize Zcash toolbox
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+    phrase: "your zcash mnemonic here"
+  });
+  
+  // Initialize Bitcoin toolbox for comparison
+  const btcToolbox = await getUtxoToolbox(Chain.Bitcoin, {
+    phrase: "your bitcoin mnemonic here"
+  });
+  
+  // Get balances from both chains
+  const zcashAddress = await zcashToolbox.getAddress();
+  const btcAddress = await btcToolbox.getAddress();
+  
+  const zcashBalance = await zcashToolbox.getBalance(zcashAddress);
+  const btcBalance = await btcToolbox.getBalance(btcAddress);
+  
+  console.log("Zcash balance:", zcashBalance.toString());
+  console.log("Bitcoin balance:", btcBalance.toString());
+  
+  // Both use similar UTXO patterns but with chain-specific addressing
+  return { zcashBalance, btcBalance };
+}
+```
+
+## Limitations and Considerations
+
+### Current Limitations
+
+1. **Transparent Addresses Only**: SwapKit does not support Zcash shielded addresses (z-addresses)
+2. **No Sapling/Orchard**: Only transparent pool transactions are supported
+3. **Standard UTXO Model**: Uses Bitcoin-like UTXO management without privacy features
+4. **Network Fees**: Uses Zcash network fee estimation via BitGo API (library-independent)
+
+### Performance Considerations
+
+```ts twoslash
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+async function optimizePerformance() {
+  // Reuse toolbox instances when possible
+  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
+  
+  // Cache fee rates for multiple operations
+  const feeRates = await zcashToolbox.getFeeRates();
+  
+  // Use cached rates for estimations
+  const estimation1 = await zcashToolbox.estimateTransactionFee({
+    sender: "t1Address1",
+    recipient: "t1Address2", 
+    assetValue: AssetValue.from({ chain: Chain.Zcash, value: "0.001" }),
+    feeRate: feeRates.fast // Use cached rate
+  });
+  
+  return { feeRates, estimation1 };
+}
+```
+
+## Migration from Previous Versions
+
+### BitGo Removal
+
+SwapKit v2+ no longer depends on BitGo libraries for Zcash operations:
+
+- **Before**: Used `@bitgo/utxo-lib` for cryptographic operations
+- **After**: Uses `bitcoinjs-lib + ecpair` for better compatibility and smaller bundles
+- **Impact**: No breaking changes to public API, improved performance and bundle size
+
+### API Compatibility
+
+All existing Zcash integration code continues to work without changes:
+
+```ts twoslash
+// This code works the same in both old and new versions
+import { Chain, getUtxoToolbox } from "@swapkit/sdk";
+
+const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
+  phrase: "your mnemonic here"
+});
+
+const address = await zcashToolbox.getAddress();
+const balance = await zcashToolbox.getBalance(address);
+```
+
+The migration to the new architecture is transparent to users and provides:
+- Reduced bundle size (~1.7MB smaller)
+- Better maintenance and security
+- Improved consistency with other UTXO chains
+- Continued fee estimation via BitGo API (no library dependency)

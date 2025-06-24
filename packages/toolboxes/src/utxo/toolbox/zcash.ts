@@ -1,24 +1,3 @@
-/**
- * @fileoverview Zcash UTXO Toolbox Implementation
- *
- * This module provides a comprehensive toolbox for interacting with the Zcash blockchain,
- * specifically supporting transparent addresses (t1 mainnet, t3 testnet).
- *
- * Key Features:
- * - Custom address generation handling Zcash's 2-byte prefixes
- * - PSBT-based transaction building for compatibility
- * - Full compatibility with SwapKit UTXO patterns
- * - Support for memos via OP_RETURN outputs
- * - Comprehensive fee estimation and UTXO management
- *
- * Limitations:
- * - Only supports transparent addresses (no shielded z-addresses)
- * - Uses custom network configuration due to BitGo incompatibility
- *
- * @author SwapKit Team
- * @version 1.0.0
- */
-
 import secp256k1 from "@bitcoinerlab/secp256k1";
 import { HDKey } from "@scure/bip32";
 import { mnemonicToSeedSync } from "@scure/bip39";
@@ -33,46 +12,17 @@ import {
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { Psbt, initEccLib } from "bitcoinjs-lib";
+import type { Psbt } from "bitcoinjs-lib";
 import { hash160 } from "bitcoinjs-lib/src/crypto";
 import bs58check from "bs58check";
+import ECPairFactory from "ecpair";
 import { P, match } from "ts-pattern";
-import { getBalance } from "../../utils";
-import { accumulative, calculateTxSize, compileMemo, getUtxoApi } from "../helpers";
-import type { UTXOBuildTxParams, UTXOTransferParams, UTXOType } from "../types";
+import { getUtxoNetwork } from "../helpers";
+import type { UTXOBuildTxParams, UTXOTransferParams } from "../types";
+import { createUTXOToolbox } from "./utxo";
 
 const chain = Chain.Zcash;
-
-// Define Zcash network objects that match ECPair's expected interface
-const ZCASH_MAINNET = {
-  messagePrefix: "\x19Zcash Signed Message:\n",
-  bech32: "zc",
-  bip32: {
-    public: 0x0488b21e,
-    private: 0x0488ade4,
-  },
-  pubKeyHash: 0x1c, // 28 in decimal - correct for Zcash mainnet
-  scriptHash: 0x1c, // 28 in decimal
-  wif: 0x80, // 128 in decimal
-};
-
-const ZCASH_TESTNET = {
-  messagePrefix: "\x19Zcash Signed Message:\n",
-  bech32: "ztestsapling",
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x1d, // 29 in decimal - correct for Zcash testnet
-  scriptHash: 0x1c, // 28 in decimal
-  wif: 0xef, // 239 in decimal
-};
-
-// Get Zcash network configuration using our custom objects
-function getZcashNetwork() {
-  const { isStagenet } = SKConfig.get("envs");
-  return isStagenet ? ZCASH_TESTNET : ZCASH_MAINNET;
-}
+const network = getUtxoNetwork()(chain);
 
 /**
  * Custom Zcash address generation that handles 2-byte prefixes
@@ -111,8 +61,6 @@ export function validateZcashAddress(address: string) {
       return false;
     }
 
-    const network = getZcashNetwork();
-
     const isMainnet = address.startsWith("t1");
     const isTestnet = address.startsWith("t3");
 
@@ -132,7 +80,10 @@ export function validateZcashAddress(address: string) {
   }
 }
 
-function validateBase58Check(address: string, network: ReturnType<typeof getZcashNetwork>) {
+function validateBase58Check(
+  address: string,
+  network: ReturnType<ReturnType<typeof getUtxoNetwork>>,
+) {
   try {
     const decoded = bs58check.decode(address);
 
@@ -147,20 +98,17 @@ function validateBase58Check(address: string, network: ReturnType<typeof getZcas
   }
 }
 
-const getUtxoLib = async () => await import("@bitgo/utxo-lib");
+const ECPair = ECPairFactory(secp256k1);
 
 type ZcashSigner = ChainSigner<Psbt, Psbt>;
 
-// Create signer from phrase - Zcash specific using PSBT
 async function createZcashSignerFromPhrase({
   phrase,
   derivationPathString,
 }: {
   phrase: string;
-  derivationPathString: string; // Expects the final derivation path string
+  derivationPathString: string;
 }) {
-  const { ECPair } = await getUtxoLib();
-  const network = getZcashNetwork();
   const seed = mnemonicToSeedSync(phrase);
   const root = HDKey.fromMasterSeed(seed);
 
@@ -172,7 +120,6 @@ async function createZcashSignerFromPhrase({
 
   const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network });
 
-  // Use custom Zcash address generation
   const { isStagenet } = SKConfig.get("envs");
   const address = generateZcashAddress(keyPair.publicKey, isStagenet);
 
@@ -182,7 +129,6 @@ async function createZcashSignerFromPhrase({
     },
 
     signTransaction(psbt: Psbt) {
-      // Sign all inputs in the PSBT
       for (let i = 0; i < psbt.inputCount; i++) {
         psbt.signInput(i, keyPair);
       }
@@ -191,140 +137,6 @@ async function createZcashSignerFromPhrase({
   };
 }
 
-// Helper function to add inputs to PSBT
-function addInputsToPsbt(psbt: Psbt, inputs: UTXOType[]) {
-  for (const utxo of inputs) {
-    const witnessInfo = !!utxo.witnessUtxo && {
-      witnessUtxo: {
-        ...utxo.witnessUtxo,
-        value: utxo.witnessUtxo.value,
-      },
-    };
-    const nonWitnessInfo = utxo.txHex && {
-      nonWitnessUtxo: Buffer.from(utxo.txHex, "hex"),
-    };
-
-    psbt.addInput({
-      hash: utxo.hash,
-      index: utxo.index,
-      ...witnessInfo,
-      ...nonWitnessInfo,
-    });
-  }
-}
-
-// Helper function to add outputs to PSBT
-function addOutputsToPsbt(
-  psbt: Psbt,
-  outputs: Array<{ address?: string; value: number; script?: Buffer }>,
-  sender: string,
-  compiledMemo: Buffer | null,
-) {
-  for (const output of outputs) {
-    const address = "address" in output && output.address ? output.address : sender;
-    const hasOutputScript = "script" in output && output.script;
-
-    if (hasOutputScript && !compiledMemo) {
-      continue;
-    }
-
-    const mappedOutput = hasOutputScript
-      ? { script: compiledMemo as Buffer, value: 0 }
-      : { address, value: output.value };
-
-    psbt.addOutput(mappedOutput);
-  }
-}
-
-// PSBT-based transaction creation for Zcash
-async function createPsbtTransaction(params: UTXOBuildTxParams) {
-  if (!validateZcashAddress(params.recipient)) {
-    throw new Error("Invalid Zcash address");
-  }
-
-  const network = getZcashNetwork();
-  const compiledMemo = params.memo ? await compileMemo(params.memo) : null;
-
-  const api = getUtxoApi(Chain.Zcash);
-  const utxos = await api.scanUTXOs({ address: params.sender, fetchTxHex: true });
-
-  const targets: Array<
-    { address: string; value: number } | { address: string; script: Buffer; value: number }
-  > = [
-    {
-      address: params.recipient,
-      value: params.assetValue.getBaseValue("number"),
-    },
-  ];
-
-  if (params.memo && compiledMemo) {
-    targets.push({ address: "", script: compiledMemo, value: 0 });
-  }
-
-  const { inputs, outputs } = accumulative({
-    inputs: utxos,
-    outputs: targets,
-    feeRate: params.feeRate,
-    chain: Chain.Zcash,
-  });
-
-  if (!(inputs && outputs)) {
-    throw new Error("Insufficient balance for transaction");
-  }
-
-  initEccLib(secp256k1);
-  const psbt = new Psbt({ network });
-
-  addInputsToPsbt(psbt, inputs);
-  addOutputsToPsbt(psbt, outputs, params.sender, compiledMemo);
-
-  return {
-    psbt,
-    utxos,
-    inputs,
-  };
-}
-
-/**
- * Creates a comprehensive Zcash toolbox for blockchain interactions
- *
- * This toolbox provides full UTXO functionality specifically tailored for Zcash,
- * including custom address generation, PSBT-based transactions, and comprehensive
- * fee estimation. It maintains compatibility with the SwapKit UTXO interface
- * while handling Zcash-specific requirements.
- *
- * @param toolboxParams - Configuration object containing either a signer or phrase-based setup
- * @param toolboxParams.signer - Pre-configured Zcash signer instance
- * @param toolboxParams.phrase - BIP39 mnemonic phrase for key derivation
- * @param toolboxParams.derivationPath - Custom derivation path (defaults to Zcash standard)
- * @param toolboxParams.index - Account index for derivation (defaults to 0)
- *
- * @returns Promise resolving to a complete Zcash toolbox with all UTXO methods
- *
- * @example
- * ```typescript
- * // Create toolbox with mnemonic
- * const toolbox = await createZcashToolbox({
- *   phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
- *   index: 0
- * });
- *
- * // Get address
- * const address = await toolbox.getAddress(); // Returns t1... address
- *
- * // Validate address
- * const isValid = toolbox.validateAddress("t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F");
- *
- * // Create transaction
- * const { psbt } = await toolbox.createTransaction({
- *   recipient: "t1...",
- *   assetValue: AssetValue.from({ chain: Chain.Zcash, value: "0.001" }),
- *   sender: address,
- *   feeRate: 1000,
- *   memo: "Hello Zcash!"
- * });
- * ```
- */
 export async function createZcashToolbox(
   toolboxParams:
     | {
@@ -349,140 +161,13 @@ export async function createZcashToolbox(
     })
     .otherwise(() => Promise.resolve(undefined));
 
-  function getAddress() {
-    return signer?.getAddress();
-  }
-
-  async function getFeeRates() {
-    const suggestedFeeRate = await getUtxoApi(chain).getSuggestedTxFee();
-    return {
-      [FeeOption.Average]: suggestedFeeRate,
-      [FeeOption.Fast]: Math.floor(suggestedFeeRate * 1.5),
-      [FeeOption.Fastest]: Math.floor(suggestedFeeRate * 2),
-    };
-  }
-
-  function broadcastTx(txHash: string) {
-    return getUtxoApi(chain).broadcastTx(txHash);
-  }
-
-  // Zcash-specific createKeysForPath since base UTXO doesn't support Zcash
-  async function createKeysForPath(params: { phrase: string; derivationPath: string }) {
-    const { ECPair } = await getUtxoLib();
-    const network = getZcashNetwork();
-    const seed = mnemonicToSeedSync(params.phrase);
-    const root = HDKey.fromMasterSeed(seed);
-
-    // Use the derivation path string directly since HDKey.derive handles the parsing
-    const node = root.derive(params.derivationPath);
-
-    if (!node.privateKey) {
-      throw new Error("Unable to derive private key");
-    }
-
-    const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network });
-
-    // Use custom Zcash address generation
-    const { isStagenet } = SKConfig.get("envs");
-    const address = generateZcashAddress(keyPair.publicKey, isStagenet);
-
-    return {
-      getAddress: () => address || "",
-      publicKey: keyPair.publicKey.toString("hex"),
-      privateKey: keyPair.privateKey?.toString("hex") || "",
-      toWIF: () => keyPair.toWIF(),
-    };
-  }
+  const { getFeeRates, broadcastTx, ...toolbox } = await createUTXOToolbox({
+    chain: Chain.Zcash,
+    signer,
+  });
 
   function getAddressFromKeys(keys: { getAddress: () => string }) {
     return keys.getAddress();
-  }
-
-  async function getInputsOutputsFee({
-    assetValue,
-    feeOptionKey = FeeOption.Fast,
-    feeRate,
-    memo,
-    sender,
-    recipient,
-  }: Omit<UTXOBuildTxParams, "feeRate"> & {
-    feeOptionKey?: FeeOption;
-    feeRate?: number;
-  }) {
-    const api = getUtxoApi(chain);
-    const utxos = await api.scanUTXOs({ address: sender });
-
-    const targets = [
-      { address: recipient, value: Number(assetValue.bigIntValue) },
-      ...(memo ? [{ address: "", script: await compileMemo(memo), value: 0 }] : []),
-    ];
-
-    const feeRateWhole = feeRate ? Math.floor(feeRate) : (await getFeeRates())[feeOptionKey];
-
-    return accumulative({ inputs: utxos, outputs: targets, feeRate: feeRateWhole, chain });
-  }
-
-  async function estimateTransactionFee(params: {
-    assetValue: InstanceType<typeof import("@swapkit/helpers").AssetValue>;
-    recipient: string;
-    sender: string;
-    memo?: string;
-    feeOptionKey?: FeeOption;
-    feeRate?: number;
-    fetchTxHex?: boolean;
-  }) {
-    const inputFees = await getInputsOutputsFee(params);
-    const { AssetValue } = await import("@swapkit/helpers");
-
-    return AssetValue.from({
-      chain,
-      value: inputFees.fee.toString(),
-    });
-  }
-
-  async function estimateMaxSendableAmount({
-    from,
-    memo,
-    feeRate,
-    feeOptionKey = FeeOption.Fast,
-    recipients = 1,
-  }: {
-    from: string;
-    memo?: string;
-    feeRate?: number;
-    feeOptionKey?: FeeOption;
-    recipients?: number;
-  }) {
-    const { AssetValue } = await import("@swapkit/helpers");
-    const api = getUtxoApi(chain);
-    const addressData = await api.getAddressData(from);
-    const feeRateWhole = feeRate ? Math.ceil(feeRate) : (await getFeeRates())[feeOptionKey];
-
-    if (!addressData?.utxo?.length) {
-      return AssetValue.from({ chain });
-    }
-
-    const totalBalance = addressData.utxo.reduce((sum, utxo) => sum + utxo.value, 0);
-    const balance = AssetValue.from({ chain, value: totalBalance });
-
-    // Estimate transaction size and fee
-    const outputs = Array.from({ length: recipients }, () => ({ address: from, value: 0 }));
-    if (memo) {
-      outputs.push({ address: from, value: 0 });
-    }
-
-    const txSize = calculateTxSize({
-      inputs: addressData.utxo.map((utxo) => ({
-        ...utxo,
-        hash: utxo.transaction_hash,
-        type: 0,
-      })),
-      outputs,
-      feeRate: feeRateWhole,
-    });
-
-    const fee = txSize * feeRateWhole;
-    return balance.sub(fee);
   }
 
   async function transfer({
@@ -496,7 +181,6 @@ export async function createZcashToolbox(
 
     const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey];
 
-    // Use PSBT-based transaction creation
     const buildTxParams: UTXOBuildTxParams = {
       ...rest,
       assetValue,
@@ -505,7 +189,7 @@ export async function createZcashToolbox(
       sender: from,
     };
 
-    const { psbt } = await createPsbtTransaction(buildTxParams);
+    const { psbt } = await toolbox.createTransaction(buildTxParams);
     const signedPsbt = await signer.signTransaction(psbt);
     signedPsbt.finalizeAllInputs();
     const txHex = signedPsbt.extractTransaction().toHex();
@@ -514,36 +198,11 @@ export async function createZcashToolbox(
   }
 
   return {
-    // Core functionality
-    getAddress,
+    ...toolbox,
     broadcastTx,
-    getBalance: getBalance(chain),
     getFeeRates,
-
-    // Transaction methods
-    createTransaction: createPsbtTransaction, // Use PSBT-based transaction creation
-    createPsbtTransaction, // PSBT-based transaction creation
-
-    /**
-     * Transfer Zcash using PSBT-based transaction building
-     */
     transfer,
-
-    getInputsOutputsFee,
-    estimateTransactionFee,
-    estimateMaxSendableAmount,
-
-    // Key and address methods
-    createKeysForPath,
     getAddressFromKeys,
     validateAddress: validateZcashAddress,
-    getPrivateKeyFromMnemonic: async (params: { phrase: string; derivationPath: string }) => {
-      const keys = await createKeysForPath(params);
-      return keys.toWIF();
-    },
-
-    // Helper methods
-    accumulative,
-    calculateTxSize,
   };
 }

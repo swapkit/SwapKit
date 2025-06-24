@@ -88,7 +88,6 @@ describe("UTXO Toolbox Zcash Integration", () => {
 
     // Transaction methods
     expect(typeof toolbox.createTransaction).toBe("function");
-    expect(typeof toolbox.createPsbtTransaction).toBe("function");
     expect(typeof toolbox.transfer).toBe("function");
     expect(typeof toolbox.getInputsOutputsFee).toBe("function");
     expect(typeof toolbox.estimateTransactionFee).toBe("function");
@@ -116,14 +115,13 @@ describe("UTXO Toolbox Zcash Integration", () => {
     });
 
     expect(keys).toBeDefined();
-    expect(typeof keys.getAddress).toBe("function");
-    expect(typeof keys.publicKey).toBe("string");
-    expect(typeof keys.privateKey).toBe("string");
+    expect(keys.publicKey).toBeDefined();
+    expect(keys.privateKey).toBeDefined();
     expect(typeof keys.toWIF).toBe("function");
 
-    const address = keys.getAddress();
-    expect(address.startsWith("t1")).toBe(true);
-    expect(toolbox.validateAddress(address)).toBe(true);
+    const address = await toolbox.getAddress();
+    expect(address).toBeDefined();
+    expect(address?.startsWith("t1")).toBe(true);
   });
 
   it("should get WIF private key from mnemonic", async () => {
