@@ -212,7 +212,6 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
 
-  debugger;
   const signer = phrase
     ? await createSignerWithKeys({ chain, phrase, derivationPath })
     : "signer" in toolboxParams
