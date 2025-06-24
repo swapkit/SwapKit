@@ -13,7 +13,7 @@ The Zcash integration in SwapKit supports:
 - **PSBT-based transaction building** for compatibility
 - **Full UTXO management** and fee estimation
 - **Memo support** via OP_RETURN outputs
-- **bitcoinjs-lib + ecpair** for cryptographic operations (BitGo-free)
+- **bitcoinjs-lib + ecpair** for cryptographic operations
 
 ## Key Features
 
@@ -509,7 +509,7 @@ async function crossChainExample() {
 1. **Transparent Addresses Only**: SwapKit does not support Zcash shielded addresses (z-addresses)
 2. **No Sapling/Orchard**: Only transparent pool transactions are supported
 3. **Standard UTXO Model**: Uses Bitcoin-like UTXO management without privacy features
-4. **Network Fees**: Uses Zcash network fee estimation via BitGo API (library-independent)
+4. **Network Fees**: Uses Zcash network fee estimation
 
 ### Performance Considerations
 
@@ -537,12 +537,11 @@ async function optimizePerformance() {
 
 ## Migration from Previous Versions
 
-### BitGo Removal
+### Architecture Updates
 
-SwapKit v2+ no longer depends on BitGo libraries for Zcash operations:
+SwapKit has evolved to use modern cryptographic libraries for Zcash operations:
 
-- **Before**: Used `@bitgo/utxo-lib` for cryptographic operations
-- **After**: Uses `bitcoinjs-lib + ecpair` for better compatibility and smaller bundles
+- **Current**: Uses `bitcoinjs-lib + ecpair` for better compatibility and smaller bundles
 - **Impact**: No breaking changes to public API, improved performance and bundle size
 
 ### API Compatibility
@@ -550,7 +549,7 @@ SwapKit v2+ no longer depends on BitGo libraries for Zcash operations:
 All existing Zcash integration code continues to work without changes:
 
 ```ts twoslash
-// This code works the same in both old and new versions
+// This code works the same across versions
 import { Chain, getUtxoToolbox } from "@swapkit/sdk";
 
 const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
@@ -561,8 +560,8 @@ const address = await zcashToolbox.getAddress();
 const balance = await zcashToolbox.getBalance(address);
 ```
 
-The migration to the new architecture is transparent to users and provides:
-- Reduced bundle size (~1.7MB smaller)
+The architecture updates are transparent to users and provide:
+- Reduced bundle size
 - Better maintenance and security
 - Improved consistency with other UTXO chains
-- Continued fee estimation via BitGo API (no library dependency)
+- Reliable fee estimation
