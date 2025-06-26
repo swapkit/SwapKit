@@ -1,5 +1,15 @@
 # @swapkit/sdk
 
+## 3.0.0-beta.28
+
+### Patch Changes
+
+- Updated dependencies [[`ed8019e`](https://github.com/swapkit/SwapKit/commit/ed8019efdb010a0d024e5bd7b0ddb2f6afa4d956)]:
+  - @swapkit/toolboxes@1.0.0-beta.24
+  - @swapkit/wallets@3.0.0-beta.27
+  - @swapkit/core@4.0.0-beta.25
+  - @swapkit/plugins@1.0.0-beta.24
+
 ## 3.0.0-beta.27
 
 ### Patch Changes

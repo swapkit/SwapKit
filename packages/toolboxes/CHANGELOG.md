@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.24
+
+### Patch Changes
+
+- [`ed8019e`](https://github.com/swapkit/SwapKit/commit/ed8019efdb010a0d024e5bd7b0ddb2f6afa4d956) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getBalance for cosmos and substrate toolboxes
+
+- Updated dependencies [[`ed8019e`](https://github.com/swapkit/SwapKit/commit/ed8019efdb010a0d024e5bd7b0ddb2f6afa4d956)]:
+  - @swapkit/helpers@3.0.0-beta.17
+
 ## 1.0.0-beta.23
 
 ### Patch Changes
