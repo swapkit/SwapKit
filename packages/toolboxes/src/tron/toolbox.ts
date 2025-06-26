@@ -96,7 +96,7 @@ async function createKeysForPath({
 }
 
 export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
-  const { TronWeb } = require("tronweb");
+  const { TronWeb } = await import("tronweb");
   // Always get configuration from SKConfig
   const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
   // Note: TRON API key support can be added to SKConfig apiKeys when needed

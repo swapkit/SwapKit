@@ -23,12 +23,12 @@ import {
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { P, match } from "ts-pattern";
-import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
   cosmosCreateTransaction,
   createSigningStargateClient,
   createStargateClient,
+  getAssetFromDenom,
   getDenomWithChain,
   getMsgSendDenom,
 } from "../util";
@@ -52,8 +52,8 @@ export async function getSignerFromPhrase({
   | { chain: Chain; index?: number }
   | { derivationPath: string }
 )) {
-  const { DirectSecp256k1HdWallet } = (await import("@cosmjs/proto-signing")).default;
-  const { stringToPath } = (await import("@cosmjs/crypto")).default;
+  const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
+  const { stringToPath } = await import("@cosmjs/crypto");
 
   const derivationPath =
     "derivationPath" in derivationParams
@@ -73,7 +73,7 @@ export async function getSignerFromPrivateKey({
   privateKey: Uint8Array;
   prefix: string;
 }) {
-  const { DirectSecp256k1Wallet } = (await import("@cosmjs/proto-signing")).default;
+  const { DirectSecp256k1Wallet } = await import("@cosmjs/proto-signing");
 
   return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
 }
@@ -97,7 +97,7 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
   }) {
     const account = await getAccount(address);
     if (!account?.pubkey) throw new SwapKitError("toolbox_cosmos_verify_signature_no_pubkey");
-    const { Secp256k1Signature, Secp256k1 } = (await import("@cosmjs/crypto")).default;
+    const { Secp256k1Signature, Secp256k1 } = await import("@cosmjs/crypto");
 
     const secpSignature = Secp256k1Signature.fromFixedLength(base64.decode(signature));
     return Secp256k1.verifySignature(secpSignature, base64.decode(message), account.pubkey.value);
@@ -185,7 +185,21 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     transfer,
     getAddress,
     getAccount,
-    getBalance: getBalance(chain),
+    getBalance: async (address: string, _potentialScamFilter?: boolean) => {
+      const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
+      return await Promise.all(
+        denomBalances
+          .filter(({ denom }) => denom && !denom.includes("IBC/"))
+          .map(({ denom, amount }) => {
+            const fullDenom =
+              [Chain.THORChain, Chain.Maya].includes(chain) &&
+              (denom.includes("/") || denom.includes("˜"))
+                ? `${chain}.${denom}`
+                : denom;
+            return getAssetFromDenom(fullDenom, amount);
+          }),
+      );
+    },
     getSignerFromPhrase: async ({
       phrase,
       derivationPath,
@@ -197,7 +211,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         index,
       }),
     getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
-      const { DirectSecp256k1Wallet } = (await import("@cosmjs/proto-signing")).default;
+      const { DirectSecp256k1Wallet } = await import("@cosmjs/proto-signing");
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),

@@ -19,7 +19,7 @@ import {
 } from "@swapkit/helpers";
 
 import { P, match } from "ts-pattern";
-import { getBalance } from "../utils";
+import { createBalanceGetter } from "./balance";
 import { SubstrateNetwork, type SubstrateTransferParams } from "./types";
 
 export const PolkadotToolbox = ({ generic = false, ...signerParams }: ToolboxParams = {}) => {
@@ -36,7 +36,7 @@ export const ChainflipToolbox = async ({
     ...signerParams,
   });
 
-  return { ...toolbox, getBalance: getBalance(Chain.Chainflip) };
+  return { ...toolbox };
 };
 
 export type SubstrateToolboxes = {
@@ -208,11 +208,13 @@ export const BaseSubstrateToolbox = ({
   network,
   gasAsset,
   signer,
+  chain,
 }: {
   api: ApiPromise;
   network: SubstrateNetwork;
   gasAsset: AssetValue;
   signer?: IKeyringPair | Signer;
+  chain?: SubstrateChain;
 }) => ({
   api,
   network,
@@ -220,7 +222,7 @@ export const BaseSubstrateToolbox = ({
   decodeAddress,
   encodeAddress,
   convertAddress,
-  getBalance: getBalance(Chain.Polkadot),
+  getBalance: createBalanceGetter(chain || Chain.Polkadot, api),
   createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
   getAddress: (keyring?: IKeyringPair | Signer) => {
     const keyringPair = keyring || signer;
@@ -301,7 +303,7 @@ export async function createSubstrateToolbox({
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
-  return BaseSubstrateToolbox({ api, signer, gasAsset, network });
+  return BaseSubstrateToolbox({ api, signer, gasAsset, network, chain });
 }
 
 export type ToolboxParams = {

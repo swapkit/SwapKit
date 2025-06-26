@@ -117,8 +117,29 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
   async function createTransaction(params: NearCreateTransactionParams) {
     const { recipient, assetValue, memo, feeRate: gas, attachedDeposit, sender: signerId } = params;
 
-    const { publicKey, nonce } = await getFullAccessPublicKey(provider, signerId);
+    // Handle NEP-141 token transfers
+    if (!assetValue.isGasAsset) {
+      const contractId = assetValue.address;
+      if (!contractId) {
+        throw new SwapKitError("toolbox_near_missing_contract_address");
+      }
 
+      return createContractFunctionCall({
+        sender: signerId,
+        contractId,
+        methodName: "ft_transfer",
+        args: {
+          receiver_id: recipient,
+          amount: assetValue.getBaseValue("string"),
+          memo: memo || null,
+        },
+        gas: gas.toString() || "100000000000000", // 100 TGas default
+        attachedDeposit: "1", // 1 yoctoNEAR required for NEP-141 transfers
+      });
+    }
+
+    // Native NEAR transfer
+    const { publicKey, nonce } = await getFullAccessPublicKey(provider, signerId);
     const baseAmount = assetValue.getBaseValue("bigint");
 
     const { SCHEMA } = await import("near-api-js/lib/transaction");

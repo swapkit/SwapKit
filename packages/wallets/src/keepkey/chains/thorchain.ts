@@ -32,7 +32,7 @@ export const thorchainWalletMethods = async ({
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
 }) => {
-  const { makeSignDoc } = (await import("@cosmjs/amino")).default;
+  const { makeSignDoc } = await import("@cosmjs/amino");
   const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } =
     await import("@swapkit/toolboxes/cosmos");
 

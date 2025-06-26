@@ -45,7 +45,7 @@ export const mayachainWalletMethods = async ({
     sender,
     memo,
   }: SignTransactionParams) => {
-    const { makeSignDoc } = (await import("@cosmjs/amino")).default;
+    const { makeSignDoc } = await import("@cosmjs/amino");
     const { getDenomWithChain } = await import("@swapkit/toolboxes/cosmos");
 
     const account = await toolbox.getAccount(sender);
