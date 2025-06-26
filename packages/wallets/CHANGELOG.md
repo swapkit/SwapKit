@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.28
+
+### Patch Changes
+
+- [`8ea9ce7`](https://github.com/swapkit/SwapKit/commit/8ea9ce78c9c718dff8237a54187547f26693f01e) Thanks [@towanTG](https://github.com/towanTG)! - Changes cosmjs imports to be better usable with bundlers
+
+- Updated dependencies [[`8ea9ce7`](https://github.com/swapkit/SwapKit/commit/8ea9ce78c9c718dff8237a54187547f26693f01e)]:
+  - @swapkit/toolboxes@1.0.0-beta.25
+  - @swapkit/helpers@3.0.0-beta.17
+
 ## 3.0.0-beta.27
 
 ### Patch Changes

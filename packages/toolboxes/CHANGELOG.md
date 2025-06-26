@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.25
+
+### Patch Changes
+
+- [`8ea9ce7`](https://github.com/swapkit/SwapKit/commit/8ea9ce78c9c718dff8237a54187547f26693f01e) Thanks [@towanTG](https://github.com/towanTG)! - Changes cosmjs imports to be better usable with bundlers
+
+- Updated dependencies []:
+  - @swapkit/helpers@3.0.0-beta.17
+
 ## 1.0.0-beta.24
 
 ### Patch Changes
