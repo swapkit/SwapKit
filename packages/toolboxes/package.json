@@ -30,11 +30,7 @@
     "ecpair": "2.1.0",
     "ethers": "6.14.3",
     "micro-key-producer": "0.7.6",
-    "near-api-js": "^6.1.0",
-    "near-sdk-js": "^2.0.0",
-    "near-seed-phrase": "^0.2.0",
     "protobufjs": "7.5.3",
-    "tronweb": "6.0.3",
     "ts-pattern": "5.7.1",
     "xrpl": "4.3.0"
   },
@@ -49,53 +45,43 @@
   },
   "exports": {
     ".": {
-      "default": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "types": "./src/index.ts"
     },
     "./cosmos": {
-      "default": "./dist/src/cosmos/index.js",
-      "require": "./dist/src/cosmos/index.cjs",
+      "default": "./dist/cosmos/index.js",
+      "require": "./dist/cosmos/index.cjs",
       "types": "./src/cosmos/index.ts"
     },
     "./evm": {
-      "default": "./dist/src/evm/index.js",
-      "require": "./dist/src/evm/index.cjs",
+      "default": "./dist/evm/index.js",
+      "require": "./dist/evm/index.cjs",
       "types": "./src/evm/index.ts"
     },
-    "./near": {
-      "default": "./dist/src/near/index.js",
-      "require": "./dist/src/near/index.cjs",
-      "types": "./src/near/index.ts"
-    },
     "./radix": {
-      "default": "./dist/src/radix/index.js",
-      "require": "./dist/src/radix/index.cjs",
+      "default": "./dist/radix/index.js",
+      "require": "./dist/radix/index.cjs",
       "types": "./src/radix/index.ts"
     },
     "./ripple": {
-      "default": "./dist/src/ripple/index.js",
-      "require": "./dist/src/ripple/index.cjs",
+      "default": "./dist/ripple/index.js",
+      "require": "./dist/ripple/index.cjs",
       "types": "./src/ripple/index.ts"
     },
     "./solana": {
-      "default": "./dist/src/solana/index.js",
-      "require": "./dist/src/solana/index.cjs",
+      "default": "./dist/solana/index.js",
+      "require": "./dist/solana/index.cjs",
       "types": "./src/solana/index.ts"
     },
     "./substrate": {
-      "default": "./dist/src/substrate/index.js",
-      "require": "./dist/src/substrate/index.cjs",
+      "default": "./dist/substrate/index.js",
+      "require": "./dist/substrate/index.cjs",
       "types": "./src/substrate/index.ts"
     },
-    "./tron": {
-      "default": "./dist/src/tron/index.js",
-      "require": "./dist/src/tron/index.cjs",
-      "types": "./src/tron/index.ts"
-    },
     "./utxo": {
-      "default": "./dist/src/utxo/index.js",
-      "require": "./dist/src/utxo/index.cjs",
+      "default": "./dist/utxo/index.js",
+      "require": "./dist/utxo/index.cjs",
       "types": "./src/utxo/index.ts"
     }
   },
@@ -116,5 +102,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "1.0.0-beta.25"
+  "version": "1.0.0-beta.16"
 }

@@ -1,11 +1,4 @@
-import {
-  BaseDecimal,
-  Chain,
-  ChainId,
-  ChainToExplorerUrl,
-  SKConfig,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, SKConfig } from "@swapkit/helpers";
 import type {
   Authorization,
   BrowserProvider,
@@ -45,8 +38,7 @@ function serializeTx<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
   return async function serializeTx({ from, to, nonce, ...tx }: TransactionRequest) {
     const { Transaction } = await import("ethers");
 
-    if (!to)
-      throw new SwapKitError("toolbox_evm_invalid_transaction", { error: "Missing to address" });
+    if (!to) throw new Error("Missing to address");
 
     return Transaction.from({
       ...tx,

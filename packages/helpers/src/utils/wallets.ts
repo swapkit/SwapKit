@@ -70,10 +70,7 @@ export async function switchEVMWalletNetwork(
     });
   } catch (_error) {
     if (!networkParams) {
-      throw new SwapKitError("helpers_failed_to_switch_network", {
-        error: _error,
-        reason: "networkParams not provided",
-      });
+      throw new Error("Failed to switch network, networkParams not provided");
     }
     await addEVMWalletNetwork(provider, networkParams);
   }
@@ -110,7 +107,7 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   provider: BrowserProvider,
   chain: Chain,
 ) {
-  return (async (...args: any[]) => {
+  (async (...args: any[]) => {
     try {
       await switchEVMWalletNetwork(provider, chain);
     } catch (error) {

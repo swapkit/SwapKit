@@ -1,8 +1,10 @@
 import type { BuildArtifact, BuildConfig } from "bun";
+import { $ } from "bun";
 
 export async function buildPackage({
   plugins,
   entrypoints: packageEntrypoints,
+  format,
   ...rest
 }: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
   const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
@@ -10,10 +12,16 @@ export async function buildPackage({
     name: string;
   };
 
-  const entrypoints = packageEntrypoints || Object.entries(exports).map(([, { types }]) => types);
+  const dist = Bun.file("dist/index.js");
 
-  const buildOptions: BuildConfig = {
-    entrypoints,
+  if (await dist.exists()) {
+    await $`rm -rf dist`;
+  }
+
+  const { entrypoints, ...buildOptions }: BuildConfig = {
+    entrypoints:
+      packageEntrypoints ||
+      Object.entries(exports).map(([, p]) => (typeof p === "string" ? p : p.types)),
     outdir: "./dist",
     minify: process.env.DEBUG !== "true",
     packages: "external",
@@ -23,35 +31,65 @@ export async function buildPackage({
     ...rest,
   };
 
-  const buildESM = await Bun.build(buildOptions);
-  const buildCJS = await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
+  const buildESM = await Bun.build({ ...buildOptions, entrypoints, format: "esm" });
+  const buildCJS =
+    format === "esm"
+      ? buildESM
+      : await Bun.build({
+          ...buildOptions,
+          entrypoints: entrypoints.filter((entrypoint) => !entrypoint.includes(".css")),
+          format: "cjs",
+          naming: "./[dir]/[name].cjs",
+        });
 
   if (!(buildESM.success || buildCJS.success)) {
     throw new AggregateError(buildESM.logs.concat(buildCJS.logs), "Build failed");
   }
 
   if (entrypoints.length === 1) {
-    const esmBytesize = buildESM.outputs
+    const esmSize = buildESM.outputs
       .filter((file) => file.path.endsWith(".js"))
       .reduce((acc, file) => acc + file.size, 0);
-    const cjsBytesize = buildCJS.outputs
+    const cjsSize = buildCJS.outputs
       .filter((file) => file.path.endsWith(".cjs"))
       .reduce((acc, file) => acc + file.size, 0);
 
-    updateSizeData({ [pkgName]: { esm: esmBytesize, cjs: cjsBytesize } });
+    updateSizeData({ [pkgName]: { esm: esmSize, cjs: cjsSize } });
+
+    const cjsMessage = format === "esm" ? "" : `${"CJS: ".padStart(21)}${formatBytes(cjsSize)}`;
 
     return console.info(
       `✅ Build successful: ${buildESM.outputs.length} files
-${"ESM: ".padStart(21)}${formatBytes(esmBytesize)}
-${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
+${"ESM: ".padStart(21)}${formatBytes(esmSize)}
+${cjsMessage}
+`,
     );
   }
 
+  logBuildInfo({
+    pkgName,
+    esmOutputs: buildESM.outputs,
+    cjsOutputs: buildCJS.outputs,
+    format,
+  });
+}
+
+function logBuildInfo({
+  pkgName,
+  esmOutputs,
+  cjsOutputs,
+  format,
+}: {
+  pkgName: string;
+  esmOutputs: BuildArtifact[];
+  cjsOutputs: BuildArtifact[];
+  format: BuildConfig["format"];
+}) {
   const sizeData: Record<string, { esm: number; cjs: number }> = {};
 
   const { files: esmFiles, maxLength: esmMaxLength } = mapFiles({
     pkgName,
-    files: buildESM.outputs,
+    files: esmOutputs,
     type: "esm",
   });
   console.info("📦 ESM Import Sizes:");
@@ -64,19 +102,21 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
     console.info(`${label.padEnd(esmMaxLength)}${formatBytes(size)}`);
   }
 
-  const { files: cjsFiles, maxLength: cjsMaxLength } = mapFiles({
-    pkgName,
-    files: buildCJS.outputs,
-    type: "cjs",
-  });
-  console.info("📦 CJS Import Sizes:");
-  for (const { size, name, label } of cjsFiles) {
-    if (sizeData[name]) {
-      sizeData[name].cjs = size;
-    } else {
-      sizeData[name] = { esm: 0, cjs: size };
+  if (format !== "esm") {
+    const { files: cjsFiles, maxLength: cjsMaxLength } = mapFiles({
+      pkgName,
+      files: cjsOutputs,
+      type: "cjs",
+    });
+    console.info("📦 CJS Import Sizes:");
+    for (const { size, name, label } of cjsFiles) {
+      if (sizeData[name]) {
+        sizeData[name].cjs = size;
+      } else {
+        sizeData[name] = { esm: 0, cjs: size };
+      }
+      console.info(`${label.padEnd(cjsMaxLength)}${formatBytes(size)}`);
     }
-    console.info(`${label.padEnd(cjsMaxLength)}${formatBytes(size)}`);
   }
 
   updateSizeData(sizeData);

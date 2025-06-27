@@ -54,9 +54,7 @@ class WalletconnectSigner extends AbstractSigner {
   };
 
   signTransaction = () => {
-    throw new SwapKitError("wallet_walletconnect_method_not_supported", {
-      method: "signTransaction",
-    });
+    throw new Error("Not implemented: signTransaction");
 
     // const baseTx = {
     //   from,
@@ -79,9 +77,7 @@ class WalletconnectSigner extends AbstractSigner {
 
   // ANCHOR (@Towan) - Implement in future
   signTypedData = () => {
-    throw new SwapKitError("wallet_walletconnect_method_not_supported", {
-      method: "signTypedData",
-    });
+    throw new Error("Not implemented: signTypedData");
 
     // const { toHexString } = await import('@swapkit/toolboxes/evm');
 

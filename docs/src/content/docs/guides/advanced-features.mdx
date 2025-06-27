@@ -16,8 +16,7 @@ SwapKit excels at coordinating operations across multiple blockchains simultaneo
 Fetch balances across all connected chains efficiently:
 
 ```typescript
-import { createSwapKit, Chain } from '@swapkit/sdk';
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { createSwapKit, SwapKitApi, Chain } from '@swapkit/sdk';
 
 const swapKit = createSwapKit();
 
@@ -120,7 +119,7 @@ Synthetic assets are represented with `/` notation:
 Convert L1 assets to synthetics for faster swaps:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 // Get quote for minting synthetic BTC
 const mintQuote = await SwapKitApi.getSwapQuote({
@@ -269,8 +268,7 @@ await swapKit.swap({ route: modifiedRoute });
 Optimize gas usage across different chains:
 
 ```typescript
-import { ChainToChainId, Chain } from '@swapkit/sdk';
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi, ChainToChainId, Chain } from '@swapkit/sdk';
 
 // Get current gas rates
 const gasRatesArray = await SwapKitApi.getGasRate();
@@ -324,8 +322,7 @@ const tx = await swapKit.transfer({
 Manage custom token lists and metadata:
 
 ```typescript
-import { AssetValue, ProviderName } from '@swapkit/sdk';
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi, AssetValue, ProviderName } from '@swapkit/sdk';
 
 // Get token lists from providers
 async function loadTokenList(provider: ProviderName) {
@@ -404,8 +401,7 @@ registry.addCustomToken({
 Implement advanced transaction tracking:
 
 ```typescript
-import { ChainToChainId } from '@swapkit/sdk';
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi, ChainToChainId } from '@swapkit/sdk';
 
 class TransactionTracker {
   private pendingTxs: Map<string, any> = new Map();

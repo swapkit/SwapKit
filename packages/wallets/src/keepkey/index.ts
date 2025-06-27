@@ -3,7 +3,6 @@ import {
   type DerivationPathArray,
   NetworkDerivationPath,
   SKConfig,
-  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -45,21 +44,14 @@ export const keepkeyWallet = createWallet({
       derivationPathMap?: Record<Chain, DerivationPathArray>,
     ) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-      const pairingInfo = SKConfig.get("integrations").keepKey;
-      if (!pairingInfo) throw new Error("KeepKey config not found");
+      const config = SKConfig.get("integrations").keepKey;
 
-      const initialApiKey = SKConfig.get("apiKeys").keepKey || "1234";
+      if (!config) throw new Error("KeepKey config not found");
 
       await checkAndLaunch();
 
-      // Conform to the expected { apiKey, pairingInfo } structure
-      const keepkeyConfig = { apiKey: initialApiKey, pairingInfo };
+      const keepkeyConfig = { ...config, apiKey: SKConfig.get("apiKeys").keepKey };
       const keepKeySdk = await KeepKeySdk.create(keepkeyConfig);
-
-      // Persist the new API key via SKConfig after pairing
-      if (keepkeyConfig.apiKey && keepkeyConfig.apiKey !== initialApiKey) {
-        SKConfig.setApiKey("keepKey", keepkeyConfig.apiKey);
-      }
 
       await Promise.all(
         filteredChains.map(async (chain) => {
@@ -92,7 +84,6 @@ async function getWalletMethods({
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.Avalanche:
-    case Chain.Base:
     case Chain.Ethereum: {
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
@@ -117,11 +108,11 @@ async function getWalletMethods({
       return utxoWalletMethods({ sdk, chain, derivationPath });
     }
     default:
-      throw new SwapKitError("wallet_keepkey_chain_not_supported", { chain });
+      throw new Error(`Chain not supported ${chain}`);
   }
 }
 
-// kk-sdk docs: https://keepkey.com/blog/building_on_the_keepkey_sdk
+// kk-sdk docs: https://medium.com/@highlander_35968/building-on-the-keepkey-sdk-2023fda41f38
 // test spec: if offline, launch keepkey-bridge
 async function checkAndLaunch(attempts = 0) {
   if (attempts >= 3) {
@@ -142,7 +133,8 @@ async function checkKeepkeyAvailability(spec = "http://localhost:1646/spec/swagg
   try {
     const response = await fetch(spec);
     return response.status === 200;
-  } catch (_error) {
+  } catch (error) {
+    console.error(error);
     return false;
   }
 }

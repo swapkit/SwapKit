@@ -2,6 +2,7 @@ import {
   type AssetValue,
   Chain,
   ChainId,
+  ErrorCode,
   FeeTypeEnum,
   ProviderName,
   WarningCodeEnum,
@@ -19,7 +20,6 @@ import {
   unknown,
   type z,
 } from "zod";
-import { ErrorCode } from "../../types/quotes";
 
 export enum PriorityLabel {
   CHEAPEST = "CHEAPEST",

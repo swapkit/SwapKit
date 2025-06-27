@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Swap Modal Example</title>
+  <link rel="stylesheet" href="../dist/index.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #0a0a0a;
+      color: white;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .button {
+      background: #00d4aa;
+      color: black;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .button:hover {
+      background: #00b895;
+    }
+    .demo-info {
+      margin: 20px 0;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 12px;
+    }
+    .demo-info h2 {
+      margin-top: 0;
+    }
+    .demo-info ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .demo-info li {
+      margin: 5px 0;
+    }
+    .demo-info code {
+      background: #2a2a2a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Confirm Swap Modal - Figma Design Implementation</h1>
+    
+    <div class="demo-info">
+      <h2>Design Specifications Implemented:</h2>
+      <ul>
+        <li>Modal dimensions: <code>360px</code> width on mobile, proper width on desktop</li>
+        <li>Modal height: <code>640px</code> with flex layout</li>
+        <li>Title: "Confirm swap" with <code>20px</code> font size, <code>500</code> font weight</li>
+        <li>Background: <code>#141514</code> (background-primary)</li>
+        <li>Close button: Positioned absolute at top-right</li>
+        <li>Header padding: <code>24px 16px 16px</code></li>
+        <li>Body padding: <code>0px 16px 16px</code></li>
+        <li>Card backgrounds: <code>#1C1C1C</code> for token displays and transaction details</li>
+        <li>White CTA button with black text</li>
+        <li>Proper fee breakdown with total fee calculation</li>
+        <li>Loading states during confirmation</li>
+        <li>High price impact warning (shows when > 5%)</li>
+      </ul>
+    </div>
+
+    <button class="button" onclick="openModal()">Open Confirm Swap Modal</button>
+
+    <div class="demo-info">
+      <h2>Key Features:</h2>
+      <ul>
+        <li>Responsive design - slides up from bottom on mobile, centered on desktop</li>
+        <li>Escape key and outside click to close (disabled during confirmation)</li>
+        <li>Smooth animations with <code>animate-slideUp</code></li>
+        <li>Token avatars with gradient backgrounds</li>
+        <li>Transaction details section with all fees and metrics</li>
+        <li>Loading spinner animation during confirmation</li>
+        <li>Price impact color coding (green/yellow/red)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="modal-root"></div>
+
+  <script type="module">
+    // Mock data for demonstration
+    const mockAsset = (symbol, amount) => ({
+      getValue: () => amount,
+      symbol: symbol
+    });
+
+    const mockQuote = {
+      outputAmount: "2000",
+      priceImpact: 2.5,
+      estimatedTime: 180,
+      provider: "Thorchain",
+      fees: {
+        networkUSD: "5.00",
+        protocolUSD: "1.00"
+      },
+      minimumReceived: "1980"
+    };
+
+    window.openModal = () => {
+      // This is just for demonstration - in a real app, you'd use React
+      alert('To see the modal in action, integrate it into your React application with the SwapKit widget!');
+    };
+  </script>
+</body>
+</html>

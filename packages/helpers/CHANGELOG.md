@@ -1,58 +1,5 @@
 # @swapkit/helpers
 
-## 3.0.0-beta.17
-
-### Patch Changes
-
-- [`ed8019e`](https://github.com/swapkit/SwapKit/commit/ed8019efdb010a0d024e5bd7b0ddb2f6afa4d956) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getBalance for cosmos and substrate toolboxes
-
-## 3.0.0-beta.16
-
-### Patch Changes
-
-- [`96346ac`](https://github.com/swapkit/SwapKit/commit/96346acf03f1cd80ce073b95c52bc85ee13ef443) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Correct Tron ChainId and cleans toolbox code
-
-## 3.0.0-beta.15
-
-### Patch Changes
-
-- [#1354](https://github.com/swapkit/SwapKit/pull/1354) [`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5) Thanks [@towanTG](https://github.com/towanTG)! - Add NEAR Protocol support to multiple wallets
-
-  - Add NEAR support to Ledger hardware wallet using @ledgerhq/hw-app-near
-  - Add NEAR support to OKX browser extension wallet
-  - Add NEAR support to WalletConnect v2 protocol
-  - Add NEAR support to CTRL (formerly XDEFI) browser extension wallet
-  - Create shared NEAR signer utilities for consistent wallet integration
-  - Add NEAR chain IDs and configuration for mainnet/testnet
-  - Update window type definitions to include NEAR providers
-
-  Each wallet implementation includes:
-
-  - Address retrieval and management
-  - Transaction signing capabilities
-  - Integration with NEAR toolbox
-  - Proper error handling
-
-  Note: Message signing support varies by wallet due to hardware/protocol limitations.
-
-## 3.0.0-beta.14
-
-### Patch Changes
-
-- [`586d96e`](https://github.com/thorswap/SwapKit/commit/586d96e7118476cd0bc45ad5581b60e5cf77e4cb) Thanks [@github-actions[bot]](https://github.com/github-actions%5Bbot%5D)! - Fixes web3 wallet method wrapper
-
-## 3.0.0-beta.13
-
-### Patch Changes
-
-- [#1350](https://github.com/thorswap/SwapKit/pull/1350) [`6690e59`](https://github.com/thorswap/SwapKit/commit/6690e595541eac0785e56d50024f8628a4173f6f) Thanks [@towanTG](https://github.com/towanTG)! - Fixes the precision of baseValue when returned by getBaseValue by rounding the bigint value correctly
-
-## 3.0.0-beta.12
-
-### Patch Changes
-
-- [#1343](https://github.com/thorswap/SwapKit/pull/1343) [`feadd9a`](https://github.com/thorswap/SwapKit/commit/feadd9ab64f4b56d0127a924f4cebf3e87e003c4) Thanks [@towanTG](https://github.com/towanTG)! - Adds SKConfig functionality to set headers on midgard endpoints
-
 ## 3.0.0-beta.11
 
 ### Minor Changes

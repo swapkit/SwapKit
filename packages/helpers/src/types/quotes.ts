@@ -162,11 +162,12 @@ export enum ProviderName {
 }
 
 export enum FeeTypeEnum {
+  AFFILIATE = "affiliate",
+  INBOUND = "inbound",
   LIQUIDITY = "liquidity",
   NETWORK = "network",
-  INBOUND = "inbound",
   OUTBOUND = "outbound",
-  AFFILIATE = "affiliate",
-  TAX = "tax",
   PRIORITY = "priority",
+  SERVICE = "service",
+  TAX = "tax",
 }

@@ -1,26 +1,19 @@
 import { base64 } from "@scure/base";
-import { SwapKitError } from "@swapkit/helpers";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: any: refactor
 export const getSignature = (signatureArray: any) => {
   // Check Type Length Value encoding
   if (signatureArray.length < 64) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "Too short" });
+    throw new Error("Invalid Signature: Too short");
   }
   if (signatureArray[0] !== 0x30) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV encoding: expected first byte 0x30",
-    });
+    throw new Error("Invalid Ledger Signature TLV encoding: expected first byte 0x30");
   }
   if (signatureArray[1] + 2 !== signatureArray.length) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "signature length does not match TLV",
-    });
+    throw new Error("Invalid Signature: signature length does not match TLV");
   }
   if (signatureArray[2] !== 0x02) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV encoding: expected length type 0x02",
-    });
+    throw new Error("Invalid Ledger Signature TLV encoding: expected length type 0x02");
   }
 
   // r signature
@@ -31,7 +24,7 @@ export const getSignature = (signatureArray: any) => {
   if (rSignature.length === 33 && rSignature[0] === 0) {
     rSignature = rSignature.slice(1, 33);
   } else if (rSignature.length === 33) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "r too long" });
+    throw new Error('Invalid signature: "r" too long');
   }
 
   // add leading zero's to pad to 32 bytes
@@ -41,17 +34,13 @@ export const getSignature = (signatureArray: any) => {
 
   // s signature
   if (signatureArray[rLength + 4] !== 0x02) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV encoding: expected length type 0x02 for s",
-    });
+    throw new Error("Invalid Ledger Signature TLV encoding: expected length type 0x02");
   }
 
   const sLength = signatureArray[rLength + 5];
 
   if (4 + rLength + 2 + sLength !== signatureArray.length) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV byte lengths do not match message length",
-    });
+    throw new Error("Invalid Ledger Signature: TLV byte lengths do not match message length");
   }
 
   let sSignature = signatureArray.slice(rLength + 6, signatureArray.length);
@@ -60,7 +49,7 @@ export const getSignature = (signatureArray: any) => {
   if (sSignature.length === 33 && sSignature[0] === 0) {
     sSignature = sSignature.slice(1, 33);
   } else if (sSignature.length === 33) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "s too long" });
+    throw new Error('Invalid signature: "s" too long');
   }
 
   // add leading zero's to pad to 32 bytes
@@ -69,7 +58,7 @@ export const getSignature = (signatureArray: any) => {
   }
 
   if (rSignature.length !== 32 || sSignature.length !== 32) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "must be 32 bytes each" });
+    throw new Error("Invalid signatures: must be 32 bytes each");
   }
 
   return base64.encode(Buffer.concat([rSignature, sSignature]));

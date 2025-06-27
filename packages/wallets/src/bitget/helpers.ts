@@ -66,8 +66,7 @@ export async function getWalletMethods(chain: Chain) {
       await wallet.enable(ChainId.Cosmos);
       const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
       const accounts = await offlineSigner.getAccounts();
-      if (!accounts?.[0])
-        throw new SwapKitError("wallet_bitkeep_no_accounts", { chain: Chain.Cosmos });
+      if (!accounts?.[0]) throw new Error("No cosmos account found");
 
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const [{ address }] = accounts;
@@ -122,7 +121,7 @@ export const getWeb3WalletMethods = async ({
       await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
   } catch (_error) {
-    throw new SwapKitError("wallet_bitkeep_failed_to_switch_network", { chain });
+    throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
   }
 
   return prepareNetworkSwitch({ chain, toolbox, provider });

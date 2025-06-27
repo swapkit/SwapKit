@@ -162,13 +162,13 @@ async function getWalletMethods() {
     const res = await rdt.walletApi.sendRequest();
 
     if (!res) {
-      throw new SwapKitError("wallet_radix_no_account");
+      throw new Error("wallet_radix_no_account");
     }
 
     const newAddress = res.unwrapOr(null)?.accounts[0]?.address;
 
     if (!newAddress) {
-      throw new SwapKitError("wallet_radix_no_account");
+      throw new Error("wallet_radix_no_account");
     }
 
     return newAddress;
@@ -182,7 +182,7 @@ async function getWalletMethods() {
     getAddress,
     getBalance: () => getBalance(address),
     transfer: (_params: { assetValue: AssetValue; recipient: string; from: string }) => {
-      throw new SwapKitError("wallet_radix_method_not_supported", { method: "transfer" });
+      throw new Error("Not implemented");
     },
     signAndBroadcast: async ({ manifest, message }: { manifest: string; message: string }) => {
       const tx = await rdt.walletApi.sendTransaction({
@@ -193,7 +193,7 @@ async function getWalletMethods() {
       const txResult = tx.unwrapOr(null)?.transactionIntentHash;
 
       if (!txResult) {
-        throw new SwapKitError("wallet_radix_transaction_failed");
+        throw new Error("wallet_radix_transaction_failed");
       }
 
       return txResult;

@@ -8,7 +8,6 @@ import {
   FeeOption,
   SwapKitError,
   SwapKitNumber,
-  applyFeeMultiplierToBigInt,
   isGasAsset,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
@@ -209,7 +208,7 @@ export function getEstimateGasPrices({
       try {
         const { gasPrice } = await provider.getFeeData();
 
-        if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
+        if (!gasPrice) throw new Error("No fee data available");
 
         return {
           [FeeOption.Average]: { gasPrice },
@@ -217,9 +216,9 @@ export function getEstimateGasPrices({
           [FeeOption.Fastest]: { gasPrice },
         };
       } catch (error) {
-        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-          error: (error as any).msg ?? (error as any).toString(),
-        });
+        throw new Error(
+          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
+        );
       }
     };
   }
@@ -232,7 +231,7 @@ export function getEstimateGasPrices({
         const price = gasPrice as bigint;
 
         if (!(maxFeePerGas && maxPriorityFeePerGas)) {
-          throw new SwapKitError("toolbox_evm_no_fee_data");
+          throw new Error("No fee data available");
         }
 
         return {
@@ -243,25 +242,22 @@ export function getEstimateGasPrices({
             maxPriorityFeePerGas,
           },
           [FeeOption.Fast]: {
-            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fast),
-            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fast),
+            l1GasPrice: ((l1GasPrice || 0n) * 15n) / 10n,
+            gasPrice: (price * 15n) / 10n,
             maxFeePerGas,
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
+            maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
           },
           [FeeOption.Fastest]: {
-            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fastest),
-            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fastest),
+            l1GasPrice: (l1GasPrice || 0n) * 2n,
+            gasPrice: price * 2n,
             maxFeePerGas,
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(
-              maxPriorityFeePerGas,
-              FeeOption.Fastest,
-            ),
+            maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
           },
         };
       } catch (error) {
-        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-          error: (error as any).msg ?? (error as any).toString(),
-        });
+        throw new Error(
+          `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
+        );
       }
     };
   }
@@ -277,15 +273,12 @@ export function getEstimateGasPrices({
         return {
           [FeeOption.Average]: { maxFeePerGas, maxPriorityFeePerGas },
           [FeeOption.Fast]: {
-            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fast),
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
+            maxFeePerGas: (maxFeePerGas * 15n) / 10n,
+            maxPriorityFeePerGas: (maxPriorityFeePerGas * 15n) / 10n,
           },
           [FeeOption.Fastest]: {
-            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fastest),
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(
-              maxPriorityFeePerGas,
-              FeeOption.Fastest,
-            ),
+            maxFeePerGas: maxFeePerGas * 2n,
+            maxPriorityFeePerGas: maxPriorityFeePerGas * 2n,
           },
         };
       }
@@ -293,13 +286,13 @@ export function getEstimateGasPrices({
 
       return {
         [FeeOption.Average]: { gasPrice },
-        [FeeOption.Fast]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fast) },
-        [FeeOption.Fastest]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fastest) },
+        [FeeOption.Fast]: { gasPrice: (gasPrice * 15n) / 10n },
+        [FeeOption.Fastest]: { gasPrice: gasPrice * 2n },
       };
     } catch (error) {
-      throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-        error: (error as any).msg ?? (error as any).toString(),
-      });
+      throw new Error(
+        `Failed to estimate gas price: ${(error as any).msg ?? (error as any).toString()}`,
+      );
     }
   };
 }
@@ -321,10 +314,7 @@ function getCall({ provider, isEIP1559Compatible, signer, chain }: ToolboxWrapPa
     feeOption = FeeOption.Fast,
   }: CallParams): Promise<T> {
     const contractProvider = callProvider || provider;
-    if (!contractAddress)
-      throw new SwapKitError("toolbox_evm_invalid_params", {
-        error: "contractAddress must be provided",
-      });
+    if (!contractAddress) throw new Error("contractAddress must be provided");
 
     const isStateChanging = isStateChangingCall({ abi, funcName });
 

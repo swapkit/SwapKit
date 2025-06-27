@@ -92,7 +92,6 @@ async function transaction({
   });
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export async function getCtrlAddress(chain: Chain) {
   try {
     const eipProvider = (await getCtrlProvider(chain)) as Eip1193Provider;
@@ -145,21 +144,6 @@ export async function getCtrlAddress(chain: Chain) {
 
       const accounts = await provider.connect();
       return accounts.publicKey.toString();
-    }
-
-    if (chain === Chain.Near) {
-      if (!window.xfi?.near) {
-        throw new SwapKitError("wallet_ctrl_not_found", { chain: Chain.Near });
-      }
-
-      if (!window.xfi.near.isSignedIn?.()) {
-        const result = await window.xfi.near.request<string[]>?.({
-          method: "connect",
-        });
-        return result?.[0] || "";
-      }
-
-      return window.xfi.near.getAccountId?.() || "";
     }
 
     const accounts = await eipProvider.request({ method: "request_accounts", params: [] });

@@ -1,14 +1,6 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
-import {
-  AssetValue,
-  BaseDecimal,
-  Chain,
-  ChainId,
-  type CosmosChain,
-  SKConfig,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, ChainId, type CosmosChain, SKConfig } from "@swapkit/helpers";
 
 import type { CosmosCreateTransactionParams } from "./thorchainUtils";
 
@@ -134,7 +126,7 @@ const getTransferMsgTypeByChain = (chain: CosmosChain) => {
     case Chain.Kujira:
       return "/cosmos.bank.v1beta1.MsgSend";
     default:
-      throw new SwapKitError("toolbox_cosmos_not_supported", { chain });
+      throw new Error("Unsupported chain");
   }
 };
 
@@ -157,7 +149,7 @@ export const cosmosCreateTransaction = async ({
   const accountOnChain = await client.getAccount(sender);
 
   if (!accountOnChain) {
-    throw new SwapKitError("toolbox_cosmos_account_not_found", { sender });
+    throw new Error("Account does not exist");
   }
 
   const gasAsset = AssetValue.from({ chain });
@@ -185,66 +177,4 @@ export const cosmosCreateTransaction = async ({
     sequence: sequence ?? accountOnChain.sequence,
     msgs: [{ typeUrl: getTransferMsgTypeByChain(chain as CosmosChain), value: msgSend }],
   };
-};
-
-// Map of known denoms to their asset configurations
-const DENOM_MAP = {
-  // THORChain denoms
-  rune: { chain: Chain.THORChain, decimals: BaseDecimal[Chain.THORChain] },
-  tcy: { asset: "THOR.TCY", decimals: BaseDecimal[Chain.THORChain] },
-  "x/kuji": { asset: "THOR.KUJI", decimals: BaseDecimal[Chain.THORChain] },
-
-  // Cosmos denoms
-  uatom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
-  atom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
-
-  // Maya denoms
-  cacao: { chain: Chain.Maya, decimals: 10 }, // Maya uses 10 decimals for CACAO
-  maya: { asset: `${Chain.Maya}.${Chain.Maya}`, decimals: 4 }, // MAYA token uses 4 decimals
-
-  // Kujira denoms
-  ukuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
-  kuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
-
-  // USK on Kujira (lowercase version of the factory denom)
-  [USK_KUJIRA_FACTORY_DENOM.toLowerCase()]: {
-    asset: `${Chain.Kujira}.USK`,
-    decimals: BaseDecimal[Chain.Kujira],
-  },
-};
-
-/**
- * Converts a Cosmos denom and amount to an AssetValue with proper decimal handling
- * @param denom - The denomination string
- * @param amount - The amount in base units as a string
- * @returns AssetValue with the correct decimal conversion
- */
-export const getAssetFromDenom = (denom: string, amount: string) => {
-  const config = DENOM_MAP[denom.toLowerCase()];
-
-  if (!config) {
-    // For unknown denoms, default to 8 decimals (common for many Cosmos chains)
-    // This preserves the original behavior while using fromBaseDecimal
-    return AssetValue.from({
-      asset: denom,
-      value: amount,
-      fromBaseDecimal: 8,
-    });
-  }
-
-  const { chain, asset, decimals } = config;
-
-  const assetOrChain = (
-    chain
-      ? {
-          chain,
-        }
-      : { asset }
-  ) as { asset: string } | { chain: CosmosChain };
-
-  return AssetValue.from({
-    ...assetOrChain,
-    value: amount,
-    fromBaseDecimal: decimals,
-  });
 };

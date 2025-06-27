@@ -7,8 +7,7 @@ const server = serve({
     "/*": index,
     "/widget": widget,
   },
-
-  development: process.env.NODE_ENV !== "production",
+  development: import.meta.env.NODE_ENV !== "production",
 });
 
 console.info(`🚀 Server running at ${server.url}`);

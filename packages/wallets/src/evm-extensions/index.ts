@@ -3,7 +3,6 @@ import {
   ChainToHexChainId,
   type EVMChain,
   EVMChains,
-  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -50,7 +49,7 @@ export const getWeb3WalletMethods = async ({
   chain: EVMChain;
   provider: BrowserProvider;
 }) => {
-  if (!walletProvider) throw new SwapKitError("wallet_evm_extensions_not_found");
+  if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
   const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
   const signer = await provider.getSigner();
@@ -63,7 +62,7 @@ export const getWeb3WalletMethods = async ({
         const networkParams = toolbox.getNetworkParams();
         await switchEVMWalletNetwork(provider, chain, networkParams);
       } catch (_error) {
-        throw new SwapKitError("wallet_evm_extensions_failed_to_switch_network", { chain });
+        throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
       }
     }
   }
@@ -90,7 +89,7 @@ export const evmWallet = createWallet({
       await Promise.all(
         filteredChains.map(async (chain) => {
           if (walletType === WalletOption.EIP6963) {
-            if (!eip1193Provider) throw new SwapKitError("wallet_evm_extensions_no_provider");
+            if (!eip1193Provider) throw new Error("Missing provider");
 
             const provider = new BrowserProvider(eip1193Provider, "any");
             await provider.send("eth_requestAccounts", []);

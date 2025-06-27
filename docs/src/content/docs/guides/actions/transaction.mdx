@@ -229,8 +229,7 @@ For lower-level control, you can use the toolboxes directly instead of SwapKit's
 ```ts twoslash
 // @noErrorValidation
 
-import { AssetValue, Chain, FeeOption, getEvmToolbox } from "@swapkit/sdk";
-import { getProvider } from "@swapkit/helpers";
+import { AssetValue, Chain, FeeOption, getProvider, getEvmToolbox } from "@swapkit/sdk";
 import { ethers } from "ethers";
 
 async function directEVMTransfer() {
@@ -314,8 +313,7 @@ For EVM chains, you can interact with smart contracts using the EVM toolbox:
 ```ts twoslash
 // @noErrorValidation
 
-import { Chain, getEvmToolbox, erc20ABI } from "@swapkit/sdk";
-import { getProvider } from "@swapkit/helpers";
+import { Chain, getEvmToolbox, getProvider, erc20ABI } from "@swapkit/sdk";
 import { ethers } from "ethers";
 
 

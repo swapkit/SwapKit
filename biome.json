@@ -4,20 +4,12 @@
     "ignore": ["node_modules", "dist", "coverage", "MsgCompiled.ts", ".astro"],
     "maxSize": 5242880
   },
-  "organizeImports": {
-    "enabled": true
-  },
   "formatter": {
-    "indentStyle": "space",
     "formatWithErrors": true,
-    "lineWidth": 100,
+    "indentStyle": "space",
     "indentWidth": 2,
-    "lineEnding": "lf"
-  },
-  "json": {
-    "formatter": {
-      "indentStyle": "space"
-    }
+    "lineEnding": "lf",
+    "lineWidth": 100
   },
   "javascript": {
     "formatter": {
@@ -25,42 +17,66 @@
     },
     "globals": ["Bun", "React"]
   },
+  "json": {
+    "formatter": {
+      "indentStyle": "space"
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "recommended": true,
+        "useSemanticElements": "off"
+      },
+      "complexity": {
+        "all": true,
+        "noBannedTypes": "off"
+      },
+      "correctness": {
+        "all": true,
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off",
+        "noUndeclaredVariables": "error",
+        "useImportExtensions": "off"
+      },
+      "nursery": {
+        "noDescendingSpecificity": "off",
+        "recommended": true
+      },
       "recommended": true,
+      "security": {
+        "all": true
+      },
       "style": {
         "all": true,
         "noDefaultExport": "off",
         "noImplicitBoolean": "off",
-        "useBlockStatements": "off",
-        "useNamingConvention": "off",
         "noNamespaceImport": "off",
+        "useBlockStatements": "off",
         "useExplicitLengthCheck": "off",
         "useFilenamingConvention": "off",
+        "useNamingConvention": "off",
         "useNodejsImportProtocol": "off"
       },
-      "complexity": { "all": true, "noBannedTypes": "off" },
-      "correctness": {
-        "all": true,
-        "noNodejsModules": "off",
-        "noUndeclaredVariables": "error",
-        "noUndeclaredDependencies": "off",
-        "useImportExtensions": "off"
-      },
-      "security": { "all": true },
       "suspicious": {
-        "noEvolvingTypes": "off",
-        "noConsole": "off",
         "all": true,
-        "useAwait": "error",
+        "noArrayIndexKey": "off",
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["info", "warn", "error"]
+          }
+        },
+        "noEvolvingTypes": "off",
         "noExplicitAny": "off",
-        "noReactSpecificProps": "off"
-      },
-      "nursery": {
-        "recommended": true,
-        "noDescendingSpecificity": "off"
+        "noReactSpecificProps": "off",
+        "useAwait": "error"
       }
     }
+  },
+  "organizeImports": {
+    "enabled": true
   }
 }

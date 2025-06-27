@@ -58,6 +58,7 @@ export abstract class CosmosLedgerInterface {
         throw new SwapKitError("wallet_ledger_device_not_found");
 
       default: {
+        console.error(`Ledger error: ${errorCode} ${message}`);
         break;
       }
     }

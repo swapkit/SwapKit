@@ -97,7 +97,7 @@ Before executing a swap, you need to get a quote to see available routes, prices
 
 ```ts twoslash
 // @noErrorValidation
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { SwapKitApi } from "@swapkit/sdk";
 
 // Basic swap quote
 async function getSwapQuote() {
@@ -135,7 +135,6 @@ async function getSwapQuote() {
 // Get quotes from a specific provider
 async function getProviderQuote() {
   const { ProviderName } = await import("@swapkit/sdk");
-  const { SwapKitApi } = await import("@swapkit/helpers/api");
 
   // For example, get quotes only from Uniswap V3
   const quoteResponse = await SwapKitApi.getSwapQuote({

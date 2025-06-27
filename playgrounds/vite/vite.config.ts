@@ -9,15 +9,24 @@ import wasm from "vite-plugin-wasm";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: { port: 3000 },
+  server: {
+    port: 3000,
+  },
   base: "/SwapKit",
 
   // NOTE: Have to be added to fix: Uncaught ReferenceError: process & global is not defined
   define: {
-    "process.env": {},
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
     "process.browser": true,
     global: "globalThis",
+    // For compatibility with code that expects process.env
+    "process.env": JSON.stringify({
+      NODE_ENV: process.env.NODE_ENV || "development",
+    }),
   },
+
+  // Expose environment variables that start with VITE_
+  envPrefix: ["VITE_", "SWAPKIT_"],
   plugins: [
     nodePolyfills({
       // Whether to polyfill specific globals.

@@ -1,6 +1,5 @@
 import { createStore } from "zustand/vanilla";
 import { Chain, EXPLORER_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
-import type { FeeMultiplierConfig } from "./feeMultiplier";
 
 export type SKConfigIntegrations = {
   chainflip?: { useSDKBroker?: boolean; brokerUrl: string };
@@ -61,8 +60,6 @@ const initialState = {
       },
     },
   } as SKConfigIntegrations,
-
-  feeMultipliers: undefined as FeeMultiplierConfig | undefined,
 };
 type SKState = typeof initialState;
 
@@ -75,7 +72,6 @@ export type SKConfigState = {
   nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
   wallets?: SKState["wallets"];
-  feeMultipliers?: FeeMultiplierConfig;
 };
 
 type SwapKitConfigStore = SKState & {
@@ -89,7 +85,6 @@ type SwapKitConfigStore = SKState & {
     integration: keyof SKState["integrations"],
     config: SKConfigIntegrations[keyof SKConfigIntegrations],
   ) => void;
-  setFeeMultipliers: (multipliers: FeeMultiplierConfig) => void;
 };
 
 const swapKitState = createStore<SwapKitConfigStore>((set) => ({
@@ -103,7 +98,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   setRpcUrl: (chain, url) => set((s) => ({ rpcUrls: { ...s.rpcUrls, [chain]: url } })),
   setIntegrationConfig: (integration, config) =>
     set((s) => ({ integrations: { ...s.integrations, [integration]: config } })),
-  setFeeMultipliers: (multipliers) => set(() => ({ feeMultipliers: multipliers })),
   setConfig: (config) =>
     set((s) => ({
       apiKeys: { ...s.apiKeys, ...config.apiKeys },
@@ -112,7 +106,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
       integrations: { ...s.integrations, ...config.integrations },
       nodeUrls: { ...s.nodeUrls, ...config.nodeUrls },
       rpcUrls: { ...s.rpcUrls, ...config.rpcUrls },
-      feeMultipliers: config.feeMultipliers || s.feeMultipliers,
       chains: s.chains.concat(config.chains || []),
       wallets: s.wallets.concat(config.wallets || []),
     })),
@@ -137,6 +130,4 @@ export const SKConfig = {
     integration: T,
     config: SKConfigIntegrations[T],
   ) => swapKitState.getState().setIntegrationConfig(integration, config),
-  setFeeMultipliers: (multipliers: FeeMultiplierConfig) =>
-    swapKitState.getState().setFeeMultipliers(multipliers),
 };

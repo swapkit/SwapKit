@@ -1,4 +1,6 @@
 {
+  "description": "SwapKit - Wallets",
+  "files": ["src/", "dist/"],
   "dependencies": {
     "@coinbase/wallet-sdk": "4.3.4",
     "@cosmjs/amino": "0.33.1",
@@ -11,7 +13,6 @@
     "@ledgerhq/hw-app-btc": "10.9.2",
     "@ledgerhq/hw-app-cosmos": "6.32.2",
     "@ledgerhq/hw-app-eth": "6.45.6",
-    "@ledgerhq/hw-app-near": "6.31.2",
     "@ledgerhq/hw-app-xrp": "6.31.2",
     "@ledgerhq/hw-transport": "6.31.6",
     "@ledgerhq/hw-transport-webusb": "6.29.6",
@@ -30,12 +31,10 @@
     "bitcoinjs-lib": "6.1.7",
     "blakejs": "1.2.1",
     "cosmjs-types": "0.9.0",
-    "near-api-js": "^6.1.0",
     "ripple-binary-codec": "2.4.0",
     "sats-connect": "3.5.0",
     "ts-pattern": "5.7.1"
   },
-  "description": "SwapKit - Wallets",
   "devDependencies": {
     "@walletconnect/logger": "2.1.2",
     "@walletconnect/types": "2.21.2"
@@ -55,11 +54,6 @@
       "default": "./dist/src/coinbase/index.js",
       "require": "./dist/src/coinbase/index.cjs",
       "types": "./src/coinbase/index.ts"
-    },
-    "./cosmostation": {
-      "default": "./dist/src/cosmostation/index.js",
-      "require": "./dist/src/cosmostation/index.cjs",
-      "types": "./src/cosmostation/index.ts"
     },
     "./ctrl": {
       "default": "./dist/src/ctrl/index.js",
@@ -142,7 +136,6 @@
       "types": "./src/walletconnect/index.ts"
     }
   },
-  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",
@@ -158,5 +151,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "3.0.0-beta.28"
+  "version": "3.0.0-beta.19"
 }

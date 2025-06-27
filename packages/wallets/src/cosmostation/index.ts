@@ -3,7 +3,6 @@ import {
   Chain,
   ChainId,
   ChainToChainId,
-  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -37,12 +36,12 @@ async function connectCosmosChains(chains: Chain[], addChain: any, keplrProvider
 
       await keplrProvider.enable(chainId);
       const signer = keplrProvider.getOfflineSignerOnlyAmino(chainId);
-      if (!signer) throw new SwapKitError("wallet_cosmostation_signer_not_found");
+      if (!signer) throw new Error("Could not load signer");
 
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
       const accounts = await signer.getAccounts();
-      if (!accounts?.[0]?.address) throw new SwapKitError("wallet_cosmostation_no_accounts");
+      if (!accounts?.[0]?.address) throw new Error("No accounts found");
 
       const [{ address }] = accounts;
       const toolbox = getCosmosToolbox(chain as any, { signer });
@@ -61,7 +60,7 @@ async function connectEvmChains(chains: Chain[], addChain: any) {
   const provider = window.ethereum;
 
   if (!provider) {
-    throw new SwapKitError("wallet_cosmostation_evm_provider_not_found");
+    throw new Error("No Ethereum provider found for Cosmostation");
   }
 
   const accounts = (await provider.request({
@@ -69,7 +68,7 @@ async function connectEvmChains(chains: Chain[], addChain: any) {
   })) as string[];
 
   if (!accounts || accounts.length === 0) {
-    throw new SwapKitError("wallet_cosmostation_no_evm_accounts");
+    throw new Error("No EVM accounts found");
   }
 
   const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
@@ -79,7 +78,7 @@ async function connectEvmChains(chains: Chain[], addChain: any) {
     const [address] = accounts;
 
     if (!address) {
-      throw new SwapKitError("wallet_cosmostation_no_evm_address");
+      throw new Error("No address found for EVM chain");
     }
 
     addChain({
@@ -114,7 +113,7 @@ export const cosmostationWallet = createWallet({
       });
 
       if (!window.cosmostation) {
-        throw new SwapKitError("wallet_cosmostation_not_found");
+        throw new Error("Cosmostation wallet not found");
       }
 
       const cosmosChains = filteredChains.filter((chain) =>
@@ -127,7 +126,7 @@ export const cosmostationWallet = createWallet({
       if (cosmosChains.length > 0) {
         const keplrProvider = window.cosmostation.providers?.keplr;
         if (!keplrProvider) {
-          throw new SwapKitError("wallet_cosmostation_keplr_provider_not_found");
+          throw new Error("Cosmostation Keplr provider not found");
         }
 
         await connectCosmosChains(cosmosChains, addChain, keplrProvider);

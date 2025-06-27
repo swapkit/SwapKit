@@ -5,12 +5,12 @@ description: Complete reference for SwapKit API methods and endpoints
 
 import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
-The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/helpers/api` import.
+The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/sdk` import.
 
 ## Getting Started
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 // All methods are static - no initialization needed
 const price = await SwapKitApi.getPrice({
@@ -428,27 +428,6 @@ const channel = await SwapKitApi.getChainflipDepositChannel({
 }
 ```
 
-## Rate Limits
-
-The SwapKit API has rate limits that vary by endpoint:
-
-- **Without API key**: 10 requests per minute
-- **With API key**: 100 requests per minute
-
-Configure your API key in [Configuration](/start/configuration):
-
-```typescript
-import { createSwapKit } from '@swapkit/sdk';
-
-const swapKit = createSwapKit({
-  config: {
-    apiKeys: {
-      swapKit: 'your-api-key'
-    }
-  }
-});
-```
-
 ## Error Handling
 
 All API methods can throw errors that should be handled:
@@ -539,198 +518,26 @@ async function validateToken(identifier: string) {
 }
 ```
 
-## Configuration Management
+## Rate Limits
 
-### SKConfig API
+The SwapKit API has rate limits that vary by endpoint:
 
-The `SKConfig` API provides methods to manage SwapKit's configuration at runtime. This includes RPC URLs, API keys, custom headers, and environment settings:
+- **Without API key**: 10 requests per minute
+- **With API key**: 100 requests per minute
 
-### Core Methods
-
-```typescript
-import { SKConfig } from '@swapkit/sdk';
-
-// Get configuration values
-const rpcUrls = SKConfig.get('rpcUrls');
-const apiKeys = SKConfig.get('apiKeys');
-const midgardUrls = SKConfig.get('midgardUrls');
-const apiHeaders = SKConfig.get('apiHeaders');
-
-// Set complete configuration
-SKConfig.set({
-  rpcUrls: { ETH: 'https://new-rpc.com' },
-  apiKeys: { swapKit: 'new-key' },
-  midgardUrls: { THOR: 'https://custom-midgard.com' },
-  apiHeaders: { midgard: { 'X-API-Key': 'secret' } }
-});
-```
-
-### API Keys
+Configure your API key in [Configuration](/start/configuration):
 
 ```typescript
-// Set individual API keys
-SKConfig.setApiKey('swapKit', 'your-swapkit-key');
-SKConfig.setApiKey('blockchair', 'your-blockchair-key');
-SKConfig.setApiKey('walletConnectProjectId', 'your-wc-id');
-```
+import { createSwapKit } from '@swapkit/sdk';
 
-### RPC URLs
-
-```typescript
-import { Chain } from '@swapkit/sdk';
-
-// Set RPC URL for specific chain
-SKConfig.setRpcUrl(Chain.Ethereum, 'https://eth-mainnet.g.alchemy.com/v2/key');
-SKConfig.setRpcUrl(Chain.Avalanche, 'https://api.avax.network/ext/bc/C/rpc');
-```
-
-### Midgard URLs
-
-```typescript
-import { Chain } from '@swapkit/sdk';
-
-// Set custom Midgard URLs
-SKConfig.setMidgardUrl(Chain.THORChain, 'https://custom-midgard.com');
-SKConfig.setMidgardUrl(Chain.Maya, 'https://maya-midgard.com');
-
-// Note: When isStagenet is true, SwapKit automatically uses stagenet URLs:
-// - THORChain: https://stagenet-midgard.ninerealms.com
-// - Maya: https://stagenet-midgard.mayachain.info
-```
-
-### API Headers
-
-```typescript
-// Set headers for specific APIs
-SKConfig.setApiHeaders('midgard', {
-  'X-Client-ID': 'your-client-id'
-});
-
-// Headers for THORNode API
-SKConfig.setApiHeaders('thornode', {
-  'X-Client-ID': 'your-client-id'
-});
-
-// Headers for SwapKit API (in addition to automatic x-api-key)
-SKConfig.setApiHeaders('swapkitApi', {
-  'X-API-Key': 'additional-api-key'
-});
-```
-
-### Environment Settings
-
-```typescript
-// Set environment flags
-SKConfig.setEnv('isDev', true);
-SKConfig.setEnv('isStagenet', true);
-
-// API URLs
-SKConfig.setEnv('apiUrl', 'https://api.swapkit.dev');
-SKConfig.setEnv('devApiUrl', 'https://dev-api.swapkit.dev');
-```
-
-### Integration Configurations
-
-```typescript
-// Radix configuration
-SKConfig.setIntegrationConfig('radix', {
-  dAppDefinitionAddress: 'account_rdx...',
-  applicationName: 'My dApp',
-  applicationVersion: '1.0.0',
-  network: {
-    networkId: 1,
-    networkName: 'mainnet',
-    dashboardBase: 'https://dashboard.radixdlt.com'
-  }
-});
-
-// Chainflip configuration
-SKConfig.setIntegrationConfig('chainflip', {
-  useSDKBroker: true,
-  brokerUrl: 'https://broker.chainflip.io'
-});
-```
-
-### Explorer URLs
-
-```typescript
-// Set custom explorer URLs
-SKConfig.setExplorerUrl(Chain.Ethereum, 'https://etherscan.io');
-SKConfig.setExplorerUrl(Chain.Bitcoin, 'https://blockstream.info');
-```
-
-### Complete Example
-
-```typescript
-import { SKConfig, Chain, StagenetChain } from '@swapkit/sdk';
-
-// Configure multiple settings at once
-SKConfig.set({
-  apiKeys: {
-    swapKit: process.env.SWAPKIT_API_KEY,
-    blockchair: process.env.BLOCKCHAIR_API_KEY
-  },
-  rpcUrls: {
-    [Chain.Ethereum]: 'https://eth-mainnet.g.alchemy.com/v2/key',
-    [Chain.Polygon]: 'https://polygon-rpc.com'
-  },
-  midgardUrls: {
-    [Chain.THORChain]: 'https://private-midgard.com',
-    [StagenetChain.THORChain]: 'https://stagenet-midgard.com'
-  },
-  apiHeaders: {
-    midgard: {
-      'X-Client-ID': process.env.CLIENT_ID
-    },
-    thornode: {
-      'X-Client-ID': process.env.CLIENT_ID
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: 'your-api-key'
     }
-  },
-  envs: {
-    isDev: process.env.NODE_ENV === 'development',
-    isStagenet: false
   }
 });
-
-// Later, update individual settings
-if (userPrefersTestnet) {
-  SKConfig.setEnv('isStagenet', true);
-  // Midgard URLs automatically switch to stagenet when isStagenet is true
-}
 ```
-
-### Fee Multiplier System
-
-SwapKit provides a unified fee multiplier system across all chains:
-
-```typescript
-import { FeeOption, getFeeMultiplier } from '@swapkit/sdk';
-
-// Get fee multiplier for different options
-const slowMultiplier = getFeeMultiplier(FeeOption.Slow);      // 0.75x
-const avgMultiplier = getFeeMultiplier(FeeOption.Average);    // 1x (default)
-const fastMultiplier = getFeeMultiplier(FeeOption.Fast);      // 1.5x
-const fastestMultiplier = getFeeMultiplier(FeeOption.Fastest); // 2.25x
-
-// Apply to fee calculations
-const baseFee = 1000000; // Base fee in smallest unit
-const fastFee = Math.floor(baseFee * getFeeMultiplier(FeeOption.Fast));
-
-// Use in transfers
-await wallet.transfer({
-  recipient: "0x...",
-  assetValue: AssetValue.from({ chain: Chain.Ethereum, value: "1" }),
-  feeOptionKey: FeeOption.Fast // Automatically applies 1.5x multiplier
-});
-```
-
-### Key Features
-
-- **Automatic Stagenet Support**: When `isStagenet` is true, appropriate stagenet URLs are used automatically
-- **Custom Headers**: Set authentication headers for Midgard, THORNode, and SwapKit APIs
-- **Runtime Updates**: All configuration can be updated dynamically without recreating SwapKit instances
-- **Environment-Based Config**: Easily switch between development, staging, and production environments
-- **Unified Fee System**: Consistent fee multipliers across all supported chains
 
 ## Next Steps
 

@@ -20,9 +20,7 @@ const app = (
   </StrictMode>
 );
 
-// @ts-expect-error
 if (import.meta.hot) {
-  // @ts-expect-error With hot module reloading, `import.meta.hot.data` is persisted.
   // biome-ignore lint/suspicious/noAssignInExpressions: skip
   const root = (import.meta.hot.data.root ??= createRoot(elem));
   root.render(app);

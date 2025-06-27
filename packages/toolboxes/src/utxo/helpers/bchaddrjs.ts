@@ -1,6 +1,5 @@
-import { SwapKitError } from "@swapkit/helpers";
 import base58check from "bs58check";
-// @ts-ignore
+// @ts-expect-error - cashaddrjs doesn't have types
 import cashaddr from "cashaddrjs";
 
 enum Format {
@@ -62,7 +61,8 @@ function detectAddressNetwork(address: string) {
 
 function toLegacyAddress(address: string): string {
   const decoded = decodeAddress(address);
-  if (decoded?.format === Format.Legacy) {
+  if (!decoded) return address;
+  if (decoded.format === Format.Legacy) {
     return address;
   }
   return encodeAsLegacy(decoded);
@@ -70,6 +70,7 @@ function toLegacyAddress(address: string): string {
 
 function toCashAddress(address: string): string {
   const decoded = decodeAddress(address);
+  if (!decoded) return address;
   return encodeAsCashaddr(decoded);
 }
 
@@ -84,7 +85,7 @@ function decodeAddress(address: string) {
   } catch (_error) {
     // Try to decode as bitpay if cashaddr decoding fails.
   }
-  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+  return undefined;
 }
 
 function decodeBase58Address(address: string) {
@@ -92,7 +93,7 @@ function decodeBase58Address(address: string) {
     const payload = base58check.decode(address);
 
     // BASE_58_CHECK_PAYLOAD_LENGTH
-    if (payload.length !== 21) throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+    if (payload.length !== 21) return undefined;
     const versionByte = payload[0];
     const hash = Array.prototype.slice.call(payload, 1);
 
@@ -116,10 +117,10 @@ function decodeBase58Address(address: string) {
         return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       default:
-        throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+        return undefined;
     }
   } catch (_error) {
-    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+    return undefined;
   }
 }
 
@@ -141,10 +142,10 @@ function decodeCashAddress(address: string) {
     }
   }
 
-  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+  return undefined;
 }
 
-function decodeCashAddressWithPrefix(address: string): DecodedType {
+function decodeCashAddressWithPrefix(address: string): DecodedType | undefined {
   try {
     const { hash, prefix, type } = cashaddr.decode(address);
 
@@ -155,7 +156,7 @@ function decodeCashAddressWithPrefix(address: string): DecodedType {
       type: type === "P2PKH" ? Type.P2PKH : Type.P2SH,
     };
   } catch (_error) {
-    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+    return undefined;
   }
 }
 

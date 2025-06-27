@@ -2,8 +2,6 @@
     KeepKey Specific bip32 path conventions
 */
 
-import { SwapKitError } from "@swapkit/helpers";
-
 const HARDENED = 0x80000000;
 
 export enum ChainToKeepKeyName {
@@ -29,9 +27,7 @@ export function bip32ToAddressNList(initPath: string): number[] {
   let path = initPath;
 
   if (!bip32Like(path)) {
-    throw new SwapKitError("wallet_keepkey_invalid_params", {
-      reason: `Not a bip32 path: '${path}'`,
-    });
+    throw new Error(`Not a bip32 path: '${path}'`);
   }
 
   if (/^m\//i.test(path)) {
@@ -48,20 +44,18 @@ export function bip32ToAddressNList(initPath: string): number[] {
     const segment = segments[i];
     if (segment) {
       const tmp = /(\d+)([hH']?)/.exec(segment);
-      if (tmp === null)
-        throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Invalid input" });
+      if (tmp === null) throw new Error("Invalid input");
 
       const [, num = "", modifier = ""] = tmp;
 
       ret[i] = Number.parseInt(num, 10);
 
-      if (ret[i] >= HARDENED)
-        throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Invalid child index" });
+      if (ret[i] >= HARDENED) throw new Error("Invalid child index");
 
       if (modifier === "h" || modifier === "H" || modifier === "'") {
         ret[i] += HARDENED;
       } else if (modifier.length > 0) {
-        throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Invalid modifier" });
+        throw new Error("Invalid modifier");
       }
     }
   }

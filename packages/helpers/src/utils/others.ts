@@ -34,7 +34,7 @@ export function wrapWithThrow<T>(fn: () => T, errorKey?: ErrorKeys) {
       throw new SwapKitError(errorKey, error);
     }
 
-    return;
+    return console.error(error);
   }
 }
 
@@ -62,6 +62,7 @@ export function warnOnce(condition: boolean, warning: string) {
     }
 
     warnings.add(warning);
+    console.warn(warning);
   }
 }
 

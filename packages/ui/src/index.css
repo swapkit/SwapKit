@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+@theme {
+  /* Background Colors */
+  --color-background-primary: #141514;
+  --color-background-secondary: #202120;
+  --color-background-surface: rgba(255, 255, 255, 0.08);
+  --color-background-hover: rgba(255, 255, 255, 0.12);
+
+  /* Text Colors */
+  --color-text-primary: rgba(255, 255, 255, 0.92);
+  --color-text-secondary: rgba(255, 255, 255, 0.64);
+  --color-text-tertiary: rgba(255, 255, 255, 0.48);
+
+  /* Border Colors */
+  --color-border-primary: rgba(255, 255, 255, 0.12);
+  --color-border-secondary: rgba(255, 255, 255, 0.32);
+  --color-border-hover: rgba(255, 255, 255, 0.16);
+
+  /* Button Colors */
+  --color-button-primary: rgba(255, 255, 255, 0.92);
+
+  /* Accent Colors */
+  --color-accent-primary: #24c38e;
+  --color-accent-hover: #1fa37c;
+
+  /* Status Colors */
+  --color-error: #ff4545;
+  --color-error-light: rgba(255, 69, 69, 0.12);
+  --color-error-background: rgba(255, 69, 69, 0.08);
+  --color-error-border: rgba(255, 69, 69, 0.24);
+  --color-warning: #f38b01;
+  --color-warning-light: rgba(243, 139, 1, 0.12);
+  --color-success: #24c38e;
+  --color-success-light: rgba(36, 195, 142, 0.12);
+  --color-success-background: rgba(36, 195, 142, 0.08);
+  --color-success-border: rgba(36, 195, 142, 0.24);
+
+  /* Loading States */
+  --color-skeleton-base: rgba(255, 255, 255, 0.08);
+  --color-skeleton-shimmer: rgba(255, 255, 255, 0.16);
+  --color-loading-spinner: #24c38e;
+  --color-loading-background: rgba(255, 255, 255, 0.04);
+
+  /* Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+
+  /* Line Heights */
+  --line-height-xs: 16px;
+  --line-height-sm: 20px;
+  --line-height-base: 24px;
+  --line-height-lg: 28px;
+  --line-height-xl: 28px;
+  --line-height-2xl: 32px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  :root {
+    /* Font Family - this stays in :root as it's not a Tailwind theme variable */
+    --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+
+    /* Effects - these stay in :root as they're not standard Tailwind theme variables */
+    --blur-modal: 12px;
+    --shadow-modal: 0px 6px 16px 0px rgba(0, 0, 0, 0.4);
+    --shadow-tooltip: 0px 4px 12px 0px rgba(0, 0, 0, 0.3);
+    --shadow-dropdown: 0px 4px 12px 0px rgba(0, 0, 0, 0.3);
+
+    /* Animation - these stay in :root as they're not standard Tailwind theme variables */
+    --animate-fadeIn: fadeIn 0.2s ease-out;
+    --animate-fadeOut: fadeOut 0.2s ease-out;
+    --animate-slideUp: slideUp 0.3s ease-out;
+    --animate-slideDown: slideDown 0.3s ease-out;
+    --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+    --animate-spin: spin 1s linear infinite;
+
+    /* Transition Animations */
+    --transition-base: all 0.2s ease;
+    --transition-colors: color, background-color, border-color 0.2s ease;
+    --transition-opacity: opacity 0.2s ease;
+    --transition-transform: transform 0.2s ease;
+    --transition-height: height 0.3s ease;
+    --transition-width: width 0.3s ease;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Utility classes for loading states */
+.skeleton {
+  background-color: var(--color-skeleton-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, transparent, var(--color-skeleton-shimmer), transparent);
+  animation: var(--animate-shimmer);
+  background-size: 200% 100%;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-loading-background);
+  border-top-color: var(--color-loading-spinner);
+  border-radius: 50%;
+  animation: var(--animate-spin);
+}
+
+/* Animation utility classes */
+.animate-in {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+.zoom-in {
+  animation-name: zoom-in;
+}
+
+/* Mobile specific styles */
+@media (max-width: 640px) {
+  .animate-slideUp {
+    animation: slideUpMobile 0.3s ease-out;
+  }
+}
+
+@keyframes slideUpMobile {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Touch interaction improvements */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbar for certain elements */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

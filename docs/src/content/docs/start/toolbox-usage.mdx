@@ -27,7 +27,6 @@ SwapKit provides specialized toolboxes for different blockchain ecosystems:
 - **Substrate Toolbox**: For Polkadot, Chainflip, etc.
 - **Radix Toolbox**: For Radix ecosystem
 - **Ripple Toolbox**: For XRP Ledger
-- **NEAR Toolbox**: For NEAR Protocol
 
 Each toolbox can be imported individually, which is preferred for frontend applications to minimize bundle size.
 
@@ -340,50 +339,6 @@ async function getUtxoData() {
 }
 ```
 
-### Zcash Specific Operations
-
-Zcash requires special handling due to its unique address format and transparent-only support:
-
-```ts twoslash
-// @noErrorValidation
-import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
-
-async function zcashOperations() {
-  // Initialize Zcash toolbox
-  const zcashToolbox = await getUtxoToolbox(Chain.Zcash, {
-    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
-  });
-
-  // Generate Zcash transparent address (t1... for mainnet)
-  const address = await zcashToolbox.getAddress();
-  console.log("Zcash address:", address); // t1...
-
-  // Validate addresses (transparent only)
-  const isValid = zcashToolbox.validateAddress("t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F");
-  console.log("Address valid:", isValid); // true
-
-  // Shielded addresses are rejected
-  const shieldedValid = zcashToolbox.validateAddress("zs1z7rejlpsa98s2...");
-  console.log("Shielded valid:", shieldedValid); // false + warning
-
-  // Transfer with memo support
-  const txHash = await zcashToolbox.transfer({
-    recipient: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
-    assetValue: AssetValue.from({ chain: Chain.Zcash, value: "0.001" }),
-    feeOptionKey: FeeOption.Fast,
-    memo: "Payment memo" // Optional memo via OP_RETURN
-  });
-
-  // Create keys with custom derivation path
-  const keys = await zcashToolbox.createKeysForPath({
-    phrase: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-    derivationPath: "m/44'/133'/0'/0/0" // Standard Zcash path
-  });
-
-  return { address, isValid, txHash, keys };
-}
-```
-
 ## Cosmos Toolbox
 
 ### Importing and Initializing
@@ -662,86 +617,6 @@ async function getRippleData() {
 }
 ```
 
-## NEAR Toolbox
-
-### Importing and Initializing
-
-```ts twoslash
-// @noErrorValidation
-import { getNearToolbox } from "@swapkit/sdk";
-
-// Initialize with mnemonic phrase (creates implicit account)
-const nearToolbox = await getNearToolbox({
-  phrase: "your twelve word mnemonic phrase here",
-  // Optional: custom derivation path
-  derivationPath: [44, 397, 0, 0, 0]
-});
-
-// Or with existing signer and account
-const nearWithAccount = await getNearToolbox({
-  signer: nearSigner,
-  accountId: "alice.near"
-});
-```
-
-### Transfers and Balances
-
-```ts twoslash
-// @noErrorValidation
-import { AssetValue, Chain, FeeOption, getNearToolbox } from "@swapkit/sdk";
-
-async function nearOperations() {
-  const nearToolbox = await getNearToolbox({
-    phrase: "your twelve word mnemonic phrase here"
-  });
-
-  // Get account ID (implicit accounts are hex strings)
-  const accountId = nearToolbox.getAddress();
-  
-  // Transfer NEAR
-  const txHash = await nearToolbox.transfer({
-    recipient: "receiver.near",
-    assetValue: AssetValue.from({ chain: Chain.Near, value: "1.5" }),
-    memo: "Payment"
-  });
-
-  // Get balance
-  const balance = await nearToolbox.getBalance(accountId);
-  
-  return { txHash, balance };
-}
-```
-
-### Contract Interactions
-
-```ts twoslash
-// @noErrorValidation
-import { getNearToolbox } from "@swapkit/sdk";
-
-async function nearContracts() {
-  const nearToolbox = await getNearToolbox({
-    phrase: "your twelve word mnemonic phrase here"
-  });
-
-  // Call a view function (read-only)
-  const result = await nearToolbox.viewFunction(
-    "contract.near",
-    "get_value",
-    { key: "myKey" }
-  );
-
-  // Call a change function
-  const txHash = await nearToolbox.callFunction({
-    contractId: "contract.near",
-    methodName: "set_value",
-    args: { key: "myKey", value: "myValue" },
-    attachedDeposit: "1000000000000000000000000" // 1 NEAR
-  });
-
-  return { result, txHash };
-}
-```
-
 ## Combining Multiple Toolboxes
 
 For complex operations involving multiple chains, you can use multiple toolboxes together:
@@ -755,9 +630,6 @@ async function crossChainOperation() {
   // Initialize Bitcoin toolbox
   const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
 
-  // Initialize Zcash toolbox (shares UTXO patterns with Bitcoin)
-  const zcashToolbox = await getUtxoToolbox(Chain.Zcash);
-
   // Initialize Ethereum toolbox
   const provider = new ethers.JsonRpcProvider("https://mainnet.infura.io/v3/your-infura-key");
   const signer = new ethers.Wallet("your-eth-private-key", provider);
@@ -767,14 +639,10 @@ async function crossChainOperation() {
   const btcAddress = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
   const btcBalance = await btcToolbox.getBalance(btcAddress);
 
-  // Get Zcash balance (transparent addresses only)
-  const zcashAddress = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
-  const zcashBalance = await zcashToolbox.getBalance(zcashAddress);
-
   // Get Ethereum balance
   const ethAddress = signer.address;
   const ethBalance = await ethToolbox.getBalance(ethAddress);
 
-  return { btcBalance, zcashBalance, ethBalance };
+  return { btcBalance, ethBalance };
 }
 ```

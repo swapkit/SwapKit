@@ -1,3 +1,7 @@
+import plugin from "bun-plugin-tailwind";
 import { buildPackage } from "../../tools/builder";
 
-buildPackage();
+buildPackage({
+  plugins: [plugin],
+  format: "esm",
+});

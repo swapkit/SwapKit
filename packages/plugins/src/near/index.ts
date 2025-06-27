@@ -4,6 +4,4 @@ export type {
   NearSwapResponse,
   NearSwapRoute,
   NearTokenInfo,
-  NearNameInfo,
-  NearNameRegistrationParams,
 } from "./types";

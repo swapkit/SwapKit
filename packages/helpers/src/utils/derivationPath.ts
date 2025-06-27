@@ -36,15 +36,9 @@ export function updateDerivationPath(
 }
 
 export function derivationPathToString([network, chainId, account, change, index]:
-  | [number, number, number, number?, number?]
   | [number, number, number, number, number?]
   | DerivationPathArray) {
   const shortPath = typeof index !== "number";
-  const accountPath = typeof change !== "number";
-
-  if (accountPath) {
-    return `m/${network}'/${chainId}'/${account}'`;
-  }
 
   return `m/${network}'/${chainId}'/${account}'/${change}${shortPath ? "" : `/${index}`}`;
 }

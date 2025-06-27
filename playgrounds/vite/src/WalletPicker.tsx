@@ -2,7 +2,6 @@ import {
   Chain,
   CosmosChains,
   EVMChains,
-  SKConfig,
   SubstrateChains,
   UTXOChains,
   WalletOption,
@@ -54,7 +53,7 @@ export const availableChainsByWallet = {
   [WalletOption.EIP6963]: EVMChains,
   [WalletOption.KEPLR]: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
   [WalletOption.LEAP]: [Chain.Cosmos, Chain.Kujira],
-  [WalletOption.LEDGER]: [...AllChainsSupported, Chain.Near],
+  [WalletOption.LEDGER]: AllChainsSupported,
   [WalletOption.METAMASK]: EVMChains,
   [WalletOption.OKX_MOBILE]: EVMChains,
   [WalletOption.ONEKEY]: [
@@ -71,18 +70,11 @@ export const availableChainsByWallet = {
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
-  [WalletOption.KEYSTORE]: [
-    ...AllChainsSupported,
-    Chain.Polkadot,
-    Chain.Ripple,
-    Chain.Tron,
-    Chain.Near,
-  ],
   [WalletOption.CTRL]: AllChainsSupported,
+  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple],
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
-    Chain.Base,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -149,7 +141,6 @@ export const availableChainsByWallet = {
     Chain.Polygon,
     Chain.Arbitrum,
     Chain.Optimism,
-    Chain.Near,
   ],
   [WalletOption.TALISMAN]: [
     Chain.Ethereum,
@@ -162,6 +153,7 @@ export const availableChainsByWallet = {
     Chain.Polkadot,
   ],
   [WalletOption.EXODUS]: [Chain.Ethereum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Bitcoin],
+  [WalletOption.LEDGER_LIVE]: [],
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.COSMOSTATION]: [],
 };
@@ -197,10 +189,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           );
 
           await skClient.connectKeepkey?.(chains, derivationPaths);
-          const { keepKey } = SKConfig.get("apiKeys");
-          if (keepKey) {
-            localStorage.setItem("keepkeyApiKey", keepKey);
-          }
+          localStorage.setItem("keepkeyApiKey", "1234");
           return true;
         }
         case WalletOption.KEEPKEY_BEX:
@@ -314,7 +303,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
       chains.length > 0
         ? !chains.every((chain) =>
             // @ts-ignore
-            availableChainsByWallet[wallet]?.includes(chain),
+            availableChainsByWallet[wallet].includes(chain),
           )
         : false,
     [chains],
@@ -356,8 +345,6 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             Chain.Ripple,
             Chain.Solana,
             Chain.Radix,
-            Chain.Tron,
-            Chain.Near,
           ]
             .sort()
             .map((chain) => (

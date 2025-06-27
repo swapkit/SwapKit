@@ -1,25 +1,23 @@
-import "../styles/index.css";
+import "../styles/globals.css";
+import "@swapkit/ui/styles";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Chain, WalletOption } from "@swapkit/core";
 import { SwapKitWidget } from "@swapkit/ui/react";
 
 export function Widget() {
   return (
-    <div className="container mx-auto p-8 text-center relative z-10">
-      <a href="/">Back</a>
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <a href="/" className="absolute top-4 left-4 text-white/60 hover:text-white">
+        ← Back
+      </a>
 
-      <Card className="bg-card/50 backdrop-blur-sm border-muted">
-        <CardContent className="pt-6">
-          <SwapKitWidget
-            apiKey="1234567890"
-            config={{
-              wallets: [WalletOption.CTRL],
-              chains: [Chain.Cosmos, Chain.Bitcoin],
-            }}
-          />
-        </CardContent>
-      </Card>
+      <SwapKitWidget
+        apiKey="230473ca-3631-4bcf-a6f4-19862f70b473"
+        config={{
+          wallets: [WalletOption.CTRL],
+          chains: [Chain.Ethereum, Chain.Bitcoin],
+        }}
+      />
     </div>
   );
 }

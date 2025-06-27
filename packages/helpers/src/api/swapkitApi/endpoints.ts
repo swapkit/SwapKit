@@ -21,7 +21,6 @@ import {
   PriceResponseSchema,
   type QuoteRequest,
   type QuoteResponse,
-  QuoteResponseSchema,
   type TokenListProvidersResponse,
   type TokensResponseV2,
   type TrackerParams,
@@ -39,18 +38,23 @@ export async function getSwapQuote(json: QuoteRequest) {
     throw new SwapKitError("api_v2_server_error", { message: response.error });
   }
 
-  try {
-    const parsedResponse = QuoteResponseSchema.safeParse(response);
+  // Skip Zod validation for now due to schema mismatch with API
+  // The API returns 'service' as a fee type which is not in the enum
+  return response;
 
-    if (!parsedResponse.success) {
-      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
-    }
-
-    return parsedResponse.data;
-  } catch (_error) {
-    // throw new SwapKitError("api_v2_invalid_response", error);
-    return response;
-  }
+  // TODO: Fix schema to match API response
+  // try {
+  //   const parsedResponse = QuoteResponseSchema.safeParse(response);
+  //
+  //   if (!parsedResponse.success) {
+  //     throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+  //   }
+  //
+  //   return parsedResponse.data;
+  // } catch (error) {
+  //   console.warn(error);
+  //   return response;
+  // }
 }
 
 export async function getChainBalance<T extends Chain>({

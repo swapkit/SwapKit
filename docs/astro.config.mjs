@@ -13,8 +13,8 @@ const openApiPlugin = starlightOpenAPI([
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.REFERENCES ? "https://swapkit.github.io" : undefined,
-  base: process.env.REFERENCES ? "/SwapKit" : undefined,
+  site: import.meta.env.REFERENCES ? "https://thorswap.github.io" : undefined,
+  base: import.meta.env.REFERENCES ? "/SwapKit" : undefined,
   markdown: {
     syntaxHighlight: "shiki",
     shikiConfig: {
@@ -23,12 +23,8 @@ export default defineConfig({
           twoslashOptions: {
             handbookOptions: { noErrorValidation: true, showEmit: false },
             filterNode: (node) => {
-              if (node.type === "hover") {
-                for (const keyword of ["console", "(local var) error: unknown", "HTML"]) {
-                  if (node.text?.includes(keyword)) {
-                    return false;
-                  }
-                }
+              for (const keyword of ["console", "error", "HTML"]) {
+                if (node.text?.includes(keyword)) return false;
               }
 
               return true;
@@ -47,7 +43,6 @@ export default defineConfig({
       disable404Route: true,
       expressiveCode: false,
       lastUpdated: true,
-      pagination: true,
       plugins: [openApiPlugin, ...docsPlugins],
       title: "",
       logo: {
@@ -74,25 +69,24 @@ export default defineConfig({
           items: [
             { label: "API Reference", link: "/guides/api-reference" },
             { label: "THORChain Features", link: "/guides/thorchain-features" },
-            { label: "Zcash Integration", link: "/guides/zcash-integration" },
             { label: "Advanced Features", link: "/guides/advanced-features" },
             { label: "Production Best Practices", link: "/guides/production-best-practices" },
             { label: "Create custom plugin", link: "/guides/create-plugin" },
             { label: "Create custom wallet", link: "/guides/create-wallet" },
           ],
         },
-        { label: "Actions", autogenerate: { directory: "guides/actions" }, collapsed: true },
+        { label: "Actions", collapsed: true, autogenerate: { directory: "guides/actions" } },
         {
           label: "Integrations",
-          autogenerate: { directory: "guides/integrations" },
           collapsed: true,
+          autogenerate: { directory: "guides/integrations" },
         },
         { label: "Others", autogenerate: { directory: "others" }, collapsed: true },
         ...openAPISidebarGroups,
         {
           label: "References",
           collapsed: true,
-          items: process.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : [],
+          items: import.meta.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : [],
         },
       ],
     }),
@@ -100,7 +94,7 @@ export default defineConfig({
 });
 
 function createDocs() {
-  if (!process.env.REFERENCES) {
+  if (!import.meta.env.REFERENCES) {
     return { plugins: [], items: [] };
   }
 

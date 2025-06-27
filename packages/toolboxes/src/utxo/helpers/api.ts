@@ -1,11 +1,4 @@
-import {
-  Chain,
-  RequestClient,
-  SKConfig,
-  SwapKitError,
-  type UTXOChain,
-  warnOnce,
-} from "@swapkit/helpers";
+import { Chain, RequestClient, SKConfig, type UTXOChain, warnOnce } from "@swapkit/helpers";
 import { networks } from "bitcoinjs-lib";
 import { uniqid } from "../../utils";
 
@@ -35,13 +28,11 @@ async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string
   }>(rpcUrl, { headers: { "Content-Type": "application/json" }, body });
 
   if (response.error) {
-    throw new SwapKitError("toolbox_utxo_broadcast_failed", { error: response.error?.message });
+    throw new Error(`failed to broadcast a transaction: ${response.error?.message}`);
   }
 
   if (response.result.includes('"code":-26')) {
-    throw new SwapKitError("toolbox_utxo_invalid_transaction", {
-      error: "Transaction amount was too low",
-    });
+    throw new Error("Invalid transaction: the transaction amount was too low");
   }
 
   return response.result;
@@ -59,8 +50,6 @@ function getDefaultTxFeeByChain(chain: Chain) {
       return 10000;
     case Chain.Litecoin:
       return 1;
-    case Chain.Zcash:
-      return 1;
     default:
       return 2;
   }
@@ -76,8 +65,6 @@ function mapChainToBlockchairChain(chain: Chain) {
       return "dash";
     case Chain.Dogecoin:
       return "dogecoin";
-    case Chain.Zcash:
-      return "zcash";
     case Chain.Polkadot:
       return "polkadot";
     default:
@@ -106,8 +93,7 @@ async function getSuggestedTxFee(chain: Chain) {
 async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
   try {
     const response = await RequestClient.get<BlockchairResponse<T>>(url);
-    if (!response || response.context.code !== 200)
-      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
+    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
 
     return response.data as T;
   } catch (error) {
@@ -116,16 +102,14 @@ async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
       `${url}${apiKey ? `&key=${apiKey}` : ""}`,
     );
 
-    if (!response || response.context.code !== 200)
-      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
+    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
 
     return response.data as T;
   }
 }
 
 async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
-  if (!address)
-    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
+  if (!address) throw new Error("address is required");
 
   try {
     const response = await blockchairRequest<BlockchairAddressResponse>(
@@ -150,8 +134,7 @@ async function getUnconfirmedBalance({
 }
 
 async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
-  if (!txHash)
-    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "TxHash is required" });
+  if (!txHash) throw new Error("txHash is required");
 
   try {
     const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
@@ -160,7 +143,7 @@ async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
     );
     return rawTxResponse?.[txHash]?.raw_transaction || "";
   } catch (error) {
-    console.error("Failed to fetch raw transaction:", error);
+    console.error(error);
     return "";
   }
 }
@@ -198,8 +181,7 @@ async function getUnspentUtxos({
   offset = 0,
   limit = 100,
 }: BlockchairFetchUnspentUtxoParams): Promise<Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>> {
-  if (!address)
-    throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
+  if (!address) throw new Error("address is required");
 
   try {
     const txs = await fetchUnspentUtxoBatch({ chain, address, apiKey, offset, limit });
@@ -216,7 +198,7 @@ async function getUnspentUtxos({
 
     return [...txs, ...nextBatch];
   } catch (error) {
-    console.error("Failed to fetch unspent UTXOs:", error);
+    console.error(error);
     return [];
   }
 }
@@ -281,31 +263,6 @@ export function getUtxoApi(chain: UTXOChain) {
   return utxoApi(chain);
 }
 
-// Define Zcash network objects that match ECPair's expected interface
-const ZCASH_MAINNET = {
-  messagePrefix: "\x19Zcash Signed Message:\n",
-  bech32: "zc",
-  bip32: {
-    public: 0x0488b21e,
-    private: 0x0488ade4,
-  },
-  pubKeyHash: 0x1c, // 28 in decimal - correct for Zcash mainnet
-  scriptHash: 0x1c, // 28 in decimal
-  wif: 0x80, // 128 in decimal
-};
-
-const ZCASH_TESTNET = {
-  messagePrefix: "\x19Zcash Signed Message:\n",
-  bech32: "ztestsapling",
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x1d, // 29 in decimal - correct for Zcash testnet
-  scriptHash: 0x1c, // 28 in decimal
-  wif: 0xef, // 239 in decimal
-};
-
 export function getUtxoNetwork() {
   return function getNetwork(chain: Chain) {
     switch (chain) {
@@ -324,15 +281,8 @@ export function getUtxoNetwork() {
         test.versions.bip32 = bip32;
         return coininfo.dogecoin.main.toBitcoinJS();
       }
-
-      case Chain.Zcash: {
-        // Get Zcash network configuration using our custom objects
-        const { isStagenet } = SKConfig.get("envs");
-        return isStagenet ? ZCASH_TESTNET : ZCASH_MAINNET;
-      }
-
       default:
-        throw new SwapKitError("toolbox_utxo_not_supported", { chain });
+        throw new Error("Invalid chain");
     }
   };
 }

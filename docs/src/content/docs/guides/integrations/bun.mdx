@@ -61,7 +61,7 @@ Create a server file to serve your React application:
 // src/server.tsx
 import { serve } from "bun";
 
-const PORT = process.env.PORT || 3000;
+const PORT = import.meta.env.PORT || 3000;
 
 serve({
   port: PORT,
@@ -155,7 +155,7 @@ Create the entry point for your React application:
 // pages/index.tsx
 import { createRoot } from 'react-dom/client';
 import { App } from '../src/App';
-import '../styles/index.css';
+import '../styles/globals.css';
 
 const container = document.getElementById('root');
 if (container) {
@@ -219,8 +219,8 @@ Access them in your code:
 // @noErrorValidation
 import { SKConfig } from '@swapkit/sdk';
 
-if (process.env.BUN_PUBLIC_SWAPKIT_API_KEY) {
-  SKConfig.setApiKey('swapKit', process.env.BUN_PUBLIC_SWAPKIT_API_KEY);
+if (import.meta.env.BUN_PUBLIC_SWAPKIT_API_KEY) {
+  SKConfig.setApiKey('swapKit', import.meta.env.BUN_PUBLIC_SWAPKIT_API_KEY);
 }
 ```
 

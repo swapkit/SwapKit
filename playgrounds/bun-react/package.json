@@ -8,6 +8,7 @@
   "scripts": {
     "clean": "rm -rf dist node_modules",
     "dev": "bun --hot src/server.tsx",
+    "dev:scan": "bun --hot src/server.tsx & bunx react-scan@latest localhost:3000",
     "start": "NODE_ENV=production bun src/server.tsx",
     "build-playground": "bun run build.ts"
   },
@@ -16,6 +17,7 @@
     "@radix-ui/react-label": "2.1.7",
     "@radix-ui/react-select": "2.2.5",
     "@radix-ui/react-slot": "1.2.3",
+    "@swapkit/core": "workspace:*",
     "@swapkit/ui": "workspace:*",
     "bun-plugin-tailwind": "0.0.15",
     "class-variance-authority": "0.7.1",

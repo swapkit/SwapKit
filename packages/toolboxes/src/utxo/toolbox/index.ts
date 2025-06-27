@@ -2,7 +2,6 @@ import {
   Chain,
   type ChainSigner,
   type DerivationPathArray,
-  SwapKitError,
   type UTXOChain,
 } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
@@ -10,13 +9,11 @@ import type { Psbt } from "bitcoinjs-lib";
 import type { TransactionBuilderType, TransactionType, UTXOType } from "../types";
 import { createBCHToolbox } from "./bitcoinCash";
 import { createUTXOToolbox } from "./utxo";
-import { createZcashToolbox } from "./zcash";
 
 type BCHToolbox = Awaited<ReturnType<typeof createBCHToolbox>>;
 type CommonUTXOToolbox = Awaited<
-  ReturnType<typeof createUTXOToolbox<Exclude<UTXOChain, Chain.BitcoinCash | Chain.Zcash>>>
+  ReturnType<typeof createUTXOToolbox<Exclude<UTXOChain, Chain.BitcoinCash>>>
 >;
-type ZcashToolbox = Awaited<ReturnType<typeof createZcashToolbox>>;
 
 export type UTXOToolboxes = {
   [Chain.BitcoinCash]: BCHToolbox;
@@ -24,7 +21,6 @@ export type UTXOToolboxes = {
   [Chain.Dogecoin]: CommonUTXOToolbox;
   [Chain.Litecoin]: CommonUTXOToolbox;
   [Chain.Dash]: CommonUTXOToolbox;
-  [Chain.Zcash]: ZcashToolbox;
 };
 
 export type UTXOWallets = {
@@ -39,9 +35,6 @@ export type UtxoToolboxParams = {
   [Chain.Dogecoin]: { signer: ChainSigner<Psbt, Psbt> };
   [Chain.Litecoin]: { signer: ChainSigner<Psbt, Psbt> };
   [Chain.Dash]: { signer: ChainSigner<Psbt, Psbt> };
-  [Chain.Zcash]: {
-    signer?: ChainSigner<Psbt, Psbt>;
-  };
 };
 
 export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
@@ -60,24 +53,19 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
       return toolbox as UTXOToolboxes[T];
     }
 
-    case Chain.Zcash: {
-      const toolbox = await createZcashToolbox(params as UtxoToolboxParams[Chain.Zcash]);
-      return toolbox as UTXOToolboxes[T];
-    }
-
     case Chain.Bitcoin:
     case Chain.Dogecoin:
     case Chain.Litecoin:
     case Chain.Dash: {
       const toolbox = await createUTXOToolbox({
         chain,
-        ...(params as UtxoToolboxParams[Exclude<T, Chain.BitcoinCash | Chain.Zcash>]),
+        ...(params as UtxoToolboxParams[Exclude<T, Chain.BitcoinCash>]),
       });
-      return toolbox as UTXOToolboxes[Exclude<T, Chain.BitcoinCash | Chain.Zcash>];
+      return toolbox as UTXOToolboxes[Exclude<T, Chain.BitcoinCash>];
     }
 
     default:
-      throw new SwapKitError("toolbox_utxo_not_supported", { chain });
+      throw new Error(`Chain ${chain} is not supported`);
   }
 }
 

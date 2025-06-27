@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Section Demo</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Background Colors */
+            --color-background-primary: #141514;
+            --color-background-secondary: #202120;
+            --color-background-surface: rgba(255, 255, 255, 0.08);
+            --color-background-hover: rgba(255, 255, 255, 0.08);
+
+            /* Text Colors */
+            --color-text-primary: rgba(255, 255, 255, 0.92);
+            --color-text-secondary: rgba(255, 255, 255, 0.64);
+            --color-text-tertiary: rgba(255, 255, 255, 0.48);
+
+            /* Border Colors */
+            --color-border-primary: rgba(255, 255, 255, 0.12);
+            --color-border-secondary: rgba(255, 255, 255, 0.32);
+
+            /* Accent Colors */
+            --color-accent-primary: #00d4aa;
+            --color-accent-hover: #00b895;
+
+            /* Status Colors */
+            --color-success: #00d4aa;
+            --color-success-light: rgba(0, 212, 170, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: var(--color-background-primary);
+            color: var(--color-text-primary);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .demo-section {
+            margin-bottom: 32px;
+        }
+
+        .demo-label {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Provider Section Component Demo</h1>
+        
+        <div class="demo-section">
+            <div class="demo-label">Loading State</div>
+            <div id="loading-demo"></div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-label">Collapsed State (with Best badge)</div>
+            <div id="collapsed-demo"></div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-label">Expanded State</div>
+            <div id="expanded-demo"></div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-label">Without Logo</div>
+            <div id="no-logo-demo"></div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        // Mock ProviderSection component for demonstration
+        const ProviderSection = ({ provider, isLoading, slippage = 1 }) => {
+            const [isExpanded, setIsExpanded] = React.useState(false);
+
+            if (isLoading) {
+                return (
+                    <div style={{
+                        backgroundColor: 'var(--color-background-surface)',
+                        borderRadius: '16px',
+                        padding: '16px'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    backgroundColor: 'var(--color-background-hover)',
+                                    borderRadius: '50%',
+                                    opacity: 0.5
+                                }}></div>
+                                <div style={{
+                                    width: '80px',
+                                    height: '16px',
+                                    backgroundColor: 'var(--color-background-hover)',
+                                    borderRadius: '4px',
+                                    opacity: 0.5
+                                }}></div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                    width: '48px',
+                                    height: '16px',
+                                    backgroundColor: 'var(--color-background-hover)',
+                                    borderRadius: '4px',
+                                    opacity: 0.5
+                                }}></div>
+                                <div style={{
+                                    width: '96px',
+                                    height: '20px',
+                                    backgroundColor: 'var(--color-background-hover)',
+                                    borderRadius: '4px',
+                                    opacity: 0.5
+                                }}></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const estimatedMinutes = provider.estimatedTime ? Math.floor(provider.estimatedTime / 60) : 0;
+            const estimatedSeconds = provider.estimatedTime ? provider.estimatedTime % 60 : 12;
+
+            return (
+                <div style={{
+                    backgroundColor: 'var(--color-background-surface)',
+                    borderRadius: '16px'
+                }}>
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        style={{
+                            width: '100%',
+                            padding: '16px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            borderRadius: '16px',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-background-hover)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                backgroundColor: '#ffffff',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                            }}>
+                                {provider.logo ? (
+                                    <img src={provider.logo} alt={provider.name} style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                                ) : (
+                                    <span style={{ color: '#000000', fontWeight: '600', fontSize: '14px' }}>
+                                        {provider.name.charAt(0).toUpperCase()}
+                                    </span>
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: '500', fontSize: '16px', color: 'var(--color-text-primary)' }}>
+                                    {provider.name}
+                                </span>
+                                {provider.isRecommended && (
+                                    <span style={{
+                                        padding: '2px 8px',
+                                        backgroundColor: 'var(--color-success-light)',
+                                        color: 'var(--color-success)',
+                                        fontSize: '11px',
+                                        fontWeight: '500',
+                                        borderRadius: '4px'
+                                    }}>
+                                        Best
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-text-tertiary)' }}>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.5" />
+                                    <path d="M8 4V8L10.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                <span style={{ fontSize: '14px', fontWeight: '400' }}>
+                                    {String(estimatedMinutes).padStart(2, '0')}:{String(estimatedSeconds).padStart(2, '0')}
+                                </span>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: '600', fontSize: '16px', color: 'var(--color-text-primary)' }}>
+                                    {provider.outputAmount} {provider.outputSymbol}
+                                </div>
+                            </div>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }}>
+                                <path d={isExpanded ? "M15 12L10 7L5 12" : "M5 8L10 13L15 8"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    {isExpanded && (
+                        <div style={{
+                            padding: '0 16px 16px',
+                            borderTop: '1px solid var(--color-border-primary)'
+                        }}>
+                            <div style={{ paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+                                        Minimum received after slippage ({slippage}%)
+                                    </span>
+                                    <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-text-primary)' }}>
+                                        {provider.fees.minimumReceived} {provider.outputSymbol}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Liquidity fee</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-text-primary)' }}>
+                                        {provider.fees.liquidityFee}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Exchange fee</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-success)', textTransform: 'uppercase' }}>
+                                        FREE
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Inbound network fee</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-text-primary)' }}>
+                                        {provider.fees.inboundNetworkFee}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button style={{
+                                width: '100%',
+                                marginTop: '16px',
+                                padding: '8px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: 'var(--color-accent-primary)',
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                minHeight: '40px',
+                                transition: 'color 0.2s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent-hover)'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-accent-primary)'}
+                            >
+                                Change provider
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Demo data
+        const thorchainProvider = {
+            id: 'thorchain',
+            name: 'THORChain',
+            logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMwMEQ0QUEiLz4KPHBhdGggZD0iTTE2IDI0VjhMMjQgMTZMMTYgMjRaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTYgOFYyNEw4IDE2TDE2IDhaIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjciLz4KPC9zdmc+',
+            isRecommended: true,
+            estimatedTime: 72,
+            outputAmount: '1.234',
+            outputSymbol: 'ETH',
+            fees: {
+                minimumReceived: '1.222',
+                liquidityFee: '$0.45',
+                exchangeFee: '0',
+                inboundNetworkFee: '$2.50'
+            }
+        };
+
+        const uniswapProvider = {
+            id: 'uniswap',
+            name: 'Uniswap',
+            isRecommended: false,
+            estimatedTime: 30,
+            outputAmount: '1.220',
+            outputSymbol: 'ETH',
+            fees: {
+                minimumReceived: '1.208',
+                liquidityFee: '$0.85',
+                exchangeFee: '0',
+                inboundNetworkFee: '$3.20'
+            }
+        };
+
+        // Render demos
+        ReactDOM.render(<ProviderSection isLoading={true} />, document.getElementById('loading-demo'));
+        ReactDOM.render(<ProviderSection provider={thorchainProvider} />, document.getElementById('collapsed-demo'));
+        ReactDOM.render(<ProviderSection provider={{...thorchainProvider, isExpanded: true}} />, document.getElementById('expanded-demo'));
+        ReactDOM.render(<ProviderSection provider={uniswapProvider} />, document.getElementById('no-logo-demo'));
+    </script>
+</body>
+</html>

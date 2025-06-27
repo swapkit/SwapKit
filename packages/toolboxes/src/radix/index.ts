@@ -5,13 +5,7 @@ import type {
   StateEntityFungiblesPageRequest,
   StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
-import {
-  AssetValue,
-  Chain,
-  SKConfig,
-  type SKConfigIntegrations,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, SKConfig, type SKConfigIntegrations } from "@swapkit/helpers";
 
 export type RadixWallet = Awaited<ReturnType<typeof RadixToolbox>>;
 
@@ -150,7 +144,7 @@ export const RadixToolbox = async ({
     networkApi,
     validateAddress: radixValidateAddress,
     signAndBroadcast: (() => {
-      throw new SwapKitError("toolbox_radix_method_not_supported", { method: "signAndBroadcast" });
+      throw new Error("Not implemented");
     }) as (params: any) => Promise<string>,
   };
 };

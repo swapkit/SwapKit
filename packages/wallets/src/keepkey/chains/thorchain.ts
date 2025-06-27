@@ -11,7 +11,6 @@ import {
   type DerivationPathArray,
   type GenericTransferParams,
   SKConfig,
-  SwapKitError,
   derivationPathToString,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
@@ -52,7 +51,7 @@ export const thorchainWalletMethods = async ({
     memo,
   }: SignTransactionParams) => {
     const account = await toolbox.getAccount(sender);
-    if (!account) throw new SwapKitError("wallet_keepkey_account_not_found");
+    if (!account) throw new Error("Account not found");
     const { accountNumber, sequence = 0 } = account;
 
     const isTransfer = recipient && recipient !== "";

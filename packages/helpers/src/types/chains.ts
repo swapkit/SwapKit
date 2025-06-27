@@ -1,6 +1,3 @@
-import { match } from "ts-pattern";
-import { SwapKitError } from "../modules/swapKitError";
-
 export enum Chain {
   Arbitrum = "ARB",
   Avalanche = "AVAX",
@@ -25,8 +22,6 @@ export enum Chain {
   Ripple = "XRP",
   THORChain = "THOR",
   Solana = "SOL",
-  Tron = "TRX",
-  Zcash = "ZEC",
 }
 
 export enum StagenetChain {
@@ -67,9 +62,6 @@ export enum ChainId {
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
-  Tron = "728126428",
-  TronHex = "0x2b6653dc",
-  Zcash = "zcash",
 }
 
 export const ChainIdToChain: Record<ChainId, Chain> = {
@@ -105,9 +97,6 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.Solana]: Chain.Solana,
   [ChainId.THORChainStagenet]: Chain.THORChain,
   [ChainId.THORChain]: Chain.THORChain,
-  [ChainId.Tron]: Chain.Tron,
-  [ChainId.TronHex]: Chain.Tron,
-  [ChainId.Zcash]: Chain.Zcash,
 };
 
 type ChainNameType = keyof typeof Chain;
@@ -136,10 +125,8 @@ export const BaseDecimal: Record<Chain, number> = {
   OP: 18,
   SOL: 9,
   THOR: 8,
-  TRX: 6,
   XRD: 18,
   XRP: 6,
-  ZEC: 8,
 };
 
 export const BlockTimes: Record<Partial<Chain>, number> = {
@@ -166,8 +153,6 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Ripple]: 5,
   [Chain.Solana]: 0.4,
   [Chain.THORChain]: 6,
-  [Chain.Tron]: 3,
-  [Chain.Zcash]: 150,
 };
 
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
@@ -197,15 +182,13 @@ export type UTXOChain =
   | Chain.BitcoinCash
   | Chain.Dash
   | Chain.Dogecoin
-  | Chain.Litecoin
-  | Chain.Zcash;
+  | Chain.Litecoin;
 export const UTXOChains = [
   Chain.Bitcoin,
   Chain.BitcoinCash,
   Chain.Dash,
   Chain.Dogecoin,
   Chain.Litecoin,
-  Chain.Zcash,
 ] as const;
 
 export type CosmosChain = Chain.Cosmos | Chain.THORChain | Chain.Maya | Chain.Kujira;
@@ -254,7 +237,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Kujira]: "https://kujira-rpc.ibs.team",
   [Chain.Litecoin]: "https://node-router.thorswap.net/litecoin",
   [Chain.Maya]: "https://tendermint.mayachain.info",
-  [Chain.Near]: "https://rpc.mainnet.near.org",
+  [Chain.Near]: "https://rpc.ankr.com/near",
   [Chain.Optimism]: "https://mainnet.optimism.io",
   [Chain.Polkadot]: "wss://rpc.polkadot.io",
   [Chain.Polygon]: "https://polygon-rpc.com",
@@ -262,8 +245,6 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Ripple]: "wss://xrpl.ws/",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
   [Chain.THORChain]: "https://rpc.thorswap.net",
-  [Chain.Tron]: "https://tron-rpc.publicnode.com",
-  [Chain.Zcash]: "https://api.blockchair.com/zcash",
   [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
@@ -298,36 +279,27 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
     "wss://archive-1.mainnet.chainflip.io",
     "wss://archive-2.mainnet.chainflip.io",
   ],
-  [Chain.Cosmos]: ["https://cosmos-rpc.publicnode.com"],
+  [Chain.Cosmos]: ["https://cosmos-rpc.quickapi.com", "https://cosmos-rpc.publicnode.com"],
   [Chain.Dash]: ["https://dash-rpc.publicnode.com"],
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
-  [Chain.Ethereum]: ["https://eth.llamarpc.com", "https://cloudflare-eth.com"],
+  [Chain.Ethereum]: ["https://eth.llamarpc.com", "https://rpc.ankr.com/eth"],
   [Chain.Fiat]: [],
   [Chain.Kujira]: ["https://kujira-rpc.polkachu.com", "https://rpc-kujira.synergynodes.com/"],
   [Chain.Litecoin]: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   [Chain.Maya]: ["https://tendermint.mayachain.info", "https://maya-tendermint.publicnode.com"],
   [StagenetChain.Maya]: [],
-  [Chain.Near]: [
-    "https://1rpc.io/near",
-    "https://near.lava.build",
-    "https://near-mainnet.infura.io/v3/3cbfcafa5e1e48b7bb0ea41f2fbc4abf",
-  ],
+  [Chain.Near]: ["https://1rpc.io/near"],
   [Chain.Optimism]: ["https://optimism.llamarpc.com", "https://1rpc.io/op"],
   [Chain.Polkadot]: [
     "wss://polkadot-rpc.dwellir.com",
     "wss://polkadot.api.onfinality.io/public-ws",
   ],
-  [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://polygon-bor-rpc.publicnode.com"],
+  [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://rpc.ankr.com/polygon"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
   [Chain.Ripple]: ["wss://s1.ripple.com/", "wss://s2.ripple.com/"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
-  [Chain.Solana]: [
-    "https://api.mainnet-beta.solana.com",
-    "https://solana-mainnet.rpc.extrnode.com",
-  ],
-  [Chain.Tron]: ["https://api.tronstack.io", "https://api.tron.network"],
-  [Chain.Zcash]: ["https://api.blockchair.com/zcash"],
+  [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
 };
 
 export const EXPLORER_URLS: Record<Chain, string> = {
@@ -354,58 +326,51 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Ripple]: "https://livenet.xrpl.org/",
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
-  [Chain.Tron]: "https://tronscan.org",
-  [Chain.Zcash]: "https://blockchair.com/zcash",
 };
 
 let RPCUrlsMerged = RPC_URLS;
 
 const getRpcBody = (chain: Chain | StagenetChain) => {
-  return match(chain)
-    .with(
-      Chain.Arbitrum,
-      Chain.Avalanche,
-      Chain.Base,
-      Chain.BinanceSmartChain,
-      Chain.Ethereum,
-      Chain.Optimism,
-      Chain.Polygon,
-      Chain.Tron,
-      () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }),
-    )
-    .with(
-      Chain.Bitcoin,
-      Chain.Dogecoin,
-      Chain.BitcoinCash,
-      Chain.Dash,
-      Chain.Litecoin,
-      Chain.Zcash,
-      () => ({
-        id: "test",
-        jsonrpc: "1.0",
-        method: "getblockchaininfo",
-        params: [],
-      }),
-    )
-    .with(
-      Chain.Cosmos,
-      Chain.Kujira,
-      Chain.Maya,
-      Chain.THORChain,
-      StagenetChain.Maya,
-      StagenetChain.THORChain,
-      () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }),
-    )
-    .with(Chain.Polkadot, () => ({ id: 1, jsonrpc: "2.0", method: "system_health", params: [] }))
-    .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
-    .with(Chain.Radix, () => "")
-    .otherwise(() => {
-      throw new SwapKitError("helpers_chain_not_supported", { chain });
-    });
+  switch (chain) {
+    case Chain.Arbitrum:
+    case Chain.Avalanche:
+    case Chain.Base:
+    case Chain.BinanceSmartChain:
+    case Chain.Ethereum:
+    case Chain.Optimism:
+    case Chain.Polygon:
+      return { id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] };
+    case Chain.Bitcoin:
+    case Chain.Dogecoin:
+    case Chain.BitcoinCash:
+    case Chain.Dash:
+    case Chain.Litecoin:
+      return { id: "test", jsonrpc: "1.0", method: "getblockchaininfo", params: [] };
+    case Chain.Cosmos:
+    case Chain.Kujira:
+    case Chain.Maya:
+    case Chain.THORChain:
+    case StagenetChain.Maya:
+    case StagenetChain.THORChain:
+      return { id: 1, jsonrpc: "2.0", method: "status", params: {} };
+    case Chain.Polkadot:
+      return { id: 1, jsonrpc: "2.0", method: "system_health", params: [] };
+    case Chain.Solana:
+      return { id: 1, jsonrpc: "2.0", method: "getHealth" };
+    case Chain.Radix:
+      return "";
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
+  }
 };
 
 function getChainStatusEndpoint(chain: Chain | StagenetChain) {
-  return chain === Chain.Radix ? "/status/network-configuration" : "";
+  switch (chain) {
+    case Chain.Radix:
+      return "/status/network-configuration";
+    default:
+      return "";
+  }
 }
 
 const testRPCConnection = async (chain: Chain | StagenetChain, url: string) => {

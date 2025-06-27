@@ -1,10 +1,9 @@
-import { type AssetValue, Chain, type FullWallet, SKConfig } from "@swapkit/core";
+import { type AssetValue, type Chain, type FullWallet, SKConfig } from "@swapkit/core";
 import { WalletWidget } from "@swapkit/wallets/exodus";
 import { useCallback, useMemo, useState } from "react";
 
 import Liquidity from "./Liquidity";
 import Multisig from "./Multisig";
-import NearNames from "./NearNames";
 import Send from "./Send";
 import Swap from "./Swap";
 import TNS from "./TNS";
@@ -24,7 +23,7 @@ const App = () => {
 
   const [keys, setKeys] = useState({
     swapKit: (import.meta.env.VITE_TEST_API_KEY || "") as string,
-    walletConnectProjectId: (import.meta.env.WALLETCONNECT_PROJECT_ID || "") as string,
+    walletConnectProjectId: "",
     brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
   });
 
@@ -169,13 +168,6 @@ const App = () => {
           <WalletWidget />
         </div>
       </div>
-
-      {/* NEAR Names Registration Modal - Only render when NEAR wallet is connected */}
-      {skClient &&
-        wallet &&
-        (Array.isArray(wallet)
-          ? wallet.some((w) => w.chain === Chain.Near)
-          : wallet?.chain === Chain.Near) && <NearNames skClient={skClient} />}
     </div>
   );
 };

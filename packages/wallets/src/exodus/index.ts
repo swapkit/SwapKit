@@ -49,11 +49,11 @@ async function getWalletMethods({
           network: { type: BitcoinNetworkType.Mainnet },
         },
         onFinish: (response: GetAddressResponse) => {
-          if (!response.addresses[0]) throw new SwapKitError("wallet_exodus_no_address");
+          if (!response.addresses[0]) throw new Error("No address found");
           address = response.addresses[0].address;
         },
         onCancel: () => {
-          throw new SwapKitError("wallet_exodus_request_canceled");
+          throw new Error("Request canceled");
         },
       };
 
@@ -79,7 +79,7 @@ async function getWalletMethods({
             signedPsbt = Psbt.fromBase64(response.psbtBase64);
           },
           onCancel: () => {
-            throw new SwapKitError("wallet_exodus_signature_canceled");
+            throw new Error("Signature canceled");
           },
         };
 
@@ -103,7 +103,7 @@ async function getWalletMethods({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      if (!walletProvider) throw new SwapKitError("wallet_exodus_not_found");
+      if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const jsonRpcProvider = await getProvider(chain);
@@ -121,13 +121,13 @@ async function getWalletMethods({
           await switchEVMWalletNetwork(browserProvider, chain, networkParams);
         }
       } catch (_error) {
-        throw new SwapKitError("wallet_exodus_failed_to_switch_network", { chain });
+        throw new Error(`Failed to add/switch ${chain} network: ${chain}`);
       }
 
       return { ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }), address };
     }
     default:
-      throw new SwapKitError("wallet_exodus_chain_not_supported", { chain });
+      throw new Error(`Unsupported chain: ${chain}`);
   }
 }
 
@@ -137,7 +137,7 @@ export const exodusWallet = createWallet({
   supportedChains: [...EVMChains, Chain.Bitcoin],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
-      if (!wallet) throw new SwapKitError("wallet_exodus_instance_missing");
+      if (!wallet) throw new Error("Missing Exodus Wallet instance");
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
       const { BrowserProvider } = await import("ethers");
 

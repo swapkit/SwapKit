@@ -21,17 +21,17 @@ const quote = await fetch('/api/swap-quote', {
 }).then(r => r.json());
 
 // Backend API route
-import { SwapKitApi } from '@swapkit/helpers/api';
+import { SwapKitApi } from '@swapkit/sdk';
 
 export async function POST(request: Request) {
   const params = await request.json();
-  
+
   // Add API key server-side
   const quote = await SwapKitApi.getSwapQuote({
     ...params,
-    apiKey: process.env.SWAPKIT_API_KEY
+    apiKey: import.meta.env.SWAPKIT_API_KEY
   });
-  
+
   return Response.json(quote);
 }
 ```
@@ -67,7 +67,7 @@ function validateSwapInput(params: any): void {
       message: 'Invalid recipient address'
     });
   }
-  
+
   // Validate amounts
   const amount = Number(params.amount);
   if (isNaN(amount) || amount <= 0) {
@@ -75,7 +75,7 @@ function validateSwapInput(params: any): void {
       message: 'Invalid amount'
     });
   }
-  
+
   // Validate slippage
   if (params.slippage < 0 || params.slippage > 50) {
     throw new SwapKitError('core_swap_invalid_params', {
@@ -96,7 +96,7 @@ Use the modular approach for smaller bundles:
     ```typescript
     // Import only what you need
     import { SwapKit, ThorchainPlugin, evmWallet } from '@swapkit/sdk';
-    
+
     const swapKit = SwapKit({
       plugins: { ...ThorchainPlugin },
       wallets: { ...evmWallet }
@@ -107,7 +107,7 @@ Use the modular approach for smaller bundles:
     ```typescript
     // Imports everything - larger bundle
     import { createSwapKit } from '@swapkit/sdk';
-    
+
     const swapKit = createSwapKit();
     ```
   </TabItem>
@@ -126,11 +126,11 @@ async function getToolboxForChain(chain: Chain) {
     case Chain.Ethereum:
       const { getEvmToolbox } = await import('@swapkit/sdk');
       return getEvmToolbox(chain);
-    
+
     case Chain.Bitcoin:
       const { getUtxoToolbox } = await import('@swapkit/sdk');
       return getUtxoToolbox(chain);
-    
+
     default:
       const { getToolbox } = await import('@swapkit/sdk');
       return getToolbox(chain);
@@ -150,19 +150,19 @@ class SwapKitCache {
     balance: 300_000,   // 5 minutes
     quote: 30_000,      // 30 seconds
   };
-  
+
   async get<T>(
-    key: string, 
+    key: string,
     type: keyof typeof this.ttl,
     fetcher: () => Promise<T>
   ): Promise<T> {
     const cached = this.cache.get(key);
     const now = Date.now();
-    
+
     if (cached && now - cached.timestamp < this.ttl[type]) {
       return cached.data;
     }
-    
+
     const data = await fetcher();
     this.cache.set(key, { data, timestamp: now });
     return data;
@@ -175,10 +175,7 @@ const cache = new SwapKitCache();
 const price = await cache.get(
   `price_${asset}`,
   'price',
-  async () => {
-    const { SwapKitApi } = await import('@swapkit/helpers/api');
-    return SwapKitApi.getPrice(asset);
-  }
+  () => SwapKitApi.getPrice(asset)
 );
 ```
 
@@ -220,23 +217,23 @@ async function executeSwap(route: SwapRoute) {
       switch (error.code) {
         case 'wallet_not_connected':
           return { success: false, error: 'Please connect your wallet' };
-        
+
         case 'insufficient_balance':
           return { success: false, error: 'Insufficient balance' };
-        
+
         case 'user_rejected':
           return { success: false, error: 'Transaction cancelled' };
-        
+
         default:
           return { success: false, error: error.message };
       }
     }
-    
+
     // Handle network errors
     if (error instanceof Error && error.message.includes('network')) {
       return { success: false, error: 'Network error. Please try again.' };
     }
-    
+
     // Unknown error
     console.error('Unexpected error:', error);
     return { success: false, error: 'An unexpected error occurred' };
@@ -256,31 +253,31 @@ async function withRetry<T>(
   options = { maxRetries: 3, delay: 1000 }
 ): Promise<T> {
   let lastError: Error;
-  
+
   for (let i = 0; i <= options.maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
+
       // Don't retry user rejections
-      if (error instanceof SwapKitError && 
+      if (error instanceof SwapKitError &&
           error.code === 'user_rejected') {
         throw error;
       }
-      
+
       // Wait before retry
       if (i < options.maxRetries) {
         await new Promise(r => setTimeout(r, options.delay * (i + 1)));
       }
     }
   }
-  
+
   throw lastError!;
 }
 
 // Usage
-const quote = await withRetry(() => 
+const quote = await withRetry(() =>
   SwapKitApi.getSwapQuote(params)
 );
 ```
@@ -304,22 +301,22 @@ async function performSwap(params: SwapParams) {
   const setState = (update: Partial<SwapState>) => {
     // Update UI state
   };
-  
+
   try {
     setState({ status: 'quoting', message: 'Getting best price...' });
     const quote = await SwapKitApi.getSwapQuote(params);
-    
+
     setState({ status: 'approving', message: 'Approving tokens...' });
     await swapKit.approveAssetValue(assetValue);
-    
+
     setState({ status: 'swapping', message: 'Executing swap...' });
     const txHash = await swapKit.swap({ route: quote.routes[0] });
-    
+
     setState({ status: 'success', txHash });
   } catch (error) {
-    setState({ 
-      status: 'error', 
-      message: getErrorMessage(error) 
+    setState({
+      status: 'error',
+      message: getErrorMessage(error)
     });
   }
 }
@@ -333,30 +330,30 @@ Track transaction status for better UX:
 import { Chain, SwapKitApi } from '@swapkit/sdk';
 
 async function trackTransaction(
-  txHash: string, 
+  txHash: string,
   chain: Chain,
   onUpdate: (status: string) => void
 ) {
   let attempts = 0;
   const maxAttempts = 60; // 5 minutes with 5s intervals
-  
+
   while (attempts < maxAttempts) {
     try {
       const status = await SwapKitApi.getTrackerDetails({ txHash, chain });
-      
+
       onUpdate(status.status);
-      
+
       if (status.status === 'completed' || status.status === 'failed') {
         return status;
       }
     } catch (error) {
       // Continue polling
     }
-    
+
     await new Promise(r => setTimeout(r, 5000));
     attempts++;
   }
-  
+
   throw new Error('Transaction tracking timeout');
 }
 ```
@@ -376,7 +373,7 @@ const rpcEndpoints = {
     process.env.INFURA_ETH_RPC,
     'https://eth.llamarpc.com'
   ].filter(Boolean),
-  
+
   [Chain.Avalanche]: [
     process.env.AVALANCHE_RPC,
     'https://api.avax.network/ext/bc/C/rpc'
@@ -386,20 +383,20 @@ const rpcEndpoints = {
 // Failover logic
 async function getRpcUrl(chain: Chain): Promise<string> {
   const endpoints = rpcEndpoints[chain] || [];
-  
+
   for (const url of endpoints) {
     try {
       const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({ method: 'eth_blockNumber', params: [], id: 1 })
       });
-      
+
       if (response.ok) return url;
     } catch {
       continue;
     }
   }
-  
+
   throw new Error(`No working RPC for ${chain}`);
 }
 ```
@@ -413,13 +410,13 @@ import { SwapKitApi } from '@swapkit/sdk';
 
 async function getOptimalGasPrice(chain: Chain, priority: 'low' | 'medium' | 'high') {
   const gasRates = await SwapKitApi.getGasRate(chain);
-  
+
   const multipliers = {
     low: 0.9,
     medium: 1.0,
     high: 1.5
   };
-  
+
   return {
     maxFeePerGas: Math.floor(Number(gasRates) * multipliers[priority]),
     maxPriorityFeePerGas: Math.floor(Number(gasRates) * 0.1)
@@ -472,7 +469,7 @@ Track key metrics:
 class PerformanceTracker {
   track(operation: string, fn: () => Promise<any>) {
     const start = performance.now();
-    
+
     return fn()
       .then(result => {
         const duration = performance.now() - start;
@@ -485,7 +482,7 @@ class PerformanceTracker {
         throw error;
       });
   }
-  
+
   private report(operation: string, duration: number, status: string) {
     // Send to analytics
     analytics.track('operation_performance', {
@@ -499,7 +496,7 @@ class PerformanceTracker {
 const tracker = new PerformanceTracker();
 
 // Track swap performance
-const txHash = await tracker.track('swap', () => 
+const txHash = await tracker.track('swap', () =>
   swapKit.swap({ route })
 );
 ```
@@ -548,7 +545,7 @@ async function healthCheck(): Promise<HealthStatus> {
     swapKit.validateAddress('0x...', Chain.Ethereum),
     fetch(rpcUrls[Chain.Ethereum])
   ]);
-  
+
   return {
     api: checks[0].status === 'fulfilled',
     sdk: checks[1].status === 'fulfilled',

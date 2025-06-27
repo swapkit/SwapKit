@@ -6,7 +6,6 @@ import {
   type GenericTransferParams,
   SKConfig,
   StagenetChain,
-  SwapKitError,
   WalletOption,
   createWallet,
   filterSupportedChains,
@@ -31,7 +30,6 @@ export const ledgerWallet = createWallet({
     Chain.Dogecoin,
     Chain.Ethereum,
     Chain.Litecoin,
-    Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
     Chain.Ripple,
@@ -151,7 +149,7 @@ async function getWalletMethods({
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
       const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
-        if (!assetValue) throw new SwapKitError("wallet_ledger_invalid_asset");
+        if (!assetValue) throw new Error("invalid asset");
 
         const sendCoinsMessage = {
           amount: [
@@ -211,9 +209,9 @@ async function getWalletMethods({
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
       }: GenericTransferParams | ThorchainDepositParams) => {
         const account = await toolbox.getAccount(address);
-        if (!account) throw new SwapKitError("wallet_ledger_invalid_account");
-        if (!assetValue) throw new SwapKitError("wallet_ledger_invalid_asset");
-        if (!value) throw new SwapKitError("wallet_ledger_pubkey_not_found");
+        if (!account) throw new Error("invalid account");
+        if (!assetValue) throw new Error("invalid asset");
+        if (!value) throw new Error("Account pubkey not found");
 
         const { accountNumber, sequence: sequenceNumber } = account;
         const sequence = (sequenceNumber || 0).toString();
@@ -233,7 +231,7 @@ async function getWalletMethods({
         });
 
         const signatures = await signTransaction(rawSendTx, sequence);
-        if (!signatures) throw new SwapKitError("wallet_ledger_signing_error");
+        if (!signatures) throw new Error("tx signing failed");
 
         const pubkey = encodePubkey({ type: "tendermint/PubKeySecp256k1", value });
         const msgs = orderedMessages.map(parseAminoMessageForDirectSigning);
@@ -270,15 +268,6 @@ async function getWalletMethods({
       return { ...toolbox, address, deposit, transfer, signMessage };
     }
 
-    case Chain.Near: {
-      const { getNearToolbox } = await import("@swapkit/toolboxes/near");
-      const signer = await getLedgerClient({ chain, derivationPath });
-      const accountId = await signer.getAddress();
-      const toolbox = await getNearToolbox({ signer });
-
-      return { ...toolbox, address: accountId };
-    }
-
     case Chain.Ripple: {
       const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
       const signer = await getLedgerClient({ chain, derivationPath });
@@ -289,6 +278,6 @@ async function getWalletMethods({
     }
 
     default:
-      throw new SwapKitError("wallet_ledger_chain_not_supported", { chain });
+      throw new Error("Unsupported chain");
   }
 }

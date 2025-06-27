@@ -1,4 +1,4 @@
-import { Chain, type EVMChain, SwapKitError } from "@swapkit/helpers";
+import { Chain, type EVMChain } from "@swapkit/helpers";
 
 import { getProvider } from "../helpers";
 import type { EVMToolboxParams } from "../types";
@@ -27,7 +27,7 @@ export async function getEvmToolbox<T extends EVMChain>(chain: T, params?: EVMTo
     case Chain.Ethereum:
       return ETHToolbox(toolboxParams);
     default:
-      throw new SwapKitError("toolbox_evm_not_supported", { chain });
+      throw new Error(`Chain ${chain} is not supported`);
   }
 }
 

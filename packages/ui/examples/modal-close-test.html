@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Close Button Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .modal-preview {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .modal-preview h3 {
+            margin: 0 0 15px 0;
+            color: #888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .modal-header {
+            position: relative;
+            padding: 16px;
+            background: #1c1c1c;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            padding-right: 40px;
+        }
+        .close-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .close-icon {
+            width: 16px;
+            height: 16px;
+            stroke: #999;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .status-icon {
+            width: 16px;
+            height: 16px;
+        }
+        .status.success {
+            color: #4ade80;
+        }
+        .status.error {
+            color: #f87171;
+        }
+        .notes {
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .notes h2 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+        }
+        .notes ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .notes li {
+            margin-bottom: 8px;
+            color: #888;
+        }
+        .notes code {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Modal Close Button Positioning Test</h1>
+        
+        <div class="modal-grid">
+            <div class="modal-preview">
+                <h3>Token Select Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Select token</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Updated to absolute positioning
+                </div>
+            </div>
+
+            <div class="modal-preview">
+                <h3>Confirm Swap Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Confirm swap</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Already using absolute positioning
+                </div>
+            </div>
+
+            <div class="modal-preview">
+                <h3>Provider Select Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Select provider</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Updated to absolute positioning
+                </div>
+            </div>
+
+            <div class="modal-preview">
+                <h3>Transaction Status Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Transaction status</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Already using absolute positioning
+                </div>
+            </div>
+
+            <div class="modal-preview">
+                <h3>Settings Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Settings</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Updated to absolute positioning
+                </div>
+            </div>
+
+            <div class="modal-preview">
+                <h3>Wallet Connect Modal</h3>
+                <div class="modal-header">
+                    <div class="modal-title">Connect wallet</div>
+                    <button class="close-button" aria-label="Close modal">
+                        <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="status success">
+                    <svg class="status-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Already using absolute positioning
+                </div>
+            </div>
+        </div>
+
+        <div class="notes">
+            <h2>Summary of Changes</h2>
+            <ul>
+                <li>All modal close buttons now use <code>position: absolute</code> for consistent positioning</li>
+                <li>Close buttons are positioned at <code>top: 16px; right: 16px</code> (with responsive variations where applicable)</li>
+                <li>Modal titles have <code>padding-right</code> to prevent overlap with the close button</li>
+                <li>All close buttons include proper <code>aria-label</code> attributes for accessibility</li>
+                <li>The CloseIcon component is used consistently across all modals (except where inline SVG was already present)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

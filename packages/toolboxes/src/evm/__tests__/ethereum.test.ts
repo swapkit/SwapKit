@@ -31,7 +31,7 @@ beforeEach(async () => {
 
   SKConfig.set({
     apiKeys: {
-      swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
+      swapKit: process.env.TEST_API_KEY || import.meta.env.TEST_API_KEY,
     },
   });
   context.provider = provider;

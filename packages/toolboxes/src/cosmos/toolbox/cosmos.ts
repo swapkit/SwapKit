@@ -17,18 +17,17 @@ import {
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  applyFeeMultiplier,
   derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { P, match } from "ts-pattern";
+import { getBalance } from "../../utils";
 import type { CosmosToolboxParams } from "../types";
 import {
   cosmosCreateTransaction,
   createSigningStargateClient,
   createStargateClient,
-  getAssetFromDenom,
   getDenomWithChain,
   getMsgSendDenom,
 } from "../util";
@@ -39,7 +38,8 @@ export async function fetchFeeRateFromSwapKit(chainId: ChainId, safeDefault: num
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch (e) {
+    console.error(e);
     return safeDefault;
   }
 }
@@ -185,21 +185,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     transfer,
     getAddress,
     getAccount,
-    getBalance: async (address: string, _potentialScamFilter?: boolean) => {
-      const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
-      return await Promise.all(
-        denomBalances
-          .filter(({ denom }) => denom && !denom.includes("IBC/"))
-          .map(({ denom, amount }) => {
-            const fullDenom =
-              [Chain.THORChain, Chain.Maya].includes(chain) &&
-              (denom.includes("/") || denom.includes("˜"))
-                ? `${chain}.${denom}`
-                : denom;
-            return getAssetFromDenom(fullDenom, amount);
-          }),
-      );
-    },
+    getBalance: getBalance(chain),
     getSignerFromPhrase: async ({
       phrase,
       derivationPath,
@@ -231,7 +217,8 @@ export async function getFeeRateFromThorswap(chainId: ChainId, safeDefault: numb
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch (e) {
+    console.error(e);
     return safeDefault;
   }
 }
@@ -275,14 +262,8 @@ async function getFees(chain: Chain, safeDefault: number) {
   const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
   return {
     average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
-    fast: SwapKitNumber.fromBigInt(
-      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)),
-      BaseDecimal[chain],
-    ),
-    fastest: SwapKitNumber.fromBigInt(
-      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)),
-      BaseDecimal[chain],
-    ),
+    fast: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 1.5)), BaseDecimal[chain]),
+    fastest: SwapKitNumber.fromBigInt(BigInt(Math.floor(baseFee * 2)), BaseDecimal[chain]),
   } as { [key in FeeOption]: SwapKitNumber };
 }
 
@@ -335,9 +316,9 @@ function cosmosBalanceDenomsGetter(rpcUrl: string) {
 
 function createPrivateKeyFromPhrase(derivationPath: string) {
   return async function createPrivateKeyFromPhrase(phrase: string) {
-    const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = (
-      await import("@cosmjs/crypto")
-    ).default;
+    const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = await import(
+      "@cosmjs/crypto"
+    );
 
     const mnemonicChecked = new EnglishMnemonic(phrase);
     const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
