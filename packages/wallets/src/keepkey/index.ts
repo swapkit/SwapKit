@@ -33,6 +33,7 @@ export const keepkeyWallet = createWallet({
     Chain.Dash,
     Chain.Ethereum,
     Chain.Litecoin,
+    Chain.Ripple,
     Chain.Optimism,
     Chain.Polygon,
     Chain.THORChain,
@@ -115,6 +116,10 @@ async function getWalletMethods({
     case Chain.Dogecoin:
     case Chain.Litecoin: {
       return utxoWalletMethods({ sdk, chain, derivationPath });
+    }
+    case Chain.Ripple: {
+      const { rippleWalletMethods } = await import("./chains/ripple");
+      return rippleWalletMethods({ sdk, derivationPath });
     }
     default:
       throw new SwapKitError("wallet_keepkey_chain_not_supported", { chain });

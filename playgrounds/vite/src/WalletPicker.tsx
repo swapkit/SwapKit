@@ -42,6 +42,7 @@ const AllChainsSupported = [
   Chain.Polkadot,
   Chain.Maya,
   Chain.Kujira,
+  Chain.Ripple,
   Chain.THORChain,
   Chain.Solana,
 ] as Chain[];
@@ -91,6 +92,7 @@ export const availableChainsByWallet = {
     Chain.Dogecoin,
     Chain.Ethereum,
     Chain.Litecoin,
+    Chain.Ripple,
     Chain.Optimism,
     Chain.Polygon,
     Chain.THORChain,
@@ -108,6 +110,7 @@ export const availableChainsByWallet = {
     Chain.Dogecoin,
     Chain.Ethereum,
     Chain.Litecoin,
+    Chain.Ripple,
     Chain.Optimism,
     Chain.Polygon,
     Chain.THORChain,
