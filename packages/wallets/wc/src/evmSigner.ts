@@ -1,5 +1,5 @@
 import { type EVMChain, SwapKitError, WalletOption } from "@swapkit/helpers";
-import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
+import type { JsonRpcProvider, Provider, TransactionRequest, TransactionResponse } from "ethers";
 import { AbstractSigner } from "ethers";
 
 import { DEFAULT_EIP155_METHODS } from "./constants";
@@ -33,7 +33,7 @@ class WalletconnectSigner extends AbstractSigner {
       throw new SwapKitError("wallet_walletconnect_connection_not_established");
     }
     if (!this.address) {
-      this.address = getAddressByChain(this.chain, this.walletconnect.accounts);
+      this.address = getAddressByChain(this.chain, this.walletconnect.accounts || []);
     }
 
     return this.address;
@@ -100,7 +100,6 @@ class WalletconnectSigner extends AbstractSigner {
     // return txHash.startsWith('0x') ? txHash : `0x${txHash}`;
   };
 
-  // @ts-expect-error TODO: fix this
   sendTransaction = async ({ from, to, value, data }: TransactionRequest) => {
     const { toHexString } = await import("@swapkit/toolbox-evm");
 
@@ -119,10 +118,9 @@ class WalletconnectSigner extends AbstractSigner {
       },
     });
 
-    return response;
+    return response as TransactionResponse;
   };
 
-  // @ts-expect-error TODO: fix this
   connect = (provider: Provider | null) => {
     if (!provider) {
       throw new SwapKitError({

@@ -12,7 +12,8 @@ import {
   setRequestClientConfig,
 } from "@swapkit/helpers";
 import type { BaseCosmosToolboxType, DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
-import type { WalletConnectModalSign } from "@walletconnect/modal-sign-html";
+import type { WalletConnectModal } from "@walletconnect/modal";
+import { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 
 import {
@@ -45,13 +46,11 @@ async function getToolbox({
   chain,
   walletconnect,
   address,
-  session,
   ethplorerApiKey,
   covalentApiKey,
 }: {
   apis: ChainApis;
   walletconnect: Walletconnect;
-  session: SessionTypes.Struct;
   chain: (typeof WC_SUPPORTED_CHAINS)[number];
   covalentApiKey?: string;
   ethplorerApiKey?: string;
@@ -77,7 +76,7 @@ async function getToolbox({
       });
       const provider = getProvider(chain);
       const signer = await getEVMSigner({ walletconnect, chain, provider });
-      // @ts-expect-error TODO: fix this
+
       const toolbox = getToolboxByChain(chain)({ api, apiKey, provider, signer });
 
       return toolbox;
@@ -104,7 +103,7 @@ async function getToolbox({
       const signRequest = (signDoc: StdSignDoc) =>
         walletconnect?.client.request({
           chainId: THORCHAIN_MAINNET_ID,
-          topic: session.topic,
+          topic: walletconnect.session.topic,
           request: {
             method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO,
             params: { signerAddress: address, signDoc },
@@ -199,24 +198,34 @@ async function getWalletconnect(
   walletConnectProjectId?: string,
   walletconnectOptions?: SignClientTypes.Options,
 ) {
-  let modal: WalletConnectModalSign | undefined;
+  let modal: WalletConnectModal | undefined;
+  let signer: typeof SignClient | undefined;
+  let session: SessionTypes.Struct | undefined;
+  let accounts: string[] | undefined;
   try {
     if (!walletConnectProjectId) {
       throw new SwapKitError("wallet_walletconnect_project_id_not_specified");
     }
     const requiredNamespaces = getRequiredNamespaces(chains.map(chainToChainId));
 
-    const { WalletConnectModalSign } = await import("@walletconnect/modal-sign-html");
+    const { WalletConnectModal } = await import("@walletconnect/modal");
 
-    const client = new WalletConnectModalSign({
+    const client = await SignClient.init({
+      ...walletconnectOptions,
+      logger: DEFAULT_LOGGER,
+      relayUrl: DEFAULT_RELAY_URL,
+      projectId: "f2ec95d515e61deb4f80ead9b4501212", // walletConnectProjectId,
+      metadata: DEFAULT_APP_METADATA,
+    });
+
+    const modal = new WalletConnectModal({
       logger: DEFAULT_LOGGER,
       relayUrl: DEFAULT_RELAY_URL,
       projectId: walletConnectProjectId,
-      metadata: walletconnectOptions?.metadata || DEFAULT_APP_METADATA,
       ...walletconnectOptions?.core,
     });
 
-    const oldSession = await client.getSession();
+    const oldSession = await client.session.getAll()[0];
 
     // disconnect old Session cause we can't handle using it with current ui
     if (oldSession) {
@@ -226,25 +235,51 @@ async function getWalletconnect(
       });
     }
 
-    const session = await client.connect({ requiredNamespaces });
+    const { uri, approval } = await client.connect({
+      // Optionally: pass a known prior pairing (e.g. from `client.core.pairing.getPairings()`) to skip the `uri` step.
+      //   pairingTopic: pairing?.topic,
+      // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+      requiredNamespaces,
+    });
 
-    const accounts = Object.values(session.namespaces).flatMap(
-      (namespace: any) => namespace.accounts,
-    );
+    if (uri) {
+      modal.openModal({ uri });
+      // Await session approval from the wallet.
+      session = await approval();
+      // Handle the returned session (e.g. update UI to "connected" state).
+      // Close the QRCode modal in case it was open.
+      modal.closeModal();
+
+      function extractAccountsFromSession(session: SessionTypes.Struct) {
+        const accounts: string[] = [];
+
+        for (const [_namespace, data] of Object.entries(session.namespaces)) {
+          accounts.push(...data.accounts);
+        }
+
+        return accounts;
+      }
+
+      accounts = extractAccountsFromSession(session);
+    }
 
     const disconnect = async () => {
-      await client.disconnect({
-        topic: session.topic,
-        reason: { code: 0, message: "User disconnected" },
-      });
+      session &&
+        (await client.disconnect({
+          topic: session.topic,
+          reason: { code: 0, message: "User disconnected" },
+        }));
     };
 
-    return { session, accounts, client, disconnect };
+    if (!session) {
+      throw new SwapKitError("wallet_walletconnect_connection_not_established");
+    }
+
+    return { signer, session, accounts, client, disconnect };
   } catch (e) {
     console.error(e);
   } finally {
     if (modal) {
-      // @ts-expect-error wrong typing
       modal.closeModal();
     }
   }
@@ -290,11 +325,10 @@ function connectWalletconnect({
     const { session, accounts } = walletconnect;
 
     const promises = chainsToConnect.map(async (chain) => {
-      const address = getAddressByChain(chain, accounts);
+      const address = getAddressByChain(chain, accounts || []);
 
       const toolbox = await getToolbox({
         apis,
-        session,
         address,
         chain,
         walletconnect,
