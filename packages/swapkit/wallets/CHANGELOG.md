@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.1.31
+
+### Patch Changes
+
+- Updated dependencies [[`c776ab6`](https://github.com/swapkit/SwapKit/commit/c776ab68d5a1e81ec60768b71333eb604dc80649)]:
+  - @swapkit/wallet-wc@1.9.20
+
 ## 2.1.30
 
 ### Patch Changes
