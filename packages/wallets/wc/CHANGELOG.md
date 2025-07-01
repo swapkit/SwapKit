@@ -1,5 +1,11 @@
 # @swapkit/wallet-wc
 
+## 1.9.20
+
+### Patch Changes
+
+- [`c776ab6`](https://github.com/swapkit/SwapKit/commit/c776ab68d5a1e81ec60768b71333eb604dc80649) Thanks [@towanTG](https://github.com/towanTG)! - Bumps Walletconnect libs to fix deprecation issues on iOS app
+
 ## 1.9.19
 
 ### Patch Changes
