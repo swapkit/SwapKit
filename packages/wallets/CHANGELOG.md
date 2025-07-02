@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 3.0.0-beta.30
+
+### Patch Changes
+
+- [`ee9cf70`](https://github.com/swapkit/SwapKit/commit/ee9cf70ae6585ebd3754a99f97a79f216d4918f9) Thanks [@towanTG](https://github.com/towanTG)! - Fixes tron transaction creation and walletconnect lib update
+
+- Updated dependencies [[`ee9cf70`](https://github.com/swapkit/SwapKit/commit/ee9cf70ae6585ebd3754a99f97a79f216d4918f9)]:
+  - @swapkit/toolboxes@1.0.0-beta.27
+  - @swapkit/helpers@3.0.0-beta.18
+
 ## 3.0.0-beta.29
 
 ### Patch Changes

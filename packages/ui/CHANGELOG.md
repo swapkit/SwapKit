@@ -1,5 +1,15 @@
 # @swapkit/ui
 
+## 0.1.0-beta.31
+
+### Patch Changes
+
+- Updated dependencies [[`ee9cf70`](https://github.com/swapkit/SwapKit/commit/ee9cf70ae6585ebd3754a99f97a79f216d4918f9)]:
+  - @swapkit/toolboxes@1.0.0-beta.27
+  - @swapkit/wallets@3.0.0-beta.30
+  - @swapkit/core@4.0.0-beta.28
+  - @swapkit/plugins@1.0.0-beta.27
+
 ## 0.1.0-beta.30
 
 ### Patch Changes
