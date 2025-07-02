@@ -1,5 +1,11 @@
 # @swapkit/wallet-wc
 
+## 1.9.21
+
+### Patch Changes
+
+- [`b65f96a`](https://github.com/swapkit/SwapKit/commit/b65f96a0bb00840e0918a4679a8b324d4d452cd1) Thanks [@towanTG](https://github.com/towanTG)! - Changes to walletconnectprojectid usage
+
 ## 1.9.20
 
 ### Patch Changes
