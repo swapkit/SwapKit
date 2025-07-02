@@ -214,7 +214,7 @@ async function getWalletconnect(
       ...walletconnectOptions,
       logger: DEFAULT_LOGGER,
       relayUrl: DEFAULT_RELAY_URL,
-      projectId: "f2ec95d515e61deb4f80ead9b4501212", // walletConnectProjectId,
+      projectId: walletConnectProjectId,
       metadata: DEFAULT_APP_METADATA,
     });
 
