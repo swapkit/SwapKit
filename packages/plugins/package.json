@@ -1,8 +1,8 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@polkadot/keyring": "13.5.1",
-    "@polkadot/util": "13.5.1",
+    "@polkadot/keyring": "13.5.3",
+    "@polkadot/util": "13.5.3",
     "@solana/web3.js": "1.98.2",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
@@ -46,7 +46,10 @@
       "types": "./src/thorchain/index.ts"
     }
   },
-  "files": ["src/", "dist/"],
+  "files": [
+    "src/",
+    "dist/"
+  ],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",

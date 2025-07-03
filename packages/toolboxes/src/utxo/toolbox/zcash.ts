@@ -15,7 +15,7 @@ import {
 import type { Psbt } from "bitcoinjs-lib";
 import { hash160 } from "bitcoinjs-lib/src/crypto";
 import bs58check from "bs58check";
-import ECPairFactory from "ecpair";
+import { ECPairFactory } from "ecpair";
 import { P, match } from "ts-pattern";
 import { getUtxoNetwork } from "../helpers";
 import type { UTXOBuildTxParams, UTXOTransferParams } from "../types";
