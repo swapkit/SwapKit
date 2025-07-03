@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.21
+
+### Patch Changes
+
+- [`3d10c9a`](https://github.com/swapkit/SwapKit/commit/3d10c9afcc107879afb917ba4491eb6bd555f6e0) Thanks [@towanTG](https://github.com/towanTG)! - Adds RPC Test body for XRP
+
 ## 3.0.0-beta.20
 
 ### Patch Changes
