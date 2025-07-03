@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 1.0.0-beta.28
+
+### Patch Changes
+
+- [`f66d9e1`](https://github.com/swapkit/SwapKit/commit/f66d9e1839e3a387a06a1123a3764e0bef73d02e) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Solana balance mapping
+
+- Updated dependencies []:
+  - @swapkit/helpers@3.0.0-beta.18
+
 ## 1.0.0-beta.27
 
 ### Patch Changes
