@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.22
+
+### Patch Changes
+
+- [`97162d9`](https://github.com/swapkit/SwapKit/commit/97162d9b33aca66304489db059fd18d76fa3a709) Thanks [@towanTG](https://github.com/towanTG)! - Fixes dynamicHeader usage in requestClient
+
 ## 3.0.0-beta.21
 
 ### Patch Changes

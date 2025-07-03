@@ -1,5 +1,13 @@
 # @swapkit/plugins
 
+## 1.0.0-beta.32
+
+### Patch Changes
+
+- Updated dependencies [[`97162d9`](https://github.com/swapkit/SwapKit/commit/97162d9b33aca66304489db059fd18d76fa3a709)]:
+  - @swapkit/helpers@3.0.0-beta.22
+  - @swapkit/toolboxes@1.0.0-beta.32
+
 ## 1.0.0-beta.31
 
 ### Patch Changes
