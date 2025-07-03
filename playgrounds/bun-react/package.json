@@ -27,7 +27,7 @@
     "tailwind-merge": "3.3.0",
     "tailwindcss": "4.1.8",
     "tailwindcss-animate": "1.0.7",
-    "zod": "3.25.57"
+    "zod": "3.25.71"
   },
   "devDependencies": {
     "@types/bun": "latest",
