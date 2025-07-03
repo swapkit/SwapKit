@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.19
+
+### Patch Changes
+
+- [`c4764b6`](https://github.com/swapkit/SwapKit/commit/c4764b6178c4aa94c35f827c052288566d4f2ed5) Thanks [@towanTG](https://github.com/towanTG)! - Fixes sk api key usage
+
 ## 3.0.0-beta.18
 
 ### Patch Changes
