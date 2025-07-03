@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 1.0.0-beta.33
+
+### Patch Changes
+
+- [`ffb68e0`](https://github.com/swapkit/SwapKit/commit/ffb68e040ef2b5505507a7cf07f51a39f07c5054) Thanks [@towanTG](https://github.com/towanTG)! - Bump dependency versions
+
+- Updated dependencies [[`ffb68e0`](https://github.com/swapkit/SwapKit/commit/ffb68e040ef2b5505507a7cf07f51a39f07c5054)]:
+  - @swapkit/toolboxes@1.0.0-beta.33
+  - @swapkit/helpers@3.0.0-beta.22
+
 ## 1.0.0-beta.32
 
 ### Patch Changes

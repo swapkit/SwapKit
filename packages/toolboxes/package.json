@@ -1,9 +1,6 @@
 {
   "description": "SwapKit - Toolboxes",
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
     "@cosmjs/amino": "0.33.1",
@@ -119,5 +116,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "1.0.0-beta.32"
+  "version": "1.0.0-beta.33"
 }

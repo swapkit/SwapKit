@@ -46,10 +46,7 @@
       "types": "./src/thorchain/index.ts"
     }
   },
-  "files": [
-    "src/",
-    "dist/"
-  ],
+  "files": ["src/", "dist/"],
   "homepage": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",
@@ -68,5 +65,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "1.0.0-beta.32"
+  "version": "1.0.0-beta.33"
 }
