@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0-beta.20
+
+### Patch Changes
+
+- [`296316d`](https://github.com/swapkit/SwapKit/commit/296316dd8e56d51ccb39ee2145e52b09ee01a880) Thanks [@towanTG](https://github.com/towanTG)! - Adds missing chains to getRpcBody
+
 ## 3.0.0-beta.19
 
 ### Patch Changes
