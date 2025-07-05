@@ -191,7 +191,10 @@ async function getWalletMethods({
     case Chain.THORChain: {
       const { SignMode } = await import("cosmjs-types/cosmos/tx/signing/v1beta1/signing.js");
       const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx.js");
-      const { encodePubkey, makeAuthInfoBytes } = (await import("@cosmjs/proto-signing")).default;
+      const importedSigning = await import("@cosmjs/proto-signing");
+      const encodePubkey = importedSigning.encodePubkey ?? importedSigning.default?.encodePubkey;
+      const makeAuthInfoBytes =
+        importedSigning.makeAuthInfoBytes ?? importedSigning.default?.makeAuthInfoBytes;
       const {
         createStargateClient,
         buildEncodedTxBody,

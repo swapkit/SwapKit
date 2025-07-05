@@ -3,8 +3,11 @@ import { base64ToBech32, bech32ToBase64 } from "./addressFormat";
 
 export async function createDefaultRegistry() {
   const { $root } = await import("./types/MsgCompiled");
-  const { Registry } = (await import("@cosmjs/proto-signing")).default;
-  const { defaultRegistryTypes } = (await import("@cosmjs/stargate")).default;
+  const importedProtoSigning = await import("@cosmjs/proto-signing");
+  const Registry = importedProtoSigning.Registry ?? importedProtoSigning.default?.Registry;
+  const importedStargate = await import("@cosmjs/stargate");
+  const defaultRegistryTypes =
+    importedStargate.defaultRegistryTypes ?? importedStargate.default?.defaultRegistryTypes;
 
   return new Registry([
     ...defaultRegistryTypes,
@@ -14,7 +17,8 @@ export async function createDefaultRegistry() {
 }
 
 export async function createDefaultAminoTypes(chain: Chain.THORChain | Chain.Maya) {
-  const { AminoTypes } = (await import("@cosmjs/stargate")).default;
+  const imported = await import("@cosmjs/stargate");
+  const AminoTypes = imported.AminoTypes ?? imported.default?.AminoTypes;
   const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : "mayachain";
 
   return new AminoTypes({

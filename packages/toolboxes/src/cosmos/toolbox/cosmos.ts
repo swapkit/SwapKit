@@ -52,8 +52,12 @@ export async function getSignerFromPhrase({
   | { chain: Chain; index?: number }
   | { derivationPath: string }
 )) {
-  const { DirectSecp256k1HdWallet } = (await import("@cosmjs/proto-signing")).default;
-  const { stringToPath } = (await import("@cosmjs/crypto")).default;
+  const importedProtoSigning = await import("@cosmjs/proto-signing");
+  const DirectSecp256k1HdWallet =
+    importedProtoSigning.DirectSecp256k1HdWallet ??
+    importedProtoSigning.default?.DirectSecp256k1HdWallet;
+  const importedCrypto = await import("@cosmjs/crypto");
+  const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
 
   const derivationPath =
     "derivationPath" in derivationParams
@@ -73,7 +77,10 @@ export async function getSignerFromPrivateKey({
   privateKey: Uint8Array;
   prefix: string;
 }) {
-  const { DirectSecp256k1Wallet } = (await import("@cosmjs/proto-signing")).default;
+  const importedProtoSigning = await import("@cosmjs/proto-signing");
+  const DirectSecp256k1Wallet =
+    importedProtoSigning.DirectSecp256k1Wallet ??
+    importedProtoSigning.default?.DirectSecp256k1Wallet;
 
   return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
 }
@@ -97,7 +104,11 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
   }) {
     const account = await getAccount(address);
     if (!account?.pubkey) throw new SwapKitError("toolbox_cosmos_verify_signature_no_pubkey");
-    const { Secp256k1Signature, Secp256k1 } = (await import("@cosmjs/crypto")).default;
+
+    const importedCrypto = await import("@cosmjs/crypto");
+    const Secp256k1Signature =
+      importedCrypto.Secp256k1Signature ?? importedCrypto.default?.Secp256k1Signature;
+    const Secp256k1 = importedCrypto.Secp256k1 ?? importedCrypto.default?.Secp256k1;
 
     const secpSignature = Secp256k1Signature.fromFixedLength(base64.decode(signature));
     return Secp256k1.verifySignature(secpSignature, base64.decode(message), account.pubkey.value);
@@ -211,7 +222,9 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         index,
       }),
     getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
-      const { DirectSecp256k1Wallet } = (await import("@cosmjs/proto-signing")).default;
+      const importedSigning = await import("@cosmjs/proto-signing");
+      const DirectSecp256k1Wallet =
+        importedSigning.DirectSecp256k1Wallet ?? importedSigning.default?.DirectSecp256k1Wallet;
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
@@ -340,9 +353,13 @@ function cosmosBalanceDenomsGetter(rpcUrl: string) {
 
 function createPrivateKeyFromPhrase(derivationPath: string) {
   return async function createPrivateKeyFromPhrase(phrase: string) {
-    const { Bip39, EnglishMnemonic, Slip10, Slip10Curve, stringToPath } = (
-      await import("@cosmjs/crypto")
-    ).default;
+    const importedCrypto = await import("@cosmjs/crypto");
+    const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
+    const Slip10Curve = importedCrypto.Slip10Curve ?? importedCrypto.default?.Slip10Curve;
+    const Slip10 = importedCrypto.Slip10 ?? importedCrypto.default?.Slip10;
+    const EnglishMnemonic =
+      importedCrypto.EnglishMnemonic ?? importedCrypto.default?.EnglishMnemonic;
+    const Bip39 = importedCrypto.Bip39 ?? importedCrypto.default?.Bip39;
 
     const mnemonicChecked = new EnglishMnemonic(phrase);
     const seed = await Bip39.mnemonicToSeed(mnemonicChecked);

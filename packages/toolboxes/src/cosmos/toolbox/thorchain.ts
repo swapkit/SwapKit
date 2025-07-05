@@ -44,8 +44,11 @@ function secp256k1HdWalletFromMnemonic({
   derivationPath?: string;
 }) {
   return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
-    const { Secp256k1HdWallet } = (await import("@cosmjs/amino")).default;
-    const { stringToPath } = (await import("@cosmjs/crypto")).default;
+    const importedAmino = await import("@cosmjs/amino");
+    const Secp256k1HdWallet =
+      importedAmino.Secp256k1HdWallet ?? importedAmino.default?.Secp256k1HdWallet;
+    const importedCrypto = await import("@cosmjs/crypto");
+    const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
 
     return Secp256k1HdWallet.fromMnemonic(mnemonic, {
       hdPaths: [stringToPath(`${derivationPath}/${index}`)],
