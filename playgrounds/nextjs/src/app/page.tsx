@@ -78,8 +78,8 @@ export default function SwapPage() {
     if (!(inputAssetValue && swapKit)) return;
 
     try {
-      const isChainFlip = route?.providers?.includes(ProviderName.CHAINFLIP);
-      if (isChainFlip) {
+      const isChainflip = route?.providers?.includes(ProviderName.CHAINFLIP);
+      if (isChainflip) {
         await handleSwap(route);
         return;
       }

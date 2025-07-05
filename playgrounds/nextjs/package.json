@@ -57,7 +57,7 @@
   "devDependencies": {
     "@swc-jotai/debug-label": "0.2.0",
     "@swc-jotai/react-refresh": "0.3.0",
-    "@types/react": "19.1.7",
+    "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "autoprefixer": "10.4.21",
     "global": "4.4.0",

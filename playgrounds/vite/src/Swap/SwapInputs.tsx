@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 type Props = {
   inputAsset?: AssetValue;
   outputAsset?: AssetValue;
-  handleSwap: (route: QuoteResponseRoute, isChainFlipBoost: boolean) => Promise<void>;
+  handleSwap: (route: QuoteResponseRoute, isChainflipBoost: boolean) => Promise<void>;
   skClient?: ReturnType<typeof SwapKit<{}, {}>>;
 };
 
@@ -58,10 +58,10 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
   const swap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
     if (!(inputAsset && outputAsset && inputAssetValue && skClient)) return;
-    const isChainFlip =
+    const isChainflip =
       route?.providers?.includes(ProviderName.CHAINFLIP) ||
       route?.providers?.includes(ProviderName.CHAINFLIP_STREAMING);
-    if (isChainFlip) {
+    if (isChainflip) {
       await handleSwap(route, useChainflipBoost);
       return;
     }

@@ -283,9 +283,9 @@ async function executeSwap() {
 }
 ```
 
-## Cross-Chain Swaps with ChainFlip
+## Cross-Chain Swaps with Chainflip
 
-SwapKit supports cross-chain swaps through ChainFlip:
+SwapKit supports cross-chain swaps through Chainflip:
 
 ```ts twoslash
 // @noErrorValidation
@@ -306,7 +306,7 @@ const swapKit = SwapKit({
   config: {
     integrations: {
       chainflip: {
-        brokerUrl: "https://broker.chainflip.io", // ChainFlip broker URL
+        brokerUrl: "https://broker.chainflip.io", // Chainflip broker URL
       },
     },
   },
@@ -323,7 +323,7 @@ async function crossChainSwap() {
       sellAsset: "ETH.ETH", // Ethereum
       buyAsset: "BTC.BTC", // Bitcoin
       sellAmount: "0.1", // 0.1 ETH
-      providers: [ProviderName.CHAINFLIP], // Use ChainFlip for cross-chain
+      providers: [ProviderName.CHAINFLIP], // Use Chainflip for cross-chain
       sourceAddress: swapKit.getAddress(Chain.Ethereum),
       destinationAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq", // BTC destination
     });
@@ -540,7 +540,7 @@ async function advancedSwap() {
     const txHash = await swapKit.swap({
       route,
       feeOptionKey: FeeOption.Fast,
-      // Additional ChainFlip-specific parameters
+      // Additional Chainflip-specific parameters
       // maxBoostFeeBps: 5, // 0.05% max fee boost
     });
 

@@ -17,15 +17,23 @@ for (const file of onlyPackageJson) {
   versions[packageName] = version;
 }
 
+console.info(`Versions: ${JSON.stringify(versions, null, 2)}`);
+
 for (const file of onlyPackageJson) {
+  console.info(`Replacing versions in ${file}`);
+
   const pkgContent = await Bun.file(`./packages/${file}`).json();
 
   for (const [key, value] of Object.entries(versions)) {
-    if (pkgContent.dependencies?.[key]) {
-      pkgContent.dependencies[key] = value;
+    if (pkgContent?.dependencies?.[key]) {
+      pkgContent.dependencies[key] = `^${value}`;
     }
 
-    if (pkgContent.devDependencies?.[key]) {
+    if (pkgContent?.peerDependencies?.[key]) {
+      pkgContent.peerDependencies[key] = `^${value}`;
+    }
+
+    if (pkgContent?.devDependencies?.[key]) {
       pkgContent.devDependencies[key] = value;
     }
 
