@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.35
+
+### Patch Changes
+
+- [#1375](https://github.com/swapkit/SwapKit/pull/1375) [`0575471`](https://github.com/swapkit/SwapKit/commit/0575471042bb3514163ac6ed703cc637c1e14569) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update range for deps and lock for devDeps
+
+- Updated dependencies [[`0575471`](https://github.com/swapkit/SwapKit/commit/0575471042bb3514163ac6ed703cc637c1e14569)]:
+  - @swapkit/helpers@4.0.0-beta.24
+
 ## 1.0.0-beta.34
 
 ### Patch Changes

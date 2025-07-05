@@ -1,5 +1,17 @@
 # @swapkit/sdk
 
+## 4.0.0-beta.39
+
+### Patch Changes
+
+- [#1375](https://github.com/swapkit/SwapKit/pull/1375) [`0575471`](https://github.com/swapkit/SwapKit/commit/0575471042bb3514163ac6ed703cc637c1e14569) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update range for deps and lock for devDeps
+
+- Updated dependencies [[`0575471`](https://github.com/swapkit/SwapKit/commit/0575471042bb3514163ac6ed703cc637c1e14569)]:
+  - @swapkit/toolboxes@4.0.0-beta.35
+  - @swapkit/plugins@4.0.0-beta.35
+  - @swapkit/wallets@4.0.0-beta.38
+  - @swapkit/core@4.0.0-beta.36
+
 ## 3.0.0-beta.38
 
 ### Patch Changes
