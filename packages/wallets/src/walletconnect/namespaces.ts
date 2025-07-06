@@ -11,6 +11,8 @@ import {
   DEFAULT_POLKADOT_METHODS,
   DEFAULT_SOLANA_EVENTS,
   DEFAULT_SOLANA_METHODS,
+  DEFAULT_TRON_EVENTS,
+  DEFAULT_TRON_METHODS,
 } from "./constants";
 
 export const getNamespacesFromChains = (chains: string[]) => {
@@ -37,6 +39,8 @@ export const getSupportedMethodsByNamespace = (namespace: string) => {
       return Object.values(DEFAULT_POLKADOT_METHODS);
     case "near":
       return Object.values(DEFAULT_NEAR_METHODS);
+    case "tron":
+      return Object.values(DEFAULT_TRON_METHODS);
     default:
       throw new SwapKitError({
         errorKey: "wallet_walletconnect_namespace_not_supported",
@@ -57,6 +61,8 @@ export const getSupportedEventsByNamespace = (namespace: string) => {
       return Object.values(DEFAULT_POLKADOT_EVENTS);
     case "near":
       return Object.values(DEFAULT_NEAR_EVENTS);
+    case "tron":
+      return Object.values(DEFAULT_TRON_EVENTS);
     default:
       throw new SwapKitError({
         errorKey: "wallet_walletconnect_namespace_not_supported",

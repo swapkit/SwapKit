@@ -161,6 +161,22 @@ declare global {
       };
       solana: SolanaProvider;
       ethereum: EthereumWindowProvider;
+      tronLink: {
+        request: (args: { method: string; params?: any }) => Promise<any>;
+        ready: boolean;
+      };
+      tronWeb: {
+        defaultAddress: {
+          base58: string;
+          hex: string;
+        };
+        trx: {
+          sign: (transaction: any) => Promise<any>;
+          sendRawTransaction: (signedTransaction: any) => Promise<any>;
+          getAccount: (address: string) => Promise<any>;
+          getBalance: (address: string) => Promise<number>;
+        };
+      };
     };
 
     okxwallet?:
@@ -206,6 +222,22 @@ declare global {
             requestSignTransactions: (params: {
               transactions: any[];
             }) => Promise<any>;
+          };
+          tronLink: {
+            request: (args: { method: string; params?: any }) => Promise<any>;
+            ready: boolean;
+            tronWeb: {
+              defaultAddress: {
+                base58: string;
+                hex: string;
+              };
+              trx: {
+                sign: (transaction: any) => Promise<any>;
+                sendRawTransaction: (signedTransaction: any) => Promise<any>;
+                getAccount: (address: string) => Promise<any>;
+                getBalance: (address: string) => Promise<number>;
+              };
+            };
           };
         }
       | EthereumWindowProvider;

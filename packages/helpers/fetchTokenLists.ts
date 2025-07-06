@@ -19,6 +19,7 @@ console.info(
 
 for (const { provider } of providers) {
   try {
+    console.info(`🔄 Fetching token list for ${provider}...`);
     const tokenList = await SwapKitApi.getTokenList(provider);
     if (!tokenList) continue;
 

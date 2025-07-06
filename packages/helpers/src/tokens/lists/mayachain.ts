@@ -2,111 +2,111 @@ export const list = {
   provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
   name: "MAYACHAIN",
-  timestamp: "2025-05-01T16:02:27.787Z",
+  timestamp: "2025-07-06T08:01:52.463Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 48,
+  count: 53,
   tokens: [
     {
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
       identifier: "ARB.ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/arb.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.eth.png",
       ticker: "ETH",
     },
     {
-      address: "0xafd091f140c21770f4e5d53d26b2859ae97555aa",
+      address: "0xaFD091f140C21770f4e5d53d26B2859Ae97555Aa",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.GLD-0xafd091f140c21770f4e5d53d26b2859ae97555aa",
+      identifier: "ARB.GLD-0xaFD091f140C21770f4e5d53d26B2859Ae97555Aa",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.gld-0xafd091f140c21770f4e5d53d26b2859ae97555aa.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gld-0xafd091f140c21770f4e5d53d26b2859ae97555aa.png",
       ticker: "GLD",
     },
     {
-      address: "0x93864d81175095dd93360ffa2a529b8642f76a6e",
+      address: "0x93864d81175095DD93360FFA2A529b8642F76A6E",
       chain: "ARB",
       chainId: "42161",
       decimals: 3,
-      identifier: "ARB.LEO-0x93864d81175095dd93360ffa2a529b8642f76a6e",
+      identifier: "ARB.LEO-0x93864d81175095DD93360FFA2A529b8642F76A6E",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.leo-0x93864d81175095dd93360ffa2a529b8642f76a6e.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.leo-0x93864d81175095dd93360ffa2a529b8642f76a6e.png",
       ticker: "LEO",
     },
     {
-      address: "0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+      address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.LINK-0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+      identifier: "ARB.LINK-0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.link-0xf97f4df75117a78c1a5a0dbb814af92458539fb4.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.link-0xf97f4df75117a78c1a5a0dbb814af92458539fb4.png",
       ticker: "LINK",
     },
     {
-      address: "0x25d887ce7a35172c62febfd67a1856f20faebb00",
+      address: "0x25d887Ce7a35172C62FeBFD67a1856F20FaEbB00",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.PEPE-0x25d887ce7a35172c62febfd67a1856f20faebb00",
+      identifier: "ARB.PEPE-0x25d887Ce7a35172C62FeBFD67a1856F20FaEbB00",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.pepe-0x25d887ce7a35172c62febfd67a1856f20faebb00.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.pepe-0x25d887ce7a35172c62febfd67a1856f20faebb00.png",
       ticker: "PEPE",
     },
     {
-      address: "0x429fed88f10285e61b12bdf00848315fbdfcc341",
+      address: "0x429fEd88f10285E61b12BDF00848315fbDfCC341",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.TGT-0x429fed88f10285e61b12bdf00848315fbdfcc341",
+      identifier: "ARB.TGT-0x429fEd88f10285E61b12BDF00848315fbDfCC341",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
       ticker: "TGT",
     },
     {
-      address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       chain: "ARB",
       chainId: "42161",
       decimals: 6,
-      identifier: "ARB.USDC-0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      identifier: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
       ticker: "USDC",
     },
     {
-      address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       chain: "ARB",
       chainId: "42161",
       decimals: 6,
-      identifier: "ARB.USDT-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      identifier: "ARB.USDT-0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
     },
     {
-      address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
       chain: "ARB",
       chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.WBTC-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      decimals: 8,
+      identifier: "ARB.WBTC-0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
       ticker: "WBTC",
     },
     {
-      address: "0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
+      address: "0x9F41b34f42058a7b74672055a5fae22c4b113Fd1",
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
-      identifier: "ARB.YUM-0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
+      identifier: "ARB.YUM-0x9F41b34f42058a7b74672055a5fae22c4b113Fd1",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.yum-0x9f41b34f42058a7b74672055a5fae22c4b113fd1.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.yum-0x9f41b34f42058a7b74672055a5fae22c4b113fd1.png",
       ticker: "YUM",
     },
     {
@@ -114,7 +114,7 @@ export const list = {
       chainId: "bitcoin",
       decimals: 8,
       identifier: "BTC.BTC",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/btc.btc.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/btc.btc.png",
       ticker: "BTC",
     },
     {
@@ -122,7 +122,7 @@ export const list = {
       chainId: "dash",
       decimals: 8,
       identifier: "DASH.DASH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/dash.dash.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/dash.dash.png",
       ticker: "DASH",
     },
     {
@@ -130,47 +130,47 @@ export const list = {
       chainId: "1",
       decimals: 18,
       identifier: "ETH.ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/eth.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
       ticker: "ETH",
     },
     {
-      address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      address: "0x53312F85Bba24C8cb99CFFc13BF82420157230d3",
       chain: "ETH",
       chainId: "1",
       decimals: 18,
-      identifier: "ETH.PEPE-0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      identifier: "ETH.MOCA-0x53312F85Bba24C8cb99CFFc13BF82420157230d3",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.pepe-0x6982508145454ce325ddbe47a25d4ec3d2311933.png",
-      ticker: "PEPE",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.moca-0x53312f85bba24c8cb99cffc13bf82420157230d3.png",
+      ticker: "MOCA",
     },
     {
-      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       chain: "ETH",
       chainId: "1",
       decimals: 6,
-      identifier: "ETH.USDC-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      identifier: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
       ticker: "USDC",
     },
     {
-      address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
       chain: "ETH",
       chainId: "1",
       decimals: 6,
-      identifier: "ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7",
+      identifier: "ETH.USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
     },
     {
-      address: "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      address: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
       chain: "ETH",
       chainId: "1",
       decimals: 18,
-      identifier: "ETH.wstETH-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      identifier: "ETH.wstETH-0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.wsteth-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.wsteth-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0.png",
       ticker: "wstETH",
     },
     {
@@ -178,7 +178,7 @@ export const list = {
       chainId: "kaiyo-1",
       decimals: 6,
       identifier: "KUJI.KUJI",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.kuji.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/kuji.kuji.png",
       ticker: "KUJI",
     },
     {
@@ -186,9 +186,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/ARB-0x912ce59144191c1204e64559fe8253a0e49e6548",
+      identifier: "MAYA.ARB/ARB-0x912CE59144191C1204E64559FE8253a0e49E6548",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.arb-0x912ce59144191c1204e64559fe8253a0e49e6548.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.arb-0x912ce59144191c1204e64559fe8253a0e49e6548.png",
       ticker: "ARB",
     },
     {
@@ -196,9 +196,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/DAI-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+      identifier: "MAYA.ARB/DAI-0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.dai-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.dai-0xda10009cbd5d07dd0cecc66161fc93d7c9000da1.png",
       ticker: "DAI",
     },
     {
@@ -206,7 +206,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.ARB/ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/arb.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.eth.png",
       ticker: "ETH",
     },
     {
@@ -214,9 +214,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/GLD-0xafd091f140c21770f4e5d53d26b2859ae97555aa",
+      identifier: "MAYA.ARB/GLD-0xaFD091f140C21770f4e5d53d26B2859Ae97555Aa",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.gld-0xafd091f140c21770f4e5d53d26b2859ae97555aa.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gld-0xafd091f140c21770f4e5d53d26b2859ae97555aa.png",
       ticker: "GLD",
     },
     {
@@ -224,9 +224,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/GMX-0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+      identifier: "MAYA.ARB/GMX-0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.gmx-0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gmx-0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a.png",
       ticker: "GMX",
     },
     {
@@ -234,9 +234,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/GNS-0x18c11fd286c5ec11c3b683caa813b77f5163a122",
+      identifier: "MAYA.ARB/GNS-0x18c11FD286C5EC11c3b683Caa813B77f5163A122",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.gns-0x18c11fd286c5ec11c3b683caa813b77f5163a122.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gns-0x18c11fd286c5ec11c3b683caa813b77f5163a122.png",
       ticker: "GNS",
     },
     {
@@ -244,9 +244,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/LEO-0x93864d81175095dd93360ffa2a529b8642f76a6e",
+      identifier: "MAYA.ARB/LEO-0x93864d81175095DD93360FFA2A529b8642F76A6E",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.leo-0x93864d81175095dd93360ffa2a529b8642f76a6e.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.leo-0x93864d81175095dd93360ffa2a529b8642f76a6e.png",
       ticker: "LEO",
     },
     {
@@ -254,9 +254,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/LINK-0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+      identifier: "MAYA.ARB/LINK-0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.link-0xf97f4df75117a78c1a5a0dbb814af92458539fb4.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.link-0xf97f4df75117a78c1a5a0dbb814af92458539fb4.png",
       ticker: "LINK",
     },
     {
@@ -264,9 +264,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/PEPE-0x25d887ce7a35172c62febfd67a1856f20faebb00",
+      identifier: "MAYA.ARB/PEPE-0x25d887Ce7a35172C62FeBFD67a1856F20FaEbB00",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.pepe-0x25d887ce7a35172c62febfd67a1856f20faebb00.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.pepe-0x25d887ce7a35172c62febfd67a1856f20faebb00.png",
       ticker: "PEPE",
     },
     {
@@ -274,9 +274,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/SUSHI-0xd4d42f0b6def4ce0383636770ef773390d85c61a",
+      identifier: "MAYA.ARB/SUSHI-0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.sushi-0xd4d42f0b6def4ce0383636770ef773390d85c61a.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.sushi-0xd4d42f0b6def4ce0383636770ef773390d85c61a.png",
       ticker: "SUSHI",
     },
     {
@@ -284,9 +284,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/TGT-0x429fed88f10285e61b12bdf00848315fbdfcc341",
+      identifier: "MAYA.ARB/TGT-0x429fEd88f10285E61b12BDF00848315fbDfCC341",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
       ticker: "TGT",
     },
     {
@@ -294,9 +294,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/UNI-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+      identifier: "MAYA.ARB/UNI-0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.uni-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.uni-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0.png",
       ticker: "UNI",
     },
     {
@@ -304,9 +304,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/USDC-0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      identifier: "MAYA.ARB/USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
       ticker: "USDC",
     },
     {
@@ -314,9 +314,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/USDT-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      identifier: "MAYA.ARB/USDT-0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
       ticker: "USDT",
     },
     {
@@ -324,9 +324,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/WBTC-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      identifier: "MAYA.ARB/WBTC-0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.wbtc-0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f.png",
       ticker: "WBTC",
     },
     {
@@ -334,9 +334,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/wstETH-0x5979d7b546e38e414f7e9822514be443a4800529",
+      identifier: "MAYA.ARB/wstETH-0x5979D7b546E38E414F7E9822514be443A4800529",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
       ticker: "wstETH",
     },
     {
@@ -344,9 +344,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ARB/YUM-0x9f41b34f42058a7b74672055a5fae22c4b113fd1",
+      identifier: "MAYA.ARB/YUM-0x9F41b34f42058a7b74672055a5fae22c4b113Fd1",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/arb.yum-0x9f41b34f42058a7b74672055a5fae22c4b113fd1.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.yum-0x9f41b34f42058a7b74672055a5fae22c4b113fd1.png",
       ticker: "YUM",
     },
     {
@@ -354,7 +354,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.BTC/BTC",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/btc.btc.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/btc.btc.png",
       ticker: "BTC",
     },
     {
@@ -362,7 +362,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 10,
       identifier: "MAYA.CACAO",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/maya.cacao.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/maya.cacao.png",
       ticker: "CACAO",
     },
     {
@@ -370,7 +370,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.DASH/DASH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/dash.dash.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/dash.dash.png",
       ticker: "DASH",
     },
     {
@@ -378,7 +378,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.ETH/ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/eth.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
       ticker: "ETH",
     },
     {
@@ -386,19 +386,29 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ETH/LLD-0x054c9d4c6f4ea4e14391addd1812106c97d05690",
+      identifier: "MAYA.ETH/LLD-0x054c9D4C6F4EA4E14391addD1812106c97D05690",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
       ticker: "LLD",
+    },
+    {
+      address: "0x53312f85bba24c8cb99cffc13bf82420157230d3",
+      chain: "MAYA",
+      chainId: "mayachain-mainnet-v1",
+      decimals: 8,
+      identifier: "MAYA.ETH/MOCA-0x53312F85Bba24C8cb99CFFc13BF82420157230d3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.moca-0x53312f85bba24c8cb99cffc13bf82420157230d3.png",
+      ticker: "MOCA",
     },
     {
       address: "0x6982508145454ce325ddbe47a25d4ec3d2311933",
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ETH/PEPE-0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      identifier: "MAYA.ETH/PEPE-0x6982508145454Ce325dDbE47a25d4ec3d2311933",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.pepe-0x6982508145454ce325ddbe47a25d4ec3d2311933.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.pepe-0x6982508145454ce325ddbe47a25d4ec3d2311933.png",
       ticker: "PEPE",
     },
     {
@@ -406,9 +416,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ETH/USDC-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      identifier: "MAYA.ETH/USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
       ticker: "USDC",
     },
     {
@@ -416,9 +426,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ETH/USDT-0xdac17f958d2ee523a2206206994597c13d831ec7",
+      identifier: "MAYA.ETH/USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
     },
     {
@@ -426,9 +436,9 @@ export const list = {
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
-      identifier: "MAYA.ETH/wstETH-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      identifier: "MAYA.ETH/wstETH-0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit/images/eth.wsteth-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.wsteth-0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0.png",
       ticker: "wstETH",
     },
     {
@@ -436,7 +446,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.KUJI/KUJI",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.kuji.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/kuji.kuji.png",
       ticker: "KUJI",
     },
     {
@@ -444,7 +454,7 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.KUJI/USK",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/kuji.usk.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/kuji.usk.png",
       ticker: "USK",
     },
     {
@@ -452,16 +462,48 @@ export const list = {
       chainId: "mayachain-mainnet-v1",
       decimals: 8,
       identifier: "MAYA.THOR/RUNE",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/thor.rune.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/thor.rune.png",
       ticker: "RUNE",
+    },
+    {
+      chain: "MAYA",
+      chainId: "mayachain-mainnet-v1",
+      decimals: 8,
+      identifier: "MAYA.XRD/XRD",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.xrd.png",
+      ticker: "XRD",
+    },
+    {
+      chain: "MAYA",
+      chainId: "mayachain-mainnet-v1",
+      decimals: 8,
+      identifier: "MAYA.ZEC/ZEC",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/zec.zec.png",
+      ticker: "ZEC",
     },
     {
       chain: "THOR",
       chainId: "thorchain-1",
       decimals: 8,
       identifier: "THOR.RUNE",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/thor.rune.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/thor.rune.png",
       ticker: "RUNE",
+    },
+    {
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.XRD",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.xrd.png",
+      ticker: "XRD",
+    },
+    {
+      chain: "ZEC",
+      chainId: "zcash",
+      decimals: 8,
+      identifier: "ZEC.ZEC",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/zec.zec.png",
+      ticker: "ZEC",
     },
   ],
 } as const;

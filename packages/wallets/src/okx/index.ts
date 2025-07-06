@@ -17,6 +17,7 @@ export const okxWallet = createWallet({
     Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.Tron,
   ],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectOkx(chains: Chain[]) {

@@ -94,7 +94,7 @@ export async function createStargateClient(url: string) {
 
 export async function createSigningStargateClient(
   url: string,
-  signer: any,
+  signer: OfflineSigner,
   optionsOrBaseGas: string | SigningStargateClientOptions = {},
 ) {
   const { SigningStargateClient, GasPrice } = (await import("@cosmjs/stargate")).default;

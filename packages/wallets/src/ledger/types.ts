@@ -9,6 +9,7 @@ import type {
   PolygonLedger,
 } from "./clients/evm";
 import type { THORChainLedger } from "./clients/thorchain";
+import type { TronLedger } from "./clients/tron";
 import type {
   BitcoinCashLedger,
   BitcoinLedger,
@@ -30,6 +31,7 @@ export type EVMLedgerClients =
   | ReturnType<typeof EthereumLedger>
   | ReturnType<typeof OptimismLedger>
   | ReturnType<typeof PolygonLedger>;
+export type TronLedgerClient = ReturnType<typeof TronLedger>;
 
 export type GetAddressAndPubKeyResponse = {
   bech32_address: string;

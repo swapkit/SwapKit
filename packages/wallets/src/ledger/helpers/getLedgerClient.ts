@@ -18,6 +18,7 @@ import {
 } from "../clients/evm";
 import { getNearLedgerClient } from "../clients/near";
 import { THORChainLedger } from "../clients/thorchain";
+import { TronLedger } from "../clients/tron";
 import {
   BitcoinCashLedger,
   BitcoinLedger,
@@ -45,6 +46,7 @@ type LedgerSignerMap = {
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
   [Chain.Ripple]: ReturnType<typeof XRPLedger>;
   [Chain.THORChain]: THORChainLedger;
+  [Chain.Tron]: ReturnType<typeof TronLedger>;
 };
 
 type LedgerSupportedChain = keyof LedgerSignerMap;
@@ -78,6 +80,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
       Promise.resolve(LitecoinLedger(derivationPath) as LedgerSignerMap[T]),
     )
     .with(Chain.Ripple, () => Promise.resolve(XRPLedger(derivationPath) as LedgerSignerMap[T]))
+    .with(Chain.Tron, () => Promise.resolve(TronLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Near, async () => {
       const transport = await getLedgerTransport();
       return getNearLedgerClient(transport, derivationPath) as unknown as LedgerSignerMap[T];

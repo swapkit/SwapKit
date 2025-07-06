@@ -112,16 +112,7 @@ async function getTrezorWallet<T extends Chain>({
             amount: value,
             script_type: scriptType.input,
           })),
-
-          // Lint is not happy with the type of txOutputs
-          outputs: psbt.txOutputs.map((output: any) => {
-            const outputAddress =
-              chain === Chain.BitcoinCash && output.address
-                ? toolbox.stripPrefix(toCashAddress(output.address))
-                : output.address;
-
-            const isChangeAddress = outputAddress === address;
-
+          outputs: psbt.txOutputs.map((output) => {
             // OP_RETURN
             if (!output.address) {
               return {
@@ -130,6 +121,13 @@ async function getTrezorWallet<T extends Chain>({
                 script_type: "PAYTOOPRETURN",
               };
             }
+
+            const outputAddress =
+              chain === Chain.BitcoinCash
+                ? toolbox.stripPrefix(toCashAddress(output.address))
+                : output.address;
+
+            const isChangeAddress = outputAddress === address;
 
             return isChangeAddress
               ? { amount: output.value, address_n, script_type: scriptType.output }

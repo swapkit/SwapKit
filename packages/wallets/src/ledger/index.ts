@@ -36,6 +36,7 @@ export const ledgerWallet = createWallet({
     Chain.Polygon,
     Chain.Ripple,
     Chain.THORChain,
+    Chain.Tron,
   ],
   walletType: WalletOption.LEDGER,
   connect: ({ addChain, supportedChains, walletType }) =>
@@ -284,6 +285,15 @@ async function getWalletMethods({
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = signer.address;
       const toolbox = await getRippleToolbox({ signer });
+
+      return { ...toolbox, address };
+    }
+
+    case Chain.Tron: {
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const signer = await getLedgerClient({ chain, derivationPath });
+      const address = await getLedgerAddress({ chain, ledgerClient: signer });
+      const toolbox = await createTronToolbox({ signer });
 
       return { ...toolbox, address };
     }

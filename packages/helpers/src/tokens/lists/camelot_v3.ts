@@ -1,9 +1,9 @@
 export const list = {
   provider: "CAMELOT_V3",
   chainId: "42161",
-  name: "Camelot V3",
-  timestamp: "1741956312848",
-  count: 1602,
+  name: "CAMELOT_V3",
+  timestamp: "1744043449737",
+  count: 1605,
   tokens: [
     {
       address: "0xda39A32c9c5Bb2C9E99d4e2a24bc55A418599F90",
@@ -5926,6 +5926,16 @@ export const list = {
       ticker: "EDET",
     },
     {
+      address: "0xf8173a39c56a554837C4C7f104153A005D284D11",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.EDU-0xf8173a39c56a554837C4C7f104153A005D284D11",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.edu-0xf8173a39c56a554837c4c7f104153a005d284d11.png",
+      ticker: "EDU",
+    },
+    {
       address: "0x53e131a94Df92787a080F61FE67Ce1EA6640EA4C",
       chain: "ARB",
       chainId: "42161",
@@ -10596,6 +10606,16 @@ export const list = {
       ticker: "OPUL",
     },
     {
+      address: "0xcF6C2bb97a8978321C9e207afE8A2037fa9be45C",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.orbETH-0xcF6C2bb97a8978321C9e207afE8A2037fa9be45C",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.orbeth-0xcf6c2bb97a8978321c9e207afe8a2037fa9be45c.png",
+      ticker: "orbETH",
+    },
+    {
       address: "0x4d92B4fdFE695cD9FD0409dF36741308976315c6",
       chain: "ARB",
       chainId: "42161",
@@ -13655,6 +13675,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.supr-0xf8393c8de20953b83db1be7ca42cd242563d8fe7.png",
       ticker: "SUPR",
+    },
+    {
+      address: "0xdDb46999F8891663a8F2828d25298f70416d7610",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.sUSDS-0xdDb46999F8891663a8F2828d25298f70416d7610",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.susds-0xddb46999f8891663a8f2828d25298f70416d7610.png",
+      ticker: "sUSDS",
     },
     {
       address: "0x7788A3538C5fc7F9c7C8A74EAC4c898fC8d87d92",

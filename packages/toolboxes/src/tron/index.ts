@@ -9,6 +9,7 @@ export type {
   TronTransferParams,
   TronContract,
   TronTransaction,
+  TronSignedTransaction,
 } from "./types";
 export { trc20ABI } from "./helpers/trc20.abi";
 

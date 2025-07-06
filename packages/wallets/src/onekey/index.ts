@@ -56,8 +56,8 @@ async function getWalletMethodsForExtension(chain: Chain) {
 
       await getAddress(getAddressOptions);
 
-      async function signTransaction(psbt: any) {
-        let signedPsbt: any;
+      async function signTransaction(psbt: Psbt) {
+        let signedPsbt: Psbt | undefined;
         const signPsbtOptions: SignTransactionOptions = {
           getProvider,
           payload: {

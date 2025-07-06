@@ -6,33 +6,42 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
+import type { TronTransaction } from "@swapkit/toolboxes/tron";
 import { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
 
 export async function getWalletMethods(chain: Chain) {
+  const { match, P } = await import("ts-pattern");
   const bitget = window.bitkeep;
 
-  switch (chain) {
-    case Chain.Ethereum:
-    case Chain.Base:
-    case Chain.Avalanche:
-    case Chain.Arbitrum:
-    case Chain.Optimism:
-    case Chain.Polygon:
-    case Chain.BinanceSmartChain: {
-      if (!(bitget && "ethereum" in bitget)) {
-        throw new SwapKitError("wallet_bitkeep_not_found");
-      }
+  return match(chain)
+    .with(
+      P.union(
+        Chain.Ethereum,
+        Chain.Base,
+        Chain.Avalanche,
+        Chain.Arbitrum,
+        Chain.Optimism,
+        Chain.Polygon,
+        Chain.BinanceSmartChain,
+      ),
+      async () => {
+        if (!(bitget && "ethereum" in bitget)) {
+          throw new SwapKitError("wallet_bitkeep_not_found");
+        }
 
-      const wallet = bitget.ethereum;
+        const wallet = bitget.ethereum;
 
-      const [address]: [string] = await wallet.send("eth_requestAccounts", []);
-      const evmWallet = await getWeb3WalletMethods({ chain, walletProvider: wallet });
+        const [address]: [string] = await wallet.send("eth_requestAccounts", []);
+        const evmWallet = await getWeb3WalletMethods({
+          chain: chain as EVMChain,
+          walletProvider: wallet,
+        });
 
-      return { ...evmWallet, address };
-    }
-
-    case Chain.Bitcoin: {
+        return { ...evmWallet, address };
+      },
+    )
+    .with(Chain.Bitcoin, async () => {
       if (!(bitget && "unisat" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -55,9 +64,8 @@ export async function getWalletMethods(chain: Chain) {
       const toolbox = await getUtxoToolbox(Chain.Bitcoin, { signer });
 
       return { ...toolbox, address };
-    }
-
-    case Chain.Cosmos: {
+    })
+    .with(Chain.Cosmos, async () => {
       if (!(bitget && "keplr" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -83,9 +91,8 @@ export async function getWalletMethods(chain: Chain) {
       });
 
       return { ...toolbox, address };
-    }
-
-    case Chain.Solana: {
+    })
+    .with(Chain.Solana, async () => {
       if (!(bitget && "solana" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -98,11 +105,39 @@ export async function getWalletMethods(chain: Chain) {
       const address: string = providerConnection.publicKey.toString();
 
       return { ...toolbox, address };
-    }
+    })
+    .with(Chain.Tron, async () => {
+      if (!(bitget && "tronLink" in bitget && "tronWeb" in bitget)) {
+        throw new SwapKitError("wallet_bitkeep_not_found");
+      }
 
-    default:
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const { tronLink, tronWeb } = bitget;
+
+      // Request account access
+      const account = await tronLink.request({ method: "tron_requestAccounts" });
+      if (!account?.base58) {
+        throw new SwapKitError("wallet_bitkeep_no_accounts", { chain: Chain.Tron });
+      }
+
+      const address = account.base58;
+
+      // Create signer compatible with TronSigner interface
+      const signer = {
+        getAddress: () => Promise.resolve(address),
+        signTransaction: async (transaction: TronTransaction) => {
+          const signedTx = await tronWeb.trx.sign(transaction);
+          return signedTx;
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer });
+
+      return { ...toolbox, address };
+    })
+    .otherwise(() => {
       throw new SwapKitError("wallet_chain_not_supported");
-  }
+    });
 }
 
 export const getWeb3WalletMethods = async ({

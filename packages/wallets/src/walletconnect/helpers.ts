@@ -14,10 +14,18 @@ import {
   OPTIMISM_MAINNET_ID,
   POLYGON_MAINNET_ID,
   THORCHAIN_MAINNET_ID,
+  TRON_MAINNET_ID,
 } from "./constants";
 
 export const getAddressByChain = (
-  chain: EVMChain | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Cosmos | Chain.Near,
+  chain:
+    | EVMChain
+    | Chain.THORChain
+    | Chain.Maya
+    | Chain.Kujira
+    | Chain.Cosmos
+    | Chain.Near
+    | Chain.Tron,
   accounts: string[],
 ) => {
   const account = accounts.find((account) => account.startsWith(chainToChainId(chain))) || "";
@@ -55,6 +63,8 @@ export const chainToChainId = (chain: Chain) => {
       const { isStagenet } = SKConfig.get("envs");
       return isStagenet ? NEAR_TESTNET_ID : NEAR_MAINNET_ID;
     }
+    case Chain.Tron:
+      return TRON_MAINNET_ID;
     default:
       return "";
   }

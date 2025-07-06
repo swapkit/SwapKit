@@ -12,7 +12,7 @@ import { getWalletMethods } from "./helpers";
 export const bitgetWallet = createWallet({
   name: "connectBitget",
   walletType: WalletOption.BITGET,
-  supportedChains: [...EVMChains, Chain.Cosmos, Chain.Bitcoin, Chain.Solana],
+  supportedChains: [...EVMChains, Chain.Cosmos, Chain.Bitcoin, Chain.Solana, Chain.Tron],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectBitget(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });

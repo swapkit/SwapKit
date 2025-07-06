@@ -11,6 +11,7 @@ import {
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { NearSigner } from "@swapkit/toolboxes/near";
+import type { TronSignedTransaction, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
 import type { WalletConnectModal } from "@walletconnect/modal";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 import type { Transaction } from "near-api-js/lib/transaction";
@@ -47,6 +48,7 @@ export const walletconnectWallet = createWallet({
     Chain.Optimism,
     Chain.Polygon,
     Chain.THORChain,
+    Chain.Tron,
   ],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectWalletconnect(
@@ -312,6 +314,38 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
       } as NearSigner;
 
       const toolbox = await getNearToolbox({ signer });
+      return toolbox;
+    }
+
+    case Chain.Tron: {
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const { DEFAULT_TRON_METHODS } = await import("./constants");
+
+      // Create a Tron signer that uses WalletConnect
+      const signer: TronSigner = {
+        getAddress() {
+          return Promise.resolve(address);
+        },
+
+        async signTransaction(transaction: TronTransaction) {
+          if (!walletconnect) {
+            throw new SwapKitError("wallet_walletconnect_connection_not_established");
+          }
+
+          const signedTx = await walletconnect.client.request({
+            topic: session.topic,
+            chainId: chainToChainId(Chain.Tron),
+            request: {
+              method: DEFAULT_TRON_METHODS.TRON_SIGN_TRANSACTION,
+              params: { transaction },
+            },
+          });
+
+          return signedTx as TronSignedTransaction;
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer });
       return toolbox;
     }
 

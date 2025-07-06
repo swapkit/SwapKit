@@ -15,6 +15,7 @@ export const POLYGON_MAINNET_ID = "eip155:137";
 export const BASE_MAINNET_ID = "eip155:8453";
 export const NEAR_MAINNET_ID = "near:mainnet";
 export const NEAR_TESTNET_ID = "near:testnet";
+export const TRON_MAINNET_ID = "tron:0x2b6653dc";
 
 export const DEFAULT_LOGGER = "debug";
 
@@ -85,3 +86,15 @@ export enum DEFAULT_NEAR_METHODS {
 }
 
 export enum DEFAULT_NEAR_EVENTS {}
+
+/**
+ * TRON
+ */
+export enum DEFAULT_TRON_METHODS {
+  TRON_SIGN_MESSAGE = "tron_signMessage",
+  TRON_SIGN_TRANSACTION = "tron_signTransaction",
+  TRON_SEND_TRANSACTION = "tron_sendTransaction",
+  TRON_GET_ACCOUNTS = "tron_getAccounts",
+}
+
+export enum DEFAULT_TRON_EVENTS {}
