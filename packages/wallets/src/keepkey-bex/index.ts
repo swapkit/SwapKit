@@ -36,6 +36,7 @@ export const keepkeyBexWallet = createWallet({
     Chain.Maya,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.Ripple,
     Chain.Solana,
     Chain.THORChain,
   ],

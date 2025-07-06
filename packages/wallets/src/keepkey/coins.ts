@@ -12,6 +12,7 @@ export enum ChainToKeepKeyName {
   DOGE = "Dogecoin",
   LTC = "Litecoin",
   DASH = "Dash",
+  XRP = "Ripple",
 }
 
 export function addressNListToBIP32(address: number[]) {

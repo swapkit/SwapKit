@@ -34,6 +34,7 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
       () => `${baseUrl}/transaction/${txHash.toLowerCase()}`,
     )
     .with(Chain.Near, () => `${baseUrl}/txns/${txHash}`)
+    .with(Chain.Ripple, () => `${baseUrl}/transactions/${txHash}`)
     .otherwise(() => "");
 
   return explorerUrl;
