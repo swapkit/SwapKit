@@ -1,5 +1,17 @@
 # @swapkit/ui
 
+## 0.1.0-beta.43
+
+### Patch Changes
+
+- [`dfaf1fb`](https://github.com/swapkit/SwapKit/commit/dfaf1fb64043ca706e463b244135afe998ce2e07) Thanks [@towanTG](https://github.com/towanTG)! - General bump to fix bun lock
+
+- Updated dependencies [[`dfaf1fb`](https://github.com/swapkit/SwapKit/commit/dfaf1fb64043ca706e463b244135afe998ce2e07)]:
+  - @swapkit/core@4.0.0-beta.40
+  - @swapkit/plugins@4.0.0-beta.39
+  - @swapkit/toolboxes@4.0.0-beta.39
+  - @swapkit/wallets@4.0.0-beta.42
+
 ## 0.1.0-beta.42
 
 ### Patch Changes

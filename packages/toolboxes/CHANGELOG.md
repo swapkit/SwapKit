@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.39
+
+### Patch Changes
+
+- [`dfaf1fb`](https://github.com/swapkit/SwapKit/commit/dfaf1fb64043ca706e463b244135afe998ce2e07) Thanks [@towanTG](https://github.com/towanTG)! - General bump to fix bun lock
+
+- Updated dependencies [[`dfaf1fb`](https://github.com/swapkit/SwapKit/commit/dfaf1fb64043ca706e463b244135afe998ce2e07)]:
+  - @swapkit/helpers@4.0.0-beta.27
+
 ## 4.0.0-beta.38
 
 ### Patch Changes

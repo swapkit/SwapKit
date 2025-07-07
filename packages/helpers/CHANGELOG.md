@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.27
+
+### Patch Changes
+
+- [`dfaf1fb`](https://github.com/swapkit/SwapKit/commit/dfaf1fb64043ca706e463b244135afe998ce2e07) Thanks [@towanTG](https://github.com/towanTG)! - General bump to fix bun lock
+
 ## 4.0.0-beta.26
 
 ### Patch Changes
