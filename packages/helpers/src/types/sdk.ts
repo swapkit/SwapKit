@@ -36,4 +36,7 @@ export enum MemoType {
   WITHDRAW = "-",
   RUNEPOOL_DEPOSIT = "POOL+",
   RUNEPOOL_WITHDRAW = "POOL-",
+  CLAIM_TCY = "tcy",
+  STAKE_TCY = "tcy+",
+  UNSTAKE_TCY = "tcy-",
 }

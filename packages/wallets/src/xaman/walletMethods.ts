@@ -22,6 +22,7 @@ export const connectXamanWallet = async (xumm: Xumm) => {
   }
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: might need refactoring later
 export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParams) => {
   try {
     // Validate required parameters

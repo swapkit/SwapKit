@@ -266,6 +266,7 @@ const errorCodes = {
    */
   thorchain_chain_halted: 40001,
   thorchain_trading_halted: 40002,
+  thorchain_asset_is_not_tcy: 40003,
   /**
    * THORChain - Swap
    */

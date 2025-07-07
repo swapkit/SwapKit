@@ -19,6 +19,14 @@ export type InboundAddressesItem = {
   halted: boolean;
   pub_key: string;
   router?: string;
+  global_trading_paused: boolean;
+  chain_trading_paused: boolean;
+  chain_lp_actions_paused: boolean;
+  observed_fee_rate?: string;
+  gas_rate_units: string;
+  outbound_tx_size: string;
+  outbound_fee: string;
+  dust_threshold: string;
 };
 
 export type LastBlockItem<T extends THORNodeType = "thorchain"> = {
