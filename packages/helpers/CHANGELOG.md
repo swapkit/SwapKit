@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.28
+
+### Patch Changes
+
+- [`c5f646c`](https://github.com/swapkit/SwapKit/commit/c5f646cc40fe1fc1347b68e1996321f048f9d3ac) Thanks [@towanTG](https://github.com/towanTG)! - Fixes TRC20 ABI and rpc urls
+
+- [`8e89afc`](https://github.com/swapkit/SwapKit/commit/8e89afc5c8d9490ddefd616d4567c883cf02787f) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Zcash rpc endpoint
+
 ## 4.0.0-beta.27
 
 ### Patch Changes
