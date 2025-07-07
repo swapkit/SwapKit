@@ -24,6 +24,7 @@ import { radixWallet } from "@swapkit/wallets/radix";
 import { talismanWallet } from "@swapkit/wallets/talisman";
 import { trezorWallet } from "@swapkit/wallets/trezor";
 import { walletconnectWallet } from "@swapkit/wallets/walletconnect";
+import { xamanWallet } from "@swapkit/wallets/xaman";
 
 export * from "@swapkit/core";
 
@@ -64,6 +65,7 @@ export {
   talismanWallet,
   trezorWallet,
   walletconnectWallet,
+  xamanWallet,
 };
 
 export const defaultPlugins = {
