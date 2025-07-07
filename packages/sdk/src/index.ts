@@ -97,6 +97,7 @@ export const defaultWallets = {
   ...talismanWallet,
   ...trezorWallet,
   ...walletconnectWallet,
+  ...xamanWallet,
 };
 
 export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {
