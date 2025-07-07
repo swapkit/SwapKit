@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.41
+
+### Patch Changes
+
+- [`2bebe67`](https://github.com/swapkit/SwapKit/commit/2bebe67b7933887b33b92863590a2e89ef73b9b7) Thanks [@towanTG](https://github.com/towanTG)! - Adds Tron approve to toolbox
+
+- Updated dependencies [[`2bebe67`](https://github.com/swapkit/SwapKit/commit/2bebe67b7933887b33b92863590a2e89ef73b9b7)]:
+  - @swapkit/helpers@4.0.0-beta.29
+
 ## 4.0.0-beta.40
 
 ### Patch Changes
