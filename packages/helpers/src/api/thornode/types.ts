@@ -248,3 +248,29 @@ export type RunePoolProviderInfo = {
   last_deposit_height: number;
   last_withdraw_height: number;
 };
+
+export type TCYStakerSummary = {
+  amount: string;
+};
+
+export type TCYStaker = {
+  address?: string;
+  amount: string;
+};
+
+export type TCYStakerResponse = TCYStaker;
+export type TCYStakersResponse = TCYStakerSummary[];
+
+export type TCYClaimerSummary = {
+  amount: string;
+  asset: string;
+};
+
+export type TCYClaimer = {
+  l1_address?: string;
+  amount: string;
+  asset: string;
+};
+
+export type TCYClaimerResponse = TCYClaimer;
+export type TCYClaimersResponse = TCYClaimerSummary[];
