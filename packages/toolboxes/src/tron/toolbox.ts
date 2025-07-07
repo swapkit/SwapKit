@@ -131,6 +131,77 @@ export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
     return 100_000_000; // 100 TRX in SUN
   };
 
+  // Constants for TRON resource calculation
+  const TRX_TRANSFER_BANDWIDTH = 268; // Bandwidth consumed by a TRX transfer
+  const TRC20_TRANSFER_ENERGY = 13000; // Average energy consumed by TRC20 transfer
+  const TRC20_TRANSFER_BANDWIDTH = 345; // Bandwidth consumed by TRC20 transfer
+
+  /**
+   * Get current chain parameters including resource prices
+   */
+  const getChainParameters = async () => {
+    try {
+      const parameters = await tronWeb.trx.getChainParameters();
+      const paramMap: Record<string, number> = {};
+
+      for (const param of parameters) {
+        paramMap[param.key] = param.value;
+      }
+
+      return {
+        energyFee: paramMap.getEnergyFee || 420, // SUN per energy unit
+        bandwidthFee: paramMap.getTransactionFee || 1000, // SUN per bandwidth unit
+        createAccountFee: paramMap.getCreateAccountFee || 100000, // 0.1 TRX in SUN
+      };
+    } catch {
+      // Return default values if unable to fetch
+      return {
+        energyFee: 420,
+        bandwidthFee: 1000,
+        createAccountFee: 100000,
+      };
+    }
+  };
+
+  /**
+   * Check if an address exists on the blockchain
+   */
+  const accountExists = async (address: string) => {
+    try {
+      const account = await tronWeb.trx.getAccount(address);
+      return account && Object.keys(account).length > 0;
+    } catch {
+      return false;
+    }
+  };
+
+  /**
+   * Get account resources (bandwidth and energy)
+   */
+  const getAccountResources = async (address: string) => {
+    try {
+      const resources = await tronWeb.trx.getAccountResources(address);
+
+      return {
+        bandwidth: {
+          free: resources.freeNetLimit - resources.freeNetUsed,
+          total: resources.NetLimit || 0,
+          used: resources.NetUsed || 0,
+        },
+        energy: {
+          total: resources.EnergyLimit || 0,
+          used: resources.EnergyUsed || 0,
+        },
+      };
+    } catch {
+      // Return default structure if unable to fetch
+      return {
+        bandwidth: { free: 600, total: 0, used: 0 }, // 600 free bandwidth daily
+        energy: { total: 0, used: 0 },
+      };
+    }
+  };
+
   const getBalance = async (address: string, scamFilter = true) => {
     const { getBalance: getBalanceFromApi } = await import("../utils.js");
 
@@ -218,7 +289,7 @@ export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
     }
 
     const feeLimit = calculateFeeLimit();
-    const contract = await tronWeb.contract(trc20ABI, contractAddress);
+    const contract = tronWeb.contract(trc20ABI, contractAddress);
 
     if (!contract.methods?.transfer) {
       throw new SwapKitError("toolbox_tron_token_transfer_failed");
@@ -239,17 +310,94 @@ export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
     return txid;
   };
 
-  const estimateTransactionFee = ({ assetValue }: TronTransferParams) => {
+  const estimateTransactionFee = async ({
+    assetValue,
+    recipient,
+    sender,
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+  }: TronTransferParams & { sender?: string }) => {
     const isNative = assetValue.isGasAsset;
 
-    if (isNative) {
-      // Native TRX transfers typically consume bandwidth, which is free up to daily limit
-      // Return a minimal fee estimation for bandwidth cost
-      return AssetValue.from({ chain: Chain.Tron, value: 1 }); // 1 TRX
-    }
+    try {
+      // Get sender address
+      const senderAddress = sender ? sender : signer ? await getAddress() : undefined;
+      if (!senderAddress) {
+        // If no signer, return conservative estimate
+        return isNative
+          ? AssetValue.from({ chain: Chain.Tron, value: 0.1, fromBaseDecimal: 0 })
+          : AssetValue.from({ chain: Chain.Tron, value: 15, fromBaseDecimal: 0 });
+      }
 
-    // TRC20 transfers consume energy, estimate higher fee
-    return AssetValue.from({ chain: Chain.Tron, value: 10 }); // 10 TRX
+      // Get chain parameters for current resource prices
+      const chainParams = await getChainParameters();
+
+      // Check if recipient account exists (new accounts require activation fee)
+      const recipientExists = await accountExists(recipient);
+      const activationFee = recipientExists ? 0 : chainParams.createAccountFee;
+
+      // Get account resources
+      const resources = await getAccountResources(senderAddress);
+
+      if (isNative) {
+        // Calculate bandwidth needed for TRX transfer
+        const bandwidthNeeded = TRX_TRANSFER_BANDWIDTH;
+        const availableBandwidth =
+          resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
+
+        let bandwidthFee = 0;
+        if (bandwidthNeeded > availableBandwidth) {
+          // Need to burn TRX for bandwidth
+          const bandwidthToBuy = bandwidthNeeded - availableBandwidth;
+          bandwidthFee = bandwidthToBuy * chainParams.bandwidthFee;
+        }
+
+        // Total fee in SUN
+        const totalFeeSun = activationFee + bandwidthFee;
+
+        return AssetValue.from({
+          chain: Chain.Tron,
+          value: totalFeeSun,
+          fromBaseDecimal: 6, // SUN to TRX
+        });
+      }
+
+      // TRC20 Transfer - needs both bandwidth and energy
+      const bandwidthNeeded = TRC20_TRANSFER_BANDWIDTH;
+      const energyNeeded = TRC20_TRANSFER_ENERGY;
+
+      const availableBandwidth =
+        resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
+      const availableEnergy = resources.energy.total - resources.energy.used;
+
+      let bandwidthFee = 0;
+      if (bandwidthNeeded > availableBandwidth) {
+        const bandwidthToBuy = bandwidthNeeded - availableBandwidth;
+        bandwidthFee = bandwidthToBuy * chainParams.bandwidthFee;
+      }
+
+      let energyFee = 0;
+      if (energyNeeded > availableEnergy) {
+        const energyToBuy = energyNeeded - availableEnergy;
+        energyFee = energyToBuy * chainParams.energyFee;
+      }
+
+      // Total fee in SUN
+      const totalFeeSun = activationFee + bandwidthFee + energyFee;
+
+      return AssetValue.from({
+        chain: Chain.Tron,
+        value: totalFeeSun,
+        fromBaseDecimal: 6, // SUN to TRX
+      });
+    } catch (error) {
+      // Fallback to conservative estimates if calculation fails
+      warnOnce(
+        true,
+        `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
+      );
+
+      throw new SwapKitError("toolbox_tron_fee_estimation_failed", { error });
+    }
   };
 
   const createTransaction = async (params: TronCreateTransactionParams) => {

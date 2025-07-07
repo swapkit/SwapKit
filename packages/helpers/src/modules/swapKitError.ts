@@ -344,6 +344,7 @@ const errorCodes = {
   toolbox_tron_invalid_token_identifier: 50802,
   toolbox_tron_token_transfer_failed: 50803,
   toolbox_tron_transaction_creation_failed: 50804,
+  toolbox_tron_fee_estimation_failed: 50805,
   /**
    * Toolboxes - Near
    */

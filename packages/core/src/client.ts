@@ -281,7 +281,10 @@ export function SwapKit<
     params,
   }: (
     | { type: "swap"; params: SwapParams<T, QuoteResponseRoute> & { assetValue: AssetValue } }
-    | { type: "transfer"; params: EVMTransferParams | GenericTransferParams }
+    | {
+        type: "transfer";
+        params: EVMTransferParams | (GenericTransferParams & { sender?: string });
+      }
     | {
         type: "approve";
         params: {
@@ -309,6 +312,7 @@ export function SwapKit<
         Chain.Ethereum,
         Chain.BinanceSmartChain,
         Chain.Polygon,
+        Chain.Base,
         // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: simplify this or use nested match
         async (chain) => {
           const wallet = getWallet(chain);
@@ -383,6 +387,14 @@ export function SwapKit<
       .with(Chain.Ripple, (chain) => {
         const wallet = getWallet(chain);
         return wallet.estimateTransactionFee();
+      })
+      .with(Chain.Tron, (chain) => {
+        const wallet = getWallet(chain);
+        return wallet.estimateTransactionFee({
+          ...params,
+          recipient: wallet.address,
+          sender: wallet.address,
+        });
       })
       .otherwise(async () => baseValue);
   }
