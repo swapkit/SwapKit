@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.36
+
+### Patch Changes
+
+- [`5551184`](https://github.com/swapkit/SwapKit/commit/5551184456b78169b60113a1e3569dec948020e1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix near transaction signer typing
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.24
+
 ## 4.0.0-beta.35
 
 ### Patch Changes
