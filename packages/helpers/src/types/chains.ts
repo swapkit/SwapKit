@@ -258,13 +258,14 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Optimism]: "https://mainnet.optimism.io",
   [Chain.Polkadot]: "wss://rpc.polkadot.io",
   [Chain.Polygon]: "https://polygon-rpc.com",
+  // TODO - Update Radix RPC URL when available
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.Ripple]: "wss://xrpl.ws/",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
   [Chain.THORChain]: "https://rpc.thorswap.net",
   [Chain.Tron]: "https://tron-rpc.publicnode.com",
   [Chain.Zcash]: "https://mainnet.lightwalletd.com:9067",
-  [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
+  [StagenetChain.Maya]: "",
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
 

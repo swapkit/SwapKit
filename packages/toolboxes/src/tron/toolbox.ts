@@ -384,13 +384,11 @@ export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
       throw new SwapKitError("toolbox_tron_token_transfer_failed");
     }
 
-    const txid = await contract.methods
-      .transfer(recipient, assetValue.getBaseValue("string"))
-      .send({
-        from,
-        feeLimit,
-        callValue: 0,
-      });
+    const txid = await contract.transfer(recipient, assetValue.getBaseValue("string")).send({
+      from,
+      feeLimit,
+      callValue: 0,
+    });
 
     if (!txid) {
       throw new SwapKitError("toolbox_tron_token_transfer_failed");
