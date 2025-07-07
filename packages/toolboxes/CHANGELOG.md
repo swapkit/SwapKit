@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.37
+
+### Patch Changes
+
+- [#1381](https://github.com/swapkit/SwapKit/pull/1381) [`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b) Thanks [@towanTG](https://github.com/towanTG)! - Wraps Near validate address in a getter function to remove Promise return of actual validation
+
+- Updated dependencies [[`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b), [`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b)]:
+  - @swapkit/helpers@4.0.0-beta.25
+
 ## 4.0.0-beta.36
 
 ### Patch Changes

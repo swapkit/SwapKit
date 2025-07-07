@@ -1,5 +1,15 @@
 # @swapkit/core
 
+## 4.0.0-beta.38
+
+### Patch Changes
+
+- [`52243ac`](https://github.com/swapkit/SwapKit/commit/52243acf87fc3cb7e7f50173f2dba05bc07ffc9b) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Tron Explorer Urls
+
+- Updated dependencies [[`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b), [`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b)]:
+  - @swapkit/toolboxes@4.0.0-beta.37
+  - @swapkit/helpers@4.0.0-beta.25
+
 ## 4.0.0-beta.37
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.25
+
+### Patch Changes
+
+- [#1381](https://github.com/swapkit/SwapKit/pull/1381) [`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b) Thanks [@towanTG](https://github.com/towanTG)! - Wraps Near validate address in a getter function to remove Promise return of actual validation
+
+- [#1381](https://github.com/swapkit/SwapKit/pull/1381) [`cbc71e3`](https://github.com/swapkit/SwapKit/commit/cbc71e3f5a76018db4984e7b90e78ba7aaa7208b) Thanks [@towanTG](https://github.com/towanTG)! - feat: Add Xaman (XUMM) wallet integration
+
+  - Added support for Xaman (formerly XUMM) mobile wallet for Ripple/XRP transactions
+  - Added XAMAN to WalletOption enum in @swapkit/helpers
+  - Added `xaman` to SKConfig apiKeys for centralized API key management
+  - Added wallet-specific error codes for better error handling
+  - Supports QR code and deep linking for mobile transaction signing
+  - Includes destination tag support for exchange addresses
+  - Uses official xumm SDK v1.8.0
+
 ## 4.0.0-beta.24
 
 ### Patch Changes
