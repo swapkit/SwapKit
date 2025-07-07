@@ -27,7 +27,7 @@ export async function getAddressValidator() {
   const { substrateValidateAddress } = await import("@swapkit/toolboxes/substrate");
   const { getUTXOAddressValidator } = await import("@swapkit/toolboxes/utxo");
   const { getSolanaAddressValidator } = await import("@swapkit/toolboxes/solana");
-  const { validateNearAddress } = await import("@swapkit/toolboxes/near");
+  const { getValidateNearAddress } = await import("@swapkit/toolboxes/near");
   const { rippleValidateAddress } = await import("@swapkit/toolboxes/ripple");
   const { radixValidateAddress } = await import("@swapkit/toolboxes/radix");
   const { getTronAddressValidator } = await import("@swapkit/toolboxes/tron");
@@ -35,6 +35,7 @@ export async function getAddressValidator() {
   const solanaValidateAddress = await getSolanaAddressValidator();
   const utxoValidateAddress = await getUTXOAddressValidator();
   const tronValidateAddress = await getTronAddressValidator();
+  const nearValidateAddress = await getValidateNearAddress();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     const isValid = match(chain)
@@ -58,7 +59,7 @@ export async function getAddressValidator() {
         substrateValidateAddress({ address, chain: chain as SubstrateChain }),
       )
       .with(Chain.Radix, () => radixValidateAddress(address))
-      .with(Chain.Near, () => validateNearAddress(address))
+      .with(Chain.Near, () => nearValidateAddress(address))
       .with(Chain.Ripple, () => rippleValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
       .with(Chain.Tron, () => tronValidateAddress(address))

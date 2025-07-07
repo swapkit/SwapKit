@@ -12,7 +12,7 @@ import {
   getFullAccessPublicKey,
   getNearSignerFromPhrase,
   getNearSignerFromPrivateKey,
-  validateNearAddress,
+  getValidateNearAddress,
 } from "./helpers";
 import {
   GAS_COSTS,
@@ -74,7 +74,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
 
     const { recipient, assetValue } = params;
 
-    if (!validateNearAddress(recipient)) {
+    const nearValidateAddress = await getValidateNearAddress();
+
+    if (!nearValidateAddress(recipient)) {
       throw new SwapKitError("toolbox_near_invalid_address");
     }
 
@@ -116,6 +118,15 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
 
   async function createTransaction(params: NearCreateTransactionParams) {
     const { recipient, assetValue, memo, feeRate: gas, attachedDeposit, sender: signerId } = params;
+    const validateNearAddress = await getValidateNearAddress();
+
+    if (!validateNearAddress(recipient)) {
+      throw new SwapKitError("toolbox_near_invalid_address", { address: recipient });
+    }
+
+    if (!validateNearAddress(signerId)) {
+      throw new SwapKitError("toolbox_near_invalid_address", { address: signerId });
+    }
 
     // Handle NEP-141 token transfers
     if (!assetValue.isGasAsset) {
@@ -480,7 +491,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     broadcastTransaction,
     signTransaction,
     getBalance,
-    validateAddress: validateNearAddress,
+    validateAddress: await getValidateNearAddress(),
     getSignerFromPhrase: (params: {
       phrase: string;
       derivationPath?: DerivationPathArray;

@@ -3,16 +3,18 @@ import { type DerivationPathArray, SwapKitError, derivationPathToString } from "
 import { type KeyPair, KeyPairSigner } from "near-api-js";
 import type { NearSigner } from "../types";
 
-export async function validateNearAddress(address: string) {
-  // Use the official NEAR SDK validation function if available
-  try {
-    const { validateAccountId } = await import("near-sdk-js");
-    return validateAccountId(address);
-  } catch {
-    const ACCOUNT_ID_REGEX = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
+export async function getValidateNearAddress() {
+  const { validateAccountId } = await import("near-sdk-js");
+  return (address: string) => {
+    // Use the official NEAR SDK validation function if available
+    try {
+      return validateAccountId(address);
+    } catch {
+      const ACCOUNT_ID_REGEX = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
 
-    return address.length >= 2 && address.length <= 64 && ACCOUNT_ID_REGEX.test(address);
-  }
+      return address.length >= 2 && address.length <= 64 && ACCOUNT_ID_REGEX.test(address);
+    }
+  };
 }
 
 export async function getNearSignerFromPhrase(params: {
