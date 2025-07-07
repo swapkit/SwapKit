@@ -18,7 +18,7 @@ export const NearPlugin = createPlugin({
     supportedSwapkitProviders: [ProviderName.NEAR],
   },
   methods: ({ getWallet }) => ({
-    async sswap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
+    async swap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
       const {
         route: {
           buyAsset: buyAssetString,
