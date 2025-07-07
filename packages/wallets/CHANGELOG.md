@@ -1,5 +1,11 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.45
+
+### Major Changes
+
+- [`97e8ccc`](https://github.com/swapkit/SwapKit/commit/97e8cccc1ee884013e3f2d5e069f562a743762e5) Thanks [@towanTG](https://github.com/towanTG)! - Fix missing deps
+
 ## 4.0.0-beta.44
 
 ### Patch Changes
