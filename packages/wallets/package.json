@@ -12,6 +12,7 @@
     "@ledgerhq/hw-app-cosmos": "^6.32.0",
     "@ledgerhq/hw-app-eth": "^6.45.0",
     "@ledgerhq/hw-app-near": "^6.31.0",
+    "@ledgerhq/hw-app-trx": "^6.31.3",
     "@ledgerhq/hw-app-xrp": "^6.31.0",
     "@ledgerhq/hw-transport": "^6.31.0",
     "@ledgerhq/hw-transport-webusb": "^6.29.0",
