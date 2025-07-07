@@ -2,6 +2,7 @@ import {
   type AssetValue,
   Chain,
   ChainId,
+  ErrorCode,
   FeeTypeEnum,
   ProviderName,
   WarningCodeEnum,
@@ -10,6 +11,7 @@ import {
   type ZodType,
   array,
   boolean,
+  coerce,
   nativeEnum,
   number,
   object,
@@ -19,7 +21,6 @@ import {
   unknown,
   type z,
 } from "zod";
-import { ErrorCode } from "../../types/quotes";
 
 export enum PriorityLabel {
   CHEAPEST = "CHEAPEST",
@@ -241,16 +242,19 @@ export const PriceRequestSchema = object({
 
 export type PriceRequest = z.infer<typeof PriceRequestSchema>;
 
-export const BrokerDepositChannelParamsSchema = object({
+export const DepositChannelParamsSchema = object({
+  destinationAddress: string(),
+});
+
+export const BrokerDepositChannelParamsSchema = DepositChannelParamsSchema.extend({
   sellAsset: object({
     chain: string(),
     asset: string(),
   }),
   buyAsset: object({
     chain: string(),
-    asset: string(), // identifier of the asset
+    asset: string(),
   }),
-  destinationAddress: string(),
   channelMetadata: object({
     cfParameters: string().optional(),
     gasBudget: string().optional(),
@@ -281,6 +285,57 @@ export const DepositChannelResponseSchema = object({
   channelId: string(),
   depositAddress: string(),
 });
+
+export const NearDepositChannelParamsSchema = DepositChannelParamsSchema.extend({
+  sellAsset: string(),
+  buyAsset: string(),
+  sourceAddress: string(),
+  sellAmount: string(),
+  affiliateFees: object({
+    nearId: string(),
+    feeBps: number(),
+  }).optional(),
+  slippage: coerce.number(),
+});
+
+export type NearDepositChannelParams = z.infer<typeof NearDepositChannelParamsSchema>;
+
+const NearQuoteResponseSchema = object({
+  amountIn: string(),
+  amountInFormatted: string(),
+  amountInUsd: string(),
+  minAmountIn: string(),
+  amountOut: string(),
+  amountOutFormatted: string(),
+  amountOutUsd: string(),
+  minAmountOut: string(),
+  deadline: string().optional(),
+  timeWhenInactive: string().optional(),
+  timeEstimate: number().optional(),
+});
+
+export const NearDepositChannelResultSchema = NearQuoteResponseSchema.extend({
+  timestamp: string(),
+  signature: string(),
+  quote: NearQuoteResponseSchema,
+  tx: unknown(),
+  depositAddress: string(),
+});
+
+export type NearDepositChannelResult = z.infer<typeof NearDepositChannelResultSchema>;
+
+export const NearSwapResponseSchema = object({
+  depositAddress: string(),
+  depositAsset: string(),
+  depositAmount: string(),
+  buyAsset: string(),
+  buyAssetAmount: string(),
+  buyAssetAmountMaxSlippage: string(),
+  tx: unknown(),
+  deadline: string().optional(),
+});
+
+export type NearSwapResponse = z.infer<typeof NearSwapResponseSchema>;
 
 export type DepositChannelResponse = z.infer<typeof DepositChannelResponseSchema>;
 
@@ -407,7 +462,6 @@ export const EVMTransactionDetailsParamsSchema = array(
     string(),
     number(),
     array(string()),
-
     object({ from: string(), value: string() }).describe(
       "Parameters to pass to the contract method",
     ),
@@ -485,16 +539,21 @@ export const ChainflipMetadataSchema = BrokerDepositChannelParamsSchema;
 export type ChainflipMetadata = z.infer<typeof ChainflipMetadataSchema>;
 
 export const RouteQuoteMetadataSchema = object({
-  priceImpact: optional(number({ description: "Price impact" })),
   assets: optional(array(RouteQuoteMetadataAssetSchema)),
-  approvalAddress: optional(string({ description: "Approval address for swap" })),
+  tags: array(nativeEnum(PriorityLabel)),
   streamingInterval: number().optional(),
   maxStreamingQuantity: number().optional(),
-  tags: array(nativeEnum(PriorityLabel)),
+  referrer: string().optional(),
+});
+
+export const RouteQuoteMetadataV2Schema = RouteQuoteMetadataSchema.extend({
+  priceImpact: optional(number({ description: "Price impact" })),
+  approvalAddress: optional(string({ description: "Approval address for swap" })),
   affiliate: optional(string()),
   affiliateFee: optional(string()),
   txType: optional(nativeEnum(RouteQuoteTxType)),
-  chainflip: optional(ChainflipMetadataSchema),
+  chainflip: ChainflipMetadataSchema.optional(),
+  near: NearDepositChannelParamsSchema.optional(),
   referrer: optional(string()),
 });
 
@@ -534,7 +593,7 @@ const QuoteResponseRouteItem = object({
   totalSlippageBps: number({ description: "Total slippage in bps" }),
   legs: array(QuoteResponseRouteLegItem),
   warnings: RouteQuoteWarningSchema,
-  meta: RouteQuoteMetadataSchema,
+  meta: RouteQuoteMetadataV2Schema,
 });
 
 export const QuoteResponseSchema = object({

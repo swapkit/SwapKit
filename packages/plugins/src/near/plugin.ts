@@ -1,20 +1,16 @@
 import {
   AssetValue,
   Chain,
+  type CryptoChain,
   ProviderName,
   SwapKitError,
   type SwapParams,
   createPlugin,
 } from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { type QuoteResponseRoute, SwapKitApi } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
 import { calculateNearNameCost, validateNearName } from "./nearNames";
-import type {
-  NearDepositChannelParams,
-  NearNameRegistrationParams,
-  NearSwapResponse,
-  NearSwapRoute,
-} from "./types";
+import type { NearNameRegistrationParams } from "./types";
 
 export const NearPlugin = createPlugin({
   name: "near",
@@ -22,62 +18,41 @@ export const NearPlugin = createPlugin({
     supportedSwapkitProviders: [ProviderName.NEAR],
   },
   methods: ({ getWallet }) => ({
-    async swap({
-      route,
-      recipient,
-    }: SwapParams<{
-      route: NearSwapRoute & {
-        meta?: {
-          nearSwapInfo?: NearDepositChannelParams;
-        };
-      };
-    }>) {
-      const { meta } = route as any;
-      if (!meta?.nearSwapInfo) {
-        throw new SwapKitError("core_swap_invalid_params", {
-          message: "Missing NEAR swap metadata",
-        });
+    async sswap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
+      const {
+        route: {
+          buyAsset: buyAssetString,
+          sellAsset: sellAssetString,
+          sellAmount,
+          meta: { near },
+        },
+      } = swapParams;
+
+      if (!(sellAssetString && buyAssetString && near?.sellAsset)) {
+        throw new SwapKitError("core_swap_asset_not_recognized");
       }
 
-      const nearSwapInfo = meta.nearSwapInfo;
-      const srcWallet = await getWallet(nearSwapInfo.srcChain);
-
-      const nearDepositChannelParams: NearDepositChannelParams = {
-        ...nearSwapInfo,
-        toAddress: recipient || (await srcWallet.getAddress()),
-      };
-
-      // TODO: UPSTREAM getNearDepositChannel in SwapKitApi from v3 branch
-      const response = await (SwapKitApi as any).getNearDepositChannel?.(nearDepositChannelParams);
-      if (!response) {
-        throw new SwapKitError("core_plugin_not_found", {
-          info: "NEAR deposit channel API not implemented",
-        });
-      }
-      const nearResponse = response as NearSwapResponse;
-
-      if (!nearResponse.isSuccess) {
-        throw new SwapKitError("core_swap_invalid_params", {
-          message: "Failed to create NEAR deposit channel",
-        });
-      }
-
-      const { channelId, depositAddress } = nearResponse.response;
-
-      const assetValue = AssetValue.from({
-        chain: nearSwapInfo.srcChain,
-        symbol: nearSwapInfo.srcToken,
-        value: nearSwapInfo.amount,
-        decimal: (route as any).srcToken.decimals,
+      const sellAsset = await AssetValue.from({
+        asyncTokenLookup: true,
+        asset: sellAssetString,
+        value: sellAmount,
       });
 
-      const txHash = await srcWallet.transfer({
-        assetValue,
+      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+
+      if (!wallet) {
+        throw new SwapKitError("core_wallet_connection_not_found");
+      }
+
+      const { depositAddress } = await SwapKitApi.getNearDepositChannel(near);
+
+      const tx = await wallet.transfer({
+        assetValue: sellAsset,
         recipient: depositAddress,
-        memo: channelId,
+        isProgramDerivedAddress: true,
       });
 
-      return txHash;
+      return tx as string;
     },
 
     // NEAR Names functionality

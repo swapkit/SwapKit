@@ -110,7 +110,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
         amount: transferAmount,
       });
 
-      return result.transaction.hash;
+      return result.transaction_outcome.id;
     } catch (error) {
       throw new SwapKitError("toolbox_near_transfer_failed", { error });
     }
@@ -344,7 +344,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
         actions: [functionAction],
       });
 
-      return result.transaction.hash;
+      return result.transaction_outcome.id;
     } catch (error) {
       throw new SwapKitError("toolbox_near_transfer_failed", { error });
     }
