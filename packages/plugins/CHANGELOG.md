@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 4.0.0-beta.38
+
+### Patch Changes
+
+- [`b341967`](https://github.com/swapkit/SwapKit/commit/b341967b9db2ef591fa8e6adda5dcfccb14e0fa8) Thanks [@towanTG](https://github.com/towanTG)! - General Patch Bump
+
+- Updated dependencies [[`b341967`](https://github.com/swapkit/SwapKit/commit/b341967b9db2ef591fa8e6adda5dcfccb14e0fa8), [`a74d2ee`](https://github.com/swapkit/SwapKit/commit/a74d2ee7dbfa5c9426855e8a09d3be3ae2bf967b)]:
+  - @swapkit/helpers@4.0.0-beta.26
+  - @swapkit/toolboxes@4.0.0-beta.38
+
 ## 4.0.0-beta.37
 
 ### Patch Changes
@@ -149,4 +159,3 @@
 - Updated dependencies [[`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5), [`12af242`](https://github.com/swapkit/SwapKit/commit/12af242176195a99821d9b49c5af8355bcf920a5)]:
   - @swapkit/toolboxes@1.0.0-beta.20
   - @swapkit/helpers@3.0.0-beta.15
-

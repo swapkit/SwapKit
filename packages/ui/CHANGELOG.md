@@ -1,5 +1,17 @@
 # @swapkit/ui
 
+## 0.1.0-beta.42
+
+### Patch Changes
+
+- [`b341967`](https://github.com/swapkit/SwapKit/commit/b341967b9db2ef591fa8e6adda5dcfccb14e0fa8) Thanks [@towanTG](https://github.com/towanTG)! - General Patch Bump
+
+- Updated dependencies [[`b341967`](https://github.com/swapkit/SwapKit/commit/b341967b9db2ef591fa8e6adda5dcfccb14e0fa8), [`a74d2ee`](https://github.com/swapkit/SwapKit/commit/a74d2ee7dbfa5c9426855e8a09d3be3ae2bf967b)]:
+  - @swapkit/core@4.0.0-beta.39
+  - @swapkit/plugins@4.0.0-beta.38
+  - @swapkit/toolboxes@4.0.0-beta.38
+  - @swapkit/wallets@4.0.0-beta.41
+
 ## 0.1.0-beta.41
 
 ### Patch Changes
@@ -191,4 +203,3 @@
   - @swapkit/plugins@1.0.0-beta.19
   - @swapkit/toolboxes@1.0.0-beta.19
   - @swapkit/wallets@3.0.0-beta.22
-

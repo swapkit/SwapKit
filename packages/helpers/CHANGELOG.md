@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.26
+
+### Patch Changes
+
+- [`b341967`](https://github.com/swapkit/SwapKit/commit/b341967b9db2ef591fa8e6adda5dcfccb14e0fa8) Thanks [@towanTG](https://github.com/towanTG)! - General Patch Bump
+
+- [`a74d2ee`](https://github.com/swapkit/SwapKit/commit/a74d2ee7dbfa5c9426855e8a09d3be3ae2bf967b) Thanks [@towanTG](https://github.com/towanTG)! - Adds Trongrid TRC20 token lookup
+
 ## 4.0.0-beta.25
 
 ### Patch Changes
@@ -86,4 +94,3 @@
   - Proper error handling
 
   Note: Message signing support varies by wallet due to hardware/protocol limitations.
-
