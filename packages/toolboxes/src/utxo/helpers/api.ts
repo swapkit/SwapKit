@@ -104,23 +104,14 @@ async function getSuggestedTxFee(chain: Chain) {
 }
 
 async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
-  try {
-    const response = await RequestClient.get<BlockchairResponse<T>>(url);
-    if (!response || response.context.code !== 200)
-      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
+  const response = await RequestClient.get<BlockchairResponse<T>>(
+    `${url}${apiKey ? `${url.includes("?") ? "&" : "?"}key=${apiKey}` : ""}`,
+  );
 
-    return response.data as T;
-  } catch (error) {
-    if (!apiKey) throw error;
-    const response = await RequestClient.get<BlockchairResponse<T>>(
-      `${url}${apiKey ? `${url.includes("?") ? "&" : "?"}key=${apiKey}` : ""}`,
-    );
+  if (!response || response.context.code !== 200)
+    throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
 
-    if (!response || response.context.code !== 200)
-      throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
-
-    return response.data as T;
-  }
+  return response.data as T;
 }
 
 async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
