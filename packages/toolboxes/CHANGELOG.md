@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.44
+
+### Patch Changes
+
+- [`30fd190`](https://github.com/swapkit/SwapKit/commit/30fd1900c35df6cd305800102c558468e623abe2) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Blockchair api key url appending
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.43
 
 ### Patch Changes
