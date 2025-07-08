@@ -36,7 +36,7 @@ export async function getWalletForChain({ xumm, chain, address, rpcUrl }: GetWal
         });
 
         // If not successful or no transaction ID, throw error
-        if (!paymentResult.result.success || !paymentResult.result.transactionId) {
+        if (!(paymentResult.result.success && paymentResult.result.transactionId)) {
           throw new Error(paymentResult.result.reason || "Transaction failed");
         }
 

@@ -18,6 +18,7 @@ export const OKX_SUPPORTED_CHAINS = [
   Chain.Ethereum,
   Chain.Optimism,
   Chain.Polygon,
+  Chain.Tron,
 ] as const;
 
 function connectOkx({

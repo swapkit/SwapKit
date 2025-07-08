@@ -1,4 +1,4 @@
-import { type QuoteResponseRoute, swapkitApiEndpoints } from "@swapkit/api";
+import type { QuoteResponseRoute } from "@swapkit/api";
 import {
   AssetValue,
   type ConnectConfig,
@@ -14,15 +14,13 @@ import {
 
 type SupportedChain = keyof (EVMWallets & SubstrateWallets & UTXOWallets & SolanaWallets);
 
-function plugin({
-  getWallet,
-  config: { swapkitApiKey, swapkitConfig },
-}: SwapKitPluginParams<ConnectConfig>) {
+function plugin({ getWallet }: SwapKitPluginParams<ConnectConfig>) {
   async function swap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
     const {
       route: {
         buyAsset: buyAssetString,
         sellAsset: sellAssetString,
+        inboundAddress,
         sellAmount,
         meta: { near },
       },
@@ -44,18 +42,10 @@ function plugin({
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const { depositAddress } = await swapkitApiEndpoints.getNearDepositChannel({
-      isDev: swapkitConfig?.isDev,
-      body: {
-        ...near,
-      },
-      apiKey: swapkitApiKey || swapkitConfig?.swapkitApiKey,
-    });
-
     const tx = await wallet.transfer({
       assetValue: sellAsset,
       from: wallet.address,
-      recipient: depositAddress,
+      recipient: inboundAddress,
       isProgramDerivedAddress: true,
     });
 

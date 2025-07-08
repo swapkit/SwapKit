@@ -75,7 +75,6 @@ export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParam
       if (url) window.open(url);
     }
 
-    debugger;
     // Wait until the user signed/rejected
     const resolved = await subscription.resolved;
 
@@ -84,6 +83,7 @@ export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParam
     }
 
     // Fetch the full payload result using the UUID from resolved data
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const payloadDetails = await xumm.payload?.get((resolved as any).payload_uuidv4);
 
     if (!payloadDetails) {

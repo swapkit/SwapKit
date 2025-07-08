@@ -74,6 +74,7 @@ const errorCodes = {
   wallet_ledger_get_address_error: 20103,
   wallet_ledger_device_not_found: 20104,
   wallet_ledger_device_locked: 20105,
+  wallet_ledger_sign_error: 20106,
   wallet_phantom_not_found: 20201,
   wallet_ctrl_not_found: 20301,
   wallet_ctrl_send_transaction_no_address: 20302,
@@ -101,6 +102,8 @@ const errorCodes = {
   wallet_xaman_connection_failed: 21104,
   wallet_xaman_transaction_failed: 21105,
   wallet_xaman_monitoring_failed: 21106,
+  wallet_okx_tron_not_found: 21201,
+  wallet_bitget_tron_not_found: 21301,
   /**
    * Chainflip
    */
@@ -155,6 +158,15 @@ const errorCodes = {
   toolbox_ripple_rpc_not_configured: 90503,
   toolbox_ripple_asset_not_supported: 90504,
   toolbox_ripple_broadcast_error: 90505,
+  toolbox_tron_no_signer: 90901,
+  toolbox_tron_invalid_address: 90902,
+  toolbox_tron_insufficient_balance: 90903,
+  toolbox_tron_transaction_failed: 90904,
+  toolbox_tron_trongrid_api_error: 90905,
+  toolbox_tron_invalid_token_identifier: 90906,
+  toolbox_tron_fee_estimation_failed: 90907,
+  toolbox_tron_token_transfer_failed: 90908,
+  toolbox_tron_transaction_creation_failed: 90909,
   /**
    * Helpers
    */

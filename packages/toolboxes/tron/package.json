@@ -1,0 +1,44 @@
+{
+  "name": "@swapkit/toolbox-tron",
+  "version": "0.0.1",
+  "description": "SwapKit TRON blockchain toolbox",
+  "keywords": ["swapkit", "tron", "blockchain", "toolbox"],
+  "repository": "https://github.com/thorswap/SwapKit",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "lint": "biome check --diagnostic-level=error --write ./src",
+    "test": "echo 'bun test'",
+    "test:coverage": "bun test --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@scure/bip32": "1.6.2",
+    "@scure/bip39": "1.5.4",
+    "@swapkit/helpers": "workspace:*",
+    "tronweb": "^6.0.3",
+    "ts-pattern": "^5.5.0"
+  },
+  "devDependencies": {
+    "@swapkit/tokens": "workspace:*",
+    "@swapkit/toolbox-utxo": "workspace:*",
+    "@types/node": "22.10.5",
+    "typescript": "5.7.2",
+    "vite": "6.0.7",
+    "vitest": "2.1.4"
+  },
+  "peerDependencies": {
+    "@swapkit/helpers": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

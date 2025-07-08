@@ -16,6 +16,7 @@ export const LEDGER_SUPPORTED_CHAINS = [
   Chain.Polygon,
   Chain.Ripple,
   Chain.THORChain,
+  Chain.Tron,
 ] as const;
 
 export type LedgerSupportedChain = (typeof LEDGER_SUPPORTED_CHAINS)[number];

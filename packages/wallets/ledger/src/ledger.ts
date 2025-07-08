@@ -14,6 +14,7 @@ import {
 import type { DepositParam, TransferParams } from "@swapkit/toolbox-cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolbox-utxo";
 
+import type { TronTransaction } from "@swapkit/toolbox-tron";
 import { LEDGER_SUPPORTED_CHAINS } from "./helpers/index";
 import { getLedgerAddress, getLedgerClient } from "./helpers/index";
 import type { LedgerSupportedChain } from "./helpers/ledgerSupportedChains";
@@ -260,6 +261,24 @@ const getToolbox = async ({
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = signer.address;
       const toolbox = await XRPToolbox({ signer, rpcUrl });
+
+      return { ...toolbox, address };
+    }
+
+    case Chain.Tron: {
+      const { createTronToolbox } = await import("@swapkit/toolbox-tron");
+      const ledgerClient = await getLedgerClient({ chain, derivationPath });
+      const address = await getLedgerAddress({ chain, ledgerClient });
+
+      const signer = {
+        getAddress: async () => address,
+        signTransaction: async (transaction: TronTransaction) => {
+          // Convert transaction to hex format if needed
+          return await ledgerClient.signTransaction(transaction);
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer, rpcUrl });
 
       return { ...toolbox, address };
     }

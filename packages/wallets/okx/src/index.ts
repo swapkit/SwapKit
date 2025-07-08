@@ -53,6 +53,17 @@ declare global {
             ) => Promise<boolean>;
             getOfflineSignerOnlyAmino: (chainId: string) => OfflineAminoSigner;
           };
+          tronLink: {
+            request: (params: { method: string }) => Promise<any>;
+            tronWeb: {
+              defaultAddress: {
+                base58: string;
+              };
+              trx: {
+                sign: (transaction: any, privateKey?: string) => Promise<any>;
+              };
+            };
+          };
         }
       | EthereumWindowProvider;
   }

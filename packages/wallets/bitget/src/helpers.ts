@@ -15,6 +15,7 @@ import {
 } from "@swapkit/helpers";
 import type { TransferParams } from "@swapkit/toolbox-cosmos";
 import type { AlchemyApiType, CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
+import type { TronTransaction } from "@swapkit/toolbox-tron";
 import type { Psbt, UTXOTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
@@ -213,6 +214,39 @@ export async function getWalletForChain({
       };
 
       return { ...toolbox, signTransaction, transfer, address };
+    }
+
+    case Chain.Tron: {
+      if (!(bitget && "tronLink" in bitget)) {
+        throw new SwapKitError("wallet_bitget_tron_not_found");
+      }
+
+      const { tronLink } = bitget;
+
+      // Request account access
+      await tronLink.request({ method: "tron_requestAccounts" });
+
+      // Verify connection
+      if (!tronLink.tronWeb.defaultAddress?.base58) {
+        throw new Error("Failed to get TRON address from Bitget wallet");
+      }
+
+      const { createTronToolbox } = await import("@swapkit/toolbox-tron");
+
+      const signer = {
+        tronWeb: tronLink.tronWeb,
+        getAddress: async () => tronLink.tronWeb.defaultAddress.base58,
+        signTransaction: async (tx: TronTransaction) => {
+          return await tronLink.tronWeb.trx.sign(tx);
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer, rpcUrl });
+
+      return {
+        ...toolbox,
+        address: tronLink.tronWeb.defaultAddress.base58,
+      };
     }
 
     default:

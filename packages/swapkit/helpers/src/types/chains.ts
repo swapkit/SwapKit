@@ -21,6 +21,7 @@ export enum Chain {
   Ripple = "XRP",
   THORChain = "THOR",
   Solana = "SOL",
+  Tron = "TRX",
 }
 
 export enum StagenetChain {
@@ -60,6 +61,8 @@ export enum ChainId {
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
+  Tron = "728126428",
+  TronHex = "0x2b6653dc",
 }
 
 export const ChainIdToChain: Record<ChainId, Chain> = {
@@ -94,6 +97,8 @@ export const ChainIdToChain: Record<ChainId, Chain> = {
   [ChainId.THORChainStagenet]: Chain.THORChain,
   [ChainId.THORChain]: Chain.THORChain,
   [ChainId.Solana]: Chain.Solana,
+  [ChainId.Tron]: Chain.Tron,
+  [ChainId.TronHex]: Chain.Tron,
 };
 
 type ChainNameType = keyof typeof Chain;
@@ -121,6 +126,7 @@ export const BaseDecimal: Record<Chain, number> = {
   OP: 18,
   SOL: 9,
   THOR: 8,
+  TRX: 6,
   XRD: 18,
   XRP: 6,
 };
@@ -148,6 +154,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Ripple]: 4,
   [Chain.Solana]: 0.4,
   [Chain.THORChain]: 6,
+  [Chain.Tron]: 3,
 };
 
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
@@ -234,6 +241,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
   [StagenetChain.Maya]: "https://stagenet.tendermint.mayachain.info",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
+  [Chain.Tron]: "https://api.trongrid.io",
 };
 
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
@@ -276,6 +284,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.THORChain]: ["https://rpc.thorswap.net"],
   [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://rpc.ankr.com/solana"],
+  [Chain.Tron]: ["https://api.trongrid.io", "https://tron-rpc.publicnode.com"],
 };
 
 export const EXPLORER_URLS: Record<Chain, string> = {
@@ -301,6 +310,7 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Ripple]: "https://livenet.xrpl.org",
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
+  [Chain.Tron]: "https://tronscan.org",
 };
 
 let RPCUrlsMerged = RPC_URLS;
@@ -361,6 +371,13 @@ const getRpcBody = (chain: Chain | StagenetChain) => {
         jsonrpc: "2.0",
         id: 1,
         method: "getHealth",
+      };
+    case Chain.Tron:
+      return {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getblockbynum",
+        params: [1],
       };
     default:
       throw new Error(`Unsupported chain: ${chain}`);

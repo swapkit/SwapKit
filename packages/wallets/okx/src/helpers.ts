@@ -11,6 +11,7 @@ import {
 } from "@swapkit/helpers";
 import type { GaiaToolbox } from "@swapkit/toolbox-cosmos";
 import type { AlchemyApiType, CovalentApiType, EthplorerApiType } from "@swapkit/toolbox-evm";
+import type { TronTransaction, createTronToolbox } from "@swapkit/toolbox-tron";
 import type { BTCToolbox, Psbt, UTXOWalletTransferParams } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
@@ -59,7 +60,9 @@ export const getWalletForChain = async ({
     | ReturnType<typeof GaiaToolbox>
     | Awaited<ReturnType<typeof getWeb3WalletMethods>>
     | ReturnType<typeof BTCToolbox>
+    | Awaited<ReturnType<typeof createTronToolbox>>
   ) & { address: string }
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 > => {
   switch (chain) {
     case Chain.Ethereum:
@@ -151,6 +154,39 @@ export const getWalletForChain = async ({
         address,
         ...GaiaToolbox({ server: api, swapkitApiKey }),
         transfer: cosmosTransfer(rpcUrl),
+      };
+    }
+
+    case Chain.Tron: {
+      if (!(window.okxwallet && "tronLink" in window.okxwallet)) {
+        throw new Error("No tron okxwallet found");
+      }
+
+      const { tronLink } = window.okxwallet;
+
+      // Request account access
+      await tronLink.request({ method: "tron_requestAccounts" });
+
+      // Verify connection
+      if (!tronLink.tronWeb.defaultAddress?.base58) {
+        throw new Error("Failed to get TRON address from OKX wallet");
+      }
+
+      const { createTronToolbox } = await import("@swapkit/toolbox-tron");
+
+      const signer = {
+        tronWeb: tronLink.tronWeb,
+        getAddress: async () => tronLink.tronWeb.defaultAddress.base58,
+        signTransaction: async (tx: TronTransaction) => {
+          return await tronLink.tronWeb.trx.sign(tx);
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer, rpcUrl });
+
+      return {
+        ...toolbox,
+        address: tronLink.tronWeb.defaultAddress.base58,
       };
     }
 

@@ -59,6 +59,17 @@ declare global {
         signTransaction: (transaction: Transaction) => Promise<Transaction>;
       };
       ethereum: EthereumWindowProvider;
+      tronLink: {
+        request: (params: { method: string }) => Promise<any>;
+        tronWeb: {
+          defaultAddress: {
+            base58: string;
+          };
+          trx: {
+            sign: (transaction: any, privateKey?: string) => Promise<any>;
+          };
+        };
+      };
     };
   }
 }

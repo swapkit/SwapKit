@@ -12,6 +12,7 @@ import {
   PolygonLedger,
 } from "../clients/evm";
 import { THORChainLedger } from "../clients/thorchain/index";
+import { TronLedger } from "../clients/tron";
 import {
   BitcoinCashLedger,
   BitcoinLedger,
@@ -38,6 +39,7 @@ type LedgerSignerMap = {
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
   [Chain.Ripple]: AsyncXrpSigner;
   [Chain.THORChain]: THORChainLedger;
+  [Chain.Tron]: ReturnType<typeof TronLedger>;
 };
 
 export const getLedgerClient = async <T extends LedgerSupportedChain>({
@@ -64,6 +66,8 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
       return LitecoinLedger(derivationPath) as LedgerSignerMap[T];
     case Chain.Ripple:
       return LedgerXrpSigner() as Promise<LedgerSignerMap[T]>;
+    case Chain.Tron:
+      return TronLedger(derivationPath) as LedgerSignerMap[T];
 
     case Chain.Arbitrum:
     case Chain.Avalanche:

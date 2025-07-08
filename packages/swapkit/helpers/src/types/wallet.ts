@@ -4,6 +4,7 @@ import type { RadixWallets } from "@swapkit/toolbox-radix";
 import type { RippleWallet } from "@swapkit/toolbox-ripple";
 import type { SolanaWallets } from "@swapkit/toolbox-solana";
 import type { SubstrateWallets } from "@swapkit/toolbox-substrate";
+import type { TronWallet } from "@swapkit/toolbox-tron";
 import type { UTXOWallets } from "@swapkit/toolbox-utxo";
 import type { Eip1193Provider } from "ethers";
 
@@ -84,7 +85,8 @@ export type FullWallet = BaseWallet<
     SubstrateWallets &
     SolanaWallets &
     RadixWallets &
-    RippleWallet
+    RippleWallet &
+    TronWallet
 >;
 
 /**

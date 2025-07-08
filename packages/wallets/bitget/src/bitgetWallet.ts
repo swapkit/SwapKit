@@ -14,6 +14,7 @@ export const BITGET_SUPPORTED_CHAINS = [
   Chain.Cosmos,
   Chain.Bitcoin,
   Chain.Solana,
+  Chain.Tron,
 ] as const;
 
 function connectBitget({

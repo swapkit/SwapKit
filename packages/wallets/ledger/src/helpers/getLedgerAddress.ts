@@ -3,6 +3,7 @@ import type { AsyncXrpSigner } from "@swapkit/toolbox-ripple";
 
 import type { CosmosLedgerClients, EVMLedgerClients, UTXOLedgerClients } from "../types";
 
+import type { TronLedgerInterface } from "../clients/tron";
 import type { getLedgerClient } from "./getLedgerClient";
 import type { LEDGER_SUPPORTED_CHAINS } from "./ledgerSupportedChains";
 
@@ -45,6 +46,12 @@ export const getLedgerAddress = async ({
 
     case Chain.Ripple: {
       return (ledgerClient as AsyncXrpSigner).address;
+    }
+
+    case Chain.Tron: {
+      const client = ledgerClient as TronLedgerInterface;
+      const address = await client.getAddress();
+      return address;
     }
   }
 };
