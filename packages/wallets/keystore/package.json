@@ -8,6 +8,7 @@
     "@swapkit/toolbox-ripple": "workspace:*",
     "@swapkit/toolbox-solana": "workspace:*",
     "@swapkit/toolbox-substrate": "workspace:*",
+    "@swapkit/toolbox-tron": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*",
     "blakejs": "1.2.1",
     "micro-key-producer": "0.7.5"

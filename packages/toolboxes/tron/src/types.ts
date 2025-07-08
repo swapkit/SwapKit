@@ -2,10 +2,7 @@ import type { AssetValue, DerivationPathArray, FeeOption } from "@swapkit/helper
 import type { Contract, Types } from "tronweb";
 
 export interface TRONToolboxParams {
-  mnemonic?: string;
   phrase?: string;
-  seed?: string;
-  privateKey?: string;
   rpcUrl?: string;
   apiKey?: string;
   signer?: TronSigner;

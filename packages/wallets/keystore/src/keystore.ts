@@ -32,6 +32,7 @@ const KEYSTORE_SUPPORTED_CHAINS = [
   Chain.Chainflip,
   Chain.Solana,
   Chain.Ripple,
+  Chain.Tron,
 ] as const;
 
 type KeystoreOptions = {
@@ -225,6 +226,18 @@ const getWalletMethodsForChain = async ({
 
       return {
         address: signer.address,
+        walletMethods: {
+          ...toolbox,
+        },
+      };
+    }
+
+    case Chain.Tron: {
+      const { createTronToolbox } = await import("@swapkit/toolbox-tron");
+      const toolbox = await createTronToolbox({ rpcUrl, phrase, derivationPath });
+
+      return {
+        address: await toolbox.getAddress(),
         walletMethods: {
           ...toolbox,
         },
