@@ -35,7 +35,7 @@
     "near-api-js": "~6.1.0",
     "ripple-binary-codec": "~2.4.0",
     "sats-connect": "3.5.0",
-    "ts-pattern": "~5.0.0",
+    "ts-pattern": "~5.7.0",
     "xumm": "1.8.0"
   },
   "description": "SwapKit - Wallets",
