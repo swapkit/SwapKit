@@ -1,5 +1,17 @@
 # @swapkit/ui
 
+## 0.1.0-beta.48
+
+### Patch Changes
+
+- [#1388](https://github.com/swapkit/SwapKit/pull/1388) [`54e38a0`](https://github.com/swapkit/SwapKit/commit/54e38a074f5393c162b8f7b007a8aef46e7d8002) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Addition of `@noble/hashes` version 2.0.0
+
+- Updated dependencies [[`54e38a0`](https://github.com/swapkit/SwapKit/commit/54e38a074f5393c162b8f7b007a8aef46e7d8002)]:
+  - @swapkit/toolboxes@4.0.0-beta.43
+  - @swapkit/plugins@4.0.0-beta.43
+  - @swapkit/wallets@4.0.0-beta.47
+  - @swapkit/core@4.0.0-beta.44
+
 ## 0.1.0-beta.47
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.43
+
+### Patch Changes
+
+- [#1388](https://github.com/swapkit/SwapKit/pull/1388) [`54e38a0`](https://github.com/swapkit/SwapKit/commit/54e38a074f5393c162b8f7b007a8aef46e7d8002) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Addition of `@noble/hashes` version 2.0.0
+
+- Updated dependencies [[`54e38a0`](https://github.com/swapkit/SwapKit/commit/54e38a074f5393c162b8f7b007a8aef46e7d8002)]:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.42
 
 ### Patch Changes
