@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.30
+
+### Patch Changes
+
+- [`69b4aec`](https://github.com/swapkit/SwapKit/commit/69b4aec824013ede9ca797aa11244442ef389250) Thanks [@towanTG](https://github.com/towanTG)! - Fixes AssetValue Token parsing for TRX
+
 ## 4.0.0-beta.29
 
 ### Patch Changes
