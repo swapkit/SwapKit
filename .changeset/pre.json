@@ -3,6 +3,7 @@
   "tag": "beta",
   "initialVersions": {
     "@internal/docs": "0.0.0",
+    "@internal/playground-bun-backend": "0.0.0",
     "@internal/playground-bun-react": "0.0.0",
     "@internal/playground-nextjs": "0.0.0",
     "@internal/playground-node": "0.0.0",
@@ -16,8 +17,7 @@
     "@swapkit/sdk": "2.2.17",
     "@swapkit/toolboxes": "0.1.0",
     "@swapkit/ui": "0.0.1",
-    "@swapkit/wallets": "2.0.20",
-    "bun-backend": "0.0.0"
+    "@swapkit/wallets": "2.0.20"
   },
   "changesets": [
     "all-garlics-battle",

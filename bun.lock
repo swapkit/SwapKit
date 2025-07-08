@@ -39,7 +39,7 @@
     },
     "packages/core": {
       "name": "@swapkit/core",
-      "version": "4.0.0-beta.44",
+      "version": "4.0.0-beta.45",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
@@ -64,7 +64,7 @@
     },
     "packages/plugins": {
       "name": "@swapkit/plugins",
-      "version": "4.0.0-beta.43",
+      "version": "4.0.0-beta.44",
       "dependencies": {
         "@polkadot/keyring": "~13.5.0",
         "@polkadot/util": "~13.5.0",
@@ -82,7 +82,7 @@
     },
     "packages/sdk": {
       "name": "@swapkit/sdk",
-      "version": "4.0.0-beta.48",
+      "version": "4.0.0-beta.49",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -92,7 +92,7 @@
     },
     "packages/toolboxes": {
       "name": "@swapkit/toolboxes",
-      "version": "4.0.0-beta.43",
+      "version": "4.0.0-beta.44",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "~1.2.0",
         "@cosmjs/amino": "~0.33.0",
@@ -178,7 +178,7 @@
     },
     "packages/ui": {
       "name": "@swapkit/ui",
-      "version": "0.1.0-beta.48",
+      "version": "0.1.0-beta.49",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -192,7 +192,7 @@
     },
     "packages/wallets": {
       "name": "@swapkit/wallets",
-      "version": "4.0.0-beta.47",
+      "version": "4.0.0-beta.48",
       "dependencies": {
         "@coinbase/wallet-sdk": "~4.3.0",
         "@cosmjs/amino": "~0.33.0",
@@ -275,7 +275,7 @@
       },
     },
     "playgrounds/bun-backend": {
-      "name": "bun-backend",
+      "name": "@internal/playground-bun-backend",
       "version": "0.0.0",
       "dependencies": {
         "@swapkit/sdk": "workspace:*",
@@ -830,6 +830,8 @@
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.34.2", "", { "os": "win32", "cpu": "x64" }, "sha512-aUdT6zEYtDKCaxkofmmJDJYGCf0+pJg3eU9/oBuqvEeoB9dKI6ZLc/1iLJCTuJQDO4ptntAlkUmHgGjyuobZbw=="],
 
     "@internal/docs": ["@internal/docs@workspace:docs"],
+
+    "@internal/playground-bun-backend": ["@internal/playground-bun-backend@workspace:playgrounds/bun-backend"],
 
     "@internal/playground-bun-react": ["@internal/playground-bun-react@workspace:playgrounds/bun-react"],
 
@@ -2022,8 +2024,6 @@
     "builtin-modules": ["builtin-modules@3.3.0", "", {}, "sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw=="],
 
     "builtin-status-codes": ["builtin-status-codes@3.0.0", "", {}, "sha512-HpGFw18DgFWlncDfjTa2rcQ4W88O1mC8e8yZ2AvQY5KDaktSTwo+KRf6nHK6FRI5FyRyb/5T6+TSxfP7QyGsmQ=="],
-
-    "bun-backend": ["bun-backend@workspace:playgrounds/bun-backend"],
 
     "bun-plugin-tailwind": ["bun-plugin-tailwind@0.0.15", "", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-qtAXMNGG4R0UGGI8zWrqm2B7BdXqx48vunJXBPzfDOHPA5WkRUZdTSbE7TFwO4jLhYqSE23YMWsM9NhE6ovobw=="],
 
