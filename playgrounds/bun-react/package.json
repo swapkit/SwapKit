@@ -30,7 +30,7 @@
     "zod": "3.25.74"
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/bun": "1.2.18",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6"
   }

@@ -1,0 +1,11 @@
+{
+  "name": "bun-backend",
+  "dependencies": {
+    "@swapkit/sdk": "workspace:*"
+  },
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run build && bun run dist/index.js"
+  }
+}
