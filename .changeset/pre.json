@@ -3,6 +3,7 @@
   "tag": "beta",
   "initialVersions": {
     "@internal/docs": "0.0.0",
+    "@internal/playground-bun-backend": "0.0.0",
     "@internal/playground-bun-react": "0.0.0",
     "@internal/playground-nextjs": "0.0.0",
     "@internal/playground-node": "0.0.0",
@@ -29,6 +30,7 @@
     "curvy-peaches-stick",
     "curvy-terms-live",
     "cyan-pets-grow",
+    "dirty-ducks-draw",
     "early-parrots-nail",
     "early-wombats-change",
     "easy-deer-tan",
