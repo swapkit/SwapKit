@@ -504,18 +504,21 @@ async function getInputsAndTargetOutputs({
   fetchTxHex: fetchTxOverwrite = false,
 }: Omit<UTXOBuildTxParams, "feeRate">) {
   const chain = assetValue.chain as UTXOChain;
+  const feeRate = (await getFeeRates(chain))[FeeOption.Fastest];
 
   const fetchTxHex = fetchTxOverwrite || nonSegwitChains.includes(chain);
 
-  const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex });
+  const amountToSend = assetValue.getBaseValue("number");
 
-  //1. add output amount and recipient to targets
-  //2. add output memo to targets (optional)
+  // Overestimate by 5000 byte * highest feeRate to ensure we have enough UTXOs for fees and change
+  const targetValue = Math.ceil(amountToSend + feeRate * 5000);
+
+  const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex, targetValue });
 
   return {
     inputs,
     outputs: [
-      { address: recipient, value: Number(assetValue.bigIntValue) },
+      { address: recipient, value: amountToSend },
       ...(memo ? [{ address: "", script: await compileMemo(memo), value: 0 }] : []),
     ],
   };

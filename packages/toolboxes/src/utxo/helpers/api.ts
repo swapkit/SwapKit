@@ -17,6 +17,8 @@ type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
   offset?: number;
   limit?: number;
   address: string;
+  targetValue?: number;
+  accumulativeValue?: number;
 }>;
 
 async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string }) {
@@ -161,51 +163,97 @@ async function fetchUnspentUtxoBatch({
   address,
   apiKey,
   offset = 0,
-  limit = 100,
+  limit = 5,
 }: BlockchairFetchUnspentUtxoParams) {
+  // Only fetch the fields we need to reduce payload size
+  const fields = "is_spent,transaction_hash,index,value,script_hex,block_id,spending_signature_hex";
+
   const response = await blockchairRequest<BlockchairOutputsResponse[]>(
-    `${baseUrl(chain)}/outputs?q=is_spent(false),recipient(${address})&limit=${limit}&offset=${offset}`,
+    `${baseUrl(chain)}/outputs?q=recipient(${address}),is_spent(false)&s=value(desc)&fields=${fields}&limit=${limit}&offset=${offset}`,
     apiKey,
   );
 
-  const txs = response
-    .filter(({ is_spent }) => !is_spent)
-    .map(({ script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
+  const txs = response.map(
+    ({
+      is_spent,
+      script_hex,
+      block_id,
+      transaction_hash,
+      index,
+      value,
+      spending_signature_hex,
+    }) => ({
       hash: transaction_hash,
       index,
       value,
       txHex: spending_signature_hex,
       script_hex,
       is_confirmed: block_id !== -1,
-    }));
+      is_spent,
+    }),
+  );
 
   return txs;
+}
+
+function getTxsValue(txs: Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>) {
+  return txs.reduce((total, tx) => total + tx.value, 0);
+}
+
+function pickMostValuableTxs(
+  txs: Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>,
+  targetValue?: number,
+): Awaited<ReturnType<typeof fetchUnspentUtxoBatch>> {
+  const sortedTxs = txs.sort((a, b) => b.value - a.value);
+
+  if (targetValue) {
+    let accumulated = 0;
+    const cutoffIndex = sortedTxs.findIndex((utxo) => {
+      accumulated += utxo.value;
+      return accumulated >= targetValue;
+    });
+
+    return cutoffIndex >= 0 ? sortedTxs.slice(0, cutoffIndex + 1) : sortedTxs;
+  }
+
+  return sortedTxs;
 }
 
 async function getUnspentUtxos({
   chain,
   address,
   apiKey,
+  targetValue,
+  accumulativeValue = 0,
   offset = 0,
-  limit = 100,
+  limit = 50,
 }: BlockchairFetchUnspentUtxoParams): Promise<Awaited<ReturnType<typeof fetchUnspentUtxoBatch>>> {
   if (!address)
     throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
   try {
-    const txs = await fetchUnspentUtxoBatch({ chain, address, apiKey, offset, limit });
+    const txs = await fetchUnspentUtxoBatch({ targetValue, chain, address, apiKey, offset, limit });
 
-    if (txs.length <= limit) return txs;
+    const usableTxs = txs.filter(({ is_spent }) => !is_spent);
 
+    const txsValue = getTxsValue(usableTxs);
+    const currentValue = accumulativeValue + txsValue;
+    if ((targetValue && currentValue >= targetValue) || txs.length < limit) {
+      return pickMostValuableTxs(usableTxs, targetValue);
+    }
     const nextBatch = await getUnspentUtxos({
       chain,
       address,
       apiKey,
       offset: offset + limit,
       limit,
+      accumulativeValue: currentValue,
+      targetValue,
     });
 
-    return [...txs, ...nextBatch];
+    const allUtxos = [...txs, ...nextBatch].sort((a, b) => b.value - a.value);
+
+    return pickMostValuableTxs(allUtxos, targetValue);
   } catch (error) {
     console.error("Failed to fetch unspent UTXOs:", error);
     return [];
@@ -217,8 +265,10 @@ async function scanUTXOs({
   chain,
   apiKey,
   fetchTxHex = true,
-}: BlockchairParams<{ address: string; fetchTxHex?: boolean }>) {
-  const utxos = await getUnspentUtxos({ chain, address, apiKey });
+  targetValue,
+}: BlockchairParams<{ address: string; fetchTxHex?: boolean; targetValue?: number }>) {
+  const utxos = await getUnspentUtxos({ chain, address, apiKey, targetValue });
+
   const results = [];
 
   for (const { hash, index, script_hex, value } of utxos) {
@@ -249,7 +299,7 @@ function utxoApi(chain: UTXOChain) {
     getSuggestedTxFee: () => getSuggestedTxFee(chain),
     getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
     getAddressData: (address: string) => getAddressData({ address, chain, apiKey }),
-    scanUTXOs: (params: { address: string; fetchTxHex?: boolean }) =>
+    scanUTXOs: (params: { address: string; fetchTxHex?: boolean; targetValue?: number }) =>
       scanUTXOs({ ...params, chain, apiKey }),
   };
 }

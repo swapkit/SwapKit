@@ -56,7 +56,9 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
 ): Promise<UTXOToolboxes[T]> {
   switch (chain) {
     case Chain.BitcoinCash: {
-      const toolbox = await createBCHToolbox(params as UtxoToolboxParams[Chain.BitcoinCash]);
+      const toolbox = await createBCHToolbox(
+        (params as UtxoToolboxParams[Chain.BitcoinCash]) || {},
+      );
       return toolbox as UTXOToolboxes[T];
     }
 

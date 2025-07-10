@@ -97,7 +97,7 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
       : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
 
-  const keys = (await getCreateKeysForPath(chain))({ phrase, derivationPath });
+  const keys = phrase ? (await getCreateKeysForPath(chain))({ phrase, derivationPath }) : undefined;
 
   const signer = keys
     ? await createSignerWithKeys(keys)
@@ -239,7 +239,7 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
 
   const utxos = await getUtxoApi(chain).scanUTXOs({
     address: stripToCashAddress(sender),
-    fetchTxHex: true,
+    fetchTxHex: false,
   });
 
   const feeRateWhole = Number(feeRate.toFixed(0));

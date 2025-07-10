@@ -75,12 +75,18 @@ function toCashAddress(address: string): string {
 
 function decodeAddress(address: string) {
   try {
-    return decodeBase58Address(address);
+    const decoded = decodeBase58Address(address);
+    if (decoded) {
+      return decoded;
+    }
   } catch (_error) {
     // Try to decode as cashaddr if base58 decoding fails.
   }
   try {
-    return decodeCashAddress(address);
+    const decoded = decodeCashAddress(address);
+    if (decoded) {
+      return decoded;
+    }
   } catch (_error) {
     // Try to decode as bitpay if cashaddr decoding fails.
   }
@@ -116,10 +122,10 @@ function decodeBase58Address(address: string) {
         return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       default:
-        throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+        return;
     }
   } catch (_error) {
-    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+    return;
   }
 }
 
@@ -141,10 +147,10 @@ function decodeCashAddress(address: string) {
     }
   }
 
-  throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+  return;
 }
 
-function decodeCashAddressWithPrefix(address: string): DecodedType {
+function decodeCashAddressWithPrefix(address: string) {
   try {
     const { hash, prefix, type } = cashaddr.decode(address);
 
@@ -155,7 +161,7 @@ function decodeCashAddressWithPrefix(address: string): DecodedType {
       type: type === "P2PKH" ? Type.P2PKH : Type.P2SH,
     };
   } catch (_error) {
-    throw new SwapKitError("toolbox_utxo_invalid_address", { address });
+    return;
   }
 }
 
