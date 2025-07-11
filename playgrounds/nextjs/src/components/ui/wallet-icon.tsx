@@ -37,6 +37,7 @@ const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.CTRL]: Wallet,
   [WalletOption.RADIX_WALLET]: Wallet,
   [WalletOption.XAMAN]: Wallet,
+  [WalletOption.TRONLINK]: Wallet,
 };
 
 export function WalletIcon({

@@ -178,6 +178,7 @@ export const availableChainsByWallet = {
   [WalletOption.LEDGER_LIVE]: [],
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.XAMAN]: [Chain.Ripple],
+  [WalletOption.TRONLINK]: [Chain.Tron],
 };
 
 interface WalletConnectDialogProps {

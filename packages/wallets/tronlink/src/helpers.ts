@@ -32,7 +32,6 @@ export async function getWalletForChain(chain: Chain) {
     });
   }
 
-  debugger;
   const tronLink = window.tronLink;
   if (!tronLink) {
     throw new SwapKitError("wallet_provider_not_found", {
