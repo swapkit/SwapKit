@@ -8,7 +8,8 @@ export async function waitForTronLink(timeout = 3000): Promise<TronLinkWindow> {
     const startTime = Date.now();
 
     const checkInterval = setInterval(() => {
-      if (window.tronLink?.ready) {
+      // Check if tronLink exists (not ready state)
+      if (window.tronLink) {
         clearInterval(checkInterval);
         resolve(window.tronLink);
       } else if (Date.now() - startTime > timeout) {
@@ -31,6 +32,7 @@ export async function getWalletForChain(chain: Chain) {
     });
   }
 
+  debugger;
   const tronLink = window.tronLink;
   if (!tronLink) {
     throw new SwapKitError("wallet_provider_not_found", {
@@ -38,7 +40,7 @@ export async function getWalletForChain(chain: Chain) {
     });
   }
 
-  // Request account access
+  // Request account access (this will also initialize TronLink if not ready)
   const response = await tronLink.request({ method: "tron_requestAccounts" });
 
   if (response.code !== TronLinkResponseCode.SUCCESS) {

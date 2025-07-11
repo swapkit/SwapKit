@@ -146,6 +146,7 @@ export const availableChainsByWallet = {
   [WalletOption.LEDGER_LIVE]: [],
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.XAMAN]: [Chain.Ripple],
+  [WalletOption.TRONLINK]: [Chain.Tron],
 };
 
 export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
@@ -214,6 +215,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           return skClient.connectWalletconnect?.(chains);
         case WalletOption.XAMAN:
           return skClient.connectXaman?.(chains);
+        case WalletOption.TRONLINK:
+          return skClient.connectTronLink?.(chains);
 
         default:
           throw new Error(`Unsupported wallet option: ${option}`);
@@ -317,6 +320,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
             Chain.Solana,
             Chain.Radix,
             Chain.Ripple,
+            Chain.Tron,
           ]
             .sort()
             .map((chain) => (

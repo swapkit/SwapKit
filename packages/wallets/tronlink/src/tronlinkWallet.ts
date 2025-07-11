@@ -18,7 +18,7 @@ function connectTronLink({ addChain, config: { thorswapApiKey } }: ConnectWallet
       throw new Error("TronLink wallet only supports Tron chain");
     }
 
-    // Wait for TronLink to be ready
+    // Wait for TronLink to be available
     await waitForTronLink();
 
     // Get wallet for Tron chain
@@ -28,17 +28,9 @@ function connectTronLink({ addChain, config: { thorswapApiKey } }: ConnectWallet
     const cleanup = setupEventListeners(walletMethods.address);
 
     addChain({
+      ...walletMethods,
       chain: walletMethods.chain as CryptoChain,
-      address: walletMethods.address,
-      walletType: walletMethods.walletType,
       balance: [], // Initialize with empty balance
-      // Include only the required wallet methods
-      getAddress: walletMethods.getAddress,
-      validateAddress: walletMethods.validateAddress,
-      getBalance: walletMethods.getBalance,
-      transfer: walletMethods.transfer,
-      signTransaction: walletMethods.signTransaction,
-      broadcastTransaction: walletMethods.broadcastTransaction,
       disconnect: cleanup, // Use the cleanup function as disconnect
     });
 
