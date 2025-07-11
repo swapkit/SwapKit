@@ -1,5 +1,25 @@
 # @swapkit/sdk
 
+## 2.4.11
+
+### Patch Changes
+
+- [#1395](https://github.com/swapkit/SwapKit/pull/1395) [`5856590`](https://github.com/swapkit/SwapKit/commit/585659055df5d95152de21fb35b8eba56f04640d) Thanks [@towanTG](https://github.com/towanTG)! - Mandatory version bump
+
+- [#1396](https://github.com/swapkit/SwapKit/pull/1396) [`8f037f6`](https://github.com/swapkit/SwapKit/commit/8f037f6e64136f0b3e7651f776fa8c3ffb5c3951) Thanks [@github-actions](https://github.com/apps/github-actions)! - Adds Tron support
+
+- Updated dependencies [[`5856590`](https://github.com/swapkit/SwapKit/commit/585659055df5d95152de21fb35b8eba56f04640d), [`8f037f6`](https://github.com/swapkit/SwapKit/commit/8f037f6e64136f0b3e7651f776fa8c3ffb5c3951)]:
+  - @swapkit/plugin-chainflip@2.2.17
+  - @swapkit/plugin-thorchain@2.5.21
+  - @swapkit/wallets@2.1.33
+  - @swapkit/plugin-solana@0.2.18
+  - @swapkit/tokens@2.7.1
+  - @swapkit/plugin-radix@1.4.17
+  - @swapkit/plugin-near@1.0.5
+  - @swapkit/core@3.4.6
+  - @swapkit/plugin-evm@1.4.17
+  - @swapkit/api@2.9.5
+
 ## 2.4.10
 
 ### Patch Changes

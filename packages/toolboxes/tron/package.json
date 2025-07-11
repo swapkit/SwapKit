@@ -1,8 +1,13 @@
 {
   "name": "@swapkit/toolbox-tron",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SwapKit TRON blockchain toolbox",
-  "keywords": ["swapkit", "tron", "blockchain", "toolbox"],
+  "keywords": [
+    "swapkit",
+    "tron",
+    "blockchain",
+    "toolbox"
+  ],
   "repository": "https://github.com/thorswap/SwapKit",
   "license": "Apache-2.0",
   "type": "module",

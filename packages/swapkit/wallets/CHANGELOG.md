@@ -1,5 +1,34 @@
 # @swapkit/wallets
 
+## 2.1.33
+
+### Patch Changes
+
+- [#1395](https://github.com/swapkit/SwapKit/pull/1395) [`5856590`](https://github.com/swapkit/SwapKit/commit/585659055df5d95152de21fb35b8eba56f04640d) Thanks [@towanTG](https://github.com/towanTG)! - Mandatory version bump
+
+- [#1396](https://github.com/swapkit/SwapKit/pull/1396) [`8f037f6`](https://github.com/swapkit/SwapKit/commit/8f037f6e64136f0b3e7651f776fa8c3ffb5c3951) Thanks [@github-actions](https://github.com/apps/github-actions)! - Adds Tron support
+
+- Updated dependencies [[`5856590`](https://github.com/swapkit/SwapKit/commit/585659055df5d95152de21fb35b8eba56f04640d), [`5856590`](https://github.com/swapkit/SwapKit/commit/585659055df5d95152de21fb35b8eba56f04640d), [`8f037f6`](https://github.com/swapkit/SwapKit/commit/8f037f6e64136f0b3e7651f776fa8c3ffb5c3951)]:
+  - @swapkit/wallet-evm-extensions@1.4.15
+  - @swapkit/wallet-keepkey-bex@1.4.20
+  - @swapkit/wallet-polkadotjs@1.3.15
+  - @swapkit/wallet-coinbase@1.5.15
+  - @swapkit/wallet-keystore@1.8.19
+  - @swapkit/wallet-talisman@1.6.15
+  - @swapkit/wallet-tronlink@0.1.0
+  - @swapkit/wallet-keepkey@1.6.20
+  - @swapkit/wallet-phantom@1.5.16
+  - @swapkit/wallet-bitget@1.3.21
+  - @swapkit/wallet-exodus@1.5.15
+  - @swapkit/wallet-ledger@1.14.17
+  - @swapkit/wallet-trezor@1.6.15
+  - @swapkit/wallet-keplr@1.5.20
+  - @swapkit/wallet-radix@1.4.15
+  - @swapkit/wallet-xaman@1.0.5
+  - @swapkit/wallet-ctrl@2.3.22
+  - @swapkit/wallet-okx@1.6.20
+  - @swapkit/wallet-wc@1.9.22
+
 ## 2.1.32
 
 ### Patch Changes
