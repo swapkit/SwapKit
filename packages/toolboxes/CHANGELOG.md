@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.46
+
+### Patch Changes
+
+- [`a0a6366`](https://github.com/swapkit/SwapKit/commit/a0a6366e8abb6c02c6cce6b062a88e3774e75017) Thanks [@towanTG](https://github.com/towanTG)! - Removes max size filter for inbounds used
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.45
 
 ### Patch Changes
