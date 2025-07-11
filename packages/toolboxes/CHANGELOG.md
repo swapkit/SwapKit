@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.45
+
+### Patch Changes
+
+- [#1394](https://github.com/swapkit/SwapKit/pull/1394) [`df0fbd8`](https://github.com/swapkit/SwapKit/commit/df0fbd8447977c967eb90c59c7cea59b14ef235a) Thanks [@towanTG](https://github.com/towanTG)! - Improves BTC-like tx creation performance and reduces network load
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.44
 
 ### Patch Changes
