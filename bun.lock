@@ -167,6 +167,7 @@
         "@swapkit/wallet-radix": "workspace:*",
         "@swapkit/wallet-talisman": "workspace:*",
         "@swapkit/wallet-trezor": "workspace:*",
+        "@swapkit/wallet-tronlink": "workspace:*",
         "@swapkit/wallet-wc": "workspace:*",
         "@swapkit/wallet-xaman": "workspace:*",
       },
@@ -485,6 +486,18 @@
         "@swapkit/toolbox-evm": "workspace:*",
         "@swapkit/toolbox-utxo": "workspace:*",
         "@trezor/connect-web": "9.5.1",
+      },
+    },
+    "packages/wallets/tronlink": {
+      "name": "@swapkit/wallet-tronlink",
+      "version": "0.0.0",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolbox-tron": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/node": "22.10.5",
+        "typescript": "5.7.2",
       },
     },
     "packages/wallets/wc": {
@@ -1612,6 +1625,8 @@
     "@swapkit/wallet-talisman": ["@swapkit/wallet-talisman@workspace:packages/wallets/talisman"],
 
     "@swapkit/wallet-trezor": ["@swapkit/wallet-trezor@workspace:packages/wallets/trezor"],
+
+    "@swapkit/wallet-tronlink": ["@swapkit/wallet-tronlink@workspace:packages/wallets/tronlink"],
 
     "@swapkit/wallet-wc": ["@swapkit/wallet-wc@workspace:packages/wallets/wc"],
 
