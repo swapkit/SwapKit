@@ -1,0 +1,31 @@
+{
+  "name": "@swapkit/wallet-tronlink",
+  "version": "1.0.0",
+  "description": "TronLink wallet integration for SwapKit",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts --watch",
+    "lint": "biome check --write ./src",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolbox-tron": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "typescript": "5.7.2"
+  },
+  "peerDependencies": {
+    "@swapkit/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
