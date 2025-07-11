@@ -140,9 +140,14 @@ async function createTransaction({
 }: UTXOBuildTxParams) {
   if (!bchValidateAddress(recipient))
     throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipient });
-  const utxos = await getUtxoApi(chain).scanUTXOs({
+
+  // Overestimate by 7500 byte * feeRate to ensure we have enough UTXOs for fees and change
+  const targetValue = Math.ceil(assetValue.getBaseValue("number") + feeRate * 7500);
+
+  const utxos = await getUtxoApi(chain).getUtxos({
     address: stripToCashAddress(sender),
     fetchTxHex: true,
+    targetValue,
   });
 
   const compiledMemo = memo ? await compileMemo(memo) : null;
@@ -237,9 +242,13 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
   if (!bchValidateAddress(recipientCashAddress))
     throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipientCashAddress });
 
-  const utxos = await getUtxoApi(chain).scanUTXOs({
+  // Overestimate by 7500 byte * feeRate to ensure we have enough UTXOs for fees and change
+  const targetValue = Math.ceil(assetValue.getBaseValue("number") + feeRate * 7500);
+
+  const utxos = await getUtxoApi(chain).getUtxos({
     address: stripToCashAddress(sender),
     fetchTxHex: false,
+    targetValue,
   });
 
   const feeRateWhole = Number(feeRate.toFixed(0));

@@ -513,7 +513,7 @@ async function getInputsAndTargetOutputs({
   // Overestimate by 5000 byte * highest feeRate to ensure we have enough UTXOs for fees and change
   const targetValue = Math.ceil(amountToSend + feeRate * 5000);
 
-  const inputs = await getUtxoApi(chain).scanUTXOs({ address: sender, fetchTxHex, targetValue });
+  const inputs = await getUtxoApi(chain).getUtxos({ address: sender, fetchTxHex, targetValue });
 
   return {
     inputs,
