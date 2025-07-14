@@ -1,5 +1,14 @@
 # @swapkit/wallets
 
+## 2.1.34
+
+### Patch Changes
+
+- Updated dependencies [[`7be3052`](https://github.com/swapkit/SwapKit/commit/7be3052f69b848fb54cb7a5a575ce85d10f322a4)]:
+  - @swapkit/wallet-ledger@1.14.18
+  - @swapkit/wallet-keystore@1.8.20
+  - @swapkit/wallet-tronlink@0.1.1
+
 ## 2.1.33
 
 ### Patch Changes
