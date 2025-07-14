@@ -29,8 +29,21 @@ import type { polkadotWallet } from "./polkadotjs";
 import type { radixWallet } from "./radix";
 import type { talismanWallet } from "./talisman";
 import type { trezorWallet } from "./trezor";
+import type { vultisigWallet } from "./vultisig";
 import type { walletconnectWallet } from "./walletconnect";
 import type { xamanWallet } from "./xaman";
+
+export type Callback = (
+  error: Error | null,
+  result?: any, // https://github.com/vultisig/vultisig-windows/blob/baeb3e8099a0003404f9664c43b0183c26029041/clients/extension/src/utils/interfaces.ts#L11
+) => void;
+
+export type VultisigCosmosProvider = {
+  request(
+    request: { method: string; params?: Array<any> | Record<string, any> },
+    callback?: Callback,
+  ): Promise<any>;
+};
 
 export type SKWallets = {
   [WalletOption.BITGET]: typeof bitgetWallet;
@@ -58,6 +71,7 @@ export type SKWallets = {
   [WalletOption.TALISMAN]: typeof talismanWallet;
   [WalletOption.TREZOR]: typeof trezorWallet;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet;
+  [WalletOption.VULTISIG]: typeof vultisigWallet;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
   [WalletOption.XAMAN]: typeof xamanWallet;
 };
@@ -90,6 +104,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.TALISMAN]: typeof talismanWallet.connectTalisman.supportedChains;
   [WalletOption.TREZOR]: typeof trezorWallet.connectTrezor.supportedChains;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
+  [WalletOption.VULTISIG]: typeof vultisigWallet.connectVultisig.supportedChains;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet.connectWalletconnect.supportedChains;
   [WalletOption.XAMAN]: typeof xamanWallet.connectXaman.supportedChains;
 };
@@ -127,6 +142,23 @@ declare global {
       mayachain: Eip1193Provider;
       solana: SolanaProvider & { isXDEFI: boolean };
       near: NearBrowserWalletProvider;
+    };
+
+    vultisig?: {
+      bitcoin: Eip1193Provider;
+      bitcoincash: Eip1193Provider;
+      dogecoin: Eip1193Provider;
+      ethereum: Eip1193Provider;
+      keplr: Keplr;
+      cosmos: VultisigCosmosProvider;
+      litecoin: Eip1193Provider;
+      thorchain: Eip1193Provider;
+      mayachain: Eip1193Provider;
+      solana: SolanaProvider;
+      polkadot: Eip1193Provider;
+      ripple: Eip1193Provider;
+      dash: Eip1193Provider;
+      zcash: Eip1193Provider;
     };
 
     bitkeep?: {

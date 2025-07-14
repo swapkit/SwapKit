@@ -21,6 +21,7 @@ declare const window: {
   bitkeep?: { ethereum: EthereumWindowProvider };
   xfi?: { ethereum: EthereumWindowProvider };
   $onekey?: { ethereum: EthereumWindowProvider };
+  vultisig?: { ethereum: EthereumWindowProvider };
 } & Window;
 
 export function isWeb3Detected() {
@@ -35,6 +36,7 @@ export function listWeb3EVMWallets() {
   const metamaskEnabled = window?.ethereum && !window.ethereum?.isBraveWallet;
   // @ts-ignore that should be implemented in ctrl and hooked up via swapkit core
   const ctrlEnabled = window?.xfi || window?.ethereum?.__XDEFI;
+  const vultisigEnabled = window?.vultisig;
   const braveEnabled = window?.ethereum?.isBraveWallet;
   const trustEnabled = window?.ethereum?.isTrust || window?.trustwallet;
   const coinbaseEnabled =
@@ -47,6 +49,7 @@ export function listWeb3EVMWallets() {
   const wallets = [];
   if (metamaskEnabled) wallets.push(WalletOption.METAMASK);
   if (ctrlEnabled) wallets.push(WalletOption.CTRL);
+  if (vultisigEnabled) wallets.push(WalletOption.VULTISIG);
   if (braveEnabled) wallets.push(WalletOption.BRAVE);
   if (trustEnabled) wallets.push(WalletOption.TRUSTWALLET_WEB);
   if (coinbaseEnabled) wallets.push(WalletOption.COINBASE_WEB);
@@ -68,10 +71,10 @@ export async function switchEVMWalletNetwork(
       method: "wallet_switchEthereumChain",
       params: [{ chainId: ChainToHexChainId[chain] }],
     });
-  } catch (_error) {
+  } catch (error) {
     if (!networkParams) {
       throw new SwapKitError("helpers_failed_to_switch_network", {
-        error: _error,
+        error: error,
         reason: "networkParams not provided",
       });
     }

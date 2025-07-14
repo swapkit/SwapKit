@@ -237,6 +237,15 @@ const errorCodes = {
   wallet_near_extensions_no_provider: 22002,
   wallet_near_extensions_not_found: 22003,
   wallet_near_method_not_supported: 22003,
+
+  /**
+   * Wallets - Vultisig
+   */
+  wallet_vultisig_not_found: 22101,
+  wallet_vultisig_contract_address_not_provided: 22102,
+  wallet_vultisig_asset_not_defined: 22103,
+  wallet_vultisig_send_transaction_no_address: 22104,
+
   /**
    * Wallets - Xaman
    */
@@ -246,6 +255,7 @@ const errorCodes = {
   wallet_xaman_connection_failed: 23004,
   wallet_xaman_transaction_failed: 23005,
   wallet_xaman_monitoring_failed: 23006,
+
   /**
    * Chainflip
    */

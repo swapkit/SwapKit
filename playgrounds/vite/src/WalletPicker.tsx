@@ -13,6 +13,7 @@ import type { DerivationPathArray, FullWallet } from "@swapkit/sdk";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { decryptFromKeystore } from "@swapkit/wallets/keystore";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
+import { VULTISIG_SUPPORTED_CHAINS } from "@swapkit/wallets/vultisig";
 import type { Eip1193Provider } from "ethers";
 import { useCallback, useState } from "react";
 import type { SwapKitClient } from "./swapKitClient";
@@ -80,6 +81,7 @@ export const availableChainsByWallet = {
     Chain.Near,
   ],
   [WalletOption.CTRL]: AllChainsSupported,
+  [WalletOption.VULTISIG]: VULTISIG_SUPPORTED_CHAINS,
   [WalletOption.KEEPKEY]: [
     Chain.Arbitrum,
     Chain.Avalanche,
@@ -228,6 +230,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           return skClient.connectCoinbaseWallet?.(chains);
         case WalletOption.CTRL:
           return skClient.connectCtrl?.(chains);
+        case WalletOption.VULTISIG:
+          return skClient.connectVultisig?.(chains);
         case WalletOption.OKX:
           return skClient.connectOkx?.(chains);
         case WalletOption.POLKADOT_JS:

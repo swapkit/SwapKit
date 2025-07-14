@@ -15,6 +15,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.COINBASE_MOBILE, async () => (await import("./coinbase")).coinbaseWallet)
     .with(WalletOption.BITGET, async () => (await import("./bitget")).bitgetWallet)
     .with(WalletOption.CTRL, async () => (await import("./ctrl")).ctrlWallet)
+    .with(WalletOption.VULTISIG, async () => (await import("./vultisig")).vultisigWallet)
     .with(WalletOption.OKX, async () => (await import("./okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("./onekey")).onekeyWallet)
     .with(WalletOption.EXODUS, async () => (await import("./exodus")).exodusWallet)
