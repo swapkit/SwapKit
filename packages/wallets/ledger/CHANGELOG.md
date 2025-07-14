@@ -1,5 +1,14 @@
 # @swapkit/wallet-ledger
 
+## 1.14.18
+
+### Patch Changes
+
+- [`7be3052`](https://github.com/swapkit/SwapKit/commit/7be3052f69b848fb54cb7a5a575ce85d10f322a4) Thanks [@towanTG](https://github.com/towanTG)! - Minor fix for Tron
+
+- Updated dependencies [[`7be3052`](https://github.com/swapkit/SwapKit/commit/7be3052f69b848fb54cb7a5a575ce85d10f322a4)]:
+  - @swapkit/toolbox-tron@0.0.3
+
 ## 1.14.17
 
 ### Patch Changes
