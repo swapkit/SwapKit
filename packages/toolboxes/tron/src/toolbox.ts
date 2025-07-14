@@ -40,7 +40,7 @@ export async function fetchAccountFromTronGrid(address: string) {
 
     const data = (await response.json()) as TronGridAccountResponse;
 
-    if (!(data.success && data.data) || data.data.length === 0) {
+    if (!data.success) {
       throw new Error("Invalid response from TronGrid API");
     }
 

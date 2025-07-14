@@ -54,7 +54,7 @@ export const availableChainsByWallet = {
   [WalletOption.EIP6963]: EVMChains,
   [WalletOption.KEPLR]: [Chain.Cosmos, Chain.Kujira, Chain.THORChain],
   [WalletOption.LEAP]: [Chain.Cosmos, Chain.Kujira],
-  [WalletOption.LEDGER]: [...AllChainsSupported, Chain.Ripple],
+  [WalletOption.LEDGER]: [...AllChainsSupported, Chain.Ripple, Chain.Tron],
   [WalletOption.METAMASK]: EVMChains,
   [WalletOption.OKX_MOBILE]: EVMChains,
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
@@ -120,6 +120,7 @@ export const availableChainsByWallet = {
     Chain.Polygon,
     Chain.Arbitrum,
     Chain.Optimism,
+    Chain.Tron,
   ],
   [WalletOption.OKX]: [
     Chain.Ethereum,
@@ -131,6 +132,7 @@ export const availableChainsByWallet = {
     Chain.Polygon,
     Chain.Arbitrum,
     Chain.Optimism,
+    Chain.Tron,
   ],
   [WalletOption.TALISMAN]: [
     Chain.Ethereum,

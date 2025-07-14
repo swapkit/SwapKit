@@ -63,13 +63,17 @@ export class TronLedgerInterface implements TronSigner {
       throw new SwapKitError("wallet_ledger_connection_error");
     }
 
-    // Tron transactions need to be serialized before signing
-    const serializedTx = JSON.stringify(transaction);
+    // Ledger expects the raw_data_hex field from TronWeb transactions
+    if (!transaction.raw_data_hex) {
+      throw new SwapKitError("wallet_ledger_sign_error", {
+        error: "Transaction missing raw_data_hex field",
+      });
+    }
 
     try {
       const signature = await this.ledgerApp.signTransaction(
         this.derivationPath,
-        serializedTx,
+        transaction.raw_data_hex,
         [], // Token signatures array - empty for native TRX transfers
       );
 
