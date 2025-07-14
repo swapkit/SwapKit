@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.47
+
+### Patch Changes
+
+- [`51a438f`](https://github.com/swapkit/SwapKit/commit/51a438fdf2f8bd1daecaa78ac347a9806d367dfd) Thanks [@towanTG](https://github.com/towanTG)! - Sets max usable inputs query to 20 mio
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.46
 
 ### Patch Changes
