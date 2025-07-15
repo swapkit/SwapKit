@@ -91,7 +91,7 @@ export const vultisigWallet = createWallet({
 
 export const VULTISIG_SUPPORTED_CHAINS = getWalletSupportedChains(vultisigWallet);
 
-export async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number]) {
+async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number]) {
   const { match } = await import("ts-pattern");
   return match(chain)
     .with(Chain.Solana, async () => {
