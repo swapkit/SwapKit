@@ -1,6 +1,6 @@
 import { SwapKitError } from "@swapkit/helpers";
 import type { Xumm } from "xumm";
-import type { XamanPaymentParams } from "./types.js";
+import type { XamanPaymentParams } from "./types";
 
 export const connectXamanWallet = async (xumm: Xumm) => {
   if (!xumm) {

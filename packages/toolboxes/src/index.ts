@@ -9,28 +9,29 @@ import {
   SwapKitError,
   type UTXOChain,
 } from "@swapkit/helpers";
-import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { getCosmosToolbox } from "./cosmos";
+import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "./evm";
+import type { getNearToolbox } from "./near";
+import type { RadixToolbox } from "./radix";
+import type { getRippleToolbox } from "./ripple";
+import type { SolanaCreateTransactionParams, getSolanaToolbox } from "./solana";
+import type { getSubstrateToolbox } from "./substrate";
+import type { createTronToolbox } from "./tron";
+import type { getUtxoToolbox } from "./utxo";
 
-import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "@swapkit/toolboxes/evm";
-import type { getNearToolbox } from "@swapkit/toolboxes/near";
-import type { RadixToolbox } from "@swapkit/toolboxes/radix";
-import type { getRippleToolbox } from "@swapkit/toolboxes/ripple";
-import type { SolanaCreateTransactionParams, getSolanaToolbox } from "@swapkit/toolboxes/solana";
-import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
-import type { createTronToolbox } from "@swapkit/toolboxes/tron";
-import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+export * from "./types";
 
 export async function getAddressValidator() {
   const { match } = await import("ts-pattern");
-  const { cosmosValidateAddress } = await import("@swapkit/toolboxes/cosmos");
-  const { evmValidateAddress } = await import("@swapkit/toolboxes/evm");
-  const { substrateValidateAddress } = await import("@swapkit/toolboxes/substrate");
-  const { getUTXOAddressValidator } = await import("@swapkit/toolboxes/utxo");
-  const { getSolanaAddressValidator } = await import("@swapkit/toolboxes/solana");
-  const { getValidateNearAddress } = await import("@swapkit/toolboxes/near");
-  const { rippleValidateAddress } = await import("@swapkit/toolboxes/ripple");
-  const { radixValidateAddress } = await import("@swapkit/toolboxes/radix");
-  const { getTronAddressValidator } = await import("@swapkit/toolboxes/tron");
+  const { cosmosValidateAddress } = await import("./cosmos");
+  const { evmValidateAddress } = await import("./evm");
+  const { substrateValidateAddress } = await import("./substrate");
+  const { getUTXOAddressValidator } = await import("./utxo");
+  const { getSolanaAddressValidator } = await import("./solana");
+  const { getValidateNearAddress } = await import("./near");
+  const { rippleValidateAddress } = await import("./ripple");
+  const { radixValidateAddress } = await import("./radix");
+  const { getTronAddressValidator } = await import("./tron");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
   const utxoValidateAddress = await getUTXOAddressValidator();
@@ -117,7 +118,7 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
         },
       )
       .with(Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Cosmos, async () => {
-        const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
+        const { estimateTransactionFee } = await import("./cosmos");
         return estimateTransactionFee(params);
       })
       .otherwise(async () => AssetValue.from({ chain }));
@@ -188,7 +189,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       Chain.Optimism,
       Chain.Polygon,
       async () => {
-        const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+        const { getEvmToolbox } = await import("./evm");
         const evmToolbox = await getEvmToolbox(
           chain as EVMChain,
           params as Parameters<typeof getEvmToolbox>[1],
@@ -204,7 +205,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       Chain.Bitcoin,
       Chain.Zcash,
       async () => {
-        const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+        const { getUtxoToolbox } = await import("./utxo");
         const utxoToolbox = await getUtxoToolbox(
           chain as UTXOChain,
           params as Parameters<typeof getUtxoToolbox>[1],
@@ -213,7 +214,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       },
     )
     .with(Chain.Cosmos, Chain.Kujira, Chain.Maya, Chain.THORChain, async () => {
-      const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
+      const { getCosmosToolbox } = await import("./cosmos");
       const cosmosToolbox = await getCosmosToolbox(
         chain as CosmosChain,
         params as Parameters<typeof getCosmosToolbox>[1],
@@ -221,7 +222,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       return cosmosToolbox as Toolboxes[T];
     })
     .with(Chain.Chainflip, Chain.Polkadot, async () => {
-      const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
+      const { getSubstrateToolbox } = await import("./substrate");
       const substrateToolbox = await getSubstrateToolbox(
         chain as SubstrateChain,
         params as Parameters<typeof getSubstrateToolbox>[1],
@@ -229,31 +230,31 @@ export async function getToolbox<T extends keyof Toolboxes>(
       return substrateToolbox as Toolboxes[T];
     })
     .with(Chain.Radix, async () => {
-      const { RadixToolbox } = await import("@swapkit/toolboxes/radix");
+      const { RadixToolbox } = await import("./radix");
       const radixToolbox = await RadixToolbox(params as Parameters<typeof RadixToolbox>[0]);
       return radixToolbox as Toolboxes[T];
     })
     .with(Chain.Ripple, async () => {
-      const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
+      const { getRippleToolbox } = await import("./ripple");
       const rippleToolbox = await getRippleToolbox(
         params as Parameters<typeof getRippleToolbox>[0],
       );
       return rippleToolbox as Toolboxes[T];
     })
     .with(Chain.Solana, async () => {
-      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
+      const { getSolanaToolbox } = await import("./solana");
       const solanaToolbox = await getSolanaToolbox(
         params as Parameters<typeof getSolanaToolbox>[0],
       );
       return solanaToolbox as Toolboxes[T];
     })
     .with(Chain.Tron, async () => {
-      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const { createTronToolbox } = await import("./tron");
       const tronToolbox = await createTronToolbox(params);
       return tronToolbox as Toolboxes[T];
     })
     .with(Chain.Near, async () => {
-      const { getNearToolbox } = await import("@swapkit/toolboxes/near");
+      const { getNearToolbox } = await import("./near");
       const nearToolbox = await getNearToolbox(params as Parameters<typeof getNearToolbox>[0]);
       return nearToolbox as Toolboxes[T];
     })

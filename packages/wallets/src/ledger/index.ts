@@ -8,13 +8,12 @@ import {
   StagenetChain,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 import { getLedgerAddress, getLedgerClient } from "./helpers";
 
 export const ledgerWallet = createWallet({

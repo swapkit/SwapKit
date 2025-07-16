@@ -84,112 +84,112 @@
     ".": {
       "default": "./dist/src/index.js",
       "require": "./dist/src/index.cjs",
-      "types": "./dist/src/index.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./bitget": {
       "default": "./dist/src/bitget/index.js",
       "require": "./dist/src/bitget/index.cjs",
-      "types": "./dist/src/bitget/index.d.ts"
+      "types": "./dist/types/bitget/index.d.ts"
     },
     "./coinbase": {
       "default": "./dist/src/coinbase/index.js",
       "require": "./dist/src/coinbase/index.cjs",
-      "types": "./dist/src/coinbase/index.d.ts"
+      "types": "./dist/types/coinbase/index.d.ts"
     },
     "./cosmostation": {
       "default": "./dist/src/cosmostation/index.js",
       "require": "./dist/src/cosmostation/index.cjs",
-      "types": "./dist/src/cosmostation/index.d.ts"
+      "types": "./dist/types/cosmostation/index.d.ts"
     },
     "./ctrl": {
       "default": "./dist/src/ctrl/index.js",
       "require": "./dist/src/ctrl/index.cjs",
-      "types": "./dist/src/ctrl/index.d.ts"
+      "types": "./dist/types/ctrl/index.d.ts"
     },
     "./vultisig": {
       "default": "./dist/src/vultisig/index.js",
       "require": "./dist/src/vultisig/index.cjs",
-      "types": "./dist/src/vultisig/index.d.ts"
+      "types": "./dist/types/vultisig/index.d.ts"
     },
     "./evm-extensions": {
       "default": "./dist/src/evm-extensions/index.js",
       "require": "./dist/src/evm-extensions/index.cjs",
-      "types": "./dist/src/evm-extensions/index.d.ts"
+      "types": "./dist/types/evm-extensions/index.d.ts"
     },
     "./exodus": {
       "default": "./dist/src/exodus/index.js",
       "require": "./dist/src/exodus/index.cjs",
-      "types": "./dist/src/exodus/index.d.ts"
+      "types": "./dist/types/exodus/index.d.ts"
     },
     "./keepkey": {
       "default": "./dist/src/keepkey/index.js",
       "require": "./dist/src/keepkey/index.cjs",
-      "types": "./dist/src/keepkey/index.d.ts"
+      "types": "./dist/types/keepkey/index.d.ts"
     },
     "./keepkey-bex": {
       "default": "./dist/src/keepkey-bex/index.js",
       "require": "./dist/src/keepkey-bex/index.cjs",
-      "types": "./dist/src/keepkey-bex/index.d.ts"
+      "types": "./dist/types/keepkey-bex/index.d.ts"
     },
     "./keplr": {
       "default": "./dist/src/keplr/index.js",
       "require": "./dist/src/keplr/index.cjs",
-      "types": "./dist/src/keplr/index.d.ts"
+      "types": "./dist/types/keplr/index.d.ts"
     },
     "./keystore": {
       "default": "./dist/src/keystore/index.js",
       "require": "./dist/src/keystore/index.cjs",
-      "types": "./dist/src/keystore/index.d.ts"
+      "types": "./dist/types/keystore/index.d.ts"
     },
     "./ledger": {
       "default": "./dist/src/ledger/index.js",
       "require": "./dist/src/ledger/index.cjs",
-      "types": "./dist/src/ledger/index.d.ts"
+      "types": "./dist/types/ledger/index.d.ts"
     },
     "./okx": {
       "default": "./dist/src/okx/index.js",
       "require": "./dist/src/okx/index.cjs",
-      "types": "./dist/src/okx/index.d.ts"
+      "types": "./dist/types/okx/index.d.ts"
     },
     "./onekey": {
       "default": "./dist/src/onekey/index.js",
       "require": "./dist/src/onekey/index.cjs",
-      "types": "./dist/src/onekey/index.d.ts"
+      "types": "./dist/types/onekey/index.d.ts"
     },
     "./phantom": {
       "default": "./dist/src/phantom/index.js",
       "require": "./dist/src/phantom/index.cjs",
-      "types": "./dist/src/phantom/index.d.ts"
+      "types": "./dist/types/phantom/index.d.ts"
     },
     "./polkadotjs": {
       "default": "./dist/src/polkadotjs/index.js",
       "require": "./dist/src/polkadotjs/index.cjs",
-      "types": "./dist/src/polkadotjs/index.d.ts"
+      "types": "./dist/types/polkadotjs/index.d.ts"
     },
     "./radix": {
       "default": "./dist/src/radix/index.js",
       "require": "./dist/src/radix/index.cjs",
-      "types": "./dist/src/radix/index.d.ts"
+      "types": "./dist/types/radix/index.d.ts"
     },
     "./talisman": {
       "default": "./dist/src/talisman/index.js",
       "require": "./dist/src/talisman/index.cjs",
-      "types": "./dist/src/talisman/index.d.ts"
+      "types": "./dist/types/talisman/index.d.ts"
     },
     "./trezor": {
       "default": "./dist/src/trezor/index.js",
       "require": "./dist/src/trezor/index.cjs",
-      "types": "./dist/src/trezor/index.d.ts"
+      "types": "./dist/types/trezor/index.d.ts"
     },
     "./walletconnect": {
       "default": "./dist/src/walletconnect/index.js",
       "require": "./dist/src/walletconnect/index.cjs",
-      "types": "./dist/src/walletconnect/index.d.ts"
+      "types": "./dist/types/walletconnect/index.d.ts"
     },
     "./xaman": {
       "default": "./dist/src/xaman/index.js",
       "require": "./dist/src/xaman/index.cjs",
-      "types": "./dist/src/xaman/index.d.ts"
+      "types": "./dist/types/xaman/index.d.ts"
     }
   },
   "files": ["dist/"],

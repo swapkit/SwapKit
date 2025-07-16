@@ -221,6 +221,7 @@ export async function findAssetBy(
         "address" in rest &&
         "chain" in params &&
         tokenChain === params.chain &&
+        rest.address &&
         rest.address.toLowerCase() === params.contract.toLowerCase()
       )
         return identifier as TokenNames;

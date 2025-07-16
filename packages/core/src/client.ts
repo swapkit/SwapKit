@@ -11,7 +11,6 @@ import {
   type EVMChain,
   EVMChains,
   type FeeOption,
-  type FullWallet,
   type GenericTransferParams,
   ProviderName as PluginNameEnum,
   SKConfig,
@@ -19,14 +18,11 @@ import {
   SwapKitError,
   type SwapParams,
   UTXOChains,
-  type createPlugin,
-  type createWallet,
 } from "@swapkit/helpers";
+import type { createPlugin } from "@swapkit/plugins";
+import type { FullWallet } from "@swapkit/toolboxes";
 import type { EVMCreateTransactionParams, EVMTransferParams } from "@swapkit/toolboxes/evm";
-import {
-  getExplorerAddressUrl as getAddressUrl,
-  getExplorerTxUrl as getTxUrl,
-} from "./helpers/explorerUrls";
+import type { createWallet } from "@swapkit/wallets";
 
 export type SwapKitParams<P, W> = {
   config?: SKConfigState;
@@ -379,8 +375,6 @@ export function SwapKit<
     getAddress,
     getAllWallets,
     getBalance,
-    getExplorerAddressUrl: getAddressUrl,
-    getExplorerTxUrl: getTxUrl,
     getWallet,
     getWalletWithBalance,
 

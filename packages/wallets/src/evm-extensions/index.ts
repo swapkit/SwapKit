@@ -5,13 +5,12 @@ import {
   EVMChains,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 export type EVMWalletOptions =
   | WalletOption.BRAVE

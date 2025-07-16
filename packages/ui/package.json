@@ -15,12 +15,12 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./dist/inde.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./react": {
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
-      "types": "./dist/react/index.d.ts"
+      "types": "./dist/types/react/index.d.ts"
     }
   },
   "files": ["dist/"],

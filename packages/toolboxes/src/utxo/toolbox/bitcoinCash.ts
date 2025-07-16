@@ -15,7 +15,6 @@ import {
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { Psbt } from "bitcoinjs-lib";
-import type { UtxoToolboxParams } from ".";
 import {
   accumulative,
   UtxoNetwork as bchNetwork,
@@ -36,6 +35,7 @@ import type {
   UTXOTransferParams,
   UTXOType,
 } from "../types";
+import type { UtxoToolboxParams } from "./index";
 import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
 
 const chain = Chain.BitcoinCash;

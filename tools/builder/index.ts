@@ -1,8 +1,6 @@
 import type { BuildArtifact, BuildConfig } from "bun";
-import { dtsPlugin } from "./dts-plugin";
 
 export async function buildPackage({
-  plugins: packagePlugins = [],
   entrypoints: packageEntrypoints,
   ...rest
 }: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
@@ -12,8 +10,26 @@ export async function buildPackage({
     name: string;
   };
 
-  const entrypoints = packageEntrypoints || Object.entries(exports).map(([, { types }]) => types);
-  const plugins = [dtsPlugin, ...packagePlugins];
+  const entrypoints =
+    packageEntrypoints ||
+    (await Promise.all(
+      Object.entries(exports).map(async ([key, value]) => {
+        const basePath = value.types
+          ? value.types.replace("./dist/types/", "./src/").replace(".d.ts", "")
+          : key === "."
+            ? "./src/index"
+            : `./src/${key.replace("./", "")}/index`;
+
+        const isTsx = await Bun.file(`${basePath}.tsx`).exists();
+
+        return `${basePath}.${isTsx ? "tsx" : "ts"}`;
+      }),
+    ));
+
+  if (process.env.DEBUG === "true") {
+    console.info("Package:", pkgName);
+    console.info("Entrypoints:", entrypoints);
+  }
 
   const buildOptions: BuildConfig = {
     entrypoints,
@@ -25,7 +41,7 @@ export async function buildPackage({
     ...rest,
   };
 
-  const buildESM = await Bun.build({ ...buildOptions, plugins });
+  const buildESM = await Bun.build(buildOptions);
   const buildCJS = await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
 
   if (!(buildESM.success || buildCJS.success)) {

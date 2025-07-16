@@ -5,9 +5,9 @@ import {
   ChainToChainId,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
+import { createWallet } from "../utils";
 
 const cosmostationSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
 const cosmostationSupportedEVMChains = [

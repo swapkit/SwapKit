@@ -119,7 +119,7 @@ Plugins now use the `createPlugin` helper:
 - }
 
 // v4
-+ import { createPlugin } from "@swapkit/helpers";
++ import { createPlugin } from "@swapkit/plugins";
 + export const MyPlugin = createPlugin({
 +   name: "myPlugin",
 +   properties: { supportedSwapkitProviders: [ProviderName.THORCHAIN] },
@@ -139,7 +139,7 @@ Wallets now use the `createWallet` helper:
 -   };
 
 // v4
-+ import { createWallet } from "@swapkit/helpers";
++ import { createWallet } from "@swapkit/wallets";
 + export const keystoreWallet = createWallet({
 +   name: "keystore",
 +   hooks: ({ config }) => ({

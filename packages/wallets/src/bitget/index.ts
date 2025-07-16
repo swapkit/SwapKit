@@ -1,12 +1,6 @@
-import {
-  Chain,
-  EVMChains,
-  WalletOption,
-  createWallet,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { Chain, EVMChains, WalletOption, filterSupportedChains } from "@swapkit/helpers";
 
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 import { getWalletMethods } from "./helpers";
 
 export const bitgetWallet = createWallet({

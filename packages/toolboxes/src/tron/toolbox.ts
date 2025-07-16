@@ -10,8 +10,8 @@ import {
 } from "@swapkit/helpers";
 import { P, match } from "ts-pattern";
 
-import { trc20ABI } from "./helpers/trc20.abi.js";
-import { fetchAccountFromTronGrid } from "./helpers/trongrid.js";
+import { trc20ABI } from "./helpers/trc20.abi";
+import { fetchAccountFromTronGrid } from "./helpers/trongrid";
 import type {
   ApproveParams,
   ApprovedParams,
@@ -22,7 +22,7 @@ import type {
   TronToolboxOptions,
   TronTransaction,
   TronTransferParams,
-} from "./types.js";
+} from "./types";
 
 import { TronWeb } from "tronweb";
 
@@ -109,7 +109,22 @@ async function createKeysForPath({
   };
 }
 
-export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
+export const createTronToolbox = async (
+  options: TronToolboxOptions = {},
+): Promise<{
+  tronWeb: TronWeb;
+  getAddress: () => Promise<string>;
+  validateAddress: (address: string) => boolean;
+  getBalance: (address: string) => Promise<AssetValue[]>;
+  transfer: (params: TronTransferParams) => Promise<string>;
+  estimateTransactionFee: (params: TronTransferParams & { sender?: string }) => Promise<AssetValue>;
+  createTransaction: (params: TronCreateTransactionParams) => Promise<any>;
+  signTransaction: (transaction: any) => Promise<any>;
+  broadcastTransaction: (signedTransaction: any) => Promise<string>;
+  approve: (params: ApproveParams) => Promise<string>;
+  isApproved: (params: IsApprovedParams) => Promise<boolean>;
+  getApprovedAmount: (params: ApprovedParams) => Promise<bigint>;
+}> => {
   // Always get configuration from SKConfig
   const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
   // Note: TRON API key support can be added to SKConfig apiKeys when needed

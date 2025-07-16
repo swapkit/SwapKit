@@ -3,13 +3,12 @@ import {
   type EVMChain,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { Eip1193Provider } from "ethers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 export const talismanWallet = createWallet({
   name: "connectTalisman",

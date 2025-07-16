@@ -3,14 +3,13 @@ import {
   SKConfig,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import { Xumm } from "xumm";
-import { getWalletSupportedChains } from "../utils";
-import { getWalletForChain } from "./helpers.js";
-import type { XamanConfig } from "./types.js";
-import { connectXamanWallet as connectXamanWalletMethod } from "./walletMethods.js";
+import { createWallet, getWalletSupportedChains } from "../utils";
+import { getWalletForChain } from "./helpers";
+import type { XamanConfig } from "./types";
+import { connectXamanWallet as connectXamanWalletMethod } from "./walletMethods";
 
 export const xamanWallet = createWallet({
   name: "connectXaman",
@@ -76,4 +75,4 @@ export const xamanWallet = createWallet({
 export const XAMAN_SUPPORTED_CHAINS = getWalletSupportedChains(xamanWallet);
 export type XamanSupportedChain = (typeof XAMAN_SUPPORTED_CHAINS)[number];
 
-export type { XamanConfig } from "./types.js";
+export type { XamanConfig } from "./types";

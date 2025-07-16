@@ -11,10 +11,9 @@ import {
   SKConfig,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 export const radixWallet = createWallet({
   name: "connectRadixWallet",

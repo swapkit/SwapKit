@@ -26,6 +26,7 @@ import {
   isSimpleTransfer,
 } from "./helpers/gasEstimation";
 import { createNEP141Token } from "./helpers/nep141";
+import type { NEP141Token } from "./helpers/nep141";
 import type {
   NearCreateTransactionParams,
   NearFunctionCallParams,
@@ -34,7 +35,34 @@ import type {
 } from "./types";
 import type { NearContractInterface, NearGasEstimateParams } from "./types/contract";
 
-export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
+export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise<{
+  getAddress: () => Promise<string>;
+  getPublicKey: () => Promise<string>;
+  provider: any;
+  transfer: (params: NearTransferParams) => Promise<string>;
+  createTransaction: (params: NearCreateTransactionParams) => Promise<any>;
+  createContractFunctionCall: (params: any) => Promise<any>;
+  estimateTransactionFee: (
+    params: NearTransferParams | NearGasEstimateParams,
+  ) => Promise<AssetValue>;
+  broadcastTransaction: (signedTransaction: SignedTransaction) => Promise<string>;
+  signTransaction: (transaction: Transaction) => Promise<any>;
+  getBalance: (address: string) => Promise<AssetValue[]>;
+  validateAddress: (address: string) => boolean;
+  getSignerFromPhrase: (params: any) => Promise<any>;
+  getSignerFromPrivateKey: (privateKey: string) => Promise<any>;
+  callFunction: (params: NearFunctionCallParams) => Promise<any>;
+  createSubAccount: (
+    subAccountId: string,
+    publicKey: string,
+    initialBalance: string,
+  ) => Promise<any>;
+  createContract: (contractInterface: NearContractInterface) => Promise<any>;
+  executeBatchTransaction: (batch: any) => Promise<string>;
+  nep141: (contractId: string) => Promise<NEP141Token>;
+  getGasPrice: () => Promise<string>;
+  estimateGas: (params: NearGasEstimateParams, account?: Account) => Promise<AssetValue>;
+}> {
   const { P, match } = await import("ts-pattern");
   const { providers } = await import("near-api-js");
   const signer = await match(toolboxParams)

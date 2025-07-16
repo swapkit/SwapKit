@@ -43,7 +43,7 @@ jobs:
         uses: ./tools/github/setup-repo
 
       - name: Replace versions
-        run: bun run ./scripts/replace-versions.ts
+        run: bun run ./tools/builder/versions.ts
 
       - name: Copy npmrc config
         run: cp .npmrc.prod .npmrc

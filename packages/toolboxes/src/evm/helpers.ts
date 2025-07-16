@@ -36,7 +36,7 @@ export const estimateMaxSendableAmount = async ({
   contractAddress,
   txOverrides,
 }: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
-  const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+  const { getEvmToolbox } = await import("./toolbox");
   const toolbox = await getEvmToolbox(assetValue.chain as EVMChain);
 
   const balances = await toolbox.getBalance(from);

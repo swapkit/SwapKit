@@ -1,3 +1,4 @@
+import { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import {
   Chain,
   type DerivationPathArray,
@@ -5,14 +6,11 @@ import {
   SKConfig,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-
-import { KeepKeySdk } from "@keepkey/keepkey-sdk";
 export type { PairingInfo } from "@keepkey/keepkey-sdk";
 
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 import { cosmosWalletMethods } from "./chains/cosmos";
 import { KeepKeySigner } from "./chains/evm";
 import { mayachainWalletMethods } from "./chains/mayachain";

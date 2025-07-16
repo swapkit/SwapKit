@@ -1,6 +1,6 @@
 import { SwapKitError } from "@swapkit/helpers";
 import { TronWeb } from "tronweb";
-import type { TronGridAccountResponse } from "../types.js";
+import type { TronGridAccountResponse } from "../types";
 
 const TRONGRID_API_BASE = "https://api.trongrid.io";
 

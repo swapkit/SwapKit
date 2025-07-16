@@ -16,7 +16,6 @@ import {
 import { Psbt, address as btcLibAddress, initEccLib, payments } from "bitcoinjs-lib";
 import type { ECPairInterface } from "ecpair";
 import { ECPairFactory } from "ecpair";
-import type { UtxoToolboxParams } from ".";
 import { getBalance } from "../../utils";
 import {
   UTXOScriptType,
@@ -36,6 +35,7 @@ import type {
   UTXOType,
 } from "../types";
 import { bchValidateAddress } from "./bitcoinCash";
+import type { UtxoToolboxParams } from "./index";
 
 import secp256k1 from "@bitcoinerlab/secp256k1";
 // @ts-ignore

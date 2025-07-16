@@ -5,10 +5,10 @@ import {
   ProviderName,
   SwapKitError,
   type SwapParams,
-  createPlugin,
 } from "@swapkit/helpers";
 import { type QuoteResponseRoute, SwapKitApi } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
+import { createPlugin } from "../utils";
 import { calculateNearNameCost, validateNearName } from "./nearNames";
 import type { NearNameRegistrationParams } from "./types";
 

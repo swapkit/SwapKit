@@ -5,7 +5,6 @@ import {
   SwapKitError,
   WalletOption,
   addEVMWalletNetwork,
-  createWallet,
   filterSupportedChains,
   prepareNetworkSwitch,
 } from "@swapkit/helpers";
@@ -16,7 +15,7 @@ import type {
   GetAddressResponse,
   SignTransactionOptions,
 } from "sats-connect";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 async function getWalletMethodsForExtension(chain: Chain) {
   switch (chain) {
