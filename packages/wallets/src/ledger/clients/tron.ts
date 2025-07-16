@@ -56,7 +56,7 @@ export class TronLedgerInterface implements TronSigner {
     return this.ledgerApp?.getAddress(this.derivationPath, true);
   };
 
-  signTransaction = async (transaction: TronTransaction) => {
+  signTransaction = async (transaction: TronTransaction): Promise<TronSignedTransaction> => {
     await this.createTransportAndLedger();
 
     if (!this.ledgerApp) {

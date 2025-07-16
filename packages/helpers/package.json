@@ -18,25 +18,25 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./src/index.ts"
+      "types": "./dist/index.d.ts"
     },
     "./api": {
       "default": "./dist/api/index.js",
       "require": "./dist/api/index.cjs",
-      "types": "./src/api/index.ts"
+      "types": "./dist/api/index.d.ts"
     },
     "./contracts": {
       "default": "./dist/contracts/index.js",
       "require": "./dist/contracts/index.cjs",
-      "types": "./src/contracts/index.ts"
+      "types": "./dist/contracts/index.d.ts"
     },
     "./tokens": {
       "default": "./dist/tokens/index.js",
       "require": "./dist/tokens/index.cjs",
-      "types": "./src/tokens/index.ts"
+      "types": "./dist/tokens/index.d.ts"
     }
   },
-  "files": ["src/", "dist/"],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/helpers",

@@ -1,16 +1,19 @@
 import type { BuildArtifact, BuildConfig } from "bun";
+import { dtsPlugin } from "./dts-plugin";
 
 export async function buildPackage({
-  plugins,
+  plugins: packagePlugins = [],
   entrypoints: packageEntrypoints,
   ...rest
 }: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
   const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
     exports: Record<string, { types: string }>;
+
     name: string;
   };
 
   const entrypoints = packageEntrypoints || Object.entries(exports).map(([, { types }]) => types);
+  const plugins = [dtsPlugin, ...packagePlugins];
 
   const buildOptions: BuildConfig = {
     entrypoints,
@@ -19,11 +22,10 @@ export async function buildPackage({
     packages: "external",
     sourcemap: "linked",
     splitting: true,
-    plugins: [...(plugins || [])],
     ...rest,
   };
 
-  const buildESM = await Bun.build(buildOptions);
+  const buildESM = await Bun.build({ ...buildOptions, plugins });
   const buildCJS = await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
 
   if (!(buildESM.success || buildCJS.success)) {

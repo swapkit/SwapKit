@@ -15,15 +15,15 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./src/index.ts"
+      "types": "./dist/inde.d.ts"
     },
     "./react": {
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
-      "types": "./src/react/index.tsx"
+      "types": "./dist/react/index.d.ts"
     }
   },
-  "files": ["src/", "dist/"],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/ui",

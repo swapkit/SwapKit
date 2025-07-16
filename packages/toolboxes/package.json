@@ -86,55 +86,55 @@
     ".": {
       "default": "./dist/src/index.js",
       "require": "./dist/src/index.cjs",
-      "types": "./src/index.ts"
+      "types": "./dist/src/index.d.ts"
     },
     "./cosmos": {
       "default": "./dist/src/cosmos/index.js",
       "require": "./dist/src/cosmos/index.cjs",
-      "types": "./src/cosmos/index.ts"
+      "types": "./dist/src/cosmos/index.d.ts"
     },
     "./evm": {
       "default": "./dist/src/evm/index.js",
       "require": "./dist/src/evm/index.cjs",
-      "types": "./src/evm/index.ts"
+      "types": "./dist/src/evm/index.d.ts"
     },
     "./near": {
       "default": "./dist/src/near/index.js",
       "require": "./dist/src/near/index.cjs",
-      "types": "./src/near/index.ts"
+      "types": "./dist/src/near/index.d.ts"
     },
     "./radix": {
       "default": "./dist/src/radix/index.js",
       "require": "./dist/src/radix/index.cjs",
-      "types": "./src/radix/index.ts"
+      "types": "./dist/src/radix/index.d.ts"
     },
     "./ripple": {
       "default": "./dist/src/ripple/index.js",
       "require": "./dist/src/ripple/index.cjs",
-      "types": "./src/ripple/index.ts"
+      "types": "./dist/src/ripple/index.d.ts"
     },
     "./solana": {
       "default": "./dist/src/solana/index.js",
       "require": "./dist/src/solana/index.cjs",
-      "types": "./src/solana/index.ts"
+      "types": "./dist/src/solana/index.d.ts"
     },
     "./substrate": {
       "default": "./dist/src/substrate/index.js",
       "require": "./dist/src/substrate/index.cjs",
-      "types": "./src/substrate/index.ts"
+      "types": "./dist/src/substrate/index.d.ts"
     },
     "./tron": {
       "default": "./dist/src/tron/index.js",
       "require": "./dist/src/tron/index.cjs",
-      "types": "./src/tron/index.ts"
+      "types": "./dist/src/tron/index.d.ts"
     },
     "./utxo": {
       "default": "./dist/src/utxo/index.js",
       "require": "./dist/src/utxo/index.cjs",
-      "types": "./src/utxo/index.ts"
+      "types": "./dist/src/utxo/index.d.ts"
     }
   },
-  "files": ["src/", "dist/"],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/toolboxes",
