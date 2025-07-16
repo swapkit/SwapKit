@@ -21,7 +21,7 @@ import {
 } from "@swapkit/helpers";
 import { P } from "ts-pattern";
 import { match } from "ts-pattern";
-import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from ".";
+import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from "./index";
 
 type SolanaSigner = SolanaProvider | Signer;
 

@@ -6,11 +6,10 @@ import {
   NetworkDerivationPath,
   UTXOChains,
   WalletOption,
-  createWallet,
   filterSupportedChains,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 export const keystoreWallet = createWallet({
   name: "connectKeystore",

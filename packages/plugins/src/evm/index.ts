@@ -6,11 +6,11 @@ import {
   EVMChains,
   ProviderName,
   SwapKitError,
-  type SwapKitPluginParams,
   type SwapParams,
-  createPlugin,
 } from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
+import type { SwapKitPluginParams } from "../types";
+import { createPlugin } from "../utils";
 
 function approve<T extends ApproveMode>({
   approveMode,

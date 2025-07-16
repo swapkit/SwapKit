@@ -4,11 +4,10 @@ import {
   ChainIdToChain,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { Eip1193Provider } from "ethers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 import {
   type WalletTxParams,
   getKEEPKEYAddress,

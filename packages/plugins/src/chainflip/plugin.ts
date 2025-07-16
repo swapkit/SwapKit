@@ -4,9 +4,9 @@ import {
   ProviderName,
   SKConfig,
   SwapKitError,
-  createPlugin,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
+import { createPlugin } from "../utils";
 import type { RequestSwapDepositAddressParams } from "./types";
 
 export const ChainflipPlugin = createPlugin({

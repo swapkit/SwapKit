@@ -1,4 +1,27 @@
-export const list = {
+type TokenList = {
+  provider: string;
+  chainId: string;
+  name: string;
+  timestamp: string;
+  version: {
+    major: number;
+    minor: number;
+    patch: number;
+  };
+  keywords: string[];
+  count: number;
+  tokens: Array<{
+    address?: string;
+    chain: string;
+    chainId: string;
+    decimals: number;
+    identifier: string;
+    logoURI: string;
+    ticker: string;
+  }>;
+};
+
+export const list: TokenList = {
   provider: "JUPITER",
   chainId: "solana",
   name: "JUPITER",

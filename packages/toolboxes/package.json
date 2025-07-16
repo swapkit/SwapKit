@@ -86,52 +86,52 @@
     ".": {
       "default": "./dist/src/index.js",
       "require": "./dist/src/index.cjs",
-      "types": "./dist/src/index.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./cosmos": {
       "default": "./dist/src/cosmos/index.js",
       "require": "./dist/src/cosmos/index.cjs",
-      "types": "./dist/src/cosmos/index.d.ts"
+      "types": "./dist/types/cosmos/index.d.ts"
     },
     "./evm": {
       "default": "./dist/src/evm/index.js",
       "require": "./dist/src/evm/index.cjs",
-      "types": "./dist/src/evm/index.d.ts"
+      "types": "./dist/types/evm/index.d.ts"
     },
     "./near": {
       "default": "./dist/src/near/index.js",
       "require": "./dist/src/near/index.cjs",
-      "types": "./dist/src/near/index.d.ts"
+      "types": "./dist/types/near/index.d.ts"
     },
     "./radix": {
       "default": "./dist/src/radix/index.js",
       "require": "./dist/src/radix/index.cjs",
-      "types": "./dist/src/radix/index.d.ts"
+      "types": "./dist/types/radix/index.d.ts"
     },
     "./ripple": {
       "default": "./dist/src/ripple/index.js",
       "require": "./dist/src/ripple/index.cjs",
-      "types": "./dist/src/ripple/index.d.ts"
+      "types": "./dist/types/ripple/index.d.ts"
     },
     "./solana": {
       "default": "./dist/src/solana/index.js",
       "require": "./dist/src/solana/index.cjs",
-      "types": "./dist/src/solana/index.d.ts"
+      "types": "./dist/types/solana/index.d.ts"
     },
     "./substrate": {
       "default": "./dist/src/substrate/index.js",
       "require": "./dist/src/substrate/index.cjs",
-      "types": "./dist/src/substrate/index.d.ts"
+      "types": "./dist/types/substrate/index.d.ts"
     },
     "./tron": {
       "default": "./dist/src/tron/index.js",
       "require": "./dist/src/tron/index.cjs",
-      "types": "./dist/src/tron/index.d.ts"
+      "types": "./dist/types/tron/index.d.ts"
     },
     "./utxo": {
       "default": "./dist/src/utxo/index.js",
       "require": "./dist/src/utxo/index.cjs",
-      "types": "./dist/src/utxo/index.d.ts"
+      "types": "./dist/types/utxo/index.d.ts"
     }
   },
   "files": ["dist/"],

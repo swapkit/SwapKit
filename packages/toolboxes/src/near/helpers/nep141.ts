@@ -4,7 +4,7 @@ import { createNearContract } from "./contractFactory";
 const DEFAULT_STORAGE_DEPOSIT = "1250000000000000000000"; // 0.00125 NEAR
 
 // Define NEP-141 contract interface
-interface NEP141Contract extends Contract {
+export interface NEP141Contract extends Contract {
   // View methods
   ft_balance_of(args: { account_id: string }): Promise<string>;
   ft_total_supply(): Promise<string>;
@@ -20,13 +20,25 @@ interface NEP141Contract extends Contract {
   storage_unregister(force?: boolean, gas?: any): Promise<any>;
 }
 
+export type NEP141Token = {
+  transfer: (receiverId: string, amount: string, memo?: string) => Promise<any>;
+  transferCall: (receiverId: string, amount: string, msg: string, memo?: string) => Promise<any>;
+  balanceOf: (accountId: string) => Promise<string>;
+  totalSupply: () => Promise<string>;
+  metadata: () => Promise<any>;
+  storageBalanceOf: (accountId: string) => Promise<any>;
+  storageDeposit: (accountId?: string, amount?: string) => Promise<any>;
+  ensureStorage: (accountId: string) => Promise<void>;
+  contract: NEP141Contract;
+};
+
 export async function createNEP141Token({
   contractId,
   account,
 }: {
   contractId: string;
   account: Account;
-}) {
+}): Promise<NEP141Token> {
   const BN = (await import("bn.js")).default;
 
   const contract = await createNearContract<NEP141Contract>({

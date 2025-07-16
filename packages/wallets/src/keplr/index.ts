@@ -4,9 +4,9 @@ import {
   ChainToChainId,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "../utils";
 import { chainRegistry } from "./chainRegistry";
 
 const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
@@ -53,3 +53,5 @@ export const keplrWallet = createWallet({
       return true;
     },
 });
+
+export const KEPLR_SUPPORTED_CHAINS = getWalletSupportedChains(keplrWallet);

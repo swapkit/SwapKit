@@ -74,10 +74,10 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
 }
 
 export function useSwapKit<P extends PluginName[]>() {
-  const context = useContext(SwapKitContext);
+  const context = useContext<SwapKitContextType<P>>(SwapKitContext);
   if (!context) {
     throw new SwapKitError("helpers_not_found_provider", { provider: "SwapKitProvider" });
   }
 
-  return context as SwapKitContextType<P>;
+  return context;
 }

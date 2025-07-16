@@ -1,4 +1,17 @@
-import type { PluginName, SKPlugins } from "./types";
+import type { ProviderName } from "@swapkit/helpers";
+import type { PluginName, SKPlugins, SwapKitPluginParams } from "./types";
+
+export function createPlugin<
+  const Name extends string,
+  T extends (params: SwapKitPluginParams) => Record<string, unknown>,
+  K extends { supportedSwapkitProviders?: (ProviderName | string)[] },
+>({ name, properties, methods }: { name: Name; properties?: K; methods: T }) {
+  function plugin(pluginParams: SwapKitPluginParams) {
+    return { ...methods(pluginParams), ...properties } as K & ReturnType<T>;
+  }
+
+  return { [name]: plugin } as { [key in Name]: typeof plugin };
+}
 
 export async function loadPlugin<P extends PluginName>(pluginName: P) {
   const { match } = await import("ts-pattern");

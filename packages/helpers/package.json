@@ -18,22 +18,22 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./api": {
       "default": "./dist/api/index.js",
       "require": "./dist/api/index.cjs",
-      "types": "./dist/api/index.d.ts"
+      "types": "./dist/types/api/index.d.ts"
     },
     "./contracts": {
       "default": "./dist/contracts/index.js",
       "require": "./dist/contracts/index.cjs",
-      "types": "./dist/contracts/index.d.ts"
+      "types": "./dist/types/contracts/index.d.ts"
     },
     "./tokens": {
       "default": "./dist/tokens/index.js",
       "require": "./dist/tokens/index.cjs",
-      "types": "./dist/tokens/index.d.ts"
+      "types": "./dist/types/tokens/index.d.ts"
     }
   },
   "files": ["dist/"],

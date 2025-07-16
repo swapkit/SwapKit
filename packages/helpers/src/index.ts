@@ -14,13 +14,13 @@ export * from "./modules/feeMultiplier";
  */
 export * from "./utils/asset";
 export * from "./utils/derivationPath";
+export * from "./utils/explorerUrls";
 export * from "./utils/liquidity";
 export * from "./utils/memo";
 export * from "./utils/others";
-export * from "./utils/plugin";
+export * from "./utils/tokens";
 export * from "./utils/validators";
 export * from "./utils/wallets";
-export * from "./utils/tokens";
 
 /**
  * Types

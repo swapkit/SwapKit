@@ -6,13 +6,12 @@ import {
   SKConfig,
   SwapKitError,
   WalletOption,
-  createWallet,
   derivationPathToString,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
 import type { Psbt } from "bitcoinjs-lib";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "../utils";
 
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {

@@ -1,12 +1,6 @@
-import {
-  AssetValue,
-  Chain,
-  ProviderName,
-  SwapKitError,
-  type SwapParams,
-  createPlugin,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
+import { createPlugin } from "../utils";
 
 export const SolanaPlugin = createPlugin({
   name: "solana",
