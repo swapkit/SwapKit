@@ -1,5 +1,16 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.48
+
+### Patch Changes
+
+- [`e298d62`](https://github.com/swapkit/SwapKit/commit/e298d623549a2027f8ecf3f8ab347663c1d405cb) Thanks [@towanTG](https://github.com/towanTG)! - Sets BCH sighash_type if flag is set on buildTx
+
+- [#1401](https://github.com/swapkit/SwapKit/pull/1401) [`65405b9`](https://github.com/swapkit/SwapKit/commit/65405b95945cd18afc3605a4556fcfd4821bffb8) Thanks [@ice-chillios](https://github.com/ice-chillios)! - fix(evm): allow passing 0 as reset value without replacing with max
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.31
+
 ## 4.0.0-beta.47
 
 ### Patch Changes
