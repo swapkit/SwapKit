@@ -1,5 +1,17 @@
 # @swapkit/sdk
 
+## 4.0.0-beta.54
+
+### Patch Changes
+
+- [`94724c5`](https://github.com/swapkit/SwapKit/commit/94724c51fa064cce28ec2ad685e277e86a604dc2) Thanks [@towanTG](https://github.com/towanTG)! - Bump all packages
+
+- Updated dependencies [[`94724c5`](https://github.com/swapkit/SwapKit/commit/94724c51fa064cce28ec2ad685e277e86a604dc2)]:
+  - @swapkit/core@4.0.0-beta.50
+  - @swapkit/plugins@4.0.0-beta.49
+  - @swapkit/toolboxes@4.0.0-beta.49
+  - @swapkit/wallets@4.0.0-beta.53
+
 ## 4.0.0-beta.53
 
 ### Patch Changes

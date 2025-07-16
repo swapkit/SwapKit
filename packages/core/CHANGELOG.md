@@ -1,5 +1,15 @@
 # @swapkit/core
 
+## 4.0.0-beta.50
+
+### Patch Changes
+
+- [`94724c5`](https://github.com/swapkit/SwapKit/commit/94724c51fa064cce28ec2ad685e277e86a604dc2) Thanks [@towanTG](https://github.com/towanTG)! - Bump all packages
+
+- Updated dependencies [[`94724c5`](https://github.com/swapkit/SwapKit/commit/94724c51fa064cce28ec2ad685e277e86a604dc2)]:
+  - @swapkit/helpers@4.0.0-beta.32
+  - @swapkit/toolboxes@4.0.0-beta.49
+
 ## 4.0.0-beta.49
 
 ### Patch Changes
