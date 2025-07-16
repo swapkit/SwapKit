@@ -745,13 +745,15 @@ function getCreateApprovalTx({ provider, signer, chain }: ToolboxWrapParams) {
     const from = (await signer?.getAddress()) || fromParam;
 
     const createTx = getCreateContractTxObject({ provider, chain });
-    const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+    const approvalAmount = ["bigint", "number"].includes(typeof amount)
+      ? (amount as bigint | number)
+      : amount || MAX_APPROVAL;
 
     const txObject = await createTx({
       contractAddress: assetAddress,
       abi: erc20ABI,
       funcName: "approve",
-      funcParams,
+      funcParams: [spenderAddress, BigInt(approvalAmount)],
       txOverrides: { from },
     });
 

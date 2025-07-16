@@ -109,7 +109,6 @@ async function transaction({
   });
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export async function getVultisigAddress(chain: Chain) {
   try {
     const eipProvider = (await getVultisigProvider(chain)) as Eip1193Provider;

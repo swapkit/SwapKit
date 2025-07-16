@@ -1,4 +1,6 @@
-name: Run build, test & publish
+name: Release
+permissions:
+  contents: read
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
@@ -6,10 +8,6 @@ env:
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    branches:
-      - develop
-      - v4
   push:
     branches:
       - develop
@@ -18,7 +16,6 @@ on:
 
 jobs:
   build-lint-test:
-    if: contains(github.event.pull_request.title, ':tada:') == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,11 +30,10 @@ jobs:
       - run: bun type-check:ci
 
       - name: Test
-        if: contains(github.ref_name, 'nightly') == false
+        if: github.ref_name == 'nightly'
         run: bun test:ci
 
   publish:
-    if: contains(github.ref_name, 'develop') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'nightly')
     needs: [build-lint-test]
     runs-on: ubuntu-latest
     steps:
@@ -58,29 +54,28 @@ jobs:
         shell: bash
         id: deployment-params
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config --global user.email "swapkit[bot]@users.noreply.github.com"
+          git config --global user.name "swapkit[bot]"
           echo "publishName=${{ github.ref_name == 'develop' && 'Release' || github.ref_name }}" >> $GITHUB_OUTPUT
 
       - name: Exit pre changeset
-        if: contains(github.ref_name, 'nightly')
+        if: github.ref_name == 'nightly'
         continue-on-error: true
         run: bun changeset pre exit
 
       - name: Change nightly changeset
-        if: contains(github.ref_name, 'nightly')
+        if: github.ref_name == 'nightly'
         run: bun changeset version --snapshot nightly
 
       - name: Change beta changeset
-        if: contains(github.ref_name, 'beta')
+        if: github.ref_name == 'beta'
         continue-on-error: true
         run: bun changeset pre enter beta
 
-
       - name: Create Pull Request or Publish to npm
         id: changesets
+        if: github.ref_name == 'develop'
         uses: changesets/action@v1.4.10
-        if: contains(github.ref_name, 'develop')
         with:
           title: ":tada: Publish ${{ steps.deployment-params.outputs.publishName }}"
           version: bun version-bump
@@ -89,8 +84,8 @@ jobs:
           createGithubReleases: false
 
       - name: Publish Beta to npm
+        if: github.ref_name == 'beta'
         uses: changesets/action@v1.4.10
-        if: contains(github.ref_name, 'beta')
         with:
           title: ":tada: Publish Beta"
           version: bun version-bump
@@ -99,8 +94,8 @@ jobs:
           createGithubReleases: false
 
       - name: Publish Nightly to npm
+        if: github.ref_name == 'nightly'
         uses: changesets/action@v1.4.10
-        if: contains(github.ref_name, 'nightly')
         with:
           title: ":tada: Publish Nightly"
           version: bun version-bump
@@ -110,7 +105,6 @@ jobs:
 
   build-docs:
     runs-on: ubuntu-latest
-    if: contains(github.ref_name, 'develop') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'nightly')
     needs: [build-lint-test]
     permissions:
       contents: read

@@ -40,7 +40,7 @@ export type Callback = (
 
 export type VultisigCosmosProvider = {
   request(
-    request: { method: string; params?: Array<any> | Record<string, any> },
+    request: { method: string; params?: any[] | Record<string, any> },
     callback?: Callback,
   ): Promise<any>;
 };
