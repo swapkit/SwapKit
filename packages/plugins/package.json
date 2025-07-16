@@ -19,40 +19,40 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./src/index.ts"
+      "types": "./dist/index.d.ts"
     },
     "./chainflip": {
       "default": "./dist/chainflip/index.js",
       "require": "./dist/chainflip/index.cjs",
-      "types": "./src/chainflip/index.ts"
+      "types": "./dist/chainflip/index.d.ts"
     },
     "./evm": {
       "default": "./dist/evm/index.js",
       "require": "./dist/evm/index.cjs",
-      "types": "./src/evm/index.ts"
+      "types": "./dist/evm/index.d.ts"
     },
     "./near": {
       "default": "./dist/near/index.js",
       "require": "./dist/near/index.cjs",
-      "types": "./src/near/index.ts"
+      "types": "./dist/near/index.d.ts"
     },
     "./radix": {
       "default": "./dist/radix/index.js",
       "require": "./dist/radix/index.cjs",
-      "types": "./src/radix/index.ts"
+      "types": "./dist/radix/index.d.ts"
     },
     "./solana": {
       "default": "./dist/solana/index.js",
       "require": "./dist/solana/index.cjs",
-      "types": "./src/solana/index.ts"
+      "types": "./dist/solana/index.d.ts"
     },
     "./thorchain": {
       "default": "./dist/thorchain/index.js",
       "require": "./dist/thorchain/index.cjs",
-      "types": "./src/thorchain/index.ts"
+      "types": "./dist/thorchain/index.d.ts"
     }
   },
-  "files": ["src/", "dist/"],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",
