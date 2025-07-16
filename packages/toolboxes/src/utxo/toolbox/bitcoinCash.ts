@@ -237,7 +237,14 @@ function transfer({
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
-async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
+async function buildTx({
+  assetValue,
+  recipient,
+  memo,
+  feeRate,
+  sender,
+  setSigHashType,
+}: UTXOBuildTxParams & { setSigHashType?: boolean }) {
   const recipientCashAddress = toCashAddress(recipient);
   if (!bchValidateAddress(recipientCashAddress))
     throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipientCashAddress });
@@ -281,7 +288,12 @@ async function buildTx({ assetValue, recipient, memo, feeRate, sender }: UTXOBui
   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
 
   for (const { hash, index, witnessUtxo } of inputs) {
-    psbt.addInput({ hash, index, witnessUtxo });
+    psbt.addInput({
+      hash,
+      index,
+      witnessUtxo,
+      sighashType: setSigHashType ? 0x41 : undefined,
+    });
   }
 
   // Outputs
