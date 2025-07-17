@@ -118,7 +118,9 @@ class WalletconnectSigner extends AbstractSigner {
       },
     });
 
-    return response as TransactionResponse;
+    return {
+      hash: response,
+    } as TransactionResponse;
   };
 
   connect = (provider: Provider | null) => {

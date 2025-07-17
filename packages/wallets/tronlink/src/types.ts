@@ -1,5 +1,12 @@
 import type { TronSignedTransaction, TronTransaction } from "@swapkit/toolbox-tron";
 
+declare global {
+  interface Window {
+    tronLink?: TronLinkWindow;
+    tronWeb?: TronLinkWindow["tronWeb"];
+  }
+}
+
 export interface TronLinkWindow {
   ready: boolean;
   request: (args: { method: string; params?: unknown }) => Promise<TronLinkResponse>;

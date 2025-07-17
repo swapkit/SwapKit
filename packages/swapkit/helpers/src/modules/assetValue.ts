@@ -374,15 +374,15 @@ function getAssetInfo(identifier: string) {
   const unformattedAddress =
     splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
 
-  const address = chain === Chain.Solana ? unformattedAddress : unformattedAddress?.toLowerCase();
+  const address = [Chain.Solana, Chain.Tron].includes(chain)
+    ? unformattedAddress
+    : unformattedAddress?.toLowerCase();
 
   let formattedAddress: string | undefined;
 
   try {
     formattedAddress =
-      address && EVMChains.includes(chain as EVMChain) && getAddress(address)
-        ? getAddress(address)
-        : address;
+      address && EVMChains.includes(chain as EVMChain) ? getAddress(address) : address;
   } catch (_error) {
     formattedAddress = address;
   }
