@@ -1,5 +1,15 @@
 # @swapkit/wallet-keepkey
 
+## 1.6.21
+
+### Patch Changes
+
+- Updated dependencies [[`7cacd6c`](https://github.com/swapkit/SwapKit/commit/7cacd6c4d58bc0963ac813a7a9fb8c81137a61f5)]:
+  - @swapkit/helpers@2.10.5
+  - @swapkit/toolbox-cosmos@1.11.21
+  - @swapkit/toolbox-evm@1.11.7
+  - @swapkit/toolbox-utxo@1.4.16
+
 ## 1.6.20
 
 ### Patch Changes

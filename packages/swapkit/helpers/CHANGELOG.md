@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.10.5
+
+### Patch Changes
+
+- [`7cacd6c`](https://github.com/swapkit/SwapKit/commit/7cacd6c4d58bc0963ac813a7a9fb8c81137a61f5) Thanks [@towanTG](https://github.com/towanTG)! - Small fixes to typings
+
 ## 2.10.4
 
 ### Patch Changes
