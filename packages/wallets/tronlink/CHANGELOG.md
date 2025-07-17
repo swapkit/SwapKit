@@ -1,5 +1,15 @@
 # @swapkit/wallet-tronlink
 
+## 0.1.2
+
+### Patch Changes
+
+- [`7cacd6c`](https://github.com/swapkit/SwapKit/commit/7cacd6c4d58bc0963ac813a7a9fb8c81137a61f5) Thanks [@towanTG](https://github.com/towanTG)! - Small fixes to typings
+
+- Updated dependencies [[`7cacd6c`](https://github.com/swapkit/SwapKit/commit/7cacd6c4d58bc0963ac813a7a9fb8c81137a61f5)]:
+  - @swapkit/helpers@2.10.5
+  - @swapkit/toolbox-tron@0.0.4
+
 ## 0.1.1
 
 ### Patch Changes
