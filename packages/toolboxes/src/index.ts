@@ -189,7 +189,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       Chain.Optimism,
       Chain.Polygon,
       async () => {
-        const { getEvmToolbox } = await import("./evm");
+        const { getEvmToolbox } = await import("./evm/toolbox");
         const evmToolbox = await getEvmToolbox(
           chain as EVMChain,
           params as Parameters<typeof getEvmToolbox>[1],

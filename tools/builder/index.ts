@@ -1,5 +1,8 @@
 import type { BuildArtifact, BuildConfig } from "bun";
 
+const isDebug = process.env.DEBUG === "true";
+const sizeData: Record<string, { esm: number; cjs: number }> = {};
+
 export async function buildPackage({
   entrypoints: packageEntrypoints,
   ...rest
@@ -26,7 +29,7 @@ export async function buildPackage({
       }),
     ));
 
-  if (process.env.DEBUG === "true") {
+  if (isDebug) {
     console.info("Package:", pkgName);
     console.info("Entrypoints:", entrypoints);
   }
@@ -34,7 +37,7 @@ export async function buildPackage({
   const buildOptions: BuildConfig = {
     entrypoints,
     outdir: "./dist",
-    minify: process.env.DEBUG !== "true",
+    minify: !isDebug,
     packages: "external",
     sourcemap: "linked",
     splitting: true,
@@ -65,39 +68,30 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
     );
   }
 
-  const sizeData: Record<string, { esm: number; cjs: number }> = {};
-
-  const { files: esmFiles, maxLength: esmMaxLength } = mapFiles({
-    pkgName,
-    files: buildESM.outputs,
-    type: "esm",
-  });
-  console.info("📦 ESM Import Sizes:");
-  for (const { size, name, label } of esmFiles) {
-    if (sizeData[name]) {
-      sizeData[name].esm = size;
-    } else {
-      sizeData[name] = { esm: size, cjs: 0 };
-    }
-    console.info(`${label.padEnd(esmMaxLength)}${formatBytes(size)}`);
-  }
-
-  const { files: cjsFiles, maxLength: cjsMaxLength } = mapFiles({
-    pkgName,
-    files: buildCJS.outputs,
-    type: "cjs",
-  });
-  console.info("📦 CJS Import Sizes:");
-  for (const { size, name, label } of cjsFiles) {
-    if (sizeData[name]) {
-      sizeData[name].cjs = size;
-    } else {
-      sizeData[name] = { esm: 0, cjs: size };
-    }
-    console.info(`${label.padEnd(cjsMaxLength)}${formatBytes(size)}`);
-  }
-
+  saveSizes({ pkgName, files: buildESM.outputs, type: "esm" });
+  saveSizes({ pkgName, files: buildCJS.outputs, type: "cjs" });
   updateSizeData(sizeData);
+}
+
+function saveSizes({
+  pkgName,
+  files,
+  type,
+}: { pkgName: string; files: BuildArtifact[]; type: "esm" | "cjs" }) {
+  const { files: mappedFiles, maxLength } = mapFiles({
+    pkgName,
+    files,
+    type,
+  });
+  console.info(`📦 ${type.toUpperCase()} Import Sizes:`);
+  for (const { size, name, label } of mappedFiles) {
+    if (sizeData[name]) {
+      sizeData[name][type] = size;
+    } else {
+      sizeData[name] = { esm: 0, cjs: 0, [type]: size };
+    }
+    console.info(`${label.padEnd(maxLength)}${formatBytes(size)}`);
+  }
 }
 
 function mapFiles({

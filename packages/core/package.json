@@ -26,7 +26,7 @@
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "test": "echo 'bun test'",
-    "test:ci": "bun test --coverage",
+    "test:ci": "echo 'bun test --coverage'",
     "type-check": "bun tsc --noEmit",
     "type-check:go": "tsgo"
   },

@@ -19,3 +19,4 @@ zig-out/
 
 CLAUDE*
 .mcp*
+*.tmp.json
