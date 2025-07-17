@@ -9,8 +9,8 @@
     "@swapkit/toolbox-radix": "workspace:*",
     "@swapkit/toolbox-ripple": "workspace:*",
     "@swapkit/toolbox-solana": "workspace:*",
-    "@swapkit/toolbox-tron": "workspace:*",
     "@swapkit/toolbox-substrate": "workspace:*",
+    "@swapkit/toolbox-tron": "workspace:*",
     "@swapkit/toolbox-utxo": "workspace:*"
   },
   "description": "SwapKit - Core",
