@@ -8,6 +8,7 @@ export async function getAddressValidator() {
   const { validateAddress: solanaValidateAddress } = await import("@swapkit/toolbox-solana");
   const { validateAddress: validateRadixAddress } = await import("@swapkit/toolbox-radix");
   const { rippleValidateAddress } = await import("@swapkit/toolbox-ripple");
+  const { getTronAddressValidator } = await import("@swapkit/toolbox-tron");
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     switch (chain) {
@@ -48,6 +49,10 @@ export async function getAddressValidator() {
 
       case Chain.Ripple: {
         return rippleValidateAddress(address);
+      }
+
+      case Chain.Tron: {
+        return getTronAddressValidator()(address);
       }
 
       default:
