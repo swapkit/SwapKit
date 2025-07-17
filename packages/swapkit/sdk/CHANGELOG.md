@@ -1,5 +1,12 @@
 # @swapkit/sdk
 
+## 2.4.14
+
+### Patch Changes
+
+- Updated dependencies [[`b0970a5`](https://github.com/swapkit/SwapKit/commit/b0970a55f14380df9aee58f8a9360c3c568ddf93)]:
+  - @swapkit/core@3.4.8
+
 ## 2.4.13
 
 ### Patch Changes
