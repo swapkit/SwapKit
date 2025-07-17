@@ -68,3 +68,14 @@ bun changeset
 ```
 
 After PR is merged to `develop` branch with changeset file, github action will create new PR with updated versions of packages and changelogs.
+
+
+| Package                  | Client | Both | Server |
+| ------------------------ | ------ | ---- | ------ |
+| @swapkit/client          | -      | ✅    | -      |
+| @swapkit/helpers         | -      | ✅    | -      |
+| @swapkit/plugins         | ✅      | -    | ❌      |
+| @swapkit/toolboxes       | -      | ✅    | -      |
+| @swapkit/wallet-keystore | -      | ✅    | -      |
+| @swapkit/wallets         | ✅      | -    | ❌      |
+| @swapkit/types           | -      | ✅    | -      |

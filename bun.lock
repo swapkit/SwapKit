@@ -37,6 +37,20 @@
         "typedoc-plugin-markdown": "4.7.0",
       },
     },
+    "packages/browser": {
+      "name": "@swapkit/browser",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/plugins": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallets": "workspace:*",
+      },
+    },
+    "packages/contracts": {
+      "name": "@swapkit/contracts",
+      "version": "4.0.0-beta.1",
+    },
     "packages/core": {
       "name": "@swapkit/core",
       "version": "4.0.0-beta.50",
@@ -49,6 +63,8 @@
       "name": "@swapkit/helpers",
       "version": "4.0.0-beta.32",
       "dependencies": {
+        "@swapkit/contracts": "workspace:*",
+        "@swapkit/tokens": "workspace:*",
         "ethers": "^6.14.0",
         "ts-pattern": "~5.7.0",
         "zod": "3.25.74",
@@ -86,6 +102,23 @@
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallets": "workspace:*",
+      },
+    },
+    "packages/server": {
+      "name": "@swapkit/server",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/tokens": {
+      "name": "@swapkit/tokens",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
         "@swapkit/wallets": "workspace:*",
       },
@@ -188,6 +221,46 @@
       "devDependencies": {
         "react": "19.1.0",
         "react-dom": "19.1.0",
+      },
+    },
+    "packages/wallet-core": {
+      "name": "@swapkit/wallet-core",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallet-extension": {
+      "name": "@swapkit/wallet-extension",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallet-hardware": {
+      "name": "@swapkit/wallet-hardware",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallet-keystore": {
+      "name": "@swapkit/wallet-keystore",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallet-mobile": {
+      "name": "@swapkit/wallet-mobile",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
       },
     },
     "packages/wallets": {
@@ -1487,6 +1560,10 @@
 
     "@substrate/ss58-registry": ["@substrate/ss58-registry@1.51.0", "", {}, "sha512-TWDurLiPxndFgKjVavCniytBIw+t4ViOi7TYp9h/D0NMmkEc9klFTo+827eyEJ0lELpqO207Ey7uGxUa+BS1jQ=="],
 
+    "@swapkit/browser": ["@swapkit/browser@workspace:packages/browser"],
+
+    "@swapkit/contracts": ["@swapkit/contracts@workspace:packages/contracts"],
+
     "@swapkit/core": ["@swapkit/core@workspace:packages/core"],
 
     "@swapkit/helpers": ["@swapkit/helpers@workspace:packages/helpers"],
@@ -1495,9 +1572,23 @@
 
     "@swapkit/sdk": ["@swapkit/sdk@workspace:packages/sdk"],
 
+    "@swapkit/server": ["@swapkit/server@workspace:packages/server"],
+
+    "@swapkit/tokens": ["@swapkit/tokens@workspace:packages/tokens"],
+
     "@swapkit/toolboxes": ["@swapkit/toolboxes@workspace:packages/toolboxes"],
 
     "@swapkit/ui": ["@swapkit/ui@workspace:packages/ui"],
+
+    "@swapkit/wallet-core": ["@swapkit/wallet-core@workspace:packages/wallet-core"],
+
+    "@swapkit/wallet-extension": ["@swapkit/wallet-extension@workspace:packages/wallet-extension"],
+
+    "@swapkit/wallet-hardware": ["@swapkit/wallet-hardware@workspace:packages/wallet-hardware"],
+
+    "@swapkit/wallet-keystore": ["@swapkit/wallet-keystore@workspace:packages/wallet-keystore"],
+
+    "@swapkit/wallet-mobile": ["@swapkit/wallet-mobile@workspace:packages/wallet-mobile"],
 
     "@swapkit/wallets": ["@swapkit/wallets@workspace:packages/wallets"],
 
@@ -4375,6 +4466,10 @@
 
     "@stellar/stellar-sdk/bignumber.js": ["bignumber.js@9.3.1", "", {}, "sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ=="],
 
+    "@swapkit/wallets/@ledgerhq/devices": ["@ledgerhq/devices@8.4.7", "", { "dependencies": { "@ledgerhq/errors": "^6.22.0", "@ledgerhq/logs": "^6.13.0", "rxjs": "^7.8.1", "semver": "^7.3.5" } }, "sha512-CljHIaPmtv93H2If1Zs1xW0pgg+M37bAoJkm6+V6Yw5S0MgFWFpLnTTNgCvHXyD8pG0+uq8TuOXUiG1oAV5AyA=="],
+
+    "@swapkit/wallets/@ledgerhq/hw-transport": ["@ledgerhq/hw-transport@6.31.7", "", { "dependencies": { "@ledgerhq/devices": "8.4.7", "@ledgerhq/errors": "^6.22.0", "@ledgerhq/logs": "^6.13.0", "events": "^3.3.0" } }, "sha512-R+QMlqoLJDPeCiqwWv85PbZ3m0hel5PwQzWwSIbyEwialqjXnG7LFQgytkgXlgMcayT0chvvLeYjuY5ZfMPY7w=="],
+
     "@swc/helpers/tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
     "@trezor/analytics/@trezor/env-utils": ["@trezor/env-utils@1.3.4", "", { "dependencies": { "ua-parser-js": "^2.0.3" }, "peerDependencies": { "expo-constants": "*", "expo-localization": "*", "react-native": "*", "tslib": "^2.6.2" }, "optionalPeers": ["expo-constants", "expo-localization", "react-native"] }, "sha512-L+cytJM0z9j8yI1Lh6AFtmfUdFOPxhcmDvzC5UgyeUsdkgrrnXFDSyaXc8a+ItukoX/CTfZBsmWRYu5BLUuLJQ=="],
@@ -5076,6 +5171,10 @@
     "@solana/sysvars/@solana/codecs/@solana/options": ["@solana/options@2.3.0", "", { "dependencies": { "@solana/codecs-core": "2.3.0", "@solana/codecs-data-structures": "2.3.0", "@solana/codecs-numbers": "2.3.0", "@solana/codecs-strings": "2.3.0", "@solana/errors": "2.3.0" }, "peerDependencies": { "typescript": ">=5.3.3" } }, "sha512-PPnnZBRCWWoZQ11exPxf//DRzN2C6AoFsDI/u2AsQfYih434/7Kp4XLpfOMT/XESi+gdBMFNNfbES5zg3wAIkw=="],
 
     "@stacks/common/@types/node/undici-types": ["undici-types@5.26.5", "", {}, "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="],
+
+    "@swapkit/wallets/@ledgerhq/devices/@ledgerhq/errors": ["@ledgerhq/errors@6.22.0", "", {}, "sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ=="],
+
+    "@swapkit/wallets/@ledgerhq/hw-transport/@ledgerhq/errors": ["@ledgerhq/errors@6.22.0", "", {}, "sha512-rXtpIOfHL62jWB7o77PNFD4EDYdcqyMeVgt7TZcmTkWT78cK+YYSUTMrNuGLhnZZZTMLWH023Wgt65OfKIdGBQ=="],
 
     "@trezor/analytics/@trezor/utils/bignumber.js": ["bignumber.js@9.3.1", "", {}, "sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ=="],
 

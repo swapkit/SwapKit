@@ -1,5 +1,17 @@
 import { match } from "ts-pattern";
-import type * as tokenLists from "../tokens/lists";
+import type * as tokenLists from "./lists";
+
+type ListOfTokens = Exclude<
+  keyof typeof tokenLists,
+  | "JupiterList"
+  | "CamelotV3List"
+  | "OneInchList"
+  | "OpenOceanV2List"
+  | "PancakeswapList"
+  | "PangolinList"
+  | "SushiswapList"
+  | "TraderjoeV2List"
+>;
 
 export type TokenLists = {
   camelot: typeof tokenLists.CamelotV3List;
@@ -19,6 +31,8 @@ export type TokenLists = {
 };
 
 export type TokenListName = keyof TokenLists;
+export type TokenTax = { buy: number; sell: number };
+export type TokenNames = (typeof tokenLists)[ListOfTokens]["tokens"][number]["identifier"];
 
 const defaultLists = [
   "camelot",
@@ -53,21 +67,24 @@ export async function loadTokenLists<T extends TokenListName[]>(pickedLists?: T)
 
 async function loadTokenList<T extends TokenListName>(listName: T): Promise<TokenLists[T]> {
   const { list } = await match(listName as TokenListName)
-    .with("camelot", () => import("../tokens/lists/camelot_v3"))
-    .with("caviar", () => import("../tokens/lists/caviar_v1"))
-    .with("chainflip", () => import("../tokens/lists/chainflip"))
-    .with("jupiter", () => import("../tokens/lists/jupiter"))
-    .with("mayachain", () => import("../tokens/lists/mayachain"))
-    .with("oneinch", () => import("../tokens/lists/oneinch"))
-    .with("openocean", () => import("../tokens/lists/openocean_v2"))
-    .with("pancakeswap", () => import("../tokens/lists/pancakeswap"))
-    .with("pangolin", () => import("../tokens/lists/pangolin_v1"))
-    .with("sushiswap", () => import("../tokens/lists/sushiswap_v2"))
-    .with("thorchain", () => import("../tokens/lists/thorchain"))
-    .with("traderjoe", () => import("../tokens/lists/traderjoe_v2"))
-    .with("uniswap", () => import("../tokens/lists/uniswap_v2"))
-    .with("uniswapv3", () => import("../tokens/lists/uniswap_v3"))
-    .exhaustive();
+    .with("camelot", () => import("./lists/camelot_v3"))
+    .with("caviar", () => import("./lists/caviar_v1"))
+    .with("chainflip", () => import("./lists/chainflip"))
+    .with("jupiter", () => import("./lists/jupiter"))
+    .with("mayachain", () => import("./lists/mayachain"))
+    .with("oneinch", () => import("./lists/oneinch"))
+    .with("openocean", () => import("./lists/openocean_v2"))
+    .with("pancakeswap", () => import("./lists/pancakeswap"))
+    .with("pangolin", () => import("./lists/pangolin_v1"))
+    .with("sushiswap", () => import("./lists/sushiswap_v2"))
+    .with("thorchain", () => import("./lists/thorchain"))
+    .with("traderjoe", () => import("./lists/traderjoe_v2"))
+    .with("uniswap", () => import("./lists/uniswap_v2"))
+    .with("uniswapv3", () => import("./lists/uniswap_v3"))
+    .otherwise(() => {
+      console.warn(`Token list ${listName} not found`);
+      return { list: [] };
+    });
 
   return list as unknown as TokenLists[T];
 }
