@@ -9,7 +9,7 @@ import {
   filterSupportedChains,
 } from "@swapkit/helpers";
 
-import { createWallet, getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import {
   getVultisigAddress,
   getVultisigMethods,

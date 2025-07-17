@@ -10,7 +10,7 @@ import {
 } from "@swapkit/helpers";
 export type { PairingInfo } from "@keepkey/keepkey-sdk";
 
-import { createWallet, getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { cosmosWalletMethods } from "./chains/cosmos";
 import { KeepKeySigner } from "./chains/evm";
 import { mayachainWalletMethods } from "./chains/mayachain";

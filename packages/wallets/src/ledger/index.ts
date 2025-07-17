@@ -13,7 +13,7 @@ import {
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
 
-import { createWallet, getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { getLedgerAddress, getLedgerClient } from "./helpers";
 
 export const ledgerWallet = createWallet({

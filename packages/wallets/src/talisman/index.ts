@@ -7,8 +7,8 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { Eip1193Provider } from "ethers";
-import { createWallet, getWalletSupportedChains } from "../utils";
 
 export const talismanWallet = createWallet({
   name: "connectTalisman",

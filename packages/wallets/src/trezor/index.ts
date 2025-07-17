@@ -10,8 +10,8 @@ import {
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { Psbt } from "bitcoinjs-lib";
-import { createWallet, getWalletSupportedChains } from "../utils";
 
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {

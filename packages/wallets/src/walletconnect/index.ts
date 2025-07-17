@@ -16,7 +16,7 @@ import type { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 import type { Transaction } from "near-api-js/lib/transaction";
 
-import { createWallet, getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,

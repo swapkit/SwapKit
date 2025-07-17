@@ -6,9 +6,9 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
-
 import type { NearCreateTransactionParams } from "@swapkit/toolboxes/near";
-import { createWallet, getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
+
 import { getCtrlAddress, getCtrlMethods, getCtrlProvider, walletTransfer } from "./walletHelpers";
 
 export const ctrlWallet = createWallet({

@@ -14,7 +14,7 @@
   "packageManager": "bun@^1.2.18",
   "private": true,
   "scripts": {
-    "bootstrap": "bun clean; bun install --force; bun run build",
+    "bootstrap": "bun clean; bun install --force; bun build:ci",
     "build": "bun --filter '!@internal/docs' --elide-lines=0 build",
     "build:ci": "bun build:dts && bun --filter '!@internal/docs' build",
     "build:clean": "bun build:dts && bun --filter '!@internal/docs' --elide-lines=0 build:clean",

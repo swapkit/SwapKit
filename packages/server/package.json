@@ -2,7 +2,9 @@
   "author": "swapkit-oss",
   "dependencies": {
     "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*"
+    "@swapkit/tokens": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallet-keystore": "workspace:*"
   },
   "description": "SwapKit - Server SDK",
   "exports": {

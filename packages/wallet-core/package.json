@@ -1,8 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*"
+    "@swapkit/helpers": "workspace:*"
   },
   "description": "SwapKit - Wallet Core",
   "exports": {

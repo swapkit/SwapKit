@@ -1,9 +1,9 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
+    "@swapkit/core": "workspace:*",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/plugins": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*"
   },
   "description": "SwapKit - Browser SDK",
