@@ -12,7 +12,10 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.OKX, async () => (await import("./okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("./onekey")).onekeyWallet)
     .with(WalletOption.EXODUS, async () => (await import("./exodus")).exodusWallet)
-    .with(WalletOption.KEEPKEY, async () => (await import("./keepkey")).keepkeyWallet)
+    .with(
+      WalletOption.KEEPKEY,
+      async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet,
+    )
     .with(WalletOption.KEEPKEY_BEX, async () => (await import("./keepkey-bex")).keepkeyBexWallet)
     .with(
       WalletOption.WALLETCONNECT,
@@ -34,12 +37,15 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     )
 
     .with(WalletOption.KEYSTORE, async () => (await import("./keystore")).keystoreWallet)
-    .with(WalletOption.TREZOR, async () => (await import("./trezor")).trezorWallet)
+    .with(
+      WalletOption.TREZOR,
+      async () => (await import("@swapkit/wallet-hardware/trezor")).trezorWallet,
+    )
     .with(
       WalletOption.LEDGER,
       // TODO: Remove
       WalletOption.LEDGER_LIVE,
-      async () => (await import("./ledger")).ledgerWallet,
+      async () => (await import("@swapkit/wallet-hardware/ledger")).ledgerWallet,
     )
 
     .with(WalletOption.PHANTOM, async () => (await import("./phantom")).phantomWallet)

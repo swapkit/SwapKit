@@ -1,4 +1,4 @@
-// export { keystoreWallet } from "@swapkit/wallet-keystore";
+export * from "@swapkit/wallet-keystore";
 export * from "@swapkit/helpers";
 export * from "@swapkit/helpers/api";
 export * from "@swapkit/helpers/contracts";

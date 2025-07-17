@@ -28,14 +28,14 @@
       "types": "./dist/types/api/index.d.ts"
     },
     "./contracts": {
-      "default": "./dist/contracts/index.js",
-      "require": "./dist/contracts/index.cjs",
-      "types": "./dist/types/contracts/index.d.ts"
+      "default": "./dist/contracts.js",
+      "require": "./dist/contracts.cjs",
+      "types": "./dist/types/contracts.d.ts"
     },
     "./tokens": {
-      "default": "./dist/tokens/index.js",
-      "require": "./dist/tokens/index.cjs",
-      "types": "./dist/types/tokens/index.d.ts"
+      "default": "./dist/tokens.js",
+      "require": "./dist/tokens.cjs",
+      "types": "./dist/types/tokens.d.ts"
     }
   },
   "files": ["dist/"],

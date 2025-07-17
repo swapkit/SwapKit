@@ -4,19 +4,7 @@
     "@cosmjs/amino": "~0.33.0",
     "@cosmjs/crypto": "~0.33.0",
     "@cosmjs/proto-signing": "~0.33.0",
-    "@keepkey/keepkey-sdk": "~0.2.62",
     "@keplr-wallet/types": "~0.12.238",
-    "@ledgerhq/devices": "~8.4.6",
-    "@ledgerhq/errors": "~6.21.0",
-    "@ledgerhq/hw-app-btc": "~10.9.0",
-    "@ledgerhq/hw-app-cosmos": "~6.32.0",
-    "@ledgerhq/hw-app-eth": "~6.45.0",
-    "@ledgerhq/hw-app-near": "~6.31.0",
-    "@ledgerhq/hw-app-trx": "~6.31.3",
-    "@ledgerhq/hw-app-xrp": "~6.31.0",
-    "@ledgerhq/hw-transport": "~6.31.0",
-    "@ledgerhq/hw-transport-webusb": "~6.29.0",
-    "@ledgerhq/wallet-api-client": "~1.9.0",
     "@passkeys/core": "~3.3.0",
     "@passkeys/react": "~2.5.0",
     "@radixdlt/babylon-gateway-api-sdk": "~1.10.0",
@@ -27,6 +15,7 @@
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallet-core": "workspace:*",
+    "@swapkit/wallet-hardware": "workspace:*",
     "@swapkit/wallet-keystore": "workspace:*",
     "@trezor/connect-web": "~9.6.0",
     "@walletconnect/modal": "~2.7.0",
@@ -46,19 +35,7 @@
     "@cosmjs/amino": "0.33.1",
     "@cosmjs/crypto": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",
-    "@keepkey/keepkey-sdk": "0.2.62",
     "@keplr-wallet/types": "0.12.238",
-    "@ledgerhq/devices": "8.4.6",
-    "@ledgerhq/errors": "6.21.0",
-    "@ledgerhq/hw-app-btc": "10.9.2",
-    "@ledgerhq/hw-app-cosmos": "6.32.2",
-    "@ledgerhq/hw-app-eth": "6.45.6",
-    "@ledgerhq/hw-app-near": "6.31.2",
-    "@ledgerhq/hw-app-trx": "6.31.3",
-    "@ledgerhq/hw-app-xrp": "6.31.2",
-    "@ledgerhq/hw-transport": "6.31.6",
-    "@ledgerhq/hw-transport-webusb": "6.29.6",
-    "@ledgerhq/wallet-api-client": "1.9.0",
     "@passkeys/core": "3.3.7",
     "@passkeys/react": "2.5.4",
     "@radixdlt/babylon-gateway-api-sdk": "1.10.1",
@@ -108,11 +85,6 @@
       "require": "./dist/src/ctrl/index.cjs",
       "types": "./dist/types/ctrl/index.d.ts"
     },
-    "./vultisig": {
-      "default": "./dist/src/vultisig/index.js",
-      "require": "./dist/src/vultisig/index.cjs",
-      "types": "./dist/types/vultisig/index.d.ts"
-    },
     "./evm-extensions": {
       "default": "./dist/src/evm-extensions/index.js",
       "require": "./dist/src/evm-extensions/index.cjs",
@@ -124,9 +96,9 @@
       "types": "./dist/types/exodus/index.d.ts"
     },
     "./keepkey": {
-      "default": "./dist/src/keepkey/index.js",
-      "require": "./dist/src/keepkey/index.cjs",
-      "types": "./dist/types/keepkey/index.d.ts"
+      "default": "./dist/src/keepkey.js",
+      "require": "./dist/src/keepkey.cjs",
+      "types": "./dist/types/keepkey.d.ts"
     },
     "./keepkey-bex": {
       "default": "./dist/src/keepkey-bex/index.js",
@@ -139,14 +111,14 @@
       "types": "./dist/types/keplr/index.d.ts"
     },
     "./keystore": {
-      "default": "./dist/src/keystore/index.js",
-      "require": "./dist/src/keystore/index.cjs",
-      "types": "./dist/types/keystore/index.d.ts"
+      "default": "./dist/src/keystore.js",
+      "require": "./dist/src/keystore.cjs",
+      "types": "./dist/types/keystore.d.ts"
     },
     "./ledger": {
-      "default": "./dist/src/ledger/index.js",
-      "require": "./dist/src/ledger/index.cjs",
-      "types": "./dist/types/ledger/index.d.ts"
+      "default": "./dist/src/ledger.js",
+      "require": "./dist/src/ledger.cjs",
+      "types": "./dist/types/ledger.d.ts"
     },
     "./okx": {
       "default": "./dist/src/okx/index.js",
@@ -179,9 +151,14 @@
       "types": "./dist/types/talisman/index.d.ts"
     },
     "./trezor": {
-      "default": "./dist/src/trezor/index.js",
-      "require": "./dist/src/trezor/index.cjs",
-      "types": "./dist/types/trezor/index.d.ts"
+      "default": "./dist/src/trezor.js",
+      "require": "./dist/src/trezor.cjs",
+      "types": "./dist/types/trezor.d.ts"
+    },
+    "./vultisig": {
+      "default": "./dist/src/vultisig/index.js",
+      "require": "./dist/src/vultisig/index.cjs",
+      "types": "./dist/types/vultisig/index.d.ts"
     },
     "./walletconnect": {
       "default": "./dist/src/walletconnect/index.js",
