@@ -1,3 +1,4 @@
+import { $ } from "bun";
 import { readdir } from "fs/promises";
 
 const files = await readdir("./packages", { recursive: true });
@@ -8,8 +9,9 @@ const onlyPackageJson = files.filter(
 
 const versions: Record<string, string> = {};
 
+const cwd = process.cwd();
 for (const file of onlyPackageJson) {
-  const { version } = await import(`../packages/${file}`);
+  const { version } = await import(`${cwd}/packages/${file}`);
   const [name] = file.split("/");
 
   const packageName = `@swapkit/${name}`;
@@ -22,7 +24,7 @@ console.info(`Versions: ${JSON.stringify(versions, null, 2)}`);
 for (const file of onlyPackageJson) {
   console.info(`Replacing versions in ${file}`);
 
-  const pkgContent = await Bun.file(`./packages/${file}`).json();
+  const pkgContent = await Bun.file(`${cwd}/packages/${file}`).json();
 
   for (const [key, value] of Object.entries(versions)) {
     if (pkgContent?.dependencies?.[key]) {
@@ -37,6 +39,8 @@ for (const file of onlyPackageJson) {
       pkgContent.devDependencies[key] = value;
     }
 
-    await Bun.write(`./packages/${file}`, JSON.stringify(pkgContent, null, 2));
+    await Bun.write(`${cwd}/packages/${file}`, JSON.stringify(pkgContent, null, 2));
   }
 }
+
+await $`bun lint`;

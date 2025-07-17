@@ -30,14 +30,14 @@
     "playground:react-bun": "bun --cwd ./playgrounds/bun-react",
     "playground:vite": "bun --cwd ./playgrounds/vite",
     "postinstall": "lefthook install; bun lint:ws",
-    "publish-packages": "bun build:ci && bun version-bump && bun changeset publish && bun install",
+    "publish-packages": "bun build:ci && bun version-bump && bun changeset publish",
     "test": "bun --filter '*' --elide-lines=0 test",
     "test:ci": "bun --filter '*' test:ci",
     "test:coverage": "bun --filter '*' --elide-lines=0 test:ci",
     "type-check": "bun --filter '*' --elide-lines=0 type-check",
     "type-check:ci": "bun --filter '*' type-check",
     "type-check:go": "bun --filter '*' type-check:go",
-    "version-bump": "bun changeset version"
+    "version-bump": "bun ./tools/builder/versions.ts; bun changeset version; bun ./tools/builder/versions.ts; bun install"
   },
   "trustedDependencies": [
     "@biomejs/biome",
