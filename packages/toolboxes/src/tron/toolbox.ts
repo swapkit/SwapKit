@@ -10,6 +10,7 @@ import {
 } from "@swapkit/helpers";
 import { P, match } from "ts-pattern";
 
+import type { TronWeb } from "tronweb";
 import { trc20ABI } from "./helpers/trc20.abi";
 import { fetchAccountFromTronGrid } from "./helpers/trongrid";
 import type {
@@ -24,8 +25,6 @@ import type {
   TronTransferParams,
 } from "./types";
 
-import { TronWeb } from "tronweb";
-
 // Constants for TRON resource calculation
 const TRX_TRANSFER_BANDWIDTH = 268; // Bandwidth consumed by a TRX transfer
 const TRC20_TRANSFER_ENERGY = 13000; // Average energy consumed by TRC20 transfer
@@ -37,6 +36,9 @@ const TRON_USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 const MAX_APPROVAL = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
 export async function getTronAddressValidator() {
+  const TW = await import("tronweb");
+  const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
+
   return (address: string) => {
     return TronWeb.isAddress(address);
   };
@@ -125,6 +127,9 @@ export const createTronToolbox = async (
   isApproved: (params: IsApprovedParams) => Promise<boolean>;
   getApprovedAmount: (params: ApprovedParams) => Promise<bigint>;
 }> => {
+  const TW = await import("tronweb");
+  const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
+
   // Always get configuration from SKConfig
   const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
   // Note: TRON API key support can be added to SKConfig apiKeys when needed

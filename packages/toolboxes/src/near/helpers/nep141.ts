@@ -1,5 +1,4 @@
 import type { Account, Contract } from "near-api-js";
-import { createNearContract } from "./contractFactory";
 
 const DEFAULT_STORAGE_DEPOSIT = "1250000000000000000000"; // 0.00125 NEAR
 
@@ -31,6 +30,27 @@ export type NEP141Token = {
   ensureStorage: (accountId: string) => Promise<void>;
   contract: NEP141Contract;
 };
+
+// Create a Near contract instance
+export async function createNearContract<T extends Contract>({
+  account,
+  contractId,
+  viewMethods,
+  changeMethods,
+}: {
+  account: Account;
+  contractId: string;
+  viewMethods: string[];
+  changeMethods: string[];
+}): Promise<T> {
+  const { Contract } = await import("near-api-js");
+
+  return new Contract(account, contractId, {
+    viewMethods,
+    changeMethods,
+    useLocalViewExecution: true, // Enable local view execution for efficiency
+  }) as T;
+}
 
 export async function createNEP141Token({
   contractId,

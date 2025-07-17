@@ -14,6 +14,7 @@ const dtsPlugin = {
       compilerOptions: {
         allowImportingTsExtensions: false,
         declaration: true,
+        declarationMap: true,
         emitDeclarationOnly: true,
         isolatedDeclarations: false,
         noEmit: false,

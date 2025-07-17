@@ -13,7 +13,7 @@ import {
   getNearSignerFromPhrase,
   getNearSignerFromPrivateKey,
   getValidateNearAddress,
-} from "./helpers";
+} from "./helpers/core";
 import {
   GAS_COSTS,
   estimateBatchGas,
@@ -25,8 +25,7 @@ import {
   isCustomEstimator,
   isSimpleTransfer,
 } from "./helpers/gasEstimation";
-import { createNEP141Token } from "./helpers/nep141";
-import type { NEP141Token } from "./helpers/nep141";
+import { type NEP141Token, createNEP141Token, createNearContract } from "./helpers/nep141";
 import type {
   NearCreateTransactionParams,
   NearFunctionCallParams,
@@ -380,7 +379,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
   // Create typed contract interface
   async function createContract(contractInterface: NearContractInterface) {
-    const { createNearContract } = await import("./helpers/contractFactory");
     const account = await getAccount();
 
     return createNearContract({
