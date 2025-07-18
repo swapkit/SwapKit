@@ -40,7 +40,7 @@ export async function buildPackage({
     minify: !isDebug,
     packages: "external",
     sourcemap: "linked",
-    splitting: true,
+    splitting: !pkgName.includes("toolboxes"),
     ...rest,
   };
 
