@@ -1,5 +1,12 @@
 # @swapkit/wallet-ledger
 
+## 1.14.20
+
+### Patch Changes
+
+- Updated dependencies [[`b9bf8d2`](https://github.com/swapkit/SwapKit/commit/b9bf8d2d7be953ff11eeb9ac5415f9ed995504d7)]:
+  - @swapkit/toolbox-tron@0.0.5
+
 ## 1.14.19
 
 ### Patch Changes

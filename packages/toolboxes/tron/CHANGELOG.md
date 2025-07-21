@@ -1,5 +1,11 @@
 # @swapkit/toolbox-tron
 
+## 0.0.5
+
+### Patch Changes
+
+- [`b9bf8d2`](https://github.com/swapkit/SwapKit/commit/b9bf8d2d7be953ff11eeb9ac5415f9ed995504d7) Thanks [@towanTG](https://github.com/towanTG)! - Fixes TRC 20 transfers
+
 ## 0.0.4
 
 ### Patch Changes
