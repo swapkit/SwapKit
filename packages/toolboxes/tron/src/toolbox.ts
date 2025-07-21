@@ -408,32 +408,22 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
       return txid;
     }
 
-    // TRC20 transfer
-    const contractAddress = assetValue.address;
-    if (!contractAddress) {
-      throw new SwapKitError("toolbox_tron_invalid_token_identifier", {
-        identifier: assetValue.toString(),
-      });
-    }
-
-    const feeLimit = getMaxTransactionFee();
-    const contract = tronWeb.contract(TRC20_ABI, contractAddress);
-
-    if (!contract.methods?.transfer) {
-      throw new SwapKitError("toolbox_tron_token_transfer_failed");
-    }
-
-    const result = await contract.transfer(recipient, assetValue.getBaseValue("string")).send({
+    // TRC20 Token Transfer - always use createTransaction + sign pattern
+    const transaction = await createTransaction({
+      recipient,
+      assetValue,
+      memo,
       from: fromAddress,
-      feeLimit,
-      callValue: 0,
     });
 
-    if (!result) {
+    const signedTx = await signer.signTransaction(transaction);
+    const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
+
+    if (!txid) {
       throw new SwapKitError("toolbox_tron_token_transfer_failed");
     }
 
-    return result;
+    return txid;
   };
 
   const estimateTransactionFee = async ({
