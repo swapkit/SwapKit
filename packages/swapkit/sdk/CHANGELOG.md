@@ -1,5 +1,13 @@
 # @swapkit/sdk
 
+## 2.4.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@3.4.9
+  - @swapkit/wallets@2.1.36
+
 ## 2.4.14
 
 ### Patch Changes
