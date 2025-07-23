@@ -1,7 +1,9 @@
 import type { Wallet } from "@passkeys/core";
 import {
+  type AssetValue,
   Chain,
   EVMChains,
+  type GenericTransferParams,
   SwapKitError,
   WalletOption,
   filterSupportedChains,
@@ -10,11 +12,10 @@ import {
 } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Psbt } from "bitcoinjs-lib";
-import type { BrowserProvider, Eip1193Provider } from "ethers";
+// BrowserProvider imported dynamically when needed
 import {
   AddressPurpose,
   BitcoinNetworkType,
-  type BitcoinProvider,
   type GetAddressOptions,
   type GetAddressResponse,
   type SignTransactionOptions,
@@ -23,22 +24,24 @@ import {
 } from "sats-connect";
 
 async function getWalletMethods({
-  walletProvider,
-  provider,
+  wallet,
   chain,
 }: {
-  walletProvider?: Eip1193Provider;
-  provider: BrowserProvider | BitcoinProvider;
+  wallet: Wallet;
   chain: Chain;
 }) {
   switch (chain) {
     case Chain.Bitcoin: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+      const provider = await wallet.getProvider("bitcoin");
+
+      if (!provider) {
+        throw new SwapKitError("wallet_exodus_not_found");
+      }
 
       let address = "";
 
-      const getProvider: () => Promise<BitcoinProvider | undefined> = () =>
-        new Promise((res) => res(provider as BitcoinProvider));
+      const getProvider = () => Promise.resolve(provider);
 
       const getAddressOptions: GetAddressOptions = {
         getProvider,
@@ -103,11 +106,16 @@ async function getWalletMethods({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
-      if (!walletProvider) throw new SwapKitError("wallet_exodus_not_found");
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+      const { BrowserProvider } = await import("ethers");
+
+      const walletProvider = await wallet.getProvider("ethereum");
+      if (!walletProvider) {
+        throw new SwapKitError("wallet_exodus_not_found");
+      }
 
       const jsonRpcProvider = await getProvider(chain);
-      const browserProvider = provider as BrowserProvider;
+      const browserProvider = new BrowserProvider(walletProvider, "any");
 
       await browserProvider.send("eth_requestAccounts", []);
 
@@ -126,6 +134,55 @@ async function getWalletMethods({
 
       return { ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }), address };
     }
+
+    case Chain.Solana: {
+      const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
+      const provider = await wallet.getProvider("solana");
+
+      if (!provider) {
+        throw new SwapKitError("wallet_exodus_not_found");
+      }
+
+      const providerConnection = await provider.connect();
+      const address: string = providerConnection.publicKey.toString();
+      const toolbox = await getSolanaToolbox();
+
+      const transfer = async ({
+        recipient,
+        assetValue,
+        isProgramDerivedAddress,
+      }: GenericTransferParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
+        // const { PublicKey } = await import("@solana/web3.js"); // TODO: Use for advanced transactions
+        const validateAddress = await toolbox.getAddressValidator();
+
+        if (!(isProgramDerivedAddress || validateAddress(recipient))) {
+          throw new SwapKitError("core_transaction_invalid_recipient_address");
+        }
+
+        // const fromPubkey = new PublicKey(address); // TODO: Use for advanced transactions
+        const connection = await toolbox.getConnection();
+
+        const transaction = await toolbox.createTransaction({
+          recipient,
+          assetValue,
+          sender: address,
+          isProgramDerivedAddress,
+        });
+
+        const signedTransaction = await provider.signTransaction(transaction);
+        const serialized = signedTransaction.serialize();
+        const txHash = await connection.sendRawTransaction(serialized);
+
+        return txHash;
+      };
+
+      const disconnect = async () => {
+        await provider.disconnect();
+      };
+
+      return { ...toolbox, address, transfer, disconnect };
+    }
+
     default:
       throw new SwapKitError("wallet_exodus_chain_not_supported", { chain });
   }
@@ -134,38 +191,42 @@ async function getWalletMethods({
 export const exodusWallet = createWallet({
   name: "connectExodusWallet",
   walletType: WalletOption.EXODUS,
-  supportedChains: [...EVMChains, Chain.Bitcoin],
+  supportedChains: [...EVMChains, Chain.Bitcoin, Chain.Solana],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
       if (!wallet) throw new SwapKitError("wallet_exodus_instance_missing");
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-      const { BrowserProvider } = await import("ethers");
-
-      const { providers } = wallet;
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const provider =
-            chain === Chain.Bitcoin
-              ? providers.bitcoin
-              : new BrowserProvider(providers.ethereum, "any");
+          try {
+            const walletData = await getWalletMethods({
+              chain,
+              wallet,
+            });
 
-          const { address, ...walletMethods } = await getWalletMethods({
-            chain,
-            provider,
-            walletProvider: providers.ethereum,
-          });
+            const { address, ...walletMethods } = walletData;
+            const disconnect = wallet.disconnect;
 
-          const disconnect = () =>
-            provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
+            const finalDisconnect =
+              disconnect ||
+              (async () => {
+                if (wallet.disconnect) {
+                  await wallet.disconnect();
+                }
+              });
 
-          addChain({
-            ...walletMethods,
-            disconnect,
-            chain,
-            address,
-            walletType: WalletOption.EXODUS,
-          });
+            addChain({
+              ...walletMethods,
+              disconnect: finalDisconnect,
+              chain,
+              address,
+              walletType: WalletOption.EXODUS,
+            });
+          } catch (error) {
+            console.error(`Failed to connect ${chain} wallet:`, error);
+            throw error;
+          }
         }),
       );
 
