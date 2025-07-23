@@ -1,5 +1,5 @@
-import { type ChainApis, ChainToChainId, EVMChains, createSwapKit } from "@swapkit/sdk";
-import { swapkitApi } from "@swapkit/toolbox-evm/";
+import { Chain, type ChainApis, ChainToChainId, EVMChains, createSwapKit } from "@swapkit/sdk";
+import { alchemyApi, swapkitApi } from "@swapkit/toolbox-evm/";
 
 export type SwapKitClient = ReturnType<typeof createSwapKit>;
 
@@ -29,6 +29,17 @@ export const getSwapKitClient = (
   oldKey = key;
 
   const apis: ChainApis = {};
+
+  const alchemyApiKey = import.meta.env.VITE_ALCHEMY_API_KEY || process.env.VITE_ALCHEMY_API_KEY;
+
+  for (const chain of EVMChains.filter((chain) => chain !== Chain.Ethereum)) {
+    if (alchemyApiKey) {
+      apis[chain] = alchemyApi({
+        apiKey: alchemyApiKey,
+        chainId: ChainToChainId[chain],
+      });
+    }
+  }
 
   for (const chain of EVMChains) {
     if (params.swapkitApiKey) {

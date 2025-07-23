@@ -138,6 +138,7 @@ export const getWalletMethods = async ({
         nonEthApiKey: covalentApiKey,
         ethApiKey: ethplorerApiKey,
       });
+
       const provider = getProvider(chain);
       const browserProvider = new BrowserProvider(ethereumWindowProvider, "any");
 
@@ -230,6 +231,7 @@ export const getWalletMethods = async ({
 
 function connectExodusWallet({
   addChain,
+  apis,
   config: { covalentApiKey, ethplorerApiKey, thorswapApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
   return async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
@@ -247,6 +249,7 @@ function connectExodusWallet({
         const { address, ...walletMethods } = await getWalletMethods({
           wallet,
           chain,
+          apis,
           ethplorerApiKey,
           covalentApiKey,
           blockchairApiKey,
