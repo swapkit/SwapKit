@@ -2,31 +2,70 @@ import type { Account, Contract } from "near-api-js";
 
 const DEFAULT_STORAGE_DEPOSIT = "1250000000000000000000"; // 0.00125 NEAR
 
+// NEP-141 metadata interface
+export interface NEP141Metadata {
+  spec: string;
+  name: string;
+  symbol: string;
+  icon?: string;
+  reference?: string;
+  reference_hash?: string;
+  decimals: number;
+}
+
+// Storage balance response
+export interface StorageBalance {
+  total: string;
+  available: string;
+}
+
+// Storage balance bounds
+export interface StorageBalanceBounds {
+  min: string;
+  max?: string;
+}
+
+// BN.js is dynamically imported, but we need the type
+// Using any here is acceptable as BN.js doesn't export proper TypeScript types
+type BN = any; // BN.js instance
+
 // Define NEP-141 contract interface
 export interface NEP141Contract extends Contract {
   // View methods
   ft_balance_of(args: { account_id: string }): Promise<string>;
   ft_total_supply(): Promise<string>;
-  ft_metadata(): Promise<any>;
-  storage_balance_of(args: { account_id: string }): Promise<any>;
-  storage_balance_bounds(): Promise<any>;
+  ft_metadata(): Promise<NEP141Metadata>;
+  storage_balance_of(args: { account_id: string }): Promise<StorageBalance | null>;
+  storage_balance_bounds(): Promise<StorageBalanceBounds>;
 
   // Change methods
-  ft_transfer(args: any, gas: any, deposit: any): Promise<any>;
-  ft_transfer_call(args: any, gas: any, deposit: any): Promise<any>;
-  storage_deposit(args: any, gas: any, deposit: any): Promise<any>;
-  storage_withdraw(args: any, gas: any, deposit: any): Promise<any>;
-  storage_unregister(force?: boolean, gas?: any): Promise<any>;
+  ft_transfer(
+    args: { receiver_id: string; amount: string; memo?: string },
+    gas: BN,
+    deposit: BN,
+  ): Promise<void>;
+  ft_transfer_call(
+    args: { receiver_id: string; amount: string; msg: string; memo?: string },
+    gas: BN,
+    deposit: BN,
+  ): Promise<void>;
+  storage_deposit(
+    args: { account_id?: string; registration_only?: boolean },
+    gas: BN,
+    deposit: BN,
+  ): Promise<StorageBalance>;
+  storage_withdraw(args: { amount?: string }, gas: BN, deposit?: BN): Promise<StorageBalance>;
+  storage_unregister(force?: boolean, gas?: BN): Promise<boolean>;
 }
 
 export type NEP141Token = {
-  transfer: (receiverId: string, amount: string, memo?: string) => Promise<any>;
-  transferCall: (receiverId: string, amount: string, msg: string, memo?: string) => Promise<any>;
+  transfer: (receiverId: string, amount: string, memo?: string) => Promise<void>;
+  transferCall: (receiverId: string, amount: string, msg: string, memo?: string) => Promise<void>;
   balanceOf: (accountId: string) => Promise<string>;
   totalSupply: () => Promise<string>;
-  metadata: () => Promise<any>;
-  storageBalanceOf: (accountId: string) => Promise<any>;
-  storageDeposit: (accountId?: string, amount?: string) => Promise<any>;
+  metadata: () => Promise<NEP141Metadata>;
+  storageBalanceOf: (accountId: string) => Promise<StorageBalance | null>;
+  storageDeposit: (accountId?: string, amount?: string) => Promise<StorageBalance>;
   ensureStorage: (accountId: string) => Promise<void>;
   contract: NEP141Contract;
 };
