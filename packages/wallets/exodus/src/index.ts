@@ -1,20 +1,26 @@
 import type { Wallet } from "@passkeys/core";
+import { Transaction } from "@solana/web3.js";
 import {
+  type AssetValue,
   Chain,
   type ChainApis,
   ChainToHexChainId,
   type ConnectWalletParams,
   EVMChains,
+  SwapKitError,
   WalletOption,
+  type WalletTxParams,
   filterSupportedChains,
+  getRPCUrl,
   pickEvmApiKey,
   prepareNetworkSwitch,
   setRequestClientConfig,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import { type NonETHToolbox, getProvider, getToolboxByChain } from "@swapkit/toolbox-evm";
+import { SOLToolbox } from "@swapkit/toolbox-solana";
 import { BTCToolbox, Psbt, type UTXOTransferParams } from "@swapkit/toolbox-utxo";
-import { BrowserProvider, type Eip1193Provider } from "ethers";
+import { BrowserProvider } from "ethers";
 import {
   AddressPurpose,
   BitcoinNetworkType,
@@ -26,11 +32,10 @@ import {
   signTransaction as satsSignTransaction,
 } from "sats-connect";
 
-export const EXODUS_SUPPORTED_CHAINS = [...EVMChains, Chain.Bitcoin] as const;
+export const EXODUS_SUPPORTED_CHAINS = [...EVMChains, Chain.Bitcoin, Chain.Solana] as const;
 
 export const getWalletMethods = async ({
-  ethereumWindowProvider,
-  walletProvider,
+  wallet,
   chain,
   ethplorerApiKey,
   covalentApiKey,
@@ -38,8 +43,7 @@ export const getWalletMethods = async ({
   rpcUrl,
   apis,
 }: {
-  ethereumWindowProvider: Eip1193Provider | undefined;
-  walletProvider: BrowserProvider | BitcoinProvider;
+  wallet: Wallet;
   chain: Chain;
   covalentApiKey?: string;
   ethplorerApiKey?: string;
@@ -50,13 +54,14 @@ export const getWalletMethods = async ({
   switch (chain) {
     case Chain.Bitcoin: {
       const api = apis?.[chain];
+      const walletProvider = await wallet.getProvider("bitcoin");
 
       const toolbox = BTCToolbox({ rpcUrl, apiKey: blockchairApiKey, apiClient: api });
 
       let address = "";
 
       const getProvider: () => Promise<BitcoinProvider | undefined> = () =>
-        new Promise((res) => res(walletProvider as BitcoinProvider));
+        new Promise((res) => res(walletProvider || undefined));
 
       const getAddressOptions: GetAddressOptions = {
         getProvider,
@@ -109,6 +114,7 @@ export const getWalletMethods = async ({
       const transfer = (transferParams: UTXOTransferParams) => {
         return toolbox.transfer({
           ...transferParams,
+          from: address,
           signTransaction,
         });
       };
@@ -122,6 +128,7 @@ export const getWalletMethods = async ({
     case Chain.Ethereum:
     case Chain.Optimism:
     case Chain.Polygon: {
+      const ethereumWindowProvider = await wallet.getProvider("ethereum");
       if (!ethereumWindowProvider) throw new Error("Requested web3 wallet is not installed");
 
       const api = apis?.[chain];
@@ -132,7 +139,7 @@ export const getWalletMethods = async ({
         ethApiKey: ethplorerApiKey,
       });
       const provider = getProvider(chain);
-      const browserProvider = walletProvider as BrowserProvider;
+      const browserProvider = new BrowserProvider(ethereumWindowProvider, "any");
 
       await browserProvider.send("eth_requestAccounts", []);
 
@@ -160,6 +167,62 @@ export const getWalletMethods = async ({
         }),
       };
     }
+    case Chain.Solana: {
+      const walletProvider = await wallet.getProvider("solana");
+      if (!walletProvider) throw new Error("Requested web3 wallet is not installed");
+
+      const signTransaction = async (transaction: Transaction) => {
+        const serialized = transaction.serialize({
+          requireAllSignatures: false,
+          verifySignatures: false,
+        });
+        const signed = await walletProvider.signTransaction(serialized);
+        return Transaction.from(signed.serialize());
+      };
+
+      const publicKey = walletProvider.publicKey;
+      if (!publicKey) throw new SwapKitError("wallet_connection_rejected_by_user");
+      const address = publicKey.toString();
+
+      // Initialize Solana toolbox
+      const toolbox = SOLToolbox({
+        rpcUrl: rpcUrl || getRPCUrl(Chain.Solana),
+      });
+
+      const transfer = async ({
+        recipient,
+        assetValue,
+        isProgramDerivedAddress,
+        memo,
+      }: WalletTxParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
+        if (!(isProgramDerivedAddress || toolbox.validateAddress(recipient))) {
+          throw new SwapKitError("core_transaction_invalid_recipient_address");
+        }
+        const fromPublicKey = publicKey;
+
+        const transaction = await toolbox.createSolanaTransaction({
+          recipient,
+          assetValue,
+          memo,
+          fromPublicKey,
+          isProgramDerivedAddress,
+        });
+
+        const blockHash = await toolbox.connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockHash.blockhash;
+        transaction.feePayer = fromPublicKey;
+
+        const signedTransaction = await signTransaction(transaction);
+
+        return toolbox.broadcastTransaction(signedTransaction);
+      };
+
+      if (!address) throw new Error("No Solana address found");
+
+      // Create wallet methods that delegate to Exodus provider
+
+      return { ...toolbox, transfer, address };
+    }
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }
@@ -167,7 +230,7 @@ export const getWalletMethods = async ({
 
 function connectExodusWallet({
   addChain,
-  config: { covalentApiKey, ethplorerApiKey, thorswapApiKey },
+  config: { covalentApiKey, ethplorerApiKey, thorswapApiKey, blockchairApiKey },
 }: ConnectWalletParams) {
   return async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
     if (!wallet) throw new Error("Missing Exodus Wallet instance");
@@ -179,42 +242,33 @@ function connectExodusWallet({
       WalletOption.EXODUS,
     );
 
-    const { providers } = wallet;
-
     const promises = supportedChains.map(async (chain) => {
-      const walletProvider =
-        chain === Chain.Bitcoin
-          ? providers.bitcoin
-          : new BrowserProvider(providers.ethereum, "any");
+      try {
+        const { address, ...walletMethods } = await getWalletMethods({
+          wallet,
+          chain,
+          ethplorerApiKey,
+          covalentApiKey,
+          blockchairApiKey,
+        });
 
-      const { address, ...walletMethods } = await getWalletMethods({
-        chain,
-        ethplorerApiKey,
-        covalentApiKey,
-        ethereumWindowProvider: providers.ethereum,
-        walletProvider,
-      });
+        const getBalance = async (potentialScamFilter = true) =>
+          walletMethods.getBalance(address, potentialScamFilter);
 
-      const getBalance = async (potentialScamFilter = true) =>
-        walletMethods.getBalance(address, potentialScamFilter);
+        const disconnect = wallet.disconnect;
 
-      const disconnect = () =>
-        walletProvider.send("wallet_revokePermissions", [
-          {
-            eth_accounts: {},
-          },
-        ]);
-
-      addChain({
-        ...walletMethods,
-        disconnect,
-        chain,
-        address,
-        getBalance,
-        balance: [],
-        walletType: WalletOption.EXODUS,
-      });
-      return;
+        addChain({
+          ...walletMethods,
+          disconnect,
+          chain,
+          address,
+          getBalance,
+          balance: [],
+          walletType: WalletOption.EXODUS,
+        });
+      } catch (error) {
+        console.error(`Failed to connect ${chain}:`, error);
+      }
     });
 
     await Promise.all(promises);
