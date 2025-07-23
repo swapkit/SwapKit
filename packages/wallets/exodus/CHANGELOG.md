@@ -1,5 +1,11 @@
 # @swapkit/wallet-exodus
 
+## 2.0.0
+
+### Major Changes
+
+- [`599392f`](https://github.com/swapkit/SwapKit/commit/599392fe308d3307f2634c2d02b0c722c92612dc) Thanks [@towanTG](https://github.com/towanTG)! - Update to Exodus v4
+
 ## 1.6.0
 
 ### Minor Changes

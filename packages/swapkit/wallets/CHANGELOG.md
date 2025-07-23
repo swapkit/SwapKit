@@ -1,5 +1,12 @@
 # @swapkit/wallets
 
+## 2.1.38
+
+### Patch Changes
+
+- Updated dependencies [[`599392f`](https://github.com/swapkit/SwapKit/commit/599392fe308d3307f2634c2d02b0c722c92612dc)]:
+  - @swapkit/wallet-exodus@2.0.0
+
 ## 2.1.37
 
 ### Patch Changes
