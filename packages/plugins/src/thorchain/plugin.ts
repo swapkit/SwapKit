@@ -471,40 +471,46 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
     }
 
     async function swap({
-      feeOptionKey,
+      //   feeOptionKey,
       route,
     }: SwapParams<typeof pluginType, QuoteResponseRoute>) {
-      const { memo, expiration, targetAddress } = route;
+      //   const { memo, expiration, targetAddress, sellAsset, tx } = route;
+      const { sellAsset, tx } = route;
 
-      const assetValue = await AssetValue.from({
-        asyncTokenLookup: true,
-        asset: route.sellAsset,
-        value: route.sellAmount,
-      });
+      const wallet = getWallet(AssetValue.from({ asset: sellAsset }).chain as Chain.Bitcoin);
 
-      if (!assetValue) {
-        throw new SwapKitError("core_swap_asset_not_recognized");
-      }
+      const txHash = await wallet.signAndSend(tx as string);
 
-      const isRecipientValidated = validateAddressType({
-        address: route.destinationAddress,
-        chain: AssetValue.from({ asset: route.buyAsset }).chain,
-      });
+      return txHash as string;
+      //   const assetValue = await AssetValue.from({
+      //     asyncTokenLookup: true,
+      //     asset: route.sellAsset,
+      //     value: route.sellAmount,
+      //   });
 
-      if (!isRecipientValidated) {
-        throw new SwapKitError("core_transaction_invalid_recipient_address");
-      }
+      //   if (!assetValue) {
+      //     throw new SwapKitError("core_swap_asset_not_recognized");
+      //   }
 
-      const { address: recipient } = await getInboundDataByChain(assetValue.chain);
+      //   const isRecipientValidated = validateAddressType({
+      //     address: route.destinationAddress,
+      //     chain: AssetValue.from({ asset: route.buyAsset }).chain,
+      //   });
 
-      return deposit({
-        expiration: Number(expiration),
-        assetValue,
-        memo,
-        feeOptionKey,
-        router: targetAddress,
-        recipient,
-      });
+      //   if (!isRecipientValidated) {
+      //     throw new SwapKitError("core_transaction_invalid_recipient_address");
+      //   }
+
+      //   const { address: recipient } = await getInboundDataByChain(assetValue.chain);
+
+      //   return deposit({
+      //     expiration: Number(expiration),
+      //     assetValue,
+      //     memo,
+      //     feeOptionKey,
+      //     router: targetAddress,
+      //     recipient,
+      //   });
     }
 
     return {

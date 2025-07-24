@@ -239,6 +239,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
     getFeeRates: () => getFeeRates(chain),
     getInputsOutputsFee,
     transfer: transfer(signer as UtxoToolboxParams["BTC"]["signer"]),
+    signAndSend: signAndSend(chain, signer as UtxoToolboxParams["BTC"]["signer"]),
     getPrivateKeyFromMnemonic: (params: { phrase: string; derivationPath: string }) => {
       const keys = createKeysForPath(params);
       return keys.toWIF();
@@ -479,6 +480,18 @@ function transfer(signer?: ChainSigner<Psbt, Psbt>) {
       assetValue,
       memo,
     });
+    const signedPsbt = await signer.signTransaction(psbt);
+    signedPsbt.finalizeAllInputs(); // Finalise inputs
+    // TX extracted and formatted to hex
+    return getUtxoApi(chain).broadcastTx(signedPsbt.extractTransaction().toHex());
+  };
+}
+
+function signAndSend(chain: UTXOChain, signer?: ChainSigner<Psbt, Psbt>) {
+  return async function signAndSend(transaction: Psbt | string) {
+    const psbt = typeof transaction === "string" ? Psbt.fromHex(transaction) : transaction;
+    if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+
     const signedPsbt = await signer.signTransaction(psbt);
     signedPsbt.finalizeAllInputs(); // Finalise inputs
     // TX extracted and formatted to hex

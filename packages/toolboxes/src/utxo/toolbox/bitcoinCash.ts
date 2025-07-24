@@ -40,6 +40,45 @@ import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
 
 const chain = Chain.BitcoinCash;
 
+export function psbtToInputUtxos(psbt: Psbt): UTXOType[] {
+  // unsigned tx bytes stored in the PSBT
+
+  return psbt.data.inputs.map((inp, i) => {
+    const psbtInput = psbt.txInputs[i];
+    if (!psbtInput) throw new Error(`Input ${i} not found in PSBT.`);
+    const leHash = psbtInput.hash; // little-endian
+    const hash = Buffer.from(leHash).reverse().toString("hex");
+    const index = psbtInput.index;
+
+    if (inp.witnessUtxo) {
+      return {
+        hash,
+        index,
+        value: inp.witnessUtxo.value,
+        witnessUtxo: {
+          script: inp.witnessUtxo.script,
+          value: inp.witnessUtxo.value,
+        },
+        sighashType: inp.sighashType,
+      };
+    }
+
+    if (inp.nonWitnessUtxo) {
+      const prevTxBuf = inp.nonWitnessUtxo;
+      const prevTx = new Transaction(prevTxBuf);
+      return {
+        hash,
+        index,
+        value: prevTx.outs[index].value,
+        txHex: prevTxBuf.toString("hex"),
+        sighashType: inp.sighashType,
+      };
+    }
+
+    throw new Error(`Input ${i} missing UTXO data (nonWitnessUtxo/witnessUtxo).`);
+  });
+}
+
 export function stripPrefix(address: string) {
   return address.replace(/(bchtest:|bitcoincash:)/, "");
 }
@@ -128,6 +167,7 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     stripToCashAddress,
     validateAddress: bchValidateAddress,
     transfer: transfer({ getFeeRates, broadcastTx, signer }),
+    signAndSend: signAndSend(broadcastTx, signer),
   };
 }
 
@@ -194,6 +234,45 @@ async function createTransaction({
   }
 
   return { builder, utxos: inputs };
+}
+
+function signAndSend(
+  broadcastTx: (txHash: string) => Promise<string>,
+  signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>,
+) {
+  return async function signAndSend(transaction: Psbt | string) {
+    const psbt = typeof transaction === "string" ? Psbt.fromHex(transaction) : transaction;
+
+    if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+
+    const transactionBuilder = new TransactionBuilder(
+      await getUtxoNetwork()(chain),
+    ) as TransactionBuilderType;
+
+    for (const inp of psbt.txInputs) {
+      const txid = inp.hash; // little-endian in bitcoinjs-lib JSON; reverse if needed
+      const vout = inp.index;
+      transactionBuilder.addInput(txid, vout);
+    }
+
+    for (const out of psbt.txOutputs) {
+      if (out.address) {
+        transactionBuilder.addOutput(out.address, out.value);
+        continue;
+      }
+      const getNetwork = await getUtxoNetwork();
+      const outputScript = bchAddress.toOutputScript(out.script, getNetwork(chain));
+      transactionBuilder.addOutput(outputScript, out.value);
+    }
+
+    const tx = await signer.signTransaction({
+      builder: transactionBuilder,
+      utxos: psbtToInputUtxos(psbt),
+    });
+    const txHex = tx.toHex();
+
+    return broadcastTx(txHex);
+  };
 }
 
 function transfer({

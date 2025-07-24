@@ -1,12 +1,12 @@
 import {
   AssetValue,
   Chain,
-  type CryptoChain,
+  //   type CryptoChain,
   ProviderName,
   SwapKitError,
   type SwapParams,
 } from "@swapkit/helpers";
-import { type QuoteResponseRoute, SwapKitApi } from "@swapkit/helpers/api";
+import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
 import { createPlugin } from "../utils";
 import { calculateNearNameCost, validateNearName } from "./nearNames";
@@ -25,6 +25,7 @@ export const NearPlugin = createPlugin({
           sellAsset: sellAssetString,
           sellAmount,
           meta: { near },
+          tx,
         },
       } = swapParams;
 
@@ -38,21 +39,16 @@ export const NearPlugin = createPlugin({
         value: sellAmount,
       });
 
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+      //   const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+      const wallet = getWallet(sellAsset.chain as Chain.Bitcoin);
 
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
 
-      const { depositAddress } = await SwapKitApi.getNearDepositChannel(near);
+      const txHash = await wallet.signAndSend(tx as string);
 
-      const tx = await wallet.transfer({
-        assetValue: sellAsset,
-        recipient: depositAddress,
-        isProgramDerivedAddress: true,
-      });
-
-      return tx as string;
+      return txHash as string;
     },
 
     // NEAR Names functionality
