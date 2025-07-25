@@ -1,5 +1,14 @@
 # @swapkit/core
 
+## 3.4.10
+
+### Patch Changes
+
+- Updated dependencies [[`03ea1fe`](https://github.com/swapkit/SwapKit/commit/03ea1fe23b0a1356dbd7723fe91b9f624a72db03)]:
+  - @swapkit/toolbox-utxo@1.4.17
+  - @swapkit/helpers@2.10.5
+  - @swapkit/toolbox-tron@0.0.5
+
 ## 3.4.9
 
 ### Patch Changes

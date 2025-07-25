@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.4.17
+
+### Patch Changes
+
+- [`03ea1fe`](https://github.com/swapkit/SwapKit/commit/03ea1fe23b0a1356dbd7723fe91b9f624a72db03) Thanks [@towanTG](https://github.com/towanTG)! - Fixes nonWitnessUtxo for inputs if txHex is set but it is not a nonWittnessUtxo chain
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.10.5
+
 ## 1.4.16
 
 ### Patch Changes
