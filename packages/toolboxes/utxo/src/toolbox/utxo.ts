@@ -199,9 +199,10 @@ export const buildTx = async ({
       hash: utxo.hash,
       index: utxo.index,
       ...(!!utxo.witnessUtxo && !isNonSegwitChain && { witnessUtxo: utxo.witnessUtxo }),
-      ...(isNonSegwitChain && {
-        nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
-      }),
+      ...(isNonSegwitChain &&
+        utxo.txHex && {
+          nonWitnessUtxo: Buffer.from(utxo.txHex, "hex"),
+        }),
     });
   }
 

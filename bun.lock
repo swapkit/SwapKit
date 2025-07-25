@@ -130,7 +130,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.4.15",
+      "version": "2.4.17",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
@@ -150,7 +150,7 @@
     },
     "packages/swapkit/wallets": {
       "name": "@swapkit/wallets",
-      "version": "2.1.36",
+      "version": "2.1.38",
       "dependencies": {
         "@swapkit/wallet-bitget": "workspace:*",
         "@swapkit/wallet-coinbase": "workspace:*",
@@ -337,7 +337,7 @@
     },
     "packages/wallets/exodus": {
       "name": "@swapkit/wallet-exodus",
-      "version": "1.5.16",
+      "version": "2.0.0",
       "dependencies": {
         "@passkeys/core": "^4.0.0",
         "@passkeys/react": "^3.0.0",
