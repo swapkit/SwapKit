@@ -1,5 +1,12 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.50
+
+### Patch Changes
+
+- Updated dependencies [[`bf2a018`](https://github.com/swapkit/SwapKit/commit/bf2a018ba2f5769158b0b90d71f4dd37fae8c6fe)]:
+  - @swapkit/helpers@4.0.0-beta.33
+
 ## 4.0.0-beta.49
 
 ### Patch Changes

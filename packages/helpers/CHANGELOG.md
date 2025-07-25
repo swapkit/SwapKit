@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.33
+
+### Patch Changes
+
+- [`bf2a018`](https://github.com/swapkit/SwapKit/commit/bf2a018ba2f5769158b0b90d71f4dd37fae8c6fe) Thanks [@towanTG](https://github.com/towanTG)! - Changes Poligon Chain denom
+
 ## 4.0.0-beta.32
 
 ### Patch Changes
