@@ -4,7 +4,6 @@
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
     "alwaysStrict": true,
-    "baseUrl": "./",
     "disableSizeLimit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
