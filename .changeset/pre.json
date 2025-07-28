@@ -28,5 +28,10 @@
     "@swapkit/wallet-keystore": "4.0.0-beta.1",
     "@swapkit/wallet-mobile": "4.0.0-beta.1"
   },
-  "changesets": ["exodus-passkeys-v4-solana", "moody-tools-dig", "tronlink-wallet-integration"]
+  "changesets": [
+    "exodus-passkeys-v4-solana",
+    "fair-eggs-repair",
+    "moody-tools-dig",
+    "tronlink-wallet-integration"
+  ]
 }
