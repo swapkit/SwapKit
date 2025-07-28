@@ -39,7 +39,7 @@ export const GaiaToolbox = ({ server, swapkitApiKey }: ToolboxParams = {}): Gaia
   });
 
   async function getFees() {
-    const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 500, swapkitApiKey || "");
+    const baseFee = await getFeeRateFromThorswap(ChainId.Cosmos, 1000, swapkitApiKey || "");
     return {
       type: "base",
       average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal.GAIA),
