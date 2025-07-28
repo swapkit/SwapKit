@@ -1,4 +1,5 @@
 import type { Account } from "near-api-js";
+import type { Action } from "near-api-js/lib/transaction";
 
 // Custom interface for contract metadata (not in SDK)
 export interface NearContractInterface {
@@ -16,8 +17,8 @@ export interface NearCallParams {
   contractId: string;
   methodName: string;
   args?: Record<string, any>;
-  gas?: string | any; // BN type
-  attachedDeposit?: string | any; // BN type
+  gas?: string | bigint;
+  attachedDeposit?: string | bigint;
   isView?: boolean;
 }
 
@@ -34,7 +35,7 @@ export type NearGasEstimateParams =
       attachedDeposit?: string;
     }
   | {
-      actions: any[]; // Action type from near-api-js
+      actions: Action[];
     }
   | {
       newAccountId: string;

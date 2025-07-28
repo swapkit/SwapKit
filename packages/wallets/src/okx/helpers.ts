@@ -8,6 +8,7 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
+import type { NearToolbox } from "@swapkit/toolboxes/near";
 import type { TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
 import { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
@@ -145,7 +146,7 @@ export async function getWalletMethods(chain: Chain) {
       const accountId = await signer.getAddress();
       const toolbox = await getNearToolbox({ signer });
 
-      return { ...toolbox, address: accountId };
+      return { ...toolbox, address: accountId } as NearToolbox & { address: string };
     })
     .with(Chain.Tron, async () => {
       if (!(window.okxwallet && "tronLink" in window.okxwallet)) {

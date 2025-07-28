@@ -1,8 +1,6 @@
-import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
 import type { BrowserProvider, JsonRpcProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
-  type AddChainType,
   type Chain,
   ChainToHexChainId,
   type EIP6963AnnounceProviderEvent,
@@ -126,10 +124,7 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   }) as unknown as T;
 }
 
-export function prepareNetworkSwitch<
-  T extends Awaited<ReturnType<typeof getEvmToolbox>>,
-  M extends keyof T,
->({
+export function prepareNetworkSwitch<T extends Record<string, unknown>, M extends keyof T>({
   toolbox,
   chain,
   provider = window.ethereum,
@@ -215,42 +210,6 @@ export function okxMobileEnabled() {
   const isOKApp = /OKApp/i.test(ua);
 
   return isMobile && isOKApp;
-}
-
-export function createWallet<
-  ConnectParams extends any[],
-  SupportedChains extends Chain[],
-  const Name extends string,
-  WalletType extends WalletOption,
->({
-  connect,
-  name,
-  supportedChains,
-  walletType,
-}: {
-  connect: (connectParams: {
-    addChain: AddChainType;
-    walletType: WalletType;
-    supportedChains: SupportedChains;
-  }) => (...params: ConnectParams) => Promise<boolean>;
-  name: Name;
-  supportedChains: SupportedChains;
-  walletType?: WalletType | string;
-}) {
-  function connectWallet(connectParams: {
-    addChain: AddChainType;
-  }) {
-    return connect({ ...connectParams, walletType: walletType as WalletType, supportedChains });
-  }
-
-  return {
-    [name]: { supportedChains, connectWallet },
-  } as unknown as {
-    [key in Name]: {
-      connectWallet: typeof connectWallet;
-      supportedChains: SupportedChains;
-    };
-  };
 }
 
 export function providerRequest({

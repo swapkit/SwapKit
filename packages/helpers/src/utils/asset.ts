@@ -1,10 +1,11 @@
+import type { TokenNames } from "@swapkit/tokens";
 import { match } from "ts-pattern";
+
 import { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
 import { SKConfig } from "../modules/swapKitConfig";
 import { BaseDecimal, Chain, type EVMChain, EVMChains, UTXOChains } from "../types/chains";
 import type { RadixCoreStateResourceDTO } from "../types/radix";
-import type { TokenNames } from "../types/tokens";
 
 export type CommonAssetString = (typeof CommonAssetStrings)[number] | Chain;
 
@@ -209,7 +210,8 @@ export async function findAssetBy(
     | { chain: EVMChain | Chain.Radix | Chain.Solana; contract: string }
     | { identifier: `${Chain}.${string}` },
 ) {
-  const { tokenLists } = await import("@swapkit/helpers/tokens");
+  const { loadTokenLists } = await import("../tokens");
+  const tokenLists = await loadTokenLists();
 
   for (const tokenList of Object.values(tokenLists)) {
     for (const { identifier, chain: tokenChain, ...rest } of tokenList.tokens) {
@@ -221,6 +223,7 @@ export async function findAssetBy(
         "address" in rest &&
         "chain" in params &&
         tokenChain === params.chain &&
+        rest.address &&
         rest.address.toLowerCase() === params.contract.toLowerCase()
       )
         return identifier as TokenNames;

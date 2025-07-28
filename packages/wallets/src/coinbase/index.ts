@@ -3,11 +3,10 @@ import {
   ChainToChainId,
   SKConfig,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
-import { getWalletSupportedChains } from "../utils";
 import { getWalletMethods } from "./signer";
 
 export const coinbaseWallet = createWallet({

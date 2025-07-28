@@ -10,8 +10,9 @@ import {
 } from "@swapkit/helpers";
 import { P, match } from "ts-pattern";
 
-import { trc20ABI } from "./helpers/trc20.abi.js";
-import { fetchAccountFromTronGrid } from "./helpers/trongrid.js";
+import type { TronWeb } from "tronweb";
+import { trc20ABI } from "./helpers/trc20.abi";
+import { fetchAccountFromTronGrid } from "./helpers/trongrid";
 import type {
   ApproveParams,
   ApprovedParams,
@@ -22,9 +23,7 @@ import type {
   TronToolboxOptions,
   TronTransaction,
   TronTransferParams,
-} from "./types.js";
-
-import { TronWeb } from "tronweb";
+} from "./types";
 
 // Constants for TRON resource calculation
 const TRX_TRANSFER_BANDWIDTH = 268; // Bandwidth consumed by a TRX transfer
@@ -37,6 +36,9 @@ const TRON_USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 const MAX_APPROVAL = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
 export async function getTronAddressValidator() {
+  const TW = await import("tronweb");
+  const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
+
   return (address: string) => {
     return TronWeb.isAddress(address);
   };
@@ -109,7 +111,25 @@ async function createKeysForPath({
   };
 }
 
-export const createTronToolbox = async (options: TronToolboxOptions = {}) => {
+export const createTronToolbox = async (
+  options: TronToolboxOptions = {},
+): Promise<{
+  tronWeb: TronWeb;
+  getAddress: () => Promise<string>;
+  validateAddress: (address: string) => boolean;
+  getBalance: (address: string) => Promise<AssetValue[]>;
+  transfer: (params: TronTransferParams) => Promise<string>;
+  estimateTransactionFee: (params: TronTransferParams & { sender?: string }) => Promise<AssetValue>;
+  createTransaction: (params: TronCreateTransactionParams) => Promise<any>;
+  signTransaction: (transaction: any) => Promise<any>;
+  broadcastTransaction: (signedTransaction: any) => Promise<string>;
+  approve: (params: ApproveParams) => Promise<string>;
+  isApproved: (params: IsApprovedParams) => Promise<boolean>;
+  getApprovedAmount: (params: ApprovedParams) => Promise<bigint>;
+}> => {
+  const TW = await import("tronweb");
+  const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
+
   // Always get configuration from SKConfig
   const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
   // Note: TRON API key support can be added to SKConfig apiKeys when needed

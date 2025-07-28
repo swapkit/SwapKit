@@ -12,9 +12,7 @@ import {
   MemoType,
   ProviderName,
   SwapKitError,
-  type SwapKitPluginParams,
   type SwapParams,
-  createPlugin,
   getMemoForDeposit,
   getMemoForLeaveAndBond,
   getMemoForNamePreferredAssetRegister,
@@ -40,6 +38,8 @@ import {
   TCBscDepositABI,
   TCEthereumVaultAbi,
 } from "@swapkit/helpers/contracts";
+import type { SwapKitPluginParams } from "../types";
+import { createPlugin } from "../utils";
 import { prepareTxParams, validateAddressType } from "./shared";
 import type {
   AddLiquidityParams,

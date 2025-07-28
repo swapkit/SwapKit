@@ -6,18 +6,17 @@ import {
   SKConfig,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { NearSigner } from "@swapkit/toolboxes/near";
 import type { TronSignedTransaction, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
 import type { WalletConnectModal } from "@walletconnect/modal";
+import type { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 import type { Transaction } from "near-api-js/lib/transaction";
 
-import type { SignClient } from "@walletconnect/sign-client";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,

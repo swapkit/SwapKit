@@ -1,17 +1,7 @@
-import type { CosmosWallets, ThorchainWallets } from "@swapkit/toolboxes/cosmos";
-import type { EVMToolboxes } from "@swapkit/toolboxes/evm";
-import type { NearWallet } from "@swapkit/toolboxes/near";
-import type { RadixWallet } from "@swapkit/toolboxes/radix";
-import type { RippleWallet } from "@swapkit/toolboxes/ripple";
-import type { SolanaWallet } from "@swapkit/toolboxes/solana";
-import type { SubstrateToolboxes } from "@swapkit/toolboxes/substrate";
-import type { TronWallet } from "@swapkit/toolboxes/tron";
-import type { UTXOToolboxes } from "@swapkit/toolboxes/utxo";
-import type { BrowserProvider } from "ethers";
-import type { Eip1193Provider } from "ethers";
+import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
-import { Chain, type ChainId } from "./chains";
+import type { Chain, ChainId } from "./chains";
 import type { FeeOption } from "./sdk";
 
 declare global {
@@ -101,24 +91,6 @@ export type ChainWallet<T extends Chain> = {
 export type EmptyWallet = { [key in Chain]?: unknown };
 export type BaseWallet<T extends EmptyWallet | Record<string, unknown>> = {
   [key in Chain]: ChainWallet<key> & (T extends EmptyWallet ? T[key] : never);
-};
-
-export type FullWallet = BaseWallet<
-  EVMToolboxes &
-    UTXOToolboxes &
-    CosmosWallets &
-    ThorchainWallets &
-    SubstrateToolboxes & {
-      [Chain.Radix]: RadixWallet;
-      [Chain.Ripple]: RippleWallet;
-      [Chain.Solana]: SolanaWallet;
-      [Chain.Tron]: TronWallet;
-      [Chain.Near]: NearWallet;
-    }
->;
-
-export type SwapKitPluginParams = {
-  getWallet: <T extends CryptoChain>(chain: T) => FullWallet[T];
 };
 
 export type EIP6963ProviderInfo = {

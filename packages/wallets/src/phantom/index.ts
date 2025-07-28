@@ -4,10 +4,9 @@ import {
   type GenericTransferParams,
   SwapKitError,
   WalletOption,
-  createWallet,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import { getWalletSupportedChains } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 export const phantomWallet = createWallet({
   name: "connectPhantom",

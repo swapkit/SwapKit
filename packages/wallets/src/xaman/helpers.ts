@@ -1,6 +1,6 @@
 import { type AssetValue, Chain, SwapKitError } from "@swapkit/helpers";
 import type { Xumm } from "xumm";
-import { sendXamanTransaction } from "./walletMethods.js";
+import { sendXamanTransaction } from "./walletMethods";
 
 interface GetWalletForChainParams {
   chain: Chain;

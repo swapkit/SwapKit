@@ -1,6 +1,5 @@
 import { SwapKitError } from "@swapkit/helpers";
-import { TronWeb } from "tronweb";
-import type { TronGridAccountResponse } from "../types.js";
+import type { TronGridAccountResponse } from "../types";
 
 const TRONGRID_API_BASE = "https://api.trongrid.io";
 
@@ -8,6 +7,9 @@ const TRONGRID_API_BASE = "https://api.trongrid.io";
  * Fetch account information including TRC20 balances from TronGrid API
  */
 export async function fetchAccountFromTronGrid(address: string) {
+  const TW = await import("tronweb");
+  const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
+
   try {
     const response = await fetch(`${TRONGRID_API_BASE}/v1/accounts/${address}`);
 

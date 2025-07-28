@@ -1,6 +1,7 @@
 import { getAddress } from "ethers";
 import { match } from "ts-pattern";
 
+import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
 import {
   BaseDecimal,
   Chain,
@@ -9,7 +10,6 @@ import {
   type EVMChain,
   EVMChains,
 } from "../types/chains";
-import type { TokenNames, TokenTax } from "../types/tokens";
 import {
   type CommonAssetString,
   assetFromString,
@@ -19,7 +19,6 @@ import {
   isGasAsset,
 } from "../utils/asset";
 import { warnOnce } from "../utils/others";
-import { type TokenListName, loadTokenLists } from "../utils/tokens";
 import { validateIdentifier } from "../utils/validators";
 
 import type { NumberPrimitives } from "./bigIntArithmetics";
@@ -31,7 +30,7 @@ const CASE_SENSITIVE_CHAINS = [Chain.Solana, Chain.Tron];
 
 const staticTokensMap = new Map<
   TokenNames | string,
-  { tax?: TokenTax; decimal: number; identifier: string }
+  { tax?: TokenTax; decimal: number; identifier: string; logoURI?: string }
 >();
 
 type ConditionalAssetValueReturn<T extends { asyncTokenLookup?: boolean }> =
@@ -99,6 +98,11 @@ export class AssetValue extends BigIntArithmetics {
       : this.isTradeAsset
         ? `${this.chain}.${this.symbol.replace("~", "..")}`
         : this.toString();
+  }
+
+  getIconUrl() {
+    const token = staticTokensMap.get(this.toString());
+    return token?.logoURI;
   }
 
   eqAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
@@ -177,6 +181,7 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
   }
 
   static async loadStaticAssets(listNames?: TokenListName[]) {
+    const { loadTokenLists } = await import("@swapkit/tokens");
     const lists = await loadTokenLists(listNames);
 
     for (const { tokens } of Object.values(lists)) {

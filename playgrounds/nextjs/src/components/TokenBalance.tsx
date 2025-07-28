@@ -1,7 +1,6 @@
 "use client";
 
 import type { AssetValue } from "@swapkit/helpers";
-import { getTokenIcon } from "@swapkit/helpers/tokens";
 import Image from "next/image";
 
 interface TokenBalanceProps {
@@ -9,7 +8,7 @@ interface TokenBalanceProps {
 }
 
 export function TokenBalance({ balance }: TokenBalanceProps) {
-  const iconUrl = getTokenIcon(balance.toString());
+  const iconUrl = balance.getIconUrl();
   const displaySymbol = balance.ticker || balance.symbol;
 
   return (

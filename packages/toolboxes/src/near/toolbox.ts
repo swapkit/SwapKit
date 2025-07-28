@@ -1,19 +1,12 @@
-import {
-  AssetValue,
-  BaseDecimal,
-  Chain,
-  type DerivationPathArray,
-  SKConfig,
-  SwapKitError,
-} from "@swapkit/helpers";
-import type { Account } from "near-api-js";
+import { AssetValue, BaseDecimal, Chain, SKConfig, SwapKitError } from "@swapkit/helpers";
+import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import {
   getFullAccessPublicKey,
   getNearSignerFromPhrase,
   getNearSignerFromPrivateKey,
   getValidateNearAddress,
-} from "./helpers";
+} from "./helpers/core";
 import {
   GAS_COSTS,
   estimateBatchGas,
@@ -25,7 +18,7 @@ import {
   isCustomEstimator,
   isSimpleTransfer,
 } from "./helpers/gasEstimation";
-import { createNEP141Token } from "./helpers/nep141";
+import { createNEP141Token, createNearContract } from "./helpers/nep141";
 import type {
   NearCreateTransactionParams,
   NearFunctionCallParams,
@@ -33,8 +26,15 @@ import type {
   NearTransferParams,
 } from "./types";
 import type { NearContractInterface, NearGasEstimateParams } from "./types/contract";
+import type {
+  BatchTransaction,
+  ContractFunctionCallParams,
+  GetSignerFromPhraseParams,
+  NearToolbox,
+  SerializedTransaction,
+} from "./types/toolbox";
 
-export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
+export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise<NearToolbox> {
   const { P, match } = await import("ts-pattern");
   const { providers } = await import("near-api-js");
   const signer = await match(toolboxParams)
@@ -116,7 +116,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     }
   }
 
-  async function createTransaction(params: NearCreateTransactionParams) {
+  async function createTransaction(
+    params: NearCreateTransactionParams,
+  ): Promise<SerializedTransaction> {
     const { recipient, assetValue, memo, feeRate: gas, attachedDeposit, sender: signerId } = params;
     const validateNearAddress = await getValidateNearAddress();
 
@@ -190,14 +192,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     };
   }
 
-  async function createContractFunctionCall(params: {
-    sender: string;
-    contractId: string;
-    methodName: string;
-    args: any;
-    gas: string;
-    attachedDeposit: string;
-  }) {
+  async function createContractFunctionCall(
+    params: ContractFunctionCallParams,
+  ): Promise<SerializedTransaction> {
     const { sender: accountId } = params;
 
     const { publicKey, nonce } = await getFullAccessPublicKey(provider, accountId);
@@ -241,7 +238,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     };
   }
 
-  async function signTransaction(transaction: Transaction) {
+  async function signTransaction(transaction: Transaction): Promise<SignedTransaction> {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
@@ -296,7 +293,11 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     }
   }
 
-  async function createSubAccount(subAccountId: string, publicKey: string, initialBalance: string) {
+  async function createSubAccount(
+    subAccountId: string,
+    publicKey: string,
+    initialBalance: string,
+  ): Promise<string> {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
@@ -315,7 +316,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     return result.transaction.hash;
   }
 
-  async function callFunction(params: NearFunctionCallParams) {
+  async function callFunction(params: NearFunctionCallParams): Promise<string> {
     try {
       if (!signer) {
         throw new SwapKitError("toolbox_near_no_signer");
@@ -351,11 +352,12 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
   }
 
   // Create typed contract interface
-  async function createContract(contractInterface: NearContractInterface) {
-    const { createNearContract } = await import("./helpers/contractFactory");
+  async function createContract<T extends Contract = Contract>(
+    contractInterface: NearContractInterface,
+  ): Promise<T> {
     const account = await getAccount();
 
-    return createNearContract({
+    return createNearContract<T>({
       account,
       contractId: contractInterface.contractId,
       viewMethods: contractInterface.viewMethods,
@@ -363,7 +365,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     });
   }
 
-  async function executeBatchTransaction(batch: { receiverId: string; actions: any[] }) {
+  async function executeBatchTransaction(batch: BatchTransaction): Promise<string> {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
@@ -492,11 +494,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     signTransaction,
     getBalance,
     validateAddress: await getValidateNearAddress(),
-    getSignerFromPhrase: (params: {
-      phrase: string;
-      derivationPath?: DerivationPathArray;
-      index?: number;
-    }) => getNearSignerFromPhrase(params),
+    getSignerFromPhrase: (params: GetSignerFromPhraseParams) => getNearSignerFromPhrase(params),
     getSignerFromPrivateKey: getNearSignerFromPrivateKey,
     callFunction,
     createSubAccount,

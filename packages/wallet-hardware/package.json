@@ -1,0 +1,80 @@
+{
+  "author": "swapkit-oss",
+  "dependencies": {
+    "@keepkey/keepkey-sdk": "~0.2.62",
+    "@ledgerhq/devices": "~8.4.6",
+    "@ledgerhq/errors": "~6.21.0",
+    "@ledgerhq/hw-app-btc": "~10.9.0",
+    "@ledgerhq/hw-app-cosmos": "~6.32.0",
+    "@ledgerhq/hw-app-eth": "~6.45.0",
+    "@ledgerhq/hw-app-near": "~6.31.0",
+    "@ledgerhq/hw-app-trx": "~6.31.3",
+    "@ledgerhq/hw-app-xrp": "~6.31.0",
+    "@ledgerhq/hw-transport": "~6.31.0",
+    "@ledgerhq/hw-transport-webusb": "~6.29.0",
+    "@ledgerhq/wallet-api-client": "~1.9.0",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "ethers": "^6.14.0",
+    "ts-pattern": "~5.7.0"
+  },
+  "devDependencies": {
+    "@keepkey/keepkey-sdk": "0.2.62",
+    "@ledgerhq/devices": "8.4.6",
+    "@ledgerhq/errors": "6.21.0",
+    "@ledgerhq/hw-app-btc": "10.9.2",
+    "@ledgerhq/hw-app-cosmos": "6.32.2",
+    "@ledgerhq/hw-app-eth": "6.45.6",
+    "@ledgerhq/hw-app-near": "6.31.2",
+    "@ledgerhq/hw-app-trx": "6.31.3",
+    "@ledgerhq/hw-app-xrp": "6.31.2",
+    "@ledgerhq/hw-transport": "6.31.6",
+    "@ledgerhq/hw-transport-webusb": "6.29.6",
+    "@ledgerhq/wallet-api-client": "1.9.0",
+    "ethers": "6.14.3",
+    "ts-pattern": "5.7.1"
+  },
+  "description": "SwapKit - Wallet Hardware",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./keepkey": {
+      "import": "./dist/keepkey/index.js",
+      "require": "./dist/keepkey/index.cjs",
+      "types": "./dist/types/keepkey/index.d.ts"
+    },
+    "./ledger": {
+      "import": "./dist/ledger/index.js",
+      "require": "./dist/ledger/index.cjs",
+      "types": "./dist/types/ledger/index.d.ts"
+    },
+    "./trezor": {
+      "import": "./dist/trezor/index.js",
+      "require": "./dist/trezor/index.cjs",
+      "types": "./dist/types/trezor/index.d.ts"
+    }
+  },
+  "files": ["dist/"],
+  "homepage": "https://github.com/swapkit/SwapKit",
+  "license": "Apache-2.0",
+  "name": "@swapkit/wallet-hardware",
+  "repository": {
+    "directory": "packages/wallet-hardware",
+    "type": "git",
+    "url": "git+https://github.com/swapkit/SwapKit.git"
+  },
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "build:clean": "rm -rf dist && bun run ./build.ts",
+    "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "test": "echo 'bun test'",
+    "test:ci": "echo 'bun test --coverage'",
+    "type-check": "bun tsc --noEmit",
+    "type-check:go": "tsgo"
+  },
+  "type": "module",
+  "version": "4.0.0-beta.1"
+}

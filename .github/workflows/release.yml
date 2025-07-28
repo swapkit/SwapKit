@@ -42,9 +42,6 @@ jobs:
       - name: Setup Repo
         uses: ./tools/github/setup-repo
 
-      - name: Replace versions
-        run: bun run ./scripts/replace-versions.ts
-
       - name: Copy npmrc config
         run: cp .npmrc.prod .npmrc
 
@@ -103,6 +100,7 @@ jobs:
 
   build-docs:
     runs-on: ubuntu-latest
+    if: github.ref_name == 'develop'
     needs: [build-lint-test]
     permissions:
       contents: read
