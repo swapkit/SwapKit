@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 2.10.6
+
+### Patch Changes
+
+- [`c2d7e83`](https://github.com/swapkit/SwapKit/commit/c2d7e8306cf9e6beaf7b81d923dc0ffb953d215b) Thanks [@towanTG](https://github.com/towanTG)! - Changes Atom RPC url and increase Atom min gas fee default
+
 ## 2.10.5
 
 ### Patch Changes

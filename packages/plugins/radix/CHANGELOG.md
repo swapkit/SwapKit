@@ -1,5 +1,13 @@
 # @swapkit/plugin-radix
 
+## 1.4.19
+
+### Patch Changes
+
+- Updated dependencies [[`c2d7e83`](https://github.com/swapkit/SwapKit/commit/c2d7e8306cf9e6beaf7b81d923dc0ffb953d215b)]:
+  - @swapkit/helpers@2.10.6
+  - @swapkit/api@2.9.7
+
 ## 1.4.18
 
 ### Patch Changes
