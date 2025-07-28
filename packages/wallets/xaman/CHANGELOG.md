@@ -1,5 +1,13 @@
 # @swapkit/wallet-xaman
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`c2d7e83`](https://github.com/swapkit/SwapKit/commit/c2d7e8306cf9e6beaf7b81d923dc0ffb953d215b)]:
+  - @swapkit/helpers@2.10.6
+  - @swapkit/toolbox-ripple@1.0.23
+
 ## 1.0.6
 
 ### Patch Changes
