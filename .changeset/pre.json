@@ -17,7 +17,16 @@
     "@swapkit/sdk": "2.2.17",
     "@swapkit/toolboxes": "0.1.0",
     "@swapkit/ui": "0.0.1",
-    "@swapkit/wallets": "2.0.20"
+    "@swapkit/wallets": "2.0.20",
+    "@swapkit/browser": "4.0.0-beta.1",
+    "@swapkit/contracts": "4.0.0-beta.1",
+    "@swapkit/server": "4.0.0-beta.1",
+    "@swapkit/tokens": "4.0.0-beta.1",
+    "@swapkit/wallet-core": "4.0.0-beta.1",
+    "@swapkit/wallet-extension": "4.0.0-beta.1",
+    "@swapkit/wallet-hardware": "4.0.0-beta.1",
+    "@swapkit/wallet-keystore": "4.0.0-beta.1",
+    "@swapkit/wallet-mobile": "4.0.0-beta.1"
   },
-  "changesets": []
+  "changesets": ["moody-tools-dig"]
 }
