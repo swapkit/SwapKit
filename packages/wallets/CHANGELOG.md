@@ -1,5 +1,37 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.56
+
+### Minor Changes
+
+- [#1417](https://github.com/swapkit/SwapKit/pull/1417) [`fb6d225`](https://github.com/swapkit/SwapKit/commit/fb6d22564b6237f497256fbed6aa56a520126b91) Thanks [@towanTG](https://github.com/towanTG)! - Update Exodus wallet integration to Passkeys v4 and add Solana support
+
+  - Updated @passkeys/core from v3 to v4 and @passkeys/react from v2 to v3
+  - Migrated internal implementation from synchronous `wallet.providers` to asynchronous `wallet.getProvider()` API
+  - Added Solana blockchain support to Exodus wallet integration
+  - Improved error handling for provider access
+  - Enhanced disconnect functionality using new `wallet.disconnect()` method when available
+
+  Note: This is not a breaking change for SwapKit users - the wallet connection API remains unchanged.
+
+### Patch Changes
+
+- [#1418](https://github.com/swapkit/SwapKit/pull/1418) [`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5) Thanks [@towanTG](https://github.com/towanTG)! - Add TronLink wallet integration
+
+  - Add TRONLINK to WalletOption enum
+  - Implement TronLink wallet connector with support for Tron chain
+  - Use hybrid provider detection with `tronlink#initialized` event
+  - Handle account and network change events
+  - Implement robust error handling for user rejection
+  - Add network verification during connection
+
+- Updated dependencies [[`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5)]:
+  - @swapkit/helpers@4.0.0-beta.35
+  - @swapkit/toolboxes@4.0.0-beta.52
+  - @swapkit/wallet-core@4.0.0-beta.3
+  - @swapkit/wallet-hardware@4.0.0-beta.3
+  - @swapkit/wallet-keystore@4.0.0-beta.3
+
 ## 4.0.0-beta.55
 
 ### Patch Changes

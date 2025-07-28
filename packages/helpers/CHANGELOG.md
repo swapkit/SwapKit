@@ -1,5 +1,21 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.35
+
+### Patch Changes
+
+- [#1418](https://github.com/swapkit/SwapKit/pull/1418) [`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5) Thanks [@towanTG](https://github.com/towanTG)! - Add TronLink wallet integration
+
+  - Add TRONLINK to WalletOption enum
+  - Implement TronLink wallet connector with support for Tron chain
+  - Use hybrid provider detection with `tronlink#initialized` event
+  - Handle account and network change events
+  - Implement robust error handling for user rejection
+  - Add network verification during connection
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.0-beta.3
+
 ## 4.0.0-beta.34
 
 ### Patch Changes
