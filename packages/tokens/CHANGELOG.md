@@ -1,5 +1,14 @@
 # @swapkit/tokens
 
+## 4.0.0-beta.4
+
+### Patch Changes
+
+- Updated dependencies [[`94fd9b2`](https://github.com/swapkit/SwapKit/commit/94fd9b2002db030bafae72b6b86bf949e0cac674)]:
+  - @swapkit/wallets@4.0.0-beta.57
+  - @swapkit/helpers@4.0.0-beta.36
+  - @swapkit/toolboxes@4.0.0-beta.53
+
 ## 4.0.0-beta.3
 
 ### Patch Changes

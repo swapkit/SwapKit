@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.57
+
+### Patch Changes
+
+- [`94fd9b2`](https://github.com/swapkit/SwapKit/commit/94fd9b2002db030bafae72b6b86bf949e0cac674) Thanks [@towanTG](https://github.com/towanTG)! - Adds SDK package support for tronlink
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.36
+  - @swapkit/toolboxes@4.0.0-beta.53
+  - @swapkit/wallet-core@4.0.0-beta.4
+  - @swapkit/wallet-hardware@4.0.0-beta.4
+  - @swapkit/wallet-keystore@4.0.0-beta.4
+
 ## 4.0.0-beta.56
 
 ### Minor Changes
