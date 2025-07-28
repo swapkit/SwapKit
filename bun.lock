@@ -37,6 +37,20 @@
         "typedoc-plugin-markdown": "4.7.0",
       },
     },
+    "packages/browser": {
+      "name": "@swapkit/browser",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/core": "workspace:*",
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/plugins": "workspace:*",
+        "@swapkit/wallets": "workspace:*",
+      },
+    },
+    "packages/contracts": {
+      "name": "@swapkit/contracts",
+      "version": "4.0.0-beta.1",
+    },
     "packages/core": {
       "name": "@swapkit/core",
       "version": "4.0.0-beta.51",
@@ -49,6 +63,8 @@
       "name": "@swapkit/helpers",
       "version": "4.0.0-beta.33",
       "dependencies": {
+        "@swapkit/contracts": "workspace:*",
+        "@swapkit/tokens": "workspace:*",
         "ethers": "^6.14.0",
         "ts-pattern": "~5.7.0",
         "zod": "3.25.74",
@@ -86,6 +102,25 @@
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/plugins": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallets": "workspace:*",
+      },
+    },
+    "packages/server": {
+      "name": "@swapkit/server",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/tokens": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallet-keystore": "workspace:*",
+      },
+    },
+    "packages/tokens": {
+      "name": "@swapkit/tokens",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
         "@swapkit/wallets": "workspace:*",
       },
@@ -190,16 +225,26 @@
         "react-dom": "19.1.0",
       },
     },
-    "packages/wallets": {
-      "name": "@swapkit/wallets",
-      "version": "4.0.0-beta.54",
+    "packages/wallet-core": {
+      "name": "@swapkit/wallet-core",
+      "version": "4.0.0-beta.1",
       "dependencies": {
-        "@coinbase/wallet-sdk": "~4.3.0",
-        "@cosmjs/amino": "~0.33.0",
-        "@cosmjs/crypto": "~0.33.0",
-        "@cosmjs/proto-signing": "~0.33.0",
+        "@swapkit/helpers": "workspace:*",
+      },
+    },
+    "packages/wallet-extension": {
+      "name": "@swapkit/wallet-extension",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallet-hardware": {
+      "name": "@swapkit/wallet-hardware",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
         "@keepkey/keepkey-sdk": "~0.2.62",
-        "@keplr-wallet/types": "~0.12.238",
         "@ledgerhq/devices": "~8.4.6",
         "@ledgerhq/errors": "~6.21.0",
         "@ledgerhq/hw-app-btc": "~10.9.0",
@@ -211,6 +256,54 @@
         "@ledgerhq/hw-transport": "~6.31.0",
         "@ledgerhq/hw-transport-webusb": "~6.29.0",
         "@ledgerhq/wallet-api-client": "~1.9.0",
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "ethers": "^6.14.0",
+        "ts-pattern": "~5.7.0",
+      },
+      "devDependencies": {
+        "@keepkey/keepkey-sdk": "0.2.62",
+        "@ledgerhq/devices": "8.4.6",
+        "@ledgerhq/errors": "6.21.0",
+        "@ledgerhq/hw-app-btc": "10.9.2",
+        "@ledgerhq/hw-app-cosmos": "6.32.2",
+        "@ledgerhq/hw-app-eth": "6.45.6",
+        "@ledgerhq/hw-app-near": "6.31.2",
+        "@ledgerhq/hw-app-trx": "6.31.3",
+        "@ledgerhq/hw-app-xrp": "6.31.2",
+        "@ledgerhq/hw-transport": "6.31.6",
+        "@ledgerhq/hw-transport-webusb": "6.29.6",
+        "@ledgerhq/wallet-api-client": "1.9.0",
+        "ethers": "6.14.3",
+        "ts-pattern": "5.7.1",
+      },
+    },
+    "packages/wallet-keystore": {
+      "name": "@swapkit/wallet-keystore",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallet-core": "workspace:*",
+      },
+    },
+    "packages/wallet-mobile": {
+      "name": "@swapkit/wallet-mobile",
+      "version": "4.0.0-beta.1",
+      "dependencies": {
+        "@swapkit/helpers": "workspace:*",
+        "@swapkit/toolboxes": "workspace:*",
+      },
+    },
+    "packages/wallets": {
+      "name": "@swapkit/wallets",
+      "version": "4.0.0-beta.54",
+      "dependencies": {
+        "@coinbase/wallet-sdk": "~4.3.0",
+        "@cosmjs/amino": "~0.33.0",
+        "@cosmjs/crypto": "~0.33.0",
+        "@cosmjs/proto-signing": "~0.33.0",
+        "@keplr-wallet/types": "~0.12.238",
         "@passkeys/core": "~3.3.0",
         "@passkeys/react": "~2.5.0",
         "@radixdlt/babylon-gateway-api-sdk": "~1.10.0",
@@ -220,6 +313,9 @@
         "@solana/web3.js": "~1.98.0",
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
+        "@swapkit/wallet-core": "workspace:*",
+        "@swapkit/wallet-hardware": "workspace:*",
+        "@swapkit/wallet-keystore": "workspace:*",
         "@trezor/connect-web": "~9.6.0",
         "@walletconnect/modal": "~2.7.0",
         "@walletconnect/sign-client": "~2.21.0",
@@ -237,19 +333,7 @@
         "@cosmjs/amino": "0.33.1",
         "@cosmjs/crypto": "0.33.1",
         "@cosmjs/proto-signing": "0.33.1",
-        "@keepkey/keepkey-sdk": "0.2.62",
         "@keplr-wallet/types": "0.12.238",
-        "@ledgerhq/devices": "8.4.6",
-        "@ledgerhq/errors": "6.21.0",
-        "@ledgerhq/hw-app-btc": "10.9.2",
-        "@ledgerhq/hw-app-cosmos": "6.32.2",
-        "@ledgerhq/hw-app-eth": "6.45.6",
-        "@ledgerhq/hw-app-near": "6.31.2",
-        "@ledgerhq/hw-app-trx": "6.31.3",
-        "@ledgerhq/hw-app-xrp": "6.31.2",
-        "@ledgerhq/hw-transport": "6.31.6",
-        "@ledgerhq/hw-transport-webusb": "6.29.6",
-        "@ledgerhq/wallet-api-client": "1.9.0",
         "@passkeys/core": "3.3.7",
         "@passkeys/react": "2.5.4",
         "@radixdlt/babylon-gateway-api-sdk": "1.10.1",
@@ -1487,6 +1571,10 @@
 
     "@substrate/ss58-registry": ["@substrate/ss58-registry@1.51.0", "", {}, "sha512-TWDurLiPxndFgKjVavCniytBIw+t4ViOi7TYp9h/D0NMmkEc9klFTo+827eyEJ0lELpqO207Ey7uGxUa+BS1jQ=="],
 
+    "@swapkit/browser": ["@swapkit/browser@workspace:packages/browser"],
+
+    "@swapkit/contracts": ["@swapkit/contracts@workspace:packages/contracts"],
+
     "@swapkit/core": ["@swapkit/core@workspace:packages/core"],
 
     "@swapkit/helpers": ["@swapkit/helpers@workspace:packages/helpers"],
@@ -1495,9 +1583,23 @@
 
     "@swapkit/sdk": ["@swapkit/sdk@workspace:packages/sdk"],
 
+    "@swapkit/server": ["@swapkit/server@workspace:packages/server"],
+
+    "@swapkit/tokens": ["@swapkit/tokens@workspace:packages/tokens"],
+
     "@swapkit/toolboxes": ["@swapkit/toolboxes@workspace:packages/toolboxes"],
 
     "@swapkit/ui": ["@swapkit/ui@workspace:packages/ui"],
+
+    "@swapkit/wallet-core": ["@swapkit/wallet-core@workspace:packages/wallet-core"],
+
+    "@swapkit/wallet-extension": ["@swapkit/wallet-extension@workspace:packages/wallet-extension"],
+
+    "@swapkit/wallet-hardware": ["@swapkit/wallet-hardware@workspace:packages/wallet-hardware"],
+
+    "@swapkit/wallet-keystore": ["@swapkit/wallet-keystore@workspace:packages/wallet-keystore"],
+
+    "@swapkit/wallet-mobile": ["@swapkit/wallet-mobile@workspace:packages/wallet-mobile"],
 
     "@swapkit/wallets": ["@swapkit/wallets@workspace:packages/wallets"],
 

@@ -8,6 +8,7 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Psbt } from "bitcoinjs-lib";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 import {
@@ -20,7 +21,6 @@ import {
   getAddress,
   signTransaction as satsSignTransaction,
 } from "sats-connect";
-import { createWallet, getWalletSupportedChains } from "../utils";
 
 async function getWalletMethods({
   walletProvider,

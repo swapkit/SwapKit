@@ -1,48 +1,5 @@
-import { type AddChainType, type Chain, WalletOption } from "@swapkit/helpers";
+import { WalletOption } from "@swapkit/helpers";
 import type { SKWallets } from "./types";
-
-export function createWallet<
-  ConnectParams extends any[],
-  SupportedChains extends Chain[],
-  const Name extends string,
-  WalletType extends WalletOption,
->({
-  connect,
-  name,
-  supportedChains,
-  walletType,
-}: {
-  connect: (connectParams: {
-    addChain: AddChainType;
-    walletType: WalletType;
-    supportedChains: SupportedChains;
-  }) => (...params: ConnectParams) => Promise<boolean>;
-  name: Name;
-  supportedChains: SupportedChains;
-  walletType?: WalletType | string;
-}) {
-  function connectWallet(connectParams: {
-    addChain: AddChainType;
-  }) {
-    return connect({ ...connectParams, walletType: walletType as WalletType, supportedChains });
-  }
-
-  return {
-    [name]: { supportedChains, connectWallet },
-  } as unknown as {
-    [key in Name]: {
-      connectWallet: typeof connectWallet;
-      supportedChains: SupportedChains;
-    };
-  };
-}
-
-export function getWalletSupportedChains<
-  T extends ReturnType<typeof createWallet<any, any, any, any>>,
->(wallet: T): T[keyof T]["supportedChains"] {
-  const walletName = Object.keys(wallet)?.[0] || "";
-  return wallet?.[walletName]?.supportedChains || [];
-}
 
 export async function loadWallet<W extends WalletOption>(walletOption: W): Promise<SKWallets[W]> {
   const { match } = await import("ts-pattern");
@@ -55,7 +12,10 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.OKX, async () => (await import("./okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("./onekey")).onekeyWallet)
     .with(WalletOption.EXODUS, async () => (await import("./exodus")).exodusWallet)
-    .with(WalletOption.KEEPKEY, async () => (await import("./keepkey")).keepkeyWallet)
+    .with(
+      WalletOption.KEEPKEY,
+      async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet,
+    )
     .with(WalletOption.KEEPKEY_BEX, async () => (await import("./keepkey-bex")).keepkeyBexWallet)
     .with(
       WalletOption.WALLETCONNECT,
@@ -77,12 +37,15 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     )
 
     .with(WalletOption.KEYSTORE, async () => (await import("./keystore")).keystoreWallet)
-    .with(WalletOption.TREZOR, async () => (await import("./trezor")).trezorWallet)
+    .with(
+      WalletOption.TREZOR,
+      async () => (await import("@swapkit/wallet-hardware/trezor")).trezorWallet,
+    )
     .with(
       WalletOption.LEDGER,
       // TODO: Remove
       WalletOption.LEDGER_LIVE,
-      async () => (await import("./ledger")).ledgerWallet,
+      async () => (await import("@swapkit/wallet-hardware/ledger")).ledgerWallet,
     )
 
     .with(WalletOption.PHANTOM, async () => (await import("./phantom")).phantomWallet)

@@ -1,3 +1,5 @@
+export * from "@swapkit/tokens";
+
 /**
  * Modules
  */
@@ -18,7 +20,6 @@ export * from "./utils/explorerUrls";
 export * from "./utils/liquidity";
 export * from "./utils/memo";
 export * from "./utils/others";
-export * from "./utils/tokens";
 export * from "./utils/validators";
 export * from "./utils/wallets";
 

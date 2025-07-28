@@ -33,9 +33,31 @@ const dtsPlugin = {
   },
 };
 
-const orderedPackages = ["helpers", "toolboxes", "plugins", "wallets", "core", "sdk", "ui"];
+const orderedPackages = [
+  ["contracts", "tokens"],
+  "helpers",
+  "toolboxes",
+  "plugins",
+  "wallet-core",
+  ["wallet-extension", "wallet-hardware", "wallet-keystore", "wallet-mobile"],
+  "wallets",
+  "core",
+  ["browser", "server", "sdk"],
+  "ui",
+];
 
 for (const pkg of orderedPackages) {
-  console.info(`Building @swapkit/${pkg} d.ts files`);
-  await dtsPlugin.setup(pkg);
+  if (typeof pkg === "string") {
+    console.info(`Building @swapkit/${pkg} d.ts files`);
+    await dtsPlugin.setup(pkg);
+  }
+
+  if (Array.isArray(pkg)) {
+    await Promise.all(
+      pkg.map(async (p) => {
+        console.info(`Building @swapkit/${p} d.ts files`);
+        await dtsPlugin.setup(p);
+      }),
+    );
+  }
 }

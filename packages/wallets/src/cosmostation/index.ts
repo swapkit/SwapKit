@@ -7,7 +7,7 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
-import { createWallet } from "../utils";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 const cosmostationSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.THORChain] as const;
 const cosmostationSupportedEVMChains = [
@@ -140,3 +140,5 @@ export const cosmostationWallet = createWallet({
       return true;
     },
 });
+
+export const COSMOSTATION_SUPPORTED_CHAINS = getWalletSupportedChains(cosmostationWallet);

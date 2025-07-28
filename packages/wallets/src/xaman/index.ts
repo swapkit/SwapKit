@@ -5,8 +5,8 @@ import {
   WalletOption,
   filterSupportedChains,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Xumm } from "xumm";
-import { createWallet, getWalletSupportedChains } from "../utils";
 import { getWalletForChain } from "./helpers";
 import type { XamanConfig } from "./types";
 import { connectXamanWallet as connectXamanWalletMethod } from "./walletMethods";

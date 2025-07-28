@@ -9,8 +9,8 @@ import {
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
-import { createWallet, getWalletSupportedChains } from "../utils";
 
 export type EVMWalletOptions =
   | WalletOption.BRAVE
