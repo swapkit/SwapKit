@@ -30,6 +30,7 @@ import type { phantomWallet } from "./phantom";
 import type { polkadotWallet } from "./polkadotjs";
 import type { radixWallet } from "./radix";
 import type { talismanWallet } from "./talisman";
+import type { tronlinkWallet } from "./tronlink";
 import type { vultisigWallet } from "./vultisig";
 import type { walletconnectWallet } from "./walletconnect";
 import type { xamanWallet } from "./xaman";
@@ -71,6 +72,7 @@ export type SKWallets = {
   [WalletOption.RADIX_WALLET]: typeof radixWallet;
   [WalletOption.TALISMAN]: typeof talismanWallet;
   [WalletOption.TREZOR]: typeof trezorWallet;
+  [WalletOption.TRONLINK]: typeof tronlinkWallet;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet;
   [WalletOption.VULTISIG]: typeof vultisigWallet;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
@@ -104,6 +106,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.RADIX_WALLET]: typeof radixWallet.connectRadixWallet.supportedChains;
   [WalletOption.TALISMAN]: typeof talismanWallet.connectTalisman.supportedChains;
   [WalletOption.TREZOR]: typeof trezorWallet.connectTrezor.supportedChains;
+  [WalletOption.TRONLINK]: typeof tronlinkWallet.connectTronLink.supportedChains;
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.VULTISIG]: typeof vultisigWallet.connectVultisig.supportedChains;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet.connectWalletconnect.supportedChains;

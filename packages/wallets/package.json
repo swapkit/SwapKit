@@ -158,6 +158,11 @@
       "require": "./dist/src/vultisig/index.cjs",
       "types": "./dist/types/vultisig/index.d.ts"
     },
+    "./tronlink": {
+      "default": "./dist/src/tronlink/index.js",
+      "require": "./dist/src/tronlink/index.cjs",
+      "types": "./dist/types/tronlink/index.d.ts"
+    },
     "./walletconnect": {
       "default": "./dist/src/walletconnect/index.js",
       "require": "./dist/src/walletconnect/index.cjs",
