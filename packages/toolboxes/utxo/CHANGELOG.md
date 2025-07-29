@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.4.20
+
+### Patch Changes
+
+- [`b343878`](https://github.com/swapkit/SwapKit/commit/b343878208b038c01d7f8f1591edb8da1a936c6e) Thanks [@towanTG](https://github.com/towanTG)! - Removes api key from fetch raw tx data
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.10.6
+
 ## 1.4.19
 
 ### Patch Changes
