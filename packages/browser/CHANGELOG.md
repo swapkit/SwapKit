@@ -1,5 +1,15 @@
 # @swapkit/browser
 
+## 4.0.0-beta.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.0-beta.55
+  - @swapkit/helpers@4.0.0-beta.37
+  - @swapkit/plugins@4.0.0-beta.54
+  - @swapkit/wallets@4.0.0-beta.58
+
 ## 4.0.0-beta.4
 
 ### Patch Changes

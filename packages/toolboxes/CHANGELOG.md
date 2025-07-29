@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.54
+
+### Patch Changes
+
+- [`f97daf0`](https://github.com/swapkit/SwapKit/commit/f97daf02e7e9961a55d0ba9a0f4bac7dd6b3392d) Thanks [@towanTG](https://github.com/towanTG)! - Fixes types for tron toolbox
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.37
+
 ## 4.0.0-beta.53
 
 ### Patch Changes

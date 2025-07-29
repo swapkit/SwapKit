@@ -29,6 +29,7 @@
     "@swapkit/wallet-mobile": "4.0.0-beta.1"
   },
   "changesets": [
+    "cute-rings-win",
     "exodus-passkeys-v4-solana",
     "fair-eggs-repair",
     "moody-tools-dig",
