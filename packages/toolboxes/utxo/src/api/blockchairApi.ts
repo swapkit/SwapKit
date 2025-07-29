@@ -122,13 +122,12 @@ const getConfirmedBalance = async ({
   }
 };
 
-const getRawTx = async ({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) => {
+const getRawTx = async ({ chain, txHash }: BlockchairParams<{ txHash?: string }>) => {
   if (!txHash) throw new Error("txHash is required");
 
   try {
     const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
       `${baseUrl(chain)}/raw/transaction/${txHash}`,
-      apiKey,
     );
     return rawTxResponse?.[txHash]?.raw_transaction;
   } catch (error) {
@@ -206,7 +205,7 @@ const scanUTXOs = async ({
   for (const { hash, index, script_hex, value } of utxos) {
     let txHex: string | undefined;
     if (fetchTxHex) {
-      txHex = await getRawTx({ txHash: hash, chain, apiKey });
+      txHex = await getRawTx({ txHash: hash, chain });
     }
     results.push({
       address,
@@ -222,7 +221,7 @@ const scanUTXOs = async ({
 
 export const blockchairApi = ({ apiKey, chain }: { apiKey?: string; chain: UTXOChain }) => ({
   getConfirmedBalance: (address: string) => getConfirmedBalance({ chain, address, apiKey }),
-  getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
+  getRawTx: (txHash: string) => getRawTx({ txHash, chain }),
   getSuggestedTxFee: () => getSuggestedTxFee(chain),
   getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
   getAddressData: (address: string) => getAddressData({ address, chain, apiKey }),
