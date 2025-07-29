@@ -198,7 +198,8 @@ export const buildTx = async ({
     psbt.addInput({
       hash: utxo.hash,
       index: utxo.index,
-      ...(!!utxo.witnessUtxo && !isNonSegwitChain && { witnessUtxo: utxo.witnessUtxo }),
+      ...(!!utxo.witnessUtxo &&
+        !nonSegwitChains.includes(chain) && { witnessUtxo: utxo.witnessUtxo }),
       ...(isNonSegwitChain &&
         utxo.txHex && {
           nonWitnessUtxo: Buffer.from(utxo.txHex, "hex"),

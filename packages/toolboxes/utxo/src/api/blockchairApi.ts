@@ -65,21 +65,13 @@ const getSuggestedTxFee = async (chain: Chain) => {
 };
 
 const blockchairRequest = async <T>(url: string, apiKey?: string): Promise<T> => {
-  try {
-    const response = await RequestClient.get<BlockchairResponse<T>>(url);
-    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
+  const response = await RequestClient.get<BlockchairResponse<T>>(
+    `${url}${apiKey ? `&key=${apiKey}` : ""}`,
+  );
 
-    return response.data as T;
-  } catch (error) {
-    if (!apiKey) throw error;
-    const response = await RequestClient.get<BlockchairResponse<T>>(
-      `${url}${apiKey ? `&key=${apiKey}` : ""}`,
-    );
+  if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
 
-    if (!response || response.context.code !== 200) throw new Error(`failed to query ${url}`);
-
-    return response.data as T;
-  }
+  return response.data as T;
 };
 
 const baseAddressData = { utxo: [], address: { balance: 0, transaction_count: 0 } };
