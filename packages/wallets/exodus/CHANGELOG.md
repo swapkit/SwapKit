@@ -1,5 +1,13 @@
 # @swapkit/wallet-exodus
 
+## 2.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`4ba25e1`](https://github.com/swapkit/SwapKit/commit/4ba25e13ef50f2cd24066fc00e80c78b60aa9f11)]:
+  - @swapkit/toolbox-utxo@1.4.19
+  - @swapkit/helpers@2.10.6
+
 ## 2.0.2
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @swapkit/toolbox-utxo
 
+## 1.4.19
+
+### Patch Changes
+
+- [`4ba25e1`](https://github.com/swapkit/SwapKit/commit/4ba25e13ef50f2cd24066fc00e80c78b60aa9f11) Thanks [@towanTG](https://github.com/towanTG)! - Fixes duplicated blockchair requests
+
+- Updated dependencies []:
+  - @swapkit/helpers@2.10.6
+
 ## 1.4.18
 
 ### Patch Changes
