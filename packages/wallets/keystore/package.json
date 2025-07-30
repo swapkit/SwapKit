@@ -36,5 +36,5 @@
   },
   "type": "module",
   "types": "./src/index.ts",
-  "version": "1.8.26"
+  "version": "1.8.27"
 }

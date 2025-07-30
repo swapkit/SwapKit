@@ -1,5 +1,22 @@
 # @swapkit/core
 
+## 3.4.14
+
+### Patch Changes
+
+- Updated dependencies [[`b5c7b88`](https://github.com/swapkit/SwapKit/commit/b5c7b88f30eda62412066b8d186cbc942ec63464)]:
+  - @swapkit/helpers@2.10.7
+  - @swapkit/plugin-evm@1.4.20
+  - @swapkit/api@2.9.8
+  - @swapkit/toolbox-cosmos@1.11.23
+  - @swapkit/toolbox-evm@1.11.9
+  - @swapkit/toolbox-radix@1.3.18
+  - @swapkit/toolbox-ripple@1.0.24
+  - @swapkit/toolbox-solana@1.6.19
+  - @swapkit/toolbox-substrate@1.4.18
+  - @swapkit/toolbox-tron@0.0.7
+  - @swapkit/toolbox-utxo@1.4.21
+
 ## 3.4.13
 
 ### Patch Changes
