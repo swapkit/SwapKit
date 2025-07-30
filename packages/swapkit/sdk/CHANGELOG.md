@@ -1,5 +1,20 @@
 # @swapkit/sdk
 
+## 2.4.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/plugin-chainflip@2.2.23
+  - @swapkit/plugin-evm@1.4.20
+  - @swapkit/plugin-near@1.0.8
+  - @swapkit/plugin-radix@1.4.20
+  - @swapkit/plugin-solana@0.2.21
+  - @swapkit/plugin-thorchain@2.5.27
+  - @swapkit/api@2.9.8
+  - @swapkit/core@3.4.14
+  - @swapkit/wallets@2.1.43
+
 ## 2.4.21
 
 ### Patch Changes
