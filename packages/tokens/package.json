@@ -26,6 +26,7 @@
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
+    "generate-tokens": "bun --bun ./fetchTokenLists.ts",
     "test": "echo 'bun test'",
     "test:ci": "echo 'bun test --coverage'",
     "type-check": "bun tsc --noEmit",

@@ -22,7 +22,7 @@
     "build:dts": "bun ./tools/builder/dts.ts",
     "clean": "bun --filter '*' clean && rm -rf bun.lock node_modules build; bun install",
     "docs": "bun --cwd ./docs",
-    "generate:tokens": "bun --filter '@swapkit/helpers' build; bun --cwd packages/helpers generate-tokens; bun lint",
+    "generate:tokens": "bun --filter '@swapkit/helpers' build; bun --cwd packages/tokens generate-tokens; bun lint",
     "lint": "bun biome check --write .",
     "lint:ws": "bunx sherif@latest",
     "playground:backend-bun": "bun --cwd ./playgrounds/bun-backend",

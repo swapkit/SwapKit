@@ -1,14 +1,14 @@
 export const list = {
   provider: "NEAR",
   name: "NEAR",
-  timestamp: "2025-07-06T08:06:04.176Z",
+  timestamp: "2025-07-30T16:04:43.358Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 46,
+  count: 61,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -66,6 +66,34 @@ export const list = {
       identifier: "ARB.USDT-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
+      ticker: "USDT",
+    },
+    {
+      chain: "AVAX",
+      chainId: "43114",
+      decimals: 18,
+      identifier: "AVAX.AVAX",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.avax.png",
+      ticker: "AVAX",
+    },
+    {
+      address: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+      chain: "AVAX",
+      chainId: "43114",
+      decimals: 6,
+      identifier: "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.usdc-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e.png",
+      ticker: "USDC",
+    },
+    {
+      address: "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+      chain: "AVAX",
+      chainId: "43114",
+      decimals: 6,
+      identifier: "AVAX.USDT-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
       ticker: "USDT",
     },
     {
@@ -135,6 +163,54 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/base.usdc-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.png",
       ticker: "USDC",
+    },
+    {
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BNB",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bnb.png",
+      ticker: "BNB",
+    },
+    {
+      address: "0x4c067de26475e1cefee8b8d1f6e2266b33a2372e",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.RHEA-0x4c067de26475e1cefee8b8d1f6e2266b33a2372e",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.rhea-0x4c067de26475e1cefee8b8d1f6e2266b33a2372e.png",
+      ticker: "RHEA",
+    },
+    {
+      address: "0x510ad22d8c956dcc20f68932861f54a591001283",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.SWEAT-0x510ad22d8c956dcc20f68932861f54a591001283",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.sweat-0x510ad22d8c956dcc20f68932861f54a591001283.png",
+      ticker: "SWEAT",
+    },
+    {
+      address: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.USDC-0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.usdc-0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d.png",
+      ticker: "USDC",
+    },
+    {
+      address: "0x55d398326f99059ff775485246999027b3197955",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.USDT-0x55d398326f99059ff775485246999027b3197955",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.usdt-0x55d398326f99059ff775485246999027b3197955.png",
+      ticker: "USDT",
     },
     {
       chain: "BTC",
@@ -328,6 +404,72 @@ export const list = {
       identifier: "ETH.USDT-0xdac17f958d2ee523a2206206994597c13d831ec7",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+      ticker: "USDT",
+    },
+    {
+      chain: "OP",
+      chainId: "10",
+      decimals: 18,
+      identifier: "OP.ETH",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/op.eth.png",
+      ticker: "ETH",
+    },
+    {
+      address: "0x4200000000000000000000000000000000000042",
+      chain: "OP",
+      chainId: "10",
+      decimals: 18,
+      identifier: "OP.OP-0x4200000000000000000000000000000000000042",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/op.op-0x4200000000000000000000000000000000000042.png",
+      ticker: "OP",
+    },
+    {
+      address: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+      chain: "OP",
+      chainId: "10",
+      decimals: 6,
+      identifier: "OP.USDC-0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/op.usdc-0x0b2c639c533813f4aa9d7837caf62653d097ff85.png",
+      ticker: "USDC",
+    },
+    {
+      address: "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+      chain: "OP",
+      chainId: "10",
+      decimals: 6,
+      identifier: "OP.USDT-0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/op.usdt-0x94b008aa00579c1307b0ef2c499ad98a8ce58e58.png",
+      ticker: "USDT",
+    },
+    {
+      chain: "POL",
+      chainId: "137",
+      decimals: 18,
+      identifier: "POL.POL",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/pol.pol.png",
+      ticker: "POL",
+    },
+    {
+      address: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+      chain: "POL",
+      chainId: "137",
+      decimals: 6,
+      identifier: "POL.USDC-0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/pol.usdc-0x3c499c542cef5e3811e1192ce70d8cc03d5c3359.png",
+      ticker: "USDC",
+    },
+    {
+      address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+      chain: "POL",
+      chainId: "137",
+      decimals: 6,
+      identifier: "POL.USDT-0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/pol.usdt-0xc2132d05d31c914a87c6611c10748aeb04b58e8f.png",
       ticker: "USDT",
     },
     {

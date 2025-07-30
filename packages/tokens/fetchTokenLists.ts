@@ -1,5 +1,14 @@
-import { Chain, ProviderName } from "./src";
-import { SwapKitApi } from "./src/api";
+import { Chain, ProviderName, SKConfig } from "@swapkit/helpers";
+import { SwapKitApi } from "@swapkit/helpers/api";
+
+SKConfig.set({
+  apiKeys: {
+    swapKit: process.env.SWAPKIT_API_KEY || "",
+  },
+  envs: {
+    isDev: true,
+  },
+});
 
 const providers = (await SwapKitApi.getTokenListProviders()).filter(
   (provider) =>
@@ -41,7 +50,7 @@ for (const { provider } of providers) {
     const tokenListWithTokens = { ...tokenList, tokens };
 
     await Bun.write(
-      `src/tokens/lists/${provider.toLowerCase()}.ts`,
+      `src/lists/${provider.toLowerCase()}.ts`,
       `export const list = ${JSON.stringify(tokenListWithTokens, null, 2)} as const;`,
     );
   } catch (error) {

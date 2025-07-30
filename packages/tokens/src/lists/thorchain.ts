@@ -2,14 +2,14 @@ export const list = {
   provider: "THORCHAIN",
   chainId: "thorchain-1",
   name: "THORCHAIN",
-  timestamp: "2025-07-06T08:03:08.226Z",
+  timestamp: "2025-07-30T16:02:14.612Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 77,
+  count: 79,
   tokens: [
     {
       chain: "AVAX",
@@ -106,6 +106,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.btcb-0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c.png",
       ticker: "BTCB",
+    },
+    {
+      address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BUSD-0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.busd-0xe9e7cea3dedca5984780bafc599bd69add087d56.png",
+      ticker: "BUSD",
+    },
+    {
+      address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.ETH-0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.eth-0x2170ed0880ac9a755fd29b2688956bd959f933f8.png",
+      ticker: "ETH",
     },
     {
       address: "0x4B0F1812e5Df2A09796481Ff14017e6005508003",
