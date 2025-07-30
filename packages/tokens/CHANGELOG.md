@@ -1,5 +1,16 @@
 # @swapkit/tokens
 
+## 4.0.0-beta.6
+
+### Patch Changes
+
+- [`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af) Thanks [@towanTG](https://github.com/towanTG)! - Moves generate tokenlist to token package
+
+- Updated dependencies [[`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af)]:
+  - @swapkit/helpers@4.0.0-beta.38
+  - @swapkit/toolboxes@4.0.0-beta.55
+  - @swapkit/wallets@4.0.0-beta.59
+
 ## 4.0.0-beta.5
 
 ### Patch Changes
