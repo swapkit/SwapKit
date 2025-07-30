@@ -19,7 +19,7 @@
     },
     "packages/plugins/chainflip": {
       "name": "@swapkit/plugin-chainflip",
-      "version": "2.2.20",
+      "version": "2.2.22",
       "dependencies": {
         "@chainflip/sdk": "1.6.7-rc.5",
         "@polkadot/keyring": "12.6.2",
@@ -71,7 +71,7 @@
     },
     "packages/plugins/thorchain": {
       "name": "@swapkit/plugin-thorchain",
-      "version": "2.5.24",
+      "version": "2.5.26",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -95,7 +95,7 @@
     },
     "packages/swapkit/core": {
       "name": "@swapkit/core",
-      "version": "3.4.11",
+      "version": "3.4.13",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -130,7 +130,7 @@
     },
     "packages/swapkit/sdk": {
       "name": "@swapkit/sdk",
-      "version": "2.4.19",
+      "version": "2.4.21",
       "dependencies": {
         "@swapkit/api": "workspace:*",
         "@swapkit/core": "workspace:*",
@@ -150,7 +150,7 @@
     },
     "packages/swapkit/wallets": {
       "name": "@swapkit/wallets",
-      "version": "2.1.40",
+      "version": "2.1.42",
       "dependencies": {
         "@swapkit/wallet-bitget": "workspace:*",
         "@swapkit/wallet-coinbase": "workspace:*",
@@ -280,7 +280,7 @@
     },
     "packages/toolboxes/utxo": {
       "name": "@swapkit/toolbox-utxo",
-      "version": "1.4.18",
+      "version": "1.4.20",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "1.1.1",
         "@psf/bitcoincashjs-lib": "4.0.3",
@@ -296,7 +296,7 @@
     },
     "packages/wallets/bitget": {
       "name": "@swapkit/wallet-bitget",
-      "version": "1.3.24",
+      "version": "1.3.26",
       "dependencies": {
         "@solana/web3.js": "1.98.2",
         "@swapkit/helpers": "workspace:*",
@@ -317,7 +317,7 @@
     },
     "packages/wallets/ctrl": {
       "name": "@swapkit/wallet-ctrl",
-      "version": "2.3.25",
+      "version": "2.3.27",
       "dependencies": {
         "@keplr-wallet/types": "0.12.110",
         "@swapkit/helpers": "workspace:*",
@@ -337,7 +337,7 @@
     },
     "packages/wallets/exodus": {
       "name": "@swapkit/wallet-exodus",
-      "version": "2.0.2",
+      "version": "2.0.4",
       "dependencies": {
         "@passkeys/core": "^4.0.0",
         "@passkeys/react": "^3.0.0",
@@ -349,7 +349,7 @@
     },
     "packages/wallets/keepkey": {
       "name": "@swapkit/wallet-keepkey",
-      "version": "1.6.23",
+      "version": "1.6.25",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@keepkey/keepkey-sdk": "0.2.57",
@@ -361,7 +361,7 @@
     },
     "packages/wallets/keepkey-bex": {
       "name": "@swapkit/wallet-keepkey-bex",
-      "version": "1.4.23",
+      "version": "1.4.25",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-cosmos": "workspace:*",
@@ -380,7 +380,7 @@
     },
     "packages/wallets/keystore": {
       "name": "@swapkit/wallet-keystore",
-      "version": "1.8.24",
+      "version": "1.8.26",
       "dependencies": {
         "@scure/bip39": "1.5.4",
         "@swapkit/helpers": "workspace:*",
@@ -398,7 +398,7 @@
     },
     "packages/wallets/ledger": {
       "name": "@swapkit/wallet-ledger",
-      "version": "1.14.22",
+      "version": "1.14.24",
       "dependencies": {
         "@cosmjs/amino": "0.32.4",
         "@cosmjs/crypto": "0.32.4",
@@ -429,7 +429,7 @@
     },
     "packages/wallets/okx": {
       "name": "@swapkit/wallet-okx",
-      "version": "1.6.23",
+      "version": "1.6.25",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-cosmos": "workspace:*",
@@ -439,7 +439,7 @@
     },
     "packages/wallets/phantom": {
       "name": "@swapkit/wallet-phantom",
-      "version": "1.5.19",
+      "version": "1.5.21",
       "dependencies": {
         "@solana/web3.js": "1.98.2",
         "@swapkit/helpers": "workspace:*",
@@ -481,7 +481,7 @@
     },
     "packages/wallets/trezor": {
       "name": "@swapkit/wallet-trezor",
-      "version": "1.6.18",
+      "version": "1.6.20",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolbox-evm": "workspace:*",

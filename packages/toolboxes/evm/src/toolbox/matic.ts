@@ -23,7 +23,7 @@ import { EVMToolbox } from "./EVMToolbox";
 const getNetworkParams = () => ({
   chainId: ChainId.PolygonHex,
   chainName: "Polygon Mainnet",
-  nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals: BaseDecimal.MATIC },
+  nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals: BaseDecimal.POL },
   rpcUrls: [getRPCUrl(Chain.Polygon)],
   blockExplorerUrls: [ChainToExplorerUrl[Chain.Polygon]],
 });

@@ -59,7 +59,7 @@ const baseAssetAddress: Record<EVMChain, string> = {
   [Chain.BinanceSmartChain]: ContractAddress.BSC,
   [Chain.Ethereum]: ContractAddress.ETH,
   [Chain.Optimism]: ContractAddress.OP,
-  [Chain.Polygon]: ContractAddress.MATIC,
+  [Chain.Polygon]: ContractAddress.POL,
 };
 
 const stateMutable = ["payable", "nonpayable"];

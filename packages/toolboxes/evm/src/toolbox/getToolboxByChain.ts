@@ -14,7 +14,7 @@ type ToolboxType = {
   BASE: typeof BASEToolbox;
   BSC: typeof BSCToolbox;
   ETH: typeof ETHToolbox;
-  MATIC: typeof MATICToolbox;
+  POL: typeof MATICToolbox;
   OP: typeof OPToolbox;
 };
 
