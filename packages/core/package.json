@@ -1,8 +1,8 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "4.0.0-beta.40",
-    "@swapkit/toolboxes": "4.0.0-beta.57"
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*"
   },
   "description": "SwapKit - Core",
   "exports": {

@@ -11,9 +11,9 @@ export type {
   TronTransaction,
   TronSignedTransaction,
   TronCreateTransactionParams,
-  ApproveParams,
-  ApprovedParams,
-  IsApprovedParams,
+  TronApproveParams,
+  TronApprovedParams,
+  TronIsApprovedParams,
 } from "./types";
 export { trc20ABI } from "./helpers/trc20.abi";
 

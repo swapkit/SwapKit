@@ -37,7 +37,7 @@
     "type-check": "bun --filter '*' --elide-lines=0 type-check",
     "type-check:ci": "bun --filter '*' type-check",
     "type-check:go": "bun --filter '*' type-check:go",
-    "version-bump": "bun ./tools/builder/versions.ts; bun changeset version; bun ./tools/builder/versions.ts; bun install"
+    "version-bump": "bun ./tools/builder/set-versions.ts; bun changeset version; bun install"
   },
   "trustedDependencies": [
     "@biomejs/biome",

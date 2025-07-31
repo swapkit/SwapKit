@@ -1,9 +1,9 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "4.0.0-beta.40",
-    "@swapkit/toolboxes": "4.0.0-beta.57",
-    "@swapkit/wallets": "4.0.0-beta.61"
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallets": "workspace:*"
   },
   "description": "SwapKit - Tokens",
   "exports": {

@@ -32,7 +32,7 @@ export interface TronCreateTransactionParams
 }
 
 // Same as EVM types for consistency
-export type ApproveParams = {
+export type TronApproveParams = {
   assetAddress: string;
   spenderAddress: string;
   feeOptionKey?: FeeOption;
@@ -42,13 +42,13 @@ export type ApproveParams = {
   nonce?: number;
 };
 
-export type ApprovedParams = {
+export type TronApprovedParams = {
   assetAddress: string;
   spenderAddress: string;
   from: string;
 };
 
-export type IsApprovedParams = ApprovedParams & {
+export type TronIsApprovedParams = TronApprovedParams & {
   amount?: bigint | string | number;
 };
 

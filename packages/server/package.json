@@ -1,10 +1,10 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "4.0.0-beta.40",
-    "@swapkit/tokens": "4.0.0-beta.8",
-    "@swapkit/toolboxes": "4.0.0-beta.57",
-    "@swapkit/wallet-keystore": "4.0.0-beta.8"
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/tokens": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallet-keystore": "workspace:*"
   },
   "description": "SwapKit - Server SDK",
   "exports": {

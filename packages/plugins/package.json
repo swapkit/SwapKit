@@ -4,8 +4,8 @@
     "@polkadot/keyring": "~13.5.0",
     "@polkadot/util": "~13.5.0",
     "@solana/web3.js": "~1.98.0",
-    "@swapkit/helpers": "4.0.0-beta.40",
-    "@swapkit/toolboxes": "4.0.0-beta.57",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
     "ts-pattern": "~5.7.0"
   },
   "devDependencies": {

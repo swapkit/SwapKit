@@ -14,10 +14,10 @@ import type { TronWeb } from "tronweb";
 import { trc20ABI } from "./helpers/trc20.abi";
 import { fetchAccountFromTronGrid } from "./helpers/trongrid";
 import type {
-  ApproveParams,
-  ApprovedParams,
-  IsApprovedParams,
+  TronApproveParams,
+  TronApprovedParams,
   TronCreateTransactionParams,
+  TronIsApprovedParams,
   TronSignedTransaction,
   TronSigner,
   TronToolboxOptions,
@@ -123,9 +123,9 @@ export const createTronToolbox = async (
   createTransaction: (params: TronCreateTransactionParams) => Promise<TronTransaction>;
   signTransaction: (transaction: TronTransaction) => Promise<TronSignedTransaction>;
   broadcastTransaction: (signedTransaction: TronSignedTransaction) => Promise<string>;
-  approve: (params: ApproveParams) => Promise<string>;
-  isApproved: (params: IsApprovedParams) => Promise<boolean>;
-  getApprovedAmount: (params: ApprovedParams) => Promise<bigint>;
+  approve: (params: TronApproveParams) => Promise<string>;
+  isApproved: (params: TronIsApprovedParams) => Promise<boolean>;
+  getApprovedAmount: (params: TronApprovedParams) => Promise<bigint>;
 }> => {
   const TW = await import("tronweb");
   const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
@@ -577,7 +577,7 @@ export const createTronToolbox = async (
   /**
    * Check the current allowance for a spender on a token
    */
-  const getApprovedAmount = async ({ assetAddress, spenderAddress, from }: ApprovedParams) => {
+  const getApprovedAmount = async ({ assetAddress, spenderAddress, from }: TronApprovedParams) => {
     try {
       const contract = tronWeb.contract(trc20ABI, assetAddress);
 
@@ -597,7 +597,12 @@ export const createTronToolbox = async (
   /**
    * Check if a spender is approved for a specific amount
    */
-  const isApproved = async ({ assetAddress, spenderAddress, from, amount }: IsApprovedParams) => {
+  const isApproved = async ({
+    assetAddress,
+    spenderAddress,
+    from,
+    amount,
+  }: TronIsApprovedParams) => {
     const allowance = await getApprovedAmount({ assetAddress, spenderAddress, from });
 
     if (!amount) {
@@ -612,7 +617,7 @@ export const createTronToolbox = async (
   /**
    * Approve a spender to transfer tokens
    */
-  const approve = async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
+  const approve = async ({ assetAddress, spenderAddress, amount, from }: TronApproveParams) => {
     if (!signer) throw new SwapKitError("toolbox_tron_no_signer");
 
     const fromAddress = from || (await getAddress());

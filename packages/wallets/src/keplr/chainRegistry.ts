@@ -169,7 +169,6 @@ export const chainRegistry = new Map<ChainId, ChainInfo>([
         "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/noble/chain.png",
       rpc: "https://rpc-noble.keplr.app",
       rest: "https://lcd-noble.keplr.app",
-      },
       bip44: {
         coinType: 118,
       },
@@ -204,7 +203,7 @@ export const chainRegistry = new Map<ChainId, ChainInfo>([
           coinDecimals: 6,
           coinGeckoId: "usd-coin",
           coinImageUrl:
-            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/noble/uusdc.png"",
+            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/noble/uusdc.png",
         },
         {
           coinDenom: "USDN",

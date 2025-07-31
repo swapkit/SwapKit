@@ -1,3 +1,7 @@
+// This should be cleared from unnecessary imports and migrate to:
+// - `sdk/toolboxes`
+// - `sdk/plugins`
+// - `sdk/wallets`
 import { SwapKit } from "@swapkit/core";
 import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 import { EVMPlugin } from "@swapkit/plugins/evm";
@@ -45,7 +49,6 @@ export * from "@swapkit/plugins/radix";
 export * from "@swapkit/plugins/thorchain";
 export * from "@swapkit/plugins/solana";
 export * from "@swapkit/plugins/near";
-
 export * from "@swapkit/wallets";
 
 export {

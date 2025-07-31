@@ -1,9 +1,9 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "4.0.0-beta.40",
-    "@swapkit/toolboxes": "4.0.0-beta.57",
-    "@swapkit/wallet-core": "4.0.0-beta.8"
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallet-core": "workspace:*"
   },
   "description": "SwapKit - Wallet Keystore",
   "exports": {

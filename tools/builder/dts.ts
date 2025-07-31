@@ -42,7 +42,8 @@ const orderedPackages = [
   ["wallet-extension", "wallet-hardware", "wallet-keystore", "wallet-mobile"],
   "wallets",
   "core",
-  ["browser", "server", "sdk"],
+  ["browser", "server"],
+  "sdk",
   "ui",
 ];
 
