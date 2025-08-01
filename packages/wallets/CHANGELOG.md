@@ -1,5 +1,24 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.60
+
+### Patch Changes
+
+- [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f) Thanks [@towanTG](https://github.com/towanTG)! - Fix wallet connection issues
+
+  - Fixed Bitget Solana connection by creating proper signer object with `getAddress()` method and using `publicKey.toBase58()` for address formatting
+  - Fixed Bitget Tron connection by adding proper response code validation before accessing accounts
+  - Fixed OKX Cosmos connection by adding defensive checks for empty accounts array
+  - Fixed Tronlink connection and ready state detection
+  - Fixed Walletconnect SignClient creation
+
+- Updated dependencies [[`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f)]:
+  - @swapkit/helpers@4.0.0-beta.39
+  - @swapkit/toolboxes@4.0.0-beta.56
+  - @swapkit/wallet-core@4.0.0-beta.7
+  - @swapkit/wallet-hardware@4.0.0-beta.7
+  - @swapkit/wallet-keystore@4.0.0-beta.7
+
 ## 4.0.0-beta.59
 
 ### Patch Changes

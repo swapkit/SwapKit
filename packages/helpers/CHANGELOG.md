@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.39
+
+### Patch Changes
+
+- [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f) Thanks [@towanTG](https://github.com/towanTG)! - Adds general wallet error for locked state
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.0-beta.7
+
 ## 4.0.0-beta.38
 
 ### Patch Changes
