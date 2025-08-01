@@ -65,6 +65,7 @@ export const getWalletMethods = async ({
     case Chain.Arbitrum:
     case Chain.Optimism:
     case Chain.Polygon:
+    case Chain.Base:
     case Chain.BinanceSmartChain: {
       const walletProvider = coinbaseSdk.getProvider() as CoinbaseWalletProvider;
       const { getEvmToolbox, getProvider } = await import("@swapkit/toolboxes/evm");
