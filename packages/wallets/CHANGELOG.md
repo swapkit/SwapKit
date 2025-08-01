@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.61
+
+### Patch Changes
+
+- [`cc74719`](https://github.com/swapkit/SwapKit/commit/cc747193dfef3b4b9b120b6b1dcc649e1cfd9d0c) Thanks [@towanTG](https://github.com/towanTG)! - Enables Base for Base Wallet
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.40
+  - @swapkit/toolboxes@4.0.0-beta.57
+  - @swapkit/wallet-core@4.0.0-beta.8
+  - @swapkit/wallet-hardware@4.0.0-beta.8
+  - @swapkit/wallet-keystore@4.0.0-beta.8
+
 ## 4.0.0-beta.60
 
 ### Patch Changes

@@ -2,7 +2,7 @@
   "author": "swapkit-oss",
   "dependencies": {
     "@swapkit/contracts": "4.0.0-beta.2",
-    "@swapkit/tokens": "4.0.0-beta.7",
+    "@swapkit/tokens": "4.0.0-beta.8",
     "ethers": "^6.14.0",
     "ts-pattern": "~5.7.0",
     "zod": "3.25.74",
@@ -10,7 +10,7 @@
   },
   "description": "SwapKit - Helpers",
   "devDependencies": {
-    "@swapkit/toolboxes": "4.0.0-beta.56",
+    "@swapkit/toolboxes": "4.0.0-beta.57",
     "ethers": "6.14.3",
     "ts-pattern": "5.7.1",
     "zod": "3.25.74",
@@ -58,5 +58,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.0-beta.39"
+  "version": "4.0.0-beta.40"
 }

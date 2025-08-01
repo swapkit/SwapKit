@@ -1,7 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/helpers": "4.0.0-beta.39"
+    "@swapkit/helpers": "4.0.0-beta.40"
   },
   "description": "SwapKit - Wallet Core",
   "exports": {
@@ -30,5 +30,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.0-beta.7"
+  "version": "4.0.0-beta.8"
 }

@@ -12,11 +12,11 @@
     "@scure/base": "~1.2.0",
     "@scure/bip39": "~1.6.0",
     "@solana/web3.js": "~1.98.0",
-    "@swapkit/helpers": "4.0.0-beta.39",
-    "@swapkit/toolboxes": "4.0.0-beta.56",
-    "@swapkit/wallet-core": "4.0.0-beta.7",
-    "@swapkit/wallet-hardware": "4.0.0-beta.7",
-    "@swapkit/wallet-keystore": "4.0.0-beta.7",
+    "@swapkit/helpers": "4.0.0-beta.40",
+    "@swapkit/toolboxes": "4.0.0-beta.57",
+    "@swapkit/wallet-core": "4.0.0-beta.8",
+    "@swapkit/wallet-hardware": "4.0.0-beta.8",
+    "@swapkit/wallet-keystore": "4.0.0-beta.8",
     "@trezor/connect-web": "~9.6.0",
     "@walletconnect/modal": "~2.7.0",
     "@walletconnect/sign-client": "~2.21.0",
@@ -42,8 +42,8 @@
     "@scure/base": "1.2.6",
     "@scure/bip39": "1.6.0",
     "@solana/web3.js": "1.98.2",
-    "@swapkit/helpers": "4.0.0-beta.39",
-    "@swapkit/toolboxes": "4.0.0-beta.56",
+    "@swapkit/helpers": "4.0.0-beta.40",
+    "@swapkit/toolboxes": "4.0.0-beta.57",
     "@trezor/connect-web": "9.6.0",
     "@walletconnect/logger": "2.1.2",
     "@walletconnect/modal": "2.7.0",
@@ -190,5 +190,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.0-beta.60"
+  "version": "4.0.0-beta.61"
 }

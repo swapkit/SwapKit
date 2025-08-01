@@ -13,8 +13,8 @@
     "@ledgerhq/hw-transport": "~6.31.0",
     "@ledgerhq/hw-transport-webusb": "~6.29.0",
     "@ledgerhq/wallet-api-client": "~1.9.0",
-    "@swapkit/helpers": "4.0.0-beta.39",
-    "@swapkit/toolboxes": "4.0.0-beta.56",
+    "@swapkit/helpers": "4.0.0-beta.40",
+    "@swapkit/toolboxes": "4.0.0-beta.57",
     "ethers": "^6.14.0",
     "ts-pattern": "~5.7.0"
   },
@@ -76,5 +76,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.0-beta.7"
+  "version": "4.0.0-beta.8"
 }

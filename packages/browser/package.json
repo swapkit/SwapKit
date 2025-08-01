@@ -1,10 +1,10 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@swapkit/core": "4.0.0-beta.57",
-    "@swapkit/helpers": "4.0.0-beta.39",
-    "@swapkit/plugins": "4.0.0-beta.56",
-    "@swapkit/wallets": "4.0.0-beta.60"
+    "@swapkit/core": "4.0.0-beta.58",
+    "@swapkit/helpers": "4.0.0-beta.40",
+    "@swapkit/plugins": "4.0.0-beta.57",
+    "@swapkit/wallets": "4.0.0-beta.61"
   },
   "description": "SwapKit - Browser SDK",
   "exports": {
@@ -33,5 +33,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.0-beta.7"
+  "version": "4.0.0-beta.8"
 }
