@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.42
+
+### Patch Changes
+
+- [`3c3a3da`](https://github.com/swapkit/SwapKit/commit/3c3a3da284989bc6209fcd10af4b328d89a11b92) Thanks [@towanTG](https://github.com/towanTG)! - Exports midgard types
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.0-beta.10
+
 ## 4.0.0-beta.41
 
 ### Patch Changes
