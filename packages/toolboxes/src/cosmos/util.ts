@@ -29,7 +29,7 @@ export const DEFAULT_KUJI_FEE_MAINNET = {
 };
 
 export const DEFAULT_NOBLE_FEE_MAINNET = {
-  amount: [{ denom: "uusdc", amount: "1000" }], 
+  amount: [{ denom: "uusdc", amount: "1000" }],
   gas: "200000",
 };
 

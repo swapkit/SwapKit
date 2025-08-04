@@ -1,5 +1,17 @@
 # @swapkit/server
 
+## 4.0.0-beta.9
+
+### Patch Changes
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- Updated dependencies [[`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2)]:
+  - @swapkit/wallet-keystore@4.0.0-beta.9
+  - @swapkit/toolboxes@4.0.0-beta.58
+  - @swapkit/helpers@4.0.0-beta.41
+  - @swapkit/tokens@4.0.0-beta.9
+
 ## 4.0.0-beta.8
 
 ### Patch Changes
