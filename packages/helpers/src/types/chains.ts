@@ -241,7 +241,13 @@ export const UTXOChains = [
 ] as const;
 
 export type CosmosChain = Chain.Cosmos | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Noble;
-export const CosmosChains = [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Noble] as const;
+export const CosmosChains = [
+  Chain.Cosmos,
+  Chain.THORChain,
+  Chain.Maya,
+  Chain.Kujira,
+  Chain.Noble,
+] as const;
 export const CosmosChainPrefixes = {
   [Chain.Cosmos]: "cosmos",
   [Chain.THORChain]: "thor",
