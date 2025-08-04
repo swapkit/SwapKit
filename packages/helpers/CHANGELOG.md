@@ -1,5 +1,16 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.41
+
+### Patch Changes
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- [`66d9b26`](https://github.com/swapkit/SwapKit/commit/66d9b2611b7eba507209c119a254b6cdd8d23197) Thanks [@towanTG](https://github.com/towanTG)! - Adds all midgard endpoint and updates Swapkit Api types
+
+- Updated dependencies [[`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2)]:
+  - @swapkit/tokens@4.0.0-beta.9
+
 ## 4.0.0-beta.40
 
 ### Patch Changes
