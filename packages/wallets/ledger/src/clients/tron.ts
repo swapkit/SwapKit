@@ -18,7 +18,7 @@ export class TronLedgerInterface implements TronSigner {
     this.derivationPath =
       typeof derivationPath === "string"
         ? derivationPath
-        : derivationPathToString(derivationPath || NetworkDerivationPath.TRX);
+        : derivationPathToString(derivationPath || NetworkDerivationPath.TRON);
   }
 
   checkOrCreateTransportAndLedger = async () => {
@@ -74,7 +74,7 @@ export class TronLedgerInterface implements TronSigner {
       const signature = await this.ledgerApp.signTransaction(
         this.derivationPath,
         transaction.raw_data_hex,
-        [], // Token signatures array - empty for native TRX transfers
+        [], // Token signatures array - empty for native TRON transfers
       );
 
       if (!signature) {

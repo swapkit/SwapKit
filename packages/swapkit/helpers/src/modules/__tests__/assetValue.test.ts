@@ -806,6 +806,44 @@ describe("AssetValue", () => {
         }),
       );
     });
+
+    test("keep TRON address casing", () => {
+      const tronUsdt = AssetValue.from({
+        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      });
+      expect(tronUsdt).toEqual(
+        expect.objectContaining({
+          address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          chain: Chain.Tron,
+          isGasAsset: false,
+          isSynthetic: false,
+          symbol: "USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          ticker: "USDT",
+        }),
+      );
+    });
+
+    test("create TRON from chain", () => {
+      const tron = AssetValue.from({ chain: Chain.Tron });
+      expect(tron).toEqual(
+        expect.objectContaining({
+          address: undefined,
+          chain: Chain.Tron,
+          decimal: BaseDecimal.TRON,
+          isGasAsset: true,
+          isSynthetic: false,
+          symbol: "TRX",
+          ticker: "TRX",
+          type: "Native",
+        }),
+      );
+    });
+
+    test("create TRON with value", () => {
+      const tron = AssetValue.from({ chain: Chain.Tron, value: 10 });
+      expect(tron.getValue("string")).toBe("10");
+      expect(tron.toString()).toBe("TRON.TRX");
+    });
   });
 });
 
@@ -825,5 +863,6 @@ describe("getMinAmountByChain", () => {
     expect(getMinAmountByChain(Chain.Avalanche).getValue("string")).toBe("0.00000001");
     expect(getMinAmountByChain(Chain.Arbitrum).getValue("string")).toBe("0.00000001");
     expect(getMinAmountByChain(Chain.Optimism).getValue("string")).toBe("0.00000001");
+    expect(getMinAmountByChain(Chain.Tron).getValue("string")).toBe("0.000001");
   });
 });

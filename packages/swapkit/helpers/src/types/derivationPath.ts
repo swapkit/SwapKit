@@ -31,7 +31,7 @@ export enum DerivationPath {
   XRP = "m/44'/144'/0'/0",
   SOL = "m/44'/501'/0'/0",
   THOR = "m/44'/931'/0'/0",
-  TRX = "m/44'/195'/0'/0",
+  TRON = "m/44'/195'/0'/0",
   XRD = "////",
   FIAT = "////",
 }
@@ -57,7 +57,7 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   XRP: [44, 144, 0, 0, 0],
   SOL: [44, 501, 0, 0, 0],
   THOR: [44, 931, 0, 0, 0],
-  TRX: [44, 195, 0, 0, 0],
+  TRON: [44, 195, 0, 0, 0],
 
   // Polkadot and related network derivation path is not number based
   DOT: [0, 0, 0, 0, 0],

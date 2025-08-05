@@ -63,7 +63,7 @@ export type TronGridTRC20Balance = Array<{
 export interface TronGridAccountResponse {
   data: Array<{
     address: string;
-    balance: number; // TRX balance in SUN
+    balance: number; // TRON balance in SUN
     create_time: number;
     latest_opration_time: number; // Note: typo in API response
     free_net_usage: number;

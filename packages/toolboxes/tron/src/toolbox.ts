@@ -24,7 +24,7 @@ import type {
 import { TRC20_ABI } from "./types";
 
 // Constants for TRON resource calculation
-const TRX_TRANSFER_BANDWIDTH = 268; // Bandwidth consumed by a TRX transfer
+const TRX_TRANSFER_BANDWIDTH = 268; // Bandwidth consumed by a TRON transfer
 const TRC20_TRANSFER_ENERGY = 13000; // Average energy consumed by TRC20 transfer
 const TRC20_TRANSFER_BANDWIDTH = 345; // Bandwidth consumed by TRC20 transfer
 const TRON_USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
@@ -184,8 +184,8 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
   };
 
   const getMaxTransactionFee = () => {
-    // Max fee limit for smart contract calls (100 TRX)
-    return 100000000; // 100 TRX in SUN
+    // Max fee limit for smart contract calls (100 TRON)
+    return 100000000; // 100 TRON in SUN
   };
 
   const getChainParameters = async () => {
@@ -200,7 +200,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
       return {
         energyFee: paramMap.getEnergyFee || 420, // Default 420 SUN per energy unit
         bandwidthFee: paramMap.getTransactionFee || 1000, // Default 1000 SUN per bandwidth
-        createAccountFee: paramMap.getCreateAccountFee || 100000, // Default 0.1 TRX
+        createAccountFee: paramMap.getCreateAccountFee || 100000, // Default 0.1 TRON
       };
     } catch {
       return {
@@ -308,7 +308,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
       if (accountData) {
         const balances: AssetValue[] = [];
 
-        // Add TRX balance
+        // Add TRON balance
         balances.push(
           AssetValue.from({
             chain: Chain.Tron,
@@ -330,7 +330,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
 
           balances.push(
             AssetValue.from({
-              asset: `TRX.${tokenMetaData.symbol}-${contractAddress}`,
+              asset: `TRON.${tokenMetaData.symbol}-${contractAddress}`,
               value: BigInt(balance || 0),
               fromBaseDecimal: tokenMetaData.decimals,
             }),
@@ -364,7 +364,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
       if (usdtBalance) {
         balances.push(
           AssetValue.from({
-            asset: `TRX.USDT-${TRON_USDT_CONTRACT}`,
+            asset: `TRON.USDT-${TRON_USDT_CONTRACT}`,
             value: usdtBalance,
             fromBaseDecimal: 6,
           }),
@@ -381,7 +381,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
     const fromAddress = await getAddress();
 
     if (assetValue.isGasAsset) {
-      // TRX transfer
+      // TRON transfer
       const transaction = await tronWeb.transactionBuilder.sendTrx(
         recipient,
         assetValue.getBaseValue("number"),
@@ -524,7 +524,7 @@ export const createTronToolbox = async (params: TRONToolboxParams = {}): Promise
     const { recipient, assetValue, memo, from } = params;
 
     if (assetValue.isGasAsset) {
-      // TRX transfer
+      // TRON transfer
       const transaction = await tronWeb.transactionBuilder.sendTrx(
         recipient,
         assetValue.getBaseValue("number"),

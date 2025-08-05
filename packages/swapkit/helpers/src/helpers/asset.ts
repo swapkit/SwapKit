@@ -129,6 +129,8 @@ export const getGasAsset = ({ chain }: { chain: Chain }) => {
       return AssetValue.from({ asset: `${chain}.BNB` });
     case Chain.THORChain:
       return AssetValue.from({ asset: `${chain}.RUNE` });
+    case Chain.Tron:
+      return AssetValue.from({ asset: `${chain}.TRX` });
 
     default:
       return AssetValue.from({ asset: `${chain}.${chain}` });
@@ -149,6 +151,8 @@ export const isGasAsset = ({ chain, symbol }: { chain: Chain; symbol: string }) 
       return symbol === "BNB";
     case Chain.THORChain:
       return symbol === "RUNE";
+    case Chain.Tron:
+      return symbol === "TRX";
 
     default:
       return symbol === chain;
@@ -176,6 +180,8 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
       return { identifier: `${assetString}.CACAO`, decimal: 10 };
     case Chain.Radix:
       return { identifier: `${Chain.Radix}.XRD`, decimal: BaseDecimal[assetString] };
+    case Chain.Tron:
+      return { identifier: `${assetString}.TRX`, decimal: BaseDecimal[assetString] };
 
     case `${Chain.Maya}.CACAO`:
       return { identifier: assetString, decimal: 10 };
@@ -207,6 +213,8 @@ export const getAssetType = ({ chain, symbol }: { chain: Chain; symbol: string }
       return symbol === "CACAO" ? "Native" : chain;
     case Chain.THORChain:
       return symbol === "RUNE" ? "Native" : chain;
+    case Chain.Tron:
+      return symbol === "TRX" ? "Native" : chain;
 
     default:
       return symbol === chain ? "Native" : chain;

@@ -283,6 +283,7 @@ export function getMinAmountByChain(chain: Chain) {
       return asset.set(0);
 
     case Chain.Cosmos:
+    case Chain.Tron:
     case Chain.Kujira:
       return asset.set(0.000001);
 
