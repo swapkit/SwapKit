@@ -1,5 +1,17 @@
 # @swapkit/plugins
 
+## 4.0.0-beta.60
+
+### Major Changes
+
+- [`0f2e55a`](https://github.com/swapkit/SwapKit/commit/0f2e55aba9efcdbfa74fcf9a4311534b9da780ed) Thanks [@towanTG](https://github.com/towanTG)! - Changes Tron Chain identifier from TRX to TRON
+
+### Patch Changes
+
+- Updated dependencies [[`0f2e55a`](https://github.com/swapkit/SwapKit/commit/0f2e55aba9efcdbfa74fcf9a4311534b9da780ed)]:
+  - @swapkit/toolboxes@4.0.0-beta.60
+  - @swapkit/helpers@4.0.0-beta.43
+
 ## 4.0.0-beta.59
 
 ### Patch Changes
