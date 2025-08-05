@@ -1,5 +1,16 @@
 # @swapkit/plugin-chainflip
 
+## 2.2.24
+
+### Patch Changes
+
+- Updated dependencies [[`cc8c470`](https://github.com/swapkit/SwapKit/commit/cc8c47004dab79c8402dfcf1d51d604b496a2fc3)]:
+  - @swapkit/helpers@3.0.0
+  - @swapkit/api@2.9.9
+  - @swapkit/toolbox-evm@1.11.10
+  - @swapkit/toolbox-substrate@1.4.19
+  - @swapkit/toolbox-utxo@1.4.22
+
 ## 2.2.23
 
 ### Patch Changes

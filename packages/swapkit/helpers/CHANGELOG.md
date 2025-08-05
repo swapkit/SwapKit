@@ -1,5 +1,11 @@
 # @swapkit/helpers
 
+## 3.0.0
+
+### Major Changes
+
+- [`cc8c470`](https://github.com/swapkit/SwapKit/commit/cc8c47004dab79c8402dfcf1d51d604b496a2fc3) Thanks [@towanTG](https://github.com/towanTG)! - BREAKING CHANGE: Changes Tron chain identifier from TRX to TRON
+
 ## 2.10.7
 
 ### Patch Changes

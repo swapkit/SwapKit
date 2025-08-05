@@ -1,5 +1,12 @@
 # @swapkit/toolbox-tron
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`cc8c470`](https://github.com/swapkit/SwapKit/commit/cc8c47004dab79c8402dfcf1d51d604b496a2fc3)]:
+  - @swapkit/helpers@3.0.0
+
 ## 0.0.7
 
 ### Patch Changes
