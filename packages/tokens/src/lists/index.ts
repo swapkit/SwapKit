@@ -3,6 +3,7 @@ export { list as CaviarV1List } from "./caviar_v1";
 export { list as ChainflipList } from "./chainflip";
 export { list as JupiterList } from "./jupiter";
 export { list as MayaList } from "./mayachain";
+export { list as NearList } from "./near";
 export { list as OneInchList } from "./oneinch";
 export { list as OpenOceanV2List } from "./openocean_v2";
 export { list as PancakeswapList } from "./pancakeswap";

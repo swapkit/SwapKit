@@ -19,6 +19,7 @@ export type TokenLists = {
   chainflip: typeof tokenLists.ChainflipList;
   jupiter: typeof tokenLists.JupiterList;
   mayachain: typeof tokenLists.MayaList;
+  near: typeof tokenLists.NearList;
   oneinch: typeof tokenLists.OneInchList;
   openocean: typeof tokenLists.OpenOceanV2List;
   pancakeswap: typeof tokenLists.PancakeswapList;
@@ -40,6 +41,7 @@ const defaultLists = [
   "chainflip",
   "jupiter",
   "mayachain",
+  "near",
   "oneinch",
   "openocean",
   "pancakeswap",
@@ -72,6 +74,7 @@ async function loadTokenList<T extends TokenListName>(listName: T): Promise<Toke
     .with("chainflip", () => import("./lists/chainflip"))
     .with("jupiter", () => import("./lists/jupiter"))
     .with("mayachain", () => import("./lists/mayachain"))
+    .with("near", () => import("./lists/near"))
     .with("oneinch", () => import("./lists/oneinch"))
     .with("openocean", () => import("./lists/openocean_v2"))
     .with("pancakeswap", () => import("./lists/pancakeswap"))

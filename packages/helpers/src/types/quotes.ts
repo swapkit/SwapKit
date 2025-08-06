@@ -157,7 +157,6 @@ export enum ProviderName {
   TRADERJOE_V2 = "TRADERJOE_V2",
   UNISWAP_V2 = "UNISWAP_V2",
   UNISWAP_V3 = "UNISWAP_V3",
-  KADO = "KADO",
   NEAR = "NEAR",
 }
 
