@@ -1,5 +1,13 @@
 # @swapkit/plugins
 
+## 4.0.0-beta.61
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.44
+  - @swapkit/toolboxes@4.0.0-beta.61
+
 ## 4.0.0-beta.60
 
 ### Major Changes
