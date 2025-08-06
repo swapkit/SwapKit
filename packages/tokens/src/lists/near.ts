@@ -1,14 +1,14 @@
 export const list = {
   provider: "NEAR",
   name: "NEAR",
-  timestamp: "2025-07-30T16:04:43.358Z",
+  timestamp: "2025-08-05T14:31:16.579Z",
   version: {
     major: 1,
     minor: 0,
     patch: 0,
   },
   keywords: [],
-  count: 61,
+  count: 82,
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -595,6 +595,215 @@ export const list = {
       identifier: "XRP.XRP",
       logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/xrp.xrp.png",
       ticker: "XRP",
+    },
+    {
+      address: "wrap.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 24,
+      identifier: "NEAR.wNEAR-wrap.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.wnear-wrap.near.png",
+      ticker: "wNEAR",
+    },
+    {
+      address: "eth.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.ETH-eth.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.eth-eth.bridge.near.png",
+      ticker: "ETH",
+    },
+    {
+      address: "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 6,
+      identifier: "NEAR.USDC-17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.usdc-17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1.png",
+      ticker: "USDC",
+    },
+    {
+      address: "usdt.tether-token.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 6,
+      identifier: "NEAR.USDT-usdt.tether-token.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.usdt-usdt.tether-token.near.png",
+      ticker: "USDT",
+    },
+    {
+      address: "853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.FRAX-853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.frax-853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near.png",
+      ticker: "FRAX",
+    },
+    {
+      address: "aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.AURORA-aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.aurora-aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near.png",
+      ticker: "AURORA",
+    },
+    {
+      address: "2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 8,
+      identifier: "NEAR.wBTC-2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.wbtc-2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near.png",
+      ticker: "wBTC",
+    },
+    {
+      address: "blackdragon.tkn.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 24,
+      identifier: "NEAR.BLACKDRAGON-blackdragon.tkn.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.blackdragon-blackdragon.tkn.near.png",
+      ticker: "BLACKDRAGON",
+    },
+    {
+      address: "token.0xshitzu.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.SHITZU-token.0xshitzu.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.shitzu-token.0xshitzu.near.png",
+      ticker: "SHITZU",
+    },
+    {
+      address: "abg-966.meme-cooking.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.ABG-abg-966.meme-cooking.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.abg-abg-966.meme-cooking.near.png",
+      ticker: "ABG",
+    },
+    {
+      address: "noear-324.meme-cooking.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.NOEAR-noear-324.meme-cooking.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.noear-noear-324.meme-cooking.near.png",
+      ticker: "NOEAR",
+    },
+    {
+      address: "mpdao-token.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 6,
+      identifier: "NEAR.mpDAO-mpdao-token.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.mpdao-mpdao-token.near.png",
+      ticker: "mpDAO",
+    },
+    {
+      address: "gnear-229.meme-cooking.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.GNEAR-gnear-229.meme-cooking.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.gnear-gnear-229.meme-cooking.near.png",
+      ticker: "GNEAR",
+    },
+    {
+      address: "test-token.highdome3013.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 8,
+      identifier: "NEAR.TESTNEBULA-test-token.highdome3013.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.testnebula-test-token.highdome3013.near.png",
+      ticker: "TESTNEBULA",
+    },
+    {
+      address: "token.sweat",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.SWEAT-token.sweat",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.sweat-token.sweat.png",
+      ticker: "SWEAT",
+    },
+    {
+      address: "token.rhealab.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.RHEA-token.rhealab.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.rhea-token.rhealab.near.png",
+      ticker: "RHEA",
+    },
+    {
+      address: "nbtc.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 8,
+      identifier: "NEAR.BTC-nbtc.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.btc-nbtc.bridge.near.png",
+      ticker: "BTC",
+    },
+    {
+      address: "a35923162c49cf95e6bf26623385eb431ad920d3.factory.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.TURBO-a35923162c49cf95e6bf26623385eb431ad920d3.factory.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.turbo-a35923162c49cf95e6bf26623385eb431ad920d3.factory.bridge.near.png",
+      ticker: "TURBO",
+    },
+    {
+      address: "purge-558.meme-cooking.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.PURGE-purge-558.meme-cooking.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.purge-purge-558.meme-cooking.near.png",
+      ticker: "PURGE",
+    },
+    {
+      address: "d9c2d319cd7e6177336b0a9c93c21cb48d84fb54.factory.bridge.near",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 18,
+      identifier: "NEAR.HAPI-d9c2d319cd7e6177336b0a9c93c21cb48d84fb54.factory.bridge.near",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.hapi-d9c2d319cd7e6177336b0a9c93c21cb48d84fb54.factory.bridge.near.png",
+      ticker: "HAPI",
+    },
+    {
+      address: "",
+      chain: "NEAR",
+      chainId: "near",
+      decimals: 24,
+      identifier: "NEAR.NEAR",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.near.png",
+      ticker: "NEAR",
     },
   ],
 } as const;

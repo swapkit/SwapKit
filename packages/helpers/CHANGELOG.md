@@ -1,5 +1,21 @@
 # @swapkit/helpers
 
+## 4.0.0-beta.45
+
+### Patch Changes
+
+- [`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8) Thanks [@towanTG](https://github.com/towanTG)! - Exports near token list
+
+- Updated dependencies [[`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8)]:
+  - @swapkit/tokens@4.0.0-beta.13
+
+## 4.0.0-beta.44
+
+### Patch Changes
+
+- Updated dependencies [[`e80a902`](https://github.com/swapkit/SwapKit/commit/e80a9027f28d0fc388a457a16526605b714fce65)]:
+  - @swapkit/tokens@4.0.0-beta.12
+
 ## 4.0.0-beta.43
 
 ### Major Changes

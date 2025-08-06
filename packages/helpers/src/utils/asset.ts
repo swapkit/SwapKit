@@ -213,7 +213,7 @@ export const assetFromString = (assetString: string) => {
 
 export async function findAssetBy(
   params:
-    | { chain: EVMChain | Chain.Radix | Chain.Solana; contract: string }
+    | { chain: EVMChain | Chain.Near | Chain.Radix | Chain.Solana; contract: string }
     | { identifier: `${Chain}.${string}` },
 ) {
   const { loadTokenLists } = await import("../tokens");
