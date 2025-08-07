@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.63
+
+### Patch Changes
+
+- [`0d8f498`](https://github.com/swapkit/SwapKit/commit/0d8f498f7450552067aa95f27d513c71775ea67d) Thanks [@towanTG](https://github.com/towanTG)! - Adds zcash address validation to addressvalidator
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.46
+
 ## 4.0.0-beta.62
 
 ### Patch Changes

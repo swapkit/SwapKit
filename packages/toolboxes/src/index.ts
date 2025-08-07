@@ -3,11 +3,13 @@ import {
   Chain,
   type CosmosChain,
   type EVMChain,
+  EVMChains,
   FeeOption,
   type GenericCreateTransactionParams,
   type SubstrateChain,
   SwapKitError,
   type UTXOChain,
+  UTXOChains,
 } from "@swapkit/helpers";
 import type { getCosmosToolbox } from "./cosmos";
 import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "./evm";
@@ -40,27 +42,8 @@ export async function getAddressValidator() {
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     const isValid = match(chain)
-      .with(
-        Chain.Arbitrum,
-        Chain.Aurora,
-        Chain.Avalanche,
-        Chain.Base,
-        Chain.Berachain,
-        Chain.BinanceSmartChain,
-        Chain.Botanix,
-        Chain.Core,
-        Chain.Corn,
-        Chain.Ethereum,
-        Chain.Gnosis,
-        Chain.HyperEVM,
-        Chain.Optimism,
-        Chain.Polygon,
-        Chain.Unichain,
-        () => evmValidateAddress({ address }),
-      )
-      .with(Chain.Litecoin, Chain.Dash, Chain.Dogecoin, Chain.BitcoinCash, Chain.Bitcoin, () =>
-        utxoValidateAddress({ address, chain: chain as UTXOChain }),
-      )
+      .with(...EVMChains, () => evmValidateAddress({ address }))
+      .with(...UTXOChains, () => utxoValidateAddress({ address, chain: chain as UTXOChain }))
       .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, () =>
         cosmosValidateAddress({ address, chain: chain as CosmosChain }),
       )
