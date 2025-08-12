@@ -1,5 +1,16 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.64
+
+### Major Changes
+
+- [`23c9e54`](https://github.com/swapkit/SwapKit/commit/23c9e549d3591266efd9727aef349ef602ac1a18) Thanks [@towanTG](https://github.com/towanTG)! - Adds missing script types
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.0-beta.47
+
 ## 4.0.0-beta.63
 
 ### Patch Changes
