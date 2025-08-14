@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 4.0.0-beta.66
+
+### Patch Changes
+
+- Updated dependencies [[`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773)]:
+  - @swapkit/helpers@4.0.0-beta.48
+  - @swapkit/toolboxes@4.0.0-beta.65
+
 ## 4.0.0-beta.65
 
 ### Patch Changes

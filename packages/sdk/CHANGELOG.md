@@ -1,5 +1,17 @@
 # @swapkit/sdk
 
+## 4.0.0-beta.70
+
+### Patch Changes
+
+- [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773) Thanks [@towanTG](https://github.com/towanTG)! - Updated Zcash transaction building to use bitgo package
+
+- Updated dependencies [[`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773)]:
+  - @swapkit/wallets@4.0.0-beta.69
+  - @swapkit/core@4.0.0-beta.66
+  - @swapkit/plugins@4.0.0-beta.65
+  - @swapkit/server@4.0.0-beta.16
+
 ## 4.0.0-beta.69
 
 ### Patch Changes

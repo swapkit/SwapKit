@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.69
+
+### Patch Changes
+
+- [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773) Thanks [@towanTG](https://github.com/towanTG)! - Fixes tronlink isLocked detection and handling
+
+- Updated dependencies [[`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773)]:
+  - @swapkit/helpers@4.0.0-beta.48
+  - @swapkit/toolboxes@4.0.0-beta.65
+  - @swapkit/wallet-core@4.0.0-beta.16
+  - @swapkit/wallet-hardware@4.0.0-beta.16
+  - @swapkit/wallet-keystore@4.0.0-beta.16
+
 ## 4.0.0-beta.68
 
 ### Patch Changes

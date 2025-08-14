@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.0-beta.65
+
+### Patch Changes
+
+- [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773) Thanks [@towanTG](https://github.com/towanTG)! - Updated Zcash transaction building to use bitgo package
+
+- Updated dependencies [[`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773)]:
+  - @swapkit/helpers@4.0.0-beta.48
+
 ## 4.0.0-beta.64
 
 ### Major Changes
