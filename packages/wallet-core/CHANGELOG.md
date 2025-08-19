@@ -1,5 +1,12 @@
 # @swapkit/wallet-core
 
+## 4.0.0-beta.17
+
+### Patch Changes
+
+- Updated dependencies [[`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5)]:
+  - @swapkit/helpers@4.0.0-beta.49
+
 ## 4.0.0-beta.16
 
 ### Patch Changes

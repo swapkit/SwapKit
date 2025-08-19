@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.70
+
+### Patch Changes
+
+- [`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5) Thanks [@towanTG](https://github.com/towanTG)! - Small fixes and zcash signer update
+
+- Updated dependencies [[`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5)]:
+  - @swapkit/toolboxes@4.0.0-beta.66
+  - @swapkit/helpers@4.0.0-beta.49
+  - @swapkit/wallet-hardware@4.0.0-beta.17
+  - @swapkit/wallet-keystore@4.0.0-beta.17
+  - @swapkit/wallet-core@4.0.0-beta.17
+
 ## 4.0.0-beta.69
 
 ### Patch Changes

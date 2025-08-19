@@ -1,5 +1,15 @@
 # @swapkit/browser
 
+## 4.0.0-beta.17
+
+### Patch Changes
+
+- Updated dependencies [[`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5)]:
+  - @swapkit/helpers@4.0.0-beta.49
+  - @swapkit/wallets@4.0.0-beta.70
+  - @swapkit/core@4.0.0-beta.67
+  - @swapkit/plugins@4.0.0-beta.66
+
 ## 4.0.0-beta.16
 
 ### Patch Changes
