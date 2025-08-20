@@ -23,6 +23,7 @@ import {
   type JsonRpcSigner,
   type Provider,
   type Signer,
+  type TransactionRequest,
   getAddress,
 } from "ethers";
 
@@ -49,6 +50,35 @@ type ToolboxWrapParams<P = Provider | BrowserProvider, T = {}> = T & {
 export const MAX_APPROVAL = BigInt(
   "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 );
+
+function getSignTransaction({ signer }: { signer?: Signer }) {
+  return async function signTransaction(tx: TransactionRequest): Promise<string> {
+    if (!signer) throw new SwapKitError("toolbox_evm_no_signer");
+
+    // Sign the transaction without broadcasting
+    const signedTx = await signer.signTransaction(tx);
+    return signedTx;
+  };
+}
+
+function getSignAndBroadcastTransaction({
+  provider,
+  signer,
+}: {
+  provider: Provider | BrowserProvider;
+  signer?: Signer;
+}) {
+  return async function signAndBroadcastTransaction(tx: TransactionRequest): Promise<string> {
+    if (!signer) throw new SwapKitError("toolbox_evm_no_signer");
+
+    // Sign the transaction
+    const signedTx = await signer.signTransaction(tx);
+
+    // Broadcast the signed transaction
+    const response = await provider.broadcastTransaction(signedTx);
+    return response.hash;
+  };
+}
 
 export function BaseEVMToolbox<
   P extends Provider | BrowserProvider,
@@ -87,32 +117,9 @@ export function BaseEVMToolbox<
     transfer: getTransfer({ provider, signer, isEIP1559Compatible, chain }),
     validateAddress: (address: string) => evmValidateAddress({ address }),
 
-    // New unified signing methods for EVM
-    sign: async (tx: EVMTxParams): Promise<string> => {
-      if (!signer) throw new SwapKitError("toolbox_evm_no_signer");
-      const { from, to, data, value, ...transaction } = tx;
-      if (!to) throw new SwapKitError("toolbox_evm_no_to_address");
-
-      const address = from || (await signer.getAddress());
-      const nonce = tx.nonce || (await provider.getTransactionCount(address));
-      const chainId = (await provider.getNetwork()).chainId;
-
-      const parsedTxObject = {
-        ...transaction,
-        data: data || "0x",
-        to,
-        from: address,
-        value: BigInt(value || 0),
-        chainId,
-        nonce,
-        type: isEIP1559Compatible ? 2 : 0,
-      };
-
-      const signedTx = await signer.signTransaction(parsedTxObject);
-      return signedTx;
-    },
-
-    signAndBroadcast: getSendTransaction({ provider, signer, isEIP1559Compatible, chain }),
+    // New unified signing methods for EVM using ethers TransactionRequest
+    sign: getSignTransaction({ signer }),
+    signAndBroadcast: getSignAndBroadcastTransaction({ provider, signer }),
   };
 }
 
