@@ -29,6 +29,7 @@
     "@swapkit/wallet-mobile": "4.0.0-beta.1"
   },
   "changesets": [
+    "chubby-sheep-remain",
     "cute-rings-win",
     "eight-hats-enter",
     "empty-horses-flash",

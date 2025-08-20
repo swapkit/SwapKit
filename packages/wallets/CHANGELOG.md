@@ -1,5 +1,16 @@
 # @swapkit/wallets
 
+## 4.0.0-beta.71
+
+### Patch Changes
+
+- Updated dependencies [[`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436)]:
+  - @swapkit/toolboxes@4.0.0-beta.67
+  - @swapkit/helpers@4.0.0-beta.50
+  - @swapkit/wallet-hardware@4.0.0-beta.18
+  - @swapkit/wallet-keystore@4.0.0-beta.18
+  - @swapkit/wallet-core@4.0.0-beta.18
+
 ## 4.0.0-beta.70
 
 ### Patch Changes

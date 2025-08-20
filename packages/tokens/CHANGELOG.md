@@ -1,5 +1,16 @@
 # @swapkit/tokens
 
+## 4.0.0-beta.18
+
+### Patch Changes
+
+- [`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436) Thanks [@towanTG](https://github.com/towanTG)! - Changes TRX. to TRON. in tokenlist
+
+- Updated dependencies [[`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436)]:
+  - @swapkit/toolboxes@4.0.0-beta.67
+  - @swapkit/helpers@4.0.0-beta.50
+  - @swapkit/wallets@4.0.0-beta.71
+
 ## 4.0.0-beta.17
 
 ### Patch Changes
