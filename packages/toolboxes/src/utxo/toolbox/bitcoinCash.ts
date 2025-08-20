@@ -128,6 +128,23 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     stripToCashAddress,
     validateAddress: bchValidateAddress,
     transfer: transfer({ getFeeRates, broadcastTx, signer }),
+
+    // New unified signing methods for BCH
+    sign: async ({ builder, utxos }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedTx = await signer.signTransaction({ builder, utxos });
+      return signedTx;
+    },
+
+    signAndBroadcast: async ({
+      builder,
+      utxos,
+    }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedTx = await signer.signTransaction({ builder, utxos });
+      const txHex = signedTx.toHex();
+      return broadcastTx(txHex);
+    },
   };
 }
 

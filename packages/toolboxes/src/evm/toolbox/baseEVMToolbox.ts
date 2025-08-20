@@ -86,6 +86,33 @@ export function BaseEVMToolbox<
     signMessage: signer?.signMessage,
     transfer: getTransfer({ provider, signer, isEIP1559Compatible, chain }),
     validateAddress: (address: string) => evmValidateAddress({ address }),
+
+    // New unified signing methods for EVM
+    sign: async (tx: EVMTxParams): Promise<string> => {
+      if (!signer) throw new SwapKitError("toolbox_evm_no_signer");
+      const { from, to, data, value, ...transaction } = tx;
+      if (!to) throw new SwapKitError("toolbox_evm_no_to_address");
+
+      const address = from || (await signer.getAddress());
+      const nonce = tx.nonce || (await provider.getTransactionCount(address));
+      const chainId = (await provider.getNetwork()).chainId;
+
+      const parsedTxObject = {
+        ...transaction,
+        data: data || "0x",
+        to,
+        from: address,
+        value: BigInt(value || 0),
+        chainId,
+        nonce,
+        type: isEIP1559Compatible ? 2 : 0,
+      };
+
+      const signedTx = await signer.signTransaction(parsedTxObject);
+      return signedTx;
+    },
+
+    signAndBroadcast: getSendTransaction({ provider, signer, isEIP1559Compatible, chain }),
   };
 }
 

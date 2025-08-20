@@ -145,6 +145,14 @@ export async function getSolanaToolbox(
     getAddressValidator: getSolanaAddressValidator,
     signTransaction: signTransaction(getConnection, signer),
     estimateTransactionFee: estimateTransactionFee(getConnection),
+
+    // New unified signing methods for Solana
+    sign: signTransaction(getConnection, signer),
+
+    signAndBroadcast: async (transaction: Transaction | VersionedTransaction): Promise<string> => {
+      const signedTx = await signTransaction(getConnection, signer)(transaction);
+      return broadcastTransaction(getConnection)(signedTx);
+    },
   };
 }
 
