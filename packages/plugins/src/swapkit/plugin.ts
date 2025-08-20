@@ -52,7 +52,7 @@ export const SwapKitPlugin = createPlugin({
           affiliateFee: quoteParams.affiliateBasisPoints,
         });
 
-        if (!response || !response.routes || response.routes.length === 0) {
+        if (!response?.routes || response.routes.length === 0) {
           throw new SwapKitError("core_swap_invalid_params", {
             error: "No routes available for this swap",
           });
