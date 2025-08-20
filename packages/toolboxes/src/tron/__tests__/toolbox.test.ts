@@ -115,7 +115,7 @@ describe("TRON Address Validation", () => {
       recipient: toAddress,
       sender: fromAddress,
       assetValue: AssetValue.from({
-        asset: "TRX.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         value: "100", // 1 TRX
       }),
     });

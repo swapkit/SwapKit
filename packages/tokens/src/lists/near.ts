@@ -571,21 +571,21 @@ export const list = {
       ticker: "xBTC",
     },
     {
-      chain: "TRX",
+      chain: "TRON",
       chainId: "728126428",
       decimals: 6,
-      identifier: "TRX.TRX",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/trx.trx.png",
+      identifier: "TRON.TRX",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/tron.trx.png",
       ticker: "TRX",
     },
     {
       address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-      chain: "TRX",
+      chain: "TRON",
       chainId: "728126428",
       decimals: 6,
-      identifier: "TRX.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      identifier: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/trx.usdt-tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/tron.usdt-tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t.png",
       ticker: "USDT",
     },
     {
