@@ -5,15 +5,18 @@ import type { EVMPlugin } from "./evm";
 import type { NearPlugin } from "./near";
 import type { RadixPlugin } from "./radix";
 import type { SolanaPlugin } from "./solana/plugin";
+import type { SwapKitPlugin } from "./swapkit";
 import type { ThorchainPlugin } from "./thorchain";
 
 export type * from "./chainflip/types";
+export type * from "./swapkit/types";
 export type * from "./thorchain/types";
 
 export type SKPlugins = typeof ChainflipPlugin &
   typeof ThorchainPlugin &
   typeof RadixPlugin &
   typeof SolanaPlugin &
+  typeof SwapKitPlugin &
   typeof EVMPlugin &
   typeof NearPlugin;
 

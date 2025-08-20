@@ -37,6 +37,10 @@ export async function loadPlugin<P extends PluginName>(pluginName: P) {
       const { SolanaPlugin } = await import("./solana");
       return SolanaPlugin;
     })
+    .with("swapkit", async () => {
+      const { SwapKitPlugin } = await import("./swapkit");
+      return SwapKitPlugin;
+    })
     .with("near", async () => {
       const { NearPlugin } = await import("./near");
       return NearPlugin;
