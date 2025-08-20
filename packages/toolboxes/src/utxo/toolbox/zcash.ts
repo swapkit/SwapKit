@@ -324,13 +324,13 @@ export async function createZcashToolbox(
     validateAddress: validateZcashAddress,
 
     // New unified signing methods for Zcash
-    sign: async (psbt: ZcashPsbt): Promise<ZcashPsbt> => {
+    signTransaction: async (psbt: ZcashPsbt): Promise<ZcashPsbt> => {
       if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
       const signedPsbt = await signer.signTransaction(psbt);
       return signedPsbt;
     },
 
-    signAndBroadcast: async (psbt: ZcashPsbt): Promise<string> => {
+    signAndSendTransaction: async (psbt: ZcashPsbt): Promise<string> => {
       if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
       const signedPsbt = await signer.signTransaction(psbt);
       signedPsbt.finalizeAllInputs();

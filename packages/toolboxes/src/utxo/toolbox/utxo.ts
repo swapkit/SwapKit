@@ -245,7 +245,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
     },
 
     // New unified signing methods
-    sign: async (psbt: Psbt): Promise<Psbt> => {
+    signTransaction: async (psbt: Psbt): Promise<Psbt> => {
       if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
       // Check if this is a standard PSBT signer (not BCH)
       if (chain !== Chain.BitcoinCash) {
@@ -254,12 +254,13 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       }
       // BCH uses a different transaction type, so we can't support PSBT signing
       throw new SwapKitError("toolbox_utxo_invalid_params", {
-        error: "PSBT signing is not supported for BitcoinCash. Use the BCH-specific sign method.",
+        error:
+          "PSBT signing is not supported for BitcoinCash. Use the BCH-specific signTransaction method.",
         chain,
       });
     },
 
-    signAndBroadcast: async (psbt: Psbt): Promise<string> => {
+    signAndSendTransaction: async (psbt: Psbt): Promise<string> => {
       if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
       // Check if this is a standard PSBT signer (not BCH)
       if (chain !== Chain.BitcoinCash) {
@@ -270,7 +271,8 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       }
       // BCH uses a different transaction type, so we can't support PSBT signing
       throw new SwapKitError("toolbox_utxo_invalid_params", {
-        error: "PSBT signing is not supported for BitcoinCash. Use the BCH-specific sign method.",
+        error:
+          "PSBT signing is not supported for BitcoinCash. Use the BCH-specific signTransaction method.",
         chain,
       });
     },

@@ -118,8 +118,8 @@ export function BaseEVMToolbox<
     validateAddress: (address: string) => evmValidateAddress({ address }),
 
     // New unified signing methods for EVM using ethers TransactionRequest
-    sign: getSignTransaction({ signer }),
-    signAndBroadcast: getSignAndBroadcastTransaction({ provider, signer }),
+    signTransaction: getSignTransaction({ signer }),
+    signAndSendTransaction: getSignAndBroadcastTransaction({ provider, signer }),
   };
 }
 

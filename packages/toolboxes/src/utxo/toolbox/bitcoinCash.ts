@@ -130,13 +130,16 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     transfer: transfer({ getFeeRates, broadcastTx, signer }),
 
     // New unified signing methods for BCH
-    sign: async ({ builder, utxos }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
+    signTransaction: async ({
+      builder,
+      utxos,
+    }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
       if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
       const signedTx = await signer.signTransaction({ builder, utxos });
       return signedTx;
     },
 
-    signAndBroadcast: async ({
+    signAndSendTransaction: async ({
       builder,
       utxos,
     }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
