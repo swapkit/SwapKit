@@ -119,7 +119,7 @@ export function BaseEVMToolbox<
 
     // New unified signing methods for EVM using ethers TransactionRequest
     signTransaction: getSignTransaction({ signer }),
-    signAndSendTransaction: getSignAndBroadcastTransaction({ provider, signer }),
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction({ provider, signer }),
   };
 }
 

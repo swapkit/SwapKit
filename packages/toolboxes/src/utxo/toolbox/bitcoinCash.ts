@@ -115,6 +115,39 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     return getBalance(stripPrefix(toCashAddress(address)));
   }
 
+  function getSignTransaction(
+    signer?: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>,
+  ) {
+    return async function signTransaction({
+      builder,
+      utxos,
+    }: { builder: TransactionBuilderType; utxos: UTXOType[] }): Promise<TransactionType> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedTx = await signer.signTransaction({ builder, utxos });
+      return signedTx;
+    };
+  }
+
+  function getSignAndBroadcastTransaction({
+    signer,
+    broadcastTx,
+  }: {
+    signer:
+      | ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType>
+      | undefined;
+    broadcastTx: (txHash: string) => Promise<string>;
+  }) {
+    return async function signAndBroadcastTransaction({
+      builder,
+      utxos,
+    }: { builder: TransactionBuilderType; utxos: UTXOType[] }): Promise<string> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedTx = await signer.signTransaction({ builder, utxos });
+      const txHex = signedTx.toHex();
+      return broadcastTx(txHex);
+    };
+  }
+
   return {
     ...toolbox,
     getAddress,
@@ -130,24 +163,8 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     transfer: transfer({ getFeeRates, broadcastTx, signer }),
 
     // New unified signing methods for BCH
-    signTransaction: async ({
-      builder,
-      utxos,
-    }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
-      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
-      const signedTx = await signer.signTransaction({ builder, utxos });
-      return signedTx;
-    },
-
-    signAndSendTransaction: async ({
-      builder,
-      utxos,
-    }: { builder: TransactionBuilderType; utxos: UTXOType[] }) => {
-      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
-      const signedTx = await signer.signTransaction({ builder, utxos });
-      const txHex = signedTx.toHex();
-      return broadcastTx(txHex);
-    },
+    signTransaction: getSignTransaction(signer),
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction({ signer, broadcastTx }),
   };
 }
 

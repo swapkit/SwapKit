@@ -148,9 +148,7 @@ export async function getSolanaToolbox(
 
     // Keep original signTransaction for backward compatibility
     // New unified naming for consistency across toolboxes
-    signAndSendTransaction: async (
-      transaction: Transaction | VersionedTransaction,
-    ): Promise<string> => {
+    signAndBroadcastTransaction: async (transaction: Transaction | VersionedTransaction) => {
       const signedTx = await signTransaction(getConnection, signer)(transaction);
       return broadcastTransaction(getConnection)(signedTx);
     },

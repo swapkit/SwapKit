@@ -315,6 +315,24 @@ export async function createZcashToolbox(
     return keys.toWIF();
   }
 
+  function getSignTransaction(signer?: ZcashSigner) {
+    return async function signTransaction(psbt: ZcashPsbt): Promise<ZcashPsbt> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedPsbt = await signer.signTransaction(psbt);
+      return signedPsbt;
+    };
+  }
+
+  function getSignAndBroadcastTransaction(signer?: ZcashSigner) {
+    return async function signAndBroadcastTransaction(psbt: ZcashPsbt): Promise<string> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedPsbt = await signer.signTransaction(psbt);
+      signedPsbt.finalizeAllInputs();
+      const txHex = signedPsbt.extractTransaction().toHex();
+      return baseToolbox.broadcastTx(txHex);
+    };
+  }
+
   return {
     ...baseToolbox,
     transfer,
@@ -324,18 +342,7 @@ export async function createZcashToolbox(
     validateAddress: validateZcashAddress,
 
     // New unified signing methods for Zcash
-    signTransaction: async (psbt: ZcashPsbt): Promise<ZcashPsbt> => {
-      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
-      const signedPsbt = await signer.signTransaction(psbt);
-      return signedPsbt;
-    },
-
-    signAndSendTransaction: async (psbt: ZcashPsbt): Promise<string> => {
-      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
-      const signedPsbt = await signer.signTransaction(psbt);
-      signedPsbt.finalizeAllInputs();
-      const txHex = signedPsbt.extractTransaction().toHex();
-      return baseToolbox.broadcastTx(txHex);
-    },
+    signTransaction: getSignTransaction(signer),
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction(signer),
   };
 }
