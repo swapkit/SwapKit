@@ -1,4 +1,12 @@
+import { SKConfig } from "./swapKitConfig";
 import { SwapKitError } from "./swapKitError";
+
+type RetryConfig = {
+  maxRetries?: number;
+  baseDelay?: number;
+  maxDelay?: number;
+  backoffMultiplier?: number;
+};
 
 type Options = RequestInit & {
   /**
@@ -10,7 +18,95 @@ type Options = RequestInit & {
   onSuccess?: (response: any) => any;
   searchParams?: Record<string, string>;
   dynamicHeader?: () => Record<string, string> | {};
+  retry?: RetryConfig;
+  timeoutMs?: number;
+  abortController?: AbortController;
 };
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const calculateDelay = (attempt: number, { baseDelay, backoffMultiplier, maxDelay }: any) =>
+  Math.min(baseDelay * backoffMultiplier ** attempt, maxDelay);
+
+const makeRequest = async (url: string, config: RequestInit) => {
+  const response = await fetch(url, config);
+  if (!response.ok) {
+    const message = await response.text();
+    const errorData = { status: response.status, statusText: response.statusText, message };
+    throw new SwapKitError({ errorKey: "helpers_invalid_response", info: errorData }, errorData);
+  }
+  return response.json();
+};
+
+function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: maybe use sth like ky if possible to reduce logic
+  return async function methodFetchWithConfig<T>(url: string, options: Options = {}): Promise<T> {
+    const {
+      searchParams,
+      json,
+      body,
+      headers,
+      dynamicHeader,
+      retry,
+      timeoutMs,
+      abortController,
+      onError,
+      onSuccess,
+      responseHandler,
+      ...fetchOptions
+    } = { ...extendOptions, ...options };
+    const requestOptions = SKConfig.get("requestOptions");
+
+    const retryConfig = { ...requestOptions.retry, ...retry };
+    const isJson = !!json || url.endsWith(".json");
+    const requestUrl = buildUrl(url, searchParams);
+    const requestHeaders = buildHeaders(isJson, { ...headers, ...dynamicHeader?.() });
+    const requestBody = isJson ? JSON.stringify(json) : body;
+
+    let lastError: any;
+
+    for (let attempt = 0; attempt <= retryConfig.maxRetries; attempt++) {
+      const controller = abortController || new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs || requestOptions.timeoutMs);
+
+      try {
+        const result = await makeRequest(requestUrl, {
+          ...fetchOptions,
+          method,
+          body: requestBody,
+          headers: requestHeaders,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        return onSuccess?.(result) || responseHandler?.(result) || result;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        lastError = error;
+
+        if (attempt >= retryConfig.maxRetries) {
+          return onError ? onError(error) : Promise.reject(error);
+        }
+
+        await sleep(calculateDelay(attempt, retryConfig));
+      }
+    }
+
+    return onError ? onError(lastError) : Promise.reject(lastError);
+  };
+}
+
+function buildHeaders(isJson: boolean, headers?: HeadersInit) {
+  return {
+    ...headers,
+    ...(isJson && { "Content-Type": "application/json" }),
+  };
+}
+
+function buildUrl(url: string, searchParams?: Record<string, string>) {
+  const urlInstance = new URL(url);
+  if (searchParams) urlInstance.search = new URLSearchParams(searchParams).toString();
+  return urlInstance.toString();
+}
 
 export const RequestClient = {
   get: fetchWithConfig("GET"),
@@ -21,63 +117,3 @@ export const RequestClient = {
     extend: (newOptions: Options) => RequestClient.extend({ ...extendOptions, ...newOptions }),
   }),
 };
-
-function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
-  return async <T>(url: string, options: Options = {}): Promise<T> => {
-    const {
-      searchParams,
-      json,
-      body,
-      headers: headersOptions,
-      dynamicHeader,
-    } = { ...extendOptions, ...options };
-
-    const isJson = !!json || url.endsWith(".json");
-    const bodyToSend = isJson ? JSON.stringify(json) : body;
-
-    try {
-      const requestUrl = buildUrl(url, searchParams);
-      const headers = buildHeaders(isJson, {
-        ...headersOptions,
-        ...dynamicHeader?.(),
-      });
-
-      const response = await fetch(requestUrl, { ...options, method, body: bodyToSend, headers });
-
-      if (!response.ok) {
-        const message = await response.text();
-        throw new SwapKitError("helpers_invalid_response", {
-          status: response.status,
-          statusText: response.statusText,
-          message,
-        });
-      }
-
-      const body = await response.json();
-
-      return options.onSuccess?.(body) || options.responseHandler?.(body) || body;
-    } catch (error) {
-      if (options.onError) {
-        return options.onError(error);
-      }
-      throw error;
-    }
-  };
-}
-
-function buildHeaders(isJson: boolean, headersOptions?: HeadersInit) {
-  return {
-    ...headersOptions,
-    ...(isJson ? { "Content-Type": "application/json" } : {}),
-  };
-}
-
-function buildUrl(url: string, searchParams?: Record<string, string>) {
-  const urlInstance = new URL(url);
-
-  if (searchParams) {
-    urlInstance.search = new URLSearchParams(searchParams).toString();
-  }
-
-  return urlInstance.toString();
-}
