@@ -1,4 +1,4 @@
-import { AssetValue, BaseDecimal, Chain, SKConfig, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, BaseDecimal, Chain, SwapKitError, getRPCUrl } from "@swapkit/helpers";
 import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import {
@@ -45,7 +45,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
-  const url = SKConfig.get("rpcUrls")[Chain.Near];
+  const url = await getRPCUrl(Chain.Near);
 
   const provider = new providers.JsonRpcProvider({ url });
 

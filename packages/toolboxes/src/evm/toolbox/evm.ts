@@ -1,4 +1,4 @@
-import { Chain, type EVMChain, FeeOption, SKConfig } from "@swapkit/helpers";
+import { Chain, type EVMChain, FeeOption, getRPCUrl } from "@swapkit/helpers";
 import { HDNodeWallet } from "ethers";
 import { P, match } from "ts-pattern";
 
@@ -46,7 +46,7 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
     provider: providerParam,
     ...toolboxSignerParams
   }: EVMToolboxParams) {
-    const rpcUrl = SKConfig.get("rpcUrls")[chain];
+    const rpcUrl = await getRPCUrl(chain);
 
     const provider = providerParam || (await getProvider(chain, rpcUrl));
 

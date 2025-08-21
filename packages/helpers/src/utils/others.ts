@@ -1,7 +1,6 @@
 import { RequestClient } from "../modules/requestClient";
-import { SKConfig } from "../modules/swapKitConfig";
 import { type ErrorKeys, SwapKitError } from "../modules/swapKitError";
-import { Chain, ChainId, StagenetChain } from "../types";
+import { Chain, ChainId, StagenetChain, getRPCUrl } from "../types";
 
 // 10 rune for register, 1 rune per year
 // MINIMUM_REGISTRATION_FEE = 11
@@ -55,13 +54,18 @@ export function getChainIdentifier<T extends Chain>(chain: T) {
 }
 
 const warnings = new Set();
-export function warnOnce(condition: boolean, warning: string) {
+export function warnOnce({
+  condition,
+  id,
+  warning,
+}: { condition: boolean; id: string; warning: string }) {
   if (condition) {
-    if (warnings.has(warning)) {
+    if (warnings.has(id)) {
       return;
     }
 
-    warnings.add(warning);
+    console.warn(warning);
+    warnings.add(id);
   }
 }
 
@@ -71,10 +75,9 @@ export async function getDynamicChainId(chainId: ChainId = ChainId.THORChain) {
   }
 
   try {
-    const rpcUrl =
-      SKConfig.get("rpcUrls")[
-        chainId !== ChainId.THORChain ? StagenetChain.THORChain : Chain.THORChain
-      ];
+    const rpcUrl = await getRPCUrl(
+      chainId !== ChainId.THORChain ? StagenetChain.THORChain : Chain.THORChain,
+    );
 
     const response = await RequestClient.get<{ result: { node_info: { network: string } } }>(
       `${rpcUrl}/status`,

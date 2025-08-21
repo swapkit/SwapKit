@@ -152,13 +152,14 @@ export class AssetValue extends BigIntArithmetics {
 
     const tokenDecimal = token?.decimal || commonAssetDecimal;
 
-    warnOnce(
-      !(asyncTokenLookup || tokenDecimal),
-      `Couldn't find static decimal for one or more tokens on ${chain} (Using default ${BaseDecimal[chain]} decimal as fallback).
+    warnOnce({
+      condition: !(asyncTokenLookup || tokenDecimal),
+      id: `assetValue_static_decimal_not_found_${chain}`,
+      warning: `Couldn't find static decimal for one or more tokens on ${chain} (Using default ${BaseDecimal[chain]} decimal as fallback).
 This can result in incorrect calculations and mess with amount sent on transactions.
 You can load static assets by installing @swapkit/tokens package and calling AssetValue.loadStaticAssets()
 or by passing asyncTokenLookup: true to the from() function, which will make it async and return a promise.`,
-    );
+    });
 
     const { decimal, identifier, tax } = token || {
       decimal: tokenDecimal || BaseDecimal[chain],

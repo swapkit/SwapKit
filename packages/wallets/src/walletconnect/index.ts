@@ -7,6 +7,7 @@ import {
   SwapKitError,
   WalletOption,
   filterSupportedChains,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
 import type { NearSigner } from "@swapkit/toolboxes/near";
@@ -247,7 +248,8 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         });
         const txBytes = TxRaw.encode(txRaw).finish();
 
-        const broadcaster = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
+        const rpcUrl = await getRPCUrl(Chain.THORChain);
+        const broadcaster = await createStargateClient(rpcUrl);
         const result = await broadcaster.broadcastTx(txBytes);
         return result.transactionHash;
       }

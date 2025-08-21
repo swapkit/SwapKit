@@ -14,9 +14,9 @@ import {
   type DerivationPathArray,
   type GenericCreateTransactionParams,
   NetworkDerivationPath,
-  SKConfig,
   SwapKitError,
   derivationPathToString,
+  getRPCUrl,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { P } from "ts-pattern";
@@ -188,7 +188,8 @@ function estimateTransactionFee(getConnection: () => Promise<Connection>) {
 
 async function getConnection() {
   const { Connection } = await import("@solana/web3.js");
-  return new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
+  const rpcUrl = await getRPCUrl(Chain.Solana);
+  return new Connection(rpcUrl, "confirmed");
 }
 
 function createAssetTransaction(getConnection: () => Promise<Connection>) {

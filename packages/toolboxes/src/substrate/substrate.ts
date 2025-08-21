@@ -12,10 +12,10 @@ import {
   Chain,
   type DerivationPathArray,
   type GenericCreateTransactionParams,
-  SKConfig,
   type SubstrateChain,
   SwapKitError,
   SwapKitNumber,
+  getRPCUrl,
 } from "@swapkit/helpers";
 
 import { P, match } from "ts-pattern";
@@ -291,7 +291,8 @@ export async function createSubstrateToolbox({
 }: ToolboxParams & { chain: SubstrateChain }) {
   const { ApiPromise, WsProvider } = await import("@polkadot/api");
 
-  const provider = new WsProvider(SKConfig.get("rpcUrls")[chain]);
+  const rpcUrl = await getRPCUrl(chain);
+  const provider = new WsProvider(rpcUrl);
   const api = await ApiPromise.create({ provider });
   const gasAsset = AssetValue.from({ chain });
   const network = generic ? SubstrateNetwork.GENERIC : SubstrateNetwork[chain];

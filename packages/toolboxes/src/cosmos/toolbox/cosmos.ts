@@ -19,6 +19,7 @@ import {
   SwapKitNumber,
   applyFeeMultiplier,
   derivationPathToString,
+  getRPCUrl,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
@@ -117,7 +118,7 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
 }
 
 export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToolboxParams) {
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const rpcUrl = await getRPCUrl(chain);
   const chainPrefix = CosmosChainPrefixes[chain];
 
   const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;

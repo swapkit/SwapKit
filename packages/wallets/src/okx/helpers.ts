@@ -3,8 +3,8 @@ import {
   ChainId,
   type EVMChain,
   type GenericTransferParams,
-  SKConfig,
   SwapKitError,
+  getRPCUrl,
   prepareNetworkSwitch,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
@@ -24,7 +24,8 @@ const cosmosTransfer =
     const { keplr: wallet } = window.okxwallet;
     const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
 
-    const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls").GAIA, offlineSigner);
+    const rpcUrl = await getRPCUrl(Chain.Cosmos);
+    const cosmJS = await createSigningStargateClient(rpcUrl, offlineSigner);
 
     const coins = [
       {

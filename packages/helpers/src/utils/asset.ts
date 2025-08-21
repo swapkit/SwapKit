@@ -3,8 +3,14 @@ import { match } from "ts-pattern";
 
 import { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
-import { SKConfig } from "../modules/swapKitConfig";
-import { BaseDecimal, Chain, type EVMChain, EVMChains, UTXOChains } from "../types/chains";
+import {
+  BaseDecimal,
+  Chain,
+  type EVMChain,
+  EVMChains,
+  UTXOChains,
+  getRPCUrl,
+} from "../types/chains";
 import type { RadixCoreStateResourceDTO } from "../types/radix";
 
 export type CommonAssetString = (typeof CommonAssetStrings)[number] | Chain;
@@ -35,22 +41,21 @@ async function getContractDecimals({ chain, to }: { chain: EVMChain; to: string 
   const getDecimalMethodHex = "0x313ce567";
 
   try {
-    const { result } = await RequestClient.post<{ result: string }>(
-      SKConfig.get("rpcUrls")[chain],
-      {
-        headers: {
-          accept: "*/*",
-          "content-type": "application/json",
-          "cache-control": "no-cache",
-        },
-        body: JSON.stringify({
-          id: 44,
-          jsonrpc: "2.0",
-          method: "eth_call",
-          params: [{ to: to.toLowerCase(), data: getDecimalMethodHex }, "latest"],
-        }),
+    const rpcUrl = await getRPCUrl(chain);
+
+    const { result } = await RequestClient.post<{ result: string }>(rpcUrl, {
+      headers: {
+        accept: "*/*",
+        "content-type": "application/json",
+        "cache-control": "no-cache",
       },
-    );
+      body: JSON.stringify({
+        id: 44,
+        jsonrpc: "2.0",
+        method: "eth_call",
+        params: [{ to: to.toLowerCase(), data: getDecimalMethodHex }, "latest"],
+      }),
+    });
 
     return Number.parseInt(BigInt(result || BaseDecimal[chain]).toString());
   } catch (error) {
@@ -64,9 +69,10 @@ async function getRadixAssetDecimal(symbol: string) {
 
   try {
     const resourceAddress = symbol.split("-")[1]?.toLowerCase();
+    const rpcUrl = await getRPCUrl(Chain.Radix);
 
     const { manager } = await RequestClient.post<RadixCoreStateResourceDTO>(
-      `${SKConfig.get("rpcUrls").XRD}/state/resource`,
+      `${rpcUrl}/state/resource`,
       {
         headers: { Accept: "*/*", "Content-Type": "application/json" },
         body: JSON.stringify({

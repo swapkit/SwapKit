@@ -12,6 +12,7 @@ import {
   SwapKitError,
   SwapKitNumber,
   derivationPathToString,
+  getRPCUrl,
   updateDerivationPath,
 } from "@swapkit/helpers";
 
@@ -177,7 +178,7 @@ export async function createThorchainToolbox({
   ...toolboxParams
 }: CosmosToolboxParams<Chain.THORChain | Chain.Maya>) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const rpcUrl = await getRPCUrl(chain);
   const { isStagenet } = SKConfig.get("envs");
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;

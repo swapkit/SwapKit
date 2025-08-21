@@ -1,5 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
-import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
+import { AssetValue, Chain, getRPCUrl } from "@swapkit/helpers";
 import { providers } from "near-api-js";
 import { getFullAccessPublicKey } from "../helpers/core";
 import { getNearToolbox } from "../toolbox";
@@ -11,10 +11,9 @@ const context: {
   toolbox: Awaited<ReturnType<typeof getNearToolbox>>;
 } = {} as any;
 
-beforeAll(() => {
-  context.provider = new providers.JsonRpcProvider({
-    url: SKConfig.get("rpcUrls")[Chain.Near],
-  });
+beforeAll(async () => {
+  const rpcUrl = await getRPCUrl(Chain.Near);
+  context.provider = new providers.JsonRpcProvider({ url: rpcUrl });
 });
 
 beforeEach(async () => {

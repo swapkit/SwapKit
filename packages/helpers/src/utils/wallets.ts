@@ -96,12 +96,13 @@ export function filterSupportedChains<T extends string[]>({
 
   const unsupported = chains.filter((chain) => !supportedChains.includes(chain));
 
-  warnOnce(
-    unsupported.length > 0,
-    `${walletType} wallet does not support the following chains: ${unsupported.join(
+  warnOnce({
+    condition: unsupported.length > 0,
+    id: `wallet_chain_not_supported_${walletType}`,
+    warning: `${walletType} wallet does not support the following chains: ${unsupported.join(
       ", ",
     )}. These chains will be ignored.`,
-  );
+  });
 
   return supported as T;
 }

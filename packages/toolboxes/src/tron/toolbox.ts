@@ -2,9 +2,9 @@ import {
   AssetValue,
   Chain,
   NetworkDerivationPath,
-  SKConfig,
   SwapKitError,
   derivationPathToString,
+  getRPCUrl,
   updateDerivationPath,
   warnOnce,
 } from "@swapkit/helpers";
@@ -130,8 +130,7 @@ export const createTronToolbox = async (
   const TW = await import("tronweb");
   const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
 
-  // Always get configuration from SKConfig
-  const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
+  const rpcUrl = await getRPCUrl(Chain.Tron);
   // Note: TRON API key support can be added to SKConfig apiKeys when needed
   const headers = undefined; // No API key needed for basic TronGrid access
 
@@ -275,10 +274,11 @@ export const createTronToolbox = async (
         decimals: Number(decimalsRaw ?? 18),
       };
     } catch (error) {
-      warnOnce(
-        true,
-        `Failed to get token balance for ${contractAddress}: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_get_token_metadata_failed",
+        warning: `Failed to get token metadata for ${contractAddress}: ${error instanceof Error ? error.message : error}`,
+      });
       return null;
     }
   };
@@ -329,10 +329,11 @@ export const createTronToolbox = async (
       }
       return fallbackBalance;
     } catch (error) {
-      warnOnce(
-        true,
-        `Tron API getBalance failed: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_get_balance_failed",
+        warning: `Tron API getBalance failed: ${error instanceof Error ? error.message : error}`,
+      });
 
       // Fallback: get TRX and USDT directly
       const balances: AssetValue[] = [];
@@ -494,10 +495,11 @@ export const createTronToolbox = async (
       });
     } catch (error) {
       // Fallback to conservative estimates if calculation fails
-      warnOnce(
-        true,
-        `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_fee_estimation_failed",
+        warning: `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
+      });
 
       throw new SwapKitError("toolbox_tron_fee_estimation_failed", { error });
     }

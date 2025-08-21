@@ -4,10 +4,9 @@ import {
   AssetValue,
   BaseDecimal,
   Chain,
-  ChainId,
   type CosmosChain,
-  SKConfig,
   SwapKitError,
+  getRPCUrl,
 } from "@swapkit/helpers";
 
 import type { CosmosCreateTransactionParams } from "./thorchainUtils";
@@ -132,28 +131,6 @@ export async function createOfflineStargateClient(
   return SigningStargateClient.offline(wallet, registry);
 }
 
-export const getRPC = (chainId: ChainId) => {
-  const { isStagenet } = SKConfig.get("envs");
-  const rpcUrls = SKConfig.get("rpcUrls");
-
-  switch (chainId) {
-    case ChainId.Kujira:
-      return rpcUrls.KUJI;
-
-    case ChainId.Noble:
-      return rpcUrls.NOBLE;
-
-    case ChainId.THORChain:
-    case "thorchain-mainnet-v1" as ChainId:
-      return isStagenet ? rpcUrls.THOR_STAGENET : rpcUrls.THOR;
-    case ChainId.Maya:
-      return isStagenet ? rpcUrls.MAYA_STAGENET : rpcUrls.MAYA;
-
-    default:
-      return rpcUrls.GAIA;
-  }
-};
-
 const getTransferMsgTypeByChain = (chain: CosmosChain) => {
   switch (chain) {
     case Chain.Maya:
@@ -182,8 +159,8 @@ export const cosmosCreateTransaction = async ({
 }: CosmosCreateTransactionParams) => {
   const { chain, chainId } = assetValue;
 
-  const url = getRPC(chainId);
-  const client = await createStargateClient(url);
+  const rpcUrl = await getRPCUrl(chain);
+  const client = await createStargateClient(rpcUrl);
   const accountOnChain = await client.getAccount(sender);
 
   if (!accountOnChain) {

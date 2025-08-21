@@ -4,9 +4,9 @@ import {
   Chain,
   type ChainSigner,
   type GenericTransferParams,
-  SKConfig,
   SwapKitError,
   SwapKitNumber,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { Transaction } from "xrpl";
 import { Client, type Payment, Wallet, isValidAddress, xrpToDrops } from "xrpl";
@@ -48,7 +48,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
         ? createSigner(params.phrase)
         : undefined;
 
-  const rpcUrl = SKConfig.get("rpcUrls")[Chain.Ripple];
+  const rpcUrl = await getRPCUrl(Chain.Ripple);
   if (!rpcUrl) {
     throw new SwapKitError({
       errorKey: "toolbox_ripple_rpc_not_configured",

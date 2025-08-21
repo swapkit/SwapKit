@@ -4,11 +4,10 @@ import {
   type DerivationPathArray,
   FeeOption,
   type GenericTransferParams,
-  SKConfig,
-  StagenetChain,
   SwapKitError,
   WalletOption,
   filterSupportedChains,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
@@ -168,11 +167,8 @@ async function getWalletMethods({
           toAddress: recipient,
         };
 
-        const signingClient = await createSigningStargateClient(
-          SKConfig.get("rpcUrls")[chain],
-          signer,
-          "0.007uatom",
-        );
+        const rpcUrl = await getRPCUrl(chain);
+        const signingClient = await createSigningStargateClient(rpcUrl, signer, "0.007uatom");
 
         const { transactionHash } = await signingClient.signAndBroadcast(
           address,
@@ -261,11 +257,9 @@ async function getWalletMethods({
 
         const txRaw = TxRaw.fromPartial({ bodyBytes, authInfoBytes, signatures: [signature] });
         const txBytes = TxRaw.encode(txRaw).finish();
-        const { isStagenet } = SKConfig.get("envs");
+        const rpcUrl = await getRPCUrl(Chain.THORChain);
 
-        const broadcaster = await createStargateClient(
-          SKConfig.get("rpcUrls")[isStagenet ? StagenetChain.THORChain : Chain.THORChain],
-        );
+        const broadcaster = await createStargateClient(rpcUrl);
         const { transactionHash } = await broadcaster.broadcastTx(txBytes);
 
         return transactionHash;

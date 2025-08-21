@@ -5,6 +5,7 @@ import {
   SKConfig,
   SwapKitError,
   type UTXOChain,
+  getRPCUrl,
   warnOnce,
 } from "@swapkit/helpers";
 import { networks } from "bitcoinjs-lib";
@@ -50,7 +51,7 @@ async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string
     return response.data?.transaction_hash || txHash;
   } catch (error) {
     // Fallback to RPC if Blockchair fails
-    const rpcUrl = SKConfig.get("rpcUrls")[chain];
+    const rpcUrl = await getRPCUrl(chain);
     if (rpcUrl) {
       const rpcBody = JSON.stringify({
         jsonrpc: "2.0",
@@ -355,7 +356,11 @@ async function getUtxos({
 function utxoApi(chain: UTXOChain) {
   const apiKey = SKConfig.get("apiKeys").blockchair || "";
 
-  warnOnce(!apiKey, "No Blockchair API key found. Functionality will be limited.");
+  warnOnce({
+    condition: !apiKey,
+    id: "no_blockchair_api_key_warning",
+    warning: "No Blockchair API key found. Functionality will be limited.",
+  });
 
   return {
     broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, chain }),
@@ -382,7 +387,11 @@ export function getUtxoApi(chain: UTXOChain) {
   const customUtxoApi = SKConfig.get("apis")[chain];
 
   if (customUtxoApi) {
-    warnOnce(true, "Using custom UTXO API. Be sure to implement all methods to avoid issues.");
+    warnOnce({
+      condition: true,
+      id: "custom_utxo_api_warning",
+      warning: "Using custom UTXO API. Be sure to implement all methods to avoid issues.",
+    });
     return customUtxoApi as ReturnType<typeof utxoApi>;
   }
 

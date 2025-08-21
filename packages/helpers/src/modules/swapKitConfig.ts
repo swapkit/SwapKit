@@ -1,5 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import { Chain, EXPLORER_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
+import { Chain, EXPLORER_URLS, FALLBACK_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
 export type SKConfigIntegrations = {
@@ -34,6 +34,7 @@ const initialState = {
   explorerUrls: EXPLORER_URLS,
   nodeUrls: NODE_URLS,
   rpcUrls: RPC_URLS,
+  fallbackRpcUrls: FALLBACK_URLS,
 
   apiKeys: {
     blockchair: "",
@@ -75,6 +76,7 @@ export type SKConfigState = {
   integrations?: Partial<SKConfigIntegrations>;
   nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
+  fallbackRpcUrls?: Partial<SKState["fallbackRpcUrls"]>;
   wallets?: SKState["wallets"];
   feeMultipliers?: FeeMultiplierConfig;
 };

@@ -5,6 +5,7 @@ import {
   ChainToExplorerUrl,
   SKConfig,
   SwapKitError,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type {
   Authorization,
@@ -108,7 +109,7 @@ export async function OPToolbox({
   ...toolboxSignerParams
 }: EVMToolboxParams) {
   const chain = Chain.Optimism;
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const rpcUrl = await getRPCUrl(chain);
   const provider = providerParam || (await getProvider(chain, rpcUrl));
   const signer = match(toolboxSignerParams)
     .with({ phrase: P.string }, ({ phrase }) => HDNodeWallet.fromPhrase(phrase).connect(provider))

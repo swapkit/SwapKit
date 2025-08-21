@@ -10,6 +10,7 @@ import {
   SKConfig,
   SwapKitError,
   SwapKitNumber,
+  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, Provider } from "ethers";
 
@@ -19,7 +20,7 @@ import type { EIP1559TxParams, EVMMaxSendableAmountsParams } from "./types";
 export async function getProvider(chain: EVMChain, customUrl?: string) {
   const { JsonRpcProvider } = await import("ethers");
 
-  return new JsonRpcProvider(customUrl || SKConfig.get("rpcUrls")[chain]);
+  return new JsonRpcProvider(customUrl || (await getRPCUrl(chain)));
 }
 
 /**

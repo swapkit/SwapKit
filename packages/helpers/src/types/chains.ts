@@ -1,5 +1,7 @@
 import { match } from "ts-pattern";
+import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
+import { warnOnce } from "../utils/others";
 
 export enum Chain {
   Arbitrum = "ARB",
@@ -496,9 +498,47 @@ const getRPCUrlWithFallback = async (chain: Chain | StagenetChain) => {
   return primaryUrl;
 };
 
+export async function getRPCUrl(chain: Chain | StagenetChain) {
+  const { isStagenet } = SKConfig.get("envs");
+  const rpcUrls = SKConfig.get("rpcUrls");
+  const fallbackUrls = SKConfig.get("fallbackRpcUrls");
+
+  if (isStagenet) {
+    return rpcUrls[chain];
+  }
+
+  const primaryUrl = rpcUrls[chain];
+  const primaryIsWorking = await testRPCConnection(chain, primaryUrl);
+
+  if (!primaryIsWorking) {
+    for (const fallbackUrl of fallbackUrls[chain]) {
+      const fallbackIsWorking = await testRPCConnection(chain, fallbackUrl);
+
+      if (fallbackIsWorking) {
+        return fallbackUrl;
+      }
+    }
+  }
+
+  return primaryUrl;
+}
+
+/**
+ * @deprecated
+ * RPC URLs are now managed dynamically via SKConfig.
+ * Please use static { rpcUrls, fallbackRpcUrls } SwapKit init config or dynamic SKConfig.setRpcUrl/setFallbackRpcUrl to configure RPC endpoints.
+ * This function is obsolete and will be removed in a future release.
+ */
 export const initializeRPCUrlsWithFallback = async (
   chains: (Chain | StagenetChain)[] = [...Object.values(Chain), ...Object.values(StagenetChain)],
 ) => {
+  warnOnce({
+    condition: true,
+    id: "initializeRPCUrlsWithFallback",
+    warning:
+      "initializeRPCUrlsWithFallback is deprecated. Use static { rpcUrls, fallbackRpcUrls } SwapKit init config or dynamic SKConfig.setRpcUrl/setFallbackRpcUrl to configure RPC endpoints.",
+  });
+
   const workingUrls: Record<Chain | StagenetChain, string> = {} as Record<
     Chain | StagenetChain,
     string
