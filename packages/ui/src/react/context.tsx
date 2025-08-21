@@ -55,7 +55,11 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
   );
 
   const getClient = useCallback(() => {
-    warnOnce(!client, "Client not found. Please run connect first.");
+    warnOnce({
+      condition: !client,
+      id: "client_not_found",
+      warning: "Client not found. Please run connect first.",
+    });
 
     return client;
   }, [client]);
