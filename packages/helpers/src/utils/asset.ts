@@ -3,15 +3,9 @@ import { match } from "ts-pattern";
 
 import { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
-import {
-  BaseDecimal,
-  Chain,
-  type EVMChain,
-  EVMChains,
-  UTXOChains,
-  getRPCUrl,
-} from "../types/chains";
+import { BaseDecimal, Chain, type EVMChain, EVMChains, UTXOChains } from "../types/chains";
 import type { RadixCoreStateResourceDTO } from "../types/radix";
+import { getRPCUrl } from "./chains";
 
 export type CommonAssetString = (typeof CommonAssetStrings)[number] | Chain;
 

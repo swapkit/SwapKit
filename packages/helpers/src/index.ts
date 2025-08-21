@@ -15,6 +15,7 @@ export * from "./modules/feeMultiplier";
  * Utils
  */
 export * from "./utils/asset";
+export * from "./utils/chains";
 export * from "./utils/derivationPath";
 export * from "./utils/explorerUrls";
 export * from "./utils/liquidity";

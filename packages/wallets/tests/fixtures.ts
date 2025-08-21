@@ -21,7 +21,7 @@ export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[nu
   [Chain.Litecoin]: "ltc1qs4h7p8x0kfhs88wazmq2d40t59dwdlxd6rlpjz",
   [Chain.Maya]: "maya1hm0sdz9v2h5jwjuu0ssp8x98upvlc6py2t7e6j",
   [Chain.Near]: "a03fafdf5f97d3c6be6bff9e55f057dda76fefbb7e149f5469248f41e812cb6e",
-  [Chain.Noble]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
+  [Chain.Noble]: "noble12d7d2rlxp7urkp8z0p8sft2fm07ewyjrp0fhf8",
   [Chain.Optimism]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
   [Chain.Polkadot]: "16kQVedQo7yYoFSp2MnQ78zP39xWnFGePnZps2APEyt9K9KZ",
   [Chain.Polygon]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",

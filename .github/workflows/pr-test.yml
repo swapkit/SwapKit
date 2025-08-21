@@ -5,6 +5,9 @@ env:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - develop
   pull_request_target:
     branches:
       - develop
