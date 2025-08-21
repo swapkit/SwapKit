@@ -1,5 +1,26 @@
 # @swapkit/tokens
 
+## 4.0.0
+
+### Patch Changes
+
+- [`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436) Thanks [@towanTG](https://github.com/towanTG)! - Changes TRX. to TRON. in tokenlist
+
+- [`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8) Thanks [@towanTG](https://github.com/towanTG)! - Exports near token list
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- [`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af) Thanks [@towanTG](https://github.com/towanTG)! - Moves generate tokenlist to token package
+
+- [#1404](https://github.com/swapkit/SwapKit/pull/1404) [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Server/Client split, type definitions and new goodies
+
+- [`e80a902`](https://github.com/swapkit/SwapKit/commit/e80a9027f28d0fc388a457a16526605b714fce65) Thanks [@towanTG](https://github.com/towanTG)! - Updates Near token list
+
+- Updated dependencies [[`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436), [`f97daf0`](https://github.com/swapkit/SwapKit/commit/f97daf02e7e9961a55d0ba9a0f4bac7dd6b3392d), [`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5), [`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8), [`fb6d225`](https://github.com/swapkit/SwapKit/commit/fb6d22564b6237f497256fbed6aa56a520126b91), [`94fd9b2`](https://github.com/swapkit/SwapKit/commit/94fd9b2002db030bafae72b6b86bf949e0cac674), [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2), [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f), [`0d8f498`](https://github.com/swapkit/SwapKit/commit/0d8f498f7450552067aa95f27d513c71775ea67d), [`3c3a3da`](https://github.com/swapkit/SwapKit/commit/3c3a3da284989bc6209fcd10af4b328d89a11b92), [`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af), [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f), [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc), [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773), [`66d9b26`](https://github.com/swapkit/SwapKit/commit/66d9b2611b7eba507209c119a254b6cdd8d23197), [`cc74719`](https://github.com/swapkit/SwapKit/commit/cc747193dfef3b4b9b120b6b1dcc649e1cfd9d0c), [`23c9e54`](https://github.com/swapkit/SwapKit/commit/23c9e549d3591266efd9727aef349ef602ac1a18), [`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5), [`0f2e55a`](https://github.com/swapkit/SwapKit/commit/0f2e55aba9efcdbfa74fcf9a4311534b9da780ed), [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773)]:
+  - @swapkit/toolboxes@4.0.0
+  - @swapkit/helpers@4.0.0
+  - @swapkit/wallets@4.0.0
+
 ## 4.0.0-beta.18
 
 ### Patch Changes
