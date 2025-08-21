@@ -1,14 +1,14 @@
 import { SwapKit, SwapKitError, type WalletOption } from "@swapkit/core";
-import { type PluginName, type SKPlugins, loadPlugin } from "@swapkit/plugins";
+import { loadPlugin, type PluginName, type SKPlugins } from "@swapkit/plugins";
 import { loadWallet } from "@swapkit/wallets";
 
 export async function getSkClient<W extends WalletOption, P extends PluginName[]>({
   walletOption,
   pluginNames,
-}: { walletOption: W; pluginNames: P }): Promise<{
-  client: ReturnType<typeof SwapKit>;
-  connectMethod: string;
-}> {
+}: {
+  walletOption: W;
+  pluginNames: P;
+}): Promise<{ client: ReturnType<typeof SwapKit>; connectMethod: string }> {
   const connectedPlugins = await loadPlugins(pluginNames);
   const walletPkg = await loadWallet(walletOption);
   const connectMethod = Object.keys(walletPkg).find((key) => key.startsWith("connect"));
@@ -17,16 +17,12 @@ export async function getSkClient<W extends WalletOption, P extends PluginName[]
   }
 
   return {
-    client: SwapKit({ plugins: connectedPlugins, wallets: { ...walletPkg } }) as ReturnType<
-      typeof SwapKit
-    >,
+    client: SwapKit({ plugins: connectedPlugins, wallets: { ...walletPkg } }) as ReturnType<typeof SwapKit>,
     connectMethod,
   };
 }
 
-export async function loadPlugins<P extends PluginName[]>(
-  pluginNames: P,
-): Promise<Pick<SKPlugins, P[number]>> {
+export async function loadPlugins<P extends PluginName[]>(pluginNames: P): Promise<Pick<SKPlugins, P[number]>> {
   let connectedPlugins = {} as Pick<SKPlugins, P[number]>;
 
   if (pluginNames?.length) {

@@ -17,8 +17,8 @@ export function validateIdentifier(identifier = "") {
   throw new SwapKitError({
     errorKey: "helpers_invalid_identifier",
     info: {
-      message: `Invalid identifier: ${identifier}. Expected format: <Chain>.<Ticker> or <Chain>.<Ticker>-<ContractAddress>`,
       identifier,
+      message: `Invalid identifier: ${identifier}. Expected format: <Chain>.<Ticker> or <Chain>.<Ticker>-<ContractAddress>`,
     },
   });
 }

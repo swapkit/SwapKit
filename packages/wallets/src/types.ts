@@ -1,19 +1,13 @@
-import type {
-  AminoSignResponse,
-  OfflineAminoSigner,
-  StdSignDoc,
-  StdSignature,
-} from "@cosmjs/amino";
+import type { AminoSignResponse, OfflineAminoSigner, StdSignature, StdSignDoc } from "@cosmjs/amino";
 import type { Keplr } from "@keplr-wallet/types";
 import { type EthereumWindowProvider, WalletOption } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
-import type { BrowserProvider, Eip1193Provider } from "ethers";
+import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
 
 import type { keepkeyWallet } from "@swapkit/wallet-hardware/keepkey";
 import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
-
-import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
+import type { BrowserProvider, Eip1193Provider } from "ethers";
 import type { bitgetWallet } from "./bitget";
 import type { coinbaseWallet } from "./coinbase";
 import type { cosmostationWallet } from "./cosmostation";
@@ -41,10 +35,7 @@ export type Callback = (
 ) => void;
 
 export type VultisigCosmosProvider = {
-  request(
-    request: { method: string; params?: any[] | Record<string, any> },
-    callback?: Callback,
-  ): Promise<any>;
+  request(request: { method: string; params?: any[] | Record<string, any> }, callback?: Callback): Promise<any>;
 };
 
 export type SKWallets = {
@@ -113,11 +104,10 @@ export type SKWalletsSupportedChains = {
   [WalletOption.XAMAN]: typeof xamanWallet.connectXaman.supportedChains;
 };
 
-type UnisatToSignInputs = {
-  index: number;
-  sighashTypes?: number[];
-  disableTweakSigner?: boolean;
-} & ({ address: string } | { publicKey: string });
+type UnisatToSignInputs = { index: number; sighashTypes?: number[]; disableTweakSigner?: boolean } & (
+  | { address: string }
+  | { publicKey: string }
+);
 
 declare global {
   interface Window {
@@ -130,9 +120,7 @@ declare global {
     keplr: Keplr;
     leap: Keplr;
     trustwallet: EthereumWindowProvider;
-    phantom: {
-      solana: SolanaProvider;
-    };
+    phantom: { solana: SolanaProvider };
 
     xfi?: {
       binance: Eip1193Provider;
@@ -171,10 +159,7 @@ declare global {
         signMessage: (message: string, type?: "ecdsa" | "bip322-simple") => Promise<string>;
         signPsbt: (
           psbtHex: string,
-          {
-            autoFinalized,
-            toSignInputs,
-          }: { autoFinalized?: boolean; toSignInputs?: UnisatToSignInputs[] },
+          { autoFinalized, toSignInputs }: { autoFinalized?: boolean; toSignInputs?: UnisatToSignInputs[] },
         ) => Promise<string>;
       };
       keplr: {
@@ -185,11 +170,7 @@ declare global {
           signDoc: StdSignDoc,
           signOptions: any,
         ) => Promise<AminoSignResponse>;
-        signArbitrary: (
-          chainId: string,
-          signer: string,
-          data: string | Uint8Array,
-        ) => Promise<StdSignature>;
+        signArbitrary: (chainId: string, signer: string, data: string | Uint8Array) => Promise<StdSignature>;
         verifyArbitrary: (
           chainId: string,
           signer: string,
@@ -200,15 +181,9 @@ declare global {
       };
       solana: SolanaProvider;
       ethereum: EthereumWindowProvider;
-      tronLink: {
-        request: (args: { method: string; params?: any }) => Promise<any>;
-        ready: boolean;
-      };
+      tronLink: { request: (args: { method: string; params?: any }) => Promise<any>; ready: boolean };
       tronWeb: {
-        defaultAddress: {
-          base58: string;
-          hex: string;
-        };
+        defaultAddress: { base58: string; hex: string };
         trx: {
           sign: (transaction: any) => Promise<any>;
           sendRawTransaction: (signedTransaction: any) => Promise<any>;
@@ -221,16 +196,10 @@ declare global {
     okxwallet?:
       | {
           bitcoin: {
-            connect: () => Promise<{
-              address: string;
-              publicKey: string;
-            }>;
+            connect: () => Promise<{ address: string; publicKey: string }>;
             disconnect: () => Promise<void>;
             signMessage: (message: string, { from }: { from: string }) => Promise<string>;
-            signPsbt: (
-              psbtHex: string,
-              { from, type }: { from: string; type: string },
-            ) => Promise<string>;
+            signPsbt: (psbtHex: string, { from, type }: { from: string; type: string }) => Promise<string>;
           };
           keplr: {
             enable: (chainId: string | string[]) => Promise<void>;
@@ -240,11 +209,7 @@ declare global {
               signDoc: StdSignDoc,
               signOptions: any,
             ) => Promise<AminoSignResponse>;
-            signArbitrary: (
-              chainId: string,
-              signer: string,
-              data: string | Uint8Array,
-            ) => Promise<StdSignature>;
+            signArbitrary: (chainId: string, signer: string, data: string | Uint8Array) => Promise<StdSignature>;
             verifyArbitrary: (
               chainId: string,
               signer: string,
@@ -258,18 +223,13 @@ declare global {
               contractId?: string;
               methodNames?: string[];
             }) => Promise<{ accountId: string; accessKey?: any }>;
-            requestSignTransactions: (params: {
-              transactions: any[];
-            }) => Promise<any>;
+            requestSignTransactions: (params: { transactions: any[] }) => Promise<any>;
           };
           tronLink: {
             request: (args: { method: string; params?: any }) => Promise<any>;
             ready: boolean;
             tronWeb: {
-              defaultAddress: {
-                base58: string;
-                hex: string;
-              };
+              defaultAddress: { base58: string; hex: string };
               trx: {
                 sign: (transaction: any) => Promise<any>;
                 sendRawTransaction: (signedTransaction: any) => Promise<any>;

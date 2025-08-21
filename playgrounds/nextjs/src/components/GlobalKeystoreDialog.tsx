@@ -14,14 +14,8 @@ import { Input } from "~/components/ui/input";
 import { useSwapKit } from "~/lib/swapKit";
 
 export const GlobalKeystoreDialog = () => {
-  const {
-    isKeystoreOpen,
-    setIsKeystoreOpen,
-    isKeystoreDecrypting,
-    keystoreFile,
-    setKeystoreFile,
-    connectKeystore,
-  } = useSwapKit();
+  const { isKeystoreOpen, setIsKeystoreOpen, isKeystoreDecrypting, keystoreFile, setKeystoreFile, connectKeystore } =
+    useSwapKit();
   const [password, setPassword] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +39,7 @@ export const GlobalKeystoreDialog = () => {
   };
 
   return (
-    <Dialog open={isKeystoreOpen} onOpenChange={(open) => !open && handleCancel()}>
+    <Dialog onOpenChange={(open) => !open && handleCancel()} open={isKeystoreOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -56,26 +50,21 @@ export const GlobalKeystoreDialog = () => {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <Input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              ref={inputRef}
-              disabled={isKeystoreDecrypting}
               className="col-span-3"
+              disabled={isKeystoreDecrypting}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              ref={inputRef}
+              required
+              type="password"
+              value={password}
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleCancel}
-              disabled={isKeystoreDecrypting}
-            >
+            <Button disabled={isKeystoreDecrypting} onClick={handleCancel} type="button" variant="secondary">
               Cancel
             </Button>
-            <Button type="submit" disabled={isKeystoreDecrypting}>
+            <Button disabled={isKeystoreDecrypting} type="submit">
               {isKeystoreDecrypting ? "Decrypting..." : "Unlock"}
             </Button>
           </DialogFooter>

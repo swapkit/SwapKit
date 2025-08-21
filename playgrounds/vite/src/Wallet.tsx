@@ -1,10 +1,6 @@
 import { type Chain, type FullWallet, SwapKitApi } from "@swapkit/sdk";
 
-type Props = {
-  walletData: FullWallet[Chain];
-  setAsset: (asset: any) => void;
-  disconnect: () => void;
-};
+type Props = { walletData: FullWallet[Chain]; setAsset: (asset: any) => void; disconnect: () => void };
 
 export const Wallet = ({ walletData, setAsset, disconnect }: Props) => {
   if (!walletData) return null;
@@ -22,44 +18,17 @@ export const Wallet = ({ walletData, setAsset, disconnect }: Props) => {
       {walletData?.balance?.map((b) => (
         <div
           key={b.toString()}
-          style={{
-            flexDirection: "row",
-            display: "flex",
-            alignItems: "flex-start",
-            marginBottom: "8px",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              top: 0,
-              left: 0,
-              height: "30px",
-              width: "30px",
-              marginRight: "8px",
-            }}
-          >
+          style={{ alignItems: "flex-start", display: "flex", flexDirection: "row", marginBottom: "8px" }}>
+          <div style={{ height: "30px", left: 0, marginRight: "8px", position: "relative", top: 0, width: "30px" }}>
             <img
-              style={{
-                position: "relative",
-                top: 0,
-                left: 0,
-                height: "30px",
-                width: "30px",
-              }}
-              src={SwapKitApi.getLogoForAsset(b.toString())}
               alt=""
+              src={SwapKitApi.getLogoForAsset(b.toString())}
+              style={{ height: "30px", left: 0, position: "relative", top: 0, width: "30px" }}
             />
             <img
-              style={{
-                position: "relative",
-                top: "-19px",
-                left: "18px",
-                height: "15px",
-                width: "15px",
-              }}
-              src={SwapKitApi.getChainLogoForAsset(b.toString())}
               alt=""
+              src={SwapKitApi.getChainLogoForAsset(b.toString())}
+              style={{ height: "15px", left: "18px", position: "relative", top: "-19px", width: "15px" }}
             />
           </div>
 

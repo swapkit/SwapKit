@@ -40,15 +40,15 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
     try {
       const { routes } = await SwapKitApi.getSwapQuote({
-        sellAsset: inputAsset.toString(),
-        sellAmount: inputAssetValue.getValue("string"),
-        buyAsset: outputAsset.toString(),
-        sourceAddress,
-        destinationAddress,
-        slippage: 3,
         affiliate: "t",
         affiliateFee: 0,
+        buyAsset: outputAsset.toString(),
+        destinationAddress,
         includeTx: true,
+        sellAmount: inputAssetValue.getValue("string"),
+        sellAsset: inputAsset.toString(),
+        slippage: 3,
+        sourceAddress,
       });
 
       setRoutes(routes || []);
@@ -116,9 +116,9 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
                   <div>
                     <label>
                       <input
-                        type="checkbox"
                         checked={useChainflipBoost}
                         onChange={(e) => setUseChainflipBoost(e.target.checked)}
+                        type="checkbox"
                       />
                       Use Chainflip
                     </label>
@@ -129,8 +129,7 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
                   {new SwapKitNumber(route.expectedBuyAmount)
                     .mul(
                       route.meta.assets?.find(
-                        (asset) =>
-                          asset.asset.toLowerCase() === outputAsset?.toString().toLowerCase(),
+                        (asset) => asset.asset.toLowerCase() === outputAsset?.toString().toLowerCase(),
                       )?.price || 0,
                     )
                     .toFixed(4)}

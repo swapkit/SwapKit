@@ -58,11 +58,7 @@
     "xumm": "1.8.0"
   },
   "exports": {
-    ".": {
-      "default": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
     "./bitget": {
       "default": "./dist/src/bitget/index.js",
       "require": "./dist/src/bitget/index.cjs",
@@ -153,15 +149,15 @@
       "require": "./dist/src/trezor.cjs",
       "types": "./dist/types/trezor.d.ts"
     },
-    "./vultisig": {
-      "default": "./dist/src/vultisig/index.js",
-      "require": "./dist/src/vultisig/index.cjs",
-      "types": "./dist/types/vultisig/index.d.ts"
-    },
     "./tronlink": {
       "default": "./dist/src/tronlink/index.js",
       "require": "./dist/src/tronlink/index.cjs",
       "types": "./dist/types/tronlink/index.d.ts"
+    },
+    "./vultisig": {
+      "default": "./dist/src/vultisig/index.js",
+      "require": "./dist/src/vultisig/index.cjs",
+      "types": "./dist/types/vultisig/index.d.ts"
     },
     "./walletconnect": {
       "default": "./dist/src/walletconnect/index.js",
@@ -178,10 +174,7 @@
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",

@@ -16,7 +16,7 @@ import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "./ev
 import type { getNearToolbox } from "./near";
 import type { RadixToolbox } from "./radix";
 import type { getRippleToolbox } from "./ripple";
-import type { SolanaCreateTransactionParams, getSolanaToolbox } from "./solana";
+import type { getSolanaToolbox, SolanaCreateTransactionParams } from "./solana";
 import type { getSubstrateToolbox } from "./substrate";
 import type { createTronToolbox } from "./tron";
 import type { getUtxoToolbox } from "./utxo";
@@ -84,8 +84,8 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
 
           return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
             ...txObject,
-            feeOption: params.feeOptionKey || FeeOption.Fast,
             chain,
+            feeOption: params.feeOptionKey || FeeOption.Fast,
           });
         },
       )
@@ -178,29 +178,15 @@ export async function getToolbox<T extends keyof Toolboxes>(
       Chain.Polygon,
       async () => {
         const { getEvmToolbox } = await import("./evm/toolbox");
-        const evmToolbox = await getEvmToolbox(
-          chain as EVMChain,
-          params as Parameters<typeof getEvmToolbox>[1],
-        );
+        const evmToolbox = await getEvmToolbox(chain as EVMChain, params as Parameters<typeof getEvmToolbox>[1]);
         return evmToolbox as Toolboxes[T];
       },
     )
-    .with(
-      Chain.Litecoin,
-      Chain.Dash,
-      Chain.Dogecoin,
-      Chain.BitcoinCash,
-      Chain.Bitcoin,
-      Chain.Zcash,
-      async () => {
-        const { getUtxoToolbox } = await import("./utxo");
-        const utxoToolbox = await getUtxoToolbox(
-          chain as UTXOChain,
-          params as Parameters<typeof getUtxoToolbox>[1],
-        );
-        return utxoToolbox as Toolboxes[T];
-      },
-    )
+    .with(Chain.Litecoin, Chain.Dash, Chain.Dogecoin, Chain.BitcoinCash, Chain.Bitcoin, Chain.Zcash, async () => {
+      const { getUtxoToolbox } = await import("./utxo");
+      const utxoToolbox = await getUtxoToolbox(chain as UTXOChain, params as Parameters<typeof getUtxoToolbox>[1]);
+      return utxoToolbox as Toolboxes[T];
+    })
     .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, async () => {
       const { getCosmosToolbox } = await import("./cosmos");
       const cosmosToolbox = await getCosmosToolbox(
@@ -224,16 +210,12 @@ export async function getToolbox<T extends keyof Toolboxes>(
     })
     .with(Chain.Ripple, async () => {
       const { getRippleToolbox } = await import("./ripple");
-      const rippleToolbox = await getRippleToolbox(
-        params as Parameters<typeof getRippleToolbox>[0],
-      );
+      const rippleToolbox = await getRippleToolbox(params as Parameters<typeof getRippleToolbox>[0]);
       return rippleToolbox as Toolboxes[T];
     })
     .with(Chain.Solana, async () => {
       const { getSolanaToolbox } = await import("./solana");
-      const solanaToolbox = await getSolanaToolbox(
-        params as Parameters<typeof getSolanaToolbox>[0],
-      );
+      const solanaToolbox = await getSolanaToolbox(params as Parameters<typeof getSolanaToolbox>[0]);
       return solanaToolbox as Toolboxes[T];
     })
     .with(Chain.Tron, async () => {

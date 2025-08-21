@@ -1,15 +1,11 @@
 export const list = {
-  provider: "PANCAKESWAP",
   chainId: "56",
-  name: "PANCAKESWAP",
-  timestamp: "2025-07-30T14:12:03.820Z",
-  version: {
-    major: 2,
-    minor: 16,
-    patch: 477,
-  },
-  keywords: ["pancakeswap", "extended"],
   count: 645,
+  keywords: ["pancakeswap", "extended"],
+  logoURI: "https://pancakeswap.finance/logo.png",
+  name: "PANCAKESWAP",
+  provider: "PANCAKESWAP",
+  timestamp: "2025-07-30T14:12:03.820Z",
   tokens: [
     {
       address: "0x63eC886286f30AD392749b9e8f24f67F5b8Ac394",
@@ -6462,5 +6458,5 @@ export const list = {
       ticker: "ZRO",
     },
   ],
-  logoURI: "https://pancakeswap.finance/logo.png",
+  version: { major: 2, minor: 16, patch: 477 },
 } as const;

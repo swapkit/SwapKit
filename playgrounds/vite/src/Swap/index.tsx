@@ -21,8 +21,8 @@ export default function Swap({
       if (!(outputChain && inputChain && skClient)) return;
 
       const txHash = await skClient.swap({
-        route,
         feeOptionKey: FeeOption.Fast,
+        route,
         ...(isChainflipBoost ? { maxBoostFeeBps: 10 } : {}),
       });
 
@@ -34,12 +34,7 @@ export default function Swap({
   return (
     <>
       <h4>Swap</h4>
-      <SwapInputs
-        handleSwap={handleSwap}
-        inputAsset={inputAsset}
-        outputAsset={outputAsset}
-        skClient={skClient}
-      />
+      <SwapInputs handleSwap={handleSwap} inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} />
     </>
   );
 }

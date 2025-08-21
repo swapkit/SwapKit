@@ -1,18 +1,10 @@
+import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
 import { getAddress } from "ethers";
 import { match } from "ts-pattern";
-
-import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
+import { BaseDecimal, Chain, type ChainId, ChainToChainId, type EVMChain, EVMChains } from "../types/chains";
 import {
-  BaseDecimal,
-  Chain,
-  type ChainId,
-  ChainToChainId,
-  type EVMChain,
-  EVMChains,
-} from "../types/chains";
-import {
-  type CommonAssetString,
   assetFromString,
+  type CommonAssetString,
   getAssetType,
   getCommonAssetInfo,
   getDecimal,
@@ -33,13 +25,11 @@ const staticTokensMap = new Map<
   { tax?: TokenTax; decimal: number; identifier: string; logoURI?: string }
 >();
 
-type ConditionalAssetValueReturn<T extends { asyncTokenLookup?: boolean }> =
-  T["asyncTokenLookup"] extends true ? Promise<AssetValue> : AssetValue;
+type ConditionalAssetValueReturn<T extends { asyncTokenLookup?: boolean }> = T["asyncTokenLookup"] extends true
+  ? Promise<AssetValue>
+  : AssetValue;
 
-type AssetIdentifier =
-  | { asset: CommonAssetString | TokenNames }
-  | { asset: string }
-  | { chain: Chain };
+type AssetIdentifier = { asset: CommonAssetString | TokenNames } | { asset: string } | { chain: Chain };
 
 type AssetValueFromParams = AssetIdentifier & {
   value?: NumberPrimitives | SwapKitValueType;
@@ -119,10 +109,7 @@ export class AssetValue extends BigIntArithmetics {
   static fromUrl(urlAsset: string, value: NumberPrimitives = 0) {
     const [chain, ticker, symbol] = urlAsset.split(".");
     if (!(chain && ticker)) {
-      throw new SwapKitError({
-        errorKey: "helpers_invalid_asset_url",
-        info: { urlAsset },
-      });
+      throw new SwapKitError({ errorKey: "helpers_invalid_asset_url", info: { urlAsset } });
     }
 
     const asset = chain === Chain.THORChain && symbol ? `${chain}.${ticker}/${symbol}` : urlAsset;
@@ -176,7 +163,7 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       ? createAssetValue(identifier, fromBaseDecimal ? adjustedValue : parsedValue)
       : isSynthOrTrade
         ? createSyntheticAssetValue(identifier, adjustedValue)
-        : new AssetValue({ tax, decimal, identifier, value: adjustedValue });
+        : new AssetValue({ decimal, identifier, tax, value: adjustedValue });
 
     return assetValue as ConditionalAssetValueReturn<T>;
   }
@@ -192,7 +179,7 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
         ) as TokenNames;
         const tokenDecimal = "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain];
 
-        staticTokensMap.set(tokenKey, { identifier, decimal: tokenDecimal });
+        staticTokensMap.set(tokenKey, { decimal: tokenDecimal, identifier });
       }
     }
 
@@ -202,18 +189,13 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
   static setStaticAssets(
     tokenMap: Map<
       string,
-      { tax?: TokenTax; identifier: string; chain: Chain } & (
-        | { decimal: number }
-        | { decimals: number }
-      )
+      { tax?: TokenTax; identifier: string; chain: Chain } & ({ decimal: number } | { decimals: number })
     >,
   ) {
     staticTokensMap.clear();
     for (const [key, value] of tokenMap.entries()) {
       const tokenKey = (
-        CASE_SENSITIVE_CHAINS.includes(value.chain)
-          ? value.identifier
-          : value.identifier.toUpperCase()
+        CASE_SENSITIVE_CHAINS.includes(value.chain) ? value.identifier : value.identifier.toUpperCase()
       ) as TokenNames;
       const tokenDecimal = "decimals" in value ? value.decimals : value.decimal;
       staticTokensMap.set(key, { ...value, decimal: tokenDecimal, identifier: tokenKey });
@@ -228,9 +210,7 @@ export function getMinAmountByChain(chain: Chain) {
   return match(chain)
     .with(Chain.Bitcoin, Chain.Litecoin, Chain.BitcoinCash, Chain.Dash, () => asset.set(0.00010001))
     .with(Chain.Dogecoin, () => asset.set(1.00000001))
-    .with(Chain.Avalanche, Chain.Ethereum, Chain.Arbitrum, Chain.BinanceSmartChain, () =>
-      asset.set(0.00000001),
-    )
+    .with(Chain.Avalanche, Chain.Ethereum, Chain.Arbitrum, Chain.BinanceSmartChain, () => asset.set(0.00000001))
     .with(Chain.THORChain, Chain.Maya, () => asset.set(0))
     .with(Chain.Cosmos, Chain.Kujira, () => asset.set(0.000001))
     .otherwise(() => asset.set(0.00000001));
@@ -248,20 +228,14 @@ async function createAssetValue(identifier: string, value: NumberPrimitives = 0)
   const staticToken = staticTokensMap.get(modifiedIdentifier);
   const decimal = staticToken?.decimal || (await getDecimal(getAssetInfo(identifier)));
   if (!staticToken) {
-    staticTokensMap.set(modifiedIdentifier, { identifier, decimal });
+    staticTokensMap.set(modifiedIdentifier, { decimal, identifier });
   }
 
-  return new AssetValue({
-    decimal,
-    value: safeValue(value, decimal),
-    identifier,
-  });
+  return new AssetValue({ decimal, identifier, value: safeValue(value, decimal) });
 }
 
 function createSyntheticAssetValue(identifier: string, value: NumberPrimitives = 0) {
-  const chain = identifier.includes(".")
-    ? (identifier.split(".")?.[0]?.toUpperCase() as Chain)
-    : undefined;
+  const chain = identifier.includes(".") ? (identifier.split(".")?.[0]?.toUpperCase() as Chain) : undefined;
   const isMayaOrThor = chain ? [Chain.Maya, Chain.THORChain].includes(chain) : false;
 
   const assetSeparator = identifier.slice(0, 14).includes("~") ? "~" : "/";
@@ -271,23 +245,18 @@ function createSyntheticAssetValue(identifier: string, value: NumberPrimitives =
     : identifier.split(assetSeparator);
 
   if (!(synthChain && symbol)) {
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_asset_identifier",
-      info: { identifier },
-    });
+    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
   return new AssetValue({
     decimal: 8,
-    value: safeValue(value, 8),
     identifier: `${chain || Chain.THORChain}.${synthChain}${assetSeparator}${symbol}`,
+    value: safeValue(value, 8),
   });
 }
 
 function safeValue(value: NumberPrimitives, decimal: number) {
-  return typeof value === "bigint"
-    ? formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal })
-    : value;
+  return typeof value === "bigint" ? formatBigIntToSafeValue({ bigIntDecimal: decimal, decimal, value }) : value;
 }
 
 function validateAssetChain(assetOrChain: AssetIdentifier) {
@@ -337,10 +306,7 @@ function getAssetInfo(identifier: string) {
     : identifier.split(assetSeparator);
 
   if (isSynthOrTrade && !(synthChain && synthSymbol)) {
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_asset_identifier",
-      info: { identifier },
-    });
+    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
   const [chain, ...rest] = (
@@ -349,14 +315,12 @@ function getAssetInfo(identifier: string) {
 
   const assetSymbol = isSynthOrTrade ? synthSymbol : rest.join(".");
 
-  const { address, ticker } = getAssetBaseInfo({ symbol: assetSymbol, chain });
+  const { address, ticker } = getAssetBaseInfo({ chain, symbol: assetSymbol });
 
   let formattedAddress: string | undefined;
   try {
     formattedAddress =
-      address && EVMChains.includes(chain as EVMChain) && getAddress(address)
-        ? getAddress(address)
-        : address;
+      address && EVMChains.includes(chain as EVMChain) && getAddress(address) ? getAddress(address) : address;
   } catch (_error) {
     formattedAddress = address;
   }
@@ -368,26 +332,21 @@ function getAssetInfo(identifier: string) {
   return {
     address: formattedAddress,
     chain,
-    isSynthOrTrade,
-    isSynthetic,
-    isTradeAsset,
-    ticker,
-    symbol,
     isGasAsset: isGasAsset({ chain, symbol: assetSymbol }),
+    isSynthetic,
+    isSynthOrTrade,
+    isTradeAsset,
+    symbol,
+    ticker,
   };
 }
 
 function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
   const splitSymbol = symbol.split("-");
-  const unformattedAddress =
-    splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
+  const unformattedAddress = splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
 
-  const address = CASE_SENSITIVE_CHAINS.includes(chain)
-    ? unformattedAddress
-    : unformattedAddress?.toLowerCase();
-  const ticker = (
-    splitSymbol.length === 1 ? splitSymbol[0] : splitSymbol.slice(0, -1).join("-")
-  ) as string;
+  const address = CASE_SENSITIVE_CHAINS.includes(chain) ? unformattedAddress : unformattedAddress?.toLowerCase();
+  const ticker = (splitSymbol.length === 1 ? splitSymbol[0] : splitSymbol.slice(0, -1).join("-")) as string;
 
   return { address, ticker };
 }

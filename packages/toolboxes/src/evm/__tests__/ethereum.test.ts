@@ -15,7 +15,7 @@ const USDCAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 const block = await hre.ethers.provider.getBlock("latest");
 
 beforeAll(() => {
-  hre.run("node");
+  void hre.run("node");
 });
 
 const context: {
@@ -29,11 +29,7 @@ beforeEach(async () => {
   const provider = await getProvider(Chain.Ethereum, "http://127.0.0.1:8545/");
   const signer = await hre.ethers.getImpersonatedSigner(testAddress);
 
-  SKConfig.set({
-    apiKeys: {
-      swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY,
-    },
-  });
+  SKConfig.set({ apiKeys: { swapKit: process.env.TEST_API_KEY || Bun.env.TEST_API_KEY } });
   context.provider = provider;
   context.toolbox = await getEvmToolbox(Chain.Ethereum, { provider, signer: signer as any });
 });
@@ -43,18 +39,13 @@ afterEach(async () => {
 });
 
 describe("Ethereum toolkit", () => {
-  // biome-ignore lint/suspicious/noSkippedTests: env not setup correctly
   test.skip("Get Balances", async () => {
     const balances = await context.toolbox.getBalance(testAddress);
-    expect(balances.find((balance) => balance.symbol === "ETH")?.getBaseValue("string")).toBe(
-      "20526000000000000",
-    );
+    expect(balances.find((balance) => balance.symbol === "ETH")?.getBaseValue("string")).toBe("20526000000000000");
     expect(
       balances
         .find(
-          (balance) =>
-            balance.symbol.toLowerCase() ===
-            "USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".toLowerCase(),
+          (balance) => balance.symbol.toLowerCase() === "USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".toLowerCase(),
         )
         ?.getBaseValue("string"),
     ).toBe("6656178");
@@ -63,13 +54,11 @@ describe("Ethereum toolkit", () => {
   test("Send ETH", async () => {
     expect((await context.provider.getBalance(emptyRecipient)).toString()).toBe("0");
     await context.toolbox.transfer({
-      recipient: emptyRecipient,
       assetValue: await AssetValue.from({ chain: Chain.Ethereum, value: "0.010526" }),
+      recipient: emptyRecipient,
       sender: testAddress,
     });
-    expect((await context.provider.getBalance(emptyRecipient)).toString()).toBe(
-      "10526000000000000",
-    );
+    expect((await context.provider.getBalance(emptyRecipient)).toString()).toBe("10526000000000000");
   }, 10000);
 
   test("Send Token", async () => {
@@ -79,42 +68,31 @@ describe("Ethereum toolkit", () => {
 
     await AssetValue.loadStaticAssets(["thorchain"]);
 
-    const assetValue = AssetValue.from({
-      asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      value: "1",
-    });
+    const assetValue = AssetValue.from({ asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", value: "1" });
 
-    await context.toolbox.transfer({
-      recipient: emptyRecipient,
-      assetValue,
-      sender: testAddress,
-    });
-    // biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
+    await context.toolbox.transfer({ assetValue, recipient: emptyRecipient, sender: testAddress });
+    // biome-ignore lint/correctness/noUnsafeOptionalChaining: Tests
     expect((await USDC.balanceOf?.(emptyRecipient)).toString()).toBe("1000000");
   }, 10000);
 
   test("Approve Token and validate approved amount", async () => {
     expect(
       await context.toolbox.isApproved({
-        assetAddress: USDCAddress,
-        spenderAddress: emptyRecipient,
-        from: testAddress,
         amount: "1000000",
+        assetAddress: USDCAddress,
+        from: testAddress,
+        spenderAddress: emptyRecipient,
       }),
     ).toBe(false);
 
-    await context.toolbox.approve({
-      assetAddress: USDCAddress,
-      spenderAddress: emptyRecipient,
-      amount: "1000000",
-    });
+    await context.toolbox.approve({ amount: "1000000", assetAddress: USDCAddress, spenderAddress: emptyRecipient });
 
     expect(
       await context.toolbox.isApproved({
-        assetAddress: USDCAddress,
-        spenderAddress: emptyRecipient,
-        from: testAddress,
         amount: "1000000",
+        assetAddress: USDCAddress,
+        from: testAddress,
+        spenderAddress: emptyRecipient,
       }),
     ).toBe(true);
   }, 10000);
@@ -125,17 +103,15 @@ describe("Ethereum toolkit", () => {
     expect(balance.toString()).toBe("0");
 
     const txObject = await context.toolbox.createContractTxObject({
-      contractAddress: USDCAddress,
       abi: erc20ABI,
+      contractAddress: USDCAddress,
       funcName: "transfer",
       funcParams: [emptyRecipient, BigInt("2222222")],
-      txOverrides: {
-        from: testAddress,
-      },
+      txOverrides: { from: testAddress },
     });
 
     await context.toolbox.sendTransaction(txObject);
-    // biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
+    // biome-ignore lint/correctness/noUnsafeOptionalChaining: Tests
     expect((await USDC?.balanceOf?.(emptyRecipient)).toString()).toBe("2222222");
   }, 10000);
 });

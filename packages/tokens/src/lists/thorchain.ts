@@ -1,15 +1,10 @@
 export const list = {
-  provider: "THORCHAIN",
   chainId: "thorchain-1",
-  name: "THORCHAIN",
-  timestamp: "2025-07-30T16:02:14.612Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 79,
+  keywords: [],
+  name: "THORCHAIN",
+  provider: "THORCHAIN",
+  timestamp: "2025-07-30T16:02:14.612Z",
   tokens: [
     {
       chain: "AVAX",
@@ -765,4 +760,5 @@ export const list = {
       ticker: "XRP",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

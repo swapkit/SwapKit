@@ -12,16 +12,16 @@
 
 /* cool Bun background animation 😎 */
 body::before {
-  content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  opacity: 0.05;
+  pointer-events: none;
+  content: "";
   background: url("../pages/logo.svg");
   background-size: 256px;
+  opacity: 0.05;
   transform: rotate(-12deg) scale(1.35);
   animation: slide 30s linear infinite;
-  pointer-events: none;
 }
 
 @keyframes slide {

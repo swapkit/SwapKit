@@ -1,17 +1,17 @@
 import {
+  address as bchAddress,
   Transaction,
   TransactionBuilder,
-  address as bchAddress,
-  // @ts-ignore
+  // @ts-expect-error
 } from "@psf/bitcoincashjs-lib";
 import {
   Chain,
   type ChainSigner,
   type DerivationPathArray,
+  derivationPathToString,
   FeeOption,
   NetworkDerivationPath,
   SwapKitError,
-  derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { Psbt } from "bitcoinjs-lib";
@@ -46,20 +46,15 @@ export function stripPrefix(address: string) {
 
 export function bchValidateAddress(address: string) {
   const strippedAddress = stripPrefix(address);
-  return (
-    isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet
-  );
+  return isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet;
 }
 
 export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));
 }
 
-async function createSignerWithKeys(keys: BchECPair) {
-  async function signTransaction({
-    builder,
-    utxos,
-  }: { builder: TransactionBuilderType; utxos: UTXOType[] }) {
+function createSignerWithKeys(keys: BchECPair) {
+  function signTransaction({ builder, utxos }: { builder: TransactionBuilderType; utxos: UTXOType[] }) {
     utxos.forEach((utxo, index) => {
       builder.sign(index, keys, undefined, 0x41, utxo.witnessUtxo?.value);
     });
@@ -72,20 +67,11 @@ async function createSignerWithKeys(keys: BchECPair) {
     return Promise.resolve(stripToCashAddress(address));
   };
 
-  return {
-    getAddress,
-    signTransaction,
-  };
+  return { getAddress, signTransaction };
 }
 
 export async function createBCHToolbox<T extends Chain.BitcoinCash>(
-  toolboxParams:
-    | UtxoToolboxParams[T]
-    | {
-        phrase?: string;
-        derivationPath?: DerivationPathArray;
-        index?: number;
-      },
+  toolboxParams: UtxoToolboxParams[T] | { phrase?: string; derivationPath?: DerivationPathArray; index?: number },
 ) {
   const phrase = "phrase" in toolboxParams ? toolboxParams.phrase : undefined;
 
@@ -97,13 +83,9 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
       : updateDerivationPath(NetworkDerivationPath[chain], { index }),
   );
 
-  const keys = phrase ? (await getCreateKeysForPath(chain))({ phrase, derivationPath }) : undefined;
+  const keys = phrase ? (await getCreateKeysForPath(chain))({ derivationPath, phrase }) : undefined;
 
-  const signer = keys
-    ? await createSignerWithKeys(keys)
-    : "signer" in toolboxParams
-      ? toolboxParams.signer
-      : undefined;
+  const signer = keys ? createSignerWithKeys(keys) : "signer" in toolboxParams ? toolboxParams.signer : undefined;
 
   function getAddress() {
     return Promise.resolve(signer?.getAddress());
@@ -117,29 +99,22 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
 
   return {
     ...toolbox,
-    getAddress,
     broadcastTx,
-    createTransaction,
     buildTx,
+    createTransaction,
+    getAddress,
     getAddressFromKeys,
     getBalance: handleGetBalance,
     getFeeRates,
     stripPrefix,
     stripToCashAddress,
+    transfer: transfer({ broadcastTx, getFeeRates, signer }),
     validateAddress: bchValidateAddress,
-    transfer: transfer({ getFeeRates, broadcastTx, signer }),
   };
 }
 
-async function createTransaction({
-  assetValue,
-  recipient,
-  memo,
-  feeRate,
-  sender,
-}: UTXOBuildTxParams) {
-  if (!bchValidateAddress(recipient))
-    throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipient });
+async function createTransaction({ assetValue, recipient, memo, feeRate, sender }: UTXOBuildTxParams) {
+  if (!bchValidateAddress(recipient)) throw new SwapKitError("toolbox_utxo_invalid_address", { address: recipient });
 
   // Overestimate by 7500 byte * feeRate to ensure we have enough UTXOs for fees and change
   const targetValue = Math.ceil(assetValue.getBaseValue("number") + feeRate * 7500);
@@ -154,20 +129,11 @@ async function createTransaction({
 
   const targetOutputs: TargetOutput[] = [];
   // output to recipient
-  targetOutputs.push({
-    address: recipient,
-    value: assetValue.getBaseValue("number"),
-  });
-  const { inputs, outputs } = accumulative({
-    inputs: utxos,
-    outputs: targetOutputs,
-    feeRate,
-    chain,
-  });
+  targetOutputs.push({ address: recipient, value: assetValue.getBaseValue("number") });
+  const { inputs, outputs } = accumulative({ chain, feeRate, inputs: utxos, outputs: targetOutputs });
 
   // .inputs and .outputs will be undefined if no solution was found
-  if (!(inputs && outputs))
-    throw new SwapKitError("toolbox_utxo_insufficient_balance", { sender, assetValue });
+  if (!(inputs && outputs)) throw new SwapKitError("toolbox_utxo_insufficient_balance", { assetValue, sender });
   const getNetwork = await getUtxoNetwork();
   const builder = new TransactionBuilder(getNetwork(chain)) as TransactionBuilderType;
 
@@ -180,8 +146,7 @@ async function createTransaction({
   );
 
   for (const output of outputs) {
-    const address =
-      "address" in output && output.address ? output.address : toLegacyAddress(sender);
+    const address = "address" in output && output.address ? output.address : toLegacyAddress(sender);
     const getNetwork = await getUtxoNetwork();
     const outputScript = bchAddress.toOutputScript(toLegacyAddress(address), getNetwork(chain));
 
@@ -214,20 +179,12 @@ function transfer({
     const from = await signer?.getAddress();
     if (!(signer && from)) throw new SwapKitError("toolbox_utxo_no_signer");
     if (!recipient)
-      throw new SwapKitError("toolbox_utxo_invalid_params", {
-        error: "Recipient address must be provided",
-      });
+      throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Recipient address must be provided" });
 
     const feeRate = rest.feeRate || (await getFeeRates())[feeOptionKey];
 
     // try out if psbt tx is faster/better/nicer
-    const { builder, utxos } = await createTransaction({
-      ...rest,
-      assetValue,
-      feeRate,
-      recipient,
-      sender: from,
-    });
+    const { builder, utxos } = await createTransaction({ ...rest, assetValue, feeRate, recipient, sender: from });
 
     const tx = await signer.signTransaction({ builder, utxos });
     const txHex = tx.toHex();
@@ -236,7 +193,6 @@ function transfer({
   };
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor
 async function buildTx({
   assetValue,
   recipient,
@@ -264,42 +220,27 @@ async function buildTx({
   const targetOutputs = [] as TargetOutput[];
 
   // output to recipient
-  targetOutputs.push({
-    address: toLegacyAddress(recipient),
-    value: assetValue.getBaseValue("number"),
-  });
+  targetOutputs.push({ address: toLegacyAddress(recipient), value: assetValue.getBaseValue("number") });
 
   //2. add output memo to targets (optional)
   if (compiledMemo) {
     targetOutputs.push({ script: compiledMemo, value: 0 });
   }
 
-  const { inputs, outputs } = accumulative({
-    inputs: utxos,
-    outputs: targetOutputs,
-    feeRate: feeRateWhole,
-    chain,
-  });
+  const { inputs, outputs } = accumulative({ chain, feeRate: feeRateWhole, inputs: utxos, outputs: targetOutputs });
 
   // .inputs and .outputs will be undefined if no solution was found
-  if (!(inputs && outputs))
-    throw new SwapKitError("toolbox_utxo_insufficient_balance", { sender, assetValue });
+  if (!(inputs && outputs)) throw new SwapKitError("toolbox_utxo_insufficient_balance", { assetValue, sender });
   const getNetwork = await getUtxoNetwork();
   const psbt = new Psbt({ network: getNetwork(chain) }); // Network-specific
 
   for (const { hash, index, witnessUtxo } of inputs) {
-    psbt.addInput({
-      hash,
-      index,
-      witnessUtxo,
-      sighashType: setSigHashType ? 0x41 : undefined,
-    });
+    psbt.addInput({ hash, index, sighashType: setSigHashType ? 0x41 : undefined, witnessUtxo });
   }
 
   // Outputs
   for (const output of outputs) {
-    const address =
-      "address" in output && output.address ? output.address : toLegacyAddress(sender);
+    const address = "address" in output && output.address ? output.address : toLegacyAddress(sender);
     const params = output.script
       ? compiledMemo
         ? { script: compiledMemo, value: 0 }
@@ -311,7 +252,7 @@ async function buildTx({
     }
   }
 
-  return { psbt, utxos, inputs: inputs as UTXOType[] };
+  return { inputs: inputs as UTXOType[], psbt, utxos };
 }
 
 function getAddressFromKeys(keys: { getAddress: (index?: number) => string }) {

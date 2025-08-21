@@ -17,18 +17,14 @@ export async function getWalletForChain({ xumm, chain, address }: GetWalletForCh
       const toolbox = await getRippleToolbox({});
 
       // Override transfer method to use Xaman transaction flow
-      const transfer = async (params: {
-        assetValue: AssetValue;
-        recipient: string;
-        memo?: string;
-      }) => {
+      const transfer = async (params: { assetValue: AssetValue; recipient: string; memo?: string }) => {
         const { recipient, assetValue, memo } = params;
 
         // Create and subscribe to payment via Xaman
         const paymentResult = await sendXamanTransaction(xumm, {
-          from: address,
-          destination: recipient,
           amount: assetValue.getValue("string"),
+          destination: recipient,
+          from: address,
           memo: memo,
         });
 
@@ -44,15 +40,15 @@ export async function getWalletForChain({ xumm, chain, address }: GetWalletForCh
       return {
         ...toolbox,
         address,
-        getAddress: () => address,
-        transfer,
         // Expose Xaman-specific methods
         createAndSubscribePayment: sendXamanTransaction,
         disconnect: xumm.logout,
+        getAddress: () => address,
+        transfer,
       };
     }
 
     default:
-      throw new SwapKitError("wallet_chain_not_supported", { wallet: "Xaman", chain });
+      throw new SwapKitError("wallet_chain_not_supported", { chain, wallet: "Xaman" });
   }
 }

@@ -1,10 +1,4 @@
-import {
-  Chain,
-  type DerivationPathArray,
-  type EVMChain,
-  EVMChains,
-  NetworkDerivationPath,
-} from "../types";
+import { Chain, type DerivationPathArray, type EVMChain, EVMChains, NetworkDerivationPath } from "../types";
 
 type Params = {
   chain: Chain;

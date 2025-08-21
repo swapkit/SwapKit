@@ -37,12 +37,7 @@ export interface NEP141Contract {
   ): Promise<any>; // Returns transaction result
 
   ft_transfer_call(
-    args: {
-      receiver_id: string;
-      amount: string;
-      memo?: string | null;
-      msg: string;
-    },
+    args: { receiver_id: string; amount: string; memo?: string | null; msg: string },
     gas?: any,
     deposit?: any,
   ): Promise<any>; // Returns transaction result

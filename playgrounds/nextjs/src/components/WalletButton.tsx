@@ -19,8 +19,8 @@ export function WalletButton() {
         <Button onClick={() => setConnectOpen(true)}>Connect Wallet</Button>
       )}
 
-      <WalletConnectDialog open={connectOpen} onOpenChange={setConnectOpen} />
-      <WalletDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
+      <WalletConnectDialog onOpenChange={setConnectOpen} open={connectOpen} />
+      <WalletDrawer onOpenChange={setDrawerOpen} open={drawerOpen} />
     </>
   );
 }

@@ -14,21 +14,11 @@ export function ChainIcon({ chain, className }: ChainIconProps) {
 
   if (!iconUrl) {
     return (
-      <div
-        className={`rounded-full bg-accent flex items-center justify-center text-xs font-medium ${className}`}
-      >
+      <div className={`flex items-center justify-center rounded-full bg-accent font-medium text-xs ${className}`}>
         {chain.slice(0, 2)}
       </div>
     );
   }
 
-  return (
-    <Image
-      src={iconUrl}
-      alt={chain}
-      width={24}
-      height={24}
-      className={`rounded-full ${className}`}
-    />
-  );
+  return <Image alt={chain} className={`rounded-full ${className}`} height={24} src={iconUrl} width={24} />;
 }

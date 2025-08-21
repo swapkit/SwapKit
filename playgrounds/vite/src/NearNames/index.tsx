@@ -2,11 +2,8 @@ import { Chain } from "@swapkit/helpers";
 import { useCallback, useEffect, useState } from "react";
 import type { SwapKitClient } from "../swapKitClient";
 
-type Props = {
-  skClient: SwapKitClient;
-};
+type Props = { skClient: SwapKitClient };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default function NearNames({ skClient }: Props) {
   const [nearAddress, setNearAddress] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
@@ -134,38 +131,29 @@ export default function NearNames({ skClient }: Props) {
   return (
     <div
       style={{
-        position: "fixed",
-        bottom: 20,
-        right: 20,
         background: "white",
         border: "1px solid #ccc",
         borderRadius: 8,
-        padding: 20,
-        width: 400,
+        bottom: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        padding: 20,
+        position: "fixed",
+        right: 20,
+        width: 400,
         zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 15,
-        }}
-      >
+      }}>
+      <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", marginBottom: 15 }}>
         <h3 style={{ margin: 0 }}>NEAR Names</h3>
         <button
-          type="button"
           onClick={() => setShowModal(false)}
-          style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}
-        >
+          style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20 }}
+          type="button">
           ×
         </button>
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <p style={{ fontSize: 14, color: "#666", margin: "0 0 10px 0" }}>
+        <p style={{ color: "#666", fontSize: 14, margin: "0 0 10px 0" }}>
           Connected: {nearAddress.slice(0, 8)}...{nearAddress.slice(-8)}
         </p>
 
@@ -173,7 +161,7 @@ export default function NearNames({ skClient }: Props) {
           <div style={{ marginBottom: 15 }}>
             <p style={{ fontSize: 14, fontWeight: "bold", margin: "0 0 5px 0" }}>Your Names:</p>
             {ownedNames.map((name) => (
-              <div key={name} style={{ fontSize: 14, color: "#333", padding: "2px 0" }}>
+              <div key={name} style={{ color: "#333", fontSize: 14, padding: "2px 0" }}>
                 {name}
               </div>
             ))}
@@ -182,96 +170,78 @@ export default function NearNames({ skClient }: Props) {
       </div>
 
       <div style={{ marginBottom: 15 }}>
-        <label
-          htmlFor="nearNameInput"
-          style={{ display: "block", marginBottom: 5, fontSize: 14, fontWeight: "bold" }}
-        >
+        <label htmlFor="nearNameInput" style={{ display: "block", fontSize: 14, fontWeight: "bold", marginBottom: 5 }}>
           Register a new .near name:
         </label>
         <div style={{ display: "flex", gap: 10 }}>
           <input
-            id="nearNameInput"
-            type="text"
-            value={nameInput}
+            id={`nearNameInput-${Math.random()}`}
             onChange={(e) => {
               setNameInput(e.target.value);
               setIsAvailable(null);
               setError("");
             }}
             placeholder="yourname"
-            style={{
-              flex: 1,
-              padding: "8px 12px",
-              border: "1px solid #ccc",
-              borderRadius: 4,
-              fontSize: 14,
-            }}
+            style={{ border: "1px solid #ccc", borderRadius: 4, flex: 1, fontSize: 14, padding: "8px 12px" }}
+            type="text"
+            value={nameInput}
           />
-          <span style={{ display: "flex", alignItems: "center", fontSize: 14, color: "#666" }}>
-            .near
-          </span>
+          <span style={{ alignItems: "center", color: "#666", display: "flex", fontSize: 14 }}>.near</span>
         </div>
       </div>
 
       {error && <div style={{ color: "red", fontSize: 14, marginBottom: 10 }}>{error}</div>}
 
       {isAvailable === true && (
-        <div style={{ color: "green", fontSize: 14, marginBottom: 10 }}>
-          ✓ Available! Cost: {nameCost} NEAR
-        </div>
+        <div style={{ color: "green", fontSize: 14, marginBottom: 10 }}>✓ Available! Cost: {nameCost} NEAR</div>
       )}
 
       {isAvailable === false && (
-        <div style={{ color: "red", fontSize: 14, marginBottom: 10 }}>
-          ✗ This name is already taken
-        </div>
+        <div style={{ color: "red", fontSize: 14, marginBottom: 10 }}>✗ This name is already taken</div>
       )}
 
       <div style={{ display: "flex", gap: 10 }}>
         <button
-          type="button"
-          onClick={checkAvailability}
           disabled={!nameInput || isChecking || isRegistering}
+          onClick={checkAvailability}
           style={{
-            flex: 1,
-            padding: "10px 15px",
             background: "#0066cc",
-            color: "white",
             border: "none",
             borderRadius: 4,
+            color: "white",
             cursor: !nameInput || isChecking ? "not-allowed" : "pointer",
-            opacity: !nameInput || isChecking ? 0.6 : 1,
+            flex: 1,
             fontSize: 14,
+            opacity: !nameInput || isChecking ? 0.6 : 1,
+            padding: "10px 15px",
           }}
-        >
+          type="button">
           {isChecking ? "Checking..." : "Check Availability"}
         </button>
 
         {isAvailable === true && (
           <button
-            type="button"
-            onClick={registerName}
             disabled={isRegistering}
+            onClick={registerName}
             style={{
-              flex: 1,
-              padding: "10px 15px",
               background: "#00cc66",
-              color: "white",
               border: "none",
               borderRadius: 4,
+              color: "white",
               cursor: isRegistering ? "not-allowed" : "pointer",
-              opacity: isRegistering ? 0.6 : 1,
+              flex: 1,
               fontSize: 14,
+              opacity: isRegistering ? 0.6 : 1,
+              padding: "10px 15px",
             }}
-          >
+            type="button">
             {isRegistering ? "Registering..." : `Register (${nameCost} NEAR)`}
           </button>
         )}
       </div>
 
-      <p style={{ fontSize: 12, color: "#999", marginTop: 15, marginBottom: 0 }}>
-        Shorter names cost more. 2-char: 50 NEAR, 3-char: 20 NEAR, 4-char: 5 NEAR, 5-char: 1 NEAR,
-        6+: 0.1 NEAR
+      <p style={{ color: "#999", fontSize: 12, marginBottom: 0, marginTop: 15 }}>
+        Shorter names cost more. 2-char: 50 NEAR, 3-char: 20 NEAR, 4-char: 5 NEAR, 5-char: 1 NEAR, 6+: 0.1 NEAR
       </p>
     </div>
   );

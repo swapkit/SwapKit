@@ -1,15 +1,7 @@
 "use client";
 
 import { WalletOption } from "@swapkit/helpers";
-import {
-  Coins,
-  Globe2,
-  HardDrive,
-  Laptop,
-  type LucideIcon,
-  Smartphone,
-  Wallet,
-} from "lucide-react";
+import { Coins, Globe2, HardDrive, Laptop, type LucideIcon, Smartphone, Wallet } from "lucide-react";
 
 const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.LEDGER]: HardDrive,
@@ -39,10 +31,7 @@ const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.RADIX_WALLET]: Wallet,
 };
 
-export function WalletIcon({
-  wallet,
-  className = "",
-}: { wallet: WalletOption; className?: string }) {
+export function WalletIcon({ wallet, className = "" }: { wallet: WalletOption; className?: string }) {
   const Icon = WALLET_ICONS[wallet];
   if (!Icon) return null;
 

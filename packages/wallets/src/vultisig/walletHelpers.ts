@@ -6,10 +6,10 @@ import {
   EVMChains,
   type FeeOption,
   type NetworkParams,
+  providerRequest,
   SwapKitError,
   type UTXOChain,
   WalletOption,
-  providerRequest,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
@@ -48,9 +48,7 @@ type VultisigProviderType<T> = T extends Chain.Solana
         ? Eip1193Provider
         : undefined;
 
-export async function getVultisigProvider<T extends Chain>(
-  chain: T,
-): Promise<VultisigProviderType<T>> {
+export async function getVultisigProvider<T extends Chain>(chain: T): Promise<VultisigProviderType<T>> {
   if (!window.vultisig) throw new SwapKitError("wallet_vultisig_not_found");
   const { match } = await import("ts-pattern");
 
@@ -81,27 +79,20 @@ async function transaction({
   chain: Chain;
 }): Promise<string> {
   const client = await getVultisigProvider(chain);
-  let finalParams:
-    | TransactionParams[]
-    | {
-        from: string;
-        to?: string;
-        value: string;
-        data?: string;
-      }[] = params;
+  let finalParams: TransactionParams[] | { from: string; to?: string; value: string; data?: string }[] = params;
 
   if (chain === Chain.Cosmos || chain === Chain.Kujira || chain === Chain.Ripple) {
     finalParams = params.map((p) => ({
+      data: p.data as string,
       from: p.from as string,
       to: p.to as string,
       value: (p.amount as { amount: number; decimals?: number }).amount.toString(),
-      data: p.data as string,
     }));
   }
 
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
-      // @ts-ignore
+      // @ts-expect-error
       client.request({ method, params: finalParams }, (err: string, tx: string) => {
         err ? reject(err) : resolve(tx);
       });
@@ -113,28 +104,18 @@ export async function getVultisigAddress(chain: Chain) {
   try {
     const eipProvider = (await getVultisigProvider(chain)) as Eip1193Provider;
     if (!eipProvider) {
-      throw new SwapKitError({
-        errorKey: "wallet_provider_not_found",
-        info: { wallet: WalletOption.VULTISIG, chain },
-      });
+      throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
     }
 
     if ([Chain.Cosmos, Chain.Kujira].includes(chain)) {
       const provider = await getVultisigProvider(Chain.Cosmos);
       const chainId = ChainToChainId[chain];
 
-      await provider.request({
-        method: "wallet_switch_chain",
-        params: [{ chainId }],
-      });
+      await provider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 
-      let account = await provider.request({
-        method: "get_accounts",
-      });
+      let account = await provider.request({ method: "get_accounts" });
       if (!account) {
-        const connectedAcount = await provider.request({
-          method: "request_accounts",
-        });
+        const connectedAcount = await provider.request({ method: "request_accounts" });
         account = connectedAcount[0].address;
       }
       return account;
@@ -147,11 +128,7 @@ export async function getVultisigAddress(chain: Chain) {
       }
       const { BrowserProvider } = await import("ethers");
       const provider = new BrowserProvider(eipProvider, "any");
-      const [response] = await providerRequest({
-        provider,
-        method: "eth_requestAccounts",
-        params: [],
-      });
+      const [response] = await providerRequest({ method: "eth_requestAccounts", params: [], provider });
       return response;
     }
 
@@ -165,10 +142,7 @@ export async function getVultisigAddress(chain: Chain) {
     const accounts = await eipProvider.request({ method: "request_accounts", params: [] });
     return accounts[0];
   } catch (_error) {
-    throw new SwapKitError({
-      errorKey: "wallet_provider_not_found",
-      info: { wallet: WalletOption.VULTISIG, chain },
-    });
+    throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
   }
 }
 
@@ -188,10 +162,7 @@ export async function walletTransfer(
   const from = await getVultisigAddress(assetValue.chain);
   const params = [
     {
-      amount: {
-        amount: assetValue.getBaseValue("number"),
-        decimals: assetValue.decimal,
-      },
+      amount: { amount: assetValue.getBaseValue("number"), decimals: assetValue.decimal },
       asset: {
         chain: assetValue.chain,
         symbol: assetValue.symbol.toUpperCase(),
@@ -199,49 +170,50 @@ export async function walletTransfer(
       },
       data: memo || "",
       from,
-      to: recipient,
       gasLimit,
+      to: recipient,
     },
   ];
 
-  return transaction({ method, params, chain: assetValue.chain });
+  return transaction({ chain: assetValue.chain, method, params });
 }
 
 export function getVultisigMethods(provider: BrowserProvider, chain: EVMChain) {
   return {
-    call: async <T>({
-      contractAddress,
-      abi,
-      funcName,
-      funcParams = [],
-      txOverrides,
-    }: CallParams): Promise<T> => {
+    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
+      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
+      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+      const txOverrides = { from };
+
+      const functionCallParams = {
+        abi: erc20ABI,
+        contractAddress: assetAddress,
+        funcName: "approve",
+        funcParams,
+        txOverrides,
+      };
+
+      const createTx = getCreateContractTxObject({ chain, provider });
+      const { value, to, data } = await createTx(functionCallParams);
+
+      const signer = await provider.getSigner();
+      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
+      return tx.hash;
+    },
+    call: async <T>({ contractAddress, abi, funcName, funcParams = [], txOverrides }: CallParams): Promise<T> => {
       if (!contractAddress) {
         throw new SwapKitError("wallet_vultisig_contract_address_not_provided");
       }
-      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import(
-        "@swapkit/toolboxes/evm"
-      );
+      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import("@swapkit/toolboxes/evm");
 
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const createTx = getCreateContractTxObject({ provider, chain });
-        const { value, from, to, data } = await createTx({
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        });
+        const createTx = getCreateContractTxObject({ chain, provider });
+        const { value, from, to, data } = await createTx({ abi, contractAddress, funcName, funcParams, txOverrides });
 
         const signer = await provider.getSigner();
-        const tx = await signer.sendTransaction({
-          value: BigInt(value || 0),
-          from,
-          to,
-          data: data || "0x",
-        });
+        const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
         return tx.hash as T;
       }
       const contract = createContract(contractAddress, abi, provider);
@@ -250,31 +222,6 @@ export function getVultisigMethods(provider: BrowserProvider, chain: EVMChain) {
 
       return typeof result?.hash === "string" ? result?.hash : result;
     },
-    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
-      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
-      const txOverrides = { from };
-
-      const functionCallParams = {
-        contractAddress: assetAddress,
-        abi: erc20ABI,
-        funcName: "approve",
-        funcParams,
-        txOverrides,
-      };
-
-      const createTx = getCreateContractTxObject({ provider, chain });
-      const { value, to, data } = await createTx(functionCallParams);
-
-      const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({
-        value: BigInt(value || 0),
-        from,
-        to,
-        data: data || "0x",
-      });
-      return tx.hash;
-    },
     sendTransaction: async (txParams: EVMTxParams) => {
       const { from, to, data, value } = txParams;
       if (!to) {
@@ -282,12 +229,7 @@ export function getVultisigMethods(provider: BrowserProvider, chain: EVMChain) {
       }
 
       const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({
-        value: BigInt(value || 0),
-        from,
-        to,
-        data: data || "0x",
-      });
+      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
       return tx.hash;
     },
   };
@@ -299,10 +241,7 @@ export async function switchCosmosWalletNetwork(
   networkParams?: NetworkParams,
 ) {
   try {
-    await provider.request({
-      method: "wallet_switch_chain",
-      params: [{ chainId: ChainToChainId[chain] }],
-    });
+    await provider.request({ method: "wallet_switch_chain", params: [{ chainId: ChainToChainId[chain] }] });
   } catch (error) {
     if (!networkParams) {
       throw new SwapKitError("helpers_failed_to_switch_network", {
@@ -322,24 +261,23 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
     try {
       await switchCosmosWalletNetwork(provider, chain);
     } catch (error) {
-      throw new SwapKitError({
-        errorKey: "helpers_failed_to_switch_network",
-        info: { error },
-      });
+      throw new SwapKitError({ errorKey: "helpers_failed_to_switch_network", info: { error } });
     }
     return func(...args);
   }) as unknown as T;
 }
 
-export function prepareNetworkSwitchCosmos<
-  T extends Awaited<ReturnType<typeof getCosmosToolbox>>,
-  M extends keyof T,
->({
+export function prepareNetworkSwitchCosmos<T extends Awaited<ReturnType<typeof getCosmosToolbox>>, M extends keyof T>({
   toolbox,
   chain,
   provider = window.ethereum,
   methodNames = [],
-}: { toolbox: T; chain: Chain; provider?: VultisigCosmosProvider; methodNames?: M[] }) {
+}: {
+  toolbox: T;
+  chain: Chain;
+  provider?: VultisigCosmosProvider;
+  methodNames?: M[];
+}) {
   const methodsToWrap = [...methodNames, "transfer", "getAddress", "getBalance"] as M[];
   const wrappedMethods = methodsToWrap.reduce((object, methodName) => {
     if (!toolbox[methodName]) return object;

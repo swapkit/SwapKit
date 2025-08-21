@@ -1,6 +1,6 @@
 import { Chain, type EVMChain, FeeOption, getRPCUrl } from "@swapkit/helpers";
 import { HDNodeWallet } from "ethers";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 
 import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
@@ -9,10 +9,7 @@ import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
 export async function ETHToolbox({ provider, ...signer }: EVMToolboxParams) {
-  const evmToolbox = await createEvmToolbox(Chain.Ethereum)({
-    provider,
-    ...signer,
-  });
+  const evmToolbox = await createEvmToolbox(Chain.Ethereum)({ provider, ...signer });
   async function multicall(
     callTuples: { address: string; data: string }[],
     multicallAddress = "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
@@ -20,8 +17,8 @@ export async function ETHToolbox({ provider, ...signer }: EVMToolboxParams) {
     feeOptionKey: FeeOption = FeeOption.Fast,
   ) {
     const txObject = await evmToolbox.createContractTxObject({
-      contractAddress: multicallAddress,
       abi: multicallAbi,
+      contractAddress: multicallAddress,
       funcName,
       funcParams: [callTuples],
     });
@@ -42,10 +39,7 @@ export const GNOToolbox = createEvmToolbox(Chain.Gnosis);
 export const MATICToolbox = createEvmToolbox(Chain.Polygon);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
-  return async function createEvmToolbox({
-    provider: providerParam,
-    ...toolboxSignerParams
-  }: EVMToolboxParams) {
+  return async function createEvmToolbox({ provider: providerParam, ...toolboxSignerParams }: EVMToolboxParams) {
     const rpcUrl = await getRPCUrl(chain);
 
     const provider = providerParam || (await getProvider(chain, rpcUrl));
@@ -56,12 +50,8 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
       .with({ signer: P.any }, ({ signer }) => signer)
       .otherwise(() => undefined);
 
-    const evmToolbox = BaseEVMToolbox({ provider, signer, isEIP1559Compatible, chain });
+    const evmToolbox = BaseEVMToolbox({ chain, isEIP1559Compatible, provider, signer });
 
-    return {
-      ...evmToolbox,
-      getNetworkParams: getNetworkParams(chain),
-      getBalance: getEvmApi(chain).getBalance,
-    };
+    return { ...evmToolbox, getBalance: getEvmApi(chain).getBalance, getNetworkParams: getNetworkParams(chain) };
   };
 }

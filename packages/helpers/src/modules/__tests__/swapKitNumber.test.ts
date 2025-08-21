@@ -21,15 +21,15 @@ describe("SwapKitNumber", () => {
       expect(skNumber3.getValue("string")).toBe("0.0000000001");
       expect(skNumber3.getBaseValue("bigint")).toBe(0n);
 
-      const skNumber4 = new SwapKitNumber({ value: "0.0000000001", decimal: 10 });
+      const skNumber4 = new SwapKitNumber({ decimal: 10, value: "0.0000000001" });
       expect(skNumber4.getValue("string")).toBe("0.0000000001");
       expect(skNumber4.getBaseValue("bigint")).toBe(1n);
 
-      const skNumber5 = new SwapKitNumber({ value: 0.1005, decimal: 3 });
+      const skNumber5 = new SwapKitNumber({ decimal: 3, value: 0.1005 });
       expect(skNumber5.getValue("string")).toBe("0.101");
       expect(skNumber5.getBaseValue("bigint")).toBe(101n);
 
-      const skNumber6 = new SwapKitNumber({ value: -0.1005, decimal: 3 });
+      const skNumber6 = new SwapKitNumber({ decimal: 3, value: -0.1005 });
       expect(skNumber6.getValue("string")).toBe("-0.101");
       expect(skNumber6.getBaseValue("bigint")).toBe(-101n);
       expect(skNumber6.decimal).toBe(3);
@@ -51,11 +51,7 @@ describe("SwapKitNumber", () => {
       expect(skNumber.getValue("string")).toBe("1");
       expect(skNumber.getBaseValue("bigint")).toBe(100000000n);
 
-      const shiftedSkNumber = SwapKitNumber.shiftDecimals({
-        value: skNumber,
-        from: 8,
-        to: 6,
-      });
+      const shiftedSkNumber = SwapKitNumber.shiftDecimals({ from: 8, to: 6, value: skNumber });
 
       expect(shiftedSkNumber.getValue("string")).toBe("1");
       expect(shiftedSkNumber.getBaseValue("bigint")).toBe(1000000n);
@@ -66,24 +62,16 @@ describe("SwapKitNumber", () => {
       expect(skNumber.getValue("string")).toBe("2.12345678");
       expect(skNumber.getBaseValue("bigint")).toBe(212345678n);
 
-      const shiftedSkNumber = SwapKitNumber.shiftDecimals({
-        value: skNumber,
-        from: 8,
-        to: 6,
-      });
+      const shiftedSkNumber = SwapKitNumber.shiftDecimals({ from: 8, to: 6, value: skNumber });
 
       expect(shiftedSkNumber.getValue("string")).toBe("2.123456");
       expect(shiftedSkNumber.getBaseValue("bigint")).toBe(2123456n);
     });
 
     test("shift eth from 18 to 8", () => {
-      const skNumber = new SwapKitNumber({ value: "0.2", decimal: 18 });
+      const skNumber = new SwapKitNumber({ decimal: 18, value: "0.2" });
 
-      const shiftedSkNumber = SwapKitNumber.shiftDecimals({
-        value: skNumber,
-        from: 18,
-        to: 8,
-      });
+      const shiftedSkNumber = SwapKitNumber.shiftDecimals({ from: 18, to: 8, value: skNumber });
 
       expect(shiftedSkNumber.getValue("string")).toBe("0.2");
       expect(shiftedSkNumber.getBaseValue("bigint")).toBe(20000000n);
@@ -103,12 +91,12 @@ describe("SwapKitNumber", () => {
       });
 
       test("returns string value with adjusted decimals", () => {
-        const skNumber = new SwapKitNumber({ value: "1.234567890123456789", decimal: 18 });
+        const skNumber = new SwapKitNumber({ decimal: 18, value: "1.234567890123456789" });
         expect(skNumber.getValue("string", 8)).toBe("1.23456789");
       });
 
       test("returns string base value with adjusted decimals", () => {
-        const skNumber = new SwapKitNumber({ value: "1.234567890123456789", decimal: 18 });
+        const skNumber = new SwapKitNumber({ decimal: 18, value: "1.234567890123456789" });
         expect(skNumber.getBaseValue("string", 8)).toBe("123456789");
         expect(skNumber.getBaseValue("string", 10)).toBe("12345678901");
       });
@@ -126,12 +114,12 @@ describe("SwapKitNumber", () => {
       });
 
       test("returns number value with adjusted decimals", () => {
-        const skNumber = new SwapKitNumber({ value: "1.234567890123456789", decimal: 18 });
+        const skNumber = new SwapKitNumber({ decimal: 18, value: "1.234567890123456789" });
         expect(skNumber.getValue("number", 8)).toBe(1.23456789);
       });
 
       test("returns number base value with adjusted decimals", () => {
-        const skNumber = new SwapKitNumber({ value: "1.234567890123456789", decimal: 18 });
+        const skNumber = new SwapKitNumber({ decimal: 18, value: "1.234567890123456789" });
         expect(skNumber.getBaseValue("number", 8)).toBe(123456789);
         expect(skNumber.getBaseValue("number", 10)).toBe(12345678901);
       });
@@ -144,7 +132,7 @@ describe("SwapKitNumber", () => {
       });
 
       test("returns bigint value with adjusted decimals", () => {
-        const skNumber = new SwapKitNumber({ value: "1.234567890123456789", decimal: 18 });
+        const skNumber = new SwapKitNumber({ decimal: 18, value: "1.234567890123456789" });
         expect(skNumber.getBaseValue("bigint", 8)).toBe(123456789n);
         expect(skNumber.getBaseValue("bigint", 10)).toBe(12345678901n);
       });
@@ -174,7 +162,7 @@ describe("SwapKitNumber", () => {
 
     describe("custom decimals", () => {
       test("returns first significant number of digits", () => {
-        const usdLikeNumber = new SwapKitNumber({ value: 1234.5678, decimal: 2 });
+        const usdLikeNumber = new SwapKitNumber({ decimal: 2, value: 1234.5678 });
         expect(usdLikeNumber.toSignificant(2)).toBe("1200");
         expect(usdLikeNumber.toSignificant(3)).toBe("1230");
         expect(usdLikeNumber.toSignificant(4)).toBe("1234");
@@ -183,7 +171,7 @@ describe("SwapKitNumber", () => {
         expect(usdLikeNumber.toSignificant(7)).toBe("1234.57");
         expect(usdLikeNumber.toSignificant(8)).toBe("1234.57");
 
-        const ethLikeNumber = new SwapKitNumber({ value: 0.00005678, decimal: 18 });
+        const ethLikeNumber = new SwapKitNumber({ decimal: 18, value: 0.00005678 });
         expect(ethLikeNumber.toSignificant(2)).toBe("0.000056");
         expect(ethLikeNumber.toSignificant(3)).toBe("0.0000567");
         expect(ethLikeNumber.toSignificant(4)).toBe("0.00005678");
@@ -232,31 +220,18 @@ describe("SwapKitNumber", () => {
     test("returns abbreviation with up to 3 integer digits", () => {
       const skNumber = new SwapKitNumber(1234.5678);
       expect(skNumber.toCurrency()).toBe("$1,234.56");
-      expect(
-        skNumber.toCurrency("€", {
-          decimalSeparator: ",",
-          thousandSeparator: " ",
-          currencyPosition: "end",
-        }),
-      ).toBe("1 234,56€");
+      expect(skNumber.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: " " })).toBe(
+        "1 234,56€",
+      );
 
       const skNumber2 = new SwapKitNumber(0.5678);
       expect(skNumber2.toCurrency()).toBe("$0.5678");
-      expect(
-        skNumber2.toCurrency("€", {
-          decimalSeparator: ",",
-          currencyPosition: "end",
-        }),
-      ).toBe("0,5678€");
+      expect(skNumber2.toCurrency("€", { currencyPosition: "end", decimalSeparator: "," })).toBe("0,5678€");
 
       const skNumber3 = new SwapKitNumber(0.00005678);
       expect(skNumber3.toCurrency()).toBe("$0.000057");
       expect(
-        skNumber3.toCurrency("€", {
-          decimalSeparator: ",",
-          thousandSeparator: " ",
-          currencyPosition: "end",
-        }),
+        skNumber3.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: " " }),
       ).toBe("0,000057€");
 
       const skNumber4 = new SwapKitNumber(12345);
@@ -342,7 +317,7 @@ describe("SwapKitNumber", () => {
     });
 
     test("multiplies numbers correctly if decimals of SKN is lower than number multiplied with", () => {
-      const skNumber1 = new SwapKitNumber({ value: 1000000, decimal: 4 });
+      const skNumber1 = new SwapKitNumber({ decimal: 4, value: 1000000 });
       const result = skNumber1.mul("0.00001");
 
       expect(result.getValue("string")).toBe("10");
@@ -396,7 +371,7 @@ describe("SwapKitNumber", () => {
     });
 
     test("divides different type numbers correctly when decimal is set", () => {
-      const skNumber1 = new SwapKitNumber({ value: "1.2", decimal: 2 });
+      const skNumber1 = new SwapKitNumber({ decimal: 2, value: "1.2" });
       const result = skNumber1.div(0.001);
 
       expect(result.getValue("string")).toBe("1200");
@@ -412,8 +387,8 @@ describe("SwapKitNumber", () => {
     });
 
     test("divides a number with 18 decimals by a negative number with less decimals", () => {
-      const skNumber1 = new SwapKitNumber({ value: "1.000000000000000010", decimal: 18 });
-      const skNumber2 = new SwapKitNumber({ value: "-2", decimal: 1 });
+      const skNumber1 = new SwapKitNumber({ decimal: 18, value: "1.000000000000000010" });
+      const skNumber2 = new SwapKitNumber({ decimal: 1, value: "-2" });
 
       const result = skNumber1.div(skNumber2);
 
@@ -423,8 +398,8 @@ describe("SwapKitNumber", () => {
     });
 
     test("divides a number with 2 decimals by a negative number with more decimals", () => {
-      const skNumber1 = new SwapKitNumber({ value: "2", decimal: 2 });
-      const skNumber2 = new SwapKitNumber({ value: "-0.000005", decimal: 18 });
+      const skNumber1 = new SwapKitNumber({ decimal: 2, value: "2" });
+      const skNumber2 = new SwapKitNumber({ decimal: 18, value: "-0.000005" });
 
       const result = skNumber1.div(skNumber2);
 
@@ -436,8 +411,8 @@ describe("SwapKitNumber", () => {
 
   describe("shitcoin cases", () => {
     test("multiply huge numbers", () => {
-      const skNumber1 = new SwapKitNumber({ value: 1_000_000_000_000_001, decimal: 18 });
-      const skNumber2 = new SwapKitNumber({ value: 987_654_321_000, decimal: 18 });
+      const skNumber1 = new SwapKitNumber({ decimal: 18, value: 1_000_000_000_000_001 });
+      const skNumber2 = new SwapKitNumber({ decimal: 18, value: 987_654_321_000 });
 
       const result = skNumber1.mul(skNumber2);
       expect(result.getValue("string")).toBe("987654321000000987654321000");
@@ -445,8 +420,8 @@ describe("SwapKitNumber", () => {
     });
 
     test("divide huge numbers", () => {
-      const skNumber1 = new SwapKitNumber({ value: 1_000_000_000_000_001, decimal: 18 });
-      const skNumber2 = new SwapKitNumber({ value: 987_654_321_000, decimal: 18 });
+      const skNumber1 = new SwapKitNumber({ decimal: 18, value: 1_000_000_000_000_001 });
+      const skNumber2 = new SwapKitNumber({ decimal: 18, value: 987_654_321_000 });
 
       const result = skNumber1.div(skNumber2);
       expect(result.getValue("string")).toBe("1012.4999999873447625");
@@ -456,7 +431,7 @@ describe("SwapKitNumber", () => {
 
   describe("extending multiplier without loosing precision", () => {
     test("edge case 1", () => {
-      const asset1 = new SwapKitNumber({ value: 41.90963702, decimal: 8 });
+      const asset1 = new SwapKitNumber({ decimal: 8, value: 41.90963702 });
       const multiplier = 5.337952274462478;
       const divider = 105.2562773915526;
       const result = asset1.mul(multiplier).div(divider);
@@ -484,8 +459,8 @@ describe("SwapKitNumber", () => {
     });
 
     test("different decimals doesn't affect comparison", () => {
-      const skNumber1 = new SwapKitNumber({ value: 10, decimal: 18 });
-      const skNumber2 = new SwapKitNumber({ value: "50", decimal: 8 });
+      const skNumber1 = new SwapKitNumber({ decimal: 18, value: 10 });
+      const skNumber2 = new SwapKitNumber({ decimal: 8, value: "50" });
 
       expect(skNumber1.lt(skNumber2)).toBe(true);
       expect(skNumber2.gt(skNumber1)).toBe(true);
@@ -537,7 +512,7 @@ describe("SwapKitNumber", () => {
 
   describe("comparison edge cases with decimals", () => {
     test("compare on cut decimals", () => {
-      const skNumber1 = new SwapKitNumber({ value: 0.001, decimal: 3 });
+      const skNumber1 = new SwapKitNumber({ decimal: 3, value: 0.001 });
       const value = "0.0019";
 
       expect(skNumber1.lt(value)).toBe(true);

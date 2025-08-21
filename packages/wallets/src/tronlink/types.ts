@@ -11,13 +11,8 @@ export interface TronLinkWindow {
   ready: boolean;
   request: (args: { method: string; params?: unknown }) => Promise<TronLinkResponse>;
   tronWeb: {
-    defaultAddress: {
-      base58: string;
-      hex: string;
-    };
-    fullNode?: {
-      host: string;
-    };
+    defaultAddress: { base58: string; hex: string };
+    fullNode?: { host: string };
     trx: {
       sign: (transaction: TronTransaction) => Promise<TronSignedTransaction>;
       sendRawTransaction: (signedTx: TronSignedTransaction) => Promise<string>;
@@ -44,15 +39,8 @@ export interface TronLinkResponse {
 }
 
 export interface TronLinkEvents {
-  setAccount: {
-    address: string;
-  };
-  setNode: {
-    node: {
-      chain: string;
-      fullNode: string;
-    };
-  };
+  setAccount: { address: string };
+  setNode: { node: { chain: string; fullNode: string } };
 }
 
 export interface TronLinkError extends Error {

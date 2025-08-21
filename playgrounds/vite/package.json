@@ -30,13 +30,13 @@
   },
   "name": "@internal/playground-vite",
   "private": true,
-  "type": "module",
   "scripts": {
     "build-playground": "NODE_OPTIONS=--max_old_space_size=65536 vite build",
-    "visualise": "VISUALISE=true bun build-playground",
     "dev": "vite --host",
     "preview-playground": "vite preview",
-    "serve": "bun build-playground && bun preview-playground"
+    "serve": "bun build-playground && bun preview-playground",
+    "visualise": "VISUALISE=true bun build-playground"
   },
+  "type": "module",
   "version": "0.0.0"
 }

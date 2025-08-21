@@ -1,24 +1,10 @@
-import {
-  Chain,
-  ChainId,
-  ChainToChainId,
-  SwapKitError,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { Chain, ChainId, ChainToChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { chainRegistry } from "./chainRegistry";
 
-const keplrSupportedChainIds = [
-  ChainId.Cosmos,
-  ChainId.Kujira,
-  ChainId.Noble,
-  ChainId.THORChain,
-] as const;
+const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.Noble, ChainId.THORChain] as const;
 
 export const keplrWallet = createWallet({
-  name: "connectKeplr",
-  supportedChains: [Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.THORChain],
   connect: ({ addChain, supportedChains }) =>
     async function connectKeplr(
       chains: Chain[],
@@ -51,12 +37,14 @@ export const keplrWallet = createWallet({
           const [{ address }] = accounts;
           const toolbox = getCosmosToolbox(chain, { signer });
 
-          addChain({ ...toolbox, chain, address, walletType });
+          addChain({ ...toolbox, address, chain, walletType });
         }),
       );
 
       return true;
     },
+  name: "connectKeplr",
+  supportedChains: [Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.THORChain],
 });
 
 export const KEPLR_SUPPORTED_CHAINS = getWalletSupportedChains(keplrWallet);

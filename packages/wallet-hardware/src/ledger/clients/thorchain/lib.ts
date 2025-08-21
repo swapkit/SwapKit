@@ -21,11 +21,11 @@ import {
   CHUNK_SIZE,
   CLA,
   ERROR_CODE,
+  errorCodeToString,
+  getVersion,
   INS,
   P1_VALUES,
   P2_VALUES,
-  errorCodeToString,
-  getVersion,
   processErrorResponse,
 } from "./common";
 import {
@@ -102,7 +102,7 @@ export class THORChainApp {
     }
   }
 
-  async appInfo() {
+  appInfo() {
     return this.transport.send(0xb0, 0x01, 0, 0).then((response: any) => {
       const errorCodeData = response.slice(-2);
       const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
@@ -114,10 +114,7 @@ export class THORChainApp {
 
       if (response[0] !== 1) {
         // Ledger responds with format ID 1. There is no spec for any format != 1
-        return {
-          return_code: 0x9001,
-          error_message: "response format ID not recognized",
-        };
+        return { error_message: "response format ID not recognized", return_code: 0x9001 };
       }
 
       const appNameLen = response[1];
@@ -133,21 +130,21 @@ export class THORChainApp {
       flagsValue = response[idx];
 
       return {
-        return_code: returnCode,
-        error_message: errorCodeToString(returnCode),
         appName,
         appVersion,
-        flagLen,
-        flagsValue,
-        flag_recovery: (flagsValue & 1) !== 0,
-        flag_signed_mcu_code: (flagsValue & 2) !== 0,
+        error_message: errorCodeToString(returnCode),
         flag_onboarded: (flagsValue & 4) !== 0,
         flag_pin_validated: (flagsValue & 128) !== 0,
+        flag_recovery: (flagsValue & 1) !== 0,
+        flag_signed_mcu_code: (flagsValue & 2) !== 0,
+        flagLen,
+        flagsValue,
+        return_code: returnCode,
       };
     }, processErrorResponse);
   }
 
-  async deviceInfo() {
+  deviceInfo() {
     return this.transport
       .send(0xe0, 0x01, 0, 0, Buffer.from([]), [ERROR_CODE.NoError, 0x6e00])
       .then((response: any) => {
@@ -155,10 +152,7 @@ export class THORChainApp {
         const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
 
         if (returnCode === 0x6e00) {
-          return {
-            return_code: returnCode,
-            error_message: "This command is only available in the Dashboard",
-          };
+          return { error_message: "This command is only available in the Dashboard", return_code: returnCode };
         }
 
         const targetId = response.slice(0, 4).toString("hex");
@@ -184,13 +178,13 @@ export class THORChainApp {
         const mcuVersion = tmp.toString();
 
         return {
-          return_code: returnCode,
           error_message: errorCodeToString(returnCode),
-          // //
-          targetId,
-          seVersion,
           flag,
           mcuVersion,
+          return_code: returnCode,
+          seVersion,
+          // //
+          targetId,
         };
       }, processErrorResponse);
   }
@@ -203,25 +197,20 @@ export class THORChainApp {
         case 1:
           return publicKeyv1(this, serializedPath);
         case 2: {
-          // @ts-ignore
           const data = Buffer.concat([THORChainApp.serializeHRP("thor"), serializedPath]);
           return publicKeyv2(this, data);
         }
         default:
-          return {
-            return_code: 0x6400,
-            error_message: "App Version is not supported",
-          };
+          return { error_message: "App Version is not supported", return_code: 0x6400 };
       }
     } catch (e) {
       return processErrorResponse(e);
     }
   }
 
-  async getAddressAndPubKey(path: number[], hrp: string, showInDevice = false) {
+  getAddressAndPubKey(path: number[], hrp: string, showInDevice = false) {
     return this.serializePath(path)
       .then((serializedPath: Buffer) => {
-        // @ts-ignore
         const data = Buffer.concat([THORChainApp.serializeHRP(hrp), serializedPath]);
         return this.transport
           .send(
@@ -242,8 +231,8 @@ export class THORChainApp {
             return {
               bech32_address: bech32Address,
               compressed_pk: compressedPk,
-              return_code: returnCode,
               error_message: errorCodeToString(returnCode),
+              return_code: returnCode,
             };
           }, processErrorResponse);
       })
@@ -261,10 +250,7 @@ export class THORChainApp {
       case 2:
         return signSendChunkv2(this, chunkIdx, chunkNum, chunk, txType);
       default:
-        return {
-          return_code: 0x6400,
-          error_message: "App Version is not supported",
-        };
+        return { error_message: "App Version is not supported", return_code: 0x6400 };
     }
   }
 
@@ -278,11 +264,7 @@ export class THORChainApp {
     } catch (error) {
       processErrorResponse(error);
     }
-    let result = {
-      return_code: response.return_code,
-      error_message: response.error_message,
-      signature: null,
-    };
+    let result = { error_message: response.error_message, return_code: response.return_code, signature: null };
 
     for (let i = 1; i < chunks.length; i += 1) {
       result = await this.signSendChunk(1 + i, chunks.length, chunks[i] as Buffer, txType);
@@ -291,10 +273,6 @@ export class THORChainApp {
       }
     }
 
-    return {
-      return_code: result.return_code,
-      error_message: result.error_message,
-      signature: result.signature,
-    };
+    return { error_message: result.error_message, return_code: result.return_code, signature: result.signature };
   }
 }

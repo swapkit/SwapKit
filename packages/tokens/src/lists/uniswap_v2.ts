@@ -1,14 +1,9 @@
 export const list = {
-  provider: "UNISWAP_V2",
-  name: "UNISWAP_V2",
-  timestamp: "2025-07-30T16:02:18.916Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 502,
+  keywords: [],
+  name: "UNISWAP_V2",
+  provider: "UNISWAP_V2",
+  timestamp: "2025-07-30T16:02:18.916Z",
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -5031,4 +5026,5 @@ export const list = {
       ticker: "ZRX",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

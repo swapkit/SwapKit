@@ -2,12 +2,13 @@ import { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import {
   Chain,
   type DerivationPathArray,
+  filterSupportedChains,
   NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   WalletOption,
-  filterSupportedChains,
 } from "@swapkit/helpers";
+
 export type { PairingInfo } from "@keepkey/keepkey-sdk";
 
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
@@ -18,31 +19,8 @@ import { thorchainWalletMethods } from "./chains/thorchain";
 import { utxoWalletMethods } from "./chains/utxo";
 
 export const keepkeyWallet = createWallet({
-  name: "connectKeepkey",
-  supportedChains: [
-    Chain.Arbitrum,
-    Chain.Avalanche,
-    Chain.Base,
-    Chain.BinanceSmartChain,
-    Chain.Bitcoin,
-    Chain.BitcoinCash,
-    Chain.Cosmos,
-    Chain.Dogecoin,
-    Chain.Dash,
-    Chain.Ethereum,
-    Chain.Litecoin,
-    Chain.Ripple,
-    Chain.Optimism,
-    Chain.Polygon,
-    Chain.THORChain,
-    Chain.Maya,
-  ],
-  walletType: WalletOption.KEEPKEY,
   connect: ({ addChain, supportedChains, walletType }) =>
-    async function connectKeepkey(
-      chains: Chain[],
-      derivationPathMap?: Record<Chain, DerivationPathArray>,
-    ) {
+    async function connectKeepkey(chains: Chain[], derivationPathMap?: Record<Chain, DerivationPathArray>) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
       const pairingInfo = SKConfig.get("integrations").keepKey;
       if (!pairingInfo) throw new Error("KeepKey config not found");
@@ -74,6 +52,26 @@ export const keepkeyWallet = createWallet({
       );
       return true;
     },
+  name: "connectKeepkey",
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Bitcoin,
+    Chain.BitcoinCash,
+    Chain.Cosmos,
+    Chain.Dogecoin,
+    Chain.Dash,
+    Chain.Ethereum,
+    Chain.Litecoin,
+    Chain.Ripple,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.THORChain,
+    Chain.Maya,
+  ],
+  walletType: WalletOption.KEEPKEY,
 });
 
 export const KEEPKEY_SUPPORTED_CHAINS = getWalletSupportedChains(keepkeyWallet);
@@ -82,7 +80,11 @@ async function getWalletMethods({
   sdk,
   chain,
   derivationPath,
-}: { sdk: KeepKeySdk; chain: Chain; derivationPath?: DerivationPathArray }) {
+}: {
+  sdk: KeepKeySdk;
+  chain: Chain;
+  derivationPath?: DerivationPathArray;
+}) {
   const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
   switch (chain) {
@@ -94,30 +96,30 @@ async function getWalletMethods({
     case Chain.Base:
     case Chain.Ethereum: {
       const provider = await getProvider(chain);
-      const signer = new KeepKeySigner({ sdk, chain, derivationPath, provider });
+      const signer = new KeepKeySigner({ chain, derivationPath, provider, sdk });
       const toolbox = await getEvmToolbox(chain, { provider, signer });
 
       return toolbox;
     }
     case Chain.Cosmos: {
-      return cosmosWalletMethods({ sdk, derivationPath });
+      return cosmosWalletMethods({ derivationPath, sdk });
     }
     case Chain.THORChain: {
-      return thorchainWalletMethods({ sdk, derivationPath });
+      return thorchainWalletMethods({ derivationPath, sdk });
     }
     case Chain.Maya: {
-      return mayachainWalletMethods({ sdk, derivationPath });
+      return mayachainWalletMethods({ derivationPath, sdk });
     }
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
     case Chain.Dash:
     case Chain.Dogecoin:
     case Chain.Litecoin: {
-      return utxoWalletMethods({ sdk, chain, derivationPath });
+      return utxoWalletMethods({ chain, derivationPath, sdk });
     }
     case Chain.Ripple: {
       const { rippleWalletMethods } = await import("./chains/ripple");
-      return rippleWalletMethods({ sdk, derivationPath });
+      return rippleWalletMethods({ derivationPath, sdk });
     }
     default:
       throw new SwapKitError("wallet_keepkey_chain_not_supported", { chain });
@@ -128,16 +130,14 @@ async function getWalletMethods({
 // test spec: if offline, launch keepkey-bridge
 async function checkAndLaunch(attempts = 0) {
   if (attempts >= 3) {
-    alert(
-      "KeepKey desktop is required for keepkey-sdk, please go to https://keepkey.com/get-started",
-    );
+    alert("KeepKey desktop is required for keepkey-sdk, please go to https://keepkey.com/get-started");
   }
   const isAvailable = await checkKeepkeyAvailability();
 
   if (!isAvailable) {
     window.location.assign("keepkey://launch");
     await new Promise((resolve) => setTimeout(resolve, 30000));
-    checkAndLaunch(attempts + 1);
+    await checkAndLaunch(attempts + 1);
   }
 }
 

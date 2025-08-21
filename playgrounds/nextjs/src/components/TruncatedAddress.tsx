@@ -27,9 +27,8 @@ export function TruncatedAddress({ address }: TruncatedAddressProps) {
 
   return (
     <Button
-      onClick={handleCopy}
-      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-    >
+      className="inline-flex items-center gap-1 text-muted-foreground text-xs transition-colors hover:text-foreground"
+      onClick={handleCopy}>
       <span className="font-mono">{truncated}</span>
       <Copy className={`h-3 w-3 ${isCopied ? "text-green-500" : ""}`} />
     </Button>

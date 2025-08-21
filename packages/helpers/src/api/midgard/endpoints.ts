@@ -184,9 +184,9 @@ function getLiquidityPositionRaw<Chain extends Chain.THORChain | Chain.Maya>(bas
   return function getLiquidityPosition(
     address: string,
   ): Promise<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain> {
-    return RequestClient.get<
-      Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain
-    >(`${baseUrl}/v2/member/${address}`);
+    return RequestClient.get<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain>(
+      `${baseUrl}/v2/member/${address}`,
+    );
   };
 }
 
@@ -254,7 +254,7 @@ function getNamesByOwner(baseUrl: string) {
 
 // Helper functions
 function getPoolAsset({ asset, value }: { asset: string; value: string }) {
-  return AssetValue.from({ asset, value, fromBaseDecimal: BaseDecimal.THOR });
+  return AssetValue.from({ asset, fromBaseDecimal: BaseDecimal.THOR, value });
 }
 
 function getLiquidityPosition<IsThorchain extends boolean = true>({
@@ -294,47 +294,46 @@ function getMidgardMethodsForProtocol<T extends Chain.THORChain | Chain.Maya>(ch
   const liquidityPositionGetter = getLiquidityPositionRaw<T>(midgardBaseUrl);
 
   return {
-    // Pool endpoints
-    getPools: getPools(midgardBaseUrl),
-    getPool: getPool(midgardBaseUrl),
-    getPoolStats: getPoolStats(midgardBaseUrl),
-    getPoolDepthHistory: getPoolDepthHistory(midgardBaseUrl),
-
-    // Network endpoints
-    getNetworkInfo: getNetworkInfo(midgardBaseUrl),
-    getHealth: getHealth(midgardBaseUrl),
-    getNodes: getNodes(midgardBaseUrl),
-    getNode: getNode(midgardBaseUrl),
-    getMimirVotes: getMimirVotes(midgardBaseUrl),
-    getMimir: getMimir(midgardBaseUrl),
-    getConstants: getConstants(midgardBaseUrl),
-
-    // Stats endpoints
-    getStats: getStats(midgardBaseUrl),
-    getEarningsHistory: getEarningsHistory(midgardBaseUrl),
-    getSwapHistory: getSwapHistory(midgardBaseUrl),
-    getTVLHistory: getTVLHistory(midgardBaseUrl),
-
     // Action endpoints
     getActions: getActions(midgardBaseUrl),
 
+    // Balance endpoint
+    getBalance: getBalance(midgardBaseUrl),
+    getConstants: getConstants(midgardBaseUrl),
+    getEarningsHistory: getEarningsHistory(midgardBaseUrl),
+    getHealth: getHealth(midgardBaseUrl),
+    getLiquidityPosition: getLiquidityPosition({ isThorchain, liquidityPositionGetter }),
+
     // Member endpoints
     getLiquidityPositionRaw: liquidityPositionGetter,
-    getLiquidityPosition: getLiquidityPosition({ liquidityPositionGetter, isThorchain }),
     getMembers: getMembers(midgardBaseUrl),
+    getMimir: getMimir(midgardBaseUrl),
+    getMimirVotes: getMimirVotes(midgardBaseUrl),
+
+    // Name service endpoints
+    getNameDetails: getNameDetails(nameServiceBaseUrl),
+    getNamesByAddress: getNamesByAddress(nameServiceBaseUrl),
+    getNamesByOwner: getNamesByOwner(nameServiceBaseUrl),
+
+    // Network endpoints
+    getNetworkInfo: getNetworkInfo(midgardBaseUrl),
+    getNode: getNode(midgardBaseUrl),
+    getNodes: getNodes(midgardBaseUrl),
+    getPool: getPool(midgardBaseUrl),
+    getPoolDepthHistory: getPoolDepthHistory(midgardBaseUrl),
+    getPoolStats: getPoolStats(midgardBaseUrl),
+    // Pool endpoints
+    getPools: getPools(midgardBaseUrl),
 
     // Saver endpoints
     getSaverDetails: getSaverDetails(midgardBaseUrl),
     getSavers: getSavers(midgardBaseUrl),
     getSaversHistory: getSaversHistory(midgardBaseUrl),
 
-    // Balance endpoint
-    getBalance: getBalance(midgardBaseUrl),
-
-    // Name service endpoints
-    getNameDetails: getNameDetails(nameServiceBaseUrl),
-    getNamesByAddress: getNamesByAddress(nameServiceBaseUrl),
-    getNamesByOwner: getNamesByOwner(nameServiceBaseUrl),
+    // Stats endpoints
+    getStats: getStats(midgardBaseUrl),
+    getSwapHistory: getSwapHistory(midgardBaseUrl),
+    getTVLHistory: getTVLHistory(midgardBaseUrl),
   };
 }
 

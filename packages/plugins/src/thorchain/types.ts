@@ -16,10 +16,7 @@ export type AddLiquidityParams = {
   mode?: "sym" | "baseAsset" | "asset";
 };
 
-export type CreateLiquidityParams = {
-  baseAssetValue: AssetValue;
-  assetValue: AssetValue;
-};
+export type CreateLiquidityParams = { baseAssetValue: AssetValue; assetValue: AssetValue };
 
 export type CoreTxParams = {
   assetValue: AssetValue;
@@ -54,11 +51,7 @@ export type RegisterPreferredAssetParams = {
   owner: string;
 };
 
-type CommonWithdrawParams = {
-  assetValue: AssetValue;
-  memo?: string;
-  percent: number;
-};
+type CommonWithdrawParams = { assetValue: AssetValue; memo?: string; percent: number };
 
 export type WithdrawParams = CommonWithdrawParams & {
   from: "sym" | "baseAsset" | "asset";

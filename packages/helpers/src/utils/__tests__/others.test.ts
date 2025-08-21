@@ -37,17 +37,12 @@ describe("getAssetBy", () => {
       chain: Chain.Ethereum,
       contract: "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
     });
-    expect(assetByChainAndContract?.toUpperCase()).toBe(
-      "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
-    );
+    expect(assetByChainAndContract?.toUpperCase()).toBe("ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48");
   });
 
   test("return undefined if asset can't be found", async () => {
     const assetByIdentifier = await findAssetBy({ identifier: "ARB.NOTEXISTINGTOKEN" });
-    const assetByChainAndContract = await findAssetBy({
-      chain: Chain.Ethereum,
-      contract: "NOTFOUND",
-    });
+    const assetByChainAndContract = await findAssetBy({ chain: Chain.Ethereum, contract: "NOTFOUND" });
     expect(assetByIdentifier).toBeUndefined();
     expect(assetByChainAndContract).toBeUndefined();
   });
@@ -63,9 +58,7 @@ describe("getAssetBy", () => {
   });
 
   test("find asset by radix identifier", async () => {
-    const assetByChainAndContract = await findAssetBy({
-      identifier: "XRD.XRD",
-    });
+    const assetByChainAndContract = await findAssetBy({ identifier: "XRD.XRD" });
     expect(assetByChainAndContract?.toUpperCase()).toBe("XRD.XRD".toUpperCase());
   });
 
@@ -80,9 +73,7 @@ describe("getAssetBy", () => {
   });
 
   test("find asset by Solana identifier", async () => {
-    const assetByChainAndContract = await findAssetBy({
-      identifier: "SOL.SOL",
-    });
+    const assetByChainAndContract = await findAssetBy({ identifier: "SOL.SOL" });
     expect(assetByChainAndContract?.toUpperCase()).toBe("SOL.SOL".toUpperCase());
   });
 });

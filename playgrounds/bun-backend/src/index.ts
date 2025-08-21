@@ -1,10 +1,8 @@
 import { Chain } from "@swapkit/helpers";
-import { SwapKit, keystoreWallet } from "@swapkit/sdk";
+import { keystoreWallet, SwapKit } from "@swapkit/sdk";
 import { KEYSTORE_SUPPORTED_CHAINS } from "@swapkit/wallets/keystore";
 
-const swapKit = SwapKit({
-  wallets: keystoreWallet,
-});
+const swapKit = SwapKit({ wallets: keystoreWallet });
 
 const phrase = process.env.TEST_PHRASE;
 

@@ -22,8 +22,7 @@ export class THORChainLedger extends CosmosLedgerInterface {
 
   connect = async () => {
     await this.checkOrCreateTransportAndLedger();
-    const { compressed_pk, bech32_address }: GetAddressAndPubKeyResponse =
-      await this.getAddressAndPubKey();
+    const { compressed_pk, bech32_address }: GetAddressAndPubKeyResponse = await this.getAddressAndPubKey();
 
     this.pubKey = base64.encode(compressed_pk);
 
@@ -59,10 +58,7 @@ export class THORChainLedger extends CosmosLedgerInterface {
   signTransaction = async (rawTx: string, sequence = "0") => {
     await this.checkOrCreateTransportAndLedger(true);
 
-    const { return_code, error_message, signature } = await this.ledgerApp.sign(
-      this.derivationPath,
-      rawTx,
-    );
+    const { return_code, error_message, signature } = await this.ledgerApp.sign(this.derivationPath, rawTx);
 
     if (!this.pubKey) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 
@@ -80,10 +76,7 @@ export class THORChainLedger extends CosmosLedgerInterface {
   sign = async (message: string) => {
     await this.checkOrCreateTransportAndLedger(true);
 
-    const { return_code, error_message, signature } = await this.ledgerApp.sign(
-      this.derivationPath,
-      message,
-    );
+    const { return_code, error_message, signature } = await this.ledgerApp.sign(this.derivationPath, message);
 
     if (!this.pubKey) throw new SwapKitError("wallet_ledger_pubkey_not_found");
 

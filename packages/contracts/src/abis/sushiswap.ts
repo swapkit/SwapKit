@@ -103,9 +103,7 @@ export const sushiswap = [
   {
     inputs: [],
     name: "tokenTransferProxy",
-    outputs: [
-      { internalType: "contract TSAggregatorTokenTransferProxy", name: "", type: "address" },
-    ],
+    outputs: [{ internalType: "contract TSAggregatorTokenTransferProxy", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },

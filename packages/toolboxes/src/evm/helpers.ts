@@ -6,11 +6,11 @@ import {
   ChainToHexChainId,
   type EVMChain,
   FeeOption,
+  getRPCUrl,
   type NetworkParams,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  getRPCUrl,
 } from "@swapkit/helpers";
 import type { BrowserProvider, Provider } from "ethers";
 
@@ -55,19 +55,8 @@ export const estimateMaxSendableAmount = async ({
 
   const gasLimit =
     abi && funcName && funcParams && contractAddress
-      ? await toolbox.estimateCall({
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        })
-      : await toolbox.estimateGasLimit({
-          sender: from,
-          recipient: from,
-          memo,
-          assetValue,
-        });
+      ? await toolbox.estimateCall({ abi, contractAddress, funcName, funcParams, txOverrides })
+      : await toolbox.estimateGasLimit({ assetValue, memo, recipient: from, sender: from });
 
   const isFeeEIP1559Compatible = "maxFeePerGas" in gasRate;
   const isFeeEVMLegacyCompatible = "gasPrice" in gasRate && gasRate.gasPrice !== undefined;
@@ -81,9 +70,7 @@ export const estimateMaxSendableAmount = async ({
     : gasRate.gasPrice || 1n;
 
   const fee = gasLimit * gasPrice;
-  const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue("bigint")).sub(
-    fee.toString(),
-  );
+  const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue("bigint")).sub(fee.toString());
 
   return AssetValue.from({ chain: balance.chain, value: maxSendableAmount.getValue("string") });
 };
@@ -95,13 +82,17 @@ export function toHexString(value: bigint) {
 export function getEstimateTransactionFee({
   provider,
   isEIP1559Compatible = true,
-}: { provider: Provider | BrowserProvider; isEIP1559Compatible?: boolean; chain: EVMChain }) {
+}: {
+  provider: Provider | BrowserProvider;
+  isEIP1559Compatible?: boolean;
+  chain: EVMChain;
+}) {
   return async function estimateTransactionFee({
     feeOption = FeeOption.Fast,
     chain,
     ...txObject
   }: EIP1559TxParams & { feeOption: FeeOption; chain: EVMChain }) {
-    const estimateGasPrices = getEstimateGasPrices({ provider, isEIP1559Compatible, chain });
+    const estimateGasPrices = getEstimateGasPrices({ chain, isEIP1559Compatible, provider });
     const gasPrices = await estimateGasPrices();
     const gasLimit = await provider.estimateGas(txObject);
 
@@ -128,9 +119,9 @@ export function getNetworkParams<C extends EVMChain>(chain: C) {
       ? undefined
       : {
           ...getNetworkInfo({ chain }),
+          blockExplorerUrls: [ChainToExplorerUrl[chain]],
           chainId: ChainToHexChainId[chain],
           rpcUrls: [SKConfig.get("rpcUrls")[chain]],
-          blockExplorerUrls: [ChainToExplorerUrl[chain]],
         }) as C extends Chain.Ethereum ? undefined : NetworkParams;
 }
 
@@ -145,50 +136,26 @@ function getNetworkInfo<C extends EVMChain>({ chain }: { chain: C }) {
 
   switch (chain) {
     case Chain.Arbitrum:
-      return {
-        chainName: "Arbitrum One",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
+      return { chainName: "Arbitrum One", nativeCurrency: { decimals, name: "Ethereum", symbol: Chain.Ethereum } };
     case Chain.Aurora:
-      return {
-        chainName: "Aurora Mainnet",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
+      return { chainName: "Aurora Mainnet", nativeCurrency: { decimals, name: "Ethereum", symbol: Chain.Ethereum } };
     case Chain.Avalanche:
-      return {
-        chainName: "Avalanche Network",
-        nativeCurrency: { name: "Avalanche", symbol: chain, decimals },
-      };
+      return { chainName: "Avalanche Network", nativeCurrency: { decimals, name: "Avalanche", symbol: chain } };
     case Chain.Base:
-      return {
-        chainName: "Base Mainnet",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
+      return { chainName: "Base Mainnet", nativeCurrency: { decimals, name: "Ethereum", symbol: Chain.Ethereum } };
     case Chain.Berachain:
-      return {
-        chainName: "Berachain",
-        nativeCurrency: { name: "Berachain", symbol: "BERA", decimals },
-      };
+      return { chainName: "Berachain", nativeCurrency: { decimals, name: "Berachain", symbol: "BERA" } };
     case Chain.BinanceSmartChain:
       return {
         chainName: "BNB Smart Chain Mainnet",
-        nativeCurrency: { name: "Binance Coin", symbol: "BNB", decimals },
+        nativeCurrency: { decimals, name: "Binance Coin", symbol: "BNB" },
       };
     case Chain.Gnosis:
-      return {
-        chainName: "Gnosis",
-        nativeCurrency: { name: "xDAI", symbol: "XDAI", decimals },
-      };
+      return { chainName: "Gnosis", nativeCurrency: { decimals, name: "xDAI", symbol: "XDAI" } };
     case Chain.Optimism:
-      return {
-        chainName: "OP Mainnet",
-        nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals },
-      };
+      return { chainName: "OP Mainnet", nativeCurrency: { decimals, name: "Ethereum", symbol: Chain.Ethereum } };
     case Chain.Polygon:
-      return {
-        chainName: "Polygon Mainnet",
-        nativeCurrency: { name: "Polygon", symbol: Chain.Polygon, decimals },
-      };
+      return { chainName: "Polygon Mainnet", nativeCurrency: { decimals, name: "Polygon", symbol: Chain.Polygon } };
     default:
       throw new SwapKitError("toolbox_evm_not_supported", { chain });
   }

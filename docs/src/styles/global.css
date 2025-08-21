@@ -68,8 +68,9 @@
 
 /* Font styling to match SwapKit */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
 }
 
 /* Hide the default Starlight banner */
@@ -80,8 +81,8 @@ body {
 /* Style the SwapKit logo/title like their website */
 .site-title {
   font-weight: 700;
-  letter-spacing: -0.02em;
   color: var(--sk-logo-green) !important;
+  letter-spacing: -0.02em;
 }
 
 /* Ensure the logo link inherits the color */
@@ -96,23 +97,23 @@ body {
 
 /* Hero title with gradient effect */
 .hero h1 {
-  background: linear-gradient(135deg, var(--sk-white) 0%, var(--sk-logo-green) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin-bottom: 0.75rem !important;
   font-size: 3rem !important;
   font-weight: 800 !important;
-  letter-spacing: -0.03em !important;
   line-height: 1 !important;
-  margin-bottom: 0.75rem !important;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em !important;
+  background: linear-gradient(135deg, var(--sk-white) 0%, var(--sk-logo-green) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .hero .tagline {
-  color: var(--sk-logo-green);
-  font-size: 1.25rem;
-  font-weight: 500;
   margin-top: 0.5rem;
   margin-bottom: 1.5rem !important;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--sk-logo-green);
   opacity: 0.9;
 }
 
@@ -149,7 +150,7 @@ body {
 }
 
 .hero-section .card:nth-child(4) {
-  animation: fadeInUp 0.6s ease-out 1.0s both;
+  animation: fadeInUp 0.6s ease-out 1s both;
 }
 
 /* Animate Quick Start section */
@@ -168,8 +169,8 @@ main[data-pagefind-body] {
 
 /* Reduce hero actions spacing */
 .hero .actions {
-  margin-top: 2rem !important;
   gap: 1rem !important;
+  margin-top: 2rem !important;
 }
 
 /* Animate hero content on load */
@@ -198,25 +199,30 @@ main[data-pagefind-body] {
 
 /* Hero image styling with glow and breathing animation */
 .hero img {
+  box-sizing: border-box;
   width: 160px !important;
   height: 160px !important;
-  object-fit: contain;
-  border-radius: 32px;
-  background: var(--sk-black);
   padding: 25px;
-  box-sizing: border-box;
-  box-shadow: 0 0 30px rgba(146, 249, 201, 0.6), 0 0 60px rgba(146, 249, 201, 0.4), 0 0 90px
-    rgba(146, 249, 201, 0.2);
   margin-bottom: 1.5rem;
-  animation: breathing-rise 3s ease-in-out infinite;
+  object-fit: contain;
+  background: var(--sk-black);
+  border-radius: 32px;
+  box-shadow:
+    0 0 30px rgba(146, 249, 201, 0.6),
+    0 0 60px rgba(146, 249, 201, 0.4),
+    0 0 90px rgba(146, 249, 201, 0.2);
   transition: all 0.3s ease;
+  animation: breathing-rise 3s ease-in-out infinite;
   will-change: transform, box-shadow;
 }
 
 .hero img:hover {
+  box-shadow:
+    0 0 40px rgba(146, 249, 201, 0.8),
+    0 0 80px rgba(146, 249, 201, 0.6),
+    0 0 120px rgba(146, 249, 201, 0.4),
+    0 10px 30px rgba(146, 249, 201, 0.3);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 0 40px rgba(146, 249, 201, 0.8), 0 0 80px rgba(146, 249, 201, 0.6), 0 0 120px
-    rgba(146, 249, 201, 0.4), 0 10px 30px rgba(146, 249, 201, 0.3);
 }
 
 /* Breathing animation for the logo - rising effect */
@@ -224,13 +230,18 @@ main[data-pagefind-body] {
   0%,
   100% {
     transform: translateY(0) scale(1);
-    box-shadow: 0 0 30px rgba(146, 249, 201, 0.6), 0 0 60px rgba(146, 249, 201, 0.4), 0 0 90px
-      rgba(146, 249, 201, 0.2);
+    box-shadow:
+      0 0 30px rgba(146, 249, 201, 0.6),
+      0 0 60px rgba(146, 249, 201, 0.4),
+      0 0 90px rgba(146, 249, 201, 0.2);
   }
   50% {
     transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 0 40px rgba(146, 249, 201, 0.8), 0 0 80px rgba(146, 249, 201, 0.6), 0 0 120px
-      rgba(146, 249, 201, 0.3), 0 10px 40px rgba(146, 249, 201, 0.2);
+    box-shadow:
+      0 0 40px rgba(146, 249, 201, 0.8),
+      0 0 80px rgba(146, 249, 201, 0.6),
+      0 0 120px rgba(146, 249, 201, 0.3),
+      0 10px 40px rgba(146, 249, 201, 0.2);
   }
 }
 
@@ -239,13 +250,18 @@ main[data-pagefind-body] {
   0%,
   100% {
     transform: translateY(0) scale(1);
-    box-shadow: 0 0 30px rgba(0, 109, 53, 0.4), 0 0 60px rgba(0, 109, 53, 0.3), 0 0 90px
-      rgba(0, 109, 53, 0.15);
+    box-shadow:
+      0 0 30px rgba(0, 109, 53, 0.4),
+      0 0 60px rgba(0, 109, 53, 0.3),
+      0 0 90px rgba(0, 109, 53, 0.15);
   }
   50% {
     transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 0 40px rgba(0, 109, 53, 0.6), 0 0 80px rgba(0, 109, 53, 0.4), 0 0 120px
-      rgba(0, 109, 53, 0.2), 0 10px 40px rgba(0, 109, 53, 0.15);
+    box-shadow:
+      0 0 40px rgba(0, 109, 53, 0.6),
+      0 0 80px rgba(0, 109, 53, 0.4),
+      0 0 120px rgba(0, 109, 53, 0.2),
+      0 10px 40px rgba(0, 109, 53, 0.15);
   }
 }
 
@@ -253,15 +269,20 @@ main[data-pagefind-body] {
 @media (prefers-color-scheme: light) {
   .hero img {
     background: #ffffff;
-    box-shadow: 0 0 30px rgba(0, 109, 53, 0.4), 0 0 60px rgba(0, 109, 53, 0.3), 0 0 90px
-      rgba(0, 109, 53, 0.15);
+    box-shadow:
+      0 0 30px rgba(0, 109, 53, 0.4),
+      0 0 60px rgba(0, 109, 53, 0.3),
+      0 0 90px rgba(0, 109, 53, 0.15);
     animation: breathing-rise-light 3s ease-in-out infinite;
   }
 
   .hero img:hover {
+    box-shadow:
+      0 0 40px rgba(0, 109, 53, 0.5),
+      0 0 80px rgba(0, 109, 53, 0.4),
+      0 0 120px rgba(0, 109, 53, 0.2),
+      0 10px 30px rgba(0, 109, 53, 0.2);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 0 40px rgba(0, 109, 53, 0.5), 0 0 80px rgba(0, 109, 53, 0.4), 0 0 120px
-      rgba(0, 109, 53, 0.2), 0 10px 30px rgba(0, 109, 53, 0.2);
   }
 
   /* Adjust logo color in light theme */
@@ -273,24 +294,31 @@ main[data-pagefind-body] {
 /* Light theme with data-theme selector - higher specificity */
 :root[data-theme="light"] .hero img {
   background: #ffffff !important;
-  box-shadow: 0 0 30px rgba(0, 109, 53, 0.4), 0 0 60px rgba(0, 109, 53, 0.3), 0 0 90px
-    rgba(0, 109, 53, 0.15);
+  box-shadow:
+    0 0 30px rgba(0, 109, 53, 0.4),
+    0 0 60px rgba(0, 109, 53, 0.3),
+    0 0 90px rgba(0, 109, 53, 0.15);
   animation: breathing-rise-light 3s ease-in-out infinite;
   will-change: transform, box-shadow;
 }
 
 :root[data-theme="light"] .hero img:hover {
+  box-shadow:
+    0 0 40px rgba(0, 109, 53, 0.5),
+    0 0 80px rgba(0, 109, 53, 0.4),
+    0 0 120px rgba(0, 109, 53, 0.2),
+    0 10px 30px rgba(0, 109, 53, 0.2);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 0 40px rgba(0, 109, 53, 0.5), 0 0 80px rgba(0, 109, 53, 0.4), 0 0 120px
-    rgba(0, 109, 53, 0.2), 0 10px 30px rgba(0, 109, 53, 0.2);
 }
 
 /* Card styling to match SwapKit */
 .card {
-  border-radius: 12px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  padding: 1rem !important;
   position: relative;
+  padding: 1rem !important;
+  border-radius: 12px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Dark theme cards */
@@ -301,7 +329,9 @@ main[data-pagefind-body] {
 
 :root:not([data-theme="light"]) .card:hover {
   border-color: var(--sk-logo-green);
-  box-shadow: 0 0 0 1px var(--sk-logo-green), 0 4px 12px rgba(146, 249, 201, 0.1);
+  box-shadow:
+    0 0 0 1px var(--sk-logo-green),
+    0 4px 12px rgba(146, 249, 201, 0.1);
 }
 
 /* Light theme cards */
@@ -312,7 +342,9 @@ main[data-pagefind-body] {
 
 :root[data-theme="light"] .card:hover {
   border-color: var(--sk-button-green);
-  box-shadow: 0 0 0 1px var(--sk-button-green), 0 4px 12px rgba(0, 109, 53, 0.1);
+  box-shadow:
+    0 0 0 1px var(--sk-button-green),
+    0 4px 12px rgba(0, 109, 53, 0.1);
 }
 
 /* Reduce card grid spacing */
@@ -329,11 +361,11 @@ main[data-pagefind-body] {
 
 /* Code blocks with SwapKit styling */
 pre {
+  position: relative;
+  margin: 1rem 0;
   background: var(--sk-gray) !important;
   border: 1px solid var(--sk-light-gray);
   border-radius: 8px;
-  margin: 1rem 0;
-  position: relative;
 }
 
 pre:hover {
@@ -362,43 +394,43 @@ pre {
 
 .expressive-code .copy-button {
   position: absolute;
-  right: 0.5rem;
   top: 0.5rem;
+  right: 0.5rem;
 }
 
 /* Hero buttons - Starlight sl-link-button with glassmorphism */
 .hero .sl-link-button {
+  position: relative !important;
   padding: 0.75rem 2rem !important;
-  border-radius: 16px !important;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  overflow: hidden !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.01em !important;
   text-decoration: none !important;
-  position: relative !important;
-  overflow: hidden !important;
+  border-radius: 16px !important;
   transform: translateY(0) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
   will-change: transform, box-shadow !important;
 }
 
 /* Animated spotlight effect */
 .hero .sl-link-button::after {
-  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent 0%, rgba(146, 249, 201, 0.3) 50%, transparent 100%);
-  transform: skewX(-20deg);
-  opacity: 0;
-  transition: all 0.5s ease;
   pointer-events: none;
+  content: "";
+  background: linear-gradient(90deg, transparent 0%, rgba(146, 249, 201, 0.3) 50%, transparent 100%);
+  opacity: 0;
+  transform: skewX(-20deg);
+  transition: all 0.5s ease;
 }
 
 .hero .sl-link-button:hover::after {
-  opacity: 1;
   left: 100%;
+  opacity: 1;
   animation: shimmer 0.8s ease-out;
 }
 
@@ -418,35 +450,32 @@ pre {
 
 /* Primary button - Enhanced gradient with more life in dark mode */
 .hero .sl-link-button.primary {
-  background: linear-gradient(
-    135deg,
-    var(--sk-accent-green) 0%,
-    var(--sk-logo-green) 50%,
-    #59fca1 100%
-  ) !important;
-  color: var(--sk-black) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(32, 212, 131, 0.3), 0 16px 32px
-    rgba(32, 212, 131, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
   position: relative;
   overflow: hidden;
+  color: var(--sk-black) !important;
+  background: linear-gradient(135deg, var(--sk-accent-green) 0%, var(--sk-logo-green) 50%, #59fca1 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(32, 212, 131, 0.3),
+    0 16px 32px rgba(32, 212, 131, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 /* Add animated gradient overlay for more life */
 .hero .sl-link-button.primary::before {
-  content: "";
   position: absolute;
   top: 0;
   left: -100%;
+  z-index: 1;
   width: 100%;
   height: 100%;
+  content: "";
   background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
   transition: left 0.5s ease;
-  z-index: 1;
 }
 
 .hero .sl-link-button.primary:hover::before {
@@ -460,17 +489,14 @@ pre {
 }
 
 .hero .sl-link-button.primary:hover {
-  transform: translateY(-4px) scale(1.02) !important;
+  background: linear-gradient(135deg, var(--sk-accent-green) 0%, var(--sk-logo-green) 30%, #59fca1 100%) !important;
   box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(32, 212, 131, 0.4), 0 24px 48px
-    rgba(32, 212, 131, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    0 12px 24px rgba(32, 212, 131, 0.4),
+    0 24px 48px rgba(32, 212, 131, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
-  background: linear-gradient(
-    135deg,
-    var(--sk-accent-green) 0%,
-    var(--sk-logo-green) 30%,
-    #59fca1 100%
-  ) !important;
+  transform: translateY(-4px) scale(1.02) !important;
 }
 
 .hero .sl-link-button.primary:active {
@@ -479,29 +505,31 @@ pre {
 
 /* Secondary button - Enhanced outlined glass with gradient borders */
 .hero .sl-link-button.secondary {
-  background: rgba(32, 212, 131, 0.2) !important;
-  color: var(--sk-accent-green) !important;
-  border: 2px solid var(--sk-accent-green) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(32, 212, 131, 0.3), inset 0 1px 0
-    rgba(255, 255, 255, 0.2) !important;
   position: relative;
   overflow: hidden;
   font-weight: 600 !important;
+  color: var(--sk-accent-green) !important;
+  background: rgba(32, 212, 131, 0.2) !important;
+  border: 2px solid var(--sk-accent-green) !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 8px 16px rgba(32, 212, 131, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
 /* Add subtle shimmer effect to secondary button */
 .hero .sl-link-button.secondary::before {
-  content: "";
   position: absolute;
   top: 0;
   left: -100%;
+  z-index: 1;
   width: 100%;
   height: 100%;
+  content: "";
   background: linear-gradient(90deg, transparent 0%, rgba(32, 212, 131, 0.2) 50%, transparent 100%);
   transition: left 0.6s ease;
-  z-index: 1;
 }
 
 .hero .sl-link-button.secondary:hover::before {
@@ -514,44 +542,58 @@ pre {
 }
 
 .hero .sl-link-button.secondary:hover {
-  background: rgba(32, 212, 131, 0.3) !important;
   color: var(--sk-accent-green) !important;
+  background: rgba(32, 212, 131, 0.3) !important;
   border-color: var(--sk-logo-green) !important;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    0 12px 24px rgba(32, 212, 131, 0.4),
+    0 24px 48px rgba(32, 212, 131, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-4px) scale(1.02) !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 12px 24px rgba(32, 212, 131, 0.4), 0 24px 48px
-    rgba(32, 212, 131, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Light theme button overrides */
 :root[data-theme="light"] .hero .sl-link-button.primary {
-  background: linear-gradient(135deg, var(--sk-button-green) 0%, #005a2b 100%) !important;
   color: var(--sk-white) !important;
+  background: linear-gradient(135deg, var(--sk-button-green) 0%, #005a2b 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 109, 53, 0.2), 0 16px 32px
-    rgba(0, 109, 53, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 109, 53, 0.2),
+    0 16px 32px rgba(0, 109, 53, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 :root[data-theme="light"] .hero .sl-link-button.primary:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    0 12px 24px rgba(0, 109, 53, 0.3),
+    0 24px 48px rgba(0, 109, 53, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-4px) scale(1.02) !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 109, 53, 0.3), 0 24px 48px
-    rgba(0, 109, 53, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Light theme secondary button - outlined glass */
 :root[data-theme="light"] .hero .sl-link-button:not(.primary) {
-  background: rgba(0, 109, 53, 0.04) !important;
   color: var(--sk-button-green) !important;
+  background: rgba(0, 109, 53, 0.04) !important;
   border: 2px solid rgba(0, 109, 53, 0.3) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 109, 53, 0.08), inset 0 1px 0
-    rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 109, 53, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
 }
 
 :root[data-theme="light"] .hero .sl-link-button:not(.primary):hover {
   background: rgba(0, 109, 53, 0.08) !important;
   border-color: var(--sk-button-green) !important;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.1),
+    0 12px 24px rgba(0, 109, 53, 0.15),
+    0 24px 48px rgba(0, 109, 53, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
   transform: translateY(-4px) scale(1.02) !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1), 0 12px 24px rgba(0, 109, 53, 0.15), 0 24px 48px
-    rgba(0, 109, 53, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
 /* Light theme spotlight effect */
@@ -561,9 +603,9 @@ pre {
 
 /* Light theme hero text */
 :root[data-theme="light"] .hero h1 {
+  -webkit-text-fill-color: transparent;
   background: linear-gradient(135deg, var(--sk-button-green) 0%, #003d1f 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
@@ -595,11 +637,11 @@ h3 {
 
 /* Specific hero heading overrides */
 .hero h1 {
+  margin-bottom: 0.5rem !important;
   font-size: 2.5rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-bottom: 0.5rem !important;
+  letter-spacing: -0.03em;
 }
 
 .hero-section h2 {
@@ -625,11 +667,11 @@ ol li {
 
 /* Feature list styling - Enhanced colors and tint backgrounds */
 ul li strong {
+  padding: 0.125rem 0.375rem;
+  font-weight: 600;
   color: var(--sk-accent-green);
   background-color: rgba(32, 212, 131, 0.08);
-  padding: 0.125rem 0.375rem;
   border-radius: 4px;
-  font-weight: 600;
 }
 
 :root[data-theme="light"] ul li strong {
@@ -648,8 +690,8 @@ article a:not(.action) {
 
 article a:not(.action):hover {
   color: var(--sk-dark-green);
-  text-decoration-color: var(--sk-dark-green);
   text-decoration-thickness: 2px;
+  text-decoration-color: var(--sk-dark-green);
 }
 
 /* Light theme links */
@@ -674,24 +716,24 @@ article a:not(.action):hover {
 
 /* Sidebar active item - Clean styling without bracket cuts */
 nav [aria-current="page"] {
+  position: relative;
+  font-weight: 600;
   color: var(--sk-accent-green);
   background-color: rgba(32, 212, 131, 0.12);
   border-radius: 8px;
-  font-weight: 600;
-  position: relative;
 }
 
 /* Clean border indicator without cutting into content */
 nav [aria-current="page"]::before {
-  content: "";
   position: absolute;
-  left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  left: 0;
   width: 3px;
   height: 70%;
+  content: "";
   background-color: var(--sk-accent-green);
   border-radius: 0 2px 2px 0;
+  transform: translateY(-50%);
 }
 
 /* Light theme sidebar active item */
@@ -706,49 +748,49 @@ nav [aria-current="page"]::before {
 
 /* Sidebar navigation links - improved hover states and clean nested styling */
 nav a:not([aria-current="page"]) {
-  transition: all 0.2s ease;
-  border-radius: 6px;
   position: relative;
   overflow: hidden;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 nav a:not([aria-current="page"]):hover {
-  background-color: rgba(32, 212, 131, 0.06);
   color: var(--sk-accent-green);
+  background-color: rgba(32, 212, 131, 0.06);
   transform: translateX(2px);
 }
 
 :root[data-theme="light"] nav a:not([aria-current="page"]):hover {
-  background-color: rgba(0, 109, 53, 0.04);
   color: var(--sk-dark-green);
+  background-color: rgba(0, 109, 53, 0.04);
 }
 
 /* LEFT SIDEBAR ONLY - Clean styling for nested navigation items - Remove all vertical indicators */
 .sidebar-pane nav ul ul a {
   padding-left: 1.5rem;
+  margin-left: 0.5rem;
   font-size: 0.9rem;
   opacity: 0.9;
-  margin-left: 0.5rem;
 }
 
 .sidebar-pane nav ul ul a:hover {
-  opacity: 1;
   padding-left: 1.5rem;
+  opacity: 1;
   transform: translateX(2px);
 }
 
 /* LEFT SIDEBAR ONLY - Remove all borders and visual indicators from nested items */
 .sidebar-pane nav ul ul {
-  border-left: none !important;
-  margin-left: 0;
   padding-left: 0;
+  margin-left: 0;
   border: none !important;
+  border-left: none !important;
 }
 
 .sidebar-pane nav ul ul li {
-  border-left: none !important;
-  border: none !important;
   position: relative;
+  border: none !important;
+  border-left: none !important;
 }
 
 /* LEFT SIDEBAR ONLY - Remove all pseudo-element indicators */
@@ -778,13 +820,13 @@ nav a:not([aria-current="page"]):hover {
 
 /* Clean active state with left border indicator */
 .sidebar-pane nav [aria-current="page"] {
-  background-color: transparent !important;
-  color: var(--sk-accent-green) !important;
+  padding-left: 0.65rem !important; /* Compensate for border */
   font-weight: 500 !important;
+  color: var(--sk-accent-green) !important;
+  background-color: transparent !important;
   border: none !important;
   border-left: 3px solid var(--sk-accent-green) !important;
-  box-shadow: none !important;
-  padding-left: 0.65rem !important; /* Compensate for border */
+  box-shadow: none !important; /* Compensate for border */
 }
 
 :root[data-theme="light"] .sidebar-pane nav [aria-current="page"] {
@@ -794,34 +836,34 @@ nav a:not([aria-current="page"]):hover {
 
 /* Clean left sidebar navigation */
 .sidebar-pane nav a {
-  transition: all 0.2s ease;
-  border-radius: 4px;
   position: relative;
-  overflow: hidden;
   padding: 0.4rem 0.75rem;
   margin: 0.1rem 0;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .sidebar-pane nav a:hover {
-  background-color: rgba(32, 212, 131, 0.06);
   color: var(--sk-accent-green);
+  background-color: rgba(32, 212, 131, 0.06);
   transform: translateX(2px);
 }
 
 :root[data-theme="light"] .sidebar-pane nav a:hover {
-  background-color: rgba(0, 109, 53, 0.04);
   color: var(--sk-dark-green);
+  background-color: rgba(0, 109, 53, 0.04);
 }
 
 /* Clean section headers - remove harsh borders */
 .sidebar-pane .group-label {
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.025em !important;
-  color: var(--sl-color-gray-3) !important;
   padding: 0.5rem 0.75rem 0.25rem !important;
   margin: 0.75rem 0 0.25rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: var(--sl-color-gray-3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.025em !important;
   background: none !important;
   border: none !important;
   border-radius: 0 !important;
@@ -833,15 +875,15 @@ nav a:not([aria-current="page"]):hover {
 
 /* Remove all section styling */
 .sidebar-pane details summary {
-  background: none !important;
-  border: none !important;
   padding: 0.5rem 0.75rem !important;
   margin: 0.5rem 0 0.25rem !important;
   font-size: 0.75rem !important;
   font-weight: 600 !important;
+  color: var(--sl-color-gray-3) !important;
   text-transform: uppercase !important;
   letter-spacing: 0.025em !important;
-  color: var(--sl-color-gray-3) !important;
+  background: none !important;
+  border: none !important;
 }
 
 :root[data-theme="light"] .sidebar-pane details summary {
@@ -855,16 +897,16 @@ nav a:not([aria-current="page"]):hover {
 }
 
 .right-sidebar a {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 6px;
+  position: relative;
+  display: block;
   padding: 0.375rem 0.75rem;
   margin: 0.125rem 0;
-  display: block;
-  position: relative;
-  transform: translateX(0);
-  border: 1px solid transparent;
   color: var(--sl-color-gray-2);
   text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transform: translateX(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* TOC Hierarchy - Proper indentation for nested sections */
@@ -889,35 +931,35 @@ nav a:not([aria-current="page"]):hover {
 .right-sidebar a:hover {
   color: var(--sk-accent-green);
   background-color: rgba(32, 212, 131, 0.1);
-  transform: translateX(4px);
   border-color: rgba(32, 212, 131, 0.2);
   box-shadow: 0 2px 8px rgba(32, 212, 131, 0.1);
+  transform: translateX(4px);
 }
 
 /* Active state with enhanced animation */
 .right-sidebar a[aria-current="true"] {
+  position: relative;
+  font-weight: 700 !important;
   color: var(--sk-accent-green) !important;
   background-color: rgba(32, 212, 131, 0.18) !important;
-  font-weight: 700 !important;
-  position: relative;
-  transform: translateX(6px);
   border-color: rgba(32, 212, 131, 0.4) !important;
   box-shadow: 0 4px 16px rgba(32, 212, 131, 0.3) !important;
+  transform: translateX(6px);
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Animated border indicator with glow */
 .right-sidebar a[aria-current="true"]::before {
-  content: "";
   position: absolute;
-  left: -1px;
   top: 50%;
-  transform: translateY(-50%);
+  left: -1px;
   width: 3px;
   height: 80%;
+  content: "";
   background: linear-gradient(180deg, var(--sk-accent-green) 0%, var(--sk-logo-green) 100%);
   border-radius: 0 2px 2px 0;
   box-shadow: 0 0 8px rgba(32, 212, 131, 0.6);
+  transform: translateY(-50%);
   animation: slide-in 0.4s ease-out;
 }
 
@@ -928,7 +970,9 @@ nav a:not([aria-current="page"]):hover {
     box-shadow: 0 4px 12px rgba(32, 212, 131, 0.2);
   }
   50% {
-    box-shadow: 0 4px 16px rgba(32, 212, 131, 0.3), 0 0 20px rgba(32, 212, 131, 0.1);
+    box-shadow:
+      0 4px 16px rgba(32, 212, 131, 0.3),
+      0 0 20px rgba(32, 212, 131, 0.1);
   }
 }
 
@@ -952,18 +996,18 @@ nav a:not([aria-current="page"]):hover {
 }
 
 :root[data-theme="light"] .right-sidebar a[aria-current="true"] {
+  font-weight: 700 !important;
   color: var(--sk-dark-green) !important;
   background-color: rgba(0, 109, 53, 0.2) !important;
   border-color: rgba(0, 109, 53, 0.4) !important;
   box-shadow: 0 4px 16px rgba(0, 109, 53, 0.25) !important;
-  font-weight: 700 !important;
   animation: pulse-glow-light 2s ease-in-out infinite;
 }
 
 :root[data-theme="light"] .right-sidebar a[aria-current="true"]::before {
+  width: 4px;
   background: linear-gradient(180deg, var(--sk-dark-green) 0%, var(--sk-button-green) 100%);
   box-shadow: 0 0 12px rgba(0, 109, 53, 0.6);
-  width: 4px;
 }
 
 @keyframes pulse-glow-light {
@@ -972,23 +1016,25 @@ nav a:not([aria-current="page"]):hover {
     box-shadow: 0 4px 12px rgba(0, 109, 53, 0.15);
   }
   50% {
-    box-shadow: 0 4px 16px rgba(0, 109, 53, 0.25), 0 0 20px rgba(0, 109, 53, 0.1);
+    box-shadow:
+      0 4px 16px rgba(0, 109, 53, 0.25),
+      0 0 20px rgba(0, 109, 53, 0.1);
   }
 }
 
 /* Enhanced "On this page" header */
 .right-sidebar h2,
 .right-sidebar .right-sidebar-title {
-  color: var(--sk-accent-green);
-  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sk-accent-green);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.5rem 0.75rem;
   background-color: rgba(32, 212, 131, 0.08);
-  border-radius: 6px;
   border-left: 3px solid var(--sk-accent-green);
-  margin-bottom: 0.5rem;
+  border-radius: 6px;
 }
 
 :root[data-theme="light"] .right-sidebar h2,
@@ -1000,23 +1046,23 @@ nav a:not([aria-current="page"]):hover {
 
 /* Inline code styling - Enhanced with better colors and contrast */
 :root:not([data-theme="light"]) :not(pre) > code {
-  background-color: rgba(32, 212, 131, 0.12);
-  color: var(--sk-accent-green);
   padding: 0.125rem 0.375rem;
-  border-radius: 4px;
   font-size: 0.875em;
   font-weight: 500;
+  color: var(--sk-accent-green);
+  background-color: rgba(32, 212, 131, 0.12);
   border: 1px solid rgba(32, 212, 131, 0.2);
+  border-radius: 4px;
 }
 
 :root[data-theme="light"] :not(pre) > code {
-  background-color: rgba(0, 109, 53, 0.08);
-  color: var(--sk-dark-green);
   padding: 0.125rem 0.375rem;
-  border-radius: 4px;
   font-size: 0.875em;
   font-weight: 500;
+  color: var(--sk-dark-green);
+  background-color: rgba(0, 109, 53, 0.08);
   border: 1px solid rgba(0, 109, 53, 0.15);
+  border-radius: 4px;
 }
 
 /* Search input - Enhanced with better accent colors */
@@ -1035,9 +1081,9 @@ nav a:not([aria-current="page"]):hover {
 :root[data-theme="light"] site-search input,
 :root[data-theme="light"] .site-search [type="search"],
 :root[data-theme="light"] .site-search input {
+  color: #24292e !important;
   background-color: #ffffff !important;
   border-color: #d1d5da !important;
-  color: #24292e !important;
 }
 
 :root[data-theme="light"] site-search [type="search"]::placeholder,
@@ -1052,9 +1098,9 @@ nav a:not([aria-current="page"]):hover {
 :root[data-theme="light"] site-search input:focus,
 :root[data-theme="light"] .site-search [type="search"]:focus,
 :root[data-theme="light"] .site-search input:focus {
+  color: #24292e !important;
   border-color: var(--sk-dark-green) !important;
   box-shadow: 0 0 0 1px var(--sk-dark-green) !important;
-  color: #24292e !important;
 }
 
 /* Search button in light theme */
@@ -1082,8 +1128,8 @@ nav a:not([aria-current="page"]):hover {
 
 /* Light theme kbd - colors only, keeping dark theme structure */
 :root[data-theme="light"] site-search kbd {
-  background: #e1e4e8 !important;
   color: #24292e !important;
+  background: #e1e4e8 !important;
   border-color: #d1d5da !important;
   box-shadow: inset 0 -1px 0 #c9cdd1 !important;
 }
@@ -1091,30 +1137,30 @@ nav a:not([aria-current="page"]):hover {
 /* Dialog within site-search */
 :root[data-theme="light"] site-search dialog,
 :root[data-theme="light"] .site-search dialog {
-  background: #ffffff !important;
   color: #24292e !important;
+  background: #ffffff !important;
 }
 
 /* Twoslash tooltip fixes */
 .twoslash-popup {
-  background: var(--twoslash-popup-bg) !important;
-  border: 1px solid var(--sl-color-hairline) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   z-index: 10000 !important;
   padding: 0.5rem !important;
+  background: var(--twoslash-popup-bg) !important;
+  border: 1px solid var(--sl-color-hairline) !important;
   border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .twoslash-popup-code {
-  background: var(--twoslash-popup-bg) !important;
   display: block !important;
+  background: var(--twoslash-popup-bg) !important;
 }
 
 .twoslash-popup-code pre {
-  background: var(--twoslash-popup-bg) !important;
-  margin: 0 !important;
-  border: none !important;
   padding: 0 !important;
+  margin: 0 !important;
+  background: var(--twoslash-popup-bg) !important;
+  border: none !important;
 }
 
 /* Fix the hover info positioning */
@@ -1141,9 +1187,9 @@ nav a:not([aria-current="page"]):hover {
 }
 
 .twoslash-popup-container .twoslash-popup {
-  pointer-events: auto;
   max-width: 500px;
   white-space: normal;
+  pointer-events: auto;
 }
 
 /* Page progress indicator (if exists) */
@@ -1153,8 +1199,8 @@ nav a:not([aria-current="page"]):hover {
 
 /* Selection color */
 ::selection {
-  background-color: var(--sk-accent-green);
   color: var(--sk-black);
+  background-color: var(--sk-accent-green);
 }
 
 /* Additional accessibility improvements - Specific section styling */
@@ -1176,9 +1222,9 @@ h3[id],
 h4[id],
 h5[id],
 h6[id] {
+  position: relative;
   scroll-margin-top: 2rem;
   transition: all 0.3s ease;
-  position: relative;
 }
 
 /* Subtle flash animation when navigating to section */
@@ -1232,11 +1278,11 @@ h6[id]:target {
 /* Feature sections with subtle backgrounds */
 .hero-section h2 + p,
 .hero-section h2 + ul {
-  background-color: rgba(32, 212, 131, 0.04);
   padding: 1rem;
-  border-radius: 8px;
-  border-left: 3px solid var(--sk-accent-green);
   margin: 1rem 0;
+  background-color: rgba(32, 212, 131, 0.04);
+  border-left: 3px solid var(--sk-accent-green);
+  border-radius: 8px;
 }
 
 :root[data-theme="light"] .hero-section h2 + p,
@@ -1249,41 +1295,41 @@ h6[id]:target {
 .breadcrumbs,
 .breadcrumbs a,
 nav .group-label {
+  font-weight: 500;
   color: var(--sk-accent-green) !important;
   text-decoration: underline;
   text-decoration-color: rgba(32, 212, 131, 0.4);
   text-underline-offset: 2px;
-  font-weight: 500;
 }
 
 /* Light theme breadcrumbs - Much more visible */
 :root[data-theme="light"] .breadcrumbs,
 :root[data-theme="light"] .breadcrumbs a,
 :root[data-theme="light"] nav .group-label {
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
   color: var(--sk-dark-green) !important;
   text-decoration-color: var(--sk-dark-green);
   background-color: rgba(0, 109, 53, 0.08);
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
   border: 1px solid rgba(0, 109, 53, 0.15);
-  font-weight: 600;
+  border-radius: 4px;
 }
 
 /* Breadcrumb separators */
 :root[data-theme="light"] .breadcrumbs {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
   padding: 0.5rem;
-  background-color: rgba(0, 109, 53, 0.04);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 109, 53, 0.1);
   margin-bottom: 1rem;
+  background-color: rgba(0, 109, 53, 0.04);
+  border: 1px solid rgba(0, 109, 53, 0.1);
+  border-radius: 8px;
 }
 
 :root[data-theme="light"] .breadcrumbs a {
-  background-color: rgba(0, 109, 53, 0.12);
   margin: 0;
+  background-color: rgba(0, 109, 53, 0.12);
   transition: all 0.2s ease;
 }
 
@@ -1294,12 +1340,12 @@ nav .group-label {
 
 /* Enhanced dropdown and collapsible section styling */
 details summary {
-  color: var(--sk-accent-green);
-  background-color: rgba(32, 212, 131, 0.06);
   padding: 0.5rem;
-  border-radius: 6px;
-  border-left: 2px solid var(--sk-accent-green);
+  color: var(--sk-accent-green);
   cursor: pointer;
+  background-color: rgba(32, 212, 131, 0.06);
+  border-left: 2px solid var(--sk-accent-green);
+  border-radius: 6px;
   transition: all 0.2s ease;
 }
 
@@ -1374,8 +1420,8 @@ details summary:hover {
 [style*="#8b949e" i],
 [style*="8b949e" i],
 [style*="rgb(139, 148, 158)" i] {
-  color: #6a737d !important;
   font-style: italic;
+  color: #6a737d !important;
 }
 
 /* Numbers */

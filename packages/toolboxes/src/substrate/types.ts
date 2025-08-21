@@ -5,32 +5,32 @@ import type { KeypairType } from "@polkadot/util-crypto/types";
 import type { GenericTransferParams, SubstrateChain } from "@swapkit/helpers";
 
 const polkadotNetwork = {
-  prefix: 0,
-  network: "polkadot",
-  displayName: "Polkadot Relay Chain",
-  symbols: ["DOT"],
   decimals: [10],
+  displayName: "Polkadot Relay Chain",
+  network: "polkadot",
+  prefix: 0,
   standardAccount: "*25519",
+  symbols: ["DOT"],
   website: "https://polkadot.network",
 };
 
 const chainflipNetwork = {
-  prefix: 2112,
-  network: "chainflip",
-  displayName: "Chainflip",
-  symbols: ["FLIP"],
   decimals: [18],
+  displayName: "Chainflip",
+  network: "chainflip",
+  prefix: 2112,
   standardAccount: "*25519",
+  symbols: ["FLIP"],
   website: "https://chainflip.io/",
 };
 
 const subtrateNetwork = {
-  prefix: 42,
-  network: "substrate",
-  displayName: "Substrate",
-  symbols: [],
   decimals: [],
+  displayName: "Substrate",
+  network: "substrate",
+  prefix: 42,
   standardAccount: "*25519",
+  symbols: [],
   website: "https://substrate.io/",
 };
 
@@ -40,14 +40,9 @@ export const SubstrateNetwork: Record<SubstrateChain | "GENERIC", SubstrateNetwo
   GENERIC: subtrateNetwork,
 };
 
-export type SubstrateNetwork =
-  | typeof polkadotNetwork
-  | typeof chainflipNetwork
-  | typeof subtrateNetwork;
+export type SubstrateNetwork = typeof polkadotNetwork | typeof chainflipNetwork | typeof subtrateNetwork;
 
-export type SubstrateTransferParams = GenericTransferParams & {
-  sender?: string;
-};
+export type SubstrateTransferParams = GenericTransferParams & { sender?: string };
 
 type Unsubcall = () => void;
 

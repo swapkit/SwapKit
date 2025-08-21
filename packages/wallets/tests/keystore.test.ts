@@ -4,10 +4,7 @@ import { KEYSTORE_SUPPORTED_CHAINS, keystoreWallet } from "../src/keystore";
 import { testKeystoreWalletData } from "./fixtures";
 
 beforeEach(() => {
-  SKConfig.set({
-    apiKeys: { swapKit: process.env.TEST_API_KEY },
-    envs: { isDev: true },
-  });
+  SKConfig.set({ apiKeys: { swapKit: process.env.TEST_API_KEY }, envs: { isDev: true } });
 });
 
 describe("keystore - Reading address", () => {
@@ -28,7 +25,7 @@ describe("keystore - Reading address", () => {
         expect(`${chain}: ${chainWallet.address}`).toBe(`${chain}: ${address}`);
       }
     },
-    { timeout: 10000, retry: 3 },
+    { retry: 3, timeout: 10000 },
   );
 });
 
@@ -62,6 +59,6 @@ describe("keystore - Reading balances", () => {
         console.error(failedChains.map((chain) => `${chain[0]}: ${chain[1]}`).join("\n"));
       }
     },
-    { timeout: 120000, retry: 3 },
+    { retry: 3, timeout: 120000 },
   );
 });

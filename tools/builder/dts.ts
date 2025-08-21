@@ -10,7 +10,6 @@ const dtsPlugin = {
 
     // For packages with export maps, create a temp config with only src files
     const tempConfig = {
-      extends: "./tsconfig.json",
       compilerOptions: {
         allowImportingTsExtensions: false,
         declaration: true,
@@ -21,8 +20,9 @@ const dtsPlugin = {
         outDir: "./dist/types",
         rootDir: "./src",
       },
-      include: ["src/**/*"],
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
+      extends: "./tsconfig.json",
+      include: ["src/**/*"],
     };
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {

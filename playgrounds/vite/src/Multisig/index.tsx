@@ -38,7 +38,7 @@ export default function Multisig({
     }
   }, [phrase, toolbox]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: skip
   useEffect(() => {
     loadPubKey();
   }, [loadPubKey, phrase]);
@@ -51,10 +51,7 @@ export default function Multisig({
   }, [toolbox, pubkeys, threshold]);
 
   const handlePubkeyChange = useCallback((index: number, value: string) => {
-    setPubkeys((pubkeys) => ({
-      ...pubkeys,
-      [index]: value,
-    }));
+    setPubkeys((pubkeys) => ({ ...pubkeys, [index]: value }));
   }, []);
 
   const handleInputChange = useCallback(
@@ -66,35 +63,24 @@ export default function Multisig({
 
   const handleCreateTransaction = useCallback(() => {
     if (!(inputAssetValue?.gt(0) && skClient)) return;
-    const transferTx = buildAminoMsg({
-      memo,
-      recipient,
-      sender: address,
-      assetValue: inputAssetValue,
-    });
+    const transferTx = buildAminoMsg({ assetValue: inputAssetValue, memo, recipient, sender: address });
 
     setTransaction(transferTx);
   }, [address, inputAssetValue, memo, recipient, skClient]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: skip
   const handleSignTransaction = useCallback(async () => {
     const wallet = await (await toolbox).secp256k1HdWalletFromMnemonic(phrase);
-    const { signature, bodyBytes } = await (await toolbox).signMultisigTx({
-      wallet,
-      tx: transaction,
-    });
+    const { signature, bodyBytes } = await (await toolbox).signMultisigTx({ tx: transaction, wallet });
     setBodyBytes(bodyBytes);
     const [account] = await wallet.getAccounts();
 
     if (!account) return alert("No account found");
 
-    setSignatures((signatures) => ({
-      ...signatures,
-      [fromByteArray(account.pubkey)]: signature,
-    }));
+    setSignatures((signatures) => ({ ...signatures, [fromByteArray(account.pubkey)]: signature }));
   }, [phrase, toolbox, transaction, setBodyBytes]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: skip
   const handleBroadcastTransaction = useCallback(async () => {
     setIsBroadcasting(true);
     const txHash = await (await toolbox).broadcastMultisigTx(
@@ -116,12 +102,7 @@ export default function Multisig({
           <div>Your current pubkey: {nonMultisigPubKey}</div>
           <div>
             <span>Threshold:</span>
-            <input
-              onChange={(e) => setThreshold(+e.target.value)}
-              step="1"
-              type="number"
-              value={threshold}
-            />
+            <input onChange={(e) => setThreshold(+e.target.value)} step="1" type="number" value={threshold} />
           </div>
           <div>
             <span>Public keys:</span>
@@ -165,11 +146,7 @@ export default function Multisig({
 
               <div>
                 <span>Recipient:</span>
-                <input
-                  onChange={(e) => setRecipient(e.target.value)}
-                  placeholder="address"
-                  value={recipient}
-                />
+                <input onChange={(e) => setRecipient(e.target.value)} placeholder="address" value={recipient} />
               </div>
               <div>
                 <span>Memo:</span>
@@ -202,11 +179,7 @@ export default function Multisig({
                 </div>
 
                 {Object.entries(signatures).length >= threshold && (
-                  <button
-                    disabled={isBroadcasting}
-                    onClick={handleBroadcastTransaction}
-                    type="button"
-                  >
+                  <button disabled={isBroadcasting} onClick={handleBroadcastTransaction} type="button">
                     Broadcast
                   </button>
                 )}
@@ -215,8 +188,7 @@ export default function Multisig({
 
                 {transactionHash && (
                   <div>
-                    Hooray! The transaction was sent successfully. Here is your transaction hash{" "}
-                    {transactionHash}
+                    Hooray! The transaction was sent successfully. Here is your transaction hash {transactionHash}
                   </div>
                 )}
               </div>

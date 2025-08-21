@@ -1,5 +1,3 @@
-import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
-
 import {
   ApproveMode,
   type ApproveReturnType,
@@ -19,25 +17,18 @@ import {
   type SwapParams,
   UTXOChains,
 } from "@swapkit/helpers";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { createPlugin } from "@swapkit/plugins";
 import type { FullWallet } from "@swapkit/toolboxes";
 import type { EVMCreateTransactionParams, EVMTransferParams } from "@swapkit/toolboxes/evm";
 import type { createWallet } from "@swapkit/wallets";
 
-export type SwapKitParams<P, W> = {
-  config?: SKConfigState;
-  plugins?: P;
-  wallets?: W;
-};
+export type SwapKitParams<P, W> = { config?: SKConfigState; plugins?: P; wallets?: W };
 
 export function SwapKit<
   Plugins extends ReturnType<typeof createPlugin>,
   Wallets extends ReturnType<typeof createWallet>,
->({
-  config,
-  plugins,
-  wallets,
-}: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
+>({ config, plugins, wallets }: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
   if (config) {
     SKConfig.set(config);
   }
@@ -49,11 +40,7 @@ export function SwapKit<
 
   type ActionParams<P extends PluginName> = {
     transfer: EVMTransferParams | (GenericTransferParams & { sender?: string });
-    approve: {
-      assetValue: AssetValue;
-      contractAddress: string;
-      feeOptionKey?: FeeOption;
-    };
+    approve: { assetValue: AssetValue; contractAddress: string; feeOptionKey?: FeeOption };
     swap: SwapParams<P, QuoteResponseRoute> & { assetValue: AssetValue };
   };
 
@@ -71,9 +58,7 @@ export function SwapKit<
     (acc, [walletName, wallet]) => {
       const connectWallet = wallet.connectWallet({ addChain });
 
-      acc[walletName as keyof Wallets] = connectWallet as ReturnType<
-        Wallets[keyof Wallets]["connectWallet"]
-      >;
+      acc[walletName as keyof Wallets] = connectWallet as ReturnType<Wallets[keyof Wallets]["connectWallet"]>;
       return acc;
     },
     {} as {
@@ -95,13 +80,10 @@ export function SwapKit<
     return plugin as ReturnType<Plugins[T]>;
   }
 
-  function addChain<T extends Chain>(
-    connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] },
-  ) {
+  function addChain<T extends Chain>(connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] }) {
     const currentWallet = getWallet(connectWallet.chain);
 
-    const balance = connectWallet.balance ||
-      currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
+    const balance = connectWallet.balance || currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
 
     const wallet = { ...currentWallet, ...connectWallet, balance } as FullWallet[T];
 
@@ -110,7 +92,6 @@ export function SwapKit<
     return wallet;
   }
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
   function approve<T extends ApproveMode>({
     assetValue,
     type = "checkOnly" as T,
@@ -197,14 +178,9 @@ export function SwapKit<
     }
   }
 
-  function getBalance<T extends Chain, R extends boolean>(
-    chain: T,
-    refresh?: R,
-  ): ConditionalAssetValueReturn<R> {
+  function getBalance<T extends Chain, R extends boolean>(chain: T, refresh?: R): ConditionalAssetValueReturn<R> {
     return (
-      refresh
-        ? getWalletWithBalance(chain).then(({ balance }) => balance)
-        : getWallet(chain)?.balance || []
+      refresh ? getWalletWithBalance(chain).then(({ balance }) => balance) : getWallet(chain)?.balance || []
     ) as ConditionalAssetValueReturn<R>;
   }
 
@@ -227,11 +203,7 @@ export function SwapKit<
     return wallet;
   }
 
-  function swap<T extends PluginName>({
-    route,
-    pluginName,
-    ...rest
-  }: SwapParams<T, QuoteResponseRoute>) {
+  function swap<T extends PluginName>({ route, pluginName, ...rest }: SwapParams<T, QuoteResponseRoute>) {
     const plugin = getSwapKitPlugin(pluginName || route.providers[0]);
 
     if ("swap" in plugin) {
@@ -272,7 +244,12 @@ export function SwapKit<
     chain,
     message,
     signature,
-  }: { chain: Chain; signature: string; message: string; address: string }) {
+  }: {
+    chain: Chain;
+    signature: string;
+    message: string;
+    address: string;
+  }) {
     if (chain !== Chain.THORChain) {
       throw new SwapKitError({ errorKey: "core_verify_message_not_supported", info: { chain } });
     }
@@ -280,16 +257,18 @@ export function SwapKit<
     const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
     const toolbox = await getCosmosToolbox(chain);
 
-    return toolbox.verifySignature({ signature, message, address });
+    return toolbox.verifySignature({ address, message, signature });
   }
 
   async function estimateTransactionFee<P extends PluginName, T extends ActionType>({
     type,
     feeOptionKey,
     params,
-  }: { type: T; params: ActionParams<P>[T]; feeOptionKey: FeeOption }): Promise<
-    AssetValue | undefined
-  > {
+  }: {
+    type: T;
+    params: ActionParams<P>[T];
+    feeOptionKey: FeeOption;
+  }): Promise<AssetValue | undefined> {
     const { assetValue } = params;
     const { chain } = assetValue;
 
@@ -299,35 +278,32 @@ export function SwapKit<
     const { match } = await import("ts-pattern");
 
     return match(chain as Chain)
-      .returnType<Promise<AssetValue | undefined>>()
-      .with(...EVMChains, async (chain) => {
+      .returnType<Promise<AssetValue | undefined> | AssetValue | undefined>()
+      .with(...EVMChains, (chain) => {
         const { address, ...wallet } = getWallet(chain);
 
         const tx = match(type as ActionType)
           .with("transfer", () => wallet.createTransferTx(params as EVMCreateTransactionParams))
-          .with("approve", (t) => {
-            const { contractAddress } = params as ActionParams<P>[typeof t];
+          .with("approve", (_t) => {
+            const { contractAddress } = params as ActionParams<P>[typeof _t];
 
             return wallet.createApprovalTx({
-              assetAddress: assetValue.address as string,
-              spenderAddress: contractAddress,
               amount: assetValue.getBaseValue("bigint"),
+              assetAddress: assetValue.address as string,
               from: address,
+              spenderAddress: contractAddress,
             });
           })
-          .with("swap", (t) => {
+          .with("swap", (_t) => {
             const {
               route: {
                 providers: [plugin],
                 tx,
               },
-            } = params as ActionParams<P>[typeof t];
+            } = params as ActionParams<P>[typeof _t];
 
-            if (
-              plugin &&
-              [PluginNameEnum.CHAINFLIP, PluginNameEnum.CHAINFLIP_STREAMING].includes(plugin)
-            ) {
-              return wallet.createTransferTx({ sender: address, recipient: address, assetValue });
+            if (plugin && [PluginNameEnum.CHAINFLIP, PluginNameEnum.CHAINFLIP_STREAMING].includes(plugin)) {
+              return wallet.createTransferTx({ assetValue, recipient: address, sender: address });
             }
 
             const evmTx = tx as EVMTransaction;
@@ -342,12 +318,7 @@ export function SwapKit<
       })
       .with(...UTXOChains, (chain) => {
         const { address, ...wallet } = getWallet(chain);
-        return wallet.estimateTransactionFee({
-          ...params,
-          feeOptionKey,
-          recipient: address,
-          sender: address,
-        });
+        return wallet.estimateTransactionFee({ ...params, feeOptionKey, recipient: address, sender: address });
       })
       .with(...CosmosChains, async () => {
         const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
@@ -369,6 +340,8 @@ export function SwapKit<
     ...availablePlugins,
     ...connectWalletMethods,
 
+    approveAssetValue,
+
     disconnectAll,
     disconnectChain,
     estimateTransactionFee,
@@ -377,8 +350,6 @@ export function SwapKit<
     getBalance,
     getWallet,
     getWalletWithBalance,
-
-    approveAssetValue,
     isAssetValueApproved,
     signMessage,
     swap,

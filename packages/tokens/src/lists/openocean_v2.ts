@@ -1,14 +1,9 @@
 export const list = {
-  provider: "OPENOCEAN_V2",
-  name: "OPENOCEAN_V2",
-  timestamp: "2025-07-30T16:03:46.921Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 1251,
+  keywords: [],
+  name: "OPENOCEAN_V2",
+  provider: "OPENOCEAN_V2",
+  timestamp: "2025-07-30T16:03:46.921Z",
   tokens: [
     {
       address: "0x7cb16cb78ea464ad35c8a50abf95dff3c9e09d5d",
@@ -12521,4 +12516,5 @@ export const list = {
       ticker: "ZZZ",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

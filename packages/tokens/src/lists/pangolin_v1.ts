@@ -1,15 +1,10 @@
 export const list = {
-  provider: "PANGOLIN_V1",
   chainId: "43114",
-  name: "PANGOLIN_V1",
-  timestamp: "2025-07-29T08:03:00.513Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 8,
+  keywords: [],
+  name: "PANGOLIN_V1",
+  provider: "PANGOLIN_V1",
+  timestamp: "2025-07-29T08:03:00.513Z",
   tokens: [
     {
       address: "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
@@ -92,4 +87,5 @@ export const list = {
       ticker: "WETH.E",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

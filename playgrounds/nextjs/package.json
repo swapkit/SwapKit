@@ -1,13 +1,13 @@
 {
-  "name": "@internal/playground-nextjs",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "clean": "rm -rf .next node_modules",
-    "build-playground": "next build",
-    "start": "next start",
-    "lint": "biome check --write ./src"
+  "browser": {
+    "dns": false,
+    "fs": false,
+    "net": false,
+    "perf_hooks": false,
+    "stream": false,
+    "timers": false,
+    "tls": false,
+    "zlib": false
   },
   "dependencies": {
     "@hookform/resolvers": "5.1.1",
@@ -66,14 +66,14 @@
     "tailwindcss": "4.1.11",
     "typescript": "5.8.3"
   },
-  "browser": {
-    "dns": false,
-    "fs": false,
-    "net": false,
-    "perf_hooks": false,
-    "stream": false,
-    "timers": false,
-    "tls": false,
-    "zlib": false
-  }
+  "name": "@internal/playground-nextjs",
+  "private": true,
+  "scripts": {
+    "build-playground": "next build",
+    "clean": "rm -rf .next node_modules",
+    "dev": "next dev",
+    "lint": "biome check --write ./src",
+    "start": "next start"
+  },
+  "version": "0.0.0"
 }

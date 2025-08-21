@@ -1,23 +1,7 @@
-import {
-  BaseDecimal,
-  Chain,
-  ChainId,
-  ChainToExplorerUrl,
-  SKConfig,
-  SwapKitError,
-  getRPCUrl,
-} from "@swapkit/helpers";
-import type {
-  Authorization,
-  BrowserProvider,
-  JsonRpcProvider,
-  Provider,
-  TransactionRequest,
-} from "ethers";
+import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, getRPCUrl, SKConfig, SwapKitError } from "@swapkit/helpers";
+import type { Authorization, BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 import { Contract, HDNodeWallet } from "ethers";
-
-import { P } from "ts-pattern";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import { getEvmApi } from "../api";
 import { gasOracleAbi } from "../contracts/op/gasOracle";
 import { getProvider } from "../helpers";
@@ -46,14 +30,13 @@ function serializeTx<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
   return async function serializeTx({ from, to, nonce, ...tx }: TransactionRequest) {
     const { Transaction } = await import("ethers");
 
-    if (!to)
-      throw new SwapKitError("toolbox_evm_invalid_transaction", { error: "Missing to address" });
+    if (!to) throw new SwapKitError("toolbox_evm_invalid_transaction", { error: "Missing to address" });
 
     return Transaction.from({
       ...tx,
       authorizationList: tx.authorizationList as Authorization[],
-      to: to as string,
       nonce: nonce ? nonce : from ? await provider.getTransactionCount(from) : 0,
+      to: to as string,
     }).serialized;
   };
 }
@@ -97,17 +80,14 @@ export function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provi
 }
 
 const getNetworkParams = () => ({
+  blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
   chainId: ChainId.OptimismHex,
   chainName: "Optimism",
-  nativeCurrency: { name: "Ethereum", symbol: Chain.Ethereum, decimals: BaseDecimal.ETH },
+  nativeCurrency: { decimals: BaseDecimal.ETH, name: "Ethereum", symbol: Chain.Ethereum },
   rpcUrls: [SKConfig.get("rpcUrls")[Chain.Optimism]],
-  blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
 });
 
-export async function OPToolbox({
-  provider: providerParam,
-  ...toolboxSignerParams
-}: EVMToolboxParams) {
+export async function OPToolbox({ provider: providerParam, ...toolboxSignerParams }: EVMToolboxParams) {
   const chain = Chain.Optimism;
   const rpcUrl = await getRPCUrl(chain);
   const provider = providerParam || (await getProvider(chain, rpcUrl));

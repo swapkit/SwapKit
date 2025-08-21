@@ -16,10 +16,7 @@ import {
 import { OPToolbox } from "./op";
 
 export async function getEvmToolbox<T extends EVMChain>(chain: T, params?: EVMToolboxParams) {
-  const toolboxParams = {
-    ...params,
-    provider: params?.provider || (await getProvider(chain)),
-  };
+  const toolboxParams = { ...params, provider: params?.provider || (await getProvider(chain)) };
 
   switch (chain) {
     case Chain.Arbitrum:

@@ -1,15 +1,10 @@
 export const list = {
-  provider: "SUSHISWAP_V2",
   chainId: "1",
-  name: "SUSHISWAP_V2",
-  timestamp: "2025-07-29T08:03:06.673Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 65,
+  keywords: [],
+  name: "SUSHISWAP_V2",
+  provider: "SUSHISWAP_V2",
+  timestamp: "2025-07-29T08:03:06.673Z",
   tokens: [
     {
       address: "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
@@ -662,4 +657,5 @@ export const list = {
       ticker: "YVECRV-DAO",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

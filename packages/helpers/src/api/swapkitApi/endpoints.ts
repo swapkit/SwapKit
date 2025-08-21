@@ -2,11 +2,11 @@ import {
   type Chain,
   type EVMChain,
   EVMChains,
+  isGasAsset,
   type ProviderName,
   RequestClient,
   SKConfig,
   SwapKitError,
-  isGasAsset,
 } from "@swapkit/helpers";
 
 import {
@@ -67,7 +67,11 @@ export async function getChainBalance<T extends Chain>({
   chain,
   address,
   scamFilter = true,
-}: { chain: T; address: string; scamFilter?: boolean }) {
+}: {
+  chain: T;
+  address: string;
+  scamFilter?: boolean;
+}) {
   const url = getApiUrl(`/balance?chain=${chain}&address=${address}`);
   const balanceResponse = await SKRequestClient.get<BalanceResponse>(url);
   const balances = Array.isArray(balanceResponse) ? balanceResponse : [];
@@ -87,9 +91,7 @@ export function getTokenList(provider: ProviderName) {
 
 export async function getPrice(body: PriceRequest) {
   const url = getApiUrl("/price");
-  const response = await SKRequestClient.post<PriceResponse>(url, {
-    json: body,
-  });
+  const response = await SKRequestClient.post<PriceResponse>(url, { json: body });
 
   try {
     const parsedResponse = PriceResponseSchema.safeParse(response);
@@ -183,10 +185,7 @@ function evmAssetHasAddress(assetString: string) {
   return isGasAsset({ chain: chain as Chain, symbol }) || !!address;
 }
 
-const potentialScamRegex = new RegExp(
-  /(.)\1{6}|\.ORG|\.NET|\.FINANCE|\.COM|WWW|HTTP|\\\\|\/\/|[\s$%:[\]]/,
-  "gmi",
-);
+const potentialScamRegex = new RegExp(/(.)\1{6}|\.ORG|\.NET|\.FINANCE|\.COM|WWW|HTTP|\\\\|\/\/|[\s$%:[\]]/, "gmi");
 function filterAssets(tokens: BalanceResponse) {
   return tokens.filter((token) => {
     return !potentialScamRegex.test(token.identifier) && evmAssetHasAddress(token.identifier);

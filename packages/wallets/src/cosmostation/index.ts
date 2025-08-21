@@ -1,20 +1,8 @@
 import type { Keplr } from "@keplr-wallet/types";
-import {
-  Chain,
-  ChainId,
-  ChainToChainId,
-  SwapKitError,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { Chain, ChainId, ChainToChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
-const cosmostationSupportedChainIds = [
-  ChainId.Cosmos,
-  ChainId.Kujira,
-  ChainId.Noble,
-  ChainId.THORChain,
-] as const;
+const cosmostationSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.Noble, ChainId.THORChain] as const;
 const cosmostationSupportedEVMChains = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
@@ -27,11 +15,7 @@ const cosmostationSupportedEVMChains = [
 
 declare global {
   interface Window {
-    cosmostation?: {
-      providers?: {
-        keplr?: Keplr;
-      };
-    };
+    cosmostation?: { providers?: { keplr?: Keplr } };
   }
 }
 
@@ -52,12 +36,7 @@ async function connectCosmosChains(chains: Chain[], addChain: any, keplrProvider
       const [{ address }] = accounts;
       const toolbox = getCosmosToolbox(chain as any, { signer });
 
-      addChain({
-        ...toolbox,
-        chain,
-        address,
-        walletType: WalletOption.COSMOSTATION,
-      });
+      addChain({ ...toolbox, address, chain, walletType: WalletOption.COSMOSTATION });
     }),
   );
 }
@@ -69,9 +48,7 @@ async function connectEvmChains(chains: Chain[], addChain: any) {
     throw new SwapKitError("wallet_cosmostation_evm_provider_not_found");
   }
 
-  const accounts = (await provider.request({
-    method: "eth_requestAccounts",
-  })) as string[];
+  const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
 
   if (!accounts || accounts.length === 0) {
     throw new SwapKitError("wallet_cosmostation_no_evm_accounts");
@@ -87,37 +64,14 @@ async function connectEvmChains(chains: Chain[], addChain: any) {
       throw new SwapKitError("wallet_cosmostation_no_evm_address");
     }
 
-    addChain({
-      ...toolbox,
-      chain,
-      address,
-      walletType: WalletOption.COSMOSTATION,
-    });
+    addChain({ ...toolbox, address, chain, walletType: WalletOption.COSMOSTATION });
   }
 }
 
 export const cosmostationWallet = createWallet({
-  name: "connectCosmostation",
-  supportedChains: [
-    Chain.Cosmos,
-    Chain.Kujira,
-    Chain.Noble,
-    Chain.THORChain,
-    Chain.Ethereum,
-    Chain.BinanceSmartChain,
-    Chain.Avalanche,
-    Chain.Polygon,
-    Chain.Arbitrum,
-    Chain.Optimism,
-    Chain.Base,
-  ],
   connect: ({ addChain, supportedChains }) =>
     async function connectCosmostation(chains: Chain[]) {
-      const filteredChains = filterSupportedChains({
-        chains,
-        supportedChains,
-        walletType: WalletOption.COSMOSTATION,
-      });
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType: WalletOption.COSMOSTATION });
 
       if (!window.cosmostation) {
         throw new SwapKitError("wallet_cosmostation_not_found");
@@ -126,9 +80,7 @@ export const cosmostationWallet = createWallet({
       const cosmosChains = filteredChains.filter((chain) =>
         cosmostationSupportedChainIds.includes(ChainToChainId[chain] as any),
       );
-      const evmChains = filteredChains.filter((chain) =>
-        cosmostationSupportedEVMChains.includes(chain as any),
-      );
+      const evmChains = filteredChains.filter((chain) => cosmostationSupportedEVMChains.includes(chain as any));
 
       if (cosmosChains.length > 0) {
         const keplrProvider = window.cosmostation.providers?.keplr;
@@ -145,6 +97,20 @@ export const cosmostationWallet = createWallet({
 
       return true;
     },
+  name: "connectCosmostation",
+  supportedChains: [
+    Chain.Cosmos,
+    Chain.Kujira,
+    Chain.Noble,
+    Chain.THORChain,
+    Chain.Ethereum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.Optimism,
+    Chain.Base,
+  ],
 });
 
 export const COSMOSTATION_SUPPORTED_CHAINS = getWalletSupportedChains(cosmostationWallet);

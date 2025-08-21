@@ -1,10 +1,4 @@
-import {
-  Chain,
-  SKConfig,
-  SwapKitError,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { Chain, filterSupportedChains, SKConfig, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Xumm } from "xumm";
 import { getWalletForChain } from "./helpers";
@@ -12,16 +6,9 @@ import type { XamanConfig } from "./types";
 import { connectXamanWallet as connectXamanWalletMethod } from "./walletMethods";
 
 export const xamanWallet = createWallet({
-  name: "connectXaman",
-  walletType: WalletOption.XAMAN,
-  supportedChains: [Chain.Ripple],
   connect: ({ addChain, supportedChains: walletSupportedChains, walletType }) =>
-    async function connectXamanWallet(chains: Chain[], xamanConfigOverwrite?: XamanConfig) {
-      const supportedChains = filterSupportedChains({
-        chains,
-        supportedChains: walletSupportedChains,
-        walletType,
-      });
+    function connectXamanWallet(chains: Chain[], xamanConfigOverwrite?: XamanConfig) {
+      const supportedChains = filterSupportedChains({ chains, supportedChains: walletSupportedChains, walletType });
 
       const { xaman: xamanApiKey } = SKConfig.get("apiKeys");
       const apiKey = xamanConfigOverwrite?.apiKey || xamanApiKey;
@@ -38,19 +25,15 @@ export const xamanWallet = createWallet({
             const address = await connectXamanWalletMethod(xumm);
 
             const promises = supportedChains.map(async (chain) => {
-              const walletMethods = await getWalletForChain({
-                xumm,
-                chain,
-                address,
-              });
+              const walletMethods = await getWalletForChain({ address, chain, xumm });
 
               addChain({
                 ...walletMethods,
-                chain,
-                balance: [],
-                walletType: WalletOption.XAMAN,
                 address,
+                balance: [],
+                chain,
                 disconnect: xumm.logout,
+                walletType: WalletOption.XAMAN,
               });
             });
 
@@ -68,6 +51,9 @@ export const xamanWallet = createWallet({
         xumm.authorize();
       });
     },
+  name: "connectXaman",
+  supportedChains: [Chain.Ripple],
+  walletType: WalletOption.XAMAN,
 });
 
 export const XAMAN_SUPPORTED_CHAINS = getWalletSupportedChains(xamanWallet);

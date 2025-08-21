@@ -16,6 +16,7 @@ import type {
   Signer,
   Transaction,
 } from "ethers";
+import type { getProvider } from "./index";
 import type {
   ARBToolbox,
   AURORAToolbox,
@@ -28,8 +29,6 @@ import type {
   MATICToolbox,
   OPToolbox,
 } from "./toolbox";
-
-import type { getProvider } from "./index";
 
 export enum EthNetwork {
   Test = "goerli",
@@ -47,15 +46,9 @@ export type ApproveParams = {
   nonce?: number;
 };
 
-export type ApprovedParams = {
-  assetAddress: string;
-  spenderAddress: string;
-  from: string;
-};
+export type ApprovedParams = { assetAddress: string; spenderAddress: string; from: string };
 
-export type IsApprovedParams = ApprovedParams & {
-  amount?: BigNumberish;
-};
+export type IsApprovedParams = ApprovedParams & { amount?: BigNumberish };
 
 export type CallParams = {
   callProvider?: Awaited<ReturnType<typeof getProvider>>;
@@ -72,9 +65,7 @@ export type EstimateCallParams = Pick<
   "contractAddress" | "abi" | "funcName" | "funcParams" | "txOverrides"
 >;
 
-export type EVMTransferParams = GenericTransferParams & {
-  sender?: string;
-};
+export type EVMTransferParams = GenericTransferParams & { sender?: string };
 
 export type EVMCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {
   gasLimit?: bigint;
@@ -113,23 +104,13 @@ export type EIP1559TxParams<T = bigint> = EVMTxBaseParams<T> & {
   maxPriorityFeePerGas?: T;
 };
 
-export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & {
-  gasPrice?: T;
-};
+export type LegacyEVMTxParams<T = bigint> = EVMTxBaseParams<T> & { gasPrice?: T };
 
 export type EVMTxParams = EIP1559TxParams | LegacyEVMTxParams;
 
-export type EVMToolboxParams = {
-  provider?: BrowserProvider | JsonRpcProvider;
-} & (
-  | {
-      signer?: (ChainSigner<EVMTransferParams, string> & Signer) | JsonRpcSigner;
-    }
-  | {
-      phrase?: string;
-      derivationPath?: DerivationPathArray;
-      index?: number;
-    }
+export type EVMToolboxParams = { provider?: BrowserProvider | JsonRpcProvider } & (
+  | { signer?: (ChainSigner<EVMTransferParams, string> & Signer) | JsonRpcSigner }
+  | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }
 );
 
 export type EVMToolboxes = {

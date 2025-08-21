@@ -1,4 +1,1 @@
-{
-  "extends": "../typescript/base.json",
-  "include": ["./*.ts"]
-}
+{ "extends": "../typescript/base.json", "include": ["./*.ts"] }

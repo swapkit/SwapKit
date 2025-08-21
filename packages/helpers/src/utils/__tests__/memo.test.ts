@@ -26,10 +26,10 @@ describe("getMemoForLeaveAndBond", () => {
 describe("getMemoForNameRegister", () => {
   test("returns correct memo for single side", () => {
     const result = getMemoForNameRegister({
-      name: "asdfg",
-      chain: Chain.Ethereum,
-      owner: "thor1234",
       address: "0xaasd123",
+      chain: Chain.Ethereum,
+      name: "asdfg",
+      owner: "thor1234",
     });
     expect(result).toBe("~:asdfg:ETH:0xaasd123:thor1234");
   });
@@ -38,10 +38,10 @@ describe("getMemoForNameRegister", () => {
 describe("getMemoForNamePreferredAssetRegister", () => {
   test("returns correct memo for single side", () => {
     const result = getMemoForNamePreferredAssetRegister({
-      name: "asdfg",
-      chain: Chain.Ethereum,
-      owner: "thor1234",
       asset: "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      chain: Chain.Ethereum,
+      name: "asdfg",
+      owner: "thor1234",
       payout: "0x6621d872f17109d6601c49edba526ebcfd332d5d",
     });
     expect(result).toBe(
@@ -58,10 +58,10 @@ describe("getMemoForDeposit", () => {
 
   test("returns correct memo when paired address is not available but affiliate info is present", () => {
     const result = getMemoForDeposit({
-      chain: Chain.Ethereum,
-      symbol: "ETH",
       affiliateAddress: "thor1abc123",
       affiliateBasisPoints: 500,
+      chain: Chain.Ethereum,
+      symbol: "ETH",
     });
     expect(result).toBe("+:ETH.ETH::thor1abc123:500");
   });
@@ -69,12 +69,7 @@ describe("getMemoForDeposit", () => {
 
 describe("getMemoForWithdraw", () => {
   test("returns correct memo for single side", () => {
-    const result = getMemoForWithdraw({
-      chain: Chain.Ethereum,
-      symbol: "ETH",
-      ticker: "ETH",
-      basisPoints: 100,
-    });
+    const result = getMemoForWithdraw({ basisPoints: 100, chain: Chain.Ethereum, symbol: "ETH", ticker: "ETH" });
     expect(result).toBe("-:ETH.ETH:100");
   });
 });
@@ -94,9 +89,9 @@ describe("getMemoForRunePoolWithdraw", () => {
 
   test("returns correct memo when affiliate info is present", () => {
     const result = getMemoForRunePoolWithdraw({
-      basisPoints: 500,
       affiliateAddress: "thor1abc123",
       affiliateBasisPoints: 500,
+      basisPoints: 500,
     });
     expect(result).toBe("POOL-:500:thor1abc123:500");
   });

@@ -3,10 +3,7 @@ import type { createCoinbaseWalletSDK } from "@coinbase/wallet-sdk/dist/createCo
 import { Chain, SwapKitError } from "@swapkit/helpers";
 import type { Provider } from "ethers";
 
-async function getCoinbaseMobileSigner(
-  walletProvider: CoinbaseWalletProvider,
-  provider?: Provider,
-) {
+async function getCoinbaseMobileSigner(walletProvider: CoinbaseWalletProvider, provider?: Provider) {
   const { AbstractSigner } = await import("ethers");
 
   class CoinbaseMobileSigner extends AbstractSigner {
@@ -18,9 +15,7 @@ async function getCoinbaseMobileSigner(
     }
 
     async getAddress() {
-      const accounts = await this.#coinbaseProvider.request<string[]>({
-        method: "eth_requestAccounts",
-      });
+      const accounts = await this.#coinbaseProvider.request<string[]>({ method: "eth_requestAccounts" });
 
       if (!accounts[0]) throw new SwapKitError("wallet_coinbase_no_accounts");
 
@@ -28,9 +23,7 @@ async function getCoinbaseMobileSigner(
     }
 
     async signTransaction() {
-      return await this.#coinbaseProvider.request<string>({
-        method: "eth_signTransaction",
-      });
+      return await this.#coinbaseProvider.request<string>({ method: "eth_signTransaction" });
     }
 
     async signMessage(message: string | Uint8Array) {

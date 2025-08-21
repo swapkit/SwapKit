@@ -1,11 +1,6 @@
 import type Xrp from "@ledgerhq/hw-app-xrp";
 import type Transport from "@ledgerhq/hw-transport";
-import {
-  Chain,
-  type DerivationPathArray,
-  NetworkDerivationPath,
-  derivationPathToString,
-} from "@swapkit/helpers";
+import { Chain, type DerivationPathArray, derivationPathToString, NetworkDerivationPath } from "@swapkit/helpers";
 import type { Transaction } from "@swapkit/toolboxes/ripple";
 import { encode } from "ripple-binary-codec";
 import type { Payment } from "xrpl";
@@ -28,10 +23,7 @@ async function establishConnection(transport: Transport) {
   return new Xrp(transport);
 }
 
-function fetchAddressAndPublicKey({
-  instance,
-  derivationPath,
-}: { instance: Xrp; derivationPath: string }) {
+function fetchAddressAndPublicKey({ instance, derivationPath }: { instance: Xrp; derivationPath: string }) {
   return instance.getAddress(derivationPath);
 }
 
@@ -40,10 +32,7 @@ export const XRPLedger = async (derivationPath?: DerivationPathArray) => {
   const transport = await getLedgerTransport();
   const xrpInstance = await establishConnection(transport);
 
-  const { address, publicKey } = await fetchAddressAndPublicKey({
-    instance: xrpInstance,
-    derivationPath: path,
-  });
+  const { address, publicKey } = await fetchAddressAndPublicKey({ derivationPath: path, instance: xrpInstance });
 
   async function sign(transaction: Payment | Transaction) {
     const { hashes } = await import("@swapkit/toolboxes/ripple");
@@ -59,7 +48,7 @@ export const XRPLedger = async (derivationPath?: DerivationPathArray) => {
     const tx_blob = encode({ ...transactionJSON, TxnSignature: txnSignature });
     const hash = hashes.hashSignedTx(tx_blob);
 
-    return { tx_blob, hash };
+    return { hash, tx_blob };
   }
 
   return { address, sign };

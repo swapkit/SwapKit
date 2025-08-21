@@ -3,11 +3,11 @@ import {
   ChainToHexChainId,
   type EVMChain,
   EVMChains,
-  SwapKitError,
-  WalletOption,
   filterSupportedChains,
   prepareNetworkSwitch,
+  SwapKitError,
   switchEVMWalletNetwork,
+  WalletOption,
 } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
@@ -68,15 +68,13 @@ export const getWeb3WalletMethods = async ({
   }
 
   return prepareNetworkSwitch({
-    toolbox: { ...toolbox, getBalance: () => toolbox.getBalance(address) },
     chain,
     provider,
+    toolbox: { ...toolbox, getBalance: () => toolbox.getBalance(address) },
   });
 };
 
 export const evmWallet = createWallet({
-  name: "connectEVMWallet",
-  supportedChains: [...EVMChains] as EVMChain[],
   connect: ({ addChain, supportedChains }) =>
     async function connectEVMWallet(
       chains: Chain[],
@@ -119,12 +117,11 @@ export const evmWallet = createWallet({
           const walletMethods = await getWeb3WalletMethods({
             address,
             chain,
-            walletProvider: getWalletForType(walletType),
             provider: web3provider,
+            walletProvider: getWalletForType(walletType),
           });
 
-          const disconnect = () =>
-            web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
+          const disconnect = () => web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
 
           addChain({ ...walletMethods, address, chain, disconnect, walletType });
         }),
@@ -132,6 +129,8 @@ export const evmWallet = createWallet({
 
       return true;
     },
+  name: "connectEVMWallet",
+  supportedChains: [...EVMChains] as EVMChain[],
 });
 
 export const EVM_EXTENSIONS_SUPPORTED_CHAINS = getWalletSupportedChains(evmWallet);

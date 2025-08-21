@@ -61,22 +61,16 @@ export function getInboundAddresses(type?: THORNodeType) {
 export async function getTHORNodeTNSDetails({
   type,
   name,
-}: { type?: THORNodeType; name: string }): Promise<THORNodeTNSDetails> {
+}: {
+  type?: THORNodeType;
+  name: string;
+}): Promise<THORNodeTNSDetails> {
   try {
-    const result = await RequestClient.get<THORNodeTNSDetails>(
-      `${getNameServiceBaseUrl(type)}/${name}`,
-    );
+    const result = await RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(type)}/${name}`);
     return result;
   } catch (_error) {
     // If we get an error, the name doesn't exist and is available for registration
-    return {
-      name,
-      expire_block_height: 0,
-      owner: "",
-      preferred_asset: "",
-      affiliate_collector_rune: "",
-      aliases: [],
-    };
+    return { affiliate_collector_rune: "", aliases: [], expire_block_height: 0, name, owner: "", preferred_asset: "" };
   }
 }
 
@@ -85,17 +79,14 @@ export async function getTNSPreferredAsset({ type, tns }: { type?: THORNodeType;
 
   if (!tnsDetails.preferred_asset || tnsDetails.preferred_asset === ".") return undefined;
 
-  return AssetValue.from({ asyncTokenLookup: true, asset: tnsDetails.preferred_asset });
+  return AssetValue.from({ asset: tnsDetails.preferred_asset, asyncTokenLookup: true });
 }
 
 export function getRunePoolInfo(type?: THORNodeType) {
   return RequestClient.get<RunePoolInfo>(`${baseUrl(type)}/runepool`);
 }
 
-export function getRunePoolProviderInfo({
-  type,
-  thorAddress,
-}: { type?: THORNodeType; thorAddress: string }) {
+export function getRunePoolProviderInfo({ type, thorAddress }: { type?: THORNodeType; thorAddress: string }) {
   return RequestClient.get<RunePoolProviderInfo>(`${baseUrl(type)}/rune_provider/${thorAddress}`);
 }
 

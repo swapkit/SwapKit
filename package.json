@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.2.0",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.5",
     "@types/bun": "1.2.18",
@@ -12,6 +12,7 @@
   },
   "name": "swapkit-monorepo",
   "packageManager": "bun@^1.2.18",
+  "patchedDependencies": { "starlight-openapi@0.18.0": "patches/starlight-openapi@0.18.0.patch" },
   "private": true,
   "scripts": {
     "bootstrap": "bun clean --force; bun build:ci",
@@ -54,8 +55,5 @@
     "tiny-secp256k1",
     "usb"
   ],
-  "workspaces": ["packages/*", "playgrounds/*", "tools/*", "docs"],
-  "patchedDependencies": {
-    "starlight-openapi@0.18.0": "patches/starlight-openapi@0.18.0.patch"
-  }
+  "workspaces": ["packages/*", "playgrounds/*", "tools/*", "docs"]
 }

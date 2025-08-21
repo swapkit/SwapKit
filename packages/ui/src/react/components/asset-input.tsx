@@ -54,19 +54,18 @@ export const AssetInput = ({
       {label && <label htmlFor={inputId}>{label}</label>}
       <div className="asset-input-wrapper">
         <input
+          disabled={disabled}
           id={inputId}
-          type="text"
-          value={selectedAsset?.getValue("string")}
           onChange={handleInputChange}
           placeholder={placeholder}
-          disabled={disabled}
+          type="text"
+          value={selectedAsset?.getValue("string")}
         />
 
         <button
-          type="button"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           disabled={disabled || assets.length === 0}
-        >
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          type="button">
           {selectedAsset ? (
             <span>
               {selectedAsset.symbol} ({selectedAsset.chain})
@@ -80,11 +79,10 @@ export const AssetInput = ({
           <div className="asset-dropdown">
             {assets.map((asset) => (
               <button
-                type="button"
-                key={`${asset.chain}-${asset.symbol}`}
                 className="asset-option"
+                key={`${asset.chain}-${asset.symbol}`}
                 onClick={() => handleAssetSelect(asset)}
-              >
+                type="button">
                 <span>
                   {asset.ticker} ({asset.chain})
                 </span>

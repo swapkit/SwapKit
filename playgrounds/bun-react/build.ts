@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
-import { existsSync } from "fs";
-import path from "path";
 import { type BuildConfig, build } from "bun";
 import plugin from "bun-plugin-tailwind";
+import { existsSync } from "fs";
 import { rm } from "fs/promises";
+import path from "path";
 
 // Print help text if requested
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -129,7 +129,7 @@ const outdir = cliConfig.outdir || path.join(process.cwd(), "dist");
 
 if (existsSync(outdir)) {
   console.info(`🗑️ Cleaning previous build at ${outdir}`);
-  await rm(outdir, { recursive: true, force: true });
+  await rm(outdir, { force: true, recursive: true });
 }
 
 const start = performance.now();
@@ -138,21 +138,17 @@ const start = performance.now();
 const entrypoints = [...new Bun.Glob("**.html").scanSync("src")]
   .map((a) => path.resolve("src", a))
   .filter((dir) => !dir.includes("node_modules"));
-console.info(
-  `📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? "file" : "files"} to process\n`,
-);
+console.info(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? "file" : "files"} to process\n`);
 
 // Build all the HTML files
 const result = await build({
+  define: { "process.env.NODE_ENV": JSON.stringify("production") },
   entrypoints,
+  minify: true,
   outdir,
   plugins: [plugin],
-  minify: true,
-  target: "browser",
   sourcemap: "linked",
-  define: {
-    "process.env.NODE_ENV": JSON.stringify("production"),
-  },
+  target: "browser",
   ...cliConfig, // Merge in any CLI-provided options
 });
 
@@ -161,8 +157,8 @@ const end = performance.now();
 
 const outputTable = result.outputs.map((output) => ({
   File: path.relative(process.cwd(), output.path),
-  Type: output.kind,
   Size: formatFileSize(output.size),
+  Type: output.kind,
 }));
 
 console.table(outputTable);

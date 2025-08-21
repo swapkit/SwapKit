@@ -20,17 +20,15 @@ export function ConnectButton<Wallets extends WalletOption[]>({
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
 
   const toggleChain = (chain: Chain) => {
-    setSelectedChains((prev) =>
-      prev.includes(chain) ? prev.filter((c) => c !== chain) : [...prev, chain],
-    );
+    setSelectedChains((prev) => (prev.includes(chain) ? prev.filter((c) => c !== chain) : [...prev, chain]));
   };
 
   const handleConnect = async () => {
     if (!(selectedWallet && selectedChains)) return;
 
     const client = await connect({
-      walletOption: selectedWallet,
       chains: selectedChains as SKWalletsSupportedChains[Wallets[number]],
+      walletOption: selectedWallet,
     });
 
     if (onConnect) onConnect(client);
@@ -46,21 +44,21 @@ export function ConnectButton<Wallets extends WalletOption[]>({
 
   return (
     <div>
-      <button type="button" onClick={() => setIsModalOpen(true)}>
+      <button onClick={() => setIsModalOpen(true)} type="button">
         {buttonText}
       </button>
 
       {isModalOpen && (
         <div className="wallet-modal">
           <div className="wallet-modal-content">
-            <button type="button" onClick={() => setIsModalOpen(false)}>
+            <button onClick={() => setIsModalOpen(false)} type="button">
               Close
             </button>
 
             <h3>Select Wallet</h3>
             <div className="wallet-options">
               {walletOptions.map((wallet) => (
-                <button type="button" key={wallet} onClick={() => setSelectedWallet(wallet)}>
+                <button key={wallet} onClick={() => setSelectedWallet(wallet)} type="button">
                   {wallet}
                 </button>
               ))}
@@ -69,14 +67,14 @@ export function ConnectButton<Wallets extends WalletOption[]>({
             <h3>Select Chains</h3>
             <div className="chain-options">
               {chains.map((chain) => (
-                <button type="button" key={chain} onClick={() => toggleChain(chain)}>
+                <button key={chain} onClick={() => toggleChain(chain)} type="button">
                   {chain}
                 </button>
               ))}
             </div>
           </div>
 
-          <button type="button" onClick={handleConnect}>
+          <button onClick={handleConnect} type="button">
             Connect {selectedWallet} to {selectedChains.join(", ")}
           </button>
         </div>

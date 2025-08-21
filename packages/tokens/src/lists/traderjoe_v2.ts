@@ -1,14 +1,9 @@
 export const list = {
-  provider: "TRADERJOE_V2",
-  name: "TRADERJOE_V2",
-  timestamp: "2025-07-30T16:02:16.997Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 65,
+  keywords: [],
+  name: "TRADERJOE_V2",
+  provider: "TRADERJOE_V2",
+  timestamp: "2025-07-30T16:02:16.997Z",
   tokens: [
     {
       address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
@@ -661,4 +656,5 @@ export const list = {
       ticker: "YBTC.B",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

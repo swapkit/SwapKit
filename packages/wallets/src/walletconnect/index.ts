@@ -2,22 +2,21 @@ import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
   ChainId,
+  filterSupportedChains,
   type GenericTransferParams,
+  getRPCUrl,
   SKConfig,
   SwapKitError,
   WalletOption,
-  filterSupportedChains,
-  getRPCUrl,
 } from "@swapkit/helpers";
-import type { ThorchainDepositParams, createThorchainToolbox } from "@swapkit/toolboxes/cosmos";
+import type { createThorchainToolbox, ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { NearSigner } from "@swapkit/toolboxes/near";
 import type { TronSignedTransaction, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
+import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { WalletConnectModal } from "@walletconnect/modal";
 import type { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
 import type { Transaction } from "near-api-js/lib/transaction";
-
-import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,
@@ -33,30 +32,8 @@ export * from "./constants";
 export * from "./types";
 
 export const walletconnectWallet = createWallet({
-  name: "connectWalletconnect",
-  walletType: WalletOption.WALLETCONNECT,
-  supportedChains: [
-    Chain.Arbitrum,
-    Chain.Aurora,
-    Chain.Avalanche,
-    Chain.Base,
-    Chain.Berachain,
-    Chain.BinanceSmartChain,
-    Chain.Cosmos,
-    Chain.Ethereum,
-    Chain.Kujira,
-    Chain.Maya,
-    Chain.Near,
-    Chain.Optimism,
-    Chain.Polygon,
-    Chain.THORChain,
-    Chain.Tron,
-  ],
   connect: ({ addChain, supportedChains, walletType }) =>
-    async function connectWalletconnect(
-      chains: Chain[],
-      walletconnectOptions?: SignClientTypes.Options,
-    ) {
+    async function connectWalletconnect(chains: Chain[], walletconnectOptions?: SignClientTypes.Options) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
       const { walletConnectProjectId } = SKConfig.get("apiKeys");
 
@@ -64,11 +41,7 @@ export const walletconnectWallet = createWallet({
         throw new SwapKitError("wallet_walletconnect_project_id_not_specified");
       }
 
-      const walletconnect = await getWalletconnect(
-        filteredChains,
-        walletConnectProjectId,
-        walletconnectOptions,
-      );
+      const walletconnect = await getWalletconnect(filteredChains, walletConnectProjectId, walletconnectOptions);
 
       if (!walletconnect) {
         throw new SwapKitError("wallet_walletconnect_connection_not_established");
@@ -93,6 +66,25 @@ export const walletconnectWallet = createWallet({
 
       return true;
     },
+  name: "connectWalletconnect",
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Aurora,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.Berachain,
+    Chain.BinanceSmartChain,
+    Chain.Cosmos,
+    Chain.Ethereum,
+    Chain.Kujira,
+    Chain.Maya,
+    Chain.Near,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.THORChain,
+    Chain.Tron,
+  ],
+  walletType: WalletOption.WALLETCONNECT,
 });
 
 export const WC_SUPPORTED_CHAINS = getWalletSupportedChains(walletconnectWallet);
@@ -123,7 +115,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const provider = await getProvider(chain);
-      const signer = await getEVMSigner({ walletconnect, chain, provider });
+      const signer = await getEVMSigner({ chain, provider, walletconnect });
       const toolbox = await getEvmToolbox(chain, { provider, signer });
 
       return toolbox;
@@ -135,8 +127,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       const importedSigning = await import("@cosmjs/proto-signing");
       const encodePubkey = importedSigning.encodePubkey ?? importedSigning.default?.encodePubkey;
-      const makeAuthInfoBytes =
-        importedSigning.makeAuthInfoBytes ?? importedSigning.default?.makeAuthInfoBytes;
+      const makeAuthInfoBytes = importedSigning.makeAuthInfoBytes ?? importedSigning.default?.makeAuthInfoBytes;
       const importedAmino = await import("@cosmjs/amino");
       const makeSignDoc = importedAmino.makeSignDoc ?? importedSigning.default?.makeSignDoc;
 
@@ -153,9 +144,9 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       async function getAccount(accountAddress: string) {
         const cosmosToolbox = toolbox;
-        const account = await (
-          cosmosToolbox as Awaited<ReturnType<typeof createThorchainToolbox>>
-        ).getAccount(accountAddress);
+        const account = await (cosmosToolbox as Awaited<ReturnType<typeof createThorchainToolbox>>).getAccount(
+          accountAddress,
+        );
 
         if (chain !== Chain.THORChain) {
           return account;
@@ -163,12 +154,9 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
           chainId: THORCHAIN_MAINNET_ID,
-          // @ts-ignore
+          request: { method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS, params: {} },
+          // @ts-expect-error
           topic: session.topic,
-          request: {
-            method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS,
-            params: {},
-          },
         })) as [{ address: string; algo: string; pubkey: string }];
 
         return { ...account, address, pubkey: { type: algo, value: pubkey } };
@@ -179,28 +167,18 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
       const signRequest = (signDoc: StdSignDoc) =>
         walletconnect?.client.request({
           chainId: THORCHAIN_MAINNET_ID,
+          request: { method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO, params: { signDoc, signerAddress: address } },
           topic: session.topic,
-          request: {
-            method: DEFAULT_COSMOS_METHODS.COSMOS_SIGN_AMINO,
-            params: { signerAddress: address, signDoc },
-          },
         });
 
-      async function thorchainTransfer({
-        assetValue,
-        memo,
-        ...rest
-      }: GenericTransferParams | ThorchainDepositParams) {
+      async function thorchainTransfer({ assetValue, memo, ...rest }: GenericTransferParams | ThorchainDepositParams) {
         const account = await toolbox.getAccount(address);
         if (!account) {
           throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account } });
         }
 
         if (!account.pubkey) {
-          throw new SwapKitError({
-            errorKey: "wallet_missing_params",
-            info: { account, pubkey: account?.pubkey },
-          });
+          throw new SwapKitError({ errorKey: "wallet_missing_params", info: { account, pubkey: account?.pubkey } });
         }
 
         const { accountNumber, sequence = 0 } = account;
@@ -209,41 +187,30 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const chainId = ChainId.THORChain;
 
-        const signDoc = makeSignDoc(
-          msgs,
-          fee,
-          chainId,
-          memo,
-          accountNumber?.toString(),
-          sequence?.toString() || "0",
-        );
+        const signDoc = makeSignDoc(msgs, fee, chainId, memo, accountNumber?.toString(), sequence?.toString() || "0");
 
         const signature: any = await signRequest(signDoc);
 
         const bodyBytes = await buildEncodedTxBody({
           chain: Chain.THORChain,
-          msgs: msgs.map(parseAminoMessageForDirectSigning),
           memo: memo || "",
+          msgs: msgs.map(parseAminoMessageForDirectSigning),
         });
         const pubkey = encodePubkey(account.pubkey);
         const authInfoBytes = makeAuthInfoBytes(
           [{ pubkey, sequence }],
           fee.amount,
-          Number.parseInt(fee.gas),
+          Number.parseInt(fee.gas, 10),
           undefined,
           undefined,
           SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
         );
 
         const txRaw = TxRaw.fromPartial({
-          bodyBytes,
           authInfoBytes,
+          bodyBytes,
           signatures: [
-            fromBase64(
-              typeof signature.signature === "string"
-                ? signature.signature
-                : signature.signature.signature,
-            ),
+            fromBase64(typeof signature.signature === "string" ? signature.signature : signature.signature.signature),
           ],
         });
         const txBytes = TxRaw.encode(txRaw).finish();
@@ -256,9 +223,9 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       return {
         ...toolbox,
-        transfer: (params: GenericTransferParams) => thorchainTransfer(params),
         deposit: (params: ThorchainDepositParams) => thorchainTransfer(params),
         getAccount,
+        transfer: (params: GenericTransferParams) => thorchainTransfer(params),
       };
     }
 
@@ -268,12 +235,19 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
       // Create a NEAR signer that uses WalletConnect
       const signer = {
+        getAddress() {
+          return Promise.resolve(address);
+        },
         getPublicKey() {
           // WalletConnect NEAR doesn't expose public key directly
           return Promise.reject(
-            new SwapKitError("wallet_walletconnect_method_not_supported", {
-              method: "getPublicKey",
-            }),
+            new SwapKitError("wallet_walletconnect_method_not_supported", { method: "getPublicKey" }),
+          );
+        },
+
+        signDelegateAction(_delegateAction: any) {
+          return Promise.reject(
+            new SwapKitError("wallet_walletconnect_method_not_supported", { method: "signDelegateAction" }),
           );
         },
 
@@ -286,9 +260,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         ) {
           // WalletConnect NEAR spec doesn't include NEP-413 message signing
           return Promise.reject(
-            new SwapKitError("wallet_walletconnect_method_not_supported", {
-              method: "signNep413Message",
-            }),
+            new SwapKitError("wallet_walletconnect_method_not_supported", { method: "signNep413Message" }),
           );
         },
 
@@ -298,27 +270,12 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
           }
           // WalletConnect signs and sends in one operation
           const result = await walletconnect.client.request({
-            topic: session.topic,
             chainId: chainToChainId(Chain.Near),
-            request: {
-              method: DEFAULT_NEAR_METHODS.NEAR_SIGN_AND_SEND_TRANSACTION,
-              params: { transaction },
-            },
+            request: { method: DEFAULT_NEAR_METHODS.NEAR_SIGN_AND_SEND_TRANSACTION, params: { transaction } },
+            topic: session.topic,
           });
           // Return dummy hash and result
           return [new Uint8Array(32), result];
-        },
-
-        signDelegateAction(_delegateAction: any) {
-          return Promise.reject(
-            new SwapKitError("wallet_walletconnect_method_not_supported", {
-              method: "signDelegateAction",
-            }),
-          );
-        },
-
-        getAddress() {
-          return Promise.resolve(address);
         },
       } as NearSigner;
 
@@ -342,12 +299,9 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
           }
 
           const signedTx = await walletconnect.client.request({
-            topic: session.topic,
             chainId: chainToChainId(Chain.Tron),
-            request: {
-              method: DEFAULT_TRON_METHODS.TRON_SIGN_TRANSACTION,
-              params: { transaction },
-            },
+            request: { method: DEFAULT_TRON_METHODS.TRON_SIGN_TRANSACTION, params: { transaction } },
+            topic: session.topic,
           });
 
           return signedTx as TronSignedTransaction;
@@ -386,16 +340,16 @@ async function getWalletconnect(
 
     const client = await SignClient.init({
       logger: DEFAULT_LOGGER,
-      relayUrl: DEFAULT_RELAY_URL,
-      projectId: walletConnectProjectId,
       metadata: walletconnectOptions?.metadata || DEFAULT_APP_METADATA,
+      projectId: walletConnectProjectId,
+      relayUrl: DEFAULT_RELAY_URL,
       ...walletconnectOptions?.core,
     });
 
     const modal = new WalletConnectModal({
       logger: DEFAULT_LOGGER,
-      relayUrl: DEFAULT_RELAY_URL,
       projectId: walletConnectProjectId,
+      relayUrl: DEFAULT_RELAY_URL,
       ...walletconnectOptions?.core,
     });
 
@@ -403,10 +357,7 @@ async function getWalletconnect(
 
     // disconnect old Session cause we can't handle using it with current ui
     if (oldSession) {
-      await client.disconnect({
-        topic: oldSession.topic,
-        reason: { code: 0, message: "Resetting session" },
-      });
+      await client.disconnect({ reason: { code: 0, message: "Resetting session" }, topic: oldSession.topic });
     }
 
     const { uri, approval } = await client.connect({
@@ -438,18 +389,14 @@ async function getWalletconnect(
     }
 
     const disconnect = async () => {
-      session &&
-        (await client.disconnect({
-          topic: session.topic,
-          reason: { code: 0, message: "User disconnected" },
-        }));
+      session && (await client.disconnect({ reason: { code: 0, message: "User disconnected" }, topic: session.topic }));
     };
 
     if (!session) {
       throw new SwapKitError("wallet_walletconnect_connection_not_established");
     }
 
-    return { signer, session, accounts, client, disconnect };
+    return { accounts, client, disconnect, session, signer };
   } catch (_e) {
     // Errors are handled by returning undefined
   } finally {

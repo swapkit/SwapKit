@@ -2,10 +2,10 @@ import {
   type Chain,
   ChainToChainId,
   type DerivationPathArray,
+  derivationPathToString,
   SwapKitError,
   SwapKitNumber,
   WalletOption,
-  derivationPathToString,
 } from "@swapkit/helpers";
 import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 
@@ -59,14 +59,14 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       const TrezorConnect = (await import("@trezor/connect-web")).default;
 
       const result = await TrezorConnect.ethereumSignMessage({
-        path: derivationPathToString(this.derivationPath),
         message,
+        path: derivationPathToString(this.derivationPath),
       });
 
       if (!result.success) {
         throw new SwapKitError({
           errorKey: "wallet_trezor_failed_to_sign_transaction",
-          info: { ...result, message, chain: this.chain, derivationPath: this.derivationPath },
+          info: { ...result, chain: this.chain, derivationPath: this.derivationPath, message },
         });
       }
 
@@ -89,8 +89,7 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: any: refactor
     }: TransactionRequest) => {
       if (!to) throw new SwapKitError({ errorKey: "wallet_missing_params", info: { to } });
-      if (!gasLimit)
-        throw new SwapKitError({ errorKey: "wallet_missing_params", info: { gasLimit } });
+      if (!gasLimit) throw new SwapKitError({ errorKey: "wallet_missing_params", info: { gasLimit } });
 
       const isEIP1559 = maxFeePerGas && maxPriorityFeePerGas;
 
@@ -98,10 +97,7 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
         throw new SwapKitError({ errorKey: "wallet_missing_params", info: { maxFeePerGas } });
       }
       if (isEIP1559 && !maxPriorityFeePerGas) {
-        throw new SwapKitError({
-          errorKey: "wallet_missing_params",
-          info: { maxPriorityFeePerGas },
-        });
+        throw new SwapKitError({ errorKey: "wallet_missing_params", info: { maxPriorityFeePerGas } });
       }
       if (!(isEIP1559 || gasPrice)) {
         throw new SwapKitError({ errorKey: "wallet_missing_params", info: { gasPrice } });
@@ -116,23 +112,19 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
             maxFeePerGas: toHexString(BigInt(maxFeePerGas?.toString() || 0)),
             maxPriorityFeePerGas: toHexString(BigInt(maxPriorityFeePerGas?.toString() || 0)),
           }
-        : (gasPrice && { gasPrice: toHexString(BigInt(gasPrice?.toString() || 0)) }) || {
-            gasPrice: "0x0",
-          };
+        : (gasPrice && { gasPrice: toHexString(BigInt(gasPrice?.toString() || 0)) }) || { gasPrice: "0x0" };
 
       const hexifiedNonce = toHexString(
-        BigInt(
-          nonce || (await this.provider.getTransactionCount(await this.getAddress(), "pending")),
-        ),
+        BigInt(nonce || (await this.provider.getTransactionCount(await this.getAddress(), "pending"))),
       );
 
       const formattedTx = {
-        chainId: Number.parseInt(ChainToChainId[this.chain]),
-        to: to.toString(),
-        value: toHexString(BigInt(value?.toString() || 0)),
+        chainId: Number.parseInt(ChainToChainId[this.chain], 10),
+        data: data?.toString() || "0x",
         gasLimit: toHexString(BigInt(gasLimit?.toString() || 0)),
         nonce: hexifiedNonce,
-        data: data?.toString() || "0x",
+        to: to.toString(),
+        value: toHexString(BigInt(value?.toString() || 0)),
         ...additionalFields,
       };
 
@@ -150,17 +142,13 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
 
       const { r, s, v } = payload;
 
-      const signature = Signature.from({
-        r,
-        s,
-        v: new SwapKitNumber(BigInt(v)).getBaseValue("number"),
-      });
+      const signature = Signature.from({ r, s, v: new SwapKitNumber(BigInt(v)).getBaseValue("number") });
 
       const serializedTx = Transaction.from({
         ...formattedTx,
         nonce: Number.parseInt(formattedTx.nonce, 16),
-        type: isEIP1559 ? 2 : 0,
         signature,
+        type: isEIP1559 ? 2 : 0,
       }).serialized;
 
       if (!serializedTx) {
@@ -177,19 +165,11 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       if (!provider) {
         throw new SwapKitError({
           errorKey: "wallet_provider_not_found",
-          info: {
-            wallet: WalletOption.TREZOR,
-            chain: this.chain,
-            derivationPath: this.derivationPath,
-          },
+          info: { chain: this.chain, derivationPath: this.derivationPath, wallet: WalletOption.TREZOR },
         });
       }
 
-      return new TrezorSigner({
-        chain: this.chain,
-        derivationPath: this.derivationPath,
-        provider,
-      });
+      return new TrezorSigner({ chain: this.chain, derivationPath: this.derivationPath, provider });
     };
   }
 
