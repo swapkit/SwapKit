@@ -3,14 +3,17 @@ import { BaseDecimal, Chain } from "../../types";
 
 import { assetFromString, getAssetType, getDecimal } from "../asset";
 
+// TODO: this should be handled via AssetValue
 const tickerMap: Record<string, string> = {
-  [Chain.THORChain]: "RUNE",
-  [Chain.Cosmos]: "ATOM",
+  [Chain.Arbitrum]: "ETH",
+  [Chain.Aurora]: "ETH",
+  [Chain.Base]: "ETH",
   [Chain.BinanceSmartChain]: "BNB",
+  [Chain.Cosmos]: "ATOM",
   [Chain.Maya]: "CACAO",
   [Chain.Optimism]: "ETH",
-  [Chain.Arbitrum]: "ETH",
-  [Chain.Base]: "ETH",
+  [Chain.THORChain]: "RUNE",
+  [Chain.Tron]: "TRX",
 };
 
 describe("getAssetType", () => {

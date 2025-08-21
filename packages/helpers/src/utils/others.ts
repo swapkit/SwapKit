@@ -63,7 +63,10 @@ export function warnOnce({
       return;
     }
 
-    console.warn(warning);
+    if (process.env.NODE_ENV !== "test") {
+      console.warn(warning);
+    }
+
     warnings.add(id);
   }
 }
