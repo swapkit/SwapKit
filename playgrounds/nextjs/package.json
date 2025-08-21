@@ -42,8 +42,8 @@
     "next-themes": "0.4.6",
     "os-browserify": "0.3.0",
     "path-browserify": "1.0.1",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-hook-form": "7.60.0",
     "sonner": "2.0.5",
     "stream-browserify": "3.0.0",
@@ -57,14 +57,12 @@
   "devDependencies": {
     "@swc-jotai/debug-label": "0.2.0",
     "@swc-jotai/react-refresh": "0.3.0",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
     "autoprefixer": "10.4.21",
     "global": "4.4.0",
     "node-polyfill-webpack-plugin": "4.1.0",
     "postcss": "8.5.4",
     "tailwindcss": "4.1.11",
-    "typescript": "5.8.3"
+    "typescript": "5.9.2"
   },
   "name": "@internal/playground-nextjs",
   "private": true,

@@ -2,7 +2,7 @@
   "author": "swapkit-oss",
   "dependencies": { "@swapkit/browser": "workspace:*" },
   "description": "SwapKit - UI",
-  "devDependencies": { "react": "19.1.0", "react-dom": "19.1.0" },
+  "devDependencies": { "react": "19.1.1" },
   "exports": {
     ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
     "./react": {

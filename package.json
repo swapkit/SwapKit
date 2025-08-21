@@ -2,13 +2,12 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@changesets/changelog-github": "0.5.1",
-    "@changesets/cli": "2.29.5",
-    "@types/bun": "1.2.18",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
-    "lefthook": "1.11.16",
-    "react": "19.1.0",
-    "typescript": "5.8.3"
+    "@changesets/cli": "2.29.6",
+    "@types/bun": "1.2.20",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "lefthook": "1.12.3",
+    "typescript": "5.9.2"
   },
   "name": "swapkit-monorepo",
   "packageManager": "bun@^1.2.18",
