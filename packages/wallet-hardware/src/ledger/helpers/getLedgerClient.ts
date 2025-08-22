@@ -15,7 +15,7 @@ import {
 import { getNearLedgerClient } from "../clients/near";
 import { THORChainLedger } from "../clients/thorchain";
 import { TronLedger } from "../clients/tron";
-import { BitcoinCashLedger, BitcoinLedger, DashLedger, DogecoinLedger, LitecoinLedger } from "../clients/utxo";
+import { BitcoinCashLedger, BitcoinLedger, DashLedger, DogecoinLedger, LitecoinLedger, ZcashLedger } from "../clients/utxo";
 import { XRPLedger } from "../clients/xrp";
 import { getLedgerTransport } from "./getLedgerTransport";
 
@@ -39,6 +39,7 @@ type LedgerSignerMap = {
   [Chain.Ripple]: ReturnType<typeof XRPLedger>;
   [Chain.THORChain]: THORChainLedger;
   [Chain.Tron]: ReturnType<typeof TronLedger>;
+  [Chain.Zcash]: ReturnType<typeof ZcashLedger>;
 };
 
 type LedgerSupportedChain = keyof LedgerSignerMap;
@@ -61,6 +62,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
     .with(Chain.Dash, () => Promise.resolve(DashLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Dogecoin, () => Promise.resolve(DogecoinLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Litecoin, () => Promise.resolve(LitecoinLedger(derivationPath) as LedgerSignerMap[T]))
+    .with(Chain.Zcash, () => Promise.resolve(ZcashLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Ripple, () => Promise.resolve(XRPLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Tron, () => Promise.resolve(TronLedger(derivationPath) as LedgerSignerMap[T]))
     .with(Chain.Near, async () => {

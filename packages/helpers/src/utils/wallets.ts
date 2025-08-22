@@ -108,6 +108,9 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   chain: Chain,
 ) {
   return (async (...args: any[]) => {
+    if ((await provider.getNetwork()).chainId.toString() === ChainToHexChainId[chain]) {
+      return func(...args);
+    }
     try {
       await switchEVMWalletNetwork(provider, chain);
     } catch (error) {

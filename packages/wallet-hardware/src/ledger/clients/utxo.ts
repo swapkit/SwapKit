@@ -40,7 +40,7 @@ const BaseLedgerUTXO = ({
   chain,
   additionalSignParams,
 }: {
-  chain: "bitcoin-cash" | "bitcoin" | "litecoin" | "dogecoin" | "dash";
+  chain: "bitcoin-cash" | "bitcoin" | "litecoin" | "dogecoin" | "dash" | "zcash";
   additionalSignParams?: Partial<CreateTransactionArg>;
 }) => {
   let btcApp: InstanceType<typeof BitcoinApp>;
@@ -125,4 +125,9 @@ export const DogecoinLedger = BaseLedgerUTXO({
 export const DashLedger = BaseLedgerUTXO({
   additionalSignParams: { additionals: [], segwit: false, useTrustedInputForSegwit: false },
   chain: "dash",
+});
+
+export const ZcashLedger = BaseLedgerUTXO({
+  chain: "zcash",
+  additionalSignParams: { additionals: [], segwit: false, useTrustedInputForSegwit: false },
 });

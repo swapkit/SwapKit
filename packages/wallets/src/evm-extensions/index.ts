@@ -1,5 +1,5 @@
 import {
-  Chain,
+  type Chain,
   ChainToHexChainId,
   type EVMChain,
   EVMChains,
@@ -55,15 +55,13 @@ export const getWeb3WalletMethods = async ({
   const signer = await provider.getSigner();
   const toolbox = await getEvmToolbox(chain, { provider, signer });
 
-  if (chain !== Chain.Ethereum) {
-    const currentNetwork = await provider.getNetwork();
-    if (currentNetwork.chainId.toString() !== ChainToHexChainId[chain]) {
-      try {
-        const networkParams = toolbox.getNetworkParams();
-        await switchEVMWalletNetwork(provider, chain, networkParams);
-      } catch (_error) {
-        throw new SwapKitError("wallet_evm_extensions_failed_to_switch_network", { chain });
-      }
+  const currentNetwork = await provider.getNetwork();
+  if (currentNetwork.chainId.toString() !== ChainToHexChainId[chain]) {
+    try {
+      const networkParams = toolbox.getNetworkParams();
+      await switchEVMWalletNetwork(provider, chain, networkParams);
+    } catch (_error) {
+      throw new SwapKitError("wallet_evm_extensions_failed_to_switch_network", { chain });
     }
   }
 

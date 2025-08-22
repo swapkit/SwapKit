@@ -49,6 +49,7 @@ export const ledgerWallet = createWallet({
     Chain.Ripple,
     Chain.THORChain,
     Chain.Tron,
+    Chain.Zcash,
   ],
   walletType: WalletOption.LEDGER,
 });
@@ -96,7 +97,8 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
     case Chain.Bitcoin:
     case Chain.Dash:
     case Chain.Dogecoin:
-    case Chain.Litecoin: {
+    case Chain.Litecoin:
+    case Chain.Zcash: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
 

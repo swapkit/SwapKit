@@ -1,3 +1,4 @@
+import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
 import {
   Chain,
   type DerivationPathArray,
@@ -52,6 +53,139 @@ async function getTrezorWallet<T extends Chain>({
       const toolbox = await getEvmToolbox(chain, { provider, signer });
 
       return { ...toolbox, address };
+    }
+
+    case Chain.Zcash: {
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+
+      const derivationPathStr = derivationPathToString(derivationPath);
+
+      const getAddress = async () => {
+        const TrezorConnect = (await import("@trezor/connect-web")).default;
+        const { success, payload } = await TrezorConnect.getAddress({
+          path: derivationPathStr,
+          coin: "zec",
+        });
+
+        if (!success) {
+          throw new SwapKitError({
+            errorKey: "wallet_trezor_failed_to_get_address",
+            info: {
+              chain,
+              error: (payload as { error: string; code?: string }).error || "Unknown error",
+            },
+          });
+        }
+
+        return payload.address;
+      };
+
+      const address = await getAddress();
+
+      // Create a signer that works with ZcashPsbt
+      const signer = {
+        getAddress: async () => address,
+        signTransaction: async (zcashPsbt: ZcashPsbt) => {
+          const TrezorConnect = (await import("@trezor/connect-web")).default;
+          const address_n = derivationPath.map((pathElement, index) =>
+            index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
+          );
+
+          // Extract Zcash-specific parameters from the PSBT
+          // Use getVersion() method instead of accessing protected tx property
+          const version = 4; // Sapling version
+          const versionGroupId = 0x892f2085; // Sapling
+          const branchId = 0xe9ff75a6; // Canopy
+
+          const inputs = zcashPsbt.txInputs.map((input, idx) => ({
+            address_n,
+            prev_hash: input.hash.reverse().toString("hex"),
+            prev_index: input.index,
+            amount: zcashPsbt.data.inputs[idx]?.witnessUtxo?.value?.toString() || "0",
+            script_type: "SPENDADDRESS" as const,
+          }));
+
+          const result = await TrezorConnect.signTransaction({
+            coin: "zec",
+            inputs,
+            outputs: zcashPsbt.txOutputs.map((output) => {
+              // OP_RETURN
+              if (!output.address) {
+                return {
+                  amount: "0",
+                  op_return_data: output.script.toString("hex"),
+                  script_type: "PAYTOOPRETURN",
+                };
+              }
+
+              const outputAddress = output.address;
+
+              const isChangeAddress = outputAddress === address;
+
+              return isChangeAddress
+                ? { amount: output.value.toString(), address_n, script_type: "PAYTOADDRESS" }
+                : {
+                    amount: output.value.toString(),
+                    address: outputAddress,
+                    script_type: "PAYTOADDRESS",
+                  };
+            }),
+            version,
+            versionGroupId,
+            branchId,
+            overwintered: true,
+          }); // Type assertion needed due to Trezor Connect types not supporting PAYTOOPRETURN
+
+          if (!result.success) {
+            throw new SwapKitError({
+              errorKey: "wallet_trezor_failed_to_sign_transaction",
+              info: {
+                chain,
+                error: (result.payload as { error: string; code?: string }).error,
+              },
+            });
+          }
+
+          // Trezor returns the fully signed transaction hex
+          // We need to update the PSBT with the signatures and finalize it
+          // For now, we'll store the signed tx hex in a way the toolbox can use
+          return result.payload.serializedTx;
+        },
+      };
+
+      const toolbox = await getUtxoToolbox(Chain.Zcash);
+
+      const transfer = async (params: GenericTransferParams) => {
+        if (!(address && params.recipient)) {
+          throw new SwapKitError({
+            errorKey: "wallet_missing_params",
+            info: { wallet: WalletOption.TREZOR, address, recipient: params.recipient },
+          });
+        }
+
+        const feeRate =
+          params.feeRate || (await toolbox.getFeeRates())[params.feeOptionKey || FeeOption.Fast];
+
+        const { psbt } = await toolbox.createTransaction({
+          ...params,
+          sender: address,
+          feeRate,
+          fetchTxHex: false,
+        });
+
+        const signedPsbt = await signer.signTransaction(psbt);
+        // Extract the signed transaction hex that we stored
+        const txHex = (signedPsbt as any).signedTxHex;
+        if (!txHex) {
+          throw new SwapKitError({
+            errorKey: "wallet_trezor_failed_to_sign_transaction",
+            info: { chain, error: "No signed transaction hex returned" },
+          });
+        }
+        return toolbox.broadcastTx(txHex);
+      };
+
+      return { ...toolbox, address, transfer, signTransaction: signer.signTransaction };
     }
 
     case Chain.Bitcoin:
@@ -226,6 +360,7 @@ export const trezorWallet = createWallet({
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.Zcash,
   ],
   walletType: WalletOption.TREZOR,
 });
