@@ -1,5 +1,16 @@
 # @swapkit/ui
 
+## 0.1.0
+
+### Patch Changes
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- [#1404](https://github.com/swapkit/SwapKit/pull/1404) [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Server/Client split, type definitions and new goodies
+
+- Updated dependencies [[`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2), [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc)]:
+  - @swapkit/browser@4.0.0
+
 ## 0.1.0-beta.72
 
 ### Patch Changes
