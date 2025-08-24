@@ -1,0 +1,291 @@
+---
+const props = {
+  bunUrl: "https://github.com/swapkit/swapkit/tree/develop/playgrounds/bun",
+  compact: false,
+  description: "Explore SwapKit in a live development environment",
+  nextjsUrl: "https://github.com/swapkit/swapkit/tree/develop/playgrounds/nextjs",
+  title: "Try it in a Playground",
+  viteUrl: "https://github.com/swapkit/swapkit/tree/develop/playgrounds/vite",
+  ...Astro.props,
+};
+---
+
+<div class={`playground-links ${props.compact ? 'compact' : ''}`}>
+  {!props.compact && (
+    <div class="playground-header">
+      <h3 class="playground-title">{props.title}</h3>
+      <p class="playground-description">{props.description}</p>
+    </div>
+  )}
+  
+  <div class="playground-grid">
+    <div class="playground-category">
+      <h4 class="category-title">Official Playgrounds</h4>
+      <div class="link-grid">
+        <a 
+          href={props.nextjsUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="playground-link"
+        >
+          <div class="link-icon nextjs">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.5725 0c-.1763 0-.3098.0013-.3584.0067-.0516.0053-.2159.021-.3636.0328-3.4088.3073-6.6017 2.1463-8.624 4.9728C1.1004 6.584.3802 8.3666.1082 10.255c-.0962.659-.108.8537-.108 1.7474s.012 1.0884.108 1.7476c.652 4.506 3.8591 8.2919 8.2087 9.6945.7789.2511 1.6.4223 2.5337.5255.3636.04 1.9354.04 2.299 0 1.6117-.1783 2.9772-.577 4.3237-1.2643.2065-.1056.2464-.1337.2183-.1573-.0188-.0139-.8987-1.1938-1.9543-2.62l-1.919-2.592-2.4047-3.5583c-1.3231-1.9564-2.4117-3.556-2.4211-3.556-.0094-.0026-.0187 1.5787-.0235 3.509-.0067 3.3802-.0093 3.5162-.0516 3.596-.061.115-.108.1618-.220.2134-.0806.0423-.1606.0601-.5514.0601h-.4614l-.0857-.0485a.5639.5639 0 01-.1784-.1597l-.0411-.0939.0155-4.2839c.0094-2.3543.023-4.33.0278-4.3817.0045-.0581.0214-.1096.0505-.1477.0438-.061.1262-.1051.1943-.1051.0529 0 .1015.0061.134.0155.0329.0094.0778.0301.1012.0456.025.0155.5994.8967 1.2767 1.9571 1.1418 1.786 2.1111 3.3015 3.0094 4.7186.8983 1.4171 1.7966 2.8342 2.695 4.2513.8983 1.4171 1.7966 2.8342 2.695 4.2513l3.2017 5.0112 3.201 5.0113.0885.0599c.0516.0351.1262.0599.1709.0599.0513 0 .1015-.0168.134-.045a.2396.2396 0 00.0517-.1714V8.3666c0-.9937-.012-1.0884-.108-1.7474C22.8196 2.1463 19.6267.3073 16.2179.0328c-.1477-.0188-.3121-.0235-.3637-.0281C15.8066.0013 15.6731 0 15.4968 0z"/>
+            </svg>
+            Next.js
+          </div>
+          <span class="link-text">React + TypeScript</span>
+        </a>
+        
+        <a 
+          href={props.viteUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="playground-link"
+        >
+          <div class="link-icon vite">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14.746 0L8.836.002c-.112.026-.189.053-.263.096C7.67.452 7.28 1.218 7.28 2.187v19.626c0 .969.39 1.735 1.293 2.089.074.043.151.07.263.096l5.91.002c1.45-.168 2.578-1.4 2.578-2.926V2.926C17.324 1.4 16.196.168 14.746 0zm-3.38 10.405l2.297-8.54.002.001c.088-.329.372-.555.715-.555.342 0 .627.226.715.555l.002-.001 2.297 8.54-2.297 8.54-.002-.001c-.088.329-.373.555-.715.555-.343 0-.627-.226-.715-.555l-.002.001-2.297-8.54z"/>
+            </svg>
+            Vite
+          </div>
+          <span class="link-text">Fast dev server</span>
+        </a>
+        
+        <a 
+          href={props.bunUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="playground-link"
+        >
+          <div class="link-icon bun">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-22C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm6.5 9.5C18.5 10.12 17.38 9 16 9c-.69 0-1.31.28-1.76.73-.14.14-.37.14-.51 0-.45-.45-1.07-.73-1.76-.73s-1.31.28-1.76.73c-.14.14-.37.14-.51 0C9.31 9.28 8.69 9 8 9c-1.38 0-2.5 1.12-2.5 2.5v6c0 .28.22.5.5.5s.5-.22.5-.5v-6c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v6c0 .28.22.5.5.5s.5-.22.5-.5v-6c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v6c0 .28.22.5.5.5s.5-.22.5-.5v-6c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v6c0 .28.22.5.5.5s.5-.22.5-.5v-6z"/>
+            </svg>
+            Bun
+          </div>
+          <span class="link-text">Ultra-fast runtime</span>
+        </a>
+      </div>
+    </div>
+    
+    {(props.stackblitzUrl || props.codesandboxUrl) && (
+      <div class="playground-category">
+        <h4 class="category-title">Online IDEs</h4>
+        <div class="link-grid">
+          {props.stackblitzUrl && (
+            <a 
+              href={props.stackblitzUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="playground-link"
+            >
+              <div class="link-icon stackblitz">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10.9 2L5.7 12.7h4.5l-.6 7.5L15.3 11H10.9z"/>
+                </svg>
+                StackBlitz
+              </div>
+              <span class="link-text">Instant dev environment</span>
+            </a>
+          )}
+          
+          {props.codesandboxUrl && (
+            <a 
+              href={props.codesandboxUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="playground-link"
+            >
+              <div class="link-icon codesandbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <polyline points="7.5,4.21 12,6.81 16.5,4.21"/>
+                  <polyline points="7.5,19.79 7.5,14.6 3,12"/>
+                  <polyline points="21,12 16.5,14.6 16.5,19.79"/>
+                  <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                CodeSandbox
+              </div>
+              <span class="link-text">Collaborative coding</span>
+            </a>
+          )}
+        </div>
+      </div>
+    )}
+    
+    {props.githubUrl && (
+      <div class="playground-category">
+        <h4 class="category-title">Source Code</h4>
+        <div class="link-grid">
+          <a 
+            href={props.githubUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="playground-link"
+          >
+            <div class="link-icon github">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12 0 17.31 3.435 21.795 8.205 23.385c.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              GitHub
+            </div>
+            <span class="link-text">View source</span>
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+.playground-links {
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.playground-links.compact {
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.playground-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.playground-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.playground-description {
+  margin: 0;
+  color: var(--sl-color-text-accent);
+  font-size: 1rem;
+}
+
+.playground-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.playground-category {
+  text-align: center;
+}
+
+.category-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.playground-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background: var(--sl-color-bg-sidebar);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--sl-color-text);
+  transition: all 0.2s ease;
+  min-height: 120px;
+}
+
+.playground-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--sl-color-accent);
+}
+
+.link-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.link-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.link-text {
+  font-size: 0.875rem;
+  color: var(--sl-color-text-accent);
+  text-align: center;
+}
+
+
+.nextjs {
+  color: #000000;
+}
+
+.vite {
+  color: #646CFF;
+}
+
+.bun {
+  color: #FBF0DF;
+}
+
+.stackblitz {
+  color: #1389fd;
+}
+
+.codesandbox {
+  color: #040404;
+}
+
+.github {
+  color: #333333;
+}
+
+
+:global([data-theme="dark"]) .nextjs {
+  color: #ffffff;
+}
+
+:global([data-theme="dark"]) .codesandbox {
+  color: #ffffff;
+}
+
+:global([data-theme="dark"]) .github {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .link-grid {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+  }
+  
+  .playground-links {
+    padding: 1.5rem;
+  }
+  
+  .playground-grid {
+    gap: 1.5rem;
+  }
+}
+</style>

@@ -2,7 +2,8 @@
 title: Vite
 description: A guide to integrate SwapKit with Vite applications.
 ---
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 This guide will help you integrate SwapKit into your Vite application with proper Node.js polyfills and WebAssembly support.
 
@@ -12,24 +13,16 @@ Install SwapKit and required dependencies:
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add @swapkit/sdk vite-plugin-node-polyfills
-    ```
+    ```bash bun add @swapkit/sdk vite-plugin-node-polyfills ```
   </TabItem>
   <TabItem label="pnpm">
-    ```bash
-    pnpm add @swapkit/sdk vite-plugin-node-polyfills
-    ```
+    ```bash pnpm add @swapkit/sdk vite-plugin-node-polyfills ```
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @swapkit/sdk vite-plugin-node-polyfills
-    ```
+    ```bash npm install @swapkit/sdk vite-plugin-node-polyfills ```
   </TabItem>
   <TabItem label="yarn">
-    ```bash
-    yarn add @swapkit/sdk vite-plugin-node-polyfills
-    ```
+    ```bash yarn add @swapkit/sdk vite-plugin-node-polyfills ```
   </TabItem>
 </Tabs>
 
@@ -39,11 +32,12 @@ Update your `vite.config.ts` to include necessary polyfills and WebAssembly supp
 
 ```typescript
 // @noErrorValidation
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   plugins: [
@@ -51,7 +45,7 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     nodePolyfills({
-      exclude: ['fs'],
+      exclude: ["fs"],
       globals: {
         Buffer: true,
         global: true,
@@ -61,16 +55,16 @@ export default defineConfig({
     }),
   ],
   define: {
-    'process.env': {},
-    global: 'globalThis',
+    "process.env": {},
+    global: "globalThis",
   },
   optimizeDeps: {
     esbuildOptions: {
-      target: 'esnext',
+      target: "esnext",
     },
   },
   build: {
-    target: 'esnext',
+    target: "esnext",
   },
 });
 ```
@@ -81,8 +75,8 @@ Create a SwapKit client instance:
 
 ```typescript
 // @noErrorValidation
-// src/swapKitClient.ts
-import { createSwapKit } from '@swapkit/sdk';
+
+import { createSwapKit } from "@swapkit/sdk";
 
 export const swapKitClient = createSwapKit();
 ```
@@ -92,32 +86,33 @@ export const swapKitClient = createSwapKit();
 Here's a basic example of using SwapKit in a React component:
 
 ```tsx
-// @noErrorValidation
-// src/App.tsx
-import { useState, useEffect } from 'react';
-import { swapKitClient } from './swapKitClient';
-import { Chain, WalletOption } from '@swapkit/sdk';
+import { useState, useEffect } from "react";
+import { swapKitClient } from "./swapKitClient";
+import { Chain, WalletOption } from "@swapkit/sdk";
 
 function App() {
   const [isConnected, setIsConnected] = useState(false);
-  const [address, setAddress] = useState<string>('');
+  const [address, setAddress] = useState<string>("");
 
   const connectWallet = async () => {
     try {
-      await swapKitClient.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+      await swapKitClient.connectEVMWallet(
+        [Chain.Ethereum],
+        WalletOption.METAMASK
+      );
 
       setIsConnected(true);
       const ethAddress = await swapKitClient.getAddress(Chain.Ethereum);
       setAddress(ethAddress);
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error);
     }
   };
 
   const disconnectWallet = () => {
     swapKitClient.disconnectWallet(Chain.Ethereum);
     setIsConnected(false);
-    setAddress('');
+    setAddress("");
   };
 
   return (
@@ -152,11 +147,14 @@ Then configure SwapKit:
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit, SKConfig } from '@swapkit/sdk';
 
-// Configure API keys
-SKConfig.setApiKey('swapKit', import.meta.env.VITE_SWAPKIT_API_KEY);
-SKConfig.setApiKey('walletConnectProjectId', import.meta.env.VITE_WALLETCONNECT_PROJECT_ID);
+import { createSwapKit, SKConfig } from "@swapkit/sdk";
+
+SKConfig.setApiKey("swapKit", import.meta.env.VITE_SWAPKIT_API_KEY);
+SKConfig.setApiKey(
+  "walletConnectProjectId",
+  import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
+);
 
 export const swapKitClient = createSwapKit();
 ```
@@ -169,33 +167,19 @@ If you encounter WebAssembly-related errors, ensure you have the required plugin
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add -D vite-plugin-wasm vite-plugin-top-level-await
-    ```
+    ```bash bun add -D vite-plugin-wasm vite-plugin-top-level-await ```
   </TabItem>
   <TabItem label="pnpm">
-    ```bash
-    pnpm add -D vite-plugin-wasm vite-plugin-top-level-await
-    ```
+    ```bash pnpm add -D vite-plugin-wasm vite-plugin-top-level-await ```
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install -D vite-plugin-wasm vite-plugin-top-level-await
-    ```
+    ```bash npm install -D vite-plugin-wasm vite-plugin-top-level-await ```
   </TabItem>
   <TabItem label="yarn">
-    ```bash
-    yarn add -D vite-plugin-wasm vite-plugin-top-level-await
-    ```
+    ```bash yarn add -D vite-plugin-wasm vite-plugin-top-level-await ```
   </TabItem>
 </Tabs>
 
-
 ## Example Repository
 
-For a complete working example, check out the [Vite playground](https://github.com/swapkit/swapkit/tree/develop/playgrounds/vite) in the SwapKit repository.
-
-
-
-
-
+For a complete working example, check out the [Vite playground](https:

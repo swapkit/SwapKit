@@ -1,0 +1,994 @@
+---
+title: Bitget Wallet Integration
+description: Complete guide to integrating Bitget Wallet with SwapKit SDK v4 for multi-chain support
+---
+
+Bitget Wallet is a comprehensive multi-chain wallet that supports a wide range of blockchain networks. SwapKit SDK v4 provides extensive support for Bitget Wallet across all its supported chains, making it an excellent choice for multi-chain applications.
+
+## Supported Chains
+
+SwapKit supports Bitget Wallet for these chains:
+
+- **EVM Compatible**: All EVM chains (Ethereum, Arbitrum, Aurora, Avalanche, Base, BinanceSmartChain, Gnosis, Optimism, Polygon)
+- **Bitcoin**: Native Bitcoin support
+- **Solana**: SOL and SPL tokens
+- **Cosmos Ecosystem**: Cosmos Hub
+- **Layer 1 Alternatives**: Tron
+
+## Installation and Setup
+
+### 1. Install Bitget Wallet
+
+Install Bitget Wallet from official sources:
+
+- **Mobile App**:
+  - iOS: [App Store](https:
+  - Android: [Google Play](https:
+- **Browser Extension**:
+  - [Chrome Web Store](https:
+  - Available for Chrome, Firefox, Edge
+
+### 2. Set Up Bitget Wallet
+
+1. Create a new wallet or import existing one using seed phrase
+2. Set up a secure password and PIN
+3. Enable the chains you want to use
+4. Configure network preferences
+
+### 3. Browser Requirements
+
+Bitget Wallet works in:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support (mobile)
+- **Edge**: Full support
+- **Mobile browsers**: Full support in app
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...bitgetWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting Bitget Wallet
+
+#### Single Chain Connection
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function connectBitgetEthereum() {
+  try {
+    await swapKit.connectBitget([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    const balance = await swapKit.getBalance(Chain.Ethereum, true);
+
+    console.log("Ethereum address:", address);
+    console.log("ETH balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Bitget Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function connectMultipleChains() {
+  const supportedChains = [
+    Chain.Ethereum,
+    Chain.Bitcoin,
+    Chain.Solana,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Cosmos,
+    Chain.Tron,
+  ];
+
+  try {
+    await swapKit.connectBitget(supportedChains);
+
+    const addresses = {};
+    for (const chain of supportedChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    const balances = await Promise.all(
+      supportedChains.map(async (chain) => {
+        try {
+          const balance = await swapKit.getBalance(chain, true);
+          return { chain, balance };
+        } catch (error) {
+          return { chain, balance: [], error: error.message };
+        }
+      })
+    );
+
+    return { success: true, addresses, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Chain-Specific Connections
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function connectBitgetBitcoin() {
+  try {
+    await swapKit.connectBitget([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("Bitget Bitcoin address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Bitget Bitcoin:", error);
+    return { success: false, error };
+  }
+}
+
+async function connectBitgetSolana() {
+  try {
+    await swapKit.connectBitget([Chain.Solana]);
+
+    const address = swapKit.getAddress(Chain.Solana);
+    console.log("Bitget Solana address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Bitget Solana:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Ethereum Transactions
+
+#### ETH Transfer
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Ethereum]);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    console.log("Sending ETH via Bitget Wallet...");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("To:", recipient);
+    console.log("📱 Approve the transaction in Bitget Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ ETH transfer sent:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ETH transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### ERC-20 Token Transfer
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+await swapKit.connectBitget([Chain.Ethereum]);
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    console.log("📱 Approve USDC transfer in Bitget Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent via Bitget:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Bitcoin Transactions
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Bitcoin]);
+
+async function sendBitcoin() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    console.log("Sending Bitcoin via Bitget Wallet...");
+    console.log("Amount:", amount.toSignificant(8), "BTC");
+    console.log("To:", recipient);
+    console.log("📱 Approve the Bitcoin transaction in Bitget Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Bitcoin transfer sent:", txHash);
+    console.log("🔍 View on Blockstream:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Bitcoin transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Solana Transactions
+
+#### SOL Transfer
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Solana]);
+
+async function sendSolana() {
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+  const amount = AssetValue.fromChainOrSignature("SOL.SOL", 0.1);
+
+  try {
+    console.log("Sending SOL via Bitget Wallet...");
+    console.log("Amount:", amount.toSignificant(6), "SOL");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ SOL transfer sent:", txHash);
+    console.log("🔍 View on Solscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ SOL transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### SPL Token Transfer
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+await swapKit.connectBitget([Chain.Solana]);
+
+async function sendSPLToken() {
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Solana USDC transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ Solana USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Multi-Chain Transactions
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Ethereum, Chain.Polygon, Chain.Arbitrum]);
+
+async function sendOnPolygon() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+
+  try {
+    console.log("📱 Approve MATIC transfer in Bitget Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ MATIC transfer sent via Bitget:", txHash);
+    console.log("🔍 View on PolygonScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ MATIC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Cosmos Transactions
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Cosmos]);
+
+async function sendCosmos() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "Bitget Cosmos transaction",
+    });
+
+    console.log("✅ ATOM transfer sent via Bitget:", txHash);
+    console.log("🔍 View on Mintscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ATOM transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Tron Transactions
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapKit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+
+await swapKit.connectBitget([Chain.Tron]);
+
+async function sendTron() {
+  const recipient = "TLPwm9iGkMiTUERrQ8KXWCFzPn5Q3wz5jc";
+  const amount = AssetValue.fromChainOrSignature("TRON.TRX", 10);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ TRX transfer sent via Bitget:", txHash);
+    console.log("🔍 View on TronScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ TRX transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Features
+
+### EVM Chain Management
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function manageEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+    Chain.Optimism,
+    Chain.Base,
+  ];
+
+  try {
+    await swapKit.connectBitget(evmChains);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all chains):", address);
+
+    const balances = {};
+    for (const chain of evmChains) {
+      try {
+        const balance = await swapKit.getBalance(chain, true);
+        balances[chain] = balance;
+      } catch (error) {
+        console.log(`Could not fetch balance for ${chain}:`, error.message);
+      }
+    }
+
+    return { success: true, address, balances };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### Multi-Chain Portfolio View
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function getPortfolioOverview() {
+  const allChains = [
+    Chain.Ethereum,
+    Chain.Bitcoin,
+    Chain.Solana,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.Cosmos,
+    Chain.Tron,
+  ];
+
+  try {
+    await swapKit.connectBitget(allChains);
+
+    const portfolio = {};
+    for (const chain of allChains) {
+      try {
+        const address = swapKit.getAddress(chain);
+        const balance = await swapKit.getBalance(chain, true);
+
+        portfolio[chain] = {
+          address,
+          balance,
+          connected: true,
+        };
+      } catch (error) {
+        portfolio[chain] = {
+          connected: false,
+          error: error.message,
+        };
+      }
+    }
+
+    return { success: true, portfolio };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...bitgetWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+
+    if (typeof window.bitkeep === 'undefined') {
+      console.error("❌ Bitget Wallet extension not found");
+      console.log("🔧 Install Bitget Wallet from https:
+      return { success: false, error: "Bitget Wallet not installed" };
+    }
+
+    console.log("🔍 Bitget Wallet detected, attempting connection...");
+
+    await swapKit.connectBitget([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("User rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in Bitget Wallet");
+    }
+
+    if (error.message.includes("locked")) {
+      console.log("🔧 Bitget Wallet is locked");
+      console.log("Please unlock your Bitget Wallet");
+    }
+
+    if (error.message.includes("chain")) {
+      console.log("🔧 Chain not supported or configured");
+      console.log("Check if the chain is enabled in Bitget Wallet settings");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkBitgetProviders() {
+  const providers = {
+    bitkeep: !!window.bitkeep,
+    ethereum: !!window.bitkeep?.ethereum,
+    bitcoin: !!window.bitkeep?.bitcoin,
+    solana: !!window.bitkeep?.solana,
+    cosmos: !!window.bitkeep?.cosmos,
+    tron: !!window.bitkeep?.tron,
+  };
+
+  console.log("Bitget Wallet providers:", providers);
+  return providers;
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient balance for transaction + gas fees");
+
+      const balance = await swapKit.getBalance(Chain.Ethereum, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more funds to your Bitget Wallet");
+    }
+
+    if (error.message.includes("User denied")) {
+      console.error("❌ Transaction rejected in Bitget Wallet");
+      console.log("🔧 Please approve the transaction in Bitget Wallet popup");
+    }
+
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed or gas limit too low");
+      console.log("🔧 Check network congestion or increase gas limit");
+    }
+
+    if (error.message.includes("network")) {
+      console.error("❌ Wrong network selected");
+      console.log("🔧 Switch to the correct network in Bitget Wallet");
+    }
+
+    if (error.message.includes("nonce")) {
+      console.error("❌ Nonce issues");
+      console.log("🔧 Wait for pending transactions or reset account");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Chain-Specific Issues
+
+```ts twoslash
+async function handleChainSpecificIssues(chain: Chain) {
+  try {
+    await swapKit.connectBitget([chain]);
+  } catch (error) {
+    switch (chain) {
+      case Chain.Bitcoin:
+        if (error.message.includes("bitcoin")) {
+          console.error("❌ Bitcoin connection failed");
+          console.log("🔧 Ensure Bitcoin is enabled in Bitget Wallet");
+          console.log("🔧 Check if you have a Bitcoin address configured");
+        }
+        break;
+
+      case Chain.Solana:
+        if (error.message.includes("solana")) {
+          console.error("❌ Solana connection failed");
+          console.log("🔧 Ensure Solana is enabled in Bitget Wallet");
+          console.log("🔧 Check if Solana provider is available");
+        }
+        break;
+
+      case Chain.Cosmos:
+        if (error.message.includes("cosmos")) {
+          console.error("❌ Cosmos connection failed");
+          console.log("🔧 Ensure Cosmos is enabled in Bitget Wallet");
+          console.log("🔧 Check if you have imported a Cosmos account");
+        }
+        break;
+
+      case Chain.Tron:
+        if (error.message.includes("tron")) {
+          console.error("❌ Tron connection failed");
+          console.log("🔧 Ensure Tron is enabled in Bitget Wallet");
+          console.log("🔧 Check Tron network configuration");
+        }
+        break;
+
+      default:
+        console.error(`❌ ${chain} connection failed`);
+        console.log("🔧 Check if the chain is supported and enabled");
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, bitgetWallet, Chain } from "@swapkit/sdk";
+
+function validateAddress(address: string, chain: Chain): boolean {
+  switch (chain) {
+    case Chain.Ethereum:
+    case Chain.Polygon:
+    case Chain.Arbitrum:
+    case Chain.BinanceSmartChain:
+    case Chain.Avalanche:
+    case Chain.Optimism:
+    case Chain.Base:
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+
+    case Chain.Bitcoin:
+      return /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/.test(address);
+
+    case Chain.Solana:
+      return /^[1-9A-HJ-NP-Za-km-z]{44}$/.test(address);
+
+    case Chain.Cosmos:
+      return /^cosmos[0-9a-z]{39}$/.test(address);
+
+    case Chain.Tron:
+      return /^T[a-zA-Z0-9]{33}$/.test(address);
+
+    default:
+      return false;
+  }
+}
+
+async function secureTransfer(chain: Chain, recipient: string, amount: number) {
+  if (!validateAddress(recipient, chain)) {
+    throw new Error(`Invalid ${chain} address format`);
+  }
+
+  if (amount <= 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  const swapKit = SwapKit({ wallets: { ...bitgetWallet } });
+  await swapKit.connectBitget([chain]);
+
+  let assetValue: AssetValue;
+  switch (chain) {
+    case Chain.Ethereum:
+      assetValue = AssetValue.fromChainOrSignature("ETH.ETH", amount);
+      break;
+    case Chain.Bitcoin:
+      assetValue = AssetValue.fromChainOrSignature("BTC.BTC", amount);
+      break;
+    case Chain.Solana:
+      assetValue = AssetValue.fromChainOrSignature("SOL.SOL", amount);
+      break;
+
+    default:
+      throw new Error("Unsupported chain");
+  }
+
+  console.log("📋 Transaction Details:");
+  console.log("Chain:", chain);
+  console.log("Amount:", assetValue.toSignificant(6));
+  console.log("Recipient:", recipient);
+  console.log(
+    "⚠️ Please verify these details in Bitget Wallet before confirming"
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error(`${chain} transaction failed:`, error.message);
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+```
+
+### Secure Configuration
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+      [Chain.Solana]: "https:
+      [Chain.Cosmos]: "https:
+      [Chain.Tron]: "https:
+    },
+    apiKeys: {
+      swapKit: process.env.SWAPKIT_API_KEY,
+    },
+  },
+  wallets: { ...bitgetWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, bitgetWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface BitgetWalletProps {
+  onConnect: (addresses: Partial<Record<Chain, string>>) => void;
+  onError: (error: Error) => void;
+}
+
+export function BitgetWallet({ onConnect, onError }: BitgetWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Partial<Record<Chain, string>>>({});
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([Chain.Ethereum]);
+
+  const swapKit = SwapKit({ wallets: { ...bitgetWallet } });
+
+
+  const isBitgetInstalled = typeof window !== 'undefined' &&
+    typeof window.bitkeep !== 'undefined';
+
+  const connectBitget = async () => {
+    if (!isBitgetInstalled) {
+      onError(new Error("Bitget Wallet not installed"));
+      return;
+    }
+
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectBitget(selectedChains);
+
+      const connectedAddresses: Partial<Record<Chain, string>> = {};
+      for (const chain of selectedChains) {
+        connectedAddresses[chain] = swapKit.getAddress(chain);
+      }
+
+      setAddresses(connectedAddresses);
+      setIsConnected(true);
+      onConnect(connectedAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains(prev =>
+      prev.includes(chain)
+        ? prev.filter(c => c !== chain)
+        : [...prev, chain]
+    );
+  };
+
+  const supportedChains = [
+    { chain: Chain.Ethereum, name: "Ethereum" },
+    { chain: Chain.Bitcoin, name: "Bitcoin" },
+    { chain: Chain.Solana, name: "Solana" },
+    { chain: Chain.Polygon, name: "Polygon" },
+    { chain: Chain.Arbitrum, name: "Arbitrum" },
+    { chain: Chain.BinanceSmartChain, name: "BSC" },
+    { chain: Chain.Cosmos, name: "Cosmos" },
+    { chain: Chain.Tron, name: "Tron" },
+  ];
+
+  if (!isBitgetInstalled) {
+    return (
+      <div>
+        <h3>Bitget Wallet</h3>
+        <p>Bitget Wallet extension not detected</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Install Bitget Wallet
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>Bitget Wallet</h3>
+      <p>🌐 Multi-chain wallet support</p>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Chains:</h4>
+          {supportedChains.map(({ chain, name }) => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {name}
+            </label>
+          ))}
+
+          <button
+            onClick={connectBitget}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect Bitget Wallet"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Bitget Wallet integration with SwapKit SDK v4, including multi-chain support, security best practices, and troubleshooting for the most common issues across different blockchain networks.

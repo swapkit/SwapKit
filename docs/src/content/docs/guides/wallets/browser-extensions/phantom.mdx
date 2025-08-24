@@ -1,0 +1,867 @@
+---
+title: Phantom Browser Extension Integration
+description: Complete guide to integrating Phantom wallet with SwapKit SDK v4 for multi-chain support
+---
+
+Phantom is a popular multi-chain browser extension wallet that originally focused on Solana but now supports Ethereum and Bitcoin as well. SwapKit SDK v4 provides comprehensive support for Phantom across all its supported chains.
+
+## Supported Chains
+
+SwapKit supports Phantom wallet for:
+
+- **Solana**: Native Solana support with SPL tokens
+- **Ethereum**: EVM functionality with ERC-20 tokens
+- **Bitcoin**: Bitcoin transactions and UTXO management
+
+## Installation and Setup
+
+### 1. Install Phantom Extension
+
+Install Phantom from official sources:
+
+- **Chrome/Chromium**: [Chrome Web Store](https:
+- **Firefox**: [Firefox Add-ons](https:
+- **Brave**: Available through Chrome Web Store
+- **Edge**: Available through Chrome Web Store
+
+### 2. Set Up Phantom Wallet
+
+1. Create a new wallet or import existing one using seed phrase
+2. Set up a secure password
+3. The wallet supports multiple chains in one interface
+4. Switch between chains using the network selector
+
+### 3. Browser Requirements
+
+Phantom works in:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support
+- **Brave**: Full support
+- **Edge**: Full support
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...phantomWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting Phantom
+
+#### Single Chain Connection
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+async function connectPhantomSolana() {
+  try {
+    await swapKit.connectPhantom([Chain.Solana]);
+
+    const address = swapKit.getAddress(Chain.Solana);
+    const balance = await swapKit.getBalance(Chain.Solana, true);
+
+    console.log("Solana address:", address);
+    console.log("SOL balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Phantom:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+async function connectMultipleChains() {
+  const supportedChains = [Chain.Solana, Chain.Ethereum, Chain.Bitcoin];
+
+  try {
+    await swapKit.connectPhantom(supportedChains);
+
+    const addresses = {};
+    for (const chain of supportedChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    const balances = await Promise.all(
+      supportedChains.map(async (chain) => {
+        const balance = await swapKit.getBalance(chain, true);
+        return { chain, balance };
+      })
+    );
+
+    return { success: true, addresses, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Chain-Specific Connections
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+async function connectPhantomEthereum() {
+  try {
+    await swapKit.connectPhantom([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Phantom Ethereum address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Phantom Ethereum:", error);
+    return { success: false, error };
+  }
+}
+
+async function connectPhantomBitcoin() {
+  try {
+    await swapKit.connectPhantom([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("Phantom Bitcoin address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Phantom Bitcoin:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Solana Transactions
+
+#### SOL Transfer
+
+```ts twoslash
+
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+
+await swapKit.connectPhantom([Chain.Solana]);
+
+async function sendSol() {
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+  const amount = AssetValue.fromChainOrSignature("SOL.SOL", 0.1);
+
+  try {
+    console.log("Sending SOL transaction...");
+    console.log("Amount:", amount.toSignificant(6), "SOL");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ SOL transfer sent:", txHash);
+    console.log("🔍 View on Solscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ SOL transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### SPL Token Transfer
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+await swapKit.connectPhantom([Chain.Solana]);
+
+async function sendSPLToken() {
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendToPDA() {
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+  const amount = AssetValue.fromChainOrSignature("SOL.SOL", 0.1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      isProgramDerivedAddress: true,
+    });
+
+    console.log("✅ PDA transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ PDA transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Ethereum Transactions
+
+```ts twoslash
+
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+
+await swapKit.connectPhantom([Chain.Ethereum]);
+
+async function sendEthereumFromPhantom() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ ETH transfer sent via Phantom:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ETH transfer failed:", error);
+    throw error;
+  }
+}
+
+
+async function sendERC20FromPhantom() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6", 100);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent via Phantom:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Bitcoin Transactions
+
+```ts twoslash
+
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+
+await swapKit.connectPhantom([Chain.Bitcoin]);
+
+async function sendBitcoinFromPhantom() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    console.log("Sending Bitcoin via Phantom...");
+    console.log("Amount:", amount.toSignificant(8), "BTC");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Bitcoin transfer sent:", txHash);
+    console.log("🔍 View on Blockstream:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Bitcoin transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Features
+
+### Solana-Specific Operations
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+await swapKit.connectPhantom([Chain.Solana]);
+
+async function advancedSolanaOperations() {
+  const wallet = await swapKit.getWalletWithBalance(Chain.Solana);
+
+  function isPDA(address: string): boolean {
+    return address.length === 44 && !address.includes("1" || "2" || "3" || "4");
+  }
+
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+  const amount = AssetValue.fromChainOrSignature("SOL.SOL", 0.1);
+
+  const isProgramDerivedAddress = isPDA(recipient);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      isProgramDerivedAddress,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error("Advanced Solana operation failed:", error);
+    throw error;
+  }
+}
+
+async function handleSPLTokenAccount() {
+  const tokenMintAddress = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+  const recipient = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+  const amount = AssetValue.fromChainOrSignature(
+    `SOL.USDC-${tokenMintAddress}`,
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ SPL token transfer successful:", txHash);
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("account not found")) {
+      console.log(
+        "🔧 Recipient may need to create associated token account first"
+      );
+    }
+    throw error;
+  }
+}
+```
+
+### Network Switching
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+async function switchBetweenChains() {
+  try {
+    await swapKit.connectPhantom([Chain.Solana]);
+    const solanaAddress = swapKit.getAddress(Chain.Solana);
+    console.log("Connected to Solana:", solanaAddress);
+
+    await swapKit.connectPhantom([Chain.Ethereum]);
+    const ethereumAddress = swapKit.getAddress(Chain.Ethereum);
+    console.log("Connected to Ethereum:", ethereumAddress);
+
+    console.log("📱 Please switch to the desired network in Phantom wallet");
+
+    return { success: true, solanaAddress, ethereumAddress };
+  } catch (error) {
+    if (error.message.includes("network")) {
+      console.error("❌ Network switching required");
+      console.log("🔧 Please switch networks in Phantom wallet manually");
+    }
+    throw error;
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...phantomWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+
+    if (typeof window.phantom === 'undefined') {
+      console.error("❌ Phantom wallet not found");
+      console.log("🔧 Install Phantom from https:
+      return { success: false, error: "Phantom not installed" };
+    }
+
+
+    if (!window.phantom?.solana) {
+      console.error("❌ Phantom Solana provider not found");
+      console.log("🔧 Ensure Phantom is enabled for Solana");
+      return { success: false, error: "Solana provider not found" };
+    }
+
+    console.log("🔍 Phantom detected, attempting connection...");
+
+    await swapKit.connectPhantom([Chain.Solana]);
+
+    const address = swapKit.getAddress(Chain.Solana);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("User rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in Phantom");
+    }
+
+    if (error.message.includes("not found")) {
+      console.log("🔧 Phantom provider not found for this chain");
+      console.log("Ensure the chain is supported and enabled in Phantom");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkPhantomChainSupport() {
+  const results = {
+    solana: !!window.phantom?.solana?.isPhantom,
+    ethereum: !!window.phantom?.ethereum,
+    bitcoin: !!window.phantom?.bitcoin?.isPhantom,
+  };
+
+  console.log("Phantom chain support:", results);
+  return results;
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("SOL.SOL", 0.1);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient SOL balance");
+
+      const balance = await swapKit.getBalance(Chain.Solana, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more SOL to your Phantom wallet");
+    }
+
+    if (error.message.includes("User rejected")) {
+      console.error("❌ Transaction rejected in Phantom");
+      console.log("🔧 Please approve the transaction in Phantom popup");
+    }
+
+    if (error.message.includes("blockhash")) {
+      console.error("❌ Blockhash expired");
+      console.log("🔧 Transaction took too long, please try again");
+    }
+
+    if (error.message.includes("account not found")) {
+      console.error("❌ Token account not found");
+      console.log("🔧 Recipient may need to create associated token account");
+    }
+
+    if (error.message.includes("Program Derived Address")) {
+      console.error("❌ PDA transfer issue");
+      console.log(
+        "🔧 Check PDA derivation or use isProgramDerivedAddress flag"
+      );
+    }
+
+    throw error;
+  }
+}
+```
+
+### Network-Specific Issues
+
+```ts twoslash
+async function handleNetworkSpecificIssues() {
+  try {
+    await swapKit.connectPhantom([Chain.Ethereum]);
+  } catch (error) {
+    if (error.message.includes("Ethereum")) {
+      console.error("❌ Phantom Ethereum connection failed");
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Ensure Phantom supports Ethereum (newer versions)");
+      console.log("2. Switch to Ethereum network in Phantom");
+      console.log("3. Check if Ethereum provider is enabled");
+    }
+
+    if (error.message.includes("Bitcoin")) {
+      console.error("❌ Phantom Bitcoin connection failed");
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Ensure Phantom supports Bitcoin (latest versions)");
+      console.log("2. Switch to Bitcoin network in Phantom");
+      console.log("3. Enable Bitcoin in Phantom settings");
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, phantomWallet, Chain } from "@swapkit/sdk";
+
+function validateAddress(address: string, chain: Chain): boolean {
+  switch (chain) {
+    case Chain.Solana:
+      return /^[1-9A-HJ-NP-Za-km-z]{44}$/.test(address);
+    case Chain.Ethereum:
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+    case Chain.Bitcoin:
+      return /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/.test(address);
+    default:
+      return false;
+  }
+}
+
+async function secureTransaction(
+  chain: Chain,
+  recipient: string,
+  amount: number
+) {
+  if (!validateAddress(recipient, chain)) {
+    throw new Error(`Invalid ${chain} address format`);
+  }
+
+  if (amount <= 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  const swapKit = SwapKit({ wallets: { ...phantomWallet } });
+  await swapKit.connectPhantom([chain]);
+
+  let assetValue: AssetValue;
+  switch (chain) {
+    case Chain.Solana:
+      assetValue = AssetValue.fromChainOrSignature("SOL.SOL", amount);
+      break;
+    case Chain.Ethereum:
+      assetValue = AssetValue.fromChainOrSignature("ETH.ETH", amount);
+      break;
+    case Chain.Bitcoin:
+      assetValue = AssetValue.fromChainOrSignature("BTC.BTC", amount);
+      break;
+    default:
+      throw new Error("Unsupported chain");
+  }
+
+  console.log("📋 Transaction Details:");
+  console.log("Chain:", chain);
+  console.log("Amount:", assetValue.toSignificant(6));
+  console.log("Recipient:", recipient);
+  console.log("⚠️ Please verify these details in Phantom before confirming");
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error(`${chain} transaction failed:`, error.message);
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+
+async function checkPhantomPermissions() {
+  try {
+    if (window.phantom?.solana) {
+      const response = await window.phantom.solana.connect({
+        onlyIfTrusted: true,
+      });
+      console.log(
+        "Already connected to Solana:",
+        response.publicKey.toString()
+      );
+    }
+  } catch (error) {
+    console.log("Not connected to Phantom Solana");
+  }
+}
+```
+
+### Secure Configuration
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+
+    rpcUrls: {
+      [Chain.Solana]: "https:
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+    },
+    apiKeys: {
+      swapKit: process.env.SWAPKIT_API_KEY,
+    },
+  },
+  wallets: { ...phantomWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, phantomWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface PhantomWalletProps {
+  onConnect: (addresses: Partial<Record<Chain, string>>) => void;
+  onError: (error: Error) => void;
+}
+
+export function PhantomWallet({ onConnect, onError }: PhantomWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Partial<Record<Chain, string>>>({});
+  const [selectedChain, setSelectedChain] = useState<Chain>(Chain.Solana);
+
+  const swapKit = SwapKit({ wallets: { ...phantomWallet } });
+
+
+  const isPhantomInstalled = typeof window !== 'undefined' &&
+    typeof window.phantom !== 'undefined';
+
+  useEffect(() => {
+    if (!isPhantomInstalled) return;
+
+
+    const handleAccountChange = () => {
+      if (isConnected) {
+
+        connectPhantom();
+      }
+    };
+
+
+    if (window.phantom?.solana) {
+      window.phantom.solana.on('accountChanged', handleAccountChange);
+    }
+
+    return () => {
+      if (window.phantom?.solana) {
+        window.phantom.solana.off('accountChanged', handleAccountChange);
+      }
+    };
+  }, [isConnected, isPhantomInstalled]);
+
+  const connectPhantom = async () => {
+    if (!isPhantomInstalled) {
+      onError(new Error("Phantom wallet not installed"));
+      return;
+    }
+
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectPhantom([selectedChain]);
+      const address = swapKit.getAddress(selectedChain);
+
+      const newAddresses = { ...addresses, [selectedChain]: address };
+      setAddresses(newAddresses);
+      setIsConnected(true);
+      onConnect(newAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const switchChain = async (newChain: Chain) => {
+    if (isConnecting) return;
+
+    setSelectedChain(newChain);
+
+    if (isConnected) {
+
+      try {
+        setIsConnecting(true);
+        await swapKit.connectPhantom([newChain]);
+        const address = swapKit.getAddress(newChain);
+        const newAddresses = { ...addresses, [newChain]: address };
+        setAddresses(newAddresses);
+        onConnect(newAddresses);
+      } catch (error) {
+        onError(error as Error);
+      } finally {
+        setIsConnecting(false);
+      }
+    }
+  };
+
+  if (!isPhantomInstalled) {
+    return (
+      <div>
+        <h3>Phantom Wallet</h3>
+        <p>Phantom wallet not detected</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Install Phantom
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>Phantom Wallet</h3>
+
+      <div>
+        <label>Chain: </label>
+        <select
+          value={selectedChain}
+          onChange={(e) => switchChain(e.target.value as Chain)}
+          disabled={isConnecting}
+        >
+          <option value={Chain.Solana}>Solana</option>
+          <option value={Chain.Ethereum}>Ethereum</option>
+          <option value={Chain.Bitcoin}>Bitcoin</option>
+        </select>
+      </div>
+
+      {!isConnected ? (
+        <button
+          onClick={connectPhantom}
+          disabled={isConnecting}
+        >
+          {isConnecting ? "Connecting..." : `Connect to ${selectedChain}`}
+        </button>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Phantom wallet integration with SwapKit SDK v4, including multi-chain support for Solana, Ethereum, and Bitcoin, along with chain-specific features and security best practices.

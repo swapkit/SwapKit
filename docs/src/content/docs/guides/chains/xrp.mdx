@@ -1,0 +1,767 @@
+---
+title: XRP Ledger Integration
+description: Complete guide to integrating XRP Ledger with SwapKit SDK for XRP operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers XRP Ledger integration with SwapKit, including wallet connections, XRP transfers, trustlines, and cross-chain swaps.
+
+## Overview
+
+XRP Ledger is a decentralized blockchain focused on fast, low-cost payments and remittances. SwapKit provides comprehensive XRP Ledger support through:
+
+- **XRP Toolbox**: Native XRPL operations with sub-second settlement
+- **Trustlines**: Manage issued currencies and tokens on XRPL
+- **Payment Channels**: Instant, high-frequency micropayments
+- **Cross-Chain Swaps**: Bridge XRP with other cryptocurrencies
+- **Multi-Wallet Support**: Compatible with XUMM, hardware wallets, and others
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const xrpWallet = await swapKit.getWallet(Chain.Ripple);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getXRPToolbox } from '@swapkit/toolboxes/ripple';
+
+
+const xrpToolbox = await getXRPToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 144, 0, 0, 0]
+});
+
+
+const xrpToolbox = await getXRPToolbox({
+  secret: "sXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  server: "wss:
+});
+````
+
+</TabItem>
+</Tabs>
+
+## XRP Toolbox
+
+### Wallet Connection
+
+Connect to XRP Ledger using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapKit/sdk";
+
+await swapKit.connectKeystore([Chain.Ripple], "your mnemonic phrase");
+
+await swapKit.connectXumm([Chain.Ripple]);
+
+await swapKit.connectLedger([Chain.Ripple]);
+```
+
+### Address Generation and Validation
+
+XRP addresses are base58-encoded and start with 'r':
+
+```typescript
+// @noErrorValidation
+
+const xrpAddress = swapKit.getAddress(Chain.Ripple);
+
+console.log("XRP address:", xrpAddress);
+
+import { validateXRPAddress } from "@swapkit/toolboxes/ripple";
+
+const isValidAddress = validateXRPAddress(xrpAddress);
+console.log("Valid XRP address:", isValidAddress);
+
+const accountInfo = await xrpToolbox.getAccountInfo(xrpAddress);
+console.log("Account info:", {
+  sequence: accountInfo.Sequence,
+  balance: accountInfo.Balance,
+  ownerCount: accountInfo.OwnerCount,
+  previousTxnID: accountInfo.PreviousTxnID,
+});
+```
+
+### XRP Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+  assetValue: AssetValue.from({
+    chain: Chain.Ripple,
+    value: "10",
+  }),
+  feeOptionKey: FeeOption.Fast,
+  memo: "Payment reference: INV-001",
+  destinationTag: 12345,
+});
+
+console.log(`XRP transaction hash: ${txHash}`);
+
+const customTx = await xrpToolbox.transfer({
+  recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+  assetValue: AssetValue.from({ chain: Chain.Ripple, value: "5" }),
+  fee: "0.00001",
+  sequence: 12345,
+  memo: "Custom XRP transfer",
+  destinationTag: 98765,
+});
+
+const multiPayment = async () => {
+  const payments = [
+    {
+      address: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+      amount: "10",
+      destinationTag: 12345,
+      memo: "Payment 1",
+    },
+    {
+      address: "rLNaPoKeeBjZe2qs6x52yVPZpZ8td4dc6w",
+      amount: "15",
+      destinationTag: 54321,
+      memo: "Payment 2",
+    },
+  ];
+
+  for (const payment of payments) {
+    const tx = await xrpToolbox.transfer({
+      recipient: payment.address,
+      assetValue: AssetValue.from({
+        chain: Chain.Ripple,
+        value: payment.amount,
+      }),
+      destinationTag: payment.destinationTag,
+      memo: payment.memo,
+    });
+
+    console.log(`XRP sent to ${payment.address}: ${tx}`);
+  }
+};
+```
+
+### Trustlines and Issued Currencies
+
+XRP Ledger supports issued currencies through trustlines:
+
+```typescript
+// @noErrorValidation
+
+const setTrustline = async () => {
+  const trustlineTx = await xrpToolbox.setTrustline({
+    currency: "USD",
+    issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+    limit: "10000",
+    qualityIn: 1000000000,
+    qualityOut: 1000000000,
+  });
+
+  console.log("Trustline set:", trustlineTx);
+};
+
+const transferIssuedCurrency = async () => {
+  const issuedCurrencyTx = await xrpToolbox.transferCurrency({
+    recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    currency: "USD",
+    issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+    amount: "100",
+    destinationTag: 12345,
+  });
+
+  console.log("Issued currency transferred:", issuedCurrencyTx);
+};
+
+const getTrustlines = async () => {
+  const trustlines = await xrpToolbox.getTrustlines(
+    swapKit.getAddress(Chain.Ripple)
+  );
+
+  console.log("Account trustlines:");
+  trustlines.forEach((line) => {
+    console.log(
+      `${line.currency}.${line.account}: ${line.balance} (limit: ${line.limit})`
+    );
+  });
+};
+
+const removeTrustline = async () => {
+  const removeTx = await xrpToolbox.removeTrustline({
+    currency: "USD",
+    issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+  });
+
+  console.log("Trustline removed:", removeTx);
+};
+```
+
+### Decentralized Exchange (DEX)
+
+XRP Ledger has a built-in decentralized exchange:
+
+```typescript
+// @noErrorValidation
+
+const createOffer = async () => {
+  const offerTx = await xrpToolbox.createOffer({
+    takerGets: {
+      currency: "XRP",
+      value: "1000",
+    },
+    takerPays: {
+      currency: "USD",
+      issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+      value: "500",
+    },
+    expiration: Date.now() + 86400000,
+  });
+
+  console.log("Offer created:", offerTx);
+};
+
+const cancelOffer = async (offerSequence: number) => {
+  const cancelTx = await xrpToolbox.cancelOffer({
+    offerSequence,
+  });
+
+  console.log("Offer cancelled:", cancelTx);
+};
+
+const getOrderBook = async () => {
+  const orderBook = await xrpToolbox.getOrderBook({
+    takerGets: { currency: "XRP" },
+    takerPays: {
+      currency: "USD",
+      issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+    },
+  });
+
+  console.log("Order book:", {
+    asks: orderBook.asks.slice(0, 5),
+    bids: orderBook.bids.slice(0, 5),
+  });
+};
+
+const marketTrade = async () => {
+  const tradeTx = await xrpToolbox.trade({
+    takerGets: {
+      currency: "USD",
+      issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+      value: "100",
+    },
+    takerPays: {
+      currency: "XRP",
+      value: "200",
+    },
+  });
+
+  console.log("Trade executed:", tradeTx);
+};
+```
+
+### Payment Channels
+
+For high-frequency micropayments:
+
+```typescript
+// @noErrorValidation
+
+const createChannel = async () => {
+  const channelTx = await xrpToolbox.createPaymentChannel({
+    destination: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    amount: "100",
+    settleDelay: 86400,
+    publicKey: "aB44YfzW24VDEJQ2UuLPV2PvqcPCSoLnL7y5M1EzhdW4LnK5xMS3",
+  });
+
+  console.log("Payment channel created:", channelTx);
+  return channelTx;
+};
+
+const fundChannel = async (channel: string) => {
+  const fundTx = await xrpToolbox.fundPaymentChannel({
+    channel,
+    amount: "50",
+  });
+
+  console.log("Payment channel funded:", fundTx);
+};
+
+const createChannelClaim = async (
+  channel: string,
+  amount: string,
+  signature: string
+) => {
+  const claimTx = await xrpToolbox.claimPaymentChannel({
+    channel,
+    amount,
+    signature,
+    publicKey: "aB44YfzW24VDEJQ2UuLPV2PvqcPCSoLnL7y5M1EzhdW4LnK5xMS3",
+  });
+
+  console.log("Payment channel claimed:", claimTx);
+};
+
+const closeChannel = async (channel: string) => {
+  const closeTx = await xrpToolbox.closePaymentChannel({ channel });
+  console.log("Payment channel closed:", closeTx);
+};
+```
+
+### Escrow
+
+XRP Ledger supports time-locked and condition-based escrows:
+
+```typescript
+// @noErrorValidation
+
+const createEscrow = async () => {
+  const escrowTx = await xrpToolbox.createEscrow({
+    destination: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    amount: "100",
+    finishAfter: Math.floor(Date.now() / 1000) + 86400,
+    cancelAfter: Math.floor(Date.now() / 1000) + 172800,
+    destinationTag: 12345,
+  });
+
+  console.log("Escrow created:", escrowTx);
+  return escrowTx;
+};
+
+const finishEscrow = async (offerSequence: number) => {
+  const finishTx = await xrpToolbox.finishEscrow({
+    owner: swapKit.getAddress(Chain.Ripple),
+    offerSequence,
+  });
+
+  console.log("Escrow finished:", finishTx);
+};
+
+const cancelEscrow = async (offerSequence: number) => {
+  const cancelTx = await xrpToolbox.cancelEscrow({
+    owner: swapKit.getAddress(Chain.Ripple),
+    offerSequence,
+  });
+
+  console.log("Escrow cancelled:", cancelTx);
+};
+
+const createCryptoConditionEscrow = async () => {
+  const condition =
+    "A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855825100";
+  const fulfillment = "A0028000";
+
+  const escrowTx = await xrpToolbox.createEscrow({
+    destination: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    amount: "50",
+    condition,
+    cancelAfter: Math.floor(Date.now() / 1000) + 172800,
+  });
+
+  console.log("Crypto-condition escrow created:", escrowTx);
+
+  const finishTx = await xrpToolbox.finishEscrow({
+    owner: swapKit.getAddress(Chain.Ripple),
+    offerSequence: escrowTx.Sequence,
+    fulfillment,
+  });
+
+  return { escrowTx, finishTx };
+};
+```
+
+## Cross-Chain Swaps
+
+XRP is supported in various cross-chain protocols:
+
+```typescript
+// @noErrorValidation
+
+const xrpToBtcQuote = await swapKit.getQuote({
+  sellAsset: "XRP.XRP",
+  sellAmount: "1000",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Ripple),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("XRP -> BTC quote:", {
+  expectedOutput: xrpToBtcQuote.expectedOutput,
+  fees: xrpToBtcQuote.fees,
+  timeEstimate: xrpToBtcQuote.timeEstimate,
+});
+
+const swapTx = await swapKit.swap({
+  route: xrpToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const xrpToUsdcQuote = await swapKit.getQuote({
+  sellAsset: "XRP.XRP",
+  sellAmount: "500",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Ripple),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const arbitrageOpportunity = async () => {
+  const orderBooks = await Promise.all([
+    xrpToolbox.getOrderBook({
+      takerGets: { currency: "XRP" },
+      takerPays: {
+        currency: "USD",
+        issuer: "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+      },
+    }),
+
+    getExternalXRPPrice(),
+  ]);
+
+  const [nativeBook, externalPrice] = orderBooks;
+  const bestAsk = parseFloat(nativeBook.asks[0]?.TakerPays?.value || "0");
+
+  if (bestAsk > 0 && externalPrice > bestAsk * 1.02) {
+    console.log(
+      `Arbitrage opportunity: ${(
+        ((externalPrice - bestAsk) / bestAsk) *
+        100
+      ).toFixed(2)}%`
+    );
+  }
+};
+```
+
+## Advanced Features
+
+### Multi-signing
+
+```typescript
+// @noErrorValidation
+
+const setupMultiSign = async () => {
+  const signerListTx = await xrpToolbox.setSignerList({
+    signerQuorum: 2,
+    signerEntries: [
+      {
+        account: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+        signerWeight: 1,
+      },
+      {
+        account: "rLNaPoKeeBjZe2qs6x52yVPZpZ8td4dc6w",
+        signerWeight: 1,
+      },
+      {
+        account: "rDsbeomae3mUjXaBc5cXF1Kg9Ej5w6DzXn",
+        signerWeight: 1,
+      },
+    ],
+  });
+
+  console.log("Multi-sign setup:", signerListTx);
+};
+
+const multiSignTransaction = async (txBlob: string) => {
+  const signature = await xrpToolbox.signTransaction(txBlob);
+
+  return {
+    txBlob,
+    signature,
+    account: swapKit.getAddress(Chain.Ripple),
+  };
+};
+
+const submitMultiSigned = async (signatures: any[]) => {
+  const multiSignedTx = await xrpToolbox.submitMultiSignedTransaction({
+    signatures,
+    txBlob: signatures[0].txBlob,
+  });
+
+  console.log("Multi-signed transaction submitted:", multiSignedTx);
+};
+```
+
+### Account Settings
+
+```typescript
+// @noErrorValidation
+
+const configureAccount = async () => {
+  const regularKeyTx = await xrpToolbox.setRegularKey({
+    regularKey: "rRegularKeyAddressXXXXXXXXXXXXXXXXX",
+  });
+
+  const accountSetTx = await xrpToolbox.setAccountFlags({
+    requireDestinationTag: true,
+    requireAuth: false,
+    disallowXRP: false,
+    globalFreeze: false,
+  });
+
+  const domainTx = await xrpToolbox.setDomain({
+    domain: "example.com",
+  });
+
+  console.log("Account configured:", { regularKeyTx, accountSetTx, domainTx });
+};
+```
+
+## Network Configuration
+
+### Custom Server Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Ripple, [
+  "wss:
+  "wss:
+  "wss:
+]);
+
+
+const customServer = "wss:
+SKConfig.setRpcUrl(Chain.Ripple, customServer);
+
+
+const xrpToolbox = await getXRPToolbox({
+  phrase: "your mnemonic",
+  server: "wss:
+});
+```
+
+### Working with Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Ripple, "wss:
+SKConfig.setEnv('isMainnet', false);
+
+const testnetToolbox = await getXRPToolbox({
+  phrase: "your mnemonic",
+  server: "wss:
+});
+
+
+const faucetResponse = await testnetToolbox.requestFaucetFunds(
+  swapKit.getAddress(Chain.Ripple)
+);
+
+console.log("Faucet funding:", faucetResponse);
+```
+
+## Performance Optimization
+
+### Transaction Batching and Sequencing
+
+```typescript
+// @noErrorValidation
+
+const optimizeSequencing = async () => {
+  const accountInfo = await xrpToolbox.getAccountInfo(
+    swapKit.getAddress(Chain.Ripple)
+  );
+
+  let sequence = accountInfo.Sequence;
+  const transactions = [];
+
+  for (let i = 0; i < 5; i++) {
+    const tx = await xrpToolbox.prepareTransaction({
+      recipient: `rRecipient${i}XXXXXXXXXXXXXXXXXXXX`,
+      assetValue: AssetValue.from({ chain: Chain.Ripple, value: "1" }),
+      sequence: sequence + i,
+      fee: "0.00001",
+    });
+
+    transactions.push(tx);
+  }
+
+  const results = await Promise.all(
+    transactions.map((tx) => xrpToolbox.submitPreparedTransaction(tx))
+  );
+
+  console.log("Batch transactions submitted:", results);
+};
+
+const optimizeFees = {
+  async getCurrentFees() {
+    const serverInfo = await xrpToolbox.getServerInfo();
+    return {
+      baseFee: serverInfo.validatedLedger.baseFeeXRP,
+      reserveBase: serverInfo.validatedLedger.reserveBaseXRP,
+      reserveIncrement: serverInfo.validatedLedger.reserveIncrementXRP,
+    };
+  },
+
+  async getOptimalFee(urgency: "low" | "medium" | "high") {
+    const fees = await this.getCurrentFees();
+    const baseFee = parseFloat(fees.baseFee);
+
+    const multipliers = {
+      low: 1,
+      medium: 1.2,
+      high: 2,
+    };
+
+    return (baseFee * multipliers[urgency]).toFixed(6);
+  },
+};
+```
+
+## Best Practices
+
+1. **Handle Destination Tags Properly**:
+
+   ```typescript
+   const safeTransfer = async (
+     recipient: string,
+     amount: string,
+     tag?: number
+   ) => {
+     const accountInfo = await xrpToolbox.getAccountInfo(recipient);
+
+     if (accountInfo.Flags && accountInfo.Flags & 131072 && !tag) {
+       throw new Error("Destination requires a destination tag");
+     }
+
+     return await xrpToolbox.transfer({
+       recipient,
+       assetValue: AssetValue.from({ chain: Chain.Ripple, value: amount }),
+       destinationTag: tag,
+     });
+   };
+   ```
+
+2. **Monitor Account Reserve**:
+
+   ```typescript
+   const checkReserve = async () => {
+     const fees = await optimizeFees.getCurrentFees();
+     const accountInfo = await xrpToolbox.getAccountInfo(
+       swapKit.getAddress(Chain.Ripple)
+     );
+
+     const reserveRequired =
+       parseFloat(fees.reserveBase) +
+       accountInfo.OwnerCount * parseFloat(fees.reserveIncrement);
+
+     const availableBalance =
+       parseFloat(accountInfo.Balance) / 1000000 - reserveRequired;
+
+     console.log(
+       `Available balance: ${availableBalance} XRP (Reserve: ${reserveRequired} XRP)`
+     );
+
+     if (availableBalance < 1) {
+       console.warn("Low available balance - consider the reserve requirement");
+     }
+   };
+   ```
+
+3. **Use Reliable Transaction Tracking**:
+   ```typescript
+   const trackTransaction = async (txHash: string) => {
+     let attempts = 0;
+     const maxAttempts = 10;
+
+     while (attempts < maxAttempts) {
+       try {
+         const tx = await xrpToolbox.getTransaction(txHash);
+
+         if (tx.validated) {
+           console.log("Transaction confirmed:", {
+             result: tx.meta.TransactionResult,
+             ledgerIndex: tx.ledger_index,
+             fee: tx.Fee,
+           });
+
+           return tx;
+         }
+       } catch (error) {
+         console.log(`Transaction not yet validated, attempt ${attempts + 1}`);
+       }
+
+       attempts++;
+       await new Promise((resolve) => setTimeout(resolve, 1000));
+     }
+
+     throw new Error("Transaction tracking timeout");
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get XRP balance
+- `transfer()` - Send XRP payments
+- `getAccountInfo()` - Get account details
+- `getTransactionHistory()` - Get transaction history
+
+### Trustline Methods
+
+- `setTrustline()` - Create trustline for issued currency
+- `removeTrustline()` - Remove trustline
+- `getTrustlines()` - Get all trustlines
+- `transferCurrency()` - Send issued currency
+
+### DEX Methods
+
+- `createOffer()` - Create limit order
+- `cancelOffer()` - Cancel order
+- `getOrderBook()` - Get order book data
+- `trade()` - Execute market order
+
+### Payment Channel Methods
+
+- `createPaymentChannel()` - Create payment channel
+- `fundPaymentChannel()` - Add funds to channel
+- `claimPaymentChannel()` - Claim channel funds
+- `closePaymentChannel()` - Close payment channel
+
+### Escrow Methods
+
+- `createEscrow()` - Create time-locked escrow
+- `finishEscrow()` - Complete escrow
+- `cancelEscrow()` - Cancel escrow
+
+### Account Methods
+
+- `setRegularKey()` - Set regular key for security
+- `setAccountFlags()` - Configure account settings
+- `setDomain()` - Set account domain
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) using XRP
+- Explore other [blockchain integrations](/guides/chains/tron)
+- Check out [Production Best Practices](/guides/production-best-practices)
+- Read about [Payment Channel Integration](/guides/advanced-features)

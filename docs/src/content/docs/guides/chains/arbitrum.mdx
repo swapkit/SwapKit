@@ -1,0 +1,646 @@
+---
+title: Arbitrum Integration
+description: Complete guide to integrating Arbitrum One with SwapKit SDK for Layer 2 DeFi and cross-chain operations
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Arbitrum One integration with SwapKit, including wallet connections, token transfers, cross-chain swaps, and Layer 2 specific optimizations.
+
+## Overview
+
+Arbitrum One is a leading Ethereum Layer 2 scaling solution that provides faster and cheaper transactions while maintaining Ethereum security. SwapKit provides full Arbitrum support through:
+
+- **Arbitrum Toolbox**: Optimized Layer 2 operations with lower gas costs
+- **Cross-Chain Bridging**: Seamless transfers between Ethereum and Arbitrum
+- **DEX Integration**: Access to Arbitrum DEXs like Camelot, TraderJoe, and SushiSwap
+- **Multi-Wallet Support**: Compatible with all Ethereum wallets
+- **Gas Optimization**: Layer 2 gas estimation and fee management
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const arbWallet = await swapKit.getWallet(Chain.Arbitrum);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getArbitrumToolbox } from '@swapkit/toolboxes/evm';
+
+
+const arbToolbox = await getArbitrumToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 60, 0, 0, 0]
+});
+
+
+const arbToolbox = await getArbitrumToolbox({
+  signer: customArbitrumSigner,
+  provider: customArbitrumProvider
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Arbitrum Toolbox
+
+### Wallet Connection
+
+Connect to Arbitrum using Ethereum-compatible wallets:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Arbitrum], "your mnemonic phrase");
+
+await swapKit.connectBrowserWallet(Chain.Arbitrum);
+
+await swapKit.connectWalletConnect([Chain.Arbitrum]);
+
+await swapKit.connectLedger([Chain.Arbitrum]);
+```
+
+### Native ETH Transfers
+
+ETH on Arbitrum is the same as Ethereum ETH, just on Layer 2:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Arbitrum,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### ERC-20 Token Transfers
+
+Arbitrum supports the same ERC-20 standard with much lower gas costs:
+
+```typescript
+// @noErrorValidation
+
+const usdcTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Arbitrum,
+    symbol: "USDC",
+    address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const toolbox = await getArbitrumToolbox({ phrase: "..." });
+
+const transfers = [
+  {
+    to: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    token: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    amount: "100000000",
+  },
+  {
+    to: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    token: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    amount: "100000000000000000",
+  },
+];
+
+for (const transfer of transfers) {
+  const txHash = await toolbox.transfer({
+    recipient: transfer.to,
+    assetValue: AssetValue.from({
+      chain: Chain.Arbitrum,
+      address: transfer.token,
+      value: transfer.amount,
+    }),
+  });
+  console.log(`Transfer ${transfer.token}: ${txHash}`);
+}
+```
+
+### Smart Contract Interactions
+
+Arbitrum contracts work exactly like Ethereum but with lower costs:
+
+```typescript
+// @noErrorValidation
+
+const result = await toolbox.call({
+  contractAddress: "0x...",
+  abi: contractABI,
+  funcName: "balanceOf",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"],
+});
+
+const txHash = await toolbox.call({
+  contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+  abi: erc20ABI,
+  funcName: "transfer",
+  funcParams: [
+    "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    "1000000000000000000",
+  ],
+  txOverrides: {
+    gasLimit: "65000",
+    value: "0",
+  },
+});
+
+const complexDefiTx = await toolbox.call({
+  contractAddress: "0x...",
+  abi: protocolABI,
+  funcName: "multiStepOperation",
+  funcParams: [
+    /* complex parameters */
+  ],
+  txOverrides: {
+    gasLimit: "500000",
+  },
+});
+```
+
+### Gas Management on Layer 2
+
+Arbitrum has unique gas characteristics compared to Ethereum:
+
+```typescript
+// @noErrorValidation
+
+const gasInfo = await toolbox.getGasPrices();
+console.log({
+  slow: gasInfo.average,
+  standard: gasInfo.fast,
+  fast: gasInfo.fastest,
+});
+
+const txParams = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+  feeOptionKey: FeeOption.Fast,
+  gasLimit: "100000",
+});
+
+const eip1559Tx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+  maxFeePerGas: "2000000000",
+  maxPriorityFeePerGas: "100000000",
+});
+```
+
+## Cross-Chain Operations
+
+### Bridging ETH and Tokens
+
+```typescript
+// @noErrorValidation
+
+const bridgeQuote = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "0.1",
+  buyAsset: "ARB.ETH",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Arbitrum),
+});
+
+const bridgeTx = await swapKit.swap({
+  route: bridgeQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const usdcBridge = await swapKit.getQuote({
+  sellAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  sellAmount: "1000",
+  buyAsset: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Arbitrum),
+});
+```
+
+### Cross-Chain Swaps via THORChain
+
+```typescript
+// @noErrorValidation
+
+const arbToBtcQuote = await swapKit.getQuote({
+  sellAsset: "ARB.ARB-0x912CE59144191C1204E64559FE8253a0e49E6548",
+  sellAmount: "100",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Arbitrum),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+const crossChainSwap = await swapKit.swap({
+  route: arbToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const multiHopQuote = await swapKit.getQuote({
+  sellAsset: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  sellAmount: "500",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Arbitrum),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## Arbitrum DEX Integration
+
+Access native Arbitrum DEXs for optimal pricing:
+
+```typescript
+// @noErrorValidation
+
+const camelotQuote = await swapKit.getQuote({
+  sellAsset: "ARB.ETH",
+  sellAmount: "0.1",
+  buyAsset: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  senderAddress: swapKit.getAddress(Chain.Arbitrum),
+  recipientAddress: swapKit.getAddress(Chain.Arbitrum),
+  providers: ["CAMELOT"],
+});
+
+const traderjoeQuote = await swapKit.getQuote({
+  sellAsset: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  sellAmount: "100",
+  buyAsset: "ARB.ARB-0x912CE59144191C1204E64559FE8253a0e49E6548",
+  senderAddress: swapKit.getAddress(Chain.Arbitrum),
+  recipientAddress: swapKit.getAddress(Chain.Arbitrum),
+  providers: ["TRADERJOE_V2"],
+});
+
+const bestRateQuote = await swapKit.getQuote({
+  sellAsset: "ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+  sellAmount: "1",
+  buyAsset: "ARB.GMX-0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+  senderAddress: swapKit.getAddress(Chain.Arbitrum),
+  recipientAddress: swapKit.getAddress(Chain.Arbitrum),
+  providers: ["CAMELOT", "TRADERJOE_V2", "SUSHISWAP"],
+});
+```
+
+## Arbitrum-Specific Features
+
+### ARB Token Operations
+
+```typescript
+// @noErrorValidation
+
+const arbBalance = await toolbox.getBalance(
+  swapKit.getAddress(Chain.Arbitrum),
+  "0x912CE59144191C1204E64559FE8253a0e49E6548"
+);
+
+const stakeArb = await toolbox.call({
+  contractAddress: "0x...",
+  abi: stakingABI,
+  funcName: "stake",
+  funcParams: ["1000000000000000000"],
+});
+
+const governanceVote = await toolbox.call({
+  contractAddress: "0x...",
+  abi: governanceABI,
+  funcName: "vote",
+  funcParams: [proposalId, true],
+});
+```
+
+### Layer 2 Optimizations
+
+```typescript
+// @noErrorValidation
+
+const batchOperations = async () => {
+  const nonce = await toolbox.getTransactionCount(
+    swapKit.getAddress(Chain.Arbitrum)
+  );
+
+  const tx1 = await toolbox.buildTransaction({
+    recipient: "0x...",
+    amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+    nonce: nonce,
+  });
+
+  const tx2 = await toolbox.buildTransaction({
+    recipient: "0x...",
+    amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+    nonce: nonce + 1,
+  });
+
+  const [hash1, hash2] = await Promise.all([
+    toolbox.sendTransaction(tx1),
+    toolbox.sendTransaction(tx2),
+  ]);
+
+  return [hash1, hash2];
+};
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Arbitrum, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+import { JsonRpcProvider } from 'ethers';
+
+const arbitrumProvider = new JsonRpcProvider("https:
+const toolbox = await getArbitrumToolbox({
+  phrase: "your mnemonic",
+  provider: arbitrumProvider
+});
+```
+
+### Working with Arbitrum Goerli Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Arbitrum, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetTokens = {
+  USDC: "0x8FB1E3fC51F3b789dED7557E680551d93Ea9d892",
+  WETH: "0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3"
+};
+```
+
+## Error Handling
+
+Handle Arbitrum-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_evm_insufficient_funds":
+        console.error("Insufficient ETH for gas on Arbitrum");
+        break;
+      case "toolbox_evm_gas_estimation_failed":
+        console.error("Gas estimation failed - may be network congestion");
+        break;
+      case "network_arbitrum_sequencer_down":
+        console.error("Arbitrum sequencer is down, try again later");
+        break;
+      case "bridge_deposit_not_confirmed":
+        console.error("Bridge deposit not yet confirmed on L1");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Gas Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizedTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+  gasLimit: "21000",
+  maxFeePerGas: "1000000000",
+});
+
+const multicallData = [
+  { target: usdcAddress, callData: balanceOfCallData },
+  { target: arbAddress, callData: balanceOfCallData },
+  { target: wethAddress, callData: balanceOfCallData },
+];
+
+const results = await toolbox.multicall(multicallData);
+```
+
+### Transaction Bundling
+
+```typescript
+// @noErrorValidation
+
+const bundledOperations = async () => {
+  const approveTx = await toolbox.approve({
+    contractAddress: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    spenderAddress: "0x...",
+    amount: "1000000000",
+  });
+
+  await toolbox.waitForTransaction(approveTx);
+
+  const swapTx = await toolbox.call({
+    contractAddress: "0x...",
+    abi: routerABI,
+    funcName: "swapTokensForTokens",
+    funcParams: [
+      /* swap params */
+    ],
+  });
+
+  return { approveTx, swapTx };
+};
+```
+
+## Best Practices
+
+1. **Leverage Lower Gas Costs**:
+
+   ```typescript
+   const complexTx = await toolbox.call({
+     contractAddress: "0x...",
+     abi: complexABI,
+     funcName: "multiStepOperation",
+     funcParams: [
+       /* many parameters */
+     ],
+     gasLimit: "1000000",
+   });
+   ```
+
+2. **Use Native Arbitrum Tokens**:
+
+   ```typescript
+   const arbitrumTokens = {
+     USDC: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+     USDT: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+     ARB: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+   };
+   ```
+
+3. **Monitor Bridge Status**:
+
+   ```typescript
+   const bridgeStatus = await toolbox.getBridgeStatus(l1TxHash);
+   if (bridgeStatus.status === "confirmed") {
+   }
+   ```
+
+4. **Optimize for Fast Settlement**:
+
+   ```typescript
+   const fastTx = await swapKit.transfer({
+     recipient: "0x...",
+     assetValue: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+     feeOptionKey: FeeOption.Fastest,
+   });
+
+   const receipt = await toolbox.waitForTransaction(fastTx);
+   ```
+
+## Popular Arbitrum Protocols
+
+### GMX Integration
+
+```typescript
+// @noErrorValidation
+
+const gmxTrade = await toolbox.call({
+  contractAddress: "0x489ee077994B6658eAfA855C308275EAd8097C4A",
+  abi: gmxABI,
+  funcName: "createIncreasePosition",
+  funcParams: [
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "1000000000000000000",
+    0,
+    "2000000000000000000000",
+    true,
+    "1800000000000000000000",
+  ],
+});
+```
+
+### Radiant Capital Integration
+
+```typescript
+// @noErrorValidation
+
+const radiantSupply = await toolbox.call({
+  contractAddress: "0x2032b9A8e9F7e76768CA9271003d3e43E1616B1F",
+  abi: aaveV3ABI,
+  funcName: "supply",
+  funcParams: [
+    "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    "1000000000",
+    swapKit.getAddress(Chain.Arbitrum),
+    0,
+  ],
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Transaction underpriced"** - Even on L2:
+
+   ```typescript
+   const txParams = await toolbox.buildTransaction({
+     recipient: "0x...",
+     amount: AssetValue.from({ chain: Chain.Arbitrum, value: "0.1" }),
+     maxFeePerGas: "2000000000",
+   });
+   ```
+
+2. **Bridge delays**:
+
+   ```typescript
+   const checkBridgeStatus = async (l1TxHash: string) => {
+     const status = await toolbox.getBridgeDeposit(l1TxHash);
+     console.log(`Bridge status: ${status.status}`);
+     return status.status === "EXECUTED";
+   };
+   ```
+
+3. **RPC rate limiting**:
+
+   ```typescript
+
+   const providers = [
+     "https:
+     "https:
+     "https:
+   ];
+
+   SKConfig.setRpcUrl(Chain.Arbitrum, providers);
+   ```
+
+## API Reference Summary
+
+### Core Methods (Same as Ethereum)
+
+- `getBalance()` - Get ETH or token balance
+- `transfer()` - Send ETH or tokens
+- `buildTransaction()` - Construct transaction parameters
+- `call()` - Execute smart contract functions
+- `estimateCall()` - Estimate gas for contract calls
+
+### Layer 2 Specific Methods
+
+- `getBridgeStatus()` - Check bridge deposit status
+- `getBridgeDeposit()` - Get bridge transaction details
+- `estimateL1GasCost()` - Estimate L1 data cost portion
+
+### Gas Management
+
+- `getGasPrices()` - Get current L2 gas prices
+- `estimateGas()` - Estimate gas with L2 optimizations
+
+## Next Steps
+
+- Learn about other Layer 2 solutions like Optimism and Polygon
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Arbitrum
+- Check out [Ethereum Integration](/guides/chains/ethereum) for Layer 1 operations
+- Read about [Production Best Practices](/guides/production-best-practices)

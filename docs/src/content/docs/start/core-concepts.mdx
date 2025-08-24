@@ -3,7 +3,7 @@ title: Core Concepts
 description: Understanding SwapKit's fundamental building blocks - AssetValue, SwapKitNumber, and error handling
 ---
 
-import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code, Tabs, TabItem } from "@astrojs/starlight/components";
 
 Before diving into SwapKit's features, it's essential to understand its core concepts. These building blocks are used throughout the SDK and understanding them will make your development experience much smoother.
 
@@ -14,22 +14,19 @@ Before diving into SwapKit's features, it's essential to understand its core con
 ### Creating AssetValue
 
 ```typescript
-import { AssetValue } from '@swapkit/sdk';
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
 
-// From decimal value (what users see)
-const oneEth = AssetValue.from({ 
-  asset: 'ETH.ETH', 
-  value: 1 
+const oneEth = AssetValue.from({
+  asset: "ETH.ETH",
+  value: 1,
 });
 
-// From base units (wei, satoshi, etc.)
-const oneEthInWei = AssetValue.from({ 
-  asset: 'ETH.ETH', 
-  value: '1000000000000000000',
-  fromBaseDecimal: true 
+const oneEthInWei = AssetValue.from({
+  asset: "ETH.ETH",
+  value: "1000000000000000000",
+  fromBaseDecimal: true,
 });
-
-// Both create the same AssetValue representing 1 ETH
 ```
 
 ### Asset Notation
@@ -37,18 +34,17 @@ const oneEthInWei = AssetValue.from({
 SwapKit uses a consistent format for identifying assets:
 
 ```typescript
-// Native assets: CHAIN.SYMBOL
-'ETH.ETH'         // Native Ethereum
-'BTC.BTC'         // Native Bitcoin
-'AVAX.AVAX'       // Native Avalanche
+// @noErrorValidation
 
-// Tokens: CHAIN.SYMBOL-CONTRACT
-'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'     // USDC on Ethereum
-'AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E'    // USDC on Avalanche
+"ETH.ETH";
+"BTC.BTC";
+"AVAX.AVAX";
 
-// Synthetic assets (THORChain)
-'ETH/ETH'         // Synthetic ETH
-'BTC/BTC'         // Synthetic BTC
+"ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+"AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E";
+
+"ETH/ETH";
+"BTC/BTC";
 ```
 
 ### Arithmetic Operations
@@ -56,20 +52,17 @@ SwapKit uses a consistent format for identifying assets:
 AssetValue provides safe arithmetic operations:
 
 ```typescript
-const amount1 = AssetValue.from({ asset: 'ETH.ETH', value: 1.5 });
-const amount2 = AssetValue.from({ asset: 'ETH.ETH', value: 0.5 });
+// @noErrorValidation
+const amount1 = AssetValue.from({ asset: "ETH.ETH", value: 1.5 });
+const amount2 = AssetValue.from({ asset: "ETH.ETH", value: 0.5 });
 
-// Addition
-const sum = amount1.add(amount2); // 2 ETH
+const sum = amount1.add(amount2);
 
-// Subtraction
-const difference = amount1.sub(amount2); // 1 ETH
+const difference = amount1.sub(amount2);
 
-// Multiplication
-const doubled = amount1.mul(2); // 3 ETH
+const doubled = amount1.mul(2);
 
-// Division
-const halved = amount1.div(2); // 0.75 ETH
+const halved = amount1.div(2);
 ```
 
 ### Comparisons
@@ -77,14 +70,15 @@ const halved = amount1.div(2); // 0.75 ETH
 Compare AssetValue instances safely:
 
 ```typescript
-const amount1 = AssetValue.from({ asset: 'BTC.BTC', value: 1 });
-const amount2 = AssetValue.from({ asset: 'BTC.BTC', value: 0.5 });
+// @noErrorValidation
+const amount1 = AssetValue.from({ asset: "BTC.BTC", value: 1 });
+const amount2 = AssetValue.from({ asset: "BTC.BTC", value: 0.5 });
 
-amount1.gt(amount2);   // true - greater than
-amount1.gte(amount2);  // true - greater than or equal
-amount1.lt(amount2);   // false - less than
-amount1.lte(amount2);  // false - less than or equal
-amount1.eq(amount2);   // false - equal
+amount1.gt(amount2);
+amount1.gte(amount2);
+amount1.lt(amount2);
+amount1.lte(amount2);
+amount1.eq(amount2);
 ```
 
 ### Formatting
@@ -92,21 +86,18 @@ amount1.eq(amount2);   // false - equal
 Format values for display:
 
 ```typescript
-const btcAmount = AssetValue.from({ asset: 'BTC.BTC', value: 0.00123456 });
+// @noErrorValidation
+const btcAmount = AssetValue.from({ asset: "BTC.BTC", value: 0.00123456 });
 
-// Format with significant digits
-btcAmount.toSignificant(4); // "0.001235"
+btcAmount.toSignificant(4);
 
-// Format as currency
-btcAmount.toCurrency('USD', 45000); // "$55.56"
+btcAmount.toCurrency("USD", 45000);
 
-// Format with abbreviation
-const largeAmount = AssetValue.from({ asset: 'ETH.ETH', value: 1234567 });
-largeAmount.toAbbreviation(); // "1.23M"
+const largeAmount = AssetValue.from({ asset: "ETH.ETH", value: 1234567 });
+largeAmount.toAbbreviation();
 
-// Get raw values
-btcAmount.getValue('string'); // "0.00123456"
-btcAmount.getBaseValue('string'); // "123456" (in satoshis)
+btcAmount.getValue("string");
+btcAmount.getBaseValue("string");
 ```
 
 ### Type Checks
@@ -114,16 +105,17 @@ btcAmount.getBaseValue('string'); // "123456" (in satoshis)
 Check asset properties:
 
 ```typescript
-const ethAmount = AssetValue.from({ asset: 'ETH.ETH', value: 1 });
-const usdcAmount = AssetValue.from({ 
-  asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 
-  value: 100 
+// @noErrorValidation
+const ethAmount = AssetValue.from({ asset: "ETH.ETH", value: 1 });
+const usdcAmount = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: 100,
 });
-const synthEth = AssetValue.from({ asset: 'ETH/ETH', value: 1 });
+const synthEth = AssetValue.from({ asset: "ETH/ETH", value: 1 });
 
-ethAmount.isGasAsset();   // true - native asset
-usdcAmount.isGasAsset();  // false - token
-synthEth.isSynthetic();   // true - synthetic asset
+ethAmount.isGasAsset();
+usdcAmount.isGasAsset();
+synthEth.isSynthetic();
 ```
 
 ## SwapKitNumber
@@ -131,20 +123,18 @@ synthEth.isSynthetic();   // true - synthetic asset
 `SwapKitNumber` provides utilities for safe numeric operations with BigInt support:
 
 ```typescript
-import { SwapKitNumber } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitNumber } from "@swapkit/sdk";
 
-// Create from various inputs
 const num1 = new SwapKitNumber(123.456);
-const num2 = new SwapKitNumber('789.012');
+const num2 = new SwapKitNumber("789.012");
 const num3 = new SwapKitNumber({ value: 100, decimal: 18 });
 
-// Arithmetic operations
 const sum = num1.add(num2);
 const product = num1.mul(num2);
 
-// Formatting
-num1.toSignificant(4); // "123.5"
-num1.toFixed(2); // "123.46"
+num1.toSignificant(4);
+num1.toFixed(2);
 ```
 
 ## Chain Types
@@ -152,37 +142,34 @@ num1.toFixed(2); // "123.46"
 SwapKit uses consistent chain identifiers across the entire SDK:
 
 ```typescript
-import { Chain } from '@swapkit/sdk';
+// @noErrorValidation
+import { Chain } from "@swapkit/sdk";
 
-// EVM Chains
-Chain.Ethereum         // "ETH"
-Chain.Avalanche       // "AVAX"
-Chain.BinanceSmartChain // "BSC"
-Chain.Polygon         // "MATIC"
-Chain.Arbitrum        // "ARB"
-Chain.Optimism        // "OP"
-Chain.Base            // "BASE"
+Chain.Ethereum;
+Chain.Avalanche;
+Chain.BinanceSmartChain;
+Chain.Polygon;
+Chain.Arbitrum;
+Chain.Optimism;
+Chain.Base;
 
-// UTXO Chains
-Chain.Bitcoin         // "BTC"
-Chain.BitcoinCash     // "BCH"
-Chain.Litecoin        // "LTC"
-Chain.Dogecoin        // "DOGE"
-Chain.Dash            // "DASH"
-Chain.Zcash           // "ZEC"
+Chain.Bitcoin;
+Chain.BitcoinCash;
+Chain.Litecoin;
+Chain.Dogecoin;
+Chain.Dash;
+Chain.Zcash;
 
-// Cosmos Chains
-Chain.Cosmos          // "GAIA"
-Chain.THORChain       // "THOR"
-Chain.Maya            // "MAYA"
-Chain.Kujira          // "KUJI"
+Chain.Cosmos;
+Chain.THORChain;
+Chain.Maya;
+Chain.Kujira;
 
-// Other Chains
-Chain.Solana          // "SOL"
-Chain.Polkadot        // "DOT"
-Chain.Chainflip       // "FLIP"
-Chain.Radix           // "XRD"
-Chain.Ripple          // "XRP"
+Chain.Solana;
+Chain.Polkadot;
+Chain.Chainflip;
+Chain.Radix;
+Chain.Ripple;
 ```
 
 ## Error Handling
@@ -194,16 +181,16 @@ SwapKit uses a typed error system for better debugging:
 The base error class with additional context:
 
 ```typescript
-import { SwapKitError } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
 
 try {
   await swapKit.swap({ route });
 } catch (error) {
   if (error instanceof SwapKitError) {
-    // Access error details
-    console.error('Error:', error.message);
-    console.error('Code:', error.code);
-    console.error('Details:', error.details);
+    console.error("Error:", error.message);
+    console.error("Code:", error.code);
+    console.error("Details:", error.details);
   }
 }
 ```
@@ -213,25 +200,23 @@ try {
 SwapKit uses standardized error codes:
 
 ```typescript
-// Wallet errors
-"wallet_not_found"
-"wallet_connection_failed"
-"wallet_insufficient_funds"
+// @noErrorValidation
 
-// Transaction errors
-"transaction_failed"
-"transaction_rejected"
-"transaction_timeout"
+"wallet_not_found";
+"wallet_connection_failed";
+"wallet_insufficient_funds";
 
-// API errors
-"api_request_failed"
-"api_rate_limit"
-"api_invalid_response"
+"transaction_failed";
+"transaction_rejected";
+"transaction_timeout";
 
-// Validation errors
-"invalid_address"
-"invalid_amount"
-"invalid_chain"
+"api_request_failed";
+"api_rate_limit";
+"api_invalid_response";
+
+"invalid_address";
+"invalid_amount";
+"invalid_chain";
 ```
 
 ### Error Context
@@ -239,13 +224,14 @@ SwapKit uses standardized error codes:
 Errors include helpful context:
 
 ```typescript
+// @noErrorValidation
 catch (error) {
   if (error instanceof SwapKitError) {
-    // Error might include:
-    // - Transaction hash
-    // - Chain information
-    // - Wallet address
-    // - API response
+
+
+
+
+
     console.log('Context:', error.info);
   }
 }
@@ -256,29 +242,30 @@ catch (error) {
 SwapKit supports various wallet types through the `WalletOption` enum:
 
 ```typescript
-import { WalletOption } from '@swapkit/sdk';
+// @noErrorValidation
+import { WalletOption } from "@swapkit/sdk";
 
-WalletOption.METAMASK
-WalletOption.COINBASE
-WalletOption.OKX
-WalletOption.BITGET
-WalletOption.EXODUS
-WalletOption.KEPLR
-WalletOption.LEAP
-WalletOption.COSMOSTATION
-WalletOption.LEDGER
-WalletOption.TREZOR
-WalletOption.KEEPKEY
-WalletOption.WALLETCONNECT
-WalletOption.KEYSTORE
-WalletOption.POLKADOTJS
-WalletOption.TALISMAN
-WalletOption.PHANTOM
-WalletOption.ONEKEY
-WalletOption.RADIX_MOBILE
-WalletOption.BRAVE
-WalletOption.TRUSTWALLET
-WalletOption.XDEFI
+WalletOption.METAMASK;
+WalletOption.COINBASE;
+WalletOption.OKX;
+WalletOption.BITGET;
+WalletOption.EXODUS;
+WalletOption.KEPLR;
+WalletOption.LEAP;
+WalletOption.COSMOSTATION;
+WalletOption.LEDGER;
+WalletOption.TREZOR;
+WalletOption.KEEPKEY;
+WalletOption.WALLETCONNECT;
+WalletOption.KEYSTORE;
+WalletOption.POLKADOTJS;
+WalletOption.TALISMAN;
+WalletOption.PHANTOM;
+WalletOption.ONEKEY;
+WalletOption.RADIX_MOBILE;
+WalletOption.BRAVE;
+WalletOption.TRUSTWALLET;
+WalletOption.XDEFI;
 ```
 
 ## Fee Options
@@ -286,18 +273,17 @@ WalletOption.XDEFI
 Control transaction fees with the `FeeOption` enum:
 
 ```typescript
-import { FeeOption } from '@swapkit/sdk';
+// @noErrorValidation
+import { FeeOption } from "@swapkit/sdk";
 
-// Available fee options
-FeeOption.Average  // Standard fee
-FeeOption.Fast     // 1.5x standard
-FeeOption.Fastest  // 2x standard
+FeeOption.Average;
+FeeOption.Fast;
+FeeOption.Fastest;
 
-// Usage
 await swapKit.transfer({
   assetValue,
   recipient,
-  feeOptionKey: FeeOption.Fast
+  feeOptionKey: FeeOption.Fast,
 });
 ```
 
@@ -306,14 +292,15 @@ await swapKit.transfer({
 SwapKit integrates with multiple swap providers:
 
 ```typescript
-import { ProviderName } from '@swapkit/sdk';
+// @noErrorValidation
+import { ProviderName } from "@swapkit/sdk";
 
-ProviderName.THORCHAIN
-ProviderName.CHAINFLIP
-ProviderName.ONEINCH
-ProviderName.UNISWAP
-ProviderName.SUSHISWAP
-ProviderName.PANCAKESWAP
+ProviderName.THORCHAIN;
+ProviderName.CHAINFLIP;
+ProviderName.ONEINCH;
+ProviderName.UNISWAP;
+ProviderName.SUSHISWAP;
+ProviderName.PANCAKESWAP;
 ```
 
 ## Best Practices
@@ -321,40 +308,40 @@ ProviderName.PANCAKESWAP
 ### 1. Always Use AssetValue for Amounts
 
 ```typescript
-// ✅ Good
-const amount = AssetValue.from({ asset: 'ETH.ETH', value: 1 });
+// @noErrorValidation
+
+const amount = AssetValue.from({ asset: "ETH.ETH", value: 1 });
 await swapKit.transfer({ assetValue: amount, recipient });
 
-// ❌ Bad - Don't use raw numbers
 await swapKit.transfer({ value: 1, recipient });
 ```
 
 ### 2. Handle Decimal Precision
 
 ```typescript
-// AssetValue handles decimals automatically
-const usdcAmount = AssetValue.from({ 
-  asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  value: 100 // This is 100 USDC, not 100 * 10^6
+// @noErrorValidation
+
+const usdcAmount = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: 100,
 });
 
-// For base units, specify fromBaseDecimal
 const weiAmount = AssetValue.from({
-  asset: 'ETH.ETH',
-  value: '1000000000000000000',
-  fromBaseDecimal: true // This is 1 ETH in wei
+  asset: "ETH.ETH",
+  value: "1000000000000000000",
+  fromBaseDecimal: true,
 });
 ```
 
 ### 3. Compare Assets Safely
 
 ```typescript
-// ✅ Good - Use AssetValue comparison methods
+// @noErrorValidation
+
 if (balance.gte(requiredAmount)) {
   await performTransaction();
 }
 
-// ❌ Bad - Don't compare raw values
 if (Number(balance.getValue()) >= Number(requiredAmount.getValue())) {
   await performTransaction();
 }
@@ -363,20 +350,45 @@ if (Number(balance.getValue()) >= Number(requiredAmount.getValue())) {
 ### 4. Format for Display
 
 ```typescript
-// Use formatting methods for UI display
-const btcBalance = AssetValue.from({ asset: 'BTC.BTC', value: 0.00123456 });
+// @noErrorValidation
 
-// For display
-const displayValue = btcBalance.toSignificant(6); // "0.00123456"
+const btcBalance = AssetValue.from({ asset: "BTC.BTC", value: 0.00123456 });
 
-// For USD value
-const usdValue = btcBalance.toCurrency('USD', btcPrice); // "$55.56"
+const displayValue = btcBalance.toSignificant(6);
+
+const usdValue = btcBalance.toCurrency("USD", btcPrice);
 ```
 
 ## Next Steps
 
-Now that you understand the core concepts:
+Now that you understand SwapKit's core concepts, you're ready to build your first application:
 
-1. Set up your [Configuration](/start/configuration)
-2. Learn about [Toolbox Usage](/start/toolbox-usage) for direct chain operations
-3. Start [Building Your First App](/start/getting-started)
+<CardGrid>
+  <Card title="🔧 Configuration Setup" icon="setting">
+    Configure API keys, RPC URLs, and production settings for optimal
+    performance. [Configure SwapKit →](/start/configuration)
+  </Card>
+
+  <Card title="⚡ Essential Actions" icon="star">
+    Learn the core functionality every SwapKit application needs to implement.
+    [Connect Wallets →](/guides/actions/connect-wallet)
+  </Card>
+
+  <Card title="🛠️ Direct Chain Operations" icon="code">
+    Use toolboxes for low-level blockchain operations and custom integrations.
+    [Toolbox Usage →](/start/toolbox-usage)
+  </Card>
+
+  <Card title="📚 API Reference" icon="document">
+    Explore the complete SwapKit API with detailed method documentation. [API
+    Reference →](/guides/api-reference)
+  </Card>
+</CardGrid>
+
+### Learning Path Recommendations
+
+**For beginners**: Start with [Essential Actions](/guides/actions/connect-wallet) to learn wallet connections and basic transactions.
+
+**For experienced developers**: Jump to [Advanced Features](/guides/advanced-features) or explore specific [chain integrations](/guides/chains/ethereum).
+
+**For production deployments**: Review [Best Practices](/guides/production-best-practices) and [Security Guidelines](/guides/security).

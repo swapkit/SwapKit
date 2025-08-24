@@ -1,0 +1,663 @@
+---
+title: Bitcoin Integration
+description: Complete guide to integrating Bitcoin with SwapKit SDK for UTXO operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Bitcoin integration with SwapKit, including wallet connections, UTXO management, cross-chain swaps, and Bitcoin-specific operations.
+
+## Overview
+
+Bitcoin is the first and most valuable cryptocurrency, using a UTXO (Unspent Transaction Output) model. SwapKit provides comprehensive Bitcoin support through:
+
+- **Bitcoin Toolbox**: UTXO management and transaction construction
+- **Cross-Chain Swaps**: Seamless swaps with other cryptocurrencies via THORChain
+- **Multi-Wallet Support**: Compatible with hardware wallets and software wallets
+- **Fee Optimization**: Dynamic fee estimation based on network conditions
+- **Address Formats**: Support for Legacy, SegWit, and Native SegWit addresses
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const btcWallet = await swapKit.getWallet(Chain.Bitcoin);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getBitcoinToolbox } from '@swapkit/toolboxes/utxo';
+
+
+const btcToolbox = await getBitcoinToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [84, 0, 0, 0, 0]
+});
+
+
+const btcToolbox = await getBitcoinToolbox({
+  signer: customBitcoinSigner,
+  network: "mainnet"
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Bitcoin Toolbox
+
+### Wallet Connection
+
+Connect to Bitcoin using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Bitcoin], "your mnemonic phrase");
+
+await swapKit.connectLedger([Chain.Bitcoin]);
+
+await swapKit.connectTrezor([Chain.Bitcoin]);
+
+await swapKit.connectKeepKey([Chain.Bitcoin]);
+```
+
+### Address Generation
+
+Bitcoin supports multiple address formats:
+
+```typescript
+// @noErrorValidation
+
+const addresses = {
+  nativeSegwit: swapKit.getAddress(Chain.Bitcoin),
+
+  legacy: await btcToolbox.getAddress(0, false, "legacy"),
+
+  segwit: await btcToolbox.getAddress(0, false, "segwit"),
+};
+
+console.log("Bitcoin addresses:", addresses);
+```
+
+### Bitcoin Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({
+    chain: Chain.Bitcoin,
+    value: "0.001",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Bitcoin transaction hash: ${txHash}`);
+
+const customFeeTx = await btcToolbox.transfer({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.001" }),
+  feeRate: 20,
+});
+```
+
+### UTXO Management
+
+Bitcoin uses UTXOs (Unspent Transaction Outputs) instead of account balances:
+
+```typescript
+// @noErrorValidation
+
+const utxos = await btcToolbox.getUTXOs(
+  "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+);
+
+console.log("Available UTXOs:");
+utxos.forEach((utxo, index) => {
+  console.log(
+    `UTXO ${index}: ${utxo.value} sats (${utxo.txHash}:${utxo.index})`
+  );
+});
+
+const txParams = await btcToolbox.buildTransaction({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.001" }),
+  feeRate: 15,
+  utxos: utxos.slice(0, 2),
+});
+
+console.log(`Transaction size: ${txParams.size} bytes`);
+console.log(`Transaction fee: ${txParams.fee} sats`);
+```
+
+### Fee Estimation
+
+Bitcoin fees are dynamic based on network congestion:
+
+```typescript
+// @noErrorValidation
+
+const feeRates = await btcToolbox.getFeeRates();
+console.log({
+  slow: feeRates.average,
+  standard: feeRates.fast,
+  fast: feeRates.fastest,
+});
+
+const feeEstimate = await btcToolbox.estimateTransactionFee({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.01" }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Estimated fee: ${feeEstimate.toNumber()} sats`);
+
+const feePriorities = [FeeOption.Average, FeeOption.Fast, FeeOption.Fastest];
+for (const priority of feePriorities) {
+  const fee = await btcToolbox.estimateTransactionFee({
+    recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.01" }),
+    feeOptionKey: priority,
+  });
+  console.log(`${priority} fee: ${fee.toNumber()} sats`);
+}
+```
+
+### Transaction History
+
+```typescript
+// @noErrorValidation
+
+const transactions = await btcToolbox.getTransactionHistory(
+  "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  0,
+  10
+);
+
+console.log("Recent transactions:");
+transactions.forEach((tx) => {
+  console.log(`${tx.hash}: ${tx.amount} BTC (${tx.type})`);
+  console.log(`  Block: ${tx.blockHeight}, Confirmations: ${tx.confirmations}`);
+  console.log(`  Date: ${new Date(tx.date)}`);
+});
+
+const txDetails = await btcToolbox.getTransaction(
+  "abcd1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd"
+);
+
+console.log("Transaction details:", {
+  hash: txDetails.hash,
+  inputs: txDetails.inputs.length,
+  outputs: txDetails.outputs.length,
+  fee: txDetails.fee,
+  confirmations: txDetails.confirmations,
+});
+```
+
+## Cross-Chain Swaps
+
+Bitcoin is fully supported in THORChain cross-chain swaps:
+
+```typescript
+// @noErrorValidation
+
+const btcToEthQuote = await swapKit.getQuote({
+  sellAsset: "BTC.BTC",
+  sellAmount: "0.1",
+  buyAsset: "ETH.ETH",
+  senderAddress: swapKit.getAddress(Chain.Bitcoin),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+console.log("BTC -> ETH quote:", {
+  expectedOutput: btcToEthQuote.expectedOutput,
+  fees: btcToEthQuote.fees,
+  timeEstimate: btcToEthQuote.timeEstimate,
+});
+
+const swapTx = await swapKit.swap({
+  route: btcToEthQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const btcToUsdcQuote = await swapKit.getQuote({
+  sellAsset: "BTC.BTC",
+  sellAmount: "0.05",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Bitcoin),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const btcToRuneQuote = await swapKit.getQuote({
+  sellAsset: "BTC.BTC",
+  sellAmount: "0.01",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Bitcoin),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## Advanced Bitcoin Features
+
+### Multi-Signature Transactions
+
+```typescript
+// @noErrorValidation
+
+const publicKeys = [
+  "03a34b99f22c790c4e36b2b3c2c35a36db06226e41c692fc82b8b56ac1c540c5bd",
+  "03b6d8a48ac51b4c5d0c83b6e0b5e3f4d7e8c9a1b2c3d4e5f6a7b8c9d0e1f2a3b4",
+  "03c7e9f5ac2cd61e8a9b7f4e1d2c3b4a5968a7d6c5b4a398f2e1d7c6b5a49382f1",
+];
+
+const multiSigAddress = await btcToolbox.createMultiSigAddress(publicKeys, 2);
+
+console.log("Multi-sig address:", multiSigAddress);
+
+const partialTx = await btcToolbox.buildMultiSigTransaction({
+  multisigAddress: multiSigAddress,
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.005" }),
+  feeRate: 20,
+});
+
+const signedTx1 = await btcToolbox.signTransaction(partialTx, 0);
+
+const fullySignedTx = await btcToolbox.signTransaction(signedTx1, 1);
+
+const multiSigTxHash = await btcToolbox.broadcastTransaction(fullySignedTx);
+```
+
+### SegWit Optimization
+
+```typescript
+// @noErrorValidation
+
+const nativeSegwitTx = await btcToolbox.transfer({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.01" }),
+  feeRate: 15,
+  addressFormat: "nativeSegwit",
+});
+
+const legacySize = await btcToolbox.estimateTransactionSize({
+  inputs: 2,
+  outputs: 2,
+  addressFormat: "legacy",
+});
+
+const segwitSize = await btcToolbox.estimateTransactionSize({
+  inputs: 2,
+  outputs: 2,
+  addressFormat: "nativeSegwit",
+});
+
+console.log(`Legacy tx size: ${legacySize} bytes`);
+console.log(`SegWit tx size: ${segwitSize} bytes`);
+console.log(
+  `Size reduction: ${(((legacySize - segwitSize) / legacySize) * 100).toFixed(
+    1
+  )}%`
+);
+```
+
+### Custom Scripts
+
+```typescript
+// @noErrorValidation
+
+const scriptHash = "a914b7fcb4e6fb3c3c2dbf55e9e8a28d1e8b5c9a3b2187";
+
+const p2shTx = await btcToolbox.transfer({
+  recipient: scriptHash,
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.002" }),
+  feeRate: 20,
+  scriptType: "p2sh",
+});
+
+const timelockTx = await btcToolbox.buildTransaction({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.001" }),
+  feeRate: 15,
+  lockTime: 750000,
+});
+```
+
+## Network Configuration
+
+### Custom Node Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Bitcoin, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customBitcoinRpc = "https:
+SKConfig.setRpcUrl(Chain.Bitcoin, customBitcoinRpc);
+
+
+const btcToolbox = await getBitcoinToolbox({
+  phrase: "your mnemonic",
+  network: "mainnet",
+  apiUrl: "https:
+});
+```
+
+### Working with Bitcoin Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Bitcoin, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetToolbox = await getBitcoinToolbox({
+  phrase: "your mnemonic",
+  network: "testnet",
+  derivationPath: [84, 1, 0, 0, 0]
+});
+
+
+const testnetAddress = testnetToolbox.getAddress();
+console.log("Testnet address:", testnetAddress);
+```
+
+## Error Handling
+
+Handle Bitcoin-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_bitcoin_insufficient_funds":
+        console.error("Insufficient Bitcoin balance");
+        break;
+      case "toolbox_bitcoin_fee_too_high":
+        console.error("Transaction fee exceeds amount");
+        break;
+      case "toolbox_bitcoin_invalid_address":
+        console.error("Invalid Bitcoin address format");
+        break;
+      case "toolbox_bitcoin_utxo_not_found":
+        console.error("Required UTXO not found or spent");
+        break;
+      case "toolbox_bitcoin_network_error":
+        console.error("Bitcoin network error:", error.cause);
+        break;
+      case "toolbox_bitcoin_transaction_too_large":
+        console.error("Transaction size exceeds limits");
+        break;
+      default:
+        console.error("Unknown Bitcoin error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### UTXO Consolidation
+
+```typescript
+// @noErrorValidation
+
+const consolidateUTXOs = async () => {
+  const address = swapKit.getAddress(Chain.Bitcoin);
+  const utxos = await btcToolbox.getUTXOs(address);
+
+  const smallUTXOs = utxos.filter((utxo) => utxo.value < 100000);
+
+  if (smallUTXOs.length > 10) {
+    console.log(`Consolidating ${smallUTXOs.length} small UTXOs`);
+
+    const consolidationTx = await btcToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({
+        chain: Chain.Bitcoin,
+        value: (
+          smallUTXOs.reduce((sum, utxo) => sum + utxo.value, 0) / 100000000
+        ).toString(),
+      }),
+      feeRate: 5,
+      utxos: smallUTXOs,
+    });
+
+    console.log("Consolidation transaction:", consolidationTx);
+  }
+};
+```
+
+### Fee Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizeFee = async (
+  amount: string,
+  urgency: "low" | "medium" | "high"
+) => {
+  const feeRates = await btcToolbox.getFeeRates();
+
+  let selectedFeeRate: number;
+  switch (urgency) {
+    case "low":
+      selectedFeeRate = Math.min(feeRates.average, 10);
+      break;
+    case "medium":
+      selectedFeeRate = feeRates.fast;
+      break;
+    case "high":
+      selectedFeeRate = feeRates.fastest;
+      break;
+  }
+
+  const amountSats = parseFloat(amount) * 100000000;
+  if (amountSats > 10000000) {
+    selectedFeeRate = Math.max(selectedFeeRate, feeRates.fast);
+  }
+
+  return selectedFeeRate;
+};
+
+const optimalFeeRate = await optimizeFee("0.05", "medium");
+const optimizedTx = await btcToolbox.transfer({
+  recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.05" }),
+  feeRate: optimalFeeRate,
+});
+```
+
+## Best Practices
+
+1. **Use Native SegWit Addresses**:
+
+   ```typescript
+   const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+   const legacy = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+   ```
+
+2. **Monitor Network Congestion**:
+
+   ```typescript
+   const feeRates = await btcToolbox.getFeeRates();
+
+   if (feeRates.fast > 50) {
+     console.warn("Bitcoin network congested, consider waiting");
+   }
+
+   if (feeRates.average < 20) {
+     console.log("Good time for low-fee transactions");
+   }
+   ```
+
+3. **Validate Addresses**:
+
+   ```typescript
+   import { validateBitcoinAddress } from "@swapkit/toolboxes/utxo";
+
+   const isValid = validateBitcoinAddress(recipient);
+   if (!isValid) {
+     throw new Error("Invalid Bitcoin address");
+   }
+   ```
+
+4. **Handle Confirmation Times**:
+
+   ```typescript
+   const handleConfirmations = (feeRate: number) => {
+     if (feeRate < 5) return "6+ hours";
+     if (feeRate < 20) return "1-6 hours";
+     if (feeRate < 50) return "10-60 minutes";
+     return "10-30 minutes";
+   };
+
+   const estimatedTime = handleConfirmations(20);
+   console.log(`Expected confirmation time: ${estimatedTime}`);
+   ```
+
+## Address Validation
+
+```typescript
+// @noErrorValidation
+import { validateBitcoinAddress } from "@swapkit/toolboxes/utxo";
+
+const addresses = [
+  "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+  "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+];
+
+addresses.forEach((address) => {
+  const isValid = validateBitcoinAddress(address);
+  const format = detectAddressFormat(address);
+  console.log(`${address}: ${isValid ? "Valid" : "Invalid"} (${format})`);
+});
+
+const detectAddressFormat = (address: string): string => {
+  if (address.startsWith("bc1")) return "Native SegWit";
+  if (address.startsWith("3")) return "SegWit (P2SH)";
+  if (address.startsWith("1")) return "Legacy";
+  return "Unknown";
+};
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Insufficient funds for fee**:
+
+   ```typescript
+   const balance = await btcToolbox.getBalance(address);
+   const fee = await btcToolbox.estimateTransactionFee({
+     recipient: "bc1q...",
+     assetValue: AssetValue.from({ chain: Chain.Bitcoin, value: "0.01" }),
+     feeOptionKey: FeeOption.Fast,
+   });
+
+   if (balance.lte(fee)) {
+     console.error("Insufficient funds to cover transaction fee");
+   }
+   ```
+
+2. **Transaction stuck in mempool**:
+
+   ```typescript
+   const checkTxStatus = async (txHash: string) => {
+     const tx = await btcToolbox.getTransaction(txHash);
+     if (tx.confirmations === 0) {
+       console.log("Transaction still in mempool");
+     }
+   };
+   ```
+
+3. **Address format mismatch**:
+
+   ```typescript
+   const validateCompatibility = (
+     senderFormat: string,
+     recipientFormat: string
+   ) => {
+     console.log(`Sending from ${senderFormat} to ${recipientFormat}`);
+     if (senderFormat === "legacy" && recipientFormat === "nativeSegwit") {
+       console.warn("Consider upgrading sender to SegWit for lower fees");
+     }
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get Bitcoin balance in BTC
+- `transfer()` - Send Bitcoin with automatic UTXO selection
+- `buildTransaction()` - Construct transaction with custom parameters
+- `getUTXOs()` - Fetch unspent transaction outputs
+- `getTransactionHistory()` - Get transaction history
+
+### Fee Management
+
+- `getFeeRates()` - Get current network fee rates
+- `estimateTransactionFee()` - Estimate fee for transaction
+- `estimateTransactionSize()` - Estimate transaction size in bytes
+
+### Address Methods
+
+- `getAddress()` - Generate address for different formats
+- `validateAddress()` - Validate Bitcoin address format
+- `createMultiSigAddress()` - Create multi-signature address
+
+### Transaction Methods
+
+- `getTransaction()` - Get transaction details by hash
+- `broadcastTransaction()` - Broadcast signed transaction
+- `signTransaction()` - Sign transaction with private key
+
+## Next Steps
+
+- Learn about other [Bitcoin family chains](/guides/chains/bitcoin-cash) like Bitcoin Cash and Litecoin
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Bitcoin
+- Check out [THORChain Features](/guides/thorchain-features) for advanced Bitcoin DeFi
+- Read about [Production Best Practices](/guides/production-best-practices)

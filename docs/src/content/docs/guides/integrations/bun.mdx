@@ -2,7 +2,8 @@
 title: Bun + React
 description: A guide to integrate SwapKit with Bun and React applications.
 ---
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 This guide will help you integrate SwapKit into your Bun-powered React application. Bun is a fast JavaScript runtime that includes a bundler, test runner, and package manager.
 
@@ -12,25 +13,11 @@ Install SwapKit:
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add @swapkit/sdk
-    ```
+    ```bash bun add @swapkit/sdk ```
   </TabItem>
-  <TabItem label="pnpm">
-    ```bash
-    pnpm add @swapkit/sdk
-    ```
-  </TabItem>
-  <TabItem label="npm">
-    ```bash
-    npm install @swapkit/sdk
-    ```
-  </TabItem>
-  <TabItem label="yarn">
-    ```bash
-    yarn add @swapkit/sdk
-    ```
-  </TabItem>
+  <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
+  <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
+  <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
 </Tabs>
 
 ## Project Setup
@@ -57,8 +44,8 @@ env = "BUN_PUBLIC_*"
 Create a server file to serve your React application:
 
 ```tsx
-// @noErrorValidation
-// src/server.tsx
+
+
 import { serve } from "bun";
 
 const PORT = process.env.PORT || 3000;
@@ -68,22 +55,22 @@ serve({
   async fetch(req) {
     const url = new URL(req.url);
 
-    // Serve static files
+
     if (url.pathname === "/") {
       return new Response(Bun.file("pages/index.html"));
     }
 
-    // Handle API routes if needed
+
     if (url.pathname.startsWith("/api/")) {
-      // Add your API logic here
+
     }
 
-    // Default 404
+
     return new Response("Not Found", { status: 404 });
   },
 });
 
-console.log(`Server running at http://localhost:${PORT}`);
+console.log(`Server running at http:
 ```
 
 ## React Application Setup
@@ -91,16 +78,14 @@ console.log(`Server running at http://localhost:${PORT}`);
 Create your main React application with SwapKit:
 
 ```tsx
-// @noErrorValidation
-// src/App.tsx
-import { useState } from 'react';
-import { createSwapKit, Chain, WalletOption } from '@swapkit/sdk';
+import { useState } from "react";
+import { createSwapKit, Chain, WalletOption } from "@swapkit/sdk";
 
 const swapKit = createSwapKit();
 
 export function App() {
   const [isConnected, setIsConnected] = useState(false);
-  const [address, setAddress] = useState<string>('');
+  const [address, setAddress] = useState<string>("");
 
   const connectWallet = async () => {
     try {
@@ -110,14 +95,14 @@ export function App() {
       const ethAddress = await swapKit.getAddress(Chain.Ethereum);
       setAddress(ethAddress);
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error);
     }
   };
 
   const disconnectWallet = () => {
     swapKit.disconnectWallet(Chain.Ethereum);
     setIsConnected(false);
-    setAddress('');
+    setAddress("");
   };
 
   return (
@@ -151,13 +136,11 @@ export function App() {
 Create the entry point for your React application:
 
 ```tsx
-// @noErrorValidation
-// pages/index.tsx
-import { createRoot } from 'react-dom/client';
-import { App } from '../src/App';
-import '../styles/index.css';
+import { createRoot } from "react-dom/client";
+import { App } from "../src/App";
+import "../styles/index.css";
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
   root.render(<App />);
@@ -172,15 +155,15 @@ Create an HTML template:
 <!-- pages/index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwapKit + Bun</title>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/pages/index.tsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SwapKit + Bun</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/pages/index.tsx"></script>
+  </body>
 </html>
 ```
 
@@ -190,7 +173,7 @@ Create a build script for production:
 
 ```typescript
 // @noErrorValidation
-// build.ts
+
 import { build } from "bun";
 
 await build({
@@ -217,10 +200,11 @@ Access them in your code:
 
 ```typescript
 // @noErrorValidation
-import { SKConfig } from '@swapkit/sdk';
+
+import { SKConfig } from "@swapkit/sdk";
 
 if (process.env.BUN_PUBLIC_SWAPKIT_API_KEY) {
-  SKConfig.setApiKey('swapKit', process.env.BUN_PUBLIC_SWAPKIT_API_KEY);
+  SKConfig.setApiKey("swapKit", process.env.BUN_PUBLIC_SWAPKIT_API_KEY);
 }
 ```
 
@@ -251,10 +235,4 @@ Bun supports TypeScript out of the box. Create a `tsconfig.json`:
 
 ## Example Repository
 
-For a complete working example, check out the [Bun + React playground](https://github.com/swapkit/swapkit/tree/develop/playgrounds/bun-react) in the SwapKit repository.
-
-
-
-
-
-
+For a complete working example, check out the [Bun + React playground](https:

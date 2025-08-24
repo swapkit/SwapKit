@@ -1,0 +1,853 @@
+---
+title: Cosmos Hub Integration
+description: Complete guide to integrating Cosmos Hub with SwapKit SDK for ATOM operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Cosmos Hub integration with SwapKit, including wallet connections, ATOM transfers, staking operations, and cross-chain swaps.
+
+## Overview
+
+Cosmos Hub is the first blockchain in the Cosmos ecosystem, designed for interoperability and sovereignty. SwapKit provides comprehensive Cosmos Hub support through:
+
+- **Cosmos Toolbox**: Native Cosmos SDK operations with ATOM
+- **Staking Support**: Delegate, undelegate, and claim staking rewards
+- **Cross-Chain Swaps**: Seamless swaps with other cryptocurrencies via THORChain
+- **IBC Support**: Inter-Blockchain Communication protocol integration
+- **Multi-Wallet Support**: Compatible with Keplr, Leap, and hardware wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const cosmosWallet = await swapKit.getWallet(Chain.Cosmos);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getCosmosToolbox } from '@swapkit/toolboxes/cosmos';
+
+
+const cosmosToolbox = await getCosmosToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 118, 0, 0, 0]
+});
+
+
+const cosmosToolbox = await getCosmosToolbox({
+  signer: customCosmosSigner,
+  chainId: "cosmoshub-4"
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Cosmos Toolbox
+
+### Wallet Connection
+
+Connect to Cosmos Hub using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Cosmos], "your mnemonic phrase");
+
+await swapKit.connectKeplr([Chain.Cosmos]);
+
+await swapKit.connectLeap([Chain.Cosmos]);
+
+await swapKit.connectLedger([Chain.Cosmos]);
+```
+
+### Address Generation
+
+Cosmos addresses use bech32 format with "cosmos" prefix:
+
+```typescript
+// @noErrorValidation
+
+const cosmosAddress = swapKit.getAddress(Chain.Cosmos);
+
+console.log("Cosmos address:", cosmosAddress);
+
+import { validateCosmosAddress } from "@swapkit/toolboxes/cosmos";
+
+const isValidAddress = validateCosmosAddress(cosmosAddress);
+console.log("Valid ATOM address:", isValidAddress);
+
+const publicKey = await cosmosToolbox.getPublicKey();
+console.log("Public key:", publicKey);
+```
+
+### ATOM Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+  assetValue: AssetValue.from({
+    chain: Chain.Cosmos,
+    value: "1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+  memo: "Payment for services",
+});
+
+console.log(`Cosmos transaction hash: ${txHash}`);
+
+const customGasTx = await cosmosToolbox.transfer({
+  recipient: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+  assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "0.5" }),
+  gasLimit: 100000,
+  gasPrice: "0.025uatom",
+  memo: "Custom gas transfer",
+});
+
+const batchTransfers = async () => {
+  const recipients = [
+    { address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5", amount: "0.1" },
+    { address: "cosmos1fl48vsnmsdzcv85q5d2q4z5ajdha8yu34mf0eh", amount: "0.2" },
+    {
+      address: "cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzv7xu",
+      amount: "0.15",
+    },
+  ];
+
+  for (const { address, amount } of recipients) {
+    const tx = await cosmosToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({ chain: Chain.Cosmos, value: amount }),
+      gasLimit: 80000,
+      gasPrice: "0.025uatom",
+    });
+    console.log(`ATOM sent to ${address}: ${tx}`);
+  }
+};
+```
+
+### Staking Operations
+
+Cosmos Hub uses Proof of Stake consensus with delegation:
+
+```typescript
+// @noErrorValidation
+
+const validators = await cosmosToolbox.getValidators();
+
+console.log("Active validators:");
+validators.forEach((validator, index) => {
+  console.log(`${index + 1}. ${validator.moniker}`);
+  console.log(`   Address: ${validator.operatorAddress}`);
+  console.log(`   Commission: ${validator.commission.rate}%`);
+  console.log(`   Voting Power: ${validator.tokens} ATOM`);
+});
+
+const delegateTx = await cosmosToolbox.delegate({
+  validatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+  assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "10" }),
+  gasLimit: 150000,
+  gasPrice: "0.025uatom",
+});
+
+console.log("Delegation successful:", delegateTx);
+
+const redelegateTx = await cosmosToolbox.redelegate({
+  srcValidatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+  dstValidatorAddress: "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
+  assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "5" }),
+  gasLimit: 200000,
+  gasPrice: "0.025uatom",
+});
+
+const undelegateTx = await cosmosToolbox.undelegate({
+  validatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+  assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "3" }),
+  gasLimit: 150000,
+  gasPrice: "0.025uatom",
+});
+
+console.log("Undelegation started (21 days to complete):", undelegateTx);
+```
+
+### Claim Staking Rewards
+
+```typescript
+// @noErrorValidation
+
+const rewards = await cosmosToolbox.getRewards(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+
+console.log("Available rewards:");
+rewards.forEach((reward) => {
+  console.log(`Validator: ${reward.validatorAddress}`);
+  console.log(`Rewards: ${reward.amount} ATOM`);
+});
+
+const claimTx = await cosmosToolbox.claimRewards({
+  validatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+  gasLimit: 120000,
+  gasPrice: "0.025uatom",
+});
+
+const claimAllTx = await cosmosToolbox.claimAllRewards({
+  gasLimit: 300000,
+  gasPrice: "0.025uatom",
+});
+
+console.log("All rewards claimed:", claimAllTx);
+
+const compoundRewards = async () => {
+  const totalRewards = await cosmosToolbox.getTotalRewards(
+    swapKit.getAddress(Chain.Cosmos)
+  );
+
+  if (totalRewards.gt(0.1)) {
+    const claimTx = await cosmosToolbox.claimAllRewards({
+      gasLimit: 300000,
+      gasPrice: "0.025uatom",
+    });
+
+    const delegateTx = await cosmosToolbox.delegate({
+      validatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+      assetValue: AssetValue.from({
+        chain: Chain.Cosmos,
+        value: totalRewards.toFixed(6),
+      }),
+      gasLimit: 150000,
+      gasPrice: "0.025uatom",
+    });
+
+    console.log("Rewards compounded:", { claimTx, delegateTx });
+  }
+};
+```
+
+### Account Information
+
+```typescript
+// @noErrorValidation
+
+const accountInfo = await cosmosToolbox.getAccount(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+
+console.log("Account info:", {
+  address: accountInfo.address,
+  accountNumber: accountInfo.accountNumber,
+  sequence: accountInfo.sequence,
+  pubKey: accountInfo.pubKey,
+});
+
+const balance = await cosmosToolbox.getBalance(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+console.log(`ATOM balance: ${balance.toFixed(6)} ATOM`);
+
+const delegations = await cosmosToolbox.getDelegations(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+
+console.log("Active delegations:");
+delegations.forEach((delegation) => {
+  console.log(`Validator: ${delegation.validatorAddress}`);
+  console.log(`Delegated: ${delegation.amount} ATOM`);
+  console.log(`Rewards: ${delegation.rewards} ATOM`);
+});
+
+const unbonding = await cosmosToolbox.getUnbondingDelegations(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+
+console.log("Unbonding delegations:");
+unbonding.forEach((unbond) => {
+  console.log(`Validator: ${unbond.validatorAddress}`);
+  console.log(`Amount: ${unbond.amount} ATOM`);
+  console.log(`Completion Time: ${new Date(unbond.completionTime)}`);
+});
+```
+
+## Cross-Chain Swaps
+
+Cosmos Hub ATOM is supported in THORChain cross-chain swaps:
+
+```typescript
+// @noErrorValidation
+
+const atomToBtcQuote = await swapKit.getQuote({
+  sellAsset: "GAIA.ATOM",
+  sellAmount: "100",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Cosmos),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("ATOM -> BTC quote:", {
+  expectedOutput: atomToBtcQuote.expectedOutput,
+  fees: atomToBtcQuote.fees,
+  timeEstimate: atomToBtcQuote.timeEstimate,
+});
+
+const swapTx = await swapKit.swap({
+  route: atomToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const atomToUsdcQuote = await swapKit.getQuote({
+  sellAsset: "GAIA.ATOM",
+  sellAmount: "50",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Cosmos),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const atomToRuneQuote = await swapKit.getQuote({
+  sellAsset: "GAIA.ATOM",
+  sellAmount: "25",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Cosmos),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## Advanced Cosmos Features
+
+### IBC Transfers
+
+```typescript
+// @noErrorValidation
+
+const ibcTransfer = async () => {
+  const osmosisTransfer = await cosmosToolbox.ibcTransfer({
+    recipient: "osmo1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "10" }),
+    sourcePort: "transfer",
+    sourceChannel: "channel-141",
+    timeoutHeight: undefined,
+    timeoutTimestamp: Date.now() + 600000,
+    gasLimit: 150000,
+    gasPrice: "0.025uatom",
+  });
+
+  console.log("IBC transfer to Osmosis:", osmosisTransfer);
+};
+
+const getIBCChannels = async () => {
+  const channels = await cosmosToolbox.getIBCChannels();
+
+  console.log("Available IBC channels:");
+  channels.forEach((channel) => {
+    console.log(`Channel: ${channel.channelId}`);
+    console.log(`Port: ${channel.portId}`);
+    console.log(`Counterparty: ${channel.counterparty.chainId}`);
+    console.log(`State: ${channel.state}`);
+  });
+};
+```
+
+### Governance Participation
+
+```typescript
+// @noErrorValidation
+
+const proposals = await cosmosToolbox.getProposals();
+
+console.log("Active governance proposals:");
+proposals.forEach((proposal) => {
+  console.log(`Proposal #${proposal.proposalId}: ${proposal.title}`);
+  console.log(`Status: ${proposal.status}`);
+  console.log(`Voting End: ${new Date(proposal.votingEndTime)}`);
+  console.log(`Description: ${proposal.description.substring(0, 100)}...`);
+});
+
+const voteTx = await cosmosToolbox.vote({
+  proposalId: 123,
+  option: "yes",
+  gasLimit: 100000,
+  gasPrice: "0.025uatom",
+});
+
+console.log("Vote submitted:", voteTx);
+
+const votingHistory = await cosmosToolbox.getVotes(
+  "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5"
+);
+
+console.log("Voting history:");
+votingHistory.forEach((vote) => {
+  console.log(`Proposal #${vote.proposalId}: ${vote.option}`);
+});
+
+const submitProposal = async () => {
+  const proposalTx = await cosmosToolbox.submitProposal({
+    title: "Upgrade Cosmos Hub",
+    description: "Proposal to upgrade Cosmos Hub to version X.Y.Z",
+    type: "software_upgrade",
+    initialDeposit: AssetValue.from({ chain: Chain.Cosmos, value: "512" }),
+    gasLimit: 200000,
+    gasPrice: "0.025uatom",
+  });
+
+  console.log("Proposal submitted:", proposalTx);
+};
+```
+
+### Multi-Sig Operations
+
+```typescript
+// @noErrorValidation
+
+const createMultiSig = async () => {
+  const publicKeys = [
+    "cosmospub1addwnpepq2skx090esq7h7md0r3e76r6ruyet330e904r6k3pgpwuzl92x6actrt4uq",
+    "cosmospub1addwnpepq0gj4l4485x3gu6j5qqtl5d8he8q8sf3qj8zq6e7pqmf9jux0qlq8r9xsz5",
+    "cosmospub1addwnpepqw8vfa7d0jd6cqvlxqj88l5k8ppqmef6n43x0eapmklgzrdhq2z8yhzjef2",
+  ];
+
+  const multiSigAddress = await cosmosToolbox.createMultiSigAddress(
+    publicKeys,
+    2
+  );
+
+  console.log("Multi-sig address:", multiSigAddress);
+  return multiSigAddress;
+};
+
+const signForMultiSig = async () => {
+  const unsignedTx = {
+    chain_id: "cosmoshub-4",
+    account_number: "123456",
+    sequence: "0",
+    fee: { amount: [{ denom: "uatom", amount: "5000" }], gas: "200000" },
+    msgs: [
+      {
+        type: "cosmos-sdk/MsgSend",
+        value: {
+          from_address: "cosmos1multisigaddress...",
+          to_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+          amount: [{ denom: "uatom", amount: "1000000" }],
+        },
+      },
+    ],
+    memo: "",
+  };
+
+  const signature = await cosmosToolbox.signTransaction(unsignedTx);
+  console.log("Transaction signed:", signature);
+
+  return signature;
+};
+```
+
+## Gas Management
+
+```typescript
+// @noErrorValidation
+
+const gasManagement = {
+  async estimateGas(msgs: any[]) {
+    const estimation = await cosmosToolbox.simulateTransaction(msgs);
+    return Math.ceil(estimation.gasUsed * 1.2);
+  },
+
+  async getGasPrices() {
+    const prices = await cosmosToolbox.getGasPrices();
+    return {
+      low: "0.01uatom",
+      standard: "0.025uatom",
+      high: "0.04uatom",
+    };
+  },
+
+  calculateFee(gasLimit: number, gasPrice: string) {
+    const priceAmount = parseFloat(gasPrice.replace("uatom", ""));
+    const feeInMicroAtom = gasLimit * priceAmount;
+    const feeInAtom = feeInMicroAtom / 1000000;
+
+    return {
+      amount: [{ denom: "uatom", amount: feeInMicroAtom.toString() }],
+      gas: gasLimit.toString(),
+      feeInAtom,
+    };
+  },
+};
+
+const msgs = [
+  {
+    typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+    value: {
+      fromAddress: swapKit.getAddress(Chain.Cosmos),
+      toAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      amount: [{ denom: "uatom", amount: "1000000" }],
+    },
+  },
+];
+
+const estimatedGas = await gasManagement.estimateGas(msgs);
+const fee = gasManagement.calculateFee(estimatedGas, "0.025uatom");
+
+console.log(`Estimated gas: ${estimatedGas}`);
+console.log(`Fee: ${fee.feeInAtom} ATOM`);
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Cosmos, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customCosmosRpc = "https:
+SKConfig.setRpcUrl(Chain.Cosmos, customCosmosRpc);
+
+
+const cosmosToolbox = await getCosmosToolbox({
+  phrase: "your mnemonic",
+  rpcUrl: "https:
+  chainId: "cosmoshub-4"
+});
+```
+
+### Working with Cosmos Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Cosmos, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetToolbox = await getCosmosToolbox({
+  phrase: "your mnemonic",
+  rpcUrl: "https:
+  chainId: "theta-testnet-001"
+});
+
+
+const testnetAddress = testnetToolbox.getAddress();
+console.log("Cosmos testnet address:", testnetAddress);
+```
+
+## Error Handling
+
+Handle Cosmos-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_cosmos_insufficient_funds":
+        console.error("Insufficient ATOM balance");
+        break;
+      case "toolbox_cosmos_invalid_address":
+        console.error("Invalid Cosmos address format");
+        break;
+      case "toolbox_cosmos_sequence_mismatch":
+        console.error("Transaction sequence number mismatch");
+        break;
+      case "toolbox_cosmos_gas_estimation_failed":
+        console.error("Gas estimation failed");
+        break;
+      case "toolbox_cosmos_validator_not_found":
+        console.error("Validator not found or inactive");
+        break;
+      case "toolbox_cosmos_insufficient_delegation":
+        console.error("Insufficient delegation amount");
+        break;
+      default:
+        console.error("Unknown Cosmos error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Batch Operations
+
+```typescript
+// @noErrorValidation
+
+const batchOperations = async () => {
+  const msgs = [
+    {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: {
+        delegatorAddress: swapKit.getAddress(Chain.Cosmos),
+        validatorAddress:
+          "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+      },
+    },
+    {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: {
+        delegatorAddress: swapKit.getAddress(Chain.Cosmos),
+        validatorAddress:
+          "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
+      },
+    },
+
+    {
+      typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+      value: {
+        delegatorAddress: swapKit.getAddress(Chain.Cosmos),
+        validatorAddress:
+          "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+        amount: { denom: "uatom", amount: "5000000" },
+      },
+    },
+  ];
+
+  const batchTx = await cosmosToolbox.broadcastTransaction(msgs, {
+    gasLimit: 400000,
+    gasPrice: "0.025uatom",
+  });
+
+  console.log("Batch operation completed:", batchTx);
+};
+```
+
+### Optimize Gas Usage
+
+```typescript
+// @noErrorValidation
+
+const optimizeGas = {
+  transfer: 80000,
+  delegate: 150000,
+  undelegate: 150000,
+  redelegate: 200000,
+  claimRewards: 120000,
+  vote: 100000,
+  ibcTransfer: 150000,
+  multipleRewards: 300000,
+};
+
+const efficientTransfer = await cosmosToolbox.transfer({
+  recipient: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+  assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "1" }),
+  gasLimit: optimizeGas.transfer,
+  gasPrice: "0.025uatom",
+});
+```
+
+## Best Practices
+
+1. **Use Appropriate Gas Limits**:
+
+   ```typescript
+   const gasLimits = {
+     simple_send: 80000,
+     delegate: 150000,
+     multi_send: 120000,
+     claim_rewards: 120000,
+     vote: 100000,
+     ibc_transfer: 150000,
+   };
+
+   const delegateTx = await cosmosToolbox.delegate({
+     validatorAddress: "cosmosvaloper1...",
+     assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "10" }),
+     gasLimit: gasLimits.delegate,
+     gasPrice: "0.025uatom",
+   });
+   ```
+
+2. **Research Validators Carefully**:
+
+   ```typescript
+   const analyzeValidator = async (validatorAddress: string) => {
+     const validator = await cosmosToolbox.getValidator(validatorAddress);
+
+     console.log("Validator Analysis:", {
+       moniker: validator.moniker,
+       commission: validator.commission.rate,
+       uptime: validator.uptime,
+       votingPower: validator.tokens,
+       jailed: validator.jailed,
+       tombstoned: validator.tombstoned,
+     });
+
+     if (validator.jailed || validator.tombstoned) {
+       console.warn("Validator has been penalized - consider alternatives");
+     }
+
+     if (parseFloat(validator.commission.rate) > 0.1) {
+       console.warn("High commission rate - compare with other validators");
+     }
+   };
+   ```
+
+3. **Monitor Staking Rewards**:
+
+   ```typescript
+   const monitorRewards = async () => {
+     const rewards = await cosmosToolbox.getTotalRewards(
+       swapKit.getAddress(Chain.Cosmos)
+     );
+
+     if (rewards.gt(1)) {
+       console.log(`${rewards} ATOM rewards available for claiming`);
+
+       await compoundRewards();
+     }
+   };
+   ```
+
+4. **Handle Unbonding Period**:
+   ```typescript
+   const handleUnbonding = async () => {
+     const unbonding = await cosmosToolbox.getUnbondingDelegations(
+       swapKit.getAddress(Chain.Cosmos)
+     );
+
+     unbonding.forEach((entry) => {
+       const timeLeft = new Date(entry.completionTime).getTime() - Date.now();
+       const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+
+       console.log(
+         `${entry.amount} ATOM unbonding - ${daysLeft} days remaining`
+       );
+     });
+   };
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Sequence number mismatch**:
+
+   ```typescript
+   const handleSequenceError = async () => {
+     try {
+       const account = await cosmosToolbox.getAccount(
+         swapKit.getAddress(Chain.Cosmos)
+       );
+       console.log("Current sequence:", account.sequence);
+
+       const tx = await cosmosToolbox.transfer({
+         recipient: "cosmos1...",
+         assetValue: AssetValue.from({ chain: Chain.Cosmos, value: "1" }),
+         sequence: account.sequence,
+       });
+     } catch (error) {
+       console.error("Sequence error:", error);
+     }
+   };
+   ```
+
+2. **Insufficient fee**:
+
+   ```typescript
+   const checkFee = (gasLimit: number, gasPrice: string) => {
+     const minFee =
+       (gasLimit * parseFloat(gasPrice.replace("uatom", ""))) / 1000000;
+     console.log(`Minimum fee required: ${minFee} ATOM`);
+
+     if (minFee > 0.1) {
+       console.warn("High transaction fee - consider optimizing gas usage");
+     }
+   };
+   ```
+
+3. **Validator selection issues**:
+   ```typescript
+   const validateValidator = async (validatorAddress: string) => {
+     const validator = await cosmosToolbox.getValidator(validatorAddress);
+
+     if (validator.status !== "BOND_STATUS_BONDED") {
+       throw new Error("Validator is not active");
+     }
+
+     if (validator.jailed) {
+       throw new Error("Validator is currently jailed");
+     }
+
+     return true;
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get ATOM balance
+- `transfer()` - Send ATOM tokens
+- `getAccount()` - Get account information
+
+### Staking Methods
+
+- `delegate()` - Delegate ATOM to validator
+- `undelegate()` - Undelegate ATOM (21-day unbonding)
+- `redelegate()` - Redelegate between validators
+- `claimRewards()` - Claim staking rewards
+- `getValidators()` - Get list of validators
+- `getDelegations()` - Get delegation information
+
+### Governance Methods
+
+- `getProposals()` - Get governance proposals
+- `vote()` - Vote on proposals
+- `submitProposal()` - Submit new proposal
+
+### IBC Methods
+
+- `ibcTransfer()` - Inter-blockchain transfers
+- `getIBCChannels()` - Get IBC channel information
+
+### Utility Methods
+
+- `getGasPrices()` - Get current gas prices
+- `simulateTransaction()` - Estimate gas usage
+- `broadcastTransaction()` - Broadcast signed transaction
+
+## Next Steps
+
+- Learn about other [Cosmos ecosystem chains](/guides/chains/maya) like Maya Protocol
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Cosmos Hub
+- Check out [THORChain Features](/guides/thorchain-features) for advanced DeFi
+- Read about [Production Best Practices](/guides/production-best-practices)

@@ -3,23 +3,24 @@ title: THORChain Features
 description: Advanced THORChain features - liquidity, THORNames, and node operations
 ---
 
-import { Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code, Tabs, TabItem } from "@astrojs/starlight/components";
 
 THORChain provides advanced DeFi features beyond simple swaps. SwapKit includes full support for these features through the THORChain [plugin](/guides/create-plugin).
 
 ## Prerequisites
 
 To use THORChain features, you need:
+
 1. A connected wallet with RUNE
 2. SwapKit initialized with the THORChain plugin (included by default)
 
 ```typescript
-import { createSwapKit, Chain, FeeOption } from '@swapkit/sdk';
+// @noErrorValidation
+import { createSwapKit, Chain, FeeOption } from "@swapkit/sdk";
 
 const swapKit = createSwapKit();
 
-// Connect wallet for THORChain
-await swapKit.connectKeystore([Chain.THORChain], 'your mnemonic phrase');
+await swapKit.connectKeystore([Chain.THORChain], "your mnemonic phrase");
 ```
 
 ## Liquidity Operations
@@ -31,43 +32,43 @@ THORChain uses an asymmetric liquidity model where you can provide single-sided 
 #### Symmetrical Liquidity (RUNE + Asset)
 
 ```typescript
-import { AssetValue } from '@swapkit/sdk';
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
 
-// Add ETH/RUNE liquidity
-const runeAmount = AssetValue.from({ asset: 'THOR.RUNE', value: 100 });
-const ethAmount = AssetValue.from({ asset: 'ETH.ETH', value: 0.5 });
+const runeAmount = AssetValue.from({ asset: "THOR.RUNE", value: 100 });
+const ethAmount = AssetValue.from({ asset: "ETH.ETH", value: 0.5 });
 
 const result = await swapKit.thorchain.addLiquidity({
-  baseAssetValue: runeAmount,        // RUNE amount
-  assetValue: ethAmount,             // Asset amount
+  baseAssetValue: runeAmount,
+  assetValue: ethAmount,
   baseAssetAddr: swapKit.getAddress(Chain.THORChain),
   assetAddr: swapKit.getAddress(Chain.Ethereum),
-  mode: 'sym'                        // Symmetrical mode
+  mode: "sym",
 });
 
-console.log('RUNE tx:', result.baseAssetTx);
-console.log('ETH tx:', result.assetTx);
+console.log("RUNE tx:", result.baseAssetTx);
+console.log("ETH tx:", result.assetTx);
 ```
 
 #### Asymmetrical Liquidity (Single-Sided)
 
 ```typescript
-// Add RUNE-only liquidity
+// @noErrorValidation
+
 const runeOnly = await swapKit.thorchain.addLiquidity({
   baseAssetValue: runeAmount,
-  assetValue: AssetValue.from({ asset: 'BTC.BTC', value: 0 }), // Required but can be 0
+  assetValue: AssetValue.from({ asset: "BTC.BTC", value: 0 }),
   baseAssetAddr: swapKit.getAddress(Chain.THORChain),
-  mode: 'baseAsset'  // Use 'baseAsset' for RUNE-only
+  mode: "baseAsset",
 });
 
-// Add asset-only liquidity (e.g., BTC only)
-const btcAmount = AssetValue.from({ asset: 'BTC.BTC', value: 0.1 });
+const btcAmount = AssetValue.from({ asset: "BTC.BTC", value: 0.1 });
 
 const btcOnly = await swapKit.thorchain.addLiquidity({
-  baseAssetValue: AssetValue.from({ asset: 'THOR.RUNE', value: 0 }), // Required but can be 0
+  baseAssetValue: AssetValue.from({ asset: "THOR.RUNE", value: 0 }),
   assetValue: btcAmount,
   assetAddr: swapKit.getAddress(Chain.Bitcoin),
-  mode: 'asset'  // Use 'asset' for asset-only
+  mode: "asset",
 });
 ```
 
@@ -76,13 +77,14 @@ const btcOnly = await swapKit.thorchain.addLiquidity({
 For creating a new liquidity position (bootstrapping a pool):
 
 ```typescript
+// @noErrorValidation
 const result = await swapKit.thorchain.createLiquidity({
-  baseAssetValue: runeAmount,  // RUNE amount
-  assetValue: ethAmount         // Asset amount
+  baseAssetValue: runeAmount,
+  assetValue: ethAmount,
 });
 
-console.log('RUNE tx:', result.baseAssetTx);
-console.log('Asset tx:', result.assetTx);
+console.log("RUNE tx:", result.baseAssetTx);
+console.log("Asset tx:", result.assetTx);
 ```
 
 #### Add Liquidity Part
@@ -90,57 +92,58 @@ console.log('Asset tx:', result.assetTx);
 For more granular control, you can add liquidity parts separately:
 
 ```typescript
-const poolAddress = 'BTC.BTC'; // Pool identifier
+// @noErrorValidation
+const poolAddress = "BTC.BTC";
 
 await swapKit.thorchain.addLiquidityPart({
   assetValue: btcAmount,
   poolAddress,
-  address: swapKit.getAddress(Chain.Bitcoin), // Optional: for symmetric deposits
-  symmetric: true
+  address: swapKit.getAddress(Chain.Bitcoin),
+  symmetric: true,
 });
 ```
 
 ### Withdraw Liquidity
 
 ```typescript
-// Withdraw 50% of liquidity position
+// @noErrorValidation
+
 const withdrawTx = await swapKit.thorchain.withdraw({
-  assetValue: AssetValue.from({ asset: 'BTC.BTC', value: 0 }), // Pool identifier
-  percent: 50,                       // Withdraw 50%
-  from: 'sym',                       // From position type: 'sym' | 'baseAsset' | 'asset'
-  to: 'sym'                          // To asset type: 'sym' | 'baseAsset' | 'asset'
+  assetValue: AssetValue.from({ asset: "BTC.BTC", value: 0 }),
+  percent: 50,
+  from: "sym",
+  to: "sym",
 });
 
-// Withdraw asymmetric RUNE position to symmetric
 const runeToSym = await swapKit.thorchain.withdraw({
-  assetValue: AssetValue.from({ asset: 'ETH.ETH', value: 0 }),
-  percent: 100,       // Withdraw 100%
-  from: 'baseAsset',  // From RUNE-only position
-  to: 'sym'           // To both RUNE and ETH
+  assetValue: AssetValue.from({ asset: "ETH.ETH", value: 0 }),
+  percent: 100,
+  from: "baseAsset",
+  to: "sym",
 });
 
-// Withdraw to specific asset only
 const toAssetOnly = await swapKit.thorchain.withdraw({
-  assetValue: AssetValue.from({ asset: 'BTC.BTC', value: 0 }),
-  percent: 25,        // Withdraw 25%
-  from: 'sym',        // From symmetric position
-  to: 'asset'         // Receive BTC only
+  assetValue: AssetValue.from({ asset: "BTC.BTC", value: 0 }),
+  percent: 25,
+  from: "sym",
+  to: "asset",
 });
 ```
 
 ### Check Liquidity Position
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+// @noErrorValidation
+import { SwapKitApi } from "@swapkit/helpers/api";
 
 const thorAddress = swapKit.getAddress(Chain.THORChain);
-const position = await SwapKitApi.thorchainMidgard.getLiquidityPosition(thorAddress);
+const position = await SwapKitApi.thorchainMidgard.getLiquidityPosition(
+  thorAddress
+);
 
-// Position details
-console.log('Pools:', position.pools);
-console.log('Total value USD:', position.totalValueUSD);
+console.log("Pools:", position.pools);
+console.log("Total value USD:", position.totalValueUSD);
 ```
-
 
 ## THORNames
 
@@ -149,31 +152,29 @@ THORNames are human-readable aliases for wallet addresses across all supported c
 ### Register THORName
 
 ```typescript
-// Register a new THORName
-const thorname = 'myname';
-const years = 1; // Registration period
+// @noErrorValidation
 
-// Check availability
+const thorname = "myname";
+const years = 1;
+
 const details = await SwapKitApi.thorchainMidgard.getTHORNameDetails(thorname);
 if (details.owner) {
-  console.log('THORName already taken');
+  console.log("THORName already taken");
   return;
 }
 
-// Calculate registration fee (1 RUNE per year + network fee)
 const registrationFee = AssetValue.from({
-  asset: 'THOR.RUNE',
-  value: years + 0.02  // 1 RUNE/year + ~0.02 network fee
+  asset: "THOR.RUNE",
+  value: years + 0.02,
 });
 
-// Register the name
 const registerTx = await swapKit.thorchain.registerName({
   assetValue: registrationFee,
   name: thorname,
-  chain: 'THOR',  // Chain identifier for the THORName
+  chain: "THOR",
   address: swapKit.getAddress(Chain.THORChain),
-  owner: swapKit.getAddress(Chain.THORChain),  // Optional: different owner
-  preferredAsset: 'ETH.ETH'  // Optional: set preferred asset
+  owner: swapKit.getAddress(Chain.THORChain),
+  preferredAsset: "ETH.ETH",
 });
 ```
 
@@ -182,17 +183,18 @@ const registerTx = await swapKit.thorchain.registerName({
 Configure which asset you want to receive when someone sends to your THORName:
 
 ```typescript
-// Set preferred asset to USDC
+// @noErrorValidation
+
 const preferredAsset = AssetValue.from({
-  asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  value: 0
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: 0,
 });
 
 const setPreferredTx = await swapKit.thorchain.registerPreferredAsset({
-  assetValue: AssetValue.from({ chain: Chain.THORChain }), // Min RUNE for tx
+  assetValue: AssetValue.from({ chain: Chain.THORChain }),
   name: thorname,
   ownerAddress: swapKit.getAddress(Chain.THORChain),
-  payoutAddress: swapKit.getAddress(Chain.Ethereum) // Where to receive USDC
+  payoutAddress: swapKit.getAddress(Chain.Ethereum),
 });
 ```
 
@@ -201,20 +203,20 @@ const setPreferredTx = await swapKit.thorchain.registerPreferredAsset({
 Set addresses for different chains:
 
 ```typescript
-// Update Bitcoin address for THORName
+// @noErrorValidation
+
 const updateBtcTx = await swapKit.thorchain.registerName({
-  assetValue: AssetValue.from({ chain: Chain.THORChain }), // Min RUNE for tx
+  assetValue: AssetValue.from({ chain: Chain.THORChain }),
   name: thorname,
-  chain: 'BTC',  // Chain identifier
+  chain: "BTC",
   address: swapKit.getAddress(Chain.Bitcoin),
-  owner: swapKit.getAddress(Chain.THORChain)
+  owner: swapKit.getAddress(Chain.THORChain),
 });
 
-// Update multiple chains
 const chainMap = {
-  [Chain.Ethereum]: 'ETH',
-  [Chain.Bitcoin]: 'BTC',
-  [Chain.BinanceSmartChain]: 'BSC'
+  [Chain.Ethereum]: "ETH",
+  [Chain.Bitcoin]: "BTC",
+  [Chain.BinanceSmartChain]: "BSC",
 };
 
 for (const [chain, chainId] of Object.entries(chainMap)) {
@@ -223,7 +225,7 @@ for (const [chain, chainId] of Object.entries(chainMap)) {
     name: thorname,
     chain: chainId,
     address: swapKit.getAddress(chain as Chain),
-    owner: swapKit.getAddress(Chain.THORChain)
+    owner: swapKit.getAddress(Chain.THORChain),
   });
 }
 ```
@@ -231,14 +233,18 @@ for (const [chain, chainId] of Object.entries(chainMap)) {
 ### Lookup THORName
 
 ```typescript
-const thornameDetails = await SwapKitApi.thorchainMidgard.getTHORNameDetails('thorswap');
+// @noErrorValidation
+const thornameDetails = await SwapKitApi.thorchainMidgard.getTHORNameDetails(
+  "thorswap"
+);
 
-console.log('Owner:', thornameDetails.owner);
-console.log('Preferred asset:', thornameDetails.preferredAsset);
-console.log('Aliases:', thornameDetails.aliases);
+console.log("Owner:", thornameDetails.owner);
+console.log("Preferred asset:", thornameDetails.preferredAsset);
+console.log("Aliases:", thornameDetails.aliases);
 
-// Get specific chain address
-const ethAddress = thornameDetails.aliases.find(a => a.chain === 'ETH')?.address;
+const ethAddress = thornameDetails.aliases.find(
+  (a) => a.chain === "ETH"
+)?.address;
 ```
 
 ## Node Operations
@@ -248,32 +254,33 @@ For node operators, SwapKit provides bond management functions.
 ### Bond RUNE
 
 ```typescript
-import { MemoType } from '@swapkit/sdk';
+// @noErrorValidation
+import { MemoType } from "@swapkit/sdk";
 
-const bondAmount = AssetValue.from({ asset: 'THOR.RUNE', value: 100000 });
-const nodeAddress = 'thor1abc...'; // Your node address
+const bondAmount = AssetValue.from({ asset: "THOR.RUNE", value: 100000 });
+const nodeAddress = "thor1abc...";
 
 const bondTx = await swapKit.thorchain.nodeAction({
   type: MemoType.BOND,
   assetValue: bondAmount,
-  address: nodeAddress
+  address: nodeAddress,
 });
 ```
 
 ### Unbond and Leave
 
 ```typescript
-// Unbond specific amount
+// @noErrorValidation
+
 const unbondTx = await swapKit.thorchain.nodeAction({
   type: MemoType.UNBOND,
-  assetValue: AssetValue.from({ asset: 'THOR.RUNE', value: 50000 }),
-  address: nodeAddress
+  assetValue: AssetValue.from({ asset: "THOR.RUNE", value: 50000 }),
+  address: nodeAddress,
 });
 
-// Leave (unbond all)
 const leaveTx = await swapKit.thorchain.nodeAction({
   type: MemoType.LEAVE,
-  address: nodeAddress
+  address: nodeAddress,
 });
 ```
 
@@ -282,24 +289,23 @@ const leaveTx = await swapKit.thorchain.nodeAction({
 For advanced users, deposit directly to THORChain with custom memos:
 
 ```typescript
-// Direct deposit with custom memo
+// @noErrorValidation
+
 const customDeposit = await swapKit.thorchain.deposit({
-  assetValue: AssetValue.from({ asset: 'BTC.BTC', value: 0.1 }),
-  recipient: '', // Empty for THORChain protocol deposits
-  memo: 'SWAP:ETH.ETH:thor1...'  // Custom memo for any THORChain action
+  assetValue: AssetValue.from({ asset: "BTC.BTC", value: 0.1 }),
+  recipient: "",
+  memo: "SWAP:ETH.ETH:thor1...",
 });
 
-// Deposit to specific pool
 const poolDeposit = await swapKit.thorchain.depositToPool({
-  assetValue: AssetValue.from({ asset: 'ETH.ETH', value: 1 }),
-  memo: 'ADD:ETH.ETH:thor1...',
-  feeOptionKey: FeeOption.Fast  // Optional: Average, Fast, or Fastest
+  assetValue: AssetValue.from({ asset: "ETH.ETH", value: 1 }),
+  memo: "ADD:ETH.ETH:thor1...",
+  feeOptionKey: FeeOption.Fast,
 });
 
-// Protocol deposit (simplified)
 const protocolDeposit = await swapKit.thorchain.depositToProtocol({
-  assetValue: AssetValue.from({ asset: 'THOR.RUNE', value: 10 }),
-  memo: 'BOND:thor1nodeaddress...'
+  assetValue: AssetValue.from({ asset: "THOR.RUNE", value: 10 }),
+  memo: "BOND:thor1nodeaddress...",
 });
 ```
 
@@ -308,24 +314,24 @@ const protocolDeposit = await swapKit.thorchain.depositToProtocol({
 For EVM chains, THORChain requires token approvals before deposits:
 
 ```typescript
-// Check if token is approved
+// @noErrorValidation
+
 const isApproved = await swapKit.thorchain.isAssetValueApproved({
   assetValue: AssetValue.from({
-    asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    value: 1000
-  })
+    asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    value: 1000,
+  }),
 });
 
 if (!isApproved) {
-  // Approve token for THORChain router
   const approveTx = await swapKit.thorchain.approveAssetValue({
     assetValue: AssetValue.from({
-      asset: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      value: 1000
-    })
+      asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      value: 1000,
+    }),
   });
 
-  console.log('Approval tx:', approveTx);
+  console.log("Approval tx:", approveTx);
 }
 ```
 
@@ -334,8 +340,8 @@ if (!isApproved) {
 Maya is a fork of THORChain with similar features. SwapKit supports Maya through the Maya plugin:
 
 ```typescript
-// Maya operations use the same interface
-// Check Maya positions
+// @noErrorValidation
+
 const mayaPosition = await SwapKitApi.mayachainMidgard.getLiquidityPosition(
   swapKit.getAddress(Chain.Maya)
 );
@@ -346,15 +352,15 @@ const mayaPosition = await SwapKitApi.mayachainMidgard.getLiquidityPosition(
 Get inbound addresses and gas rates for any supported chain:
 
 ```typescript
-// Get inbound data for a specific chain
+// @noErrorValidation
+
 const btcInbound = await swapKit.thorchain.getInboundDataByChain(Chain.Bitcoin);
 
-console.log('BTC vault address:', btcInbound.address);
-console.log('BTC router:', btcInbound.router);
-console.log('Gas rate:', btcInbound.gas_rate);
-console.log('Chain halted:', btcInbound.halted);
+console.log("BTC vault address:", btcInbound.address);
+console.log("BTC router:", btcInbound.router);
+console.log("Gas rate:", btcInbound.gas_rate);
+console.log("Chain halted:", btcInbound.halted);
 
-// Check multiple chains
 const chains = [Chain.Ethereum, Chain.Bitcoin, Chain.BinanceSmartChain];
 for (const chain of chains) {
   const inbound = await swapKit.thorchain.getInboundDataByChain(chain);
@@ -371,11 +377,12 @@ for (const chain of chains) {
 Before adding liquidity or making swaps:
 
 ```typescript
+// @noErrorValidation
 const pools = await SwapKitApi.thorchainMidgard.getPools();
-const btcPool = pools.find(p => p.asset === 'BTC.BTC');
+const btcPool = pools.find((p) => p.asset === "BTC.BTC");
 
-if (btcPool?.status !== 'Available') {
-  console.log('Pool not available');
+if (btcPool?.status !== "Available") {
+  console.log("Pool not available");
   return;
 }
 ```
@@ -385,11 +392,11 @@ if (btcPool?.status !== 'Available') {
 For large liquidity operations:
 
 ```typescript
+// @noErrorValidation
 const quote = await SwapKitApi.getSwapQuote({
-  sellAsset: 'THOR.RUNE',
-  sellAmount: '1000000000000', // Large amount
-  buyAsset: 'BTC.BTC',
-  // ... other params
+  sellAsset: "THOR.RUNE",
+  sellAmount: "1000000000000",
+  buyAsset: "BTC.BTC",
 });
 
 const slippage = quote.routes[0].fees.slippage;
@@ -401,13 +408,14 @@ console.log(`Slippage: ${slippage}%`);
 Track THORChain transactions:
 
 ```typescript
+// @noErrorValidation
 const txStatus = await SwapKitApi.getTrackerDetails({
-  txHash: 'ABCD...',
-  chain: 'THOR'
+  txHash: "ABCD...",
+  chain: "THOR",
 });
 
-if (txStatus.status === 'completed') {
-  console.log('Transaction successful');
+if (txStatus.status === "completed") {
+  console.log("Transaction successful");
 }
 ```
 
@@ -416,28 +424,34 @@ if (txStatus.status === 'completed') {
 Here's a complete list of THORChain plugin methods:
 
 ### Core Methods
+
 - `deposit()` - Direct deposit with custom parameters
 - `depositToPool()` - Deposit to specific pool with memo
 - `depositToProtocol()` - Simplified protocol deposits
 
 ### Liquidity Methods
+
 - `addLiquidity()` - Add symmetric or asymmetric liquidity
 - `addLiquidityPart()` - Add liquidity with granular control
 - `createLiquidity()` - Bootstrap new liquidity pools
 - `withdraw()` - Withdraw liquidity positions
 
 ### THORName Methods
+
 - `registerName()` - Register or update THORNames
 - `registerPreferredAsset()` - Set preferred payout asset
 
 ### Node Methods
+
 - `nodeAction()` - Bond, unbond, or leave as node operator
 
 ### Token Methods (EVM)
+
 - `approveAssetValue()` - Approve tokens for router
 - `isAssetValueApproved()` - Check approval status
 
 ### Utility Methods
+
 - `getInboundDataByChain()` - Get vault addresses and gas rates
 - `swap()` - Execute swaps (used internally by SwapKit)
 
@@ -445,4 +459,4 @@ Here's a complete list of THORChain plugin methods:
 
 - Explore [Cross-Chain Swaps](/guides/actions/swap) using THORChain
 - Learn about [Transaction Tracking](/guides/actions/transaction)
-- Read the [THORChain Documentation](https://docs.thorchain.org/)
+- Read the [THORChain Documentation](https:

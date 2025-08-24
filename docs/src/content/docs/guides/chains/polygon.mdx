@@ -1,0 +1,692 @@
+---
+title: Polygon Integration
+description: Complete guide to integrating Polygon (POL) with SwapKit SDK for Layer 2 scaling and DeFi operations
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Polygon integration with SwapKit, including wallet connections, token transfers, cross-chain swaps, and Polygon-specific DeFi protocols.
+
+## Overview
+
+Polygon is a leading Ethereum Layer 2 scaling solution providing fast, low-cost transactions. SwapKit provides comprehensive Polygon support through:
+
+- **Polygon Toolbox**: Fast operations with minimal MATIC gas costs
+- **Cross-Chain Bridging**: Seamless transfers between Ethereum and Polygon
+- **DEX Integration**: Access to QuickSwap, SushiSwap, and other Polygon DEXs
+- **ERC-20 Compatibility**: Full support for Polygon's token ecosystem
+- **Multi-Wallet Support**: Compatible with MetaMask and other Ethereum wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const polygonWallet = await swapKit.getWallet(Chain.Polygon);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getPolygonToolbox } from '@swapkit/toolboxes/evm';
+
+
+const polygonToolbox = await getPolygonToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 60, 0, 0, 0]
+});
+
+
+const polygonToolbox = await getPolygonToolbox({
+  signer: customPolygonSigner,
+  provider: customPolygonProvider
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Polygon Toolbox
+
+### Wallet Connection
+
+Connect to Polygon using Ethereum-compatible wallets:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Polygon], "your mnemonic phrase");
+
+await swapKit.connectBrowserWallet(Chain.Polygon);
+
+await swapKit.connectWalletConnect([Chain.Polygon]);
+
+await swapKit.connectLedger([Chain.Polygon]);
+```
+
+### Native MATIC Transfers
+
+MATIC is the native gas and utility token of Polygon:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapKit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Polygon,
+    value: "1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### ERC-20 Token Transfers
+
+Polygon supports ERC-20 tokens with much lower costs than Ethereum:
+
+```typescript
+// @noErrorValidation
+
+const usdcTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Polygon,
+    symbol: "USDC",
+    address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const wethTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Polygon,
+    symbol: "WETH",
+    address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+    value: "0.1",
+  }),
+});
+
+const toolbox = await getPolygonToolbox({ phrase: "..." });
+
+const batchPolygonTransfers = async () => {
+  const polygonTokens = [
+    {
+      symbol: "USDT",
+      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      amount: "50",
+    },
+    {
+      symbol: "DAI",
+      address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      amount: "100",
+    },
+    {
+      symbol: "AAVE",
+      address: "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      amount: "5",
+    },
+  ];
+
+  for (const { symbol, address, amount } of polygonTokens) {
+    const tx = await toolbox.transfer({
+      recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+      assetValue: AssetValue.from({
+        chain: Chain.Polygon,
+        address,
+        value: amount,
+      }),
+    });
+    console.log(`${symbol} transfer: ${tx}`);
+  }
+};
+```
+
+### Smart Contract Interactions
+
+Polygon contracts execute quickly with minimal gas costs:
+
+```typescript
+// @noErrorValidation
+
+const wmaticBalance = await toolbox.call({
+  contractAddress: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+  abi: erc20ABI,
+  funcName: "balanceOf",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"],
+});
+
+const quickTransfer = await toolbox.call({
+  contractAddress: "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+  abi: erc20ABI,
+  funcName: "transfer",
+  funcParams: [
+    "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    "1000000000000000000",
+  ],
+  txOverrides: {
+    gasLimit: "65000",
+    gasPrice: "30000000000",
+  },
+});
+
+const aaveSupply = await toolbox.call({
+  contractAddress: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+  abi: aaveV3PoolABI,
+  funcName: "supply",
+  funcParams: [
+    "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "1000000000",
+    swapKit.getAddress(Chain.Polygon),
+    0,
+  ],
+});
+```
+
+### Gas Management
+
+Polygon uses MATIC for gas with EIP-1559 support:
+
+```typescript
+// @noErrorValidation
+
+const gasInfo = await toolbox.getGasPrices();
+console.log({
+  slow: gasInfo.average,
+  standard: gasInfo.fast,
+  fast: gasInfo.fastest,
+});
+
+const eip1559Tx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Polygon, value: "1" }),
+  maxFeePerGas: "50000000000",
+  maxPriorityFeePerGas: "2000000000",
+});
+
+const legacyTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Polygon, value: "1" }),
+  gasPrice: "40000000000",
+});
+```
+
+## Cross-Chain Operations
+
+### Bridging Assets
+
+```typescript
+// @noErrorValidation
+
+const bridgeQuote = await swapKit.getQuote({
+  sellAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  sellAmount: "1000",
+  buyAsset: "POL.USDC-0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Polygon),
+});
+
+const bridgeTx = await swapKit.swap({
+  route: bridgeQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const ethToMaticBridge = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "0.5",
+  buyAsset: "POL.MATIC",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Polygon),
+});
+```
+
+### Cross-Chain Swaps via THORChain
+
+```typescript
+// @noErrorValidation
+
+const maticToBtcQuote = await swapKit.getQuote({
+  sellAsset: "POL.MATIC",
+  sellAmount: "1000",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Polygon),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+const crossChainSwap = await swapKit.swap({
+  route: maticToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const usdcToRuneQuote = await swapKit.getQuote({
+  sellAsset: "POL.USDC-0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  sellAmount: "500",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Polygon),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## Polygon DEX Integration
+
+Access native Polygon DEXs for optimal liquidity:
+
+```typescript
+// @noErrorValidation
+
+const quickswapQuote = await swapKit.getQuote({
+  sellAsset: "POL.MATIC",
+  sellAmount: "100",
+  buyAsset: "POL.USDC-0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  senderAddress: swapKit.getAddress(Chain.Polygon),
+  recipientAddress: swapKit.getAddress(Chain.Polygon),
+  providers: ["QUICKSWAP"],
+});
+
+const sushiQuote = await swapKit.getQuote({
+  sellAsset: "POL.WETH-0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+  sellAmount: "0.5",
+  buyAsset: "POL.SUSHI-0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+  senderAddress: swapKit.getAddress(Chain.Polygon),
+  recipientAddress: swapKit.getAddress(Chain.Polygon),
+  providers: ["SUSHISWAP"],
+});
+
+const bestRateQuote = await swapKit.getQuote({
+  sellAsset: "POL.DAI-0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+  sellAmount: "1000",
+  buyAsset: "POL.AAVE-0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+  senderAddress: swapKit.getAddress(Chain.Polygon),
+  recipientAddress: swapKit.getAddress(Chain.Polygon),
+  providers: ["QUICKSWAP", "SUSHISWAP"],
+});
+
+const dexSwap = await swapKit.swap({
+  route: bestRateQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+```
+
+## Polygon-Specific Features
+
+### Popular Polygon Tokens
+
+```typescript
+// @noErrorValidation
+
+const polygonTokens = {
+  WMATIC: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+  USDC: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  USDT: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+  WETH: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+  DAI: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+  AAVE: "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+  QUICK: "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+  SUSHI: "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+};
+
+const getPolygonPortfolio = async () => {
+  const balances = {};
+  const address = swapKit.getAddress(Chain.Polygon);
+
+  balances.MATIC = await toolbox.getBalance(address);
+
+  for (const [symbol, tokenAddress] of Object.entries(polygonTokens)) {
+    const balance = await toolbox.getBalance(address, tokenAddress);
+    balances[symbol] = balance.toString();
+  }
+
+  return balances;
+};
+```
+
+### Aave V3 Integration
+
+```typescript
+// @noErrorValidation
+
+const aaveSupply = await toolbox.call({
+  contractAddress: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+  abi: aaveV3PoolABI,
+  funcName: "supply",
+  funcParams: [
+    "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "1000000000",
+    swapKit.getAddress(Chain.Polygon),
+    0,
+  ],
+});
+
+const aaveBorrow = await toolbox.call({
+  contractAddress: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+  abi: aaveV3PoolABI,
+  funcName: "borrow",
+  funcParams: [
+    "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    "500000000000000000000",
+    2,
+    0,
+    swapKit.getAddress(Chain.Polygon),
+  ],
+});
+
+const aaveRepay = await toolbox.call({
+  contractAddress: "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+  abi: aaveV3PoolABI,
+  funcName: "repay",
+  funcParams: [
+    "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    "250000000000000000000",
+    2,
+    swapKit.getAddress(Chain.Polygon),
+  ],
+});
+```
+
+### QuickSwap Farming
+
+```typescript
+// @noErrorValidation
+
+const quickStaking = await toolbox.call({
+  contractAddress: "0x...",
+  abi: stakingRewardsABI,
+  funcName: "stake",
+  funcParams: ["1000000000000000000"],
+});
+
+const addLiquidity = await toolbox.call({
+  contractAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+  abi: quickRouterABI,
+  funcName: "addLiquidityETH",
+  funcParams: [
+    "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "1000000000",
+    "0",
+    "0",
+    swapKit.getAddress(Chain.Polygon),
+    Date.now() + 600000,
+  ],
+  txOverrides: {
+    value: "500000000000000000000",
+    gasLimit: "300000",
+  },
+});
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Polygon, [
+  "https:
+  "https:
+  "https:
+  "https:
+]);
+
+
+import { JsonRpcProvider } from 'ethers';
+
+const polygonProvider = new JsonRpcProvider("https:
+const toolbox = await getPolygonToolbox({
+  phrase: "your mnemonic",
+  provider: polygonProvider
+});
+```
+
+### Working with Polygon Mumbai Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Polygon, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetTokens = {
+  USDC: "0x742d35Cc6051C0532025bd02d33c239b4B9Cef5B",
+  WETH: "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa"
+};
+```
+
+## Error Handling
+
+Handle Polygon-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_evm_insufficient_funds":
+        console.error("Insufficient MATIC for gas");
+        break;
+      case "network_polygon_checkpoint_delay":
+        console.error("Polygon checkpoint delay, try again later");
+        break;
+      case "toolbox_evm_transaction_failed":
+        console.error("Transaction failed:", error.cause);
+        break;
+      case "bridge_polygon_validator_issue":
+        console.error("Polygon bridge validator issue");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Gas Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizedTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Polygon, value: "1" }),
+  gasLimit: "21000",
+  maxFeePerGas: "40000000000",
+  maxPriorityFeePerGas: "2000000000",
+});
+
+const multicallData = [
+  {
+    target: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    callData: "0x70a08231...",
+  },
+  {
+    target: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+    callData: "0x70a08231...",
+  },
+  {
+    target: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    callData: "0x70a08231...",
+  },
+];
+
+const results = await toolbox.multicall(multicallData);
+```
+
+### Transaction Batching
+
+```typescript
+// @noErrorValidation
+
+const batchOperations = async () => {
+  const operations = [];
+
+  const tokens = [
+    "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+  ];
+
+  for (const tokenAddress of tokens) {
+    const approve = toolbox.approve({
+      contractAddress: tokenAddress,
+      spenderAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+      amount:
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    });
+    operations.push(approve);
+  }
+
+  const results = await Promise.all(operations);
+  return results;
+};
+```
+
+## Best Practices
+
+1. **Leverage Fast Finality**:
+
+   ```typescript
+   const fastTx = await swapKit.transfer({
+     recipient: "0x...",
+     assetValue: AssetValue.from({ chain: Chain.Polygon, value: "10" }),
+     feeOptionKey: FeeOption.Fast,
+   });
+
+   const receipt = await toolbox.waitForTransaction(fastTx);
+   console.log("Confirmed quickly:", receipt.blockNumber);
+   ```
+
+2. **Use Native Polygon Tokens**:
+
+   ```typescript
+   const nativePolygonTokens = {
+     USDC: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+     USDT: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+     DAI: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+   };
+   ```
+
+3. **Monitor Gas Spikes**:
+
+   ```typescript
+   const gasPrice = await toolbox.getGasPrices();
+
+   if (gasPrice.fast > 100000000000) {
+     console.warn("High gas prices on Polygon, consider waiting");
+   }
+   ```
+
+4. **Use QuickSwap for Best Liquidity**:
+
+   ```typescript
+   const quickQuote = await swapKit.getQuote({
+     sellAsset: "POL.MATIC",
+     sellAmount: "1000",
+     buyAsset: "POL.USDC-0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+     senderAddress: swapKit.getAddress(Chain.Polygon),
+     recipientAddress: swapKit.getAddress(Chain.Polygon),
+     providers: ["QUICKSWAP"],
+   });
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Bridge delays from Ethereum**:
+
+   ```typescript
+   const checkBridgeStatus = async (l1TxHash: string) => {
+     const status = await toolbox.getBridgeDeposit(l1TxHash);
+     console.log(`Bridge status: ${status.status}`);
+     return status.status === "COMPLETED";
+   };
+   ```
+
+2. **Gas estimation issues**:
+
+   ```typescript
+   const complexTx = await toolbox.buildTransaction({
+     recipient: "0x...",
+     amount: AssetValue.from({ chain: Chain.Polygon, value: "1" }),
+     gasLimit: "500000",
+     maxFeePerGas: "100000000000",
+   });
+   ```
+
+3. **RPC reliability**:
+
+   ```typescript
+
+   const rpcProviders = [
+     "https:
+     "https:
+     "https:
+   ];
+
+   SKConfig.setRpcUrl(Chain.Polygon, rpcProviders);
+   ```
+
+## API Reference Summary
+
+### Core Methods (Same as Ethereum)
+
+- `getBalance()` - Get MATIC or token balance
+- `transfer()` - Send MATIC or tokens
+- `buildTransaction()` - Construct transaction parameters
+- `call()` - Execute smart contract functions
+- `estimateCall()` - Estimate gas for contract calls
+
+### Gas Management
+
+- `getGasPrices()` - Get current gas prices with EIP-1559
+- `estimateGas()` - Estimate gas usage
+- `waitForTransaction()` - Wait for ~2 second confirmation
+
+### Polygon Specific
+
+- `getBridgeDeposit()` - Check bridge deposit status
+- `getCheckpointStatus()` - Monitor checkpoint progress
+- `multicall()` - Batch contract reads efficiently
+
+## Next Steps
+
+- Learn about other [Layer 2 solutions](/guides/chains/optimism) like Optimism
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Polygon
+- Check out [Ethereum Integration](/guides/chains/ethereum) for L1 comparison
+- Read about [Production Best Practices](/guides/production-best-practices)

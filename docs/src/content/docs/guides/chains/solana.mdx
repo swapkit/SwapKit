@@ -1,0 +1,724 @@
+---
+title: Solana Integration
+description: Complete guide to integrating Solana with SwapKit SDK for SOL operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Solana integration with SwapKit, including wallet connections, SOL transfers, SPL token operations, and cross-chain swaps.
+
+## Overview
+
+Solana is a high-performance blockchain known for fast transactions and low fees. SwapKit provides comprehensive Solana support through:
+
+- **Solana Toolbox**: Native Solana operations with sub-second finality
+- **SPL Token Support**: Full support for Solana's token standard
+- **Cross-Chain Swaps**: Seamless swaps with other cryptocurrencies
+- **Program Interaction**: Execute Solana program instructions
+- **Multi-Wallet Support**: Compatible with Phantom, Solflare, and hardware wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const solWallet = await swapKit.getWallet(Chain.Solana);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getSolanaToolbox } from '@swapkit/toolboxes/solana';
+
+
+const solToolbox = await getSolanaToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 501, 0, 0]
+});
+
+
+const solToolbox = await getSolanaToolbox({
+  keypair: customSolanaKeypair,
+  network: "mainnet-beta"
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Solana Toolbox
+
+### Wallet Connection
+
+Connect to Solana using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Solana], "your mnemonic phrase");
+
+await swapKit.connectPhantom([Chain.Solana]);
+
+await swapKit.connectSolflare([Chain.Solana]);
+
+await swapKit.connectLedger([Chain.Solana]);
+```
+
+### Address Generation
+
+Solana addresses are base58-encoded public keys:
+
+```typescript
+// @noErrorValidation
+
+const solanaAddress = swapKit.getAddress(Chain.Solana);
+
+console.log("Solana address:", solanaAddress);
+
+import { validateSolanaAddress } from "@swapkit/toolboxes/solana";
+
+const isValidAddress = validateSolanaAddress(solanaAddress);
+console.log("Valid SOL address:", isValidAddress);
+
+const publicKey = await solToolbox.getPublicKey();
+console.log("Public key:", publicKey);
+```
+
+### SOL Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+  assetValue: AssetValue.from({
+    chain: Chain.Solana,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+  memo: "Payment for services",
+});
+
+console.log(`Solana transaction signature: ${txHash}`);
+
+const priorityTx = await solToolbox.transfer({
+  recipient: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+  assetValue: AssetValue.from({ chain: Chain.Solana, value: "0.05" }),
+  priorityFee: 10000,
+  memo: "Priority transfer",
+});
+
+const batchTransfer = async () => {
+  const recipients = [
+    { address: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM", amount: "0.01" },
+    { address: "AaLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", amount: "0.02" },
+    { address: "BbBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", amount: "0.015" },
+  ];
+
+  const batchTx = await solToolbox.batchTransfer({
+    recipients: recipients.map((r) => ({
+      address: r.address,
+      assetValue: AssetValue.from({ chain: Chain.Solana, value: r.amount }),
+    })),
+    priorityFee: 5000,
+  });
+
+  console.log("Batch transfer completed:", batchTx);
+};
+```
+
+### SPL Token Operations
+
+Solana Program Library (SPL) tokens are equivalent to ERC-20 on Ethereum:
+
+```typescript
+// @noErrorValidation
+
+const usdcTransfer = await swapKit.transfer({
+  recipient: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+  assetValue: AssetValue.from({
+    chain: Chain.Solana,
+    symbol: "USDC",
+    address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const tokenBalance = await solToolbox.getTokenBalance(
+  "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+  "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+);
+
+console.log(`USDC balance: ${tokenBalance} USDC`);
+
+const tokenAccounts = await solToolbox.getTokenAccounts(
+  swapKit.getAddress(Chain.Solana)
+);
+
+console.log("SPL token accounts:");
+tokenAccounts.forEach((account) => {
+  console.log(`${account.mint}: ${account.amount} tokens`);
+});
+
+const createTokenAccount = async (mintAddress: string) => {
+  const tokenAccountTx = await solToolbox.createAssociatedTokenAccount({
+    mint: mintAddress,
+    owner: swapKit.getAddress(Chain.Solana),
+    payer: swapKit.getAddress(Chain.Solana),
+  });
+
+  console.log("Token account created:", tokenAccountTx);
+  return tokenAccountTx;
+};
+```
+
+### Program Interactions
+
+Interact with Solana programs (smart contracts):
+
+```typescript
+// @noErrorValidation
+
+const jupiterSwap = await solToolbox.executeProgram({
+  programId: "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  instruction: {
+    keys: [
+      { pubkey: "sourceTokenAccount", isSigner: false, isWritable: true },
+      { pubkey: "destinationTokenAccount", isSigner: false, isWritable: true },
+      {
+        pubkey: swapKit.getAddress(Chain.Solana),
+        isSigner: true,
+        isWritable: false,
+      },
+    ],
+    data: Buffer.from("swap_instruction_data", "hex"),
+  },
+  signers: [],
+});
+
+const serumTrade = await solToolbox.executeProgram({
+  programId: "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+  instruction: {
+    keys: [],
+    data: Buffer.from("place_order_instruction", "hex"),
+  },
+});
+
+const programAccount = await solToolbox.getProgramAccount(
+  "11111111111111111111111111111112",
+  "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+);
+
+console.log("Program account data:", programAccount);
+```
+
+### Transaction History and Status
+
+```typescript
+// @noErrorValidation
+
+const transactions = await solToolbox.getTransactionHistory(
+  swapKit.getAddress(Chain.Solana),
+  20
+);
+
+console.log("Recent Solana transactions:");
+transactions.forEach((tx) => {
+  console.log(`${tx.signature}: ${tx.slot} (${tx.blockTime})`);
+  console.log(`  Fee: ${tx.meta.fee} lamports`);
+  console.log(`  Status: ${tx.meta.err ? "Failed" : "Success"}`);
+});
+
+const txDetails = await solToolbox.getTransaction(
+  "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW"
+);
+
+console.log("Transaction details:", {
+  slot: txDetails.slot,
+  fee: txDetails.meta.fee,
+  computeUnitsConsumed: txDetails.meta.computeUnitsConsumed,
+  preBalances: txDetails.meta.preBalances,
+  postBalances: txDetails.meta.postBalances,
+});
+
+const confirmationStatus = await solToolbox.getTransactionConfirmation(
+  "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW"
+);
+
+console.log("Confirmation status:", confirmationStatus);
+```
+
+## Cross-Chain Swaps
+
+Solana is supported in cross-chain swaps via various protocols:
+
+```typescript
+// @noErrorValidation
+
+const solToBtcQuote = await swapKit.getQuote({
+  sellAsset: "SOL.SOL",
+  sellAmount: "10",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Solana),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("SOL -> BTC quote:", {
+  expectedOutput: solToBtcQuote.expectedOutput,
+  fees: solToBtcQuote.fees,
+  timeEstimate: solToBtcQuote.timeEstimate,
+});
+
+const swapTx = await swapKit.swap({
+  route: solToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const usdcBridge = await swapKit.getQuote({
+  sellAsset: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  sellAmount: "1000",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Solana),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const solToStable = await swapKit.getQuote({
+  sellAsset: "SOL.SOL",
+  sellAmount: "5",
+  buyAsset: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  senderAddress: swapKit.getAddress(Chain.Solana),
+  recipientAddress: swapKit.getAddress(Chain.Solana),
+  providers: ["JUPITER"],
+});
+```
+
+## Advanced Solana Features
+
+### Jupiter DEX Integration
+
+```typescript
+// @noErrorValidation
+
+const jupiterAdvancedSwap = async () => {
+  const quote = await solToolbox.getJupiterQuote({
+    inputMint: "So11111111111111111111111111111111111111112",
+    outputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    amount: 1000000000,
+    slippageBps: 50,
+  });
+
+  const swapTx = await solToolbox.executeJupiterSwap({
+    quote,
+    userPublicKey: swapKit.getAddress(Chain.Solana),
+    priorityFee: 10000,
+  });
+
+  console.log("Jupiter swap executed:", swapTx);
+};
+
+const getAllRoutes = async () => {
+  const routes = await solToolbox.getJupiterRoutes({
+    inputMint: "So11111111111111111111111111111111111111112",
+    outputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    amount: 1000000000,
+  });
+
+  routes.forEach((route, index) => {
+    console.log(`Route ${index + 1}:`);
+    console.log(`  Output: ${route.outAmount}`);
+    console.log(`  Price impact: ${route.priceImpactPct}%`);
+    console.log(
+      `  Market infos:`,
+      route.marketInfos.map((m) => m.label)
+    );
+  });
+};
+```
+
+### Staking Operations
+
+```typescript
+// @noErrorValidation
+
+const stakeSol = async () => {
+  const validators = await solToolbox.getValidators();
+
+  const goodValidator = validators.find(
+    (v) =>
+      v.commission < 10 && v.activatedStake > 1000000 * 1e9 && !v.delinquent
+  );
+
+  if (!goodValidator) {
+    throw new Error("No suitable validator found");
+  }
+
+  const stakeAccountTx = await solToolbox.createStakeAccount({
+    stakeAmount: AssetValue.from({ chain: Chain.Solana, value: "10" }),
+    validatorVoteAccount: goodValidator.votePubkey,
+    stakePubkey: solToolbox.generateStakeAccount(),
+    authorizedStaker: swapKit.getAddress(Chain.Solana),
+    authorizedWithdrawer: swapKit.getAddress(Chain.Solana),
+  });
+
+  console.log(`Staked 10 SOL with ${goodValidator.name}:`, stakeAccountTx);
+};
+
+const delegateStake = async (stakeAccount: string) => {
+  const delegateTx = await solToolbox.delegateStake({
+    stakeAccount,
+    validatorVoteAccount: "ValidatorVoteAccount111111111111111111111111",
+    authorizedStaker: swapKit.getAddress(Chain.Solana),
+  });
+
+  console.log("Stake delegated:", delegateTx);
+};
+
+const withdrawStake = async (stakeAccount: string) => {
+  const deactivateTx = await solToolbox.deactivateStake({
+    stakeAccount,
+    authorizedStaker: swapKit.getAddress(Chain.Solana),
+  });
+
+  console.log("Stake deactivated:", deactivateTx);
+
+  setTimeout(async () => {
+    const withdrawTx = await solToolbox.withdrawStake({
+      stakeAccount,
+      withdrawerPubkey: swapKit.getAddress(Chain.Solana),
+      amount: AssetValue.from({ chain: Chain.Solana, value: "10" }),
+    });
+
+    console.log("Stake withdrawn:", withdrawTx);
+  }, 2 * 24 * 60 * 60 * 1000);
+};
+```
+
+### NFT Operations
+
+```typescript
+// @noErrorValidation
+
+const getNFTs = async () => {
+  const nfts = await solToolbox.getNFTs(swapKit.getAddress(Chain.Solana));
+
+  console.log("Owned NFTs:");
+  nfts.forEach((nft) => {
+    console.log(`${nft.name}: ${nft.mint}`);
+    console.log(`  Collection: ${nft.collection}`);
+    console.log(`  Image: ${nft.image}`);
+  });
+
+  return nfts;
+};
+
+const transferNFT = async (nftMint: string, recipient: string) => {
+  const transferTx = await solToolbox.transferNFT({
+    mint: nftMint,
+    from: swapKit.getAddress(Chain.Solana),
+    to: recipient,
+    owner: swapKit.getAddress(Chain.Solana),
+  });
+
+  console.log("NFT transferred:", transferTx);
+};
+
+const listNFT = async (nftMint: string, price: number) => {
+  const listingTx = await solToolbox.createMagicEdenListing({
+    mint: nftMint,
+    seller: swapKit.getAddress(Chain.Solana),
+    price: price * 1e9,
+    expiry: Date.now() + 7 * 24 * 60 * 60 * 1000,
+  });
+
+  console.log("NFT listed:", listingTx);
+};
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Solana, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customSolanaRpc = "https:
+SKConfig.setRpcUrl(Chain.Solana, customSolanaRpc);
+
+
+const heliusRpc = "https:
+SKConfig.setRpcUrl(Chain.Solana, heliusRpc);
+```
+
+### Working with Solana Devnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Solana, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const devnetToolbox = await getSolanaToolbox({
+  phrase: "your mnemonic",
+  network: "devnet"
+});
+
+
+const airdrop = await devnetToolbox.requestAirdrop(
+  swapKit.getAddress(Chain.Solana),
+  2 * 1e9
+);
+
+console.log("Airdrop transaction:", airdrop);
+```
+
+## Error Handling
+
+Handle Solana-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_solana_insufficient_funds":
+        console.error("Insufficient SOL balance");
+        break;
+      case "toolbox_solana_invalid_address":
+        console.error("Invalid Solana address format");
+        break;
+      case "toolbox_solana_transaction_failed":
+        console.error("Transaction failed:", error.cause);
+        break;
+      case "toolbox_solana_account_not_found":
+        console.error("Account not found or not initialized");
+        break;
+      case "toolbox_solana_insufficient_compute_units":
+        console.error("Insufficient compute units for transaction");
+        break;
+      case "toolbox_solana_blockhash_expired":
+        console.error("Transaction blockhash expired");
+        break;
+      default:
+        console.error("Unknown Solana error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Transaction Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizeTransaction = {
+  fast: { priorityFee: 10000 },
+  normal: { priorityFee: 1000 },
+
+  computeUnitLimit: 200000,
+  computeUnitPrice: 1,
+
+  async getOptimalBlockhash() {
+    const recentBlockhash = await solToolbox.getRecentBlockhash();
+    return recentBlockhash.blockhash;
+  },
+};
+
+const optimizedTransfer = await solToolbox.transfer({
+  recipient: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+  assetValue: AssetValue.from({ chain: Chain.Solana, value: "0.1" }),
+  priorityFee: optimizeTransaction.fast.priorityFee,
+  computeUnitLimit: optimizeTransaction.computeUnitLimit,
+  recentBlockhash: await optimizeTransaction.getOptimalBlockhash(),
+});
+```
+
+### Batch Operations
+
+```typescript
+// @noErrorValidation
+
+const batchOptimization = async () => {
+  const instructions = [
+    await solToolbox.createTransferInstruction({
+      from: swapKit.getAddress(Chain.Solana),
+      to: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      amount: 0.1 * 1e9,
+    }),
+
+    await solToolbox.createTokenTransferInstruction({
+      mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      from: await solToolbox.getAssociatedTokenAddress(
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        swapKit.getAddress(Chain.Solana)
+      ),
+      to: await solToolbox.getAssociatedTokenAddress(
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+      ),
+      amount: 100 * 1e6,
+      owner: swapKit.getAddress(Chain.Solana),
+    }),
+  ];
+
+  const batchTx = await solToolbox.sendTransaction({
+    instructions,
+    signers: [],
+    priorityFee: 5000,
+  });
+
+  console.log("Batch transaction:", batchTx);
+};
+```
+
+## Best Practices
+
+1. **Use Priority Fees Wisely**:
+
+   ```typescript
+   const smartPriorityFee = async (urgency: "low" | "medium" | "high") => {
+     const baseFee = await solToolbox.getEstimatedFees();
+
+     const multipliers = {
+       low: 1,
+       medium: 2,
+       high: 5,
+     };
+
+     return baseFee * multipliers[urgency];
+   };
+   ```
+
+2. **Monitor Compute Units**:
+
+   ```typescript
+   const monitorComputeUnits = async (signature: string) => {
+     const tx = await solToolbox.getTransaction(signature);
+     console.log(`Compute units used: ${tx.meta.computeUnitsConsumed}`);
+
+     if (tx.meta.computeUnitsConsumed > 800000) {
+       console.warn("High compute usage - consider optimizing instructions");
+     }
+   };
+   ```
+
+3. **Handle Token Accounts Properly**:
+
+   ```typescript
+   const ensureTokenAccount = async (mint: string, owner: string) => {
+     const tokenAccount = await solToolbox.getAssociatedTokenAddress(
+       mint,
+       owner
+     );
+
+     try {
+       await solToolbox.getTokenAccountBalance(tokenAccount);
+       return tokenAccount;
+     } catch {
+       await solToolbox.createAssociatedTokenAccount({
+         mint,
+         owner,
+         payer: owner,
+       });
+       return tokenAccount;
+     }
+   };
+   ```
+
+4. **Use Versioned Transactions**:
+   ```typescript
+   const versionedTx = await solToolbox.createVersionedTransaction({
+     instructions: [
+       /* your instructions */
+     ],
+     version: 0,
+     addressLookupTableAccounts: [],
+   });
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get SOL balance in SOL
+- `transfer()` - Send SOL with optimizations
+- `getTokenBalance()` - Get SPL token balance
+- `transferToken()` - Send SPL tokens
+
+### Program Methods
+
+- `executeProgram()` - Execute program instructions
+- `getProgramAccount()` - Read program account data
+- `createAssociatedTokenAccount()` - Create token accounts
+
+### Staking Methods
+
+- `createStakeAccount()` - Create new stake account
+- `delegateStake()` - Delegate stake to validator
+- `deactivateStake()` - Deactivate stake account
+- `withdrawStake()` - Withdraw from stake account
+
+### Jupiter DEX Methods
+
+- `getJupiterQuote()` - Get swap quote from Jupiter
+- `executeJupiterSwap()` - Execute swap via Jupiter
+- `getJupiterRoutes()` - Get all available routes
+
+### Transaction Methods
+
+- `getTransaction()` - Get transaction details
+- `getTransactionHistory()` - Get transaction history
+- `sendTransaction()` - Send custom transaction
+- `getRecentBlockhash()` - Get recent blockhash
+
+### NFT Methods
+
+- `getNFTs()` - Get owned NFTs
+- `transferNFT()` - Transfer NFT ownership
+- `createMagicEdenListing()` - List NFT on Magic Eden
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) using Solana
+- Explore other [blockchain integrations](/guides/chains/radix) like Radix
+- Check out [Production Best Practices](/guides/production-best-practices)
+- Read about [Transaction Optimization](/guides/advanced-features)

@@ -1,0 +1,686 @@
+---
+title: Litecoin Integration
+description: Complete guide to integrating Litecoin with SwapKit SDK for UTXO operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Litecoin integration with SwapKit, including wallet connections, UTXO management, fast confirmations, and cross-chain swaps.
+
+## Overview
+
+Litecoin is a peer-to-peer cryptocurrency based on Bitcoin with faster block times and lower fees. SwapKit provides comprehensive Litecoin support through:
+
+- **Litecoin Toolbox**: UTXO management with LTC-specific optimizations
+- **Fast Block Times**: ~2.5 minute block confirmations vs Bitcoin's ~10 minutes
+- **Cross-Chain Swaps**: Seamless swaps with other cryptocurrencies via THORChain
+- **SegWit Support**: Native SegWit for lower transaction fees
+- **Multi-Wallet Support**: Compatible with hardware and software wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const ltcWallet = await swapKit.getWallet(Chain.Litecoin);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getLitecoinToolbox } from '@swapkit/toolboxes/utxo';
+
+
+const ltcToolbox = await getLitecoinToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [84, 2, 0, 0, 0]
+});
+
+
+const ltcToolbox = await getLitecoinToolbox({
+  signer: customLitecoinSigner,
+  network: "mainnet"
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Litecoin Toolbox
+
+### Wallet Connection
+
+Connect to Litecoin using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Litecoin], "your mnemonic phrase");
+
+await swapKit.connectLedger([Chain.Litecoin]);
+
+await swapKit.connectTrezor([Chain.Litecoin]);
+
+await swapKit.connectKeepKey([Chain.Litecoin]);
+```
+
+### Address Generation
+
+Litecoin supports multiple address formats similar to Bitcoin:
+
+```typescript
+// @noErrorValidation
+
+const addresses = {
+  nativeSegwit: swapKit.getAddress(Chain.Litecoin),
+
+  segwit: await ltcToolbox.getAddress(0, false, "segwit"),
+
+  legacy: await ltcToolbox.getAddress(0, false, "legacy"),
+};
+
+console.log("Litecoin addresses:", addresses);
+```
+
+### Litecoin Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapKit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({
+    chain: Chain.Litecoin,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Litecoin transaction hash: ${txHash}`);
+
+const fastPayment = await ltcToolbox.transfer({
+  recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "0.05" }),
+  feeRate: 50,
+});
+
+const batchTransfers = async () => {
+  const recipients = [
+    { address: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", amount: "0.01" },
+    { address: "LdP8Qox1VAhCzLJNqrr74YovaWYyNBUWvL", amount: "0.02" },
+    { address: "MQMcJhpWHYVeQArcZR3sBgyPZxxRtnH441", amount: "0.015" },
+  ];
+
+  for (const { address, amount } of recipients) {
+    const tx = await ltcToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({ chain: Chain.Litecoin, value: amount }),
+      feeRate: 20,
+    });
+    console.log(`LTC sent to ${address}: ${tx}`);
+  }
+};
+```
+
+### UTXO Management
+
+Litecoin uses the same UTXO model as Bitcoin:
+
+```typescript
+// @noErrorValidation
+
+const utxos = await ltcToolbox.getUTXOs(
+  "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+);
+
+console.log("Available UTXOs:");
+utxos.forEach((utxo, index) => {
+  console.log(
+    `UTXO ${index}: ${utxo.value} litecoins (${utxo.txHash}:${utxo.index})`
+  );
+});
+
+const txParams = await ltcToolbox.buildTransaction({
+  recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "0.1" }),
+  feeRate: 25,
+  utxos: utxos.slice(0, 2),
+});
+
+console.log(`Transaction size: ${txParams.size} bytes`);
+console.log(`Transaction fee: ${txParams.fee} litecoins`);
+console.log(
+  `Fee rate: ${((txParams.fee / txParams.size) * 100000000).toFixed(2)} sat/vB`
+);
+```
+
+### Fee Management
+
+Litecoin fees are typically lower than Bitcoin:
+
+```typescript
+// @noErrorValidation
+
+const feeRates = await ltcToolbox.getFeeRates();
+console.log({
+  slow: feeRates.average,
+  standard: feeRates.fast,
+  fast: feeRates.fastest,
+});
+
+const estimateFees = async () => {
+  const amount = "0.1";
+  const priorities = [FeeOption.Average, FeeOption.Fast, FeeOption.Fastest];
+
+  for (const priority of priorities) {
+    const fee = await ltcToolbox.estimateTransactionFee({
+      recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      assetValue: AssetValue.from({ chain: Chain.Litecoin, value: amount }),
+      feeOptionKey: priority,
+    });
+
+    const feeUsd = fee.toNumber() * 65;
+    console.log(
+      `${priority} fee: ${fee.toNumber()} LTC (~$${feeUsd.toFixed(4)})`
+    );
+  }
+};
+
+const selectFeeRate = (urgency: "low" | "medium" | "high") => {
+  const feeRates = {
+    low: 10,
+    medium: 25,
+    high: 50,
+  };
+
+  return feeRates[urgency];
+};
+```
+
+### Transaction History
+
+```typescript
+// @noErrorValidation
+
+const transactions = await ltcToolbox.getTransactionHistory(
+  "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  0,
+  15
+);
+
+console.log("Recent Litecoin transactions:");
+transactions.forEach((tx) => {
+  console.log(`${tx.hash}: ${tx.amount} LTC (${tx.type})`);
+  console.log(`  Block: ${tx.blockHeight}, Confirmations: ${tx.confirmations}`);
+  console.log(`  Fee: ${tx.fee} litecoins`);
+  console.log(`  Date: ${new Date(tx.date)}`);
+});
+
+const analyzeConfirmationTimes = (transactions: any[]) => {
+  const confirmedTxs = transactions.filter((tx) => tx.confirmations > 0);
+
+  confirmedTxs.forEach((tx) => {
+    const blockTime = 2.5;
+    const estimatedTime = tx.confirmations * blockTime;
+    console.log(
+      `TX ${tx.hash.substring(0, 8)}: ${
+        tx.confirmations
+      } confirms (~${estimatedTime} min)`
+    );
+  });
+};
+```
+
+## Cross-Chain Swaps
+
+Litecoin is supported in THORChain cross-chain swaps:
+
+```typescript
+// @noErrorValidation
+
+const ltcToBtcQuote = await swapKit.getQuote({
+  sellAsset: "LTC.LTC",
+  sellAmount: "1",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Litecoin),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("LTC -> BTC quote:", {
+  expectedOutput: ltcToBtcQuote.expectedOutput,
+  fees: ltcToBtcQuote.fees,
+  timeEstimate: ltcToBtcQuote.timeEstimate,
+});
+
+const swapTx = await swapKit.swap({
+  route: ltcToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const ltcToUsdcQuote = await swapKit.getQuote({
+  sellAsset: "LTC.LTC",
+  sellAmount: "2",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Litecoin),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const ltcToRuneQuote = await swapKit.getQuote({
+  sellAsset: "LTC.LTC",
+  sellAmount: "0.5",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Litecoin),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+
+const fastArbitrage = async () => {
+  const ltcToEthQuote = await swapKit.getQuote({
+    sellAsset: "LTC.LTC",
+    sellAmount: "5",
+    buyAsset: "ETH.ETH",
+    senderAddress: swapKit.getAddress(Chain.Litecoin),
+    recipientAddress: swapKit.getAddress(Chain.Ethereum),
+  });
+
+  console.log(`LTC->ETH rate: 1 LTC = ${ltcToEthQuote.expectedOutput} ETH`);
+  console.log(
+    `Estimated time: ${ltcToEthQuote.timeEstimate} (faster due to LTC speed)`
+  );
+};
+```
+
+## Advanced Litecoin Features
+
+### MimbleWimble Extension Blocks (MWEB)
+
+```typescript
+// @noErrorValidation
+
+const mwebTransfer = async () => {
+  console.log("MWEB (MimbleWimble Extension Blocks) provides optional privacy");
+
+  const regularTx = await ltcToolbox.transfer({
+    recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "0.1" }),
+    feeRate: 20,
+  });
+
+  console.log("Regular LTC transfer:", regularTx);
+};
+```
+
+### Atomic Swaps
+
+```typescript
+// @noErrorValidation
+
+const atomicSwapExample = async () => {
+  const swapContract = {
+    initiator: swapKit.getAddress(Chain.Litecoin),
+    participant: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    amount: "1.0",
+    hashlock: "a914b7fcb4e6fb3c3c2dbf55e9e8a28d1e8b5c9a3b2187",
+    timelock: Math.floor(Date.now() / 1000) + 86400,
+  };
+
+  console.log("Atomic swap contract:", swapContract);
+
+  console.log("Litecoin's fast confirmation makes it ideal for atomic swaps");
+};
+```
+
+### Lightning Network Integration
+
+```typescript
+// @noErrorValidation
+
+const lightningExample = async () => {
+  console.log("Litecoin Lightning Network provides instant, low-fee payments");
+
+  const lightningPayment = {
+    amount: "0.0001",
+    recipient: "lnltc1...",
+    confirmationTime: "instant",
+    fee: "0.000001",
+  };
+
+  console.log("Lightning payment example:", lightningPayment);
+};
+```
+
+## Network Configuration
+
+### Custom Node Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Litecoin, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customLtcRpc = "https:
+SKConfig.setRpcUrl(Chain.Litecoin, customLtcRpc);
+
+
+const ltcToolbox = await getLitecoinToolbox({
+  phrase: "your mnemonic",
+  network: "mainnet",
+  apiUrl: "https:
+});
+```
+
+### Working with Litecoin Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Litecoin, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetToolbox = await getLitecoinToolbox({
+  phrase: "your mnemonic",
+  network: "testnet",
+  derivationPath: [84, 1, 0, 0, 0]
+});
+
+
+const testnetAddress = testnetToolbox.getAddress();
+console.log("LTC Testnet address:", testnetAddress);
+```
+
+## Error Handling
+
+Handle Litecoin-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_ltc_insufficient_funds":
+        console.error("Insufficient Litecoin balance");
+        break;
+      case "toolbox_ltc_invalid_address":
+        console.error("Invalid Litecoin address format");
+        break;
+      case "toolbox_ltc_fee_too_high":
+        console.error("Transaction fee exceeds amount");
+        break;
+      case "toolbox_ltc_network_congestion":
+        console.error("Litecoin network congested (rare)");
+        break;
+      case "toolbox_ltc_utxo_not_found":
+        console.error("Required UTXO not found or spent");
+        break;
+      default:
+        console.error("Unknown Litecoin error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Fast Confirmation Strategy
+
+```typescript
+// @noErrorValidation
+
+const fastConfirmationStrategy = async () => {
+  const feeRates = await ltcToolbox.getFeeRates();
+
+  const strategies = {
+    instant: {
+      feeRate: feeRates.fastest * 1.5,
+      expectedTime: "2.5 minutes (1 block)",
+    },
+    fast: {
+      feeRate: feeRates.fast,
+      expectedTime: "5-7.5 minutes (2-3 blocks)",
+    },
+    economical: {
+      feeRate: feeRates.average,
+      expectedTime: "7.5-12.5 minutes (3-5 blocks)",
+    },
+  };
+
+  return strategies;
+};
+
+const urgentTransfer = await ltcToolbox.transfer({
+  recipient: "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "0.5" }),
+  feeRate: 60,
+});
+```
+
+### UTXO Consolidation
+
+```typescript
+// @noErrorValidation
+
+const consolidateUTXOs = async () => {
+  const address = swapKit.getAddress(Chain.Litecoin);
+  const utxos = await ltcToolbox.getUTXOs(address);
+
+  const smallUTXOs = utxos.filter((utxo) => utxo.value < 0.01 * 100000000);
+
+  if (smallUTXOs.length > 8) {
+    console.log(`Consolidating ${smallUTXOs.length} small UTXOs`);
+
+    const consolidationTx = await ltcToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({
+        chain: Chain.Litecoin,
+        value: (
+          smallUTXOs.reduce((sum, utxo) => sum + utxo.value, 0) / 100000000
+        ).toString(),
+      }),
+      feeRate: 10,
+      utxos: smallUTXOs,
+    });
+
+    console.log("UTXO consolidation tx:", consolidationTx);
+  }
+};
+```
+
+## Best Practices
+
+1. **Leverage Fast Block Times**:
+
+   ```typescript
+   const fastPayment = async () => {
+     return await ltcToolbox.transfer({
+       recipient: "ltc1q...",
+       assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "0.1" }),
+       feeRate: 30,
+     });
+   };
+   ```
+
+2. **Use Native SegWit**:
+
+   ```typescript
+   const recipient = "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+   const legacy = "LdP8Qox1VAhCzLJNqrr74YovaWYyNBUWvL";
+   ```
+
+3. **Monitor Fee Rates**:
+
+   ```typescript
+   const feeRates = await ltcToolbox.getFeeRates();
+
+   if (feeRates.average > 100) {
+     console.warn("Litecoin fees unusually high, consider waiting");
+   } else if (feeRates.average < 20) {
+     console.log("Good time for batch operations and UTXO consolidation");
+   }
+   ```
+
+4. **Optimize for Speed When Needed**:
+
+   ```typescript
+   const criticalTx = await ltcToolbox.transfer({
+     recipient: "ltc1q...",
+     assetValue: AssetValue.from({ chain: Chain.Litecoin, value: "1.0" }),
+     feeRate: 80,
+   });
+   ```
+
+## Address Validation
+
+```typescript
+// @noErrorValidation
+import { validateLitecoinAddress } from "@swapkit/toolboxes/utxo";
+
+const addresses = [
+  "ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  "MQMcJhpWHYVeQArcZR3sBgyPZxxRtnH441",
+  "LdP8Qox1VAhCzLJNqrr74YovaWYyNBUWvL",
+];
+
+addresses.forEach((address) => {
+  const isValid = validateLitecoinAddress(address);
+  const format = detectLTCAddressFormat(address);
+  console.log(`${address}: ${isValid ? "Valid" : "Invalid"} (${format})`);
+});
+
+const detectLTCAddressFormat = (address: string): string => {
+  if (address.startsWith("ltc1")) return "Native SegWit";
+  if (address.startsWith("M") || address.startsWith("3"))
+    return "SegWit (P2SH)";
+  if (address.startsWith("L")) return "Legacy";
+  return "Unknown";
+};
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Address format confusion with Bitcoin**:
+
+   ```typescript
+   const validateForLitecoin = (address: string) => {
+     if (
+       address.startsWith("bc1") ||
+       address.startsWith("1") ||
+       address.startsWith("3")
+     ) {
+       throw new Error(
+         "Bitcoin address provided - use Litecoin address starting with ltc1, M, or L"
+       );
+     }
+     return validateLitecoinAddress(address);
+   };
+   ```
+
+2. **Network congestion (rare but possible)**:
+
+   ```typescript
+   const checkNetworkStatus = async () => {
+     const feeRates = await ltcToolbox.getFeeRates();
+     const recentBlocks = await ltcToolbox.getRecentBlocks(5);
+
+     const avgBlockTime =
+       recentBlocks.reduce((sum, block, i, arr) => {
+         if (i === 0) return 0;
+         return sum + (arr[i - 1].timestamp - block.timestamp);
+       }, 0) /
+       (recentBlocks.length - 1);
+
+     console.log(
+       `Average block time: ${(avgBlockTime / 60).toFixed(1)} minutes`
+     );
+
+     if (avgBlockTime > 300) {
+       console.warn("Litecoin blocks slower than expected");
+     }
+   };
+   ```
+
+3. **UTXO fragmentation**:
+   ```typescript
+   const checkUTXOHealth = async (address: string) => {
+     const utxos = await ltcToolbox.getUTXOs(address);
+     const smallUTXOs = utxos.filter((utxo) => utxo.value < 0.001 * 100000000);
+
+     if (smallUTXOs.length > 20) {
+       console.warn(
+         `${smallUTXOs.length} small UTXOs detected - consider consolidation`
+       );
+       return false;
+     }
+     return true;
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get Litecoin balance in LTC
+- `transfer()` - Send LTC with automatic UTXO selection
+- `buildTransaction()` - Construct transaction with custom parameters
+- `getUTXOs()` - Fetch unspent transaction outputs
+- `getTransactionHistory()` - Get transaction history
+
+### Fee Management
+
+- `getFeeRates()` - Get current network fee rates
+- `estimateTransactionFee()` - Estimate fee for transaction
+- `estimateTransactionSize()` - Estimate transaction size in bytes
+
+### Address Methods
+
+- `getAddress()` - Generate address for different formats
+- `validateLitecoinAddress()` - Validate Litecoin address format
+
+### Transaction Methods
+
+- `getTransaction()` - Get transaction details by hash
+- `broadcastTransaction()` - Broadcast signed transaction
+- `signTransaction()` - Sign transaction with private key
+- `getRecentBlocks()` - Get recent block data for network analysis
+
+## Next Steps
+
+- Learn about other [Bitcoin family chains](/guides/chains/dogecoin) like Dogecoin
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Litecoin
+- Check out [Bitcoin Integration](/guides/chains/bitcoin) for comparison
+- Read about [Production Best Practices](/guides/production-best-practices)

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/react": "4.3.0",
     "@astrojs/starlight": "0.35.2",
     "@shikijs/twoslash": "3.11.0",
@@ -15,7 +16,8 @@
     "starlight-openapi": "0.20.0",
     "starlight-typedoc": "0.21.3",
     "typedoc": "0.28.10",
-    "typedoc-plugin-markdown": "4.8.1"
+    "typedoc-plugin-markdown": "4.8.1",
+    "typescript": "^5.9.2"
   },
   "name": "@internal/docs",
   "private": true,

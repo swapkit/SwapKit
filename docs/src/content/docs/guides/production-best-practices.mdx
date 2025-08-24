@@ -3,7 +3,7 @@ title: Production Best Practices
 description: Security, performance, and deployment guidelines for SwapKit applications
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 Building production-ready applications with SwapKit requires careful attention to security, performance, and user experience. This guide covers essential best practices.
 
@@ -14,24 +14,23 @@ Building production-ready applications with SwapKit requires careful attention t
 For frontend applications, use a backend proxy to keep API keys secure:
 
 ```typescript
-// Frontend
-const quote = await fetch('/api/swap-quote', {
-  method: 'POST',
-  body: JSON.stringify(quoteParams)
-}).then(r => r.json());
+// @noErrorValidation
 
-// Backend API route
-import { SwapKitApi } from '@swapkit/helpers/api';
+const quote = await fetch("/api/swap-quote", {
+  method: "POST",
+  body: JSON.stringify(quoteParams),
+}).then((r) => r.json());
+
+import { SwapKitApi } from "@swapkit/helpers/api";
 
 export async function POST(request: Request) {
   const params = await request.json();
-  
-  // Add API key server-side
+
   const quote = await SwapKitApi.getSwapQuote({
     ...params,
-    apiKey: process.env.SWAPKIT_API_KEY
+    apiKey: process.env.SWAPKIT_API_KEY,
   });
-  
+
   return Response.json(quote);
 }
 ```
@@ -41,14 +40,14 @@ export async function POST(request: Request) {
 Always use secure wallet connections instead of handling private keys directly:
 
 ```typescript
-import { createSwapKit, Chain } from '@swapkit/sdk';
+// @noErrorValidation
+import { createSwapKit, Chain } from "@swapkit/sdk";
 
 const swapKit = createSwapKit();
 
-// ✅ Use secure wallet connections
-await swapKit.connectEVMWallet([Chain.Ethereum]); // MetaMask
-await swapKit.connectLedger([Chain.Bitcoin]);      // Hardware wallet
-await swapKit.connectTrezor([Chain.Bitcoin]);      // Trezor wallet
+await swapKit.connectEVMWallet([Chain.Ethereum]);
+await swapKit.connectLedger([Chain.Bitcoin]);
+await swapKit.connectTrezor([Chain.Bitcoin]);
 ```
 
 ### Input Validation
@@ -56,30 +55,28 @@ await swapKit.connectTrezor([Chain.Bitcoin]);      // Trezor wallet
 Always validate user inputs:
 
 ```typescript
-import { createSwapKit, SwapKitError } from '@swapkit/sdk';
+// @noErrorValidation
+import { createSwapKit, SwapKitError } from "@swapkit/sdk";
 
 const swapKit = createSwapKit();
 
 function validateSwapInput(params: any): void {
-  // Validate addresses
   if (!swapKit.validateAddress(params.recipient, params.chain)) {
-    throw new SwapKitError('core_swap_invalid_params', {
-      message: 'Invalid recipient address'
+    throw new SwapKitError("core_swap_invalid_params", {
+      message: "Invalid recipient address",
     });
   }
-  
-  // Validate amounts
+
   const amount = Number(params.amount);
   if (isNaN(amount) || amount <= 0) {
-    throw new SwapKitError('core_swap_invalid_params', {
-      message: 'Invalid amount'
+    throw new SwapKitError("core_swap_invalid_params", {
+      message: "Invalid amount",
     });
   }
-  
-  // Validate slippage
+
   if (params.slippage < 0 || params.slippage > 50) {
-    throw new SwapKitError('core_swap_invalid_params', {
-      message: 'Slippage must be between 0 and 50%'
+    throw new SwapKitError("core_swap_invalid_params", {
+      message: "Slippage must be between 0 and 50%",
     });
   }
 }
@@ -94,22 +91,24 @@ Use the modular approach for smaller bundles:
 <Tabs>
   <TabItem label="Modular (Recommended)">
     ```typescript
-    // Import only what you need
+
     import { SwapKit, ThorchainPlugin, evmWallet } from '@swapkit/sdk';
-    
+
     const swapKit = SwapKit({
       plugins: { ...ThorchainPlugin },
       wallets: { ...evmWallet }
     });
     ```
+
   </TabItem>
   <TabItem label="All-in-one">
     ```typescript
-    // Imports everything - larger bundle
+
     import { createSwapKit } from '@swapkit/sdk';
-    
+
     const swapKit = createSwapKit();
     ```
+
   </TabItem>
 </Tabs>
 
@@ -118,21 +117,21 @@ Use the modular approach for smaller bundles:
 Load toolboxes only when needed:
 
 ```typescript
-import { Chain } from '@swapkit/sdk';
+// @noErrorValidation
+import { Chain } from "@swapkit/sdk";
 
-// Lazy load toolboxes
 async function getToolboxForChain(chain: Chain) {
   switch (chain) {
     case Chain.Ethereum:
-      const { getEvmToolbox } = await import('@swapkit/sdk');
+      const { getEvmToolbox } = await import("@swapkit/sdk");
       return getEvmToolbox(chain);
-    
+
     case Chain.Bitcoin:
-      const { getUtxoToolbox } = await import('@swapkit/sdk');
+      const { getUtxoToolbox } = await import("@swapkit/sdk");
       return getUtxoToolbox(chain);
-    
+
     default:
-      const { getToolbox } = await import('@swapkit/sdk');
+      const { getToolbox } = await import("@swapkit/sdk");
       return getToolbox(chain);
   }
 }
@@ -143,26 +142,27 @@ async function getToolboxForChain(chain: Chain) {
 Implement caching for frequently accessed data:
 
 ```typescript
+// @noErrorValidation
 class SwapKitCache {
   private cache = new Map<string, { data: any; timestamp: number }>();
   private ttl: Record<string, number> = {
-    price: 60_000,      // 1 minute
-    balance: 300_000,   // 5 minutes
-    quote: 30_000,      // 30 seconds
+    price: 60_000,
+    balance: 300_000,
+    quote: 30_000,
   };
-  
+
   async get<T>(
-    key: string, 
+    key: string,
     type: keyof typeof this.ttl,
     fetcher: () => Promise<T>
   ): Promise<T> {
     const cached = this.cache.get(key);
     const now = Date.now();
-    
+
     if (cached && now - cached.timestamp < this.ttl[type]) {
       return cached.data;
     }
-    
+
     const data = await fetcher();
     this.cache.set(key, { data, timestamp: now });
     return data;
@@ -171,15 +171,10 @@ class SwapKitCache {
 
 const cache = new SwapKitCache();
 
-// Use cache for prices
-const price = await cache.get(
-  `price_${asset}`,
-  'price',
-  async () => {
-    const { SwapKitApi } = await import('@swapkit/helpers/api');
-    return SwapKitApi.getPrice(asset);
-  }
-);
+const price = await cache.get(`price_${asset}`, "price", async () => {
+  const { SwapKitApi } = await import("@swapkit/helpers/api");
+  return SwapKitApi.getPrice(asset);
+});
 ```
 
 ### Batch Operations
@@ -187,17 +182,16 @@ const price = await cache.get(
 Batch multiple operations for efficiency:
 
 ```typescript
-import { Chain } from '@swapkit/sdk';
+// @noErrorValidation
+import { Chain } from "@swapkit/sdk";
 
-// ❌ Inefficient - multiple sequential calls
 const ethBalance = await swapKit.getBalance(Chain.Ethereum);
 const btcBalance = await swapKit.getBalance(Chain.Bitcoin);
 const avaxBalance = await swapKit.getBalance(Chain.Avalanche);
 
-// ✅ Efficient - parallel calls
 const chains = [Chain.Ethereum, Chain.Bitcoin, Chain.Avalanche];
 const balances = await Promise.all(
-  chains.map(chain => swapKit.getBalance(chain))
+  chains.map((chain) => swapKit.getBalance(chain))
 );
 ```
 
@@ -208,7 +202,8 @@ const balances = await Promise.all(
 Handle all error scenarios gracefully:
 
 ```typescript
-import { SwapKitError } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
 
 async function executeSwap(route: SwapRoute) {
   try {
@@ -216,30 +211,27 @@ async function executeSwap(route: SwapRoute) {
     return { success: true, txHash };
   } catch (error) {
     if (error instanceof SwapKitError) {
-      // Handle SwapKit-specific errors
       switch (error.code) {
-        case 'wallet_not_connected':
-          return { success: false, error: 'Please connect your wallet' };
-        
-        case 'insufficient_balance':
-          return { success: false, error: 'Insufficient balance' };
-        
-        case 'user_rejected':
-          return { success: false, error: 'Transaction cancelled' };
-        
+        case "wallet_not_connected":
+          return { success: false, error: "Please connect your wallet" };
+
+        case "insufficient_balance":
+          return { success: false, error: "Insufficient balance" };
+
+        case "user_rejected":
+          return { success: false, error: "Transaction cancelled" };
+
         default:
           return { success: false, error: error.message };
       }
     }
-    
-    // Handle network errors
-    if (error instanceof Error && error.message.includes('network')) {
-      return { success: false, error: 'Network error. Please try again.' };
+
+    if (error instanceof Error && error.message.includes("network")) {
+      return { success: false, error: "Network error. Please try again." };
     }
-    
-    // Unknown error
-    console.error('Unexpected error:', error);
-    return { success: false, error: 'An unexpected error occurred' };
+
+    console.error("Unexpected error:", error);
+    return { success: false, error: "An unexpected error occurred" };
   }
 }
 ```
@@ -249,40 +241,35 @@ async function executeSwap(route: SwapRoute) {
 Implement retry logic for transient failures:
 
 ```typescript
-import { SwapKitError, SwapKitApi } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitError, SwapKitApi } from "@swapkit/sdk";
 
 async function withRetry<T>(
   fn: () => Promise<T>,
   options = { maxRetries: 3, delay: 1000 }
 ): Promise<T> {
   let lastError: Error;
-  
+
   for (let i = 0; i <= options.maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
-      // Don't retry user rejections
-      if (error instanceof SwapKitError && 
-          error.code === 'user_rejected') {
+
+      if (error instanceof SwapKitError && error.code === "user_rejected") {
         throw error;
       }
-      
-      // Wait before retry
+
       if (i < options.maxRetries) {
-        await new Promise(r => setTimeout(r, options.delay * (i + 1)));
+        await new Promise((r) => setTimeout(r, options.delay * (i + 1)));
       }
     }
   }
-  
+
   throw lastError!;
 }
 
-// Usage
-const quote = await withRetry(() => 
-  SwapKitApi.getSwapQuote(params)
-);
+const quote = await withRetry(() => SwapKitApi.getSwapQuote(params));
 ```
 
 ## User Experience
@@ -292,34 +279,33 @@ const quote = await withRetry(() =>
 Provide clear feedback during operations:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitApi } from "@swapkit/sdk";
 
 interface SwapState {
-  status: 'idle' | 'quoting' | 'approving' | 'swapping' | 'success' | 'error';
+  status: "idle" | "quoting" | "approving" | "swapping" | "success" | "error";
   message?: string;
   txHash?: string;
 }
 
 async function performSwap(params: SwapParams) {
-  const setState = (update: Partial<SwapState>) => {
-    // Update UI state
-  };
-  
+  const setState = (update: Partial<SwapState>) => {};
+
   try {
-    setState({ status: 'quoting', message: 'Getting best price...' });
+    setState({ status: "quoting", message: "Getting best price..." });
     const quote = await SwapKitApi.getSwapQuote(params);
-    
-    setState({ status: 'approving', message: 'Approving tokens...' });
+
+    setState({ status: "approving", message: "Approving tokens..." });
     await swapKit.approveAssetValue(assetValue);
-    
-    setState({ status: 'swapping', message: 'Executing swap...' });
+
+    setState({ status: "swapping", message: "Executing swap..." });
     const txHash = await swapKit.swap({ route: quote.routes[0] });
-    
-    setState({ status: 'success', txHash });
+
+    setState({ status: "success", txHash });
   } catch (error) {
-    setState({ 
-      status: 'error', 
-      message: getErrorMessage(error) 
+    setState({
+      status: "error",
+      message: getErrorMessage(error),
     });
   }
 }
@@ -330,34 +316,33 @@ async function performSwap(params: SwapParams) {
 Track transaction status for better UX:
 
 ```typescript
-import { Chain, SwapKitApi } from '@swapkit/sdk';
+// @noErrorValidation
+import { Chain, SwapKitApi } from "@swapkit/sdk";
 
 async function trackTransaction(
-  txHash: string, 
+  txHash: string,
   chain: Chain,
   onUpdate: (status: string) => void
 ) {
   let attempts = 0;
-  const maxAttempts = 60; // 5 minutes with 5s intervals
-  
+  const maxAttempts = 60;
+
   while (attempts < maxAttempts) {
     try {
       const status = await SwapKitApi.getTrackerDetails({ txHash, chain });
-      
+
       onUpdate(status.status);
-      
-      if (status.status === 'completed' || status.status === 'failed') {
+
+      if (status.status === "completed" || status.status === "failed") {
         return status;
       }
-    } catch (error) {
-      // Continue polling
-    }
-    
-    await new Promise(r => setTimeout(r, 5000));
+    } catch (error) {}
+
+    await new Promise((r) => setTimeout(r, 5000));
     attempts++;
   }
-  
-  throw new Error('Transaction tracking timeout');
+
+  throw new Error("Transaction tracking timeout");
 }
 ```
 
@@ -368,38 +353,39 @@ async function trackTransaction(
 Configure multiple RPC endpoints for reliability:
 
 ```typescript
+// @noErrorValidation
 import { Chain } from '@swapkit/sdk';
 
 const rpcEndpoints = {
   [Chain.Ethereum]: [
     process.env.ALCHEMY_ETH_RPC,
     process.env.INFURA_ETH_RPC,
-    'https://eth.llamarpc.com'
+    'https:
   ].filter(Boolean),
-  
+
   [Chain.Avalanche]: [
     process.env.AVALANCHE_RPC,
-    'https://api.avax.network/ext/bc/C/rpc'
+    'https:
   ].filter(Boolean)
 };
 
-// Failover logic
+
 async function getRpcUrl(chain: Chain): Promise<string> {
   const endpoints = rpcEndpoints[chain] || [];
-  
+
   for (const url of endpoints) {
     try {
       const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({ method: 'eth_blockNumber', params: [], id: 1 })
       });
-      
+
       if (response.ok) return url;
     } catch {
       continue;
     }
   }
-  
+
   throw new Error(`No working RPC for ${chain}`);
 }
 ```
@@ -409,20 +395,24 @@ async function getRpcUrl(chain: Chain): Promise<string> {
 Implement dynamic gas pricing:
 
 ```typescript
-import { SwapKitApi } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitApi } from "@swapkit/sdk";
 
-async function getOptimalGasPrice(chain: Chain, priority: 'low' | 'medium' | 'high') {
+async function getOptimalGasPrice(
+  chain: Chain,
+  priority: "low" | "medium" | "high"
+) {
   const gasRates = await SwapKitApi.getGasRate(chain);
-  
+
   const multipliers = {
     low: 0.9,
     medium: 1.0,
-    high: 1.5
+    high: 1.5,
   };
-  
+
   return {
     maxFeePerGas: Math.floor(Number(gasRates) * multipliers[priority]),
-    maxPriorityFeePerGas: Math.floor(Number(gasRates) * 0.1)
+    maxPriorityFeePerGas: Math.floor(Number(gasRates) * 0.1),
   };
 }
 ```
@@ -434,31 +424,29 @@ async function getOptimalGasPrice(chain: Chain, priority: 'low' | 'medium' | 'hi
 Track errors for debugging:
 
 ```typescript
-import * as Sentry from '@sentry/browser';
+// @noErrorValidation
+import * as Sentry from "@sentry/browser";
 
-// Initialize error tracking
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
   beforeSend(event, hint) {
-    // Don't send sensitive data
     if (event.request?.data) {
       delete event.request.data.privateKey;
       delete event.request.data.mnemonic;
     }
     return event;
-  }
+  },
 });
 
-// Track SwapKit errors
 try {
   await swapKit.swap({ route });
 } catch (error) {
   Sentry.captureException(error, {
     tags: {
-      chain: route.sellAsset.split('.')[0],
-      provider: route.providers[0]
-    }
+      chain: route.sellAsset.split(".")[0],
+      provider: route.providers[0],
+    },
   });
   throw error;
 }
@@ -469,39 +457,36 @@ try {
 Track key metrics:
 
 ```typescript
+// @noErrorValidation
 class PerformanceTracker {
   track(operation: string, fn: () => Promise<any>) {
     const start = performance.now();
-    
+
     return fn()
-      .then(result => {
+      .then((result) => {
         const duration = performance.now() - start;
-        this.report(operation, duration, 'success');
+        this.report(operation, duration, "success");
         return result;
       })
-      .catch(error => {
+      .catch((error) => {
         const duration = performance.now() - start;
-        this.report(operation, duration, 'error');
+        this.report(operation, duration, "error");
         throw error;
       });
   }
-  
+
   private report(operation: string, duration: number, status: string) {
-    // Send to analytics
-    analytics.track('operation_performance', {
+    analytics.track("operation_performance", {
       operation,
       duration,
-      status
+      status,
     });
   }
 }
 
 const tracker = new PerformanceTracker();
 
-// Track swap performance
-const txHash = await tracker.track('swap', () => 
-  swapKit.swap({ route })
-);
+const txHash = await tracker.track("swap", () => swapKit.swap({ route }));
 ```
 
 ## Deployment Checklist
@@ -524,41 +509,41 @@ Before deploying to production:
 ### Gradual Rollout
 
 ```typescript
-// Feature flags for gradual rollout
+// @noErrorValidation
+
 const features = {
-  newSwapFlow: process.env.ENABLE_NEW_SWAP_FLOW === 'true',
-  thorchainSwaps: process.env.ENABLE_THORCHAIN === 'true'
+  newSwapFlow: process.env.ENABLE_NEW_SWAP_FLOW === "true",
+  thorchainSwaps: process.env.ENABLE_THORCHAIN === "true",
 };
 
 if (features.newSwapFlow) {
-  // New implementation
 } else {
-  // Stable implementation
 }
 ```
 
 ### Health Checks
 
 ```typescript
-import { SwapKitApi, Chain } from '@swapkit/sdk';
+// @noErrorValidation
+import { SwapKitApi, Chain } from "@swapkit/sdk";
 
 async function healthCheck(): Promise<HealthStatus> {
   const checks = await Promise.allSettled([
-    SwapKitApi.getPrice('ETH'),
-    swapKit.validateAddress('0x...', Chain.Ethereum),
-    fetch(rpcUrls[Chain.Ethereum])
+    SwapKitApi.getPrice("ETH"),
+    swapKit.validateAddress("0x...", Chain.Ethereum),
+    fetch(rpcUrls[Chain.Ethereum]),
   ]);
-  
+
   return {
-    api: checks[0].status === 'fulfilled',
-    sdk: checks[1].status === 'fulfilled',
-    rpc: checks[2].status === 'fulfilled'
+    api: checks[0].status === "fulfilled",
+    sdk: checks[1].status === "fulfilled",
+    rpc: checks[2].status === "fulfilled",
   };
 }
 ```
 
 ## Next Steps
 
-- Review [Security considerations](https://docs.thorchain.org/security)
+- Review [Security considerations](https:
 - Implement [Advanced Features](/guides/advanced-features)
 - Monitor performance with [API Reference](/guides/api-reference)

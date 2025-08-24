@@ -14,7 +14,6 @@
   --sl-content-width: 65rem !important;
   --sl-content-margin-inline: 0 !important;
 
-  /* SwapKit Brand Colors - Improved contrast and accessibility */
   --sk-logo-green: #92f9c9;
   --sk-button-green: #00b068;
   --sk-dark-green: #006d35;
@@ -27,28 +26,22 @@
   --sk-light-gray: #2a2a2a;
   --sk-white: #ffffff;
 
-  /* Twoslash popup background */
   --twoslash-popup-bg: var(--sk-gray) !important;
 
-  /* Override Starlight colors with SwapKit theme - Using darker, more accessible colors */
   --sl-color-accent: var(--sk-accent-green);
   --sl-color-accent-high: var(--sk-dark-green);
   --sl-color-accent-low: rgba(32, 212, 131, 0.15);
   --sl-color-text-accent: var(--sk-accent-green);
 }
 
-/* Dark theme specific overrides */
 :root:not([data-theme="light"]) {
-  /* Dark theme adjustments */
   --sl-color-bg: var(--sk-black);
   --sl-color-bg-nav: var(--sk-dark-gray);
   --sl-color-bg-sidebar: var(--sk-black);
   --sl-color-hairline: var(--sk-light-gray);
 }
 
-/* Light theme overrides */
 :root[data-theme="light"] {
-  /* Override Starlight colors for proper light theme - Using darker green for better contrast */
   --sl-color-accent: var(--sk-dark-green);
   --sl-color-accent-high: var(--sk-dark-green);
   --sl-color-accent-low: rgba(0, 109, 53, 0.08);
@@ -66,36 +59,30 @@
   --sl-color-gray-6: #0a0a0a;
 }
 
-/* Font styling to match SwapKit */
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
 }
 
-/* Hide the default Starlight banner */
 .sl-banner {
   display: none !important;
 }
 
-/* Style the SwapKit logo/title like their website */
 .site-title {
   font-weight: 700;
   color: var(--sk-logo-green) !important;
   letter-spacing: -0.02em;
 }
 
-/* Ensure the logo link inherits the color */
 .site-title a {
   color: inherit !important;
 }
 
-/* Hero section styling */
 .hero {
   margin-bottom: 1rem;
 }
 
-/* Hero title with gradient effect */
 .hero h1 {
   margin-bottom: 0.75rem !important;
   font-size: 3rem !important;
@@ -117,13 +104,11 @@ body {
   opacity: 0.9;
 }
 
-/* Compact hero section content */
 .hero-section {
   margin-top: -1rem;
   animation: fadeInUp 0.6s ease-out 0.4s both;
 }
 
-/* Animate sections sequentially */
 .hero-section > h2 {
   animation: fadeInUp 0.6s ease-out 0.4s both;
 }
@@ -136,7 +121,6 @@ body {
   animation: fadeInUp 0.6s ease-out 0.6s both;
 }
 
-/* Animate individual cards with stagger */
 .hero-section .card:nth-child(1) {
   animation: fadeInUp 0.6s ease-out 0.7s both;
 }
@@ -153,12 +137,10 @@ body {
   animation: fadeInUp 0.6s ease-out 1s both;
 }
 
-/* Animate Quick Start section */
 .hero-section ~ * {
   animation: fadeInUp 0.6s ease-out 1.1s both;
 }
 
-/* Fix the main content area spacing */
 main[data-pagefind-body] {
   padding-top: 1rem !important;
 }
@@ -167,13 +149,11 @@ main[data-pagefind-body] {
   padding-top: 1rem !important;
 }
 
-/* Reduce hero actions spacing */
 .hero .actions {
   gap: 1rem !important;
   margin-top: 2rem !important;
 }
 
-/* Animate hero content on load */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -197,7 +177,6 @@ main[data-pagefind-body] {
   animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
-/* Hero image styling with glow and breathing animation */
 .hero img {
   box-sizing: border-box;
   width: 160px !important;
@@ -225,7 +204,6 @@ main[data-pagefind-body] {
   transform: translateY(-3px) scale(1.02);
 }
 
-/* Breathing animation for the logo - rising effect */
 @keyframes breathing-rise {
   0%,
   100% {
@@ -245,7 +223,6 @@ main[data-pagefind-body] {
   }
 }
 
-/* Light theme breathing animation - defined globally */
 @keyframes breathing-rise-light {
   0%,
   100% {
@@ -265,7 +242,6 @@ main[data-pagefind-body] {
   }
 }
 
-/* Light theme adjustments */
 @media (prefers-color-scheme: light) {
   .hero img {
     background: #ffffff;
@@ -285,13 +261,11 @@ main[data-pagefind-body] {
     transform: translateY(-3px) scale(1.02);
   }
 
-  /* Adjust logo color in light theme */
   .site-title {
     color: var(--sk-button-green) !important;
   }
 }
 
-/* Light theme with data-theme selector - higher specificity */
 :root[data-theme="light"] .hero img {
   background: #ffffff !important;
   box-shadow:
@@ -311,7 +285,6 @@ main[data-pagefind-body] {
   transform: translateY(-3px) scale(1.02);
 }
 
-/* Card styling to match SwapKit */
 .card {
   position: relative;
   padding: 1rem !important;
@@ -321,7 +294,6 @@ main[data-pagefind-body] {
     box-shadow 0.2s ease;
 }
 
-/* Dark theme cards */
 :root:not([data-theme="light"]) .card {
   background: var(--sk-gray);
   border: 1px solid var(--sk-light-gray);
@@ -334,7 +306,6 @@ main[data-pagefind-body] {
     0 4px 12px rgba(146, 249, 201, 0.1);
 }
 
-/* Light theme cards */
 :root[data-theme="light"] .card {
   background: #f8f8f8;
   border: 1px solid #e5e5e5;
@@ -347,19 +318,16 @@ main[data-pagefind-body] {
     0 4px 12px rgba(0, 109, 53, 0.1);
 }
 
-/* Reduce card grid spacing */
 .card-grid {
   gap: 1rem !important;
   margin-top: 0.5rem !important;
   margin-bottom: 2.5rem !important;
 }
 
-/* Reduce spacing before Quick Start */
 .hero-section + h2 {
   margin-top: 3rem !important;
 }
 
-/* Code blocks with SwapKit styling */
 pre {
   position: relative;
   margin: 1rem 0;
@@ -372,22 +340,18 @@ pre:hover {
   border-color: rgba(146, 249, 201, 0.3);
 }
 
-/* Ensure shiki code blocks can show tooltips */
 .shiki {
   overflow: visible !important;
 }
 
-/* Make sure the code frame allows tooltip overflow */
 .expressive-code .frame {
   overflow: visible !important;
 }
 
-/* Allow tooltips to escape the pre container */
 pre {
   overflow: visible !important;
 }
 
-/* Make parent containers allow overflow for tooltips */
 .expressive-code {
   overflow: visible !important;
 }
@@ -398,7 +362,6 @@ pre {
   right: 0.5rem;
 }
 
-/* Hero buttons - Starlight sl-link-button with glassmorphism */
 .hero .sl-link-button {
   position: relative !important;
   padding: 0.75rem 2rem !important;
@@ -413,7 +376,6 @@ pre {
   will-change: transform, box-shadow !important;
 }
 
-/* Animated spotlight effect */
 .hero .sl-link-button::after {
   position: absolute;
   top: 0;
@@ -448,7 +410,6 @@ pre {
   }
 }
 
-/* Primary button - Enhanced gradient with more life in dark mode */
 .hero .sl-link-button.primary {
   position: relative;
   overflow: hidden;
@@ -465,7 +426,6 @@ pre {
   backdrop-filter: blur(10px) !important;
 }
 
-/* Add animated gradient overlay for more life */
 .hero .sl-link-button.primary::before {
   position: absolute;
   top: 0;
@@ -482,7 +442,6 @@ pre {
   left: 100%;
 }
 
-/* Ensure button text stays above overlay */
 .hero .sl-link-button.primary span {
   position: relative;
   z-index: 2;
@@ -503,7 +462,6 @@ pre {
   transform: translateY(-2px) scale(1.01) !important;
 }
 
-/* Secondary button - Enhanced outlined glass with gradient borders */
 .hero .sl-link-button.secondary {
   position: relative;
   overflow: hidden;
@@ -519,7 +477,6 @@ pre {
   backdrop-filter: blur(8px) !important;
 }
 
-/* Add subtle shimmer effect to secondary button */
 .hero .sl-link-button.secondary::before {
   position: absolute;
   top: 0;
@@ -553,7 +510,6 @@ pre {
   transform: translateY(-4px) scale(1.02) !important;
 }
 
-/* Light theme button overrides */
 :root[data-theme="light"] .hero .sl-link-button.primary {
   color: var(--sk-white) !important;
   background: linear-gradient(135deg, var(--sk-button-green) 0%, #005a2b 100%) !important;
@@ -574,7 +530,6 @@ pre {
   transform: translateY(-4px) scale(1.02) !important;
 }
 
-/* Light theme secondary button - outlined glass */
 :root[data-theme="light"] .hero .sl-link-button:not(.primary) {
   color: var(--sk-button-green) !important;
   background: rgba(0, 109, 53, 0.04) !important;
@@ -596,12 +551,10 @@ pre {
   transform: translateY(-4px) scale(1.02) !important;
 }
 
-/* Light theme spotlight effect */
 :root[data-theme="light"] .hero .sl-link-button::after {
   background: radial-gradient(circle, rgba(0, 109, 53, 0.3) 0%, transparent 70%);
 }
 
-/* Light theme hero text */
 :root[data-theme="light"] .hero h1 {
   -webkit-text-fill-color: transparent;
   background: linear-gradient(135deg, var(--sk-button-green) 0%, #003d1f 100%);
@@ -614,7 +567,6 @@ pre {
   opacity: 1;
 }
 
-/* Headings */
 h1,
 h2,
 h3,
@@ -635,7 +587,6 @@ h3 {
   margin-bottom: 0.5rem;
 }
 
-/* Specific hero heading overrides */
 .hero h1 {
   margin-bottom: 0.5rem !important;
   font-size: 2.5rem;
@@ -649,12 +600,10 @@ h3 {
   margin-bottom: 0.5rem !important;
 }
 
-/* Paragraphs */
 p {
   margin-bottom: 0.75rem !important;
 }
 
-/* Lists */
 ul,
 ol {
   margin-bottom: 0.75rem !important;
@@ -665,7 +614,6 @@ ol li {
   margin-bottom: 0.25rem;
 }
 
-/* Feature list styling - Enhanced colors and tint backgrounds */
 ul li strong {
   padding: 0.125rem 0.375rem;
   font-weight: 600;
@@ -679,7 +627,6 @@ ul li strong {
   background-color: rgba(0, 109, 53, 0.06);
 }
 
-/* Links matching SwapKit - Improved visibility with underlines and better colors */
 article a:not(.action) {
   color: var(--sk-accent-green);
   text-decoration: underline;
@@ -694,7 +641,6 @@ article a:not(.action):hover {
   text-decoration-color: var(--sk-dark-green);
 }
 
-/* Light theme links */
 :root[data-theme="light"] article a:not(.action) {
   color: var(--sk-dark-green);
   text-decoration-color: rgba(0, 109, 53, 0.6);
@@ -705,7 +651,6 @@ article a:not(.action):hover {
   text-decoration-color: var(--sk-dark-green);
 }
 
-/* Icon colors - Updated for better visibility */
 .card [data-icon] {
   color: var(--sk-accent-green);
 }
@@ -714,7 +659,6 @@ article a:not(.action):hover {
   color: var(--sk-dark-green);
 }
 
-/* Sidebar active item - Clean styling without bracket cuts */
 nav [aria-current="page"] {
   position: relative;
   font-weight: 600;
@@ -723,7 +667,6 @@ nav [aria-current="page"] {
   border-radius: 8px;
 }
 
-/* Clean border indicator without cutting into content */
 nav [aria-current="page"]::before {
   position: absolute;
   top: 50%;
@@ -736,7 +679,6 @@ nav [aria-current="page"]::before {
   transform: translateY(-50%);
 }
 
-/* Light theme sidebar active item */
 :root[data-theme="light"] nav [aria-current="page"] {
   color: var(--sk-dark-green);
   background-color: rgba(0, 109, 53, 0.08);
@@ -746,7 +688,6 @@ nav [aria-current="page"]::before {
   background-color: var(--sk-dark-green);
 }
 
-/* Sidebar navigation links - improved hover states and clean nested styling */
 nav a:not([aria-current="page"]) {
   position: relative;
   overflow: hidden;
@@ -765,7 +706,6 @@ nav a:not([aria-current="page"]):hover {
   background-color: rgba(0, 109, 53, 0.04);
 }
 
-/* LEFT SIDEBAR ONLY - Clean styling for nested navigation items - Remove all vertical indicators */
 .sidebar-pane nav ul ul a {
   padding-left: 1.5rem;
   margin-left: 0.5rem;
@@ -779,7 +719,6 @@ nav a:not([aria-current="page"]):hover {
   transform: translateX(2px);
 }
 
-/* LEFT SIDEBAR ONLY - Remove all borders and visual indicators from nested items */
 .sidebar-pane nav ul ul {
   padding-left: 0;
   margin-left: 0;
@@ -793,7 +732,6 @@ nav a:not([aria-current="page"]):hover {
   border-left: none !important;
 }
 
-/* LEFT SIDEBAR ONLY - Remove all pseudo-element indicators */
 .sidebar-pane nav ul ul li::before,
 .sidebar-pane nav ul ul li::after,
 .sidebar-pane nav li::before,
@@ -803,7 +741,6 @@ nav a:not([aria-current="page"]):hover {
   display: none !important;
 }
 
-/* LEFT SIDEBAR ONLY - Ensure no visual indicators on any nested elements */
 .sidebar-pane nav details ul,
 .sidebar-pane nav details ul li,
 .sidebar-pane nav details ul li a {
@@ -811,22 +748,20 @@ nav a:not([aria-current="page"]):hover {
   border-left: none !important;
 }
 
-/* LEFT SIDEBAR ONLY - Remove any potential visual artifacts */
 .sidebar-pane nav .group ul,
 .sidebar-pane nav .group ul li {
   border: none !important;
   border-left: none !important;
 }
 
-/* Clean active state with left border indicator */
 .sidebar-pane nav [aria-current="page"] {
-  padding-left: 0.65rem !important; /* Compensate for border */
+  padding-left: 0.65rem !important;
   font-weight: 500 !important;
   color: var(--sk-accent-green) !important;
   background-color: transparent !important;
   border: none !important;
   border-left: 3px solid var(--sk-accent-green) !important;
-  box-shadow: none !important; /* Compensate for border */
+  box-shadow: none !important;
 }
 
 :root[data-theme="light"] .sidebar-pane nav [aria-current="page"] {
@@ -834,7 +769,6 @@ nav a:not([aria-current="page"]):hover {
   border-left-color: var(--sk-dark-green) !important;
 }
 
-/* Clean left sidebar navigation */
 .sidebar-pane nav a {
   position: relative;
   padding: 0.4rem 0.75rem;
@@ -855,7 +789,6 @@ nav a:not([aria-current="page"]):hover {
   background-color: rgba(0, 109, 53, 0.04);
 }
 
-/* Clean section headers - remove harsh borders */
 .sidebar-pane .group-label {
   padding: 0.5rem 0.75rem 0.25rem !important;
   margin: 0.75rem 0 0.25rem !important;
@@ -873,7 +806,6 @@ nav a:not([aria-current="page"]):hover {
   color: var(--sl-color-gray-4) !important;
 }
 
-/* Remove all section styling */
 .sidebar-pane details summary {
   padding: 0.5rem 0.75rem !important;
   margin: 0.5rem 0 0.25rem !important;
@@ -890,7 +822,6 @@ nav a:not([aria-current="page"]):hover {
   color: var(--sl-color-gray-4) !important;
 }
 
-/* Table of contents - Enhanced with scroll animations and better visibility */
 .right-sidebar {
   position: sticky;
   top: 1rem;
@@ -909,7 +840,6 @@ nav a:not([aria-current="page"]):hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* TOC Hierarchy - Proper indentation for nested sections */
 .right-sidebar li > ul > li > a {
   padding-left: 1.25rem;
   font-size: 0.8rem;
@@ -936,7 +866,6 @@ nav a:not([aria-current="page"]):hover {
   transform: translateX(4px);
 }
 
-/* Active state with enhanced animation */
 .right-sidebar a[aria-current="true"] {
   position: relative;
   font-weight: 700 !important;
@@ -948,7 +877,6 @@ nav a:not([aria-current="page"]):hover {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Animated border indicator with glow */
 .right-sidebar a[aria-current="true"]::before {
   position: absolute;
   top: 50%;
@@ -963,7 +891,6 @@ nav a:not([aria-current="page"]):hover {
   animation: slide-in 0.4s ease-out;
 }
 
-/* Pulse animation for active item */
 @keyframes pulse-glow {
   0%,
   100% {
@@ -987,7 +914,6 @@ nav a:not([aria-current="page"]):hover {
   }
 }
 
-/* Light theme table of contents - Enhanced visibility */
 :root[data-theme="light"] .right-sidebar a:hover {
   color: var(--sk-dark-green);
   background-color: rgba(0, 109, 53, 0.1);
@@ -1022,7 +948,6 @@ nav a:not([aria-current="page"]):hover {
   }
 }
 
-/* Enhanced "On this page" header */
 .right-sidebar h2,
 .right-sidebar .right-sidebar-title {
   padding: 0.5rem 0.75rem;
@@ -1044,7 +969,6 @@ nav a:not([aria-current="page"]):hover {
   border-left-color: var(--sk-dark-green);
 }
 
-/* Inline code styling - Enhanced with better colors and contrast */
 :root:not([data-theme="light"]) :not(pre) > code {
   padding: 0.125rem 0.375rem;
   font-size: 0.875em;
@@ -1065,7 +989,6 @@ nav a:not([aria-current="page"]):hover {
   border-radius: 4px;
 }
 
-/* Search input - Enhanced with better accent colors */
 :root:not([data-theme="light"]) [type="search"] {
   background-color: var(--sk-gray);
   border-color: var(--sk-light-gray);
@@ -1076,7 +999,6 @@ nav a:not([aria-current="page"]):hover {
   box-shadow: 0 0 0 1px var(--sk-accent-green);
 }
 
-/* Light theme search - target site-search component */
 :root[data-theme="light"] site-search [type="search"],
 :root[data-theme="light"] site-search input,
 :root[data-theme="light"] .site-search [type="search"],
@@ -1103,7 +1025,6 @@ nav a:not([aria-current="page"]):hover {
   box-shadow: 0 0 0 1px var(--sk-dark-green) !important;
 }
 
-/* Search button in light theme */
 :root[data-theme="light"] site-search button,
 :root[data-theme="light"] .site-search button,
 :root[data-theme="light"] site-search button[data-open-modal],
@@ -1119,14 +1040,12 @@ nav a:not([aria-current="page"]):hover {
   border-color: #c9cdd1 !important;
 }
 
-/* Search button icon/svg in light theme */
 :root[data-theme="light"] site-search button svg,
 :root[data-theme="light"] .site-search button svg {
   color: #57606a !important;
   fill: #57606a !important;
 }
 
-/* Light theme kbd - colors only, keeping dark theme structure */
 :root[data-theme="light"] site-search kbd {
   color: #24292e !important;
   background: #e1e4e8 !important;
@@ -1134,14 +1053,12 @@ nav a:not([aria-current="page"]):hover {
   box-shadow: inset 0 -1px 0 #c9cdd1 !important;
 }
 
-/* Dialog within site-search */
 :root[data-theme="light"] site-search dialog,
 :root[data-theme="light"] .site-search dialog {
   color: #24292e !important;
   background: #ffffff !important;
 }
 
-/* Twoslash tooltip fixes */
 .twoslash-popup {
   z-index: 10000 !important;
   padding: 0.5rem !important;
@@ -1163,23 +1080,19 @@ nav a:not([aria-current="page"]):hover {
   border: none !important;
 }
 
-/* Fix the hover info positioning */
 .twoslash-hover {
   border-bottom: 1px dotted var(--sk-logo-green);
 }
 
-/* Ensure the popup container is positioned correctly */
 .twoslash {
   position: relative;
 }
 
-/* Override the default twoslash styles that might be causing issues */
 .shiki .twoslash-hover {
   position: relative;
   display: inline-block;
 }
 
-/* Position tooltips properly */
 .twoslash-popup-container {
   position: absolute !important;
   z-index: 10000 !important;
@@ -1192,20 +1105,15 @@ nav a:not([aria-current="page"]):hover {
   pointer-events: auto;
 }
 
-/* Page progress indicator (if exists) */
 .progress-bar {
   background: linear-gradient(90deg, var(--sk-gradient-start), var(--sk-gradient-end));
 }
 
-/* Selection color */
 ::selection {
   color: var(--sk-black);
   background-color: var(--sk-accent-green);
 }
 
-/* Additional accessibility improvements - Specific section styling */
-
-/* Page sections with enhanced visibility and smooth scroll */
 html {
   scroll-behavior: smooth;
 }
@@ -1215,7 +1123,6 @@ html {
   transition: all 0.2s ease;
 }
 
-/* Enhance scroll-to-section behavior with subtle highlights */
 h1[id],
 h2[id],
 h3[id],
@@ -1227,7 +1134,6 @@ h6[id] {
   transition: all 0.3s ease;
 }
 
-/* Subtle flash animation when navigating to section */
 h1[id]:target,
 h2[id]:target,
 h3[id]:target,
@@ -1268,14 +1174,12 @@ h6[id]:target {
   }
 }
 
-/* Enhanced section backgrounds for better readability */
 .sl-container > h2,
 .sl-container > h3 {
   position: relative;
   padding: 0.5rem 0;
 }
 
-/* Feature sections with subtle backgrounds */
 .hero-section h2 + p,
 .hero-section h2 + ul {
   padding: 1rem;
@@ -1291,7 +1195,6 @@ h6[id]:target {
   border-left-color: var(--sk-dark-green);
 }
 
-/* Breadcrumb and navigation styling - Enhanced visibility */
 .breadcrumbs,
 .breadcrumbs a,
 nav .group-label {
@@ -1302,7 +1205,6 @@ nav .group-label {
   text-underline-offset: 2px;
 }
 
-/* Light theme breadcrumbs - Much more visible */
 :root[data-theme="light"] .breadcrumbs,
 :root[data-theme="light"] .breadcrumbs a,
 :root[data-theme="light"] nav .group-label {
@@ -1315,7 +1217,6 @@ nav .group-label {
   border-radius: 4px;
 }
 
-/* Breadcrumb separators */
 :root[data-theme="light"] .breadcrumbs {
   display: flex;
   gap: 0.5rem;
@@ -1338,7 +1239,6 @@ nav .group-label {
   transform: translateY(-1px);
 }
 
-/* Enhanced dropdown and collapsible section styling */
 details summary {
   padding: 0.5rem;
   color: var(--sk-accent-green);
@@ -1363,13 +1263,11 @@ details summary:hover {
   background-color: rgba(0, 109, 53, 0.08);
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-/* Dark theme scrollbar */
 :root:not([data-theme="light"]) ::-webkit-scrollbar-track {
   background: var(--sk-dark-gray);
 }
@@ -1379,7 +1277,6 @@ details summary:hover {
   border-radius: 4px;
 }
 
-/* Light theme scrollbar */
 :root[data-theme="light"] ::-webkit-scrollbar-track {
   background: #f6f8fa;
 }
@@ -1389,8 +1286,6 @@ details summary:hover {
   border-radius: 4px;
 }
 
-/* SwapKit-themed syntax highlighting - Target all possible formats */
-/* Keywords */
 [style*="#ff7b72" i],
 [style*="ff7b72" i],
 [style*="rgb(255, 123, 114)" i],
@@ -1398,7 +1293,6 @@ details summary:hover {
   color: var(--sk-logo-green) !important;
 }
 
-/* Function names */
 [style*="#d2a8ff" i],
 [style*="d2a8ff" i],
 [style*="rgb(210, 168, 255)" i],
@@ -1406,7 +1300,6 @@ details summary:hover {
   color: #79d8a9 !important;
 }
 
-/* Strings */
 [style*="#a5d6ff" i],
 [style*="a5d6ff" i],
 [style*="#79b8ff" i],
@@ -1416,7 +1309,6 @@ details summary:hover {
   color: #a8e4c9 !important;
 }
 
-/* Comments */
 [style*="#8b949e" i],
 [style*="8b949e" i],
 [style*="rgb(139, 148, 158)" i] {
@@ -1424,30 +1316,186 @@ details summary:hover {
   color: #6a737d !important;
 }
 
-/* Numbers */
 [style*="#79c0ff" i],
 [style*="79c0ff" i],
 [style*="rgb(121, 192, 255)" i] {
   color: #ffab70 !important;
 }
 
-/* Types/Classes */
 [style*="#ffa657" i],
 [style*="ffa657" i],
 [style*="rgb(255, 166, 87)" i] {
   color: #7ee2b8 !important;
 }
 
-/* Properties */
 [style*="#7ee787" i],
 [style*="7ee787" i],
 [style*="rgb(126, 231, 135)" i] {
   color: #b9f5d9 !important;
 }
 
-/* Special keywords */
 [style*="#f97583" i],
 [style*="f97583" i],
 [style*="rgb(249, 117, 131)" i] {
   color: var(--sk-gradient-end) !important;
+}
+
+.sl-badge,
+.sidebar-pane .sl-badge {
+  padding: 0.125rem 0.375rem !important;
+  margin-left: 0.5rem !important;
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.025em !important;
+  border-radius: 4px !important;
+}
+
+.sidebar-pane nav a:focus,
+.right-sidebar a:focus,
+.card a:focus {
+  outline: 2px solid var(--sk-accent-green) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+:root[data-theme="light"] .sidebar-pane nav a:focus,
+:root[data-theme="light"] .right-sidebar a:focus,
+:root[data-theme="light"] .card a:focus {
+  outline-color: var(--sk-dark-green) !important;
+}
+
+pre {
+  position: relative;
+}
+
+.copy-code-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  opacity: 0;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+pre:hover .copy-code-button,
+pre:focus .copy-code-button,
+.copy-code-button:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.copy-code-button:hover {
+  color: var(--sl-color-text);
+  background: var(--sl-color-bg-accent);
+  border-color: var(--sl-color-accent);
+  transform: translateY(-1px);
+}
+
+.copy-code-button:active {
+  transform: translateY(0);
+}
+
+.copy-code-button.copied {
+  color: rgb(34, 197, 94);
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.copy-code-button.error {
+  color: rgb(239, 68, 68);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.copy-icon,
+.check-icon {
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke-width: 2;
+}
+
+.copy-text {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+pre:focus {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+.copy-code-button:focus {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .copy-code-button {
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 768px) {
+  .copy-code-button {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6875rem;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .copy-icon,
+  .check-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .copy-code-button {
+    color: var(--sl-color-black);
+    background: var(--sl-color-white);
+    border-width: 2px;
+  }
+
+  [data-theme="dark"] .copy-code-button {
+    color: var(--sl-color-white);
+    background: var(--sl-color-black);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-code-button {
+    transform: none !important;
+    transition: opacity 0.2s ease;
+  }
+
+  .copy-code-button:hover {
+    transform: none !important;
+  }
+}
+
+@media print {
+  .copy-code-button {
+    display: none !important;
+  }
 }

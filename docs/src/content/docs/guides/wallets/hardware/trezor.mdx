@@ -1,0 +1,842 @@
+---
+title: Trezor Hardware Wallet Integration
+description: Complete guide to integrating Trezor hardware wallets with SwapKit SDK v4
+---
+
+Trezor hardware wallets provide secure cryptocurrency storage by keeping private keys offline on a dedicated device. SwapKit SDK v4 supports both Trezor Model One and Model T devices across multiple blockchain networks.
+
+## Supported Chains
+
+SwapKit supports Trezor devices on these chains:
+
+- **EVM Compatible**: Ethereum, Arbitrum, Aurora, Avalanche, Base, BinanceSmartChain, Gnosis, Optimism, Polygon
+- **UTXO Chains**: Bitcoin, Bitcoin Cash, Dash, Dogecoin, Litecoin
+
+## Installation and Setup
+
+### 1. Hardware Requirements
+
+- Trezor Model One or Model T
+- USB connection
+- Latest firmware installed via Trezor Suite
+
+### 2. Install Trezor Suite
+
+Download and install [Trezor Suite](https:
+
+- Update firmware
+- Install coin support
+- Backup your recovery seed
+- Manage device settings
+
+### 3. Enable Coin Support
+
+In Trezor Suite, ensure the coins you want to use are enabled:
+
+- Bitcoin (BTC)
+- Ethereum (ETH) - enables all EVM chains
+- Bitcoin Cash (BCH)
+- Litecoin (LTC)
+- Dogecoin (DOGE)
+- Dash (DASH)
+
+### 4. Browser Setup
+
+Trezor Connect works in modern browsers:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support
+- **Mobile browsers**: Not supported
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+
+import { SwapKit, trezorWallet, Chain } from "@swapkit/sdk";
+
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+
+    integrations: {
+      trezor: {
+        appName: "Your App Name",
+        appUrl: "https:
+        email: "support@yourapp.com",
+      },
+    },
+  },
+  wallets: { ...trezorWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+    integrations: {
+      trezor: {
+        appName: "Your App Name",
+        appUrl: "https:
+        email: "support@yourapp.com",
+      },
+    },
+  },
+});
+```
+
+### Connecting Your Trezor
+
+#### Single Chain Connection with Standard Path
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+async function connectTrezorBitcoin() {
+  try {
+    const derivationPath = NetworkDerivationPath.BTC;
+
+    await swapKit.connectTrezor([Chain.Bitcoin], derivationPath);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    const balance = await swapKit.getBalance(Chain.Bitcoin, true);
+
+    console.log("Bitcoin address:", address);
+    console.log("Balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Trezor:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Ethereum Connection
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+async function connectTrezorEthereum() {
+  try {
+    const derivationPath = NetworkDerivationPath.ETH;
+
+    await swapKit.connectTrezor([Chain.Ethereum], derivationPath);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Ethereum address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Trezor Ethereum:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+async function connectMultipleChains() {
+  const chainConfigs = [
+    { chain: Chain.Bitcoin, derivationPath: NetworkDerivationPath.BTC },
+    { chain: Chain.Ethereum, derivationPath: NetworkDerivationPath.ETH },
+    { chain: Chain.Litecoin, derivationPath: NetworkDerivationPath.LTC },
+  ];
+
+  const results = [];
+
+  try {
+    for (const { chain, derivationPath } of chainConfigs) {
+      await swapKit.connectTrezor([chain], derivationPath);
+      const address = swapKit.getAddress(chain);
+      results.push({ chain, address });
+      console.log(`Connected to ${chain}:`, address);
+    }
+
+    return { success: true, connections: results };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Custom Derivation Paths
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  type DerivationPathArray,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+const BITCOIN_PATHS = {
+  LEGACY: [44, 0, 0, 0, 0] as DerivationPathArray,
+  SEGWIT: [49, 0, 0, 0, 0] as DerivationPathArray,
+  NATIVE_SEGWIT: [84, 0, 0, 0, 0] as DerivationPathArray,
+};
+
+const ETHEREUM_PATHS = {
+  STANDARD: [44, 60, 0, 0, 0] as DerivationPathArray,
+  LEDGER_LIVE: [44, 60, 0, 0] as DerivationPathArray,
+  TREZOR_ONE: [44, 60, 0, 0, 0] as DerivationPathArray,
+};
+
+async function connectWithCustomPath() {
+  try {
+    await swapKit.connectTrezor([Chain.Bitcoin], BITCOIN_PATHS.LEGACY);
+    const legacyAddress = swapKit.getAddress(Chain.Bitcoin);
+
+    console.log("Bitcoin Legacy address:", legacyAddress);
+
+    return { success: true, address: legacyAddress };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Bitcoin Transaction
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  AssetValue,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+await swapKit.connectTrezor([Chain.Bitcoin], NetworkDerivationPath.BTC);
+
+async function sendBitcoin() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "SwapKit Trezor Transaction",
+    });
+
+    console.log("Transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("Transaction failed:", error);
+    throw error;
+  }
+}
+
+async function sendBitcoinWithCustomFee() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    const wallet = await swapKit.getWalletWithBalance(Chain.Bitcoin);
+    const feeRates = await wallet.getFeeRates();
+
+    console.log("Available fee rates:", feeRates);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      feeRate: feeRates.fast,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error("Transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Ethereum Transaction
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  AssetValue,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+await swapKit.connectTrezor([Chain.Ethereum], NetworkDerivationPath.ETH);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("ETH transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("ETH transaction failed:", error);
+    throw error;
+  }
+}
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("USDC transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("USDC transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Bitcoin Cash Transaction
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  AssetValue,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+await swapKit.connectTrezor([Chain.BitcoinCash], NetworkDerivationPath.BCH);
+
+async function sendBitcoinCash() {
+  const recipient = "bitcoincash:qr95sy3j9xwd2ap32xkykttr4cvcu7as4y0qverfuy";
+  const amount = AssetValue.fromChainOrSignature("BCH.BCH", 0.01);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("BCH transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("BCH transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Setup
+
+### Bitcoin Setup
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+  FeeOption,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...trezorWallet } });
+
+async function setupBitcoinAddressTypes() {
+  const paths = {
+    legacy: [44, 0, 0, 0, 0] as const,
+    segwit: [49, 0, 0, 0, 0] as const,
+    nativeSegwit: [84, 0, 0, 0, 0] as const,
+  };
+
+  const results = {};
+
+  for (const [type, path] of Object.entries(paths)) {
+    try {
+      await swapKit.connectTrezor([Chain.Bitcoin], path);
+      const address = swapKit.getAddress(Chain.Bitcoin);
+      results[type] = address;
+      console.log(`${type} address:`, address);
+
+      swapKit.disconnectChain(Chain.Bitcoin);
+    } catch (error) {
+      console.error(`Failed to get ${type} address:`, error);
+    }
+  }
+
+  return results;
+}
+```
+
+### EVM Chains Setup
+
+```ts twoslash
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...trezorWallet } });
+
+async function setupEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Polygon,
+    Chain.BinanceSmartChain,
+    Chain.Optimism,
+  ];
+
+  const results = {};
+
+  const ethPath = NetworkDerivationPath.ETH;
+
+  for (const chain of evmChains) {
+    try {
+      await swapKit.connectTrezor([chain], ethPath);
+      const address = swapKit.getAddress(chain);
+      results[chain] = address;
+      console.log(`${chain} address:`, address);
+    } catch (error) {
+      console.error(`Failed to connect to ${chain}:`, error);
+    }
+  }
+
+  return results;
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, trezorWallet, Chain, NetworkDerivationPath } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...trezorWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+    console.log("Attempting to connect to Trezor...");
+
+    await swapKit.connectTrezor([Chain.Bitcoin], NetworkDerivationPath.BTC);
+    console.log("✅ Trezor connected successfully");
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("✅ Address retrieved:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("Device disconnected")) {
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Check USB connection");
+      console.log("2. Unlock your Trezor device");
+      console.log("3. Ensure Trezor Bridge is running");
+      console.log("4. Try refreshing the page");
+    }
+
+    if (error.message.includes("Cancelled")) {
+      console.log("🔧 User cancelled the operation");
+      console.log("Please confirm the action on your Trezor device");
+    }
+
+    if (error.message.includes("Popup closed")) {
+      console.log("🔧 Popup was closed");
+      console.log("Please allow popups for this website");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkTrezorBridge() {
+  try {
+    const response = await fetch('http:
+    const status = await response.json();
+
+    console.log("Trezor Bridge status:", status);
+    return { running: true, status };
+  } catch (error) {
+    console.log("❌ Trezor Bridge not running");
+    console.log("Download and install from: https:
+    return { running: false };
+  }
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const txHash = await swapKit.transfer({
+      /* params */
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("Insufficient funds")) {
+      console.error("❌ Insufficient balance for transaction + fees");
+    }
+
+    if (error.message.includes("Cancelled")) {
+      console.error("❌ Transaction cancelled on Trezor device");
+    }
+
+    if (error.message.includes("Device disconnected")) {
+      console.error("❌ Trezor disconnected during transaction");
+      console.log("Please reconnect your device and try again");
+    }
+
+    if (error.message.includes("PIN")) {
+      console.error("❌ PIN required or incorrect");
+      console.log("Please enter PIN on your Trezor device");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Popup and Browser Issues
+
+```ts twoslash
+async function handleBrowserIssues() {
+  try {
+    await swapKit.connectTrezor([Chain.Bitcoin], NetworkDerivationPath.BTC);
+  } catch (error) {
+    if (error.message.includes("popup")) {
+      alert("Please allow popups for this website to use Trezor");
+
+      console.log("Popup instructions:");
+      console.log("Chrome: Click the popup icon in address bar");
+      console.log("Firefox: Click 'Options' next to the popup notification");
+      console.log(
+        "Safari: Go to Safari > Preferences > Websites > Pop-up Windows"
+      );
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, trezorWallet, Chain } from "@swapkit/sdk";
+
+async function verifyAddressOnDevice() {
+  const swapKit = SwapKit({ wallets: { ...trezorWallet } });
+  await swapKit.connectTrezor([Chain.Bitcoin], NetworkDerivationPath.BTC);
+
+  const address = swapKit.getAddress(Chain.Bitcoin);
+
+  console.log("Address from SwapKit:", address);
+  console.log(
+    "⚠️ Please verify this address matches what's shown on your Trezor screen"
+  );
+
+  return address;
+}
+
+async function secureTransaction() {
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", amount.toSignificant(6));
+  console.log("Recipient:", recipient);
+  console.log(
+    "⚠️ Please verify these details on your Trezor screen before confirming"
+  );
+
+  const txHash = await swapKit.transfer({
+    assetValue: amount,
+    recipient,
+  });
+
+  return txHash;
+}
+
+async function transactionWithTimeout() {
+  const timeoutMs = 60000;
+
+  const transactionPromise = swapKit.transfer({
+    assetValue: AssetValue.fromChainOrSignature("BTC.BTC", 0.001),
+    recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  });
+
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error("Transaction timeout")), timeoutMs);
+  });
+
+  try {
+    const txHash = await Promise.race([transactionPromise, timeoutPromise]);
+    return txHash;
+  } catch (error) {
+    if (error.message === "Transaction timeout") {
+      console.log(
+        "⏰ Transaction timed out - user may need more time to confirm"
+      );
+    }
+    throw error;
+  }
+}
+```
+
+### Secure Configuration
+
+```ts twoslash
+
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      trezor: {
+        appName: "Your App Name",
+        appUrl: "https:
+        email: "support@yourapp.com",
+
+        connectSrc: "https:
+        lazyLoad: true,
+        popup: true,
+        webusb: false,
+        trustedHost: true,
+      },
+    },
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+    },
+  },
+  wallets: { ...trezorWallet },
+});
+```
+
+## Advanced Usage
+
+### Custom Coin Support
+
+```ts twoslash
+import { SwapKit, trezorWallet, Chain } from "@swapkit/sdk";
+
+class CustomTrezorWallet {
+  private swapKit: any;
+
+  constructor() {
+    this.swapKit = SwapKit({ wallets: { ...trezorWallet } });
+  }
+
+  async connectWithAccountIndex(chain: Chain, accountIndex: number) {
+    let basePath: number[];
+
+    switch (chain) {
+      case Chain.Bitcoin:
+        basePath = [84, 0, accountIndex, 0, 0];
+        break;
+      case Chain.Ethereum:
+        basePath = [44, 60, accountIndex, 0, 0];
+        break;
+      default:
+        throw new Error(`Unsupported chain: ${chain}`);
+    }
+
+    await this.swapKit.connectTrezor([chain], basePath);
+    return this.swapKit.getAddress(chain);
+  }
+
+  async connectMultipleAccounts(chain: Chain, accountCount: number) {
+    const accounts = [];
+
+    for (let i = 0; i < accountCount; i++) {
+      try {
+        const address = await this.connectWithAccountIndex(chain, i);
+        accounts.push({ accountIndex: i, address });
+
+        this.swapKit.disconnectChain(chain);
+      } catch (error) {
+        console.error(`Failed to connect account ${i}:`, error);
+      }
+    }
+
+    return accounts;
+  }
+}
+```
+
+### React Integration
+
+```tsx twoslash
+import React, { useState, useEffect } from "react";
+import {
+  SwapKit,
+  trezorWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+interface TrezorWalletProps {
+  onConnect: (address: string) => void;
+  onError: (error: Error) => void;
+}
+
+export function TrezorWallet({ onConnect, onError }: TrezorWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [address, setAddress] = useState<string>("");
+  const [selectedChain, setSelectedChain] = useState<Chain>(Chain.Bitcoin);
+
+  const swapKit = SwapKit({
+    config: {
+      integrations: {
+        trezor: {
+          appName: "My DApp",
+          appUrl: window.location.origin,
+          email: "support@mydapp.com",
+        },
+      },
+    },
+    wallets: { ...trezorWallet },
+  });
+
+  const connectTrezor = async () => {
+    setIsConnecting(true);
+
+    try {
+      const derivationPath = NetworkDerivationPath[selectedChain];
+      await swapKit.connectTrezor([selectedChain], derivationPath);
+      const walletAddress = swapKit.getAddress(selectedChain);
+
+      setAddress(walletAddress);
+      setIsConnected(true);
+      onConnect(walletAddress);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddress("");
+  };
+
+  return (
+    <div>
+      {!isConnected ? (
+        <div>
+          <select
+            value={selectedChain}
+            onChange={(e) => setSelectedChain(e.target.value as Chain)}
+            disabled={isConnecting}
+          >
+            <option value={Chain.Bitcoin}>Bitcoin</option>
+            <option value={Chain.Ethereum}>Ethereum</option>
+            <option value={Chain.Litecoin}>Litecoin</option>
+          </select>
+          <button onClick={connectTrezor} disabled={isConnecting}>
+            {isConnecting ? "Connecting..." : "Connect Trezor"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <p>Chain: {selectedChain}</p>
+          <p>Address: {address}</p>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Trezor integration with SwapKit SDK v4, including security best practices, troubleshooting, and advanced usage patterns.

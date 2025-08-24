@@ -1,0 +1,1025 @@
+---
+title: Testing
+description: Comprehensive testing strategies for SwapKit applications including unit tests, integration tests, and mocking techniques
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Testing is essential for building reliable SwapKit applications. This guide covers unit testing, integration testing, mocking strategies, and testing different chain interactions.
+
+## Testing Setup
+
+### Test Framework Configuration
+
+SwapKit uses Bun's built-in test runner. Set up your testing environment:
+
+<Tabs>
+  <TabItem label="bun.config.ts">
+    ```typescript
+
+    export default {
+      test: {
+        timeout: 30000,
+        coverage: {
+          include: ['src/**/*.ts'],
+          exclude: [
+            'src/**/*.test.ts',
+            'src/**/*.d.ts',
+            'src/types/**/*'
+          ]
+        }
+      }
+    };
+    ```
+
+  </TabItem>
+  <TabItem label="package.json">
+    ```json
+    {
+      "scripts": {
+        "test": "bun test",
+        "test:watch": "bun test --watch",
+        "test:coverage": "bun test --coverage"
+      },
+      "devDependencies": {
+        "bun-types": "latest"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Test Environment Setup
+
+Configure test environment variables:
+
+```typescript
+// @noErrorValidation
+
+import { beforeAll, beforeEach } from "bun:test";
+import { SKConfig } from "@swapkit/helpers";
+
+beforeAll(() => {
+  SKConfig.set({
+    apiKeys: {
+      swapKit: process.env.TEST_API_KEY || "test-api-key",
+    },
+    envs: {
+      isDev: true,
+    },
+  });
+});
+
+beforeEach(() => {
+  SKConfig.reset();
+});
+```
+
+## Unit Testing
+
+### Testing SwapKit Configuration
+
+Test configuration management:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test, beforeEach } from 'bun:test';
+import { SKConfig } from '@swapkit/helpers';
+import { Chain } from '@swapkit/types';
+
+describe('SwapKit Configuration', () => {
+  beforeEach(() => {
+    SKConfig.reset();
+  });
+
+  test('should set and get API keys', () => {
+    const apiKey = 'test-api-key-123';
+
+    SKConfig.setApiKey('swapKit', apiKey);
+
+    const config = SKConfig.get('apiKeys');
+    expect(config.swapKit).toBe(apiKey);
+  });
+
+  test('should set explorer URLs', () => {
+    const customUrl = 'https:
+
+    SKConfig.setExplorerUrl(Chain.Ethereum, customUrl);
+
+    const explorerUrls = SKConfig.get('explorerUrls');
+    expect(explorerUrls[Chain.Ethereum]).toBe(customUrl);
+  });
+
+  test('should preserve existing config when adding new keys', () => {
+    SKConfig.setApiKey('swapKit', 'key1');
+    SKConfig.setApiKey('walletConnectProjectId', 'key2');
+
+    const apiKeys = SKConfig.get('apiKeys');
+    expect(apiKeys.swapKit).toBe('key1');
+    expect(apiKeys.walletConnectProjectId).toBe('key2');
+  });
+});
+```
+
+### Testing Asset Value Operations
+
+Test asset value calculations:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { AssetValue } from "@swapkit/helpers";
+
+describe("AssetValue", () => {
+  test("should create AssetValue from string", () => {
+    const assetValue = AssetValue.fromString("ETH.ETH", "1.5");
+
+    expect(assetValue.toString()).toBe("1.5 ETH.ETH");
+    expect(assetValue.getValue("string")).toBe("1.5");
+    expect(assetValue.asset.toString()).toBe("ETH.ETH");
+  });
+
+  test("should handle decimal precision", () => {
+    const assetValue = AssetValue.fromString("BTC.BTC", "0.12345678");
+
+    expect(assetValue.getValue("string", 8)).toBe("0.12345678");
+    expect(assetValue.getValue("string", 4)).toBe("0.1235");
+  });
+
+  test("should perform arithmetic operations", () => {
+    const asset1 = AssetValue.fromString("ETH.ETH", "1.5");
+    const asset2 = AssetValue.fromString("ETH.ETH", "0.5");
+
+    const sum = asset1.add(asset2);
+    expect(sum.getValue("string")).toBe("2");
+
+    const difference = asset1.sub(asset2);
+    expect(difference.getValue("string")).toBe("1");
+  });
+
+  test("should handle different asset types", () => {
+    const eth = AssetValue.fromString("ETH.ETH", "1");
+    const usdc = AssetValue.fromString(
+      "ETH.USDC-0xA0b86A33E6416c3C302BA3532A0a42B2A1fF0516",
+      "1000"
+    );
+
+    expect(eth.asset.chain).toBe("ETH");
+    expect(usdc.asset.chain).toBe("ETH");
+    expect(usdc.asset.symbol).toBe("USDC");
+  });
+
+  test("should validate asset values", () => {
+    expect(() => AssetValue.fromString("ETH.ETH", "-1")).toThrow();
+    expect(() => AssetValue.fromString("", "1")).toThrow();
+    expect(() => AssetValue.fromString("ETH.ETH", "invalid")).toThrow();
+  });
+});
+```
+
+### Testing SwapKit Error Handling
+
+Test error creation and handling:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { SwapKitError } from "@swapkit/helpers";
+
+describe("SwapKitError", () => {
+  test("should create error with string key", () => {
+    const error = new SwapKitError("core_wallet_connection_not_found");
+
+    expect(error).toBeInstanceOf(SwapKitError);
+    expect(error.name).toBe("SwapKitError");
+    expect(error.message).toBe("core_wallet_connection_not_found");
+  });
+
+  test("should create error with additional info", () => {
+    const errorInfo = { chainId: 1, address: "0x123..." };
+    const error = new SwapKitError({
+      errorKey: "wallet_evm_extensions_failed_to_switch_network",
+      info: errorInfo,
+    });
+
+    expect(error.message).toContain(
+      "wallet_evm_extensions_failed_to_switch_network"
+    );
+    expect(error.message).toContain(JSON.stringify(errorInfo));
+  });
+
+  test("should preserve cause", () => {
+    const originalError = new Error("Network timeout");
+    const swapKitError = new SwapKitError("api_v2_server_error", originalError);
+
+    expect(swapKitError.cause).toBe(originalError);
+  });
+
+  test("should have correct error codes", () => {
+    expect(SwapKitError.ErrorCode.core_wallet_connection_not_found).toBe(10101);
+    expect(SwapKitError.ErrorCode.wallet_ledger_device_not_found).toBe(20104);
+    expect(SwapKitError.ErrorCode.api_v2_server_error).toBe(60002);
+  });
+});
+```
+
+### Testing Utility Functions
+
+Test helper functions:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { validateAddress, isValidAssetIdentifier } from "@swapkit/helpers";
+import { Chain } from "@swapkit/types";
+
+describe("Validators", () => {
+  test("should validate Ethereum addresses", () => {
+    const validAddress = "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A";
+    const invalidAddress = "0xinvalid";
+
+    expect(validateAddress(validAddress, Chain.Ethereum)).toBe(true);
+    expect(validateAddress(invalidAddress, Chain.Ethereum)).toBe(false);
+  });
+
+  test("should validate Bitcoin addresses", () => {
+    const validBech32 = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+    const validLegacy = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+    const invalid = "invalid-bitcoin-address";
+
+    expect(validateAddress(validBech32, Chain.Bitcoin)).toBe(true);
+    expect(validateAddress(validLegacy, Chain.Bitcoin)).toBe(true);
+    expect(validateAddress(invalid, Chain.Bitcoin)).toBe(false);
+  });
+
+  test("should validate asset identifiers", () => {
+    expect(isValidAssetIdentifier("ETH.ETH")).toBe(true);
+    expect(isValidAssetIdentifier("BTC.BTC")).toBe(true);
+    expect(
+      isValidAssetIdentifier(
+        "ETH.USDC-0xA0b86A33E6416c3C302BA3532A0a42B2A1fF0516"
+      )
+    ).toBe(true);
+    expect(isValidAssetIdentifier("invalid")).toBe(false);
+    expect(isValidAssetIdentifier("")).toBe(false);
+  });
+
+  test("should validate chain-specific addresses", () => {
+    const addresses = {
+      [Chain.Ethereum]: "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A",
+      [Chain.Bitcoin]: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      [Chain.THORChain]: "thor1x96cfrxhe2qfvs5qqe3t9z8gk8chkwaqmhc4vj",
+      [Chain.Cosmos]: "cosmos1x96cfrxhe2qfvs5qqe3t9z8gk8chkwaqmhc4vj",
+    };
+
+    Object.entries(addresses).forEach(([chain, address]) => {
+      expect(validateAddress(address, chain as Chain)).toBe(true);
+    });
+  });
+});
+```
+
+## Integration Testing
+
+### Testing Wallet Connections
+
+Test wallet connection functionality:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test, beforeEach } from "bun:test";
+import { SwapKit } from "@swapkit/core";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { Chain } from "@swapkit/types";
+
+describe("Wallet Integration", () => {
+  let swapKit: ReturnType<typeof SwapKit>;
+
+  beforeEach(() => {
+    swapKit = SwapKit({
+      wallets: { keystore: keystoreWallet },
+    });
+  });
+
+  test(
+    "should connect keystore wallet",
+    async () => {
+      if (!process.env.TEST_PHRASE) {
+        console.warn("TEST_PHRASE not set, skipping keystore test");
+        return;
+      }
+
+      const chains = [Chain.Ethereum, Chain.Bitcoin];
+      await swapKit.connectKeystore(chains, process.env.TEST_PHRASE);
+
+      const wallets = swapKit.getAllWallets();
+
+      expect(wallets.ethereum).toBeDefined();
+      expect(wallets.ethereum.address).toBeDefined();
+      expect(wallets.bitcoin).toBeDefined();
+      expect(wallets.bitcoin.address).toBeDefined();
+    },
+    { timeout: 30000 }
+  );
+
+  test(
+    "should get wallet balance",
+    async () => {
+      if (!process.env.TEST_PHRASE) {
+        console.warn("TEST_PHRASE not set, skipping balance test");
+        return;
+      }
+
+      await swapKit.connectKeystore([Chain.Ethereum], process.env.TEST_PHRASE);
+
+      const wallet = await swapKit.getWalletWithBalance(Chain.Ethereum);
+
+      expect(wallet).toBeDefined();
+      expect(wallet.balance).toBeDefined();
+      expect(Array.isArray(wallet.balance)).toBe(true);
+    },
+    { timeout: 30000 }
+  );
+
+  test("should handle connection errors gracefully", async () => {
+    const invalidPhrase = "invalid mnemonic phrase";
+
+    await expect(
+      swapKit.connectKeystore([Chain.Ethereum], invalidPhrase)
+    ).rejects.toThrow();
+  });
+});
+```
+
+### Testing API Integration
+
+Test API calls and responses:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { SwapKitApi } from "@swapkit/helpers/api";
+
+describe("API Integration", () => {
+  test(
+    "should get asset price",
+    async () => {
+      const price = await SwapKitApi.getPrice("ETH");
+
+      expect(price).toBeDefined();
+      expect(typeof price).toBe("number");
+      expect(price).toBeGreaterThan(0);
+    },
+    { timeout: 10000 }
+  );
+
+  test(
+    "should get swap quote",
+    async () => {
+      const quoteParams = {
+        sellAsset: "ETH.ETH",
+        buyAsset: "ETH.USDC-0xA0b86A33E6416c3C302BA3532A0a42B2A1fF0516",
+        sellAmount: "1",
+        senderAddress: "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A",
+        recipientAddress: "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A",
+      };
+
+      const quote = await SwapKitApi.getSwapQuote(quoteParams);
+
+      expect(quote).toBeDefined();
+      expect(quote.routes).toBeDefined();
+      expect(Array.isArray(quote.routes)).toBe(true);
+      expect(quote.routes.length).toBeGreaterThan(0);
+    },
+    { timeout: 15000 }
+  );
+
+  test("should handle invalid asset gracefully", async () => {
+    await expect(SwapKitApi.getPrice("INVALID.ASSET")).rejects.toThrow();
+  });
+
+  test(
+    "should get gas rates",
+    async () => {
+      const gasRate = await SwapKitApi.getGasRate("ETH");
+
+      expect(gasRate).toBeDefined();
+      expect(typeof gasRate).toBe("string");
+      expect(Number(gasRate)).toBeGreaterThan(0);
+    },
+    { timeout: 10000 }
+  );
+});
+```
+
+### Testing Swap Operations
+
+Test end-to-end swap functionality:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test, beforeEach } from "bun:test";
+import { SwapKit } from "@swapkit/core";
+import { ThorchainPlugin } from "@swapkit/plugins/thorchain";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+import { Chain, AssetValue } from "@swapkit/helpers";
+
+describe("Swap Integration", () => {
+  let swapKit: ReturnType<typeof SwapKit>;
+
+  beforeEach(() => {
+    swapKit = SwapKit({
+      plugins: { thorchain: ThorchainPlugin },
+      wallets: { keystore: keystoreWallet },
+    });
+  });
+
+  test(
+    "should get swap quote for THORChain swap",
+    async () => {
+      const sellAsset = AssetValue.fromString("ETH.ETH", "0.1");
+      const buyAsset = "BTC.BTC";
+
+      const quoteParams = {
+        sellAsset,
+        buyAsset,
+        recipientAddress: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      };
+
+      const quote = await swapKit.getQuote(quoteParams);
+
+      expect(quote).toBeDefined();
+      expect(quote.routes).toBeDefined();
+      expect(quote.routes.length).toBeGreaterThan(0);
+
+      const route = quote.routes[0];
+      expect(route.sellAsset).toBe("ETH.ETH");
+      expect(route.buyAsset).toBe("BTC.BTC");
+      expect(route.sellAmount).toBe("100000000");
+    },
+    { timeout: 30000 }
+  );
+
+  test("should validate swap parameters", async () => {
+    const invalidParams = {
+      sellAsset: AssetValue.fromString("INVALID.ASSET", "1"),
+      buyAsset: "BTC.BTC",
+      recipientAddress: "invalid-address",
+    };
+
+    await expect(swapKit.getQuote(invalidParams as any)).rejects.toThrow();
+  });
+
+  test(
+    "should handle insufficient liquidity",
+    async () => {
+      const largeAmount = AssetValue.fromString("ETH.ETH", "10000");
+
+      const quoteParams = {
+        sellAsset: largeAmount,
+        buyAsset: "BTC.BTC",
+        recipientAddress: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      };
+
+      await expect(swapKit.getQuote(quoteParams)).rejects.toThrow();
+    },
+    { timeout: 30000 }
+  );
+});
+```
+
+## Mocking Strategies
+
+### Mocking External APIs
+
+Create mocks for external API calls:
+
+```typescript
+// @noErrorValidation
+
+import { mock } from "bun:test";
+
+export const mockSwapKitApi = {
+  getPrice: mock(() => Promise.resolve(2500)),
+
+  getSwapQuote: mock(() =>
+    Promise.resolve({
+      routes: [
+        {
+          sellAsset: "ETH.ETH",
+          buyAsset: "BTC.BTC",
+          sellAmount: "1000000000000000000",
+          buyAmount: "4000000",
+          providers: ["thorchain"],
+          transactions: [
+            {
+              type: "swap",
+              to: "0x123...",
+              data: "0xabc...",
+            },
+          ],
+        },
+      ],
+      fees: {
+        total: "50000000000000000",
+      },
+    })
+  ),
+
+  getGasRate: mock(() => Promise.resolve("20000000000")),
+};
+
+export const mockThorchainApi = {
+  getInboundData: mock(() =>
+    Promise.resolve({
+      ethereum: {
+        address: "0x123...",
+        gas_rate: "20",
+        outbound_fee: "0.01",
+      },
+    })
+  ),
+};
+```
+
+### Mocking Wallet Providers
+
+Mock wallet provider interactions:
+
+```typescript
+// @noErrorValidation
+
+import { mock } from "bun:test";
+
+export const mockEthereumProvider = {
+  request: mock(({ method, params }) => {
+    switch (method) {
+      case "eth_accounts":
+        return Promise.resolve(["0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A"]);
+
+      case "eth_getBalance":
+        return Promise.resolve("0x1bc16d674ec80000");
+
+      case "eth_sendTransaction":
+        return Promise.resolve("0xabcdef123456789...");
+
+      case "eth_gasPrice":
+        return Promise.resolve("0x4a817c800");
+
+      default:
+        throw new Error(`Unsupported method: ${method}`);
+    }
+  }),
+
+  on: mock(),
+  removeListener: mock(),
+};
+
+global.window = {
+  ...global.window,
+  ethereum: mockEthereumProvider,
+};
+```
+
+### Mocking Toolboxes
+
+Mock toolbox operations:
+
+```typescript
+// @noErrorValidation
+
+import { mock } from "bun:test";
+import { Chain } from "@swapkit/types";
+
+export const createMockToolbox = (chain: Chain) => ({
+  chain,
+
+  getAddress: mock(() => {
+    const addresses = {
+      [Chain.Ethereum]: "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A",
+      [Chain.Bitcoin]: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      [Chain.THORChain]: "thor1x96cfrxhe2qfvs5qqe3t9z8gk8chkwaqmhc4vj",
+    };
+    return Promise.resolve(addresses[chain]);
+  }),
+
+  getBalance: mock(() =>
+    Promise.resolve([
+      {
+        asset: `${chain}.${chain}`,
+        amount: "1000000000000000000",
+        decimal: 18,
+      },
+    ])
+  ),
+
+  transfer: mock(() => Promise.resolve("mock-tx-hash")),
+
+  validateAddress: mock((address: string) => {
+    return (
+      address.startsWith("0x") ||
+      address.startsWith("bc1") ||
+      address.startsWith("thor")
+    );
+  }),
+});
+
+export const mockGetToolbox = mock((chain: Chain) =>
+  Promise.resolve(createMockToolbox(chain))
+);
+```
+
+## Testing Chain Interactions
+
+### Bitcoin Testing
+
+Test Bitcoin-specific functionality:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
+import { Chain } from "@swapkit/types";
+
+describe("Bitcoin Integration", () => {
+  test("should create Bitcoin toolbox", async () => {
+    const phrase = process.env.TEST_PHRASE;
+    if (!phrase) {
+      console.warn("TEST_PHRASE not set, skipping Bitcoin test");
+      return;
+    }
+
+    const toolbox = await getUtxoToolbox(Chain.Bitcoin, { phrase });
+
+    expect(toolbox).toBeDefined();
+    expect(toolbox.chain).toBe(Chain.Bitcoin);
+
+    const address = await toolbox.getAddress();
+    expect(address).toBeDefined();
+    expect(typeof address).toBe("string");
+  });
+
+  test("should validate Bitcoin addresses", async () => {
+    const toolbox = await getUtxoToolbox(Chain.Bitcoin);
+
+    const validAddresses = [
+      "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+      "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+    ];
+
+    for (const address of validAddresses) {
+      expect(toolbox.validateAddress(address)).toBe(true);
+    }
+
+    expect(toolbox.validateAddress("invalid-address")).toBe(false);
+  });
+});
+```
+
+### Ethereum Testing
+
+Test Ethereum-specific functionality:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { getEvmToolbox } from "@swapkit/toolboxes/evm";
+import { Chain } from "@swapkit/types";
+
+describe("Ethereum Integration", () => {
+  test("should create Ethereum toolbox", async () => {
+    const phrase = process.env.TEST_PHRASE;
+    if (!phrase) {
+      console.warn("TEST_PHRASE not set, skipping Ethereum test");
+      return;
+    }
+
+    const toolbox = await getEvmToolbox(Chain.Ethereum, { phrase });
+
+    expect(toolbox).toBeDefined();
+    expect(toolbox.chain).toBe(Chain.Ethereum);
+
+    const address = await toolbox.getAddress();
+    expect(address).toBeDefined();
+    expect(address.startsWith("0x")).toBe(true);
+  });
+
+  test(
+    "should get gas price",
+    async () => {
+      const toolbox = await getEvmToolbox(Chain.Ethereum);
+
+      if (toolbox.provider) {
+        const gasPrice = await toolbox.provider.getGasPrice();
+        expect(gasPrice).toBeDefined();
+        expect(gasPrice.gt(0)).toBe(true);
+      }
+    },
+    { timeout: 10000 }
+  );
+
+  test(
+    "should estimate gas for ERC20 transfer",
+    async () => {
+      const phrase = process.env.TEST_PHRASE;
+      if (!phrase) {
+        console.warn("TEST_PHRASE not set, skipping gas estimation test");
+        return;
+      }
+
+      const toolbox = await getEvmToolbox(Chain.Ethereum, { phrase });
+
+      const gasEstimate = await toolbox.estimateGas({
+        to: "0xA0b86a33E6416c3C302BA3532A0a42B2A1fF0516",
+        data: "0xa9059cbb000000000000000000000000742d35cc6486c0d8c50fb5f04f08e8b23e20ab8a0000000000000000000000000000000000000000000000000000000000989680",
+      });
+
+      expect(gasEstimate).toBeDefined();
+      expect(gasEstimate.gt(0)).toBe(true);
+    },
+    { timeout: 15000 }
+  );
+});
+```
+
+### THORChain Testing
+
+Test THORChain-specific functionality:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import { Chain } from "@swapkit/types";
+
+describe("THORChain Integration", () => {
+  test("should create THORChain toolbox", async () => {
+    const phrase = process.env.TEST_PHRASE;
+    if (!phrase) {
+      console.warn("TEST_PHRASE not set, skipping THORChain test");
+      return;
+    }
+
+    const toolbox = await getCosmosToolbox(Chain.THORChain, { phrase });
+
+    expect(toolbox).toBeDefined();
+    expect(toolbox.chain).toBe(Chain.THORChain);
+
+    const address = await toolbox.getAddress();
+    expect(address).toBeDefined();
+    expect(address.startsWith("thor")).toBe(true);
+  });
+
+  test("should validate THORChain addresses", async () => {
+    const toolbox = await getCosmosToolbox(Chain.THORChain);
+
+    const validAddress = "thor1x96cfrxhe2qfvs5qqe3t9z8gk8chkwaqmhc4vj";
+    const invalidAddress = "invalid-thor-address";
+
+    expect(toolbox.validateAddress(validAddress)).toBe(true);
+    expect(toolbox.validateAddress(invalidAddress)).toBe(false);
+  });
+
+  test("should create memo for swap", async () => {
+    const memo = "SWAP:BTC.BTC:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+    expect(memo).toMatch(/^SWAP:[A-Z]+\.[A-Z]+:/);
+  });
+});
+```
+
+## Test Coverage and Reporting
+
+### Coverage Configuration
+
+Set up comprehensive test coverage:
+
+```typescript
+// @noErrorValidation
+
+export default {
+  include: ["src/**/*.ts"],
+  exclude: [
+    "src/**/*.test.ts",
+    "src/**/*.d.ts",
+    "src/types/**/*",
+    "src/mocks/**/*",
+    "src/__tests__/**/*",
+  ],
+  thresholds: {
+    statements: 80,
+    branches: 75,
+    functions: 80,
+    lines: 80,
+  },
+  reporters: ["text", "html", "lcov"],
+};
+```
+
+### Custom Test Utilities
+
+Create reusable test utilities:
+
+```typescript
+// @noErrorValidation
+
+import { AssetValue, SwapKitError } from "@swapkit/helpers";
+import { Chain } from "@swapkit/types";
+
+export const testAssets = {
+  ETH: AssetValue.fromString("ETH.ETH", "1"),
+  BTC: AssetValue.fromString("BTC.BTC", "0.1"),
+  USDC: AssetValue.fromString(
+    "ETH.USDC-0xA0b86A33E6416c3C302BA3532A0a42B2A1fF0516",
+    "1000"
+  ),
+};
+
+export const testAddresses = {
+  [Chain.Ethereum]: "0x742d35Cc6486C0D8C50fb5F04F08E8b23e20Ab8A",
+  [Chain.Bitcoin]: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  [Chain.THORChain]: "thor1x96cfrxhe2qfvs5qqe3t9z8gk8chkwaqmhc4vj",
+};
+
+export function expectSwapKitError(error: any, expectedKey: string) {
+  expect(error).toBeInstanceOf(SwapKitError);
+  expect(error.message).toContain(expectedKey);
+}
+
+export function createMockRoute(sellAsset: string, buyAsset: string) {
+  return {
+    sellAsset,
+    buyAsset,
+    sellAmount: "1000000000000000000",
+    buyAmount: "4000000",
+    providers: ["thorchain"],
+    transactions: [
+      {
+        type: "swap" as const,
+        to: "0x123...",
+        data: "0xabc...",
+      },
+    ],
+  };
+}
+
+export async function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number
+): Promise<T> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout")), ms)
+  );
+
+  return Promise.race([promise, timeout]);
+}
+```
+
+## Performance Testing
+
+### Load Testing
+
+Test performance under load:
+
+```typescript
+// @noErrorValidation
+
+import { describe, expect, test } from "bun:test";
+import { SwapKitApi } from "@swapkit/helpers/api";
+
+describe("Performance Tests", () => {
+  test(
+    "should handle concurrent price requests",
+    async () => {
+      const assets = ["ETH", "BTC", "AVAX", "ATOM", "DOGE"];
+      const startTime = performance.now();
+
+      const prices = await Promise.all(
+        assets.map((asset) => SwapKitApi.getPrice(asset))
+      );
+
+      const duration = performance.now() - startTime;
+
+      expect(prices).toHaveLength(5);
+      expect(prices.every((p) => typeof p === "number")).toBe(true);
+      expect(duration).toBeLessThan(5000);
+    },
+    { timeout: 10000 }
+  );
+
+  test(
+    "should handle rate limiting gracefully",
+    async () => {
+      const requests = Array(50)
+        .fill(0)
+        .map(() => SwapKitApi.getPrice("ETH"));
+
+      const results = await Promise.allSettled(requests);
+      const successful = results.filter((r) => r.status === "fulfilled").length;
+      const failed = results.filter((r) => r.status === "rejected").length;
+
+      expect(successful).toBeGreaterThan(0);
+
+      console.log(`Successful: ${successful}, Failed: ${failed}`);
+    },
+    { timeout: 30000 }
+  );
+});
+```
+
+## Continuous Integration
+
+### GitHub Actions Configuration
+
+Set up automated testing:
+
+```yaml
+# .github/workflows/test.yml
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run unit tests
+        run: bun test src/
+        env:
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+
+      - name: Run integration tests
+        run: bun test integration/
+        env:
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+          TEST_PHRASE: ${{ secrets.TEST_PHRASE }}
+        if: github.event_name == 'push'
+
+      - name: Generate coverage
+        run: bun test --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+```
+
+## Best Practices
+
+### Test Organization
+
+- **Separate unit and integration tests**: Keep fast unit tests separate from slower integration tests
+- **Use descriptive test names**: Clear test names make failures easier to understand
+- **Group related tests**: Use `describe` blocks to organize tests logically
+- **Test error conditions**: Always test both success and failure scenarios
+
+### Mocking Guidelines
+
+- **Mock external dependencies**: Don't make real API calls in unit tests
+- **Keep mocks simple**: Complex mocks can hide bugs
+- **Reset mocks between tests**: Prevent test interdependence
+- **Mock at the right level**: Mock at component boundaries, not internal functions
+
+### Test Data Management
+
+- **Use realistic test data**: Test data should resemble production data
+- **Avoid hardcoded values**: Use constants and generators for test data
+- **Clean up after tests**: Reset state and clean up resources
+- **Use environment variables**: Keep sensitive test data in environment variables
+
+### Performance Considerations
+
+- **Run unit tests frequently**: Fast tests enable rapid iteration
+- **Limit integration test scope**: Focus on critical paths
+- **Use timeouts appropriately**: Set realistic timeouts for async operations
+- **Monitor test duration**: Keep test suites fast to maintain developer productivity
+
+## Next Steps
+
+- Implement [Security Testing](/guides/security) for comprehensive security coverage
+- Optimize [Performance](/guides/performance) based on test findings
+- Review [Error Handling](/guides/error-handling) patterns in test scenarios
+- Apply [Production Best Practices](/guides/production-best-practices) for deployment testing

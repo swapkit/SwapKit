@@ -1,0 +1,952 @@
+---
+title: Coinbase Wallet Integration
+description: Complete guide to integrating Coinbase Wallet with SwapKit SDK v4 for mobile and desktop support
+---
+
+Coinbase Wallet is a popular self-custody wallet that provides access to Ethereum and other EVM-compatible networks. SwapKit SDK v4 supports both the mobile Coinbase Wallet app (via WalletConnect/SDK) and the browser extension, offering seamless integration for your dApp.
+
+## Supported Chains
+
+SwapKit supports Coinbase Wallet for these EVM-compatible chains:
+
+- **Layer 1**: Ethereum, BinanceSmartChain, Avalanche, Polygon
+- **Layer 2**: Arbitrum, Optimism, Base (Coinbase's own L2)
+- **All EVM-compatible chains** supported by Coinbase Wallet
+
+## Coinbase Wallet Variants
+
+1. **Mobile App**: iOS and Android app with WalletConnect/SDK integration
+2. **Browser Extension**: Desktop browser extension
+3. **Smart Wallet**: Account abstraction wallet (for supported features)
+
+## Installation and Setup
+
+### 1. Mobile App Setup
+
+For mobile integration:
+
+1. Users install Coinbase Wallet app from App Store/Google Play
+2. Create or import wallet using seed phrase
+3. Enable dApp browser or WalletConnect support
+4. Your dApp connects via Coinbase Wallet SDK
+
+### 2. Browser Extension Setup
+
+For browser extension:
+
+1. Install from [Chrome Web Store](https:
+2. Set up wallet with seed phrase
+3. Extension works like MetaMask with EIP-1193 provider
+
+### 3. Requirements
+
+- **Mobile**: iOS 13+ or Android 8+
+- **Browser**: Chrome, Firefox, Safari, Edge
+- **Network**: Internet connection for wallet communication
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+
+    integrations: {
+      coinbase: {
+        appName: "Your DApp Name",
+        appLogoUrl: "https:
+        darkMode: false,
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+    integrations: {
+      coinbase: {
+        appName: "Your DApp Name",
+        appLogoUrl: "https:
+      },
+    },
+  },
+});
+```
+
+### Connecting Coinbase Wallet
+
+#### Basic Connection (Mobile SDK)
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "My DApp",
+        appLogoUrl: "https:
+        darkMode: false,
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+async function connectCoinbaseWallet() {
+  try {
+    console.log("Connecting to Coinbase Wallet...");
+    console.log("📱 This will open Coinbase Wallet app on mobile or connect via browser extension");
+
+
+    await swapKit.connectCoinbaseWallet([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    const balance = await swapKit.getBalance(Chain.Ethereum, true);
+
+    console.log("✅ Connected to Coinbase Wallet:", address);
+    console.log("ETH balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Coinbase Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Multi-Chain DApp",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+async function connectMultipleChains() {
+  const supportedChains = [
+    Chain.Ethereum,
+    Chain.Base,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.Optimism,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+  ];
+
+  try {
+
+    await swapKit.connectCoinbaseWallet(supportedChains);
+
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all chains):", address);
+
+
+    const balances = await Promise.all(
+      supportedChains.map(async (chain) => {
+        try {
+          const balance = await swapKit.getBalance(chain, true);
+          return { chain, balance };
+        } catch (error) {
+          return { chain, balance: [], error: error.message };
+        }
+      })
+    );
+
+    return { success: true, address, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Browser Extension Connection
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectCoinbaseExtension() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.COINBASE_WEB);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Coinbase Extension address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Coinbase Extension:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Basic ETH Transfer
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain, AssetValue } from "@swapKit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "My DApp",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+
+await swapKit.connectCoinbaseWallet([Chain.Ethereum]);
+
+async function sendEther() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    console.log("Sending ETH via Coinbase Wallet...");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("To:", recipient);
+    console.log("📱 Approve the transaction in Coinbase Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ ETH transfer sent:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ETH transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### ERC-20 Token Transfer
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Token DApp",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+
+await swapKit.connectCoinbaseWallet([Chain.Ethereum]);
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+
+  const amount = AssetValue.fromChainOrSignature("ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6", 100);
+
+  try {
+    console.log("📱 Approve USDC transfer in Coinbase Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent via Coinbase Wallet:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Base Network Transactions
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Base DApp",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+
+await swapKit.connectCoinbaseWallet([Chain.Base]);
+
+async function sendOnBase() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("BASE.ETH", 0.001);
+
+  try {
+    console.log("📱 Sending ETH on Base via Coinbase Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Base ETH transfer sent:", txHash);
+    console.log("🔍 View on BaseScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Base transfer failed:", error);
+    throw error;
+  }
+}
+
+
+async function sendBaseToken() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("BASE.USDC-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", 10);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Base USDC transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ Base USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Multi-Chain Transactions
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Multi-Chain DApp",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+
+await swapKit.connectCoinbaseWallet([Chain.Ethereum, Chain.Polygon, Chain.Arbitrum]);
+
+async function sendOnPolygon() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+
+  try {
+    console.log("📱 Approve MATIC transfer in Coinbase Wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ MATIC transfer sent:", txHash);
+    console.log("🔍 View on PolygonScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ MATIC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendOnArbitrum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ARB.ETH", 0.001);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Arbitrum ETH transfer sent:", txHash);
+    console.log("🔍 View on Arbiscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Arbitrum transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Features
+
+### Network Management
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Network Manager",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+async function manageNetworks() {
+  const allChains = [
+    Chain.Ethereum,
+    Chain.Base,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.Optimism,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+  ];
+
+  try {
+
+    await swapKit.connectCoinbaseWallet(allChains);
+
+
+    const networkStatus = {};
+    for (const chain of allChains) {
+      try {
+        const balance = await swapKit.getBalance(chain, false);
+        networkStatus[chain] = {
+          connected: true,
+          hasBalance: balance.length > 0
+        };
+      } catch (error) {
+        networkStatus[chain] = {
+          connected: false,
+          error: error.message
+        };
+      }
+    }
+
+    return { success: true, networkStatus };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### Mobile vs Browser Detection
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+function detectCoinbaseWalletType() {
+
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
+
+  const hasCoinbaseExtension = typeof window !== 'undefined' &&
+    window.coinbaseWalletExtension !== undefined;
+
+  return {
+    isMobile,
+    hasCoinbaseExtension,
+    preferredMethod: hasCoinbaseExtension ? 'extension' : 'sdk'
+  };
+}
+
+async function connectOptimalCoinbaseWallet() {
+  const { preferredMethod, hasCoinbaseExtension, isMobile } = detectCoinbaseWalletType();
+
+  try {
+    if (preferredMethod === 'extension' && hasCoinbaseExtension) {
+
+      const evmSwapKit = SwapKit({ wallets: { ...evmWallet } });
+      await evmSwapKit.connectEVMWallet([Chain.Ethereum], WalletOption.COINBASE_WEB);
+
+      console.log("✅ Connected via Coinbase Browser Extension");
+      return evmSwapKit;
+    } else {
+
+      const sdkSwapKit = SwapKit({
+        config: {
+          integrations: {
+            coinbase: {
+              appName: "Auto-Detect DApp",
+              appLogoUrl: "https:
+              darkMode: false,
+            },
+          },
+        },
+        wallets: { ...coinbaseWallet },
+      });
+
+      await sdkSwapKit.connectCoinbaseWallet([Chain.Ethereum]);
+
+      console.log("✅ Connected via Coinbase Wallet SDK");
+      return sdkSwapKit;
+    }
+  } catch (error) {
+    console.error("Failed to connect optimal Coinbase Wallet:", error);
+    throw error;
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Diagnostic App",
+        appLogoUrl: "https:
+      },
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+    console.log("🔍 Attempting Coinbase Wallet connection...");
+
+    await swapKit.connectCoinbaseWallet([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Coinbase Wallet connection failed:", error);
+
+    if (error.message.includes("User denied")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in Coinbase Wallet");
+    }
+
+    if (error.message.includes("No provider")) {
+      console.log("🔧 Coinbase Wallet not detected:");
+      console.log("1. Install Coinbase Wallet mobile app");
+      console.log("2. Or install Coinbase Wallet browser extension");
+      console.log("3. Ensure wallet is unlocked and ready");
+    }
+
+    if (error.message.includes("Network")) {
+      console.log("🔧 Network connection issues:");
+      console.log("1. Check internet connection");
+      console.log("2. Ensure Coinbase Wallet can connect to the network");
+      console.log("3. Try switching networks in wallet");
+    }
+
+    if (error.message.includes("App name")) {
+      console.log("🔧 Configuration issue:");
+      console.log("Ensure proper app name and logo URL are configured");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+function checkCoinbaseAvailability() {
+  const checks = {
+    mobileApp: /CoinbaseWallet/i.test(navigator.userAgent),
+    browserExtension: typeof window.coinbaseWalletExtension !== 'undefined',
+    sdkSupport: typeof window !== 'undefined',
+  };
+
+  console.log("Coinbase Wallet availability:", checks);
+
+  const available = checks.mobileApp || checks.browserExtension || checks.sdkSupport;
+
+  if (!available) {
+    console.log("❌ No Coinbase Wallet detected");
+    console.log("🔧 Install Coinbase Wallet:");
+    console.log("- Mobile: https:
+    console.log("- Extension: Chrome Web Store");
+  }
+
+  return { ...checks, available };
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient ETH balance");
+
+      const balance = await swapKit.getBalance(Chain.Ethereum, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more ETH to your Coinbase Wallet");
+    }
+
+    if (error.message.includes("User denied")) {
+      console.error("❌ Transaction rejected in Coinbase Wallet");
+      console.log("🔧 Please approve the transaction in your wallet");
+    }
+
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed or insufficient gas");
+      console.log(
+        "🔧 Check network congestion and ensure sufficient ETH for gas"
+      );
+    }
+
+    if (error.message.includes("nonce")) {
+      console.error("❌ Transaction nonce issues");
+      console.log("🔧 Wait for pending transactions to complete");
+    }
+
+    if (error.message.includes("network")) {
+      console.error("❌ Network mismatch or connection issue");
+      console.log("🔧 Ensure you're on the correct network in Coinbase Wallet");
+    }
+
+    throw error;
+  }
+}
+```
+
+### SDK-Specific Issues
+
+```ts twoslash
+async function handleSDKIssues() {
+  try {
+    await swapKit.connectCoinbaseWallet([Chain.Ethereum]);
+  } catch (error) {
+    if (error.message.includes("Wallet connection")) {
+      console.error("❌ SDK connection failed");
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Ensure app name and logo URL are properly configured");
+      console.log("2. Check if user has Coinbase Wallet app installed");
+      console.log("3. Verify network connectivity");
+      console.log("4. Try refreshing the page and reconnecting");
+    }
+
+    if (error.message.includes("Unsupported")) {
+      console.error("❌ Feature not supported");
+      console.log("🔧 This feature may not be available in:");
+      console.log("- Older versions of Coinbase Wallet");
+      console.log("- Certain mobile browsers");
+      console.log("- Browser extension vs mobile app");
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+
+import { SwapKit, coinbaseWallet, Chain } from "@swapkit/sdk";
+
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      coinbase: {
+        appName: "Your App Name",
+        appLogoUrl: "https:
+        darkMode: false,
+
+        overrideIsMetaMask: false,
+        overrideIsCoinbaseWallet: true,
+      },
+    },
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Base]: "https:
+    },
+  },
+  wallets: { ...coinbaseWallet },
+});
+
+
+function validateEthereumAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+
+async function secureTransfer(recipient: string, amount: number) {
+
+  if (!validateEthereumAddress(recipient)) {
+    throw new Error("Invalid recipient address");
+  }
+
+  if (amount <= 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  const assetValue = AssetValue.fromChainOrSignature("ETH.ETH", amount);
+
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", assetValue.toSignificant(6), "ETH");
+  console.log("Recipient:", recipient);
+  console.log("⚠️ Please verify these details in Coinbase Wallet");
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+
+    console.error("Transaction failed:", error.message);
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+
+
+function getSecureConfig() {
+  return {
+    integrations: {
+      coinbase: {
+        appName: process.env.APP_NAME || "My DApp",
+        appLogoUrl: process.env.APP_LOGO_URL || "https:
+        darkMode: process.env.THEME === 'dark',
+      },
+    },
+    rpcUrls: {
+      [Chain.Ethereum]: process.env.ETHEREUM_RPC_URL,
+      [Chain.Base]: process.env.BASE_RPC_URL,
+    },
+  };
+}
+```
+
+### Mobile Security Considerations
+
+```ts twoslash
+async function mobileSecurityChecks() {
+  const isMobile =
+    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
+  if (isMobile) {
+    console.log("📱 Mobile device detected - additional security measures:");
+    console.log("1. Ensure Coinbase Wallet app is updated to latest version");
+    console.log("2. Verify app is downloaded from official app stores");
+    console.log("3. Use device lock and biometric authentication");
+    console.log("4. Avoid public WiFi for transactions");
+  }
+
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    console.warn("⚠️ Insecure context detected");
+    console.log("🔧 Use HTTPS for production applications");
+  }
+
+  return { isMobile, isSecure: location.protocol === "https:" };
+}
+```
+
+## React Integration
+
+```tsx twoslash
+import React, { useState, useEffect } from "react";
+import { SwapKit, coinbaseWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface CoinbaseWalletProps {
+  onConnect: (address: string) => void;
+  onError: (error: Error) => void;
+}
+
+export function CoinbaseWallet({ onConnect, onError }: CoinbaseWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [address, setAddress] = useState<string>("");
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([
+    Chain.Ethereum,
+  ]);
+
+  const swapKit = SwapKit({
+    config: {
+      integrations: {
+        coinbase: {
+          appName: process.env.REACT_APP_NAME || "React DApp",
+          appLogoUrl: `${window.location.origin}/logo512.png`,
+          darkMode: false,
+        },
+      },
+    },
+    wallets: { ...coinbaseWallet },
+  });
+
+  const connectCoinbase = async () => {
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectCoinbaseWallet(selectedChains);
+      const walletAddress = swapKit.getAddress(selectedChains[0]);
+
+      setAddress(walletAddress);
+      setIsConnected(true);
+      onConnect(walletAddress);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddress("");
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains((prev) =>
+      prev.includes(chain) ? prev.filter((c) => c !== chain) : [...prev, chain]
+    );
+  };
+
+  const supportedChains = [
+    { chain: Chain.Ethereum, name: "Ethereum" },
+    { chain: Chain.Base, name: "Base" },
+    { chain: Chain.Polygon, name: "Polygon" },
+    { chain: Chain.Arbitrum, name: "Arbitrum" },
+    { chain: Chain.Optimism, name: "Optimism" },
+    { chain: Chain.BinanceSmartChain, name: "BSC" },
+    { chain: Chain.Avalanche, name: "Avalanche" },
+  ];
+
+  return (
+    <div>
+      <h3>Coinbase Wallet</h3>
+      <p>📱 Connect via mobile app or browser extension</p>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Networks:</h4>
+          {supportedChains.map(({ chain, name }) => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {name}
+            </label>
+          ))}
+
+          <button
+            onClick={connectCoinbase}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect Coinbase Wallet"}
+          </button>
+
+          {isConnecting && <p>📱 Opening Coinbase Wallet...</p>}
+        </div>
+      ) : (
+        <div>
+          <p>
+            <strong>Address:</strong> {address}
+          </p>
+          <p>
+            <strong>Networks:</strong> {selectedChains.join(", ")}
+          </p>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Coinbase Wallet integration with SwapKit SDK v4, including both mobile SDK and browser extension support, multi-chain functionality, and security best practices.

@@ -2,9 +2,25 @@
 title: Next.js
 description: A guide to integrate SwapKit with Next.js applications.
 ---
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import TryItYourself from "../../../../components/TryItYourself.astro";
+import PlaygroundLinks from "../../../../components/PlaygroundLinks.astro";
 
 This guide will help you integrate SwapKit into your Next.js application with proper Node.js polyfills and WebAssembly support.
+
+<TryItYourself
+  title="🚀 Next.js Playground Ready!"
+  description="Skip the setup and start building immediately with our configured Next.js environment"
+  variant="accent"
+>
+  <PlaygroundLinks
+    compact={true}
+    nextjsUrl="https://github.com/swapkit/swapkit/tree/develop/playgrounds/nextjs"
+    stackblitzUrl="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs"
+    codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
+  />
+</TryItYourself>
 
 ## Installation
 
@@ -12,24 +28,16 @@ Install SwapKit and required dependencies:
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add @swapkit/sdk node-polyfill-webpack-plugin
-    ```
+    ```bash bun add @swapkit/sdk node-polyfill-webpack-plugin ```
   </TabItem>
   <TabItem label="pnpm">
-    ```bash
-    pnpm add @swapkit/sdk node-polyfill-webpack-plugin
-    ```
+    ```bash pnpm add @swapkit/sdk node-polyfill-webpack-plugin ```
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @swapkit/sdk node-polyfill-webpack-plugin
-    ```
+    ```bash npm install @swapkit/sdk node-polyfill-webpack-plugin ```
   </TabItem>
   <TabItem label="yarn">
-    ```bash
-    yarn add @swapkit/sdk node-polyfill-webpack-plugin
-    ```
+    ```bash yarn add @swapkit/sdk node-polyfill-webpack-plugin ```
   </TabItem>
 </Tabs>
 
@@ -37,24 +45,20 @@ Additional polyfill dependencies:
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add buffer crypto-browserify stream-browserify stream-http https-browserify os-browserify path-browserify
-    ```
+    ```bash bun add buffer crypto-browserify stream-browserify stream-http
+    https-browserify os-browserify path-browserify ```
   </TabItem>
   <TabItem label="pnpm">
-    ```bash
-    pnpm add buffer crypto-browserify stream-browserify stream-http https-browserify os-browserify path-browserify
-    ```
+    ```bash pnpm add buffer crypto-browserify stream-browserify stream-http
+    https-browserify os-browserify path-browserify ```
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install buffer crypto-browserify stream-browserify stream-http https-browserify os-browserify path-browserify
-    ```
+    ```bash npm install buffer crypto-browserify stream-browserify stream-http
+    https-browserify os-browserify path-browserify ```
   </TabItem>
   <TabItem label="yarn">
-    ```bash
-    yarn add buffer crypto-browserify stream-browserify stream-http https-browserify os-browserify path-browserify
-    ```
+    ```bash yarn add buffer crypto-browserify stream-browserify stream-http
+    https-browserify os-browserify path-browserify ```
   </TabItem>
 </Tabs>
 
@@ -63,7 +67,6 @@ Additional polyfill dependencies:
 Update your `next.config.mjs` to include necessary polyfills and WebAssembly support:
 
 ```javascript
-// @noErrorValidation
 import { createRequire } from "module";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
@@ -75,7 +78,6 @@ const nextConfig = {
 
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
-      // Add polyfills for browser
       config.plugins.push(new NodePolyfillPlugin());
 
       config.plugins.push(
@@ -95,7 +97,6 @@ const nextConfig = {
         })
       );
 
-      // Configure fallbacks
       config.resolve.fallback = {
         ...config.resolve.fallback,
         buffer: require.resolve("buffer"),
@@ -106,7 +107,6 @@ const nextConfig = {
         process: require.resolve("process/browser"),
       };
 
-      // Configure aliases
       config.resolve.alias = {
         ...config.resolve.alias,
         crypto: require.resolve("crypto-browserify"),
@@ -119,7 +119,6 @@ const nextConfig = {
       };
     }
 
-    // Enable WebAssembly
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
@@ -159,17 +158,19 @@ Create a SwapKit instance configuration:
 
 ```typescript
 // @noErrorValidation
-// src/lib/swapKit.ts
-import { createSwapKit } from '@swapkit/sdk';
-import { SKConfig } from '@swapkit/sdk';
 
-// Configure API keys from environment variables
+import { createSwapKit } from "@swapkit/sdk";
+import { SKConfig } from "@swapkit/sdk";
+
 if (process.env.NEXT_PUBLIC_SWAPKIT_API_KEY) {
-  SKConfig.setApiKey('swapKit', process.env.NEXT_PUBLIC_SWAPKIT_API_KEY);
+  SKConfig.setApiKey("swapKit", process.env.NEXT_PUBLIC_SWAPKIT_API_KEY);
 }
 
 if (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
-  SKConfig.setApiKey('walletConnectProjectId', process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID);
+  SKConfig.setApiKey(
+    "walletConnectProjectId",
+    process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+  );
 }
 
 export const swapKitClient = createSwapKit();
@@ -180,29 +181,30 @@ export const swapKitClient = createSwapKit();
 Create a client component for wallet interactions:
 
 ```tsx
-// @noErrorValidation
-// src/components/WalletButton.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { swapKitClient } from '@/lib/swapKit';
-import { Chain, WalletOption } from '@swapkit/sdk';
+import { useState } from "react";
+import { swapKitClient } from "@/lib/swapKit";
+import { Chain, WalletOption } from "@swapkit/sdk";
 
 export function WalletButton() {
   const [isConnected, setIsConnected] = useState(false);
-  const [address, setAddress] = useState<string>('');
+  const [address, setAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   const connectWallet = async () => {
     setIsLoading(true);
     try {
-      await swapKitClient.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+      await swapKitClient.connectEVMWallet(
+        [Chain.Ethereum],
+        WalletOption.METAMASK
+      );
 
       setIsConnected(true);
       const ethAddress = await swapKitClient.getAddress(Chain.Ethereum);
       setAddress(ethAddress);
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error);
     } finally {
       setIsLoading(false);
     }
@@ -211,13 +213,15 @@ export function WalletButton() {
   const disconnectWallet = () => {
     swapKitClient.disconnectWallet(Chain.Ethereum);
     setIsConnected(false);
-    setAddress('');
+    setAddress("");
   };
 
   if (isConnected) {
     return (
       <div>
-        <p>Connected: {address.slice(0, 6)}...{address.slice(-4)}</p>
+        <p>
+          Connected: {address.slice(0, 6)}...{address.slice(-4)}
+        </p>
         <button onClick={disconnectWallet}>Disconnect</button>
       </div>
     );
@@ -225,7 +229,7 @@ export function WalletButton() {
 
   return (
     <button onClick={connectWallet} disabled={isLoading}>
-      {isLoading ? 'Connecting...' : 'Connect Wallet'}
+      {isLoading ? "Connecting..." : "Connect Wallet"}
     </button>
   );
 }
@@ -236,13 +240,11 @@ export function WalletButton() {
 For more complex applications, use a context provider:
 
 ```tsx
-// @noErrorValidation
-// src/providers/SwapKitProvider.tsx
-'use client';
+"use client";
 
-import { createContext, useContext, ReactNode } from 'react';
-import { SwapKit } from '@swapkit/sdk';
-import { swapKitClient } from '@/lib/swapKit';
+import { createContext, useContext, ReactNode } from "react";
+import { SwapKit } from "@swapkit/sdk";
+import { swapKitClient } from "@/lib/swapKit";
 
 const SwapKitContext = createContext<SwapKit | null>(null);
 
@@ -257,7 +259,7 @@ export function SwapKitProvider({ children }: { children: ReactNode }) {
 export function useSwapKit() {
   const context = useContext(SwapKitContext);
   if (!context) {
-    throw new Error('useSwapKit must be used within SwapKitProvider');
+    throw new Error("useSwapKit must be used within SwapKitProvider");
   }
   return context;
 }
@@ -266,9 +268,7 @@ export function useSwapKit() {
 Use in your root layout:
 
 ```tsx
-// @noErrorValidation
-// src/app/layout.tsx
-import { SwapKitProvider } from '@/providers/SwapKitProvider';
+import { SwapKitProvider } from "@/providers/SwapKitProvider";
 
 export default function RootLayout({
   children,
@@ -278,9 +278,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SwapKitProvider>
-          {children}
-        </SwapKitProvider>
+        <SwapKitProvider>{children}</SwapKitProvider>
       </body>
     </html>
   );
@@ -301,14 +299,12 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id_here
 SwapKit operations that require wallet connections must be performed in client components. For server components, you can only use read-only operations:
 
 ```tsx
-// @noErrorValidation
-// Server component - read-only operations
-import { AssetValue, SwapKitApi } from '@swapkit/sdk';
+import { AssetValue, SwapKitApi } from "@swapkit/sdk";
 
 export async function TokenPrice({ symbol }: { symbol: string }) {
   const price = await SwapKitApi.getPrice({
     identifier: symbol,
-    currency: 'USD'
+    currency: "USD",
   });
 
   return <div>Price: ${price.price_usd}</div>;
@@ -320,13 +316,11 @@ export async function TokenPrice({ symbol }: { symbol: string }) {
 For Cosmos ecosystem wallets like Keplr and Cosmostation, create a specialized component:
 
 ```tsx
-// @noErrorValidation
-// src/components/CosmosWalletButton.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { swapKitClient } from '@/lib/swapKit';
-import { Chain, WalletOption } from '@swapkit/sdk';
+import { useState } from "react";
+import { swapKitClient } from "@/lib/swapKit";
+import { Chain, WalletOption } from "@swapkit/sdk";
 
 export function CosmosWalletButton() {
   const [isConnected, setIsConnected] = useState(false);
@@ -336,7 +330,11 @@ export function CosmosWalletButton() {
   const connectCosmostation = async () => {
     setIsLoading(true);
     try {
-      await swapKitClient.connectCosmostation([Chain.Cosmos, Chain.THORChain, Chain.Kujira]);
+      await swapKitClient.connectCosmostation([
+        Chain.Cosmos,
+        Chain.THORChain,
+        Chain.Kujira,
+      ]);
 
       setIsConnected(true);
       const chains = [Chain.Cosmos, Chain.THORChain, Chain.Kujira];
@@ -348,21 +346,19 @@ export function CosmosWalletButton() {
           if (address) {
             newAddresses[chain] = address;
           }
-        } catch {
-          // Chain might not be connected, skip it
-        }
+        } catch {}
       }
 
       setAddresses(newAddresses);
     } catch (error) {
-      console.error('Failed to connect Cosmostation:', error);
+      console.error("Failed to connect Cosmostation:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const disconnectWallet = () => {
-    Object.keys(addresses).forEach(chain => {
+    Object.keys(addresses).forEach((chain) => {
       swapKitClient.disconnectWallet(chain as Chain);
     });
     setIsConnected(false);
@@ -385,7 +381,7 @@ export function CosmosWalletButton() {
 
   return (
     <button onClick={connectCosmostation} disabled={isLoading}>
-      {isLoading ? 'Connecting...' : 'Connect Cosmostation'}
+      {isLoading ? "Connecting..." : "Connect Cosmostation"}
     </button>
   );
 }
@@ -399,9 +395,4 @@ The webpack configuration should handle WebAssembly modules. If issues persist, 
 
 ## Example Repository
 
-For a complete working example, check out the [Next.js playground](https://github.com/swapkit/swapkit/tree/develop/playgrounds/nextjs) in the SwapKit repository.
-
-
-
-
-
+For a complete working example, check out the [Next.js playground](https:
