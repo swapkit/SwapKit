@@ -7,7 +7,7 @@ import {
   getScriptTypeForAddress,
   TX_OVERHEAD,
   UTXOScriptType,
-} from "../helpers";
+} from "../helpers/txSize";
 import type { TargetOutput, UTXOCalculateTxSizeParams, UTXOType } from "../types";
 
 export const getDustThreshold = (chain: UTXOChain) => {

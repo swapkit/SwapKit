@@ -1,7 +1,7 @@
 import type { TokenNames } from "@swapkit/tokens";
 import { match } from "ts-pattern";
 
-import { AssetValue } from "../modules/assetValue";
+import type { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
 import { BaseDecimal, Chain, type EVMChain, EVMChains, UTXOChains } from "../types/chains";
 import type { RadixCoreStateResourceDTO } from "../types/radix";
@@ -83,13 +83,6 @@ export function getDecimal({ chain, symbol }: { chain: Chain; symbol: string }) 
     .with(...EVMChains, (chain) => getEVMAssetDecimal({ chain, symbol }))
     .with(Chain.Radix, () => getRadixAssetDecimal(symbol))
     .otherwise(() => BaseDecimal[chain]);
-}
-
-/**
- * @deprecated Use AssetValue.from({ chain }) instead
- */
-export function getGasAsset({ chain }: { chain: Chain }) {
-  return AssetValue.from({ chain });
 }
 
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {

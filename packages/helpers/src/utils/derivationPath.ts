@@ -90,3 +90,11 @@ export function getWalletFormatFor(path: string) {
       return "bech32";
   }
 }
+
+export const DerivationPath: Record<Chain, string> = Object.keys(NetworkDerivationPath).reduce(
+  (acc, key) => {
+    acc[key as Chain] = derivationPathToString(NetworkDerivationPath[key as Chain]);
+    return acc;
+  },
+  {} as Record<Chain, string>,
+);

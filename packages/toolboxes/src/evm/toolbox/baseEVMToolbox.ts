@@ -1,6 +1,6 @@
 import {
   type Asset,
-  type AssetValue,
+  AssetValue,
   applyFeeMultiplierToBigInt,
   Chain,
   type ChainSigner,
@@ -25,8 +25,7 @@ import {
   type Provider,
   type Signer,
 } from "ethers";
-
-import { getEstimateTransactionFee, getL1GasPriceFetcher, toHexString } from "../index";
+import { toHexString } from "../helpers";
 import type {
   ApproveParams,
   CallParams,
@@ -157,6 +156,7 @@ const baseAssetAddress: Record<EVMChain, string> = {
   [Chain.Optimism]: ContractAddress.OP,
   [Chain.Polygon]: ContractAddress.MATIC,
 };
+
 export function getTokenAddress({ chain, symbol, ticker }: Asset, baseAssetChain: EVMChain) {
   try {
     const isBSCBNB = chain === Chain.BinanceSmartChain && symbol === "BNB" && ticker === "BNB";
@@ -203,40 +203,6 @@ export function getEstimateGasPrices({
         if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
 
         return { [FeeOption.Average]: { gasPrice }, [FeeOption.Fast]: { gasPrice }, [FeeOption.Fastest]: { gasPrice } };
-      } catch (error) {
-        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-          error: (error as any).msg ?? (error as any).toString(),
-        });
-      }
-    };
-  }
-
-  if (chain === Chain.Optimism) {
-    return async function estimateGasPrices() {
-      try {
-        const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
-        const l1GasPrice = getL1GasPriceFetcher(provider)();
-        const price = gasPrice as bigint;
-
-        if (!(maxFeePerGas && maxPriorityFeePerGas)) {
-          throw new SwapKitError("toolbox_evm_no_fee_data");
-        }
-
-        return {
-          [FeeOption.Average]: { gasPrice: price, l1GasPrice, maxFeePerGas, maxPriorityFeePerGas },
-          [FeeOption.Fast]: {
-            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fast),
-            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fast),
-            maxFeePerGas,
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
-          },
-          [FeeOption.Fastest]: {
-            gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fastest),
-            l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fastest),
-            maxFeePerGas,
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fastest),
-          },
-        };
       } catch (error) {
         throw new SwapKitError("toolbox_evm_gas_estimation_error", {
           error: (error as any).msg ?? (error as any).toString(),
@@ -647,5 +613,39 @@ function getCreateApprovalTx({ provider, signer, chain }: ToolboxWrapParams) {
     });
 
     return txObject;
+  };
+}
+
+function getEstimateTransactionFee({
+  provider,
+  isEIP1559Compatible = true,
+}: {
+  provider: Provider | BrowserProvider;
+  isEIP1559Compatible?: boolean;
+  chain: EVMChain;
+}) {
+  return async function estimateTransactionFee({
+    feeOption = FeeOption.Fast,
+    chain,
+    ...txObject
+  }: EIP1559TxParams & { feeOption: FeeOption; chain: EVMChain }) {
+    const estimateGasPrices = getEstimateGasPrices({ chain, isEIP1559Compatible, provider });
+    const gasPrices = await estimateGasPrices();
+    const gasLimit = await provider.estimateGas(txObject);
+
+    const assetValue = AssetValue.from({ chain });
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = gasPrices[feeOption];
+
+    if (!isEIP1559Compatible && gasPrice) {
+      return assetValue.set(SwapKitNumber.fromBigInt(gasPrice * gasLimit, assetValue.decimal));
+    }
+
+    if (maxFeePerGas && maxPriorityFeePerGas) {
+      const fee = (maxFeePerGas + maxPriorityFeePerGas) * gasLimit;
+
+      return assetValue.set(SwapKitNumber.fromBigInt(fee, assetValue.decimal));
+    }
+
+    throw new SwapKitError("toolbox_evm_no_gas_price");
   };
 }

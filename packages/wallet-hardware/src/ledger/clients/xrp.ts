@@ -4,7 +4,7 @@ import { Chain, type DerivationPathArray, derivationPathToString, NetworkDerivat
 import type { Transaction } from "@swapkit/toolboxes/ripple";
 import { encode } from "ripple-binary-codec";
 import type { Payment } from "xrpl";
-import { getLedgerTransport } from "../helpers";
+import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
 const TF_FULLY_CANONICAL_SIG = 2147483648;
 

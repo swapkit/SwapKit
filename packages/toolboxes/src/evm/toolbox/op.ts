@@ -1,4 +1,14 @@
-import { BaseDecimal, Chain, ChainId, ChainToExplorerUrl, getRPCUrl, SKConfig, SwapKitError } from "@swapkit/helpers";
+import {
+  applyFeeMultiplierToBigInt,
+  BaseDecimal,
+  Chain,
+  ChainId,
+  ChainToExplorerUrl,
+  FeeOption,
+  getRPCUrl,
+  SKConfig,
+  SwapKitError,
+} from "@swapkit/helpers";
 import type { Authorization, BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 import { Contract, HDNodeWallet } from "ethers";
 import { match, P } from "ts-pattern";
@@ -14,7 +24,7 @@ function connectGasPriceOracle<P extends Provider>(provider: P) {
   return new Contract(GAS_PRICE_ORACLE_ADDRESS, gasOracleAbi, provider);
 }
 
-export function getL1GasPriceFetcher<P extends Provider>(provider: P) {
+function getL1GasPriceFetcher<P extends Provider>(provider: P) {
   return function getL1GasPrice() {
     const gasPriceOracle = connectGasPriceOracle(provider);
 
@@ -68,7 +78,7 @@ function estimateTotalGasCost<P extends JsonRpcProvider | BrowserProvider>(provi
   };
 }
 
-export function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
+function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provider: P) {
   return async function estimateL1Gas(tx: TransactionRequest) {
     const gasPriceOracle = connectGasPriceOracle(provider);
     const serializedTx = await serializeTx(provider)(tx);
@@ -87,6 +97,45 @@ const getNetworkParams = () => ({
   rpcUrls: [SKConfig.get("rpcUrls")[Chain.Optimism]],
 });
 
+async function estimateGasPrices(provider: Provider) {
+  try {
+    const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
+    const l1GasPrice = getL1GasPriceFetcher(provider)();
+    const price = gasPrice as bigint;
+
+    if (!(maxFeePerGas && maxPriorityFeePerGas)) {
+      throw new SwapKitError("toolbox_evm_no_fee_data");
+    }
+
+    return {
+      [FeeOption.Average]: { gasPrice: price, l1GasPrice, maxFeePerGas, maxPriorityFeePerGas },
+      [FeeOption.Fast]: {
+        gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fast),
+        l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fast),
+        maxFeePerGas,
+        maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
+      },
+      [FeeOption.Fastest]: {
+        gasPrice: applyFeeMultiplierToBigInt(price, FeeOption.Fastest),
+        l1GasPrice: applyFeeMultiplierToBigInt(l1GasPrice || 0n, FeeOption.Fastest),
+        maxFeePerGas,
+        maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fastest),
+      },
+    } as {
+      [key in FeeOption]: {
+        l1GasPrice?: bigint;
+        gasPrice?: bigint;
+        maxFeePerGas?: bigint;
+        maxPriorityFeePerGas?: bigint;
+      };
+    };
+  } catch (error) {
+    throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+      error: (error as any).msg ?? (error as any).toString(),
+    });
+  }
+}
+
 export async function OPToolbox({ provider: providerParam, ...toolboxSignerParams }: EVMToolboxParams) {
   const chain = Chain.Optimism;
   const rpcUrl = await getRPCUrl(chain);
@@ -101,6 +150,7 @@ export async function OPToolbox({ provider: providerParam, ...toolboxSignerParam
 
   return {
     ...evmToolbox,
+    estimateGasPrices: estimateGasPrices(provider),
     estimateL1Gas: estimateL1Gas(provider),
     estimateL1GasCost: estimateL1GasCost(provider),
     estimateL2GasCost: estimateL2GasCost(provider),

@@ -1,21 +1,14 @@
 import {
-  AssetValue,
   BaseDecimal,
   Chain,
   ChainToExplorerUrl,
   ChainToHexChainId,
   type EVMChain,
-  FeeOption,
   getRPCUrl,
   type NetworkParams,
   SKConfig,
   SwapKitError,
-  SwapKitNumber,
 } from "@swapkit/helpers";
-import type { BrowserProvider, Provider } from "ethers";
-
-import { getEstimateGasPrices } from "./toolbox/baseEVMToolbox";
-import type { EIP1559TxParams, EVMMaxSendableAmountsParams } from "./types";
 
 export async function getProvider(chain: EVMChain, customUrl?: string) {
   const { JsonRpcProvider } = await import("ethers");
@@ -23,94 +16,8 @@ export async function getProvider(chain: EVMChain, customUrl?: string) {
   return new JsonRpcProvider(customUrl || (await getRPCUrl(chain)));
 }
 
-/**
- * @deprecated
- */
-export const estimateMaxSendableAmount = async ({
-  from,
-  memo = "",
-  feeOptionKey = FeeOption.Fastest,
-  assetValue,
-  abi,
-  funcName,
-  funcParams,
-  contractAddress,
-  txOverrides,
-}: EVMMaxSendableAmountsParams): Promise<AssetValue> => {
-  const { getEvmToolbox } = await import("./toolbox");
-  const toolbox = await getEvmToolbox(assetValue.chain as EVMChain);
-
-  const balances = await toolbox.getBalance(from);
-  const balance = balances.find(({ symbol, chain }) =>
-    assetValue ? symbol === assetValue.symbol : symbol === AssetValue.from({ chain })?.symbol,
-  );
-
-  const gasRate = (await toolbox.estimateGasPrices())[feeOptionKey];
-
-  if (!balance) return AssetValue.from({ chain: assetValue.chain });
-
-  if (assetValue && (balance.chain !== assetValue.chain || balance.symbol !== assetValue?.symbol)) {
-    return balance;
-  }
-
-  const gasLimit =
-    abi && funcName && funcParams && contractAddress
-      ? await toolbox.estimateCall({ abi, contractAddress, funcName, funcParams, txOverrides })
-      : await toolbox.estimateGasLimit({ assetValue, memo, recipient: from, sender: from });
-
-  const isFeeEIP1559Compatible = "maxFeePerGas" in gasRate;
-  const isFeeEVMLegacyCompatible = "gasPrice" in gasRate && gasRate.gasPrice !== undefined;
-
-  if (!(gasRate && (isFeeEVMLegacyCompatible || isFeeEIP1559Compatible))) {
-    throw new SwapKitError("toolbox_evm_no_fee_data");
-  }
-
-  const gasPrice = isFeeEIP1559Compatible
-    ? (gasRate.maxFeePerGas || 1n) + (gasRate.maxPriorityFeePerGas || 1n)
-    : gasRate.gasPrice || 1n;
-
-  const fee = gasLimit * gasPrice;
-  const maxSendableAmount = SwapKitNumber.fromBigInt(balance.getBaseValue("bigint")).sub(fee.toString());
-
-  return AssetValue.from({ chain: balance.chain, value: maxSendableAmount.getValue("string") });
-};
-
 export function toHexString(value: bigint) {
   return value > 0n ? `0x${value.toString(16)}` : "0x0";
-}
-
-export function getEstimateTransactionFee({
-  provider,
-  isEIP1559Compatible = true,
-}: {
-  provider: Provider | BrowserProvider;
-  isEIP1559Compatible?: boolean;
-  chain: EVMChain;
-}) {
-  return async function estimateTransactionFee({
-    feeOption = FeeOption.Fast,
-    chain,
-    ...txObject
-  }: EIP1559TxParams & { feeOption: FeeOption; chain: EVMChain }) {
-    const estimateGasPrices = getEstimateGasPrices({ chain, isEIP1559Compatible, provider });
-    const gasPrices = await estimateGasPrices();
-    const gasLimit = await provider.estimateGas(txObject);
-
-    const assetValue = AssetValue.from({ chain });
-    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = gasPrices[feeOption];
-
-    if (!isEIP1559Compatible && gasPrice) {
-      return assetValue.set(SwapKitNumber.fromBigInt(gasPrice * gasLimit, assetValue.decimal));
-    }
-
-    if (maxFeePerGas && maxPriorityFeePerGas) {
-      const fee = (maxFeePerGas + maxPriorityFeePerGas) * gasLimit;
-
-      return assetValue.set(SwapKitNumber.fromBigInt(fee, assetValue.decimal));
-    }
-
-    throw new SwapKitError("toolbox_evm_no_gas_price");
-  };
 }
 
 export function getNetworkParams<C extends EVMChain>(chain: C) {

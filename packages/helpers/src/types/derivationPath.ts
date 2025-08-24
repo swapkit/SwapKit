@@ -1,4 +1,3 @@
-import { derivationPathToString } from "../utils/derivationPath";
 import type { Chain } from "./chains";
 
 export enum ContractAddress {
@@ -49,11 +48,3 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   XRP: [44, 144, 0, 0, 0],
   ZEC: [44, 133, 0, 0, 0],
 };
-
-export const DerivationPath: Record<Chain, string> = Object.keys(NetworkDerivationPath).reduce(
-  (acc, key) => {
-    acc[key as Chain] = derivationPathToString(NetworkDerivationPath[key as Chain]);
-    return acc;
-  },
-  {} as Record<Chain, string>,
-);
