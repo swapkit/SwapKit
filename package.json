@@ -1,10 +1,10 @@
 {
   "devDependencies": {
-    "@biomejs/biome": "2.2.0",
+    "@biomejs/biome": "2.2.2",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.6",
     "@types/bun": "1.2.20",
-    "@types/react": "19.1.10",
+    "@types/react": "19.1.11",
     "@types/react-dom": "19.1.7",
     "lefthook": "1.12.3",
     "typescript": "5.9.2"

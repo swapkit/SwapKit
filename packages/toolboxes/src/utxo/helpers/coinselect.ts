@@ -10,7 +10,7 @@ import {
 } from "../helpers/txSize";
 import type { TargetOutput, UTXOCalculateTxSizeParams, UTXOType } from "../types";
 
-export const getDustThreshold = (chain: UTXOChain) => {
+export function getDustThreshold(chain: UTXOChain) {
   switch (chain) {
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
@@ -25,15 +25,15 @@ export const getDustThreshold = (chain: UTXOChain) => {
     default:
       throw new SwapKitError("toolbox_utxo_not_supported", { chain });
   }
-};
+}
 
-export const accumulative = ({
+export function accumulative({
   inputs,
   outputs,
   feeRate: initialFeeRate = 1,
   chain = Chain.Bitcoin,
   changeAddress = "",
-}: UTXOCalculateTxSizeParams & { outputs: TargetOutput[]; chain: UTXOChain; changeAddress?: string }) => {
+}: UTXOCalculateTxSizeParams & { outputs: TargetOutput[]; chain: UTXOChain; changeAddress?: string }) {
   const feeRate = Math.ceil(initialFeeRate);
 
   const newTxType =
@@ -89,4 +89,4 @@ export const accumulative = ({
 
   // We don't have enough inputs, let's calculate transaction fee accrude to the last input
   return { fee: feeRate * calculateTxSize({ feeRate, inputs, outputs }) };
-};
+}

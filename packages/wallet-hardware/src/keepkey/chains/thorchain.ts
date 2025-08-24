@@ -16,13 +16,13 @@ import { bip32ToAddressNList } from "../coins";
 
 type SignTransactionParams = { assetValue: AssetValue; recipient?: string; sender: string; memo: string | undefined };
 
-export const thorchainWalletMethods = async ({
+export async function thorchainWalletMethods({
   sdk,
   derivationPath,
 }: {
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
-}) => {
+}): Promise<any> {
   const importedAmino = await import("@cosmjs/amino");
   const makeSignDoc = importedAmino.makeSignDoc ?? importedAmino.default?.makeSignDoc;
   const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } = await import(
@@ -93,4 +93,4 @@ export const thorchainWalletMethods = async ({
   // };
 
   return { ...toolbox, address: fromAddress, deposit, transfer };
-};
+}

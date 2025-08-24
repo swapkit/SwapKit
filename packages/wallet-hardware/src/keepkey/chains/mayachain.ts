@@ -16,13 +16,13 @@ import { bip32ToAddressNList } from "../coins";
 
 type SignTransactionParams = { assetValue: AssetValue; recipient?: string; sender: string; memo: string | undefined };
 
-export const mayachainWalletMethods = async ({
+export async function mayachainWalletMethods({
   sdk,
   derivationPath,
 }: {
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
-}) => {
+}): Promise<any> {
   const { createStargateClient, getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
   const toolbox = await getCosmosToolbox(Chain.Maya);
@@ -95,4 +95,4 @@ export const mayachainWalletMethods = async ({
   };
 
   return { ...toolbox, address: fromAddress, deposit, transfer };
-};
+}

@@ -11,13 +11,13 @@ import {
 
 import { bip32ToAddressNList } from "../coins";
 
-export const cosmosWalletMethods = async ({
+export async function cosmosWalletMethods({
   sdk,
   derivationPath,
 }: {
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
-}) => {
+}): Promise<any> {
   const { DEFAULT_COSMOS_FEE_MAINNET, getCosmosToolbox, getFeeRateFromSwapKit, createStargateClient } = await import(
     "@swapkit/toolboxes/cosmos"
   );
@@ -66,4 +66,4 @@ export const cosmosWalletMethods = async ({
   };
 
   return { ...toolbox, address: fromAddress, transfer };
-};
+}

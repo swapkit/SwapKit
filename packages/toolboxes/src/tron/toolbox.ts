@@ -224,9 +224,9 @@ export const createTronToolbox = async (
         return 0n;
       }
 
-      const balance = (await contract.methods.balanceOf(address).call())[0] as string;
+      const [balance] = await contract.methods.balanceOf(address).call();
 
-      return BigInt(balance || 0); // Convert to BigInt for consistency
+      return balance ? (typeof balance === "bigint" ? balance : BigInt(balance)) : 0n;
     } catch (err) {
       console.warn(`balanceOf() failed for ${contractAddress}:`, err);
       return 0n;
@@ -527,8 +527,9 @@ export const createTronToolbox = async (
         throw new SwapKitError("toolbox_tron_invalid_token_contract");
       }
 
-      const allowance = (await contract.methods.allowance(from, spenderAddress).call())[0] as string;
-      return BigInt(allowance || 0);
+      const [allowance] = await contract.methods.allowance(from, spenderAddress).call();
+
+      return allowance ? (typeof allowance === "bigint" ? allowance : BigInt(allowance)) : 0n;
     } catch (error) {
       throw new SwapKitError("toolbox_tron_allowance_check_failed", { error });
     }

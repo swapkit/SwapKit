@@ -1,5 +1,6 @@
 import type { EncodeObject } from "@cosmjs/proto-signing";
-import type { Asset, ChainId, GenericCreateTransactionParams, GenericTransferParams } from "@swapkit/helpers";
+import type { Asset, ChainId, GenericTransferParams } from "@swapkit/helpers";
+import type { CosmosCreateTransactionParams } from "../../types";
 
 enum TxType {
   Transfer = "transfer",
@@ -42,11 +43,6 @@ export type TransferTransaction = {
   chainId: ChainId;
   msgs: EncodeObject[];
   fee: { amount: { denom: string; amount: string }[]; gas: string };
-};
-
-export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
-  accountNumber?: number;
-  sequence?: number;
 };
 
 export type ThorchainCreateTransactionParams = Omit<CosmosCreateTransactionParams, "feeRate" | "recipient"> & {

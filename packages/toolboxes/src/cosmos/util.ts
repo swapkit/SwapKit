@@ -1,8 +1,7 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
 import { AssetValue, BaseDecimal, Chain, type CosmosChain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
-
-import type { CosmosCreateTransactionParams } from "./thorchainUtils";
+import type { CosmosCreateTransactionParams } from "./types";
 
 export const USK_KUJIRA_FACTORY_DENOM =
   "FACTORY/KUJIRA1QK00H5ATUTPSV900X202PXX42NPJR9THG58DNQPA72F2P7M2LUASE444A7/UUSK";
@@ -118,7 +117,7 @@ const getTransferMsgTypeByChain = (chain: CosmosChain) => {
 /**
  * Used to build tx for Cosmos and Kujira
  */
-export const cosmosCreateTransaction = async ({
+export async function cosmosCreateTransaction({
   sender,
   recipient,
   assetValue,
@@ -126,7 +125,7 @@ export const cosmosCreateTransaction = async ({
   feeRate,
   sequence,
   accountNumber,
-}: CosmosCreateTransactionParams) => {
+}: CosmosCreateTransactionParams) {
   const { chain, chainId } = assetValue;
 
   const rpcUrl = await getRPCUrl(chain);
@@ -160,7 +159,7 @@ export const cosmosCreateTransaction = async ({
     msgs: [{ typeUrl: getTransferMsgTypeByChain(chain as CosmosChain), value: msgSend }],
     sequence: sequence ?? accountOnChain.sequence,
   };
-};
+}
 
 // Map of known denoms to their asset configurations
 const DENOM_MAP = {

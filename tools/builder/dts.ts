@@ -27,6 +27,14 @@ const dtsPlugin = {
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
       await $`cd ${scope} && bun tsc -p .tsconfig.tmp.json`;
+    } catch (error: any) {
+      if (error?.stdout) {
+        console.error(Buffer.from(error.stdout).toString());
+      }
+      throw new Error(
+        `Error building @swapkit/${pkgName} d.ts files
+         Fix the errors above and run "bun build:dts" again`,
+      );
     } finally {
       await $`rm -f ${scope}/.tsconfig.tmp.json`;
     }

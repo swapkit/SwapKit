@@ -1,12 +1,22 @@
 import type { OfflineAminoSigner } from "@cosmjs/amino";
 import type { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing";
-import type { Chain, ChainId, CosmosChain, DerivationPathArray } from "@swapkit/helpers";
+import type {
+  Chain,
+  ChainId,
+  CosmosChain,
+  DerivationPathArray,
+  GenericCreateTransactionParams,
+} from "@swapkit/helpers";
 import type { buildAminoMsg } from "./thorchainUtils";
 import type { createCosmosToolbox } from "./toolbox/cosmos";
 import type { createThorchainToolbox } from "./toolbox/thorchain";
 import type { getDefaultChainFee } from "./util";
 
 export type CosmosSDKClientParams = { server: string; chainId: ChainId; prefix?: string; stagenet?: boolean };
+export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
+  accountNumber?: number;
+  sequence?: number;
+};
 
 export type MultiSigSigner = { pubKey: string; signature: string };
 

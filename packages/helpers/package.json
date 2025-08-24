@@ -4,17 +4,17 @@
     "@swapkit/contracts": "workspace:*",
     "@swapkit/tokens": "workspace:*",
     "ethers": "^6.14.0",
-    "ts-pattern": "~5.7.0",
-    "zod": "3.25.74",
-    "zustand": "~5.0.0"
+    "ts-pattern": "^5.7.0",
+    "zod": "^3.25.74",
+    "zustand": "^5.0.0"
   },
   "description": "SwapKit - Helpers",
   "devDependencies": {
     "@swapkit/toolboxes": "workspace:*",
-    "ethers": "6.14.3",
-    "ts-pattern": "5.7.1",
+    "ethers": "6.15.0",
+    "ts-pattern": "5.8.0",
     "zod": "3.25.74",
-    "zustand": "5.0.5"
+    "zustand": "5.0.8"
   },
   "exports": {
     ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
