@@ -1,0 +1,833 @@
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #222;
+  --text: #fff;
+  --dim: #999;
+  --primary: #00d4ff;
+  --success: #0f8;
+  --error: #f36;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.compact-app {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1400px;
+  height: 100vh;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.tabs button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tabs button.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.chains-section,
+.wallets-section,
+.connections-section {
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.section-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.chain-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chain-actions button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--dim);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.chain-actions button:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.chain-actions button.active {
+  color: var(--bg);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.chains-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 250px;
+  padding-right: 0.5rem;
+  overflow-y: auto;
+  user-select: none;
+}
+
+.chains-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chains-container::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 3px;
+}
+
+.chains-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.chain-category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.category-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 0.25rem;
+}
+
+.chain-btn {
+  padding: 0.4rem 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--dim);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.chain-btn:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.chain-btn.selected {
+  color: var(--bg);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.chain-btn.dragging {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.drag-hint {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--dim);
+  text-align: center;
+  opacity: 0.7;
+}
+
+.wallets-section h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.wallets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+
+.wallet-btn {
+  padding: 0.5rem 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.wallet-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.wallet-btn.connected {
+  color: var(--success);
+  background: rgba(0, 255, 136, 0.1);
+  border-color: var(--success);
+}
+
+.wallet-btn.detected {
+  position: relative;
+}
+
+.wallet-btn.detected::before {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  content: "";
+  background: var(--primary);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.detected-count,
+.chain-filter {
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: var(--primary);
+}
+
+.chain-filter {
+  color: var(--dim);
+}
+
+.no-compatible {
+  padding: 2rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--dim);
+  text-align: center;
+}
+
+.wallet-btn:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.wallet-btn.incompatible {
+  color: var(--dim);
+  cursor: not-allowed;
+  background: var(--bg);
+  border-color: var(--border);
+  opacity: 0.3;
+}
+
+.wallet-btn.incompatible:hover {
+  border-color: var(--border);
+  transform: none;
+}
+
+.connections-section h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.no-connections {
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+  text-align: center;
+}
+
+.wallet-balances {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wallet-balance-card {
+  padding: 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.wallet-balance-card:hover {
+  border-color: var(--primary);
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.wallet-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.disconnect-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--error);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--error);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.disconnect-btn:hover {
+  color: white;
+  background: var(--error);
+}
+
+.loading-balances {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+
+.balances-list {
+  margin-bottom: 1rem;
+}
+
+.no-balances {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--dim);
+  text-align: center;
+}
+
+.balance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.balance-row:last-child {
+  border-bottom: none;
+}
+
+.chain-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.balance-amount {
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.addresses-section {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.addresses-details {
+  cursor: pointer;
+}
+
+.addresses-details summary {
+  padding: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--dim);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.addresses-details summary:hover {
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.addresses-list {
+  padding-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.address-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+}
+
+.address-chain {
+  font-weight: 500;
+  color: var(--dim);
+}
+
+.address-value {
+  font-family: monospace;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.address-value:hover {
+  color: var(--primary);
+  transform: scale(1.02);
+}
+
+.transfer-section,
+.swap-section {
+  max-width: 500px;
+  padding: 2rem;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.form-group input.invalid {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+}
+
+.validation-error {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--error);
+}
+
+.action-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bg);
+  cursor: pointer;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.no-assets {
+  padding: 2rem;
+  font-style: italic;
+  color: var(--dim);
+  text-align: center;
+}
+
+.asset-selector {
+  position: relative;
+}
+
+.asset-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 100;
+  max-height: 200px;
+  margin-top: 0.25rem;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.asset-option {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: all 0.2s;
+}
+
+.asset-option:hover {
+  color: var(--primary);
+  background: var(--bg);
+}
+
+/* Enhanced Transfer & Swap Pages */
+.page-header {
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--success));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.page-description {
+  font-size: 0.9rem;
+  color: var(--dim);
+  opacity: 0.8;
+}
+
+.empty-state {
+  padding: 3rem 2rem;
+  color: var(--dim);
+  text-align: center;
+}
+
+.empty-icon {
+  margin-bottom: 1rem;
+  font-size: 3rem;
+  opacity: 0.6;
+}
+
+.empty-state h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.transfer-info,
+.swap-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.info-card {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 255, 136, 0.05));
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.info-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.info-card h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.info-card p {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--dim);
+}
+
+/* Future Features - Ready for expansion */
+.feature-card {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.feature-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--bg);
+  text-transform: uppercase;
+  background: var(--primary);
+  border-radius: 12px;
+}
+
+.coming-soon {
+  background: var(--warning);
+}
+
+.beta {
+  background: var(--error);
+}
+
+/* Advanced UI Components for Future */
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--success));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.stat-item {
+  padding: 1rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Copy feedback animation */
+@keyframes copySuccess {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.copied {
+  color: var(--success) !important;
+  animation: copySuccess 0.3s ease;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .transfer-info,
+  .swap-info {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card {
+    padding: 0.75rem;
+  }
+
+  .page-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .compact-app {
+    padding: 0.5rem;
+  }
+
+  .chains-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+
+  .chains-container {
+    max-height: 200px;
+  }
+
+  .wallets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .wallet-btn {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.7rem;
+  }
+}

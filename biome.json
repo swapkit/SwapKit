@@ -12,15 +12,7 @@
     "enabled": true
   },
   "files": {
-    "includes": [
-      "**",
-      "!**/node_modules",
-      "!**/dist",
-      "!**/playgrounds",
-      "!**/coverage",
-      "!**/MsgCompiled.ts",
-      "!**/.astro"
-    ],
+    "includes": ["**", "!**/node_modules", "!**/dist", "!**/coverage", "!**/MsgCompiled.ts", "!**/.astro"],
     "maxSize": 5242880
   },
   "formatter": {

@@ -52,7 +52,7 @@ export const GlobalKeystoreDialog = () => {
             <Input
               className="col-span-3"
               disabled={isKeystoreDecrypting}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               placeholder="Enter password"
               ref={inputRef}
               required

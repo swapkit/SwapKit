@@ -48,10 +48,10 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
 
         <div className="mt-6 space-y-6 pb-16">
           {connectedChains.map((chain) => {
-            const chainBalances = balances.filter((b) => b.chain === chain);
+            const chainBalances = balances.filter((b: any) => b.chain === chain);
             const address = chainAddresses.get(chain);
-            const gasAsset = chainBalances.find((b) => b.isGasAsset);
-            const otherBalances = chainBalances.filter((b) => !b.isGasAsset);
+            const gasAsset = chainBalances.find((b: any) => b.isGasAsset);
+            const otherBalances = chainBalances.filter((b: any) => !b.isGasAsset);
 
             return (
               <div className="space-y-4" key={chain}>
@@ -68,7 +68,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
                       <TokenBalance balance={gasAsset} />
                     </div>
                   )}
-                  {otherBalances.map((balance) => (
+                  {otherBalances.map((balance: any) => (
                     <TokenBalance balance={balance} key={`${balance.chain}-${balance.ticker || balance.symbol}`} />
                   ))}
                   {chainBalances.length === 0 && <div className="text-muted-foreground text-sm">No balances found</div>}

@@ -71,6 +71,7 @@ export async function getCtrlProvider<T extends Chain>(
     .with(Chain.Solana, () => window.xfi?.solana)
     .with(Chain.THORChain, () => window.xfi?.thorchain)
     .with(Chain.Maya, () => window.xfi?.mayachain)
+    .with(Chain.Near, () => window.xfi?.near)
     .otherwise(() => undefined);
 }
 

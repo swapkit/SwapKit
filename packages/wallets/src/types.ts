@@ -24,7 +24,7 @@ import type { phantomWallet } from "./phantom";
 import type { polkadotWallet } from "./polkadotjs";
 import type { radixWallet } from "./radix";
 import type { talismanWallet } from "./talisman";
-import type { TronLinkWindow, tronlinkWallet } from "./tronlink";
+import type { tronlinkWallet } from "./tronlink";
 import type { vultisigWallet } from "./vultisig";
 import type { walletconnectWallet } from "./walletconnect";
 import type { xamanWallet } from "./xaman";
@@ -240,6 +240,5 @@ declare global {
           };
         }
       | EthereumWindowProvider;
-    tronLink?: TronLinkWindow;
   }
 }

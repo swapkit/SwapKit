@@ -46,7 +46,7 @@ export const useSwapKit = () => {
       setSwapKit(swapKitClient);
     };
 
-    loadSwapKit();
+    void loadSwapKit();
   }, [setSwapKit]);
 
   const getBalances = useCallback(

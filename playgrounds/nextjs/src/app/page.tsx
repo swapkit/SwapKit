@@ -119,7 +119,7 @@ export default function SwapPage() {
 
       if (quote?.routes?.length) {
         setRoutes(quote.routes);
-        setEstimatedOutput(quote.routes[0].expectedBuyAmount);
+        setEstimatedOutput(quote.routes[0]?.expectedBuyAmount);
       }
     } catch (error) {
       console.error("Failed to get quote:", error);
@@ -130,7 +130,7 @@ export default function SwapPage() {
   }, [inputAsset, outputAsset, amount, swapKit]);
 
   useEffect(() => {
-    updateEstimatedOutput();
+    void updateEstimatedOutput();
   }, [updateEstimatedOutput]);
 
   return (
@@ -172,7 +172,7 @@ export default function SwapPage() {
               </Select>
               <Input
                 disabled={!inputAsset || isSwapping}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
                 placeholder="Amount"
                 type="number"
                 value={amount}
@@ -238,7 +238,9 @@ export default function SwapPage() {
             try {
               const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
               const amountValue = assetValue.set(amount);
-              await swap(routes[0], amountValue);
+              if (routes[0]) {
+                await swap(routes[0], amountValue);
+              }
             } catch (error) {
               console.error("Failed to prepare swap:", error);
               toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);

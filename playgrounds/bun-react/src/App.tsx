@@ -16,7 +16,7 @@ function Content() {
   }, [connect]);
 
   useEffect(() => {
-    connectSwapKit();
+    void connectSwapKit();
   }, [connectSwapKit]);
 
   const runTx = useCallback(() => {

@@ -19,9 +19,7 @@
     "vite-plugin-node-polyfills": "0.24.0"
   },
   "devDependencies": {
-    "@react-scan/vite-plugin-react-scan": "0.1.8",
     "@vitejs/plugin-react": "5.0.1",
-    "react-scan": "0.4.3",
     "rollup-plugin-visualizer": "6.0.3",
     "typescript": "5.9.2",
     "vite-plugin-top-level-await": "1.6.0",

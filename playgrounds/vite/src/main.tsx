@@ -1,23 +1,12 @@
-import { SwapKitWidget } from "@swapkit/ui/react";
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 
 import "./index.css";
 
-import App from "./App";
+import { CompactApp } from "./CompactApp";
 
 function AppWrapper() {
-  const [isWidget, setIsWidget] = useState(false);
-
-  return (
-    <>
-      <button onClick={() => setIsWidget(!isWidget)} type="button">
-        {isWidget ? "Hide Widget" : "Show Widget"}
-      </button>
-
-      {isWidget ? <SwapKitWidget apiKey="" /> : <App />}
-    </>
-  );
+  return <CompactApp />;
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
