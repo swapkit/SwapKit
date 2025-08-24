@@ -1,6 +1,5 @@
 name: PR Test
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
 
 on:
