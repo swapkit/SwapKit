@@ -33,9 +33,8 @@ import {
   UTXOScriptType,
 } from "../helpers";
 import type { BchECPair, TargetOutput, UTXOBuildTxParams, UTXOTransferParams, UTXOType } from "../types";
-import { bchValidateAddress } from "./bitcoinCash";
 import type { UtxoToolboxParams } from "./index";
-import { validateZcashAddress } from "./zcash";
+import { bchValidateAddress, validateZcashAddress } from "./validators";
 
 export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
 

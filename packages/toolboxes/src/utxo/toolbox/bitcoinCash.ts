@@ -15,17 +15,7 @@ import {
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { Psbt } from "bitcoinjs-lib";
-import {
-  accumulative,
-  UtxoNetwork as bchNetwork,
-  compileMemo,
-  detectAddressNetwork,
-  getUtxoApi,
-  getUtxoNetwork,
-  isValidAddress,
-  toCashAddress,
-  toLegacyAddress,
-} from "../helpers";
+import { accumulative, compileMemo, getUtxoApi, getUtxoNetwork, toCashAddress, toLegacyAddress } from "../helpers";
 import type {
   BchECPair,
   TargetOutput,
@@ -37,17 +27,9 @@ import type {
 } from "../types";
 import type { UtxoToolboxParams } from "./index";
 import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
+import { bchValidateAddress, stripPrefix } from "./validators";
 
 const chain = Chain.BitcoinCash;
-
-export function stripPrefix(address: string) {
-  return address.replace(/(bchtest:|bitcoincash:)/, "");
-}
-
-export function bchValidateAddress(address: string) {
-  const strippedAddress = stripPrefix(address);
-  return isValidAddress(strippedAddress) && detectAddressNetwork(strippedAddress) === bchNetwork.Mainnet;
-}
 
 export function stripToCashAddress(address: string) {
   return stripPrefix(toCashAddress(address));

@@ -18,6 +18,7 @@ import { match, P } from "ts-pattern";
 import { accumulative, compileMemo, getUtxoApi } from "../helpers";
 import type { TargetOutput, UTXOBuildTxParams, UTXOTransferParams, UTXOType } from "../types";
 import { createUTXOToolbox } from "./utxo";
+import { validateZcashAddress } from "./validators";
 
 function getZcashNetwork() {
   return networks.zcash;
@@ -32,32 +33,6 @@ function getECPairNetwork() {
     scriptHash: 0x1c,
     wif: 0x80,
   };
-}
-
-export function validateZcashAddress(address: string): boolean {
-  try {
-    // Shielded addresses are not supported
-    if (address.startsWith("z")) {
-      console.warn("Shielded Zcash addresses (z-addresses) are not supported. Use transparent addresses (t1/t3) only.");
-      return false;
-    }
-
-    const network = getZcashNetwork();
-
-    try {
-      zcashAddress.toOutputScript(address, network);
-      return true;
-    } catch {
-      // Also try with bs58check for legacy validation
-      const decoded = bs58check.decode(address);
-      if (decoded.length < 21) return false;
-
-      const version = decoded[0];
-      return version === network.pubKeyHash || version === network.scriptHash;
-    }
-  } catch {
-    return false;
-  }
 }
 
 type ZcashSigner = ChainSigner<ZcashPsbt, ZcashPsbt>;

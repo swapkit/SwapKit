@@ -65,9 +65,5 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
   }
 }
 
-export {
-  bchValidateAddress,
-  stripPrefix,
-  stripToCashAddress,
-} from "./bitcoinCash";
-export { validateZcashAddress } from "./zcash";
+export { stripToCashAddress } from "./bitcoinCash";
+export { bchValidateAddress, stripPrefix, validateZcashAddress } from "./validators";

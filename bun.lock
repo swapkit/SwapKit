@@ -477,18 +477,18 @@
     },
     "tools/builder": {
       "name": "@internal/tools-builder",
-      "version": "0.0.1",
+      "version": "0.0.0",
       "devDependencies": {
         "@types/bun": "1.2.20",
       },
     },
     "tools/github": {
       "name": "@internal/tools-github",
-      "version": "0.0.1",
+      "version": "0.0.0",
     },
     "tools/typescript": {
       "name": "@internal/tools-typescript",
-      "version": "0.0.1",
+      "version": "0.0.0",
     },
   },
   "trustedDependencies": [
@@ -4477,6 +4477,8 @@
     "@stellar/stellar-sdk/bignumber.js": ["bignumber.js@9.3.1", "", {}, "sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ=="],
 
     "@swapkit/wallet-hardware/@ledgerhq/devices": ["@ledgerhq/devices@8.5.0", "", { "dependencies": { "@ledgerhq/errors": "^6.24.0", "@ledgerhq/logs": "^6.13.0", "rxjs": "^7.8.1", "semver": "^7.3.5" } }, "sha512-zDB6Pdk6NYYbYis8cWoLLkL9k/IvjhC3hkuuz2lhpJ2AxIs3/PDMUKoyK4DpjPtRyKk1W1lwsnpc6J1i87r4/Q=="],
+
+    "@swapkit/wallet-hardware/@ledgerhq/hw-transport": ["@ledgerhq/hw-transport@6.31.9", "", { "dependencies": { "@ledgerhq/devices": "8.5.0", "@ledgerhq/errors": "^6.24.0", "@ledgerhq/logs": "^6.13.0", "events": "^3.3.0" } }, "sha512-HqB2Whl2qbrzyvs9gC/GmLhIy8RO4CWzjqHS4k0bPWDZRqKa8m6H32vjrbXGO//pUL1Mlu87UwvxvLyuICdjwg=="],
 
     "@swc/helpers/tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
