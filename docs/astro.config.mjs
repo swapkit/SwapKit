@@ -23,208 +23,34 @@ export default defineConfig({
       plugins: [openApiPlugin, ...docsPlugins],
       sidebar: [
         {
-          collapsed: false,
           items: [
-            { badge: { text: "Start here", variant: "tip" }, label: "Getting Started", link: "/start/getting-started" },
+            { label: "Getting started", link: "/start/getting-started" },
             { label: "Core Concepts", link: "/start/core-concepts" },
             { label: "Configuration", link: "/start/configuration" },
-            { label: "Toolbox Usage", link: "/start/toolbox-usage" },
+            { label: "Toolbox usage", link: "/start/toolbox-usage" },
           ],
-          label: "🚀 Getting Started",
+          label: "Start Here",
         },
-
         {
-          collapsed: true,
           items: [
-            { badge: { text: "v4", variant: "note" }, label: "Migrate to v4", link: "/others/migrate-to-v4" },
-            { badge: { text: "New", variant: "success" }, label: "What's New in v4", link: "/guides/whats-new-v4" },
-            {
-              badge: { text: "Beta", variant: "caution" },
-              label: "Near Protocol Integration",
-              link: "/guides/near-integration",
-            },
-            {
-              badge: { text: "Beta", variant: "caution" },
-              label: "Zcash Integration",
-              link: "/guides/zcash-integration",
-            },
-          ],
-          label: "🆕 What's New",
-        },
-
-        {
-          collapsed: false,
-          items: [
-            {
-              badge: { text: "Essential", variant: "tip" },
-              label: "Connect Wallet",
-              link: "/guides/actions/connect-wallet",
-            },
-            { label: "Send Transactions", link: "/guides/actions/transaction" },
-            { label: "Perform Swaps", link: "/guides/actions/swap" },
-            { label: "Sign Transactions", link: "/guides/actions/sign-transaction" },
-          ],
-          label: "⚡ Essential Actions",
-        },
-
-        {
-          collapsed: true,
-          items: [
-            { badge: { text: "Complete", variant: "note" }, label: "API Reference", link: "/guides/api-reference" },
+            { label: "API Reference", link: "/guides/api-reference" },
             { label: "THORChain Features", link: "/guides/thorchain-features" },
+            { label: "Zcash Integration", link: "/guides/zcash-integration" },
             { label: "Advanced Features", link: "/guides/advanced-features" },
-            {
-              collapsed: true,
-              items: [
-                { label: "Next.js", link: "/guides/integrations/nextjs" },
-                { label: "Vite", link: "/guides/integrations/vite" },
-                { label: "React Native", link: "/guides/integrations/react-native" },
-                { label: "Bun", link: "/guides/integrations/bun" },
-              ],
-              label: "Framework Integrations",
-            },
+            { label: "Production Best Practices", link: "/guides/production-best-practices" },
+            { label: "Create custom plugin", link: "/guides/create-plugin" },
+            { label: "Create custom wallet", link: "/guides/create-wallet" },
           ],
-          label: "🔧 Development",
+          label: "Guides",
         },
-
-        {
-          collapsed: true,
-          items: [
-            {
-              collapsed: false,
-              items: [
-                {
-                  badge: { text: "Most Popular", variant: "success" },
-                  label: "Ethereum",
-                  link: "/guides/chains/ethereum",
-                },
-                { label: "Arbitrum", link: "/guides/chains/arbitrum" },
-                { label: "Avalanche", link: "/guides/chains/avalanche" },
-                { label: "Polygon", link: "/guides/chains/polygon" },
-                { label: "BNB Smart Chain", link: "/guides/chains/bsc" },
-                { label: "Optimism", link: "/guides/chains/optimism" },
-              ],
-              label: "EVM Networks",
-            },
-            {
-              collapsed: true,
-              items: [
-                { badge: { text: "Popular", variant: "note" }, label: "Bitcoin", link: "/guides/chains/bitcoin" },
-                { label: "Bitcoin Cash", link: "/guides/chains/bitcoin-cash" },
-                { label: "Litecoin", link: "/guides/chains/litecoin" },
-                { label: "Dogecoin", link: "/guides/chains/dogecoin" },
-              ],
-              label: "Bitcoin & UTXO",
-            },
-            {
-              collapsed: true,
-              items: [
-                { label: "Cosmos Hub", link: "/guides/chains/cosmos" },
-                { label: "Maya Protocol", link: "/guides/chains/maya" },
-              ],
-              label: "Cosmos Ecosystem",
-            },
-            {
-              collapsed: true,
-              items: [
-                { label: "Solana", link: "/guides/chains/solana" },
-                { label: "Radix", link: "/guides/chains/radix" },
-                { label: "XRP Ledger", link: "/guides/chains/xrp" },
-                { label: "Tron", link: "/guides/chains/tron" },
-              ],
-              label: "Other Networks",
-            },
-          ],
-          label: "🌐 Blockchain Networks",
-        },
-
-        {
-          collapsed: true,
-          items: [
-            {
-              collapsed: false,
-              items: [
-                {
-                  badge: { text: "Most Used", variant: "success" },
-                  label: "MetaMask & EVM Extensions",
-                  link: "/guides/wallets/browser-extensions/metamask",
-                },
-                { label: "Keplr (Cosmos)", link: "/guides/wallets/browser-extensions/keplr" },
-                { label: "Phantom (Solana)", link: "/guides/wallets/browser-extensions/phantom" },
-                { label: "OKX Wallet", link: "/guides/wallets/browser-extensions/okx" },
-              ],
-              label: "Browser Wallets",
-            },
-            {
-              collapsed: true,
-              items: [
-                {
-                  badge: { text: "Secure", variant: "note" },
-                  label: "Ledger",
-                  link: "/guides/wallets/hardware/ledger",
-                },
-                { label: "Trezor", link: "/guides/wallets/hardware/trezor" },
-                { label: "KeepKey", link: "/guides/wallets/hardware/keepkey" },
-              ],
-              label: "Hardware Wallets",
-            },
-            {
-              collapsed: true,
-              items: [
-                {
-                  badge: { text: "Universal", variant: "tip" },
-                  label: "WalletConnect",
-                  link: "/guides/wallets/mobile-desktop/walletconnect",
-                },
-                { label: "Coinbase Wallet", link: "/guides/wallets/mobile-desktop/coinbase-wallet" },
-                { label: "Bitget Wallet", link: "/guides/wallets/mobile-desktop/bitget-wallet" },
-                { label: "Exodus", link: "/guides/wallets/mobile-desktop/exodus" },
-              ],
-              label: "Mobile & Multi-Platform",
-            },
-          ],
-          label: "💳 Wallet Integration",
-        },
-
-        {
-          collapsed: true,
-          items: [
-            {
-              badge: { text: "Important", variant: "caution" },
-              label: "Production Best Practices",
-              link: "/guides/production-best-practices",
-            },
-            { label: "Error Handling", link: "/guides/error-handling" },
-            { label: "Security Guidelines", link: "/guides/security" },
-            { label: "Performance Optimization", link: "/guides/performance" },
-            { label: "Testing Your Integration", link: "/guides/testing" },
-          ],
-          label: "📋 Best Practices",
-        },
-
-        {
-          collapsed: true,
-          items: [
-            {
-              badge: { text: "Advanced", variant: "caution" },
-              label: "Create Custom Plugin",
-              link: "/guides/create-plugin",
-            },
-            {
-              badge: { text: "Advanced", variant: "caution" },
-              label: "Create Custom Wallet",
-              link: "/guides/create-wallet",
-            },
-          ],
-          label: "🔧 Extend SwapKit",
-        },
-
+        { autogenerate: { directory: "guides/actions" }, collapsed: true, label: "Actions" },
+        { autogenerate: { directory: "guides/integrations" }, collapsed: true, label: "Integrations" },
+        { autogenerate: { directory: "others" }, collapsed: true, label: "Others" },
         ...openAPISidebarGroups,
-
         {
           collapsed: true,
           items: process.env.REFERENCES ? [{ items: docsSidebarItems, label: "@swapkit" }] : [],
-          label: "📚 API References",
+          label: "References",
         },
       ],
       social: [

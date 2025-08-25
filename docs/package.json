@@ -16,8 +16,7 @@
     "starlight-openapi": "0.20.0",
     "starlight-typedoc": "0.21.3",
     "typedoc": "0.28.10",
-    "typedoc-plugin-markdown": "4.8.1",
-    "typescript": "^5.9.2"
+    "typedoc-plugin-markdown": "4.8.1"
   },
   "name": "@internal/docs",
   "private": true,

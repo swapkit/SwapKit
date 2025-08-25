@@ -19,8 +19,7 @@
       "!**/playgrounds",
       "!**/coverage",
       "!**/MsgCompiled.ts",
-      "!**/.astro",
-      "!docs/src/components/*.astro"
+      "!**/.astro"
     ],
     "maxSize": 5242880
   },

@@ -3,7 +3,7 @@ title: Getting Started with SwapKit
 description: A comprehensive guide to building your first cross-chain DeFi application with SwapKit
 ---
 
-import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+import { Card, CardGrid, Code, Tabs, TabItem } from "@astrojs/starlight/components";
 import InteractiveExample from "../../../components/InteractiveExample.astro";
 import TryItYourself from "../../../components/TryItYourself.astro";
 import PlaygroundLinks from "../../../components/PlaygroundLinks.astro";
@@ -22,12 +22,26 @@ Before starting, ensure you have:
 ## Installation
 
 <Tabs>
-  <TabItem label="bun" icon="bun">
-    ```bash bun add @swapkit/sdk ```
+  <TabItem label="bun">
+    ```bash
+    bun add @swapkit/sdk
+    ```
   </TabItem>
-  <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
-  <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
-  <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @swapkit/sdk
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @swapkit/sdk
+    ```
+  </TabItem>
 </Tabs>
 
 ## Basic Setup

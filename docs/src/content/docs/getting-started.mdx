@@ -81,15 +81,14 @@ The fastest way to integrate SwapKit into your application.
 <Steps>
 1. **Install the SDK**
 
-Choose your package manager:
+   Choose your package manager:
 
-{" "}
-<Tabs syncKey="package-manager">
-  <TabItem label="bun">```bash bun add @swapkit/sdk ```</TabItem>
-  <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
-  <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
-  <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
-</Tabs>
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">```bash bun add @swapkit/sdk ```</TabItem>
+     <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
+     <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
+     <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
+   </Tabs>
 
 2. **Initialize SwapKit**
 
@@ -125,8 +124,7 @@ Choose your package manager:
 
    const address = swapKit.getAddress(Chain.Ethereum);
    ```
-
-   </Steps>
+</Steps>
 
 <div id="core-setup"></div>
 
@@ -137,108 +135,104 @@ For developers who need more control and custom configurations.
 <Steps>
 1. **Install Core Package**
 
-Start with the core package:
+   Start with the core package:
 
-{" "}
-<Tabs syncKey="package-manager">
-  <TabItem label="bun">```bash bun add @swapkit/core ```</TabItem>
-  <TabItem label="pnpm">```bash pnpm add @swapkit/core ```</TabItem>
-  <TabItem label="npm">```bash npm install @swapkit/core ```</TabItem>
-  <TabItem label="yarn">```bash yarn add @swapkit/core ```</TabItem>
-</Tabs>
+   <Tabs syncKey="package-manager">
+     <TabItem label="bun">```bash bun add @swapkit/core ```</TabItem>
+     <TabItem label="pnpm">```bash pnpm add @swapkit/core ```</TabItem>
+     <TabItem label="npm">```bash npm install @swapkit/core ```</TabItem>
+     <TabItem label="yarn">```bash yarn add @swapkit/core ```</TabItem>
+   </Tabs>
 
-2.  **Install Required Components**
+2. **Install Required Components**
 
-    Add only the components you need:
+   Add only the components you need:
 
-     <Tabs>
-   <TabItem label="Wallets">
-     <Tabs syncKey="package-manager">
-       <TabItem label="bun">
-         ```bash
-         bun add @swapkit/wallets
-         ```
-       </TabItem>
-       <TabItem label="pnpm">
-         ```bash
-         pnpm add @swapkit/wallets
-         ```
-       </TabItem>
-       <TabItem label="npm">
-         ```bash
-         npm install @swapkit/wallets
-         ```
-       </TabItem>
-       <TabItem label="yarn">
-         ```bash
-         yarn add @swapkit/wallets
-         ```
-       </TabItem>
-     </Tabs>
+   <Tabs>
+     <TabItem label="Wallets">
+       <Tabs syncKey="package-manager">
+         <TabItem label="bun">
+           ```bash
+           bun add @swapkit/wallets
+           ```
+         </TabItem>
+         <TabItem label="pnpm">
+           ```bash
+           pnpm add @swapkit/wallets
+           ```
+         </TabItem>
+         <TabItem label="npm">
+           ```bash
+           npm install @swapkit/wallets
+           ```
+         </TabItem>
+         <TabItem label="yarn">
+           ```bash
+           yarn add @swapkit/wallets
+           ```
+         </TabItem>
+       </Tabs>
 
-         Install to add integrations with specific wallets.
-         Import specific wallet integrations as needed (e.g., `keystoreWallet` from `@swapkit/sdk`).
-         Supports around 20+ wallets, including Ledger, Trezor, Coinbase, WalletConnect and more.
+       Install to add integrations with specific wallets.
+       Import specific wallet integrations as needed (e.g., `keystoreWallet` from `@swapkit/sdk`).
+       Supports around 20+ wallets, including Ledger, Trezor, Coinbase, WalletConnect and more.
+     </TabItem>
 
-       </TabItem>
+     <TabItem label="Plugins">
+       <Tabs syncKey="package-manager">
+         <TabItem label="bun">
+           ```bash
+           bun add @swapkit/plugins
+           ```
+         </TabItem>
+         <TabItem label="pnpm">
+           ```bash
+           pnpm add @swapkit/plugins
+           ```
+         </TabItem>
+         <TabItem label="npm">
+           ```bash
+           npm install @swapkit/plugins
+           ```
+         </TabItem>
+         <TabItem label="yarn">
+           ```bash
+           yarn add @swapkit/plugins
+           ```
+         </TabItem>
+       </Tabs>
 
-       <TabItem label="Plugins">
-     <Tabs syncKey="package-manager">
-       <TabItem label="bun">
-         ```bash
-         bun add @swapkit/plugins
-         ```
-       </TabItem>
-       <TabItem label="pnpm">
-         ```bash
-         pnpm add @swapkit/plugins
-         ```
-       </TabItem>
-       <TabItem label="npm">
-         ```bash
-         npm install @swapkit/plugins
-         ```
-       </TabItem>
-       <TabItem label="yarn">
-         ```bash
-         yarn add @swapkit/plugins
-         ```
-       </TabItem>
-     </Tabs>
+       Install for interactions with specific protocols or products.
+       Install the main plugins package below; you can then import specific plugin integrations as needed (e.g., `ThorchainPlugin` from `@swapkit/sdk`).
+       By building your own plugins, you can extend SwapKit to support new protocols, products or actions.
+       Currently SwapKit includes plugins for Chainflip, Thorchain, EVM, Radix, and more.
+     </TabItem>
 
-         Install for interactions with specific protocols or products.
-         Install the main plugins package below; you can then import specific plugin integrations as needed (e.g., `ThorchainPlugin` from `@swapkit/sdk`).
-         By building your own plugins, you can extend SwapKit to support new protocols, products or actions.
-         Currently SwapKit includes plugins for Chainflip, Thorchain, EVM, Radix, and more.
+     <TabItem label="Toolboxes">
+       Toolboxes provide foundational, chain-specific functionalities used internally by wallets and plugins.
+       They are included when you install `@swapkit/core` and typically **don't need separate installation** unless you are building custom integrations or need direct access to low-level chain functions.
+       Check out [Toolbox Usage](/start/toolbox-usage/) for more information on advanced scenarios.
+     </TabItem>
+   </Tabs>
 
-       </TabItem>
+3. **Configure SwapKit**
 
-       <TabItem label="Toolboxes">
-     Toolboxes provide foundational, chain-specific functionalities used internally by wallets and plugins.
-     They are included when you install `@swapkit/core` and typically **don't need separate installation** unless you are building custom integrations or need direct access to low-level chain functions.
-     Check out [Toolbox Usage](/start/toolbox-usage/) for more information on advanced scenarios.
-   </TabItem>
- </Tabs>
+   ```typescript
+   import { SwapKit, Chain, ThorchainPlugin, EVMPlugin, keystoreWallet, ledgerWallet } from '@swapkit/sdk';
 
-3.  **Configure SwapKit**
-
-    ```typescript
-
-    import { SwapKit, Chain, ThorchainPlugin, EVMPlugin, keystoreWallet, ledgerWallet } from '@swapkit/sdk';
-
-    const swapKit = SwapKit({
-       config: { apiKeys: { swapKit: 'your-swapkit-api-key' } },
-      },
-      plugins: { ...ThorchainPlugin, ...EVMPlugin },
-      wallets: { ...keystoreWallet, ...ledgerWallet },
-    });
+   const swapKit = SwapKit({
+     config: { 
+       apiKeys: { swapKit: 'your-swapkit-api-key' } 
+     },
+     plugins: { ...ThorchainPlugin, ...EVMPlugin },
+     wallets: { ...keystoreWallet, ...ledgerWallet },
+   });
 
 
-    await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
-    const wallet = swapKit.getWallet(Chain.Ethereum);
-    ```
-
-    </Steps>
+   await swapKit.connectKeystore([Chain.Ethereum], 'your mnemonic phrase here');
+   const wallet = swapKit.getWallet(Chain.Ethereum);
+   ```
+</Steps>
 
 <Aside type="tip">
   With the Core implementation, you only include the dependencies you actually

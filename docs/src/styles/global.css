@@ -755,13 +755,13 @@ nav a:not([aria-current="page"]):hover {
 }
 
 .sidebar-pane nav [aria-current="page"] {
-  padding-left: 0.65rem !important;
+  padding-left: 0.65rem !important; /* Compensate for border */
   font-weight: 500 !important;
   color: var(--sk-accent-green) !important;
   background-color: transparent !important;
   border: none !important;
   border-left: 3px solid var(--sk-accent-green) !important;
-  box-shadow: none !important;
+  box-shadow: none !important; /* Compensate for border */
 }
 
 :root[data-theme="light"] .sidebar-pane nav [aria-current="page"] {
