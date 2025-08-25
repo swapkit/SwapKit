@@ -62,6 +62,6 @@ export const getLedgerAddress = async <
     }
 
     default:
-      throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.LEDGER, chain });
+      throw new SwapKitError("wallet_chain_not_supported", { chain, wallet: WalletOption.LEDGER });
   }
 };

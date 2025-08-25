@@ -1,4 +1,4 @@
-import { AssetValue, Chain, type ProviderName, getChainIdentifier } from "@swapkit/helpers";
+import { AssetValue, Chain, getChainIdentifier, type ProviderName } from "@swapkit/helpers";
 
 import { getTokenListProviders } from "../swapkitApi/endpoints";
 import type { TokenListProvidersResponse } from "../swapkitApi/types";

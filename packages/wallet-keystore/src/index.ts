@@ -3,28 +3,15 @@ import {
   CosmosChains,
   type DerivationPathArray,
   EVMChains,
+  filterSupportedChains,
   NetworkDerivationPath,
   UTXOChains,
-  WalletOption,
-  filterSupportedChains,
   updateDerivationPath,
+  WalletOption,
 } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 export const keystoreWallet = createWallet({
-  name: "connectKeystore",
-  walletType: WalletOption.KEYSTORE,
-  supportedChains: [
-    ...EVMChains,
-    ...UTXOChains,
-    ...CosmosChains,
-    Chain.Polkadot,
-    Chain.Chainflip,
-    Chain.Ripple,
-    Chain.Solana,
-    Chain.Tron,
-    Chain.Near,
-  ],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectKeystore(
       chains: Chain[],
@@ -35,8 +22,7 @@ export const keystoreWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const derivationPathIndex =
-            typeof derivationPathMapOrIndex === "number" ? derivationPathMapOrIndex : 0;
+          const derivationPathIndex = typeof derivationPathMapOrIndex === "number" ? derivationPathMapOrIndex : 0;
 
           const derivationPathFromMap =
             derivationPathMapOrIndex && typeof derivationPathMapOrIndex === "object"
@@ -49,12 +35,11 @@ export const keystoreWallet = createWallet({
           ) as DerivationPathArray;
 
           const derivationPath: DerivationPathArray =
-            derivationPathFromMap ||
-            updateDerivationPath(derivationArrayToUpdate, { index: derivationPathIndex });
+            derivationPathFromMap || updateDerivationPath(derivationArrayToUpdate, { index: derivationPathIndex });
 
           const { getToolbox } = await import("@swapkit/toolboxes");
 
-          const toolbox = await getToolbox(chain, { phrase, derivationPath });
+          const toolbox = await getToolbox(chain, { derivationPath, phrase });
           const address = (await toolbox.getAddress()) || "";
 
           const wallet = { ...toolbox, address };
@@ -65,6 +50,19 @@ export const keystoreWallet = createWallet({
 
       return true;
     },
+  name: "connectKeystore",
+  supportedChains: [
+    ...EVMChains,
+    ...UTXOChains,
+    ...CosmosChains,
+    Chain.Polkadot,
+    Chain.Chainflip,
+    Chain.Ripple,
+    Chain.Solana,
+    Chain.Tron,
+    Chain.Near,
+  ],
+  walletType: WalletOption.KEYSTORE,
 });
 
 export const KEYSTORE_SUPPORTED_CHAINS = getWalletSupportedChains(keystoreWallet);

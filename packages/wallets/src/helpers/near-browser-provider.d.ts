@@ -89,15 +89,7 @@ export interface NearAccessKey {
   publicKey: PublicKey;
   accessKey: {
     nonce: number;
-    permission:
-      | "FullAccess"
-      | {
-          FunctionCall: {
-            allowance?: string;
-            receiverId: string;
-            methodNames: string[];
-          };
-        };
+    permission: "FullAccess" | { FunctionCall: { allowance?: string; receiverId: string; methodNames: string[] } };
   };
 }
 
@@ -189,16 +181,12 @@ export interface NearBrowserWalletProvider {
   /**
    * Sign and send multiple transactions
    */
-  signAndSendTransactions(params: {
-    transactions: NearTransaction[];
-  }): Promise<NearFinalExecutionOutcome[]>;
+  signAndSendTransactions(params: { transactions: NearTransaction[] }): Promise<NearFinalExecutionOutcome[]>;
 
   /**
    * Request signing of transactions (alternative method used by some wallets)
    */
-  requestSignTransactions?(params: {
-    transactions: NearTransaction[];
-  }): Promise<any>;
+  requestSignTransactions?(params: { transactions: NearTransaction[] }): Promise<any>;
 
   // Verification
   /**
@@ -244,9 +232,9 @@ export interface NearBrowserWalletProvider {
   isCTRL?: boolean;
 
   // Event Handling (not all wallets support events)
-  on?(event: "accountsChanged" | "networkChanged" | "disconnect", handler: Function): void;
-  off?(event: string, handler: Function): void;
-  removeListener?(event: string, handler: Function): void;
+  on?(event: "accountsChanged" | "networkChanged" | "disconnect", handler: (...args: any[]) => void): void;
+  off?(event: string, handler: (...args: any[]) => void): void;
+  removeListener?(event: string, handler: (...args: any[]) => void): void;
 }
 
 /**
@@ -258,13 +246,9 @@ declare global {
     near?: NearBrowserWalletProvider;
 
     // Specific wallet providers
-    okxwallet?: {
-      near: NearBrowserWalletProvider;
-    };
+    okxwallet?: { near: NearBrowserWalletProvider };
 
-    xfi?: {
-      near: NearBrowserWalletProvider;
-    };
+    xfi?: { near: NearBrowserWalletProvider };
 
     // Add other wallet-specific providers as needed
   }

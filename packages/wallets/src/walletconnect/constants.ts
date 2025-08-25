@@ -22,12 +22,10 @@ export const BERACHAIN_MAINNET_ID = "eip155:80094";
 export const DEFAULT_LOGGER = "debug";
 
 export const DEFAULT_APP_METADATA: ClientMetadata = {
-  name: "SwapKit",
   description: "SwapKit cross-chain SDK",
+  icons: ["https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png"],
+  name: "SwapKit",
   url: "https://swapkit.dev/",
-  icons: [
-    "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
-  ],
 };
 
 /**

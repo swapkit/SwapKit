@@ -48,7 +48,7 @@ export function getFeeMultiplierAsBigInt(feeOption: FeeOption = FeeOption.Averag
   const denominator = 10n;
   const numerator = BigInt(Math.round(multiplier * 10));
 
-  return { numerator, denominator };
+  return { denominator, numerator };
 }
 
 /**
@@ -58,10 +58,7 @@ export function getFeeMultiplierAsBigInt(feeOption: FeeOption = FeeOption.Averag
  * @param feeOption - The fee option (Average, Fast, Fastest)
  * @returns The multiplied fee value as BigInt
  */
-export function applyFeeMultiplierToBigInt(
-  value: bigint,
-  feeOption: FeeOption = FeeOption.Average,
-): bigint {
+export function applyFeeMultiplierToBigInt(value: bigint, feeOption: FeeOption = FeeOption.Average): bigint {
   const { numerator, denominator } = getFeeMultiplierAsBigInt(feeOption);
   return (value * numerator) / denominator;
 }
@@ -74,11 +71,7 @@ export function applyFeeMultiplierToBigInt(
  * @param floor - Whether to floor the result (default: false)
  * @returns The multiplied fee value as number
  */
-export function applyFeeMultiplier(
-  value: number,
-  feeOption: FeeOption = FeeOption.Average,
-  floor = false,
-): number {
+export function applyFeeMultiplier(value: number, feeOption: FeeOption = FeeOption.Average, floor = false): number {
   const multiplier = getFeeMultiplier(feeOption);
   const result = value * multiplier;
   return floor ? Math.floor(result) : result;

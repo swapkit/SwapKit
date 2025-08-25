@@ -6,8 +6,7 @@ export async function createDefaultRegistry() {
   const importedProtoSigning = await import("@cosmjs/proto-signing");
   const Registry = importedProtoSigning.Registry ?? importedProtoSigning.default?.Registry;
   const importedStargate = await import("@cosmjs/stargate");
-  const defaultRegistryTypes =
-    importedStargate.defaultRegistryTypes ?? importedStargate.default?.defaultRegistryTypes;
+  const defaultRegistryTypes = importedStargate.defaultRegistryTypes ?? importedStargate.default?.defaultRegistryTypes;
 
   return new Registry([
     ...defaultRegistryTypes,
@@ -22,23 +21,23 @@ export async function createDefaultAminoTypes(chain: Chain.THORChain | Chain.May
   const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : "mayachain";
 
   return new AminoTypes({
+    "/types.MsgDeposit": {
+      aminoType: `${aminoTypePrefix}/MsgDeposit`,
+      fromAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: bech32ToBase64(signer) }),
+      toAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: base64ToBech32(signer) }),
+    },
     "/types.MsgSend": {
       aminoType: `${aminoTypePrefix}/MsgSend`,
-      toAmino: ({ fromAddress, toAddress, ...rest }: any) => ({
-        ...rest,
-        from_address: base64ToBech32(fromAddress),
-        to_address: base64ToBech32(toAddress),
-      }),
       fromAmino: ({ from_address, to_address, ...rest }: any) => ({
         ...rest,
         fromAddress: bech32ToBase64(from_address),
         toAddress: bech32ToBase64(to_address),
       }),
-    },
-    "/types.MsgDeposit": {
-      aminoType: `${aminoTypePrefix}/MsgDeposit`,
-      toAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: base64ToBech32(signer) }),
-      fromAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: bech32ToBase64(signer) }),
+      toAmino: ({ fromAddress, toAddress, ...rest }: any) => ({
+        ...rest,
+        from_address: base64ToBech32(fromAddress),
+        to_address: base64ToBech32(toAddress),
+      }),
     },
   });
 }

@@ -2,7 +2,6 @@ import type Transport from "@ledgerhq/hw-transport";
 import { SwapKitError } from "@swapkit/helpers";
 
 const getNavigatorUsb = () =>
-  // @ts-ignore
   navigator?.usb as unknown as {
     getDevices: () => Promise<any[]>;
     requestDevice: (requestObject: any) => Promise<any>;
@@ -20,9 +19,7 @@ const getLedgerDevices = async () => {
   const existingDevices = devices.filter((d) => d.vendorId === ledgerUSBVendorId);
   if (existingDevices.length > 0) return existingDevices[0];
 
-  return navigatorUsb?.requestDevice({
-    filters: [{ vendorId: ledgerUSBVendorId }],
-  });
+  return navigatorUsb?.requestDevice({ filters: [{ vendorId: ledgerUSBVendorId }] });
 };
 
 export const getLedgerTransport = async () => {

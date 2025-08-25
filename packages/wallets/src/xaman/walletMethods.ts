@@ -22,7 +22,6 @@ export const connectXamanWallet = async (xumm: Xumm) => {
   }
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: might need refactoring later
 export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParams) => {
   try {
     // Validate required parameters
@@ -35,21 +34,13 @@ export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParam
 
     // Create transaction object
     const transaction = {
-      TransactionType: "Payment" as const,
-      Destination: params.destination,
-      Amount: amountInDrops,
       Account: params.from,
-      ...(params.destinationTag !== undefined && {
-        DestinationTag: params.destinationTag,
-      }),
+      Amount: amountInDrops,
+      Destination: params.destination,
+      TransactionType: "Payment" as const,
+      ...(params.destinationTag !== undefined && { DestinationTag: params.destinationTag }),
       ...(params.memo && {
-        Memos: [
-          {
-            Memo: {
-              MemoData: Buffer.from(params.memo, "utf8").toString("hex").toUpperCase(),
-            },
-          },
-        ],
+        Memos: [{ Memo: { MemoData: Buffer.from(params.memo, "utf8").toString("hex").toUpperCase() } }],
       }),
     };
 
@@ -73,9 +64,7 @@ export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParam
       xumm.xapp?.openSignRequest(created);
     } else if (typeof window !== "undefined") {
       const url =
-        created.pushed && created.next?.no_push_msg_received
-          ? created.next.no_push_msg_received
-          : created.next?.always;
+        created.pushed && created.next?.no_push_msg_received ? created.next.no_push_msg_received : created.next?.always;
       if (url) window.open(url);
     }
 
@@ -103,18 +92,13 @@ export const sendXamanTransaction = async (xumm: Xumm, params: XamanPaymentParam
 
     // Return comprehensive result
     return {
+      deepLink: created.next?.always || "",
       // Initial payload info for QR codes, deep links, etc.
       payloadId: created.uuid || "",
       qrCode: created.refs?.qr_png || "",
-      deepLink: created.next?.always || "",
-      websocketUrl: created.refs?.websocket_status || "",
       // Final transaction result - SUCCESS with tx hash
-      result: {
-        success: true,
-        transactionId,
-        account,
-        reason: undefined,
-      },
+      result: { account, reason: undefined, success: true, transactionId },
+      websocketUrl: created.refs?.websocket_status || "",
     };
   } catch (error) {
     console.error("Xaman payment creation and subscription failed:", error);

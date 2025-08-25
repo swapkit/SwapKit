@@ -8,17 +8,11 @@ import type { KeyPairSigner, Signer, transactions } from "near-api-js";
 
 interface NearKeyPairSigner
   extends KeyPairSigner,
-    Omit<
-      ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>,
-      "signTransaction"
-    > {}
+    Omit<ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>, "signTransaction"> {}
 
 interface NearGeneralSigner
   extends Signer,
-    Omit<
-      ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>,
-      "signTransaction"
-    > {}
+    Omit<ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>, "signTransaction"> {}
 
 // Extend both ChainSigner and NEAR's Signer class, omitting signTransaction
 export type NearSigner = NearKeyPairSigner | NearGeneralSigner;
@@ -49,14 +43,10 @@ export interface NearCreateTransactionParams extends GenericCreateTransactionPar
   // NEAR-specific options
   attachedDeposit?: string;
   // Function call parameters
-  functionCall?: {
-    methodName: string;
-    args: object;
-    attachedDeposit: string;
-  };
+  functionCall?: { methodName: string; args: object; attachedDeposit: string };
 }
 
 export * from "./toolbox";
-export * from "./types/toolbox";
-export * from "./types/nep141";
 export * from "./types/contract";
+export * from "./types/nep141";
+export * from "./types/toolbox";

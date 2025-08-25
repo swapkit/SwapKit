@@ -60,11 +60,7 @@ export type PoolStats = {
 
 // Network types
 export type NetworkInfo = {
-  blockRewards: {
-    blockReward: string;
-    bondReward: string;
-    poolReward: string;
-  };
+  blockRewards: { blockReward: string; bondReward: string; poolReward: string };
   bondMetrics: {
     averageActiveBond: string;
     averageStandbyBond: string;
@@ -85,12 +81,7 @@ export type NetworkInfo = {
   runePriceUSD: string;
 };
 
-export type HealthInfo = {
-  database: boolean;
-  inSync: boolean;
-  scannerHeight: string;
-  thornodeHeight: string;
-};
+export type HealthInfo = { database: boolean; inSync: boolean; scannerHeight: string; thornodeHeight: string };
 
 export type Node = {
   bond: string;
@@ -103,30 +94,14 @@ export type Node = {
   forcedToLeave: boolean;
   requestedToLeave: boolean;
   bondAddress: string;
-  preflight: {
-    status: string;
-    reason: string;
-    code: number;
-  };
+  preflight: { status: string; reason: string; code: number };
   nodeOperatorAddress: string;
   nodeAddress: string;
   observerAddress: string;
-  pubKeySet: {
-    secp256k1: string;
-    ed25519: string;
-  };
-  bondProviders: {
-    nodeOperatorFee: string;
-    providers: Array<{
-      bondAddress: string;
-      bond: string;
-    }>;
-  };
+  pubKeySet: { secp256k1: string; ed25519: string };
+  bondProviders: { nodeOperatorFee: string; providers: Array<{ bondAddress: string; bond: string }> };
   signMembership: string[];
-  jail: {
-    releaseHeight: string;
-    reason: string;
-  };
+  jail: { releaseHeight: string; reason: string };
 };
 
 // Stats types
@@ -180,16 +155,9 @@ export type Action = {
   type: string;
 };
 
-export type Transaction = {
-  address: string;
-  coins: Coin[];
-  txID: string;
-};
+export type Transaction = { address: string; coins: Coin[]; txID: string };
 
-export type Coin = {
-  amount: string;
-  asset: string;
-};
+export type Coin = { amount: string; asset: string };
 
 export type SwapMetadata = {
   affiliateAddress: string;
@@ -202,30 +170,15 @@ export type SwapMetadata = {
   swapTarget: string;
 };
 
-export type AddLiquidityMetadata = {
-  liquidityUnits: string;
-};
+export type AddLiquidityMetadata = { liquidityUnits: string };
 
-export type WithdrawMetadata = {
-  asymmetry: string;
-  basisPoints: string;
-  liquidityUnits: string;
-  networkFees: Coin[];
-};
+export type WithdrawMetadata = { asymmetry: string; basisPoints: string; liquidityUnits: string; networkFees: Coin[] };
 
-export type RefundMetadata = {
-  networkFees: Coin[];
-  reason: string;
-};
+export type RefundMetadata = { networkFees: Coin[]; reason: string };
 
-export type BondMetadata = {
-  bondType: string;
-};
+export type BondMetadata = { bondType: string };
 
-export type SwitchMetadata = {
-  burn: Coin;
-  mint: Coin;
-};
+export type SwitchMetadata = { burn: Coin; mint: Coin };
 
 // THORName/MAYAName types
 export type THORNameDetails = {
@@ -388,12 +341,7 @@ export type EarningsHistory = {
       earnings: string;
     }>;
   }>;
-  meta: {
-    bonding: string;
-    liquidity: string;
-    earnings: string;
-    runePriceUSD: string;
-  };
+  meta: { bonding: string; liquidity: string; earnings: string; runePriceUSD: string };
 };
 
 // TVL types
@@ -509,11 +457,7 @@ export type SwapHistory = {
 };
 
 // Balance types
-export type Balance = {
-  asset: string;
-  amount: string;
-  dateLastAdded?: string;
-};
+export type Balance = { asset: string; amount: string; dateLastAdded?: string };
 
 // Depth history types
 export type DepthHistory = {
@@ -554,21 +498,9 @@ export type Constants = {
 };
 
 // Generic response wrapper types
-export type PagedResponse<T> = {
-  data: T[];
-  meta?: {
-    total?: number;
-    nextPageToken?: string;
-    prevPageToken?: string;
-  };
-};
+export type PagedResponse<T> = { data: T[]; meta?: { total?: number; nextPageToken?: string; prevPageToken?: string } };
 
-export type HistoryQuery = {
-  interval?: string;
-  count?: number;
-  from?: number;
-  to?: number;
-};
+export type HistoryQuery = { interval?: string; count?: number; from?: number; to?: number };
 
 export type ActionQuery = {
   address?: string;
@@ -580,9 +512,4 @@ export type ActionQuery = {
   offset?: number;
 };
 
-export type MimirVote = {
-  key: string;
-  value: string;
-  signer: string;
-  blockHeight: string;
-};
+export type MimirVote = { key: string; value: string; signer: string; blockHeight: string };

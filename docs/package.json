@@ -1,33 +1,33 @@
 {
-  "name": "@internal/docs",
-  "type": "module",
-  "private": true,
-  "version": "0.0.0",
-  "scripts": {
-    "clean": "rm -rf .astro dist node_modules ./src/content/docs/references",
-    "sync": "bun astro sync",
-    "build": "bun sync; REFERENCES=true astro build",
-    "build:no-refs": "bun sync; astro build",
-    "dev": "astro dev",
-    "dev:refs": "REFERENCES=true astro dev",
-    "preview": "astro preview"
-  },
   "dependencies": {
     "@astrojs/react": "4.3.0",
-    "@astrojs/starlight": "0.34.4",
-    "@shikijs/twoslash": "3.7.0",
+    "@astrojs/starlight": "0.35.2",
+    "@shikijs/twoslash": "3.11.0",
     "@swapkit/core": "workspace:*",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/plugins": "workspace:*",
     "@swapkit/sdk": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
-    "astro": "5.11.0",
-    "sharp": "0.34.2",
-    "starlight-links-validator": "0.17.0",
-    "starlight-openapi": "0.19.1",
+    "astro": "5.13.3",
+    "sharp": "0.34.3",
+    "starlight-links-validator": "0.17.1",
+    "starlight-openapi": "0.20.0",
     "starlight-typedoc": "0.21.3",
-    "typedoc": "0.28.7",
-    "typedoc-plugin-markdown": "4.7.0"
-  }
+    "typedoc": "0.28.10",
+    "typedoc-plugin-markdown": "4.8.1"
+  },
+  "name": "@internal/docs",
+  "private": true,
+  "scripts": {
+    "build": "bun sync; REFERENCES=true astro build",
+    "build:no-refs": "bun sync; astro build",
+    "clean": "rm -rf .astro dist node_modules ./src/content/docs/references",
+    "dev": "astro dev",
+    "dev:refs": "REFERENCES=true astro dev",
+    "preview": "astro preview",
+    "sync": "bun astro sync"
+  },
+  "type": "module",
+  "version": "0.0.0"
 }

@@ -1,68 +1,24 @@
 import { match } from "ts-pattern";
 import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
-import { Chain, StagenetChain } from "../types/chains";
+import { Chain, CosmosChains, EVMChains, StagenetChain, UTXOChains } from "../types/chains";
 import { warnOnce } from "./others";
 
 function getRpcBody(chain: Chain | StagenetChain) {
   return match(chain)
-    .with(
-      Chain.Arbitrum,
-      Chain.Aurora,
-      Chain.Avalanche,
-      Chain.Base,
-      Chain.Berachain,
-      Chain.BinanceSmartChain,
-      Chain.Ethereum,
-      Chain.Gnosis,
-      Chain.Optimism,
-      Chain.Polygon,
-      () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }),
-    )
-    .with(
-      Chain.Bitcoin,
-      Chain.Dogecoin,
-      Chain.BitcoinCash,
-      Chain.Dash,
-      Chain.Litecoin,
-      Chain.Zcash,
-      () => ({
-        id: "test",
-        jsonrpc: "1.0",
-        method: "getblockchaininfo",
-        params: [],
-      }),
-    )
-    .with(
-      Chain.Cosmos,
-      Chain.Kujira,
-      Chain.Noble,
-      Chain.Maya,
-      Chain.THORChain,
-      StagenetChain.Maya,
-      StagenetChain.THORChain,
-      () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }),
-    )
-    .with(Chain.Polkadot, Chain.Chainflip, () => ({
+    .with(...EVMChains, () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }))
+    .with(...UTXOChains, () => ({ id: "test", jsonrpc: "1.0", method: "getblockchaininfo", params: [] }))
+    .with(...CosmosChains, StagenetChain.Maya, StagenetChain.THORChain, () => ({
       id: 1,
       jsonrpc: "2.0",
-      method: "system_health",
-      params: [],
+      method: "status",
+      params: {},
     }))
+    .with(Chain.Polkadot, Chain.Chainflip, () => ({ id: 1, jsonrpc: "2.0", method: "system_health", params: [] }))
     .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
     .with(Chain.Tron, Chain.Radix, Chain.Fiat, () => "")
-    .with(Chain.Near, () => ({
-      jsonrpc: "2.0",
-      id: "dontcare",
-      method: "status",
-      params: [],
-    }))
-    .with(Chain.Ripple, () => ({
-      method: "ping",
-      params: [{}],
-      id: 1,
-      jsonrpc: "2.0",
-    }))
+    .with(Chain.Near, () => ({ id: "dontcare", jsonrpc: "2.0", method: "status", params: [] }))
+    .with(Chain.Ripple, () => ({ id: 1, jsonrpc: "2.0", method: "ping", params: [{}] }))
     .otherwise(() => {
       throw new SwapKitError("helpers_chain_not_supported", { chain });
     });
@@ -79,9 +35,9 @@ async function testRPCConnection(chain: Chain | StagenetChain, url: string) {
   try {
     const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
     const response = await fetch(`${endpoint}${getChainStatusEndpoint(chain)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(getRpcBody(chain)),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
       signal: AbortSignal.timeout(3000),
     });
 

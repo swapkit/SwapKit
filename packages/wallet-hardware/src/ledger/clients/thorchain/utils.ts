@@ -1,26 +1,19 @@
 import { base64 } from "@scure/base";
 import { SwapKitError } from "@swapkit/helpers";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: any: refactor
 export const getSignature = (signatureArray: any) => {
   // Check Type Length Value encoding
   if (signatureArray.length < 64) {
     throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "Too short" });
   }
   if (signatureArray[0] !== 0x30) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV encoding: expected first byte 0x30",
-    });
+    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "TLV encoding: expected first byte 0x30" });
   }
   if (signatureArray[1] + 2 !== signatureArray.length) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "signature length does not match TLV",
-    });
+    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "signature length does not match TLV" });
   }
   if (signatureArray[2] !== 0x02) {
-    throw new SwapKitError("wallet_ledger_invalid_signature", {
-      reason: "TLV encoding: expected length type 0x02",
-    });
+    throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "TLV encoding: expected length type 0x02" });
   }
 
   // r signature

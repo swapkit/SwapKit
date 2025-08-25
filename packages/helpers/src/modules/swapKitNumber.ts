@@ -8,9 +8,6 @@ export class SwapKitNumber extends BigIntArithmetics {
   }
 
   static fromBigInt(value: bigint, decimal?: number) {
-    return new SwapKitNumber({
-      decimal,
-      value: formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal }),
-    });
+    return new SwapKitNumber({ decimal, value: formatBigIntToSafeValue({ bigIntDecimal: decimal, decimal, value }) });
   }
 }

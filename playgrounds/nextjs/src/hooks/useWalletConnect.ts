@@ -22,8 +22,5 @@ export function useWalletConnect(selectedChains: Chain[]) {
     [connectWallet, selectedChains],
   );
 
-  return {
-    handleConnect,
-    loadingWallet,
-  };
+  return { handleConnect, loadingWallet };
 }

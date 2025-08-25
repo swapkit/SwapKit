@@ -1,11 +1,4 @@
-import {
-  AssetValue,
-  Chain,
-  type CryptoChain,
-  ProviderName,
-  SwapKitError,
-  type SwapParams,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, type CryptoChain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
 import { createPlugin } from "../utils";
@@ -13,92 +6,8 @@ import { calculateNearNameCost, validateNearName } from "./nearNames";
 import type { NearAccountInfo, NearNameRegistrationParams } from "./types";
 
 export const NearPlugin = createPlugin({
-  name: "near",
-  properties: {
-    supportedSwapkitProviders: [ProviderName.NEAR],
-  },
   methods: ({ getWallet }) => ({
-    async swap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
-      const {
-        route: {
-          buyAsset: buyAssetString,
-          sellAsset: sellAssetString,
-          inboundAddress,
-          sellAmount,
-          meta: { near },
-        },
-      } = swapParams;
-
-      if (!(sellAssetString && buyAssetString && near?.sellAsset)) {
-        throw new SwapKitError("core_swap_asset_not_recognized");
-      }
-
-      if (!inboundAddress) {
-        throw new SwapKitError("core_swap_invalid_params", { missing: ["inboundAddress"] });
-      }
-
-      const sellAsset = await AssetValue.from({
-        asyncTokenLookup: true,
-        asset: sellAssetString,
-        value: sellAmount,
-      });
-
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
-
-      if (!wallet) {
-        throw new SwapKitError("core_wallet_connection_not_found");
-      }
-
-      const tx = await wallet.transfer({
-        assetValue: sellAsset,
-        sender: wallet.address,
-        recipient: inboundAddress,
-        isProgramDerivedAddress: true,
-      });
-
-      return tx as string;
-    },
-
-    // NEAR Names functionality
     nearNames: {
-      async resolve(name: string) {
-        const normalizedName = name.toLowerCase().replace(/\.near$/, "");
-
-        if (!validateNearName(normalizedName)) {
-          throw new SwapKitError("plugin_near_invalid_name");
-        }
-
-        const accountId = `${normalizedName}.near`;
-        const wallet = getWallet(Chain.Near);
-
-        if (!wallet) {
-          throw new SwapKitError("plugin_near_no_connection");
-        }
-
-        try {
-          // Ask RPC whether the account exists
-          await wallet.provider.query({
-            request_type: "view_account",
-            finality: "final",
-            account_id: accountId,
-          });
-          // If no error is thrown, the account exists
-          return accountId; // Account is taken, return the account ID as "owner"
-        } catch (err: any) {
-          // UNKNOWN_ACCOUNT means it hasn't been created yet → available
-          if (/UNKNOWN_ACCOUNT|does not exist while viewing/.test(err.message)) {
-            return null;
-          }
-          // Re-throw any unexpected errors
-          throw err;
-        }
-      },
-
-      async isAvailable(name: string) {
-        const owner = await this.resolve(name);
-        return owner === null;
-      },
-
       async getInfo(name: string): Promise<NearAccountInfo | null> {
         const normalizedName = name.toLowerCase().replace(/\.near$/, "");
 
@@ -116,24 +25,24 @@ export const NearPlugin = createPlugin({
         try {
           // Get account info
           const accountInfo = await wallet.provider.query({
-            request_type: "view_account",
-            finality: "final",
             account_id: accountId,
+            finality: "final",
+            request_type: "view_account",
           });
 
           // Optionally get the account's public keys
           const keysInfo = await wallet.provider.query({
-            request_type: "view_access_key_list",
-            finality: "final",
             account_id: accountId,
+            finality: "final",
+            request_type: "view_access_key_list",
           });
 
           return {
             accountId,
             balance: (accountInfo as any).amount,
-            storageUsed: (accountInfo as any).storage_usage,
             codeHash: (accountInfo as any).code_hash,
             publicKeys: (keysInfo as any).keys?.map((k: any) => k.public_key) || [],
+            storageUsed: (accountInfo as any).storage_usage,
           };
         } catch (err: any) {
           if (/UNKNOWN_ACCOUNT|does not exist while viewing/.test(err.message)) {
@@ -141,6 +50,11 @@ export const NearPlugin = createPlugin({
           }
           throw err;
         }
+      },
+
+      async isAvailable(name: string) {
+        const owner = await this.resolve(name);
+        return owner === null;
       },
 
       async lookupNames(accountId: string) {
@@ -155,11 +69,7 @@ export const NearPlugin = createPlugin({
 
         try {
           // Check if the account exists
-          await wallet.provider.query({
-            request_type: "view_account",
-            finality: "final",
-            account_id: accountId,
-          });
+          await wallet.provider.query({ account_id: accountId, finality: "final", request_type: "view_account" });
 
           // If the account ID ends with .near, it's a NEAR name
           if (accountId.endsWith(".near")) {
@@ -188,14 +98,39 @@ export const NearPlugin = createPlugin({
         const cost = calculateNearNameCost(normalizedName);
 
         return wallet.callFunction({
+          args: { new_account_id: `${normalizedName}.near`, new_public_key: newPublicKey },
           contractId: "near",
-          methodName: "create_account",
-          args: {
-            new_account_id: `${normalizedName}.near`,
-            new_public_key: newPublicKey,
-          },
           deposit: cost,
+          methodName: "create_account",
         });
+      },
+      async resolve(name: string) {
+        const normalizedName = name.toLowerCase().replace(/\.near$/, "");
+
+        if (!validateNearName(normalizedName)) {
+          throw new SwapKitError("plugin_near_invalid_name");
+        }
+
+        const accountId = `${normalizedName}.near`;
+        const wallet = getWallet(Chain.Near);
+
+        if (!wallet) {
+          throw new SwapKitError("plugin_near_no_connection");
+        }
+
+        try {
+          // Ask RPC whether the account exists
+          await wallet.provider.query({ account_id: accountId, finality: "final", request_type: "view_account" });
+          // If no error is thrown, the account exists
+          return accountId; // Account is taken, return the account ID as "owner"
+        } catch (err: any) {
+          // UNKNOWN_ACCOUNT means it hasn't been created yet → available
+          if (/UNKNOWN_ACCOUNT|does not exist while viewing/.test(err.message)) {
+            return null;
+          }
+          // Re-throw any unexpected errors
+          throw err;
+        }
       },
 
       transfer(name: string, newOwner: string) {
@@ -208,15 +143,50 @@ export const NearPlugin = createPlugin({
         const wallet = getWallet(Chain.Near) as NearWallet;
 
         return wallet.callFunction({
+          args: { name: normalizedName, new_owner: newOwner },
           contractId: "near",
-          methodName: "transfer",
-          args: {
-            name: normalizedName,
-            new_owner: newOwner,
-          },
           deposit: "1",
+          methodName: "transfer",
         });
       },
     },
+    async swap(swapParams: SwapParams<"near", QuoteResponseRoute>) {
+      const {
+        route: {
+          buyAsset: buyAssetString,
+          sellAsset: sellAssetString,
+          inboundAddress,
+          sellAmount,
+          meta: { near },
+        },
+      } = swapParams;
+
+      if (!(sellAssetString && buyAssetString && near?.sellAsset)) {
+        throw new SwapKitError("core_swap_asset_not_recognized");
+      }
+
+      if (!inboundAddress) {
+        throw new SwapKitError("core_swap_invalid_params", { missing: ["inboundAddress"] });
+      }
+
+      const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
+
+      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+
+      if (!wallet) {
+        throw new SwapKitError("core_wallet_connection_not_found");
+      }
+
+      const tx = await wallet.transfer({
+        assetValue: sellAsset,
+        isProgramDerivedAddress: true,
+        recipient: inboundAddress,
+        sender: wallet.address,
+      });
+
+      return tx as string;
+    },
   }),
+  name: "near",
+  properties: { supportedSwapkitProviders: [ProviderName.NEAR] },
 });

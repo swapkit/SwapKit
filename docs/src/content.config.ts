@@ -7,9 +7,9 @@ export const collections = {
     loader: docsLoader(),
     schema: docsSchema({
       extend: z.object({
-        banner: z.object({ content: z.string() }).default({
-          content: "SwapKit is a powerful suite of tools for building blockchain applications.",
-        }),
+        banner: z
+          .object({ content: z.string() })
+          .default({ content: "SwapKit is a powerful suite of tools for building blockchain applications." }),
       }),
     }),
   }),

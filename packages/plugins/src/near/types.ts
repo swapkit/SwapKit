@@ -6,7 +6,4 @@ export type NearAccountInfo = {
   publicKeys: string[];
 };
 
-export type NearNameRegistrationParams = {
-  name: string;
-  publicKey?: string;
-};
+export type NearNameRegistrationParams = { name: string; publicKey?: string };

@@ -6,21 +6,17 @@
     "@solana/web3.js": "~1.98.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "ts-pattern": "~5.7.0"
-  },
-  "devDependencies": {
-    "@polkadot/keyring": "13.5.3",
-    "@polkadot/util": "13.5.3",
-    "@solana/web3.js": "1.98.2",
-    "ts-pattern": "5.7.1"
+    "ts-pattern": "~5.8.0"
   },
   "description": "SwapKit Plugin - Chainflip",
+  "devDependencies": {
+    "@polkadot/keyring": "13.5.5",
+    "@polkadot/util": "13.5.5",
+    "@solana/web3.js": "1.98.4",
+    "ts-pattern": "5.8.0"
+  },
   "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
     "./chainflip": {
       "default": "./dist/chainflip/index.js",
       "require": "./dist/chainflip/index.cjs",
@@ -56,11 +52,7 @@
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",
-  "repository": {
-    "directory": "packages/plugins",
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "directory": "packages/plugins", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",

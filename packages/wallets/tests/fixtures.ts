@@ -32,6 +32,4 @@ export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[nu
   [Chain.Zcash]: "t1Mh7QW9g1gK94CSRxniD49aLAJ67s6UerX",
 };
 
-export const testKeystoreWalletData = {
-  addresses: testKeystoreAddresses,
-};
+export const testKeystoreWalletData = { addresses: testKeystoreAddresses };

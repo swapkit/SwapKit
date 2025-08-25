@@ -2,13 +2,7 @@ import type { AssetValue } from "@swapkit/core";
 import { useCallback, useState } from "react";
 import type { SwapKitClient } from "../swapKitClient";
 
-export default function Send({
-  inputAsset,
-  skClient,
-}: {
-  skClient?: SwapKitClient;
-  inputAsset?: AssetValue;
-}) {
+export default function Send({ inputAsset, skClient }: { skClient?: SwapKitClient; inputAsset?: AssetValue }) {
   const [inputAssetValue, setInput] = useState(inputAsset?.mul(0));
   const [inputString, setInputString] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -29,17 +23,9 @@ export default function Send({
     if (!(inputAsset && inputAssetValue?.gt(0) && skClient)) return;
 
     const from = skClient.getAddress(inputAsset.chain);
-    const txHash = await skClient.transfer({
-      from,
-      assetValue: inputAssetValue,
-      memo: "",
-      recipient,
-    });
+    const txHash = await skClient.transfer({ assetValue: inputAssetValue, from, memo: "", recipient });
 
-    window.open(
-      `${skClient.getExplorerTxUrl({ chain: inputAssetValue.chain, txHash: txHash as string })}`,
-      "_blank",
-    );
+    window.open(`${skClient.getExplorerTxUrl({ chain: inputAssetValue.chain, txHash: txHash as string })}`, "_blank");
   }, [inputAsset, inputAssetValue, skClient, recipient]);
 
   return (
@@ -68,11 +54,7 @@ export default function Send({
 
           <div>
             <span>Recipient:</span>
-            <input
-              onChange={(e) => setRecipient(e.target.value)}
-              placeholder="address"
-              value={recipient}
-            />
+            <input onChange={(e) => setRecipient(e.target.value)} placeholder="address" value={recipient} />
           </div>
 
           <button disabled={!inputAsset} onClick={handleSend} type="button">

@@ -1,35 +1,16 @@
-import {
-  Chain,
-  ChainToChainId,
-  SKConfig,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { Chain, ChainToChainId, filterSupportedChains, SKConfig, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 import { getWalletMethods } from "./signer";
 
 export const coinbaseWallet = createWallet({
-  name: "connectCoinbaseWallet",
-  walletType: WalletOption.COINBASE_MOBILE,
-  supportedChains: [
-    Chain.Arbitrum,
-    Chain.Avalanche,
-    Chain.Base,
-    Chain.BinanceSmartChain,
-    Chain.Ethereum,
-    Chain.Optimism,
-    Chain.Polygon,
-  ],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectCoinbaseWallet(chains: Chain[]) {
       const { createCoinbaseWalletSDK } = await import("@coinbase/wallet-sdk");
 
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
-      const coinbaseConfig = SKConfig.get("integrations").coinbase || {
-        appName: "Swapkit Playground",
-      };
+      const coinbaseConfig = SKConfig.get("integrations").coinbase || { appName: "Swapkit Playground" };
 
       const coinbaseSdk = createCoinbaseWalletSDK({
         ...coinbaseConfig,
@@ -46,6 +27,17 @@ export const coinbaseWallet = createWallet({
 
       return true;
     },
+  name: "connectCoinbaseWallet",
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Ethereum,
+    Chain.Optimism,
+    Chain.Polygon,
+  ],
+  walletType: WalletOption.COINBASE_MOBILE,
 });
 
 export const COINBASE_SUPPORTED_CHAINS = getWalletSupportedChains(coinbaseWallet);

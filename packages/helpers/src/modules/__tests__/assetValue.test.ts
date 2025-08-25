@@ -7,39 +7,27 @@ describe("AssetValue", () => {
   describe("assetValue", () => {
     test("returns asset ticker with value", () => {
       const fakeAvaxUSDCAsset = new AssetValue({
-        decimal: 6,
-        value: 1234567890,
         chain: Chain.Avalanche,
+        decimal: 6,
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
-      });
-      expect(fakeAvaxUSDCAsset.toString()).toBe(
-        "AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-      );
-
-      const ethSynth = new AssetValue({
-        chain: Chain.THORChain,
-        symbol: "ETH/ETH",
-        decimal: 8,
         value: 1234567890,
       });
+      expect(fakeAvaxUSDCAsset.toString()).toBe("AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E");
+
+      const ethSynth = new AssetValue({ chain: Chain.THORChain, decimal: 8, symbol: "ETH/ETH", value: 1234567890 });
 
       expect(ethSynth.toString()).toBe("ETH/ETH");
       expect(ethSynth.mul(21.37).getValue("string")).toBe("26382715809.3");
 
-      const ethTrade = new AssetValue({
-        chain: Chain.THORChain,
-        symbol: "ETH~ETH",
-        decimal: 8,
-        value: 1234567890,
-      });
+      const ethTrade = new AssetValue({ chain: Chain.THORChain, decimal: 8, symbol: "ETH~ETH", value: 1234567890 });
 
       expect(ethTrade.toString()).toBe("ETH~ETH");
       expect(ethTrade.mul(21.37).getValue("string")).toBe("26382715809.3");
 
       const ethThorTrade = new AssetValue({
         chain: Chain.THORChain,
-        symbol: "ETH~THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         decimal: 8,
+        symbol: "ETH~THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         value: 1234567890,
       });
 
@@ -48,60 +36,39 @@ describe("AssetValue", () => {
 
       const ethThorSynth = new AssetValue({
         chain: Chain.THORChain,
-        symbol: "ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         decimal: 8,
+        symbol: "ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         value: 1234567890,
       });
       expect(ethThorSynth.toString()).toBe("ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
       expect(ethThorSynth.chain).toBe(Chain.THORChain);
 
-      const mayaEthSynth = new AssetValue({
-        chain: Chain.Maya,
-        symbol: "ETH/ETH",
-        decimal: 8,
-        value: 1234567890,
-      });
+      const mayaEthSynth = new AssetValue({ chain: Chain.Maya, decimal: 8, symbol: "ETH/ETH", value: 1234567890 });
       expect(mayaEthSynth.toString()).toBe("ETH/ETH");
       expect(mayaEthSynth.chain).toBe(Chain.Maya);
 
-      const mayaEthSynthFrom = AssetValue.from({
-        asset: "MAYA.ETH/ETH",
-        value: 12.3456789,
-      });
+      const mayaEthSynthFrom = AssetValue.from({ asset: "MAYA.ETH/ETH", value: 12.3456789 });
       expect(mayaEthSynthFrom.toString()).toBe("ETH/ETH");
       expect(mayaEthSynthFrom.chain).toBe(Chain.Maya);
 
-      const atomDerived = new AssetValue({
-        identifier: "THOR.ATOM",
-        decimal: 6,
-        value: 123456789,
-      });
+      const atomDerived = new AssetValue({ decimal: 6, identifier: "THOR.ATOM", value: 123456789 });
 
       expect(atomDerived.toString()).toBe("THOR.ATOM");
 
       const value = 10;
-      const mayaCacao = AssetValue.from({
-        asset: "MAYA.CACAO",
-        value,
-      });
+      const mayaCacao = AssetValue.from({ asset: "MAYA.CACAO", value });
 
       expect(mayaCacao.toString()).toBe("MAYA.CACAO");
       const expectedValue = value * 10_000_000_000;
       expect(mayaCacao.getBaseValue("string")).toBe(expectedValue.toString());
 
-      const ethMayaSynth = AssetValue.from({
-        asset: "MAYA.ETH/ETH",
-        value: 10,
-      });
+      const ethMayaSynth = AssetValue.from({ asset: "MAYA.ETH/ETH", value: 10 });
 
       expect(ethMayaSynth.toString()).toBe("ETH/ETH");
       expect(ethMayaSynth.toString({ includeSynthProtocol: true })).toBe("MAYA.ETH/ETH");
       expect(ethMayaSynth.getBaseValue("string")).toBe("1000000000");
 
-      const ethTCSynthFallback = AssetValue.from({
-        asset: "ETH/ETH",
-        value: 10,
-      });
+      const ethTCSynthFallback = AssetValue.from({ asset: "ETH/ETH", value: 10 });
 
       expect(ethTCSynthFallback.toString()).toBe("ETH/ETH");
       expect(ethTCSynthFallback.toString({ includeSynthProtocol: true })).toBe("THOR.ETH/ETH");
@@ -112,24 +79,14 @@ describe("AssetValue", () => {
     });
 
     test("regres cases", () => {
-      const arbWeth = AssetValue.from({
-        asset: "ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-      });
+      const arbWeth = AssetValue.from({ asset: "ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" });
       expect(arbWeth.toString()).toBe("ARB.WETH-0x82aF49447D8a07e3bd95BD0d56f35241523fBab1");
 
-      const baseAssetFromString = AssetValue.from({
-        asset: "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-      });
-      expect(baseAssetFromString.toString()).toBe(
-        "BASE.USDC-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-      );
+      const baseAssetFromString = AssetValue.from({ asset: "BASE.USDC-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" });
+      expect(baseAssetFromString.toString()).toBe("BASE.USDC-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913");
 
-      const avaxSolanaAsset = AssetValue.from({
-        asset: "AVAX.SOL-0XFE6B19286885A4F7F55ADAD09C3CD1F906D2478F",
-      });
-      expect(avaxSolanaAsset.toString()).toBe(
-        "AVAX.SOL-0xFE6B19286885a4F7F55AdAD09C3Cd1f906D2478F",
-      );
+      const avaxSolanaAsset = AssetValue.from({ asset: "AVAX.SOL-0XFE6B19286885A4F7F55ADAD09C3CD1F906D2478F" });
+      expect(avaxSolanaAsset.toString()).toBe("AVAX.SOL-0xFE6B19286885a4F7F55AdAD09C3Cd1f906D2478F");
     });
   });
 
@@ -155,10 +112,7 @@ describe("AssetValue", () => {
     });
 
     test("get a copy of a synth assetValue with a new value", () => {
-      const synthAvax = AssetValue.from({
-        asset: "THOR.AVAX/AVAX",
-        value: 1,
-      });
+      const synthAvax = AssetValue.from({ asset: "THOR.AVAX/AVAX", value: 1 });
 
       const synthAvax2 = synthAvax.set(10);
 
@@ -184,43 +138,34 @@ describe("AssetValue", () => {
   describe("toUrl", () => {
     test("returns asset compliance with url", () => {
       const fakeAvaxUSDCAsset = new AssetValue({
-        decimal: 6,
-        value: 1234567890,
         chain: Chain.Avalanche,
+        decimal: 6,
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+        value: 1234567890,
       });
-      expect(fakeAvaxUSDCAsset.toUrl()).toBe(
-        "AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-      );
+      expect(fakeAvaxUSDCAsset.toUrl()).toBe("AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E");
 
       const thor = AssetValue.from({ asset: "ETH.THOR" });
       expect(thor.toUrl()).toBe("ETH.THOR-0xa5f2211B9b8170F694421f2046281775E8468044");
 
-      const ethSynth = new AssetValue({
-        chain: Chain.THORChain,
-        symbol: "ETH/ETH",
-        decimal: 8,
-        value: 1234567890,
-      });
+      const ethSynth = new AssetValue({ chain: Chain.THORChain, decimal: 8, symbol: "ETH/ETH", value: 1234567890 });
       expect(ethSynth.toUrl()).toBe("THOR.ETH.ETH");
 
       const ethThorSynth = new AssetValue({
         chain: Chain.THORChain,
-        symbol: "ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         decimal: 8,
+        symbol: "ETH/THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         value: 1234567890,
       });
       expect(ethThorSynth.toUrl()).toBe("THOR.ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
 
       const ethThorTrade = new AssetValue({
         chain: Chain.THORChain,
-        symbol: "ETH~THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         decimal: 8,
+        symbol: "ETH~THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
         value: 1234567890,
       });
-      expect(ethThorTrade.toUrl()).toBe(
-        "THOR.ETH..THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
-      );
+      expect(ethThorTrade.toUrl()).toBe("THOR.ETH..THOR-0xa5f2211b9b8170f694421f2046281775e8468044");
     });
   });
 
@@ -231,14 +176,14 @@ describe("AssetValue", () => {
       const vThor = AssetValue.from({ asset: "ETH.vTHOR" });
       const firstUsdc = new AssetValue({
         chain: Chain.Avalanche,
-        symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
         decimal: 6,
+        symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
         value: 1234567890,
       });
       const secondUsdc = new AssetValue({
         chain: Chain.Avalanche,
-        symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
         decimal: 6,
+        symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
         value: 1234,
       });
 
@@ -284,8 +229,8 @@ describe("AssetValue", () => {
     test.todo("returns asset value with correct decimal", async () => {
       const avaxUSDCAsset = await AssetValue.from({
         asset: `${Chain.Avalanche}.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e`,
-        value: 1234567800n,
         asyncTokenLookup: true,
+        value: 1234567800n,
       });
       expect(avaxUSDCAsset.getValue("string")).toBe("1234.5678");
     });
@@ -294,30 +239,23 @@ describe("AssetValue", () => {
   describe("toString", () => {
     test("returns asset value string/identifier", async () => {
       const avaxUSDCAsset = new AssetValue({
-        decimal: 6,
-        value: 1234567890,
         chain: Chain.Avalanche,
+        decimal: 6,
         symbol: "USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+        value: 1234567890,
       });
       expect(avaxUSDCAsset.toString()).toBe("AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E");
 
       const thor = AssetValue.from({ asset: "ETH.THOR" });
       expect(thor.toString()).toBe("ETH.THOR-0xa5f2211B9b8170F694421f2046281775E8468044");
 
-      const ethSynth = await AssetValue.from({
-        asset: "ETH/ETH",
-        asyncTokenLookup: true,
-      });
+      const ethSynth = await AssetValue.from({ asset: "ETH/ETH", asyncTokenLookup: true });
       expect(ethSynth.toString()).toBe("ETH/ETH");
 
-      const eth = await AssetValue.from({
-        asset: "eth.eth",
-      });
+      const eth = await AssetValue.from({ asset: "eth.eth" });
       expect(eth.toString()).toBe("ETH.ETH");
 
-      const ethFromChain = await AssetValue.from({
-        chain: Chain.Ethereum,
-      });
+      const ethFromChain = await AssetValue.from({ chain: Chain.Ethereum });
       expect(ethFromChain.toString()).toBe("ETH.ETH");
     });
   });
@@ -343,10 +281,7 @@ describe("AssetValue", () => {
     });
 
     test("creates AssetValue from string with multiple dashes", async () => {
-      const ethPendleLptAsset = await AssetValue.from({
-        asset: "ETH.PENDLE-LPT-0x1234",
-        asyncTokenLookup: true,
-      });
+      const ethPendleLptAsset = await AssetValue.from({ asset: "ETH.PENDLE-LPT-0x1234", asyncTokenLookup: true });
 
       expect(ethPendleLptAsset).toEqual(
         expect.objectContaining({
@@ -365,10 +300,7 @@ describe("AssetValue", () => {
   describe("fromString", () => {
     test("creates AssetValue from string", async () => {
       const fakeAvaxAssetString = "AVAX.ASDF-1234";
-      const fakeAvaxAsset = await AssetValue.from({
-        asset: fakeAvaxAssetString,
-        asyncTokenLookup: true,
-      });
+      const fakeAvaxAsset = await AssetValue.from({ asset: fakeAvaxAssetString, asyncTokenLookup: true });
 
       expect(fakeAvaxAsset).toEqual(
         expect.objectContaining({
@@ -385,10 +317,7 @@ describe("AssetValue", () => {
 
     test("creates AssetValue from string with multiple dashes", async () => {
       const fakeAvaxAssetString = "AVAX.ASDF-LP-1234";
-      const fakeAvaxAsset = await AssetValue.from({
-        asset: fakeAvaxAssetString,
-        asyncTokenLookup: true,
-      });
+      const fakeAvaxAsset = await AssetValue.from({ asset: fakeAvaxAssetString, asyncTokenLookup: true });
 
       expect(fakeAvaxAsset).toEqual(
         expect.objectContaining({
@@ -428,9 +357,9 @@ describe("AssetValue", () => {
       const fakeAvaxAssetString = "AVAX.ASDF-1234";
       const fakeAvaxAsset = await AssetValue.from({
         asset: fakeAvaxAssetString,
-        value: 1,
-        fromBaseDecimal: 8,
         asyncTokenLookup: true,
+        fromBaseDecimal: 8,
+        value: 1,
       });
 
       expect(fakeAvaxAsset).toEqual(
@@ -474,9 +403,7 @@ describe("AssetValue", () => {
   describe("fromIdentifierSync", () => {
     test("(same as fromIdentifier) - creates AssetValue from string via `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
-      const thor = AssetValue.from({
-        asset: "ARB.USDT-0XFD086BC7CD5C481DCC9C85EBE478A1C0B69FCBB9",
-      });
+      const thor = AssetValue.from({ asset: "ARB.USDT-0XFD086BC7CD5C481DCC9C85EBE478A1C0B69FCBB9" });
 
       expect(thor).toBeDefined();
       expect(thor).toEqual(
@@ -496,9 +423,7 @@ describe("AssetValue", () => {
   describe("fromStringSync", () => {
     test("creates AssetValue from string via `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
-      const thor = AssetValue.from({
-        asset: "ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044",
-      });
+      const thor = AssetValue.from({ asset: "ETH.THOR-0xa5f2211b9b8170f694421f2046281775e8468044" });
 
       expect(thor).toBeDefined();
       expect(thor).toEqual(
@@ -513,9 +438,7 @@ describe("AssetValue", () => {
         }),
       );
 
-      const usdc = AssetValue.from({
-        asset: "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
-      });
+      const usdc = AssetValue.from({ asset: "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48" });
       expect(usdc).toBeDefined();
       expect(usdc).toEqual(
         expect.objectContaining({
@@ -533,9 +456,7 @@ describe("AssetValue", () => {
     test("returns safe decimals if string is not in `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
       const fakeAvaxUSDCAssetString = "AVAX.USDC-1234";
-      const fakeAvaxUSDCAsset = AssetValue.from({
-        asset: fakeAvaxUSDCAssetString,
-      });
+      const fakeAvaxUSDCAsset = AssetValue.from({ asset: fakeAvaxUSDCAssetString });
 
       expect(fakeAvaxUSDCAsset).toBeDefined();
       expect(fakeAvaxUSDCAsset).toEqual(
@@ -554,9 +475,7 @@ describe("AssetValue", () => {
     test("returns safe decimals if string is not in `@swapkit/tokens` lists with multiple dashes", async () => {
       await AssetValue.loadStaticAssets();
       const fakeAvaxUSDCAssetString = "AVAX.USDC-LPT-1234";
-      const fakeAvaxUSDCAsset2 = AssetValue.from({
-        asset: fakeAvaxUSDCAssetString,
-      });
+      const fakeAvaxUSDCAsset2 = AssetValue.from({ asset: fakeAvaxUSDCAssetString });
 
       expect(fakeAvaxUSDCAsset2).toBeDefined();
       expect(fakeAvaxUSDCAsset2).toEqual(
@@ -595,11 +514,7 @@ describe("AssetValue", () => {
   describe("fromStringWithBaseSync", () => {
     test("creates AssetValue from string with base decimals via `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
-      const btc = AssetValue.from({
-        asset: "BTC.BTC",
-        value: 5200000000000,
-        fromBaseDecimal: 8,
-      });
+      const btc = AssetValue.from({ asset: "BTC.BTC", fromBaseDecimal: 8, value: 5200000000000 });
 
       expect(btc).toBeDefined();
       expect(btc).toEqual(
@@ -620,11 +535,7 @@ describe("AssetValue", () => {
     test("returns safe decimals if string is not in `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
       const fakeAvaxUSDCAssetString = "AVAX.USDC-1234";
-      const fakeAvaxUSDCAsset = AssetValue.from({
-        asset: fakeAvaxUSDCAssetString,
-        value: 1,
-        fromBaseDecimal: 8,
-      });
+      const fakeAvaxUSDCAsset = AssetValue.from({ asset: fakeAvaxUSDCAssetString, fromBaseDecimal: 8, value: 1 });
 
       expect(fakeAvaxUSDCAsset).toBeDefined();
       expect(fakeAvaxUSDCAsset).toEqual(
@@ -646,11 +557,7 @@ describe("AssetValue", () => {
     test("returns proper avax string with address from `@swapkit/tokens` lists", async () => {
       await AssetValue.loadStaticAssets();
       const avaxUSDC = "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e";
-      const AvaxUSDC = AssetValue.from({
-        asset: avaxUSDC,
-        value: 100000000,
-        fromBaseDecimal: 8,
-      });
+      const AvaxUSDC = AssetValue.from({ asset: avaxUSDC, fromBaseDecimal: 8, value: 100000000 });
 
       expect(AvaxUSDC).toBeDefined();
       expect(AvaxUSDC).toEqual(
@@ -823,9 +730,7 @@ describe("AssetValue", () => {
     });
 
     test("keep SOL address casing", () => {
-      const solUsdc = AssetValue.from({
-        asset: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-      });
+      const solUsdc = AssetValue.from({ asset: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" });
       expect(solUsdc).toEqual(
         expect.objectContaining({
           address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -839,9 +744,7 @@ describe("AssetValue", () => {
     });
 
     test("TRC20 tokens are not marked as gas assets", () => {
-      const tronUsdt = AssetValue.from({
-        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-      });
+      const tronUsdt = AssetValue.from({ asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" });
 
       expect(tronUsdt).toEqual(
         expect.objectContaining({

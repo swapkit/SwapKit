@@ -6,10 +6,7 @@ export type THORNodeTNSDetails = {
   owner: string;
   preferred_asset: string;
   affiliate_collector_rune: string;
-  aliases: {
-    chain: string;
-    address: string;
-  }[];
+  aliases: { chain: string; address: string }[];
 };
 
 export type InboundAddressesItem = {
@@ -56,10 +53,7 @@ export type NodeItem = {
   jail: any;
   preflight_status: any;
   pub_key_set: any;
-  observe_chains: {
-    chain: string;
-    height: number;
-  }[];
+  observe_chains: { chain: string; height: number }[];
 };
 
 export type MimirData = {
@@ -215,13 +209,7 @@ export type MimirData = {
 };
 
 export type RunePoolInfo = {
-  pol: {
-    rune_deposited: string;
-    rune_withdrawn: string;
-    value: string;
-    pnl: string;
-    current_deposit: string;
-  };
+  pol: { rune_deposited: string; rune_withdrawn: string; value: string; pnl: string; current_deposit: string };
   providers: {
     units: string;
     pending_units: string;
@@ -230,12 +218,7 @@ export type RunePoolInfo = {
     pnl: string;
     current_deposit: string;
   };
-  reserve: {
-    units: string;
-    value: string;
-    pnl: string;
-    current_deposit: string;
-  };
+  reserve: { units: string; value: string; pnl: string; current_deposit: string };
 };
 
 export type RunePoolProviderInfo = {
@@ -249,28 +232,16 @@ export type RunePoolProviderInfo = {
   last_withdraw_height: number;
 };
 
-export type TCYStakerSummary = {
-  amount: string;
-};
+export type TCYStakerSummary = { amount: string };
 
-export type TCYStaker = {
-  address?: string;
-  amount: string;
-};
+export type TCYStaker = { address?: string; amount: string };
 
 export type TCYStakerResponse = TCYStaker;
 export type TCYStakersResponse = TCYStakerSummary[];
 
-export type TCYClaimerSummary = {
-  amount: string;
-  asset: string;
-};
+export type TCYClaimerSummary = { amount: string; asset: string };
 
-export type TCYClaimer = {
-  l1_address?: string;
-  amount: string;
-  asset: string;
-};
+export type TCYClaimer = { l1_address?: string; amount: string; asset: string };
 
 export type TCYClaimerResponse = TCYClaimer;
 export type TCYClaimersResponse = TCYClaimerSummary[];

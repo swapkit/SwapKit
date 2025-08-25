@@ -10,7 +10,6 @@ const dtsPlugin = {
 
     // For packages with export maps, create a temp config with only src files
     const tempConfig = {
-      extends: "./tsconfig.json",
       compilerOptions: {
         allowImportingTsExtensions: false,
         declaration: true,
@@ -21,12 +20,21 @@ const dtsPlugin = {
         outDir: "./dist/types",
         rootDir: "./src",
       },
-      include: ["src/**/*"],
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
+      extends: "./tsconfig.json",
+      include: ["src/**/*"],
     };
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
       await $`cd ${scope} && bun tsc -p .tsconfig.tmp.json`;
+    } catch (error: any) {
+      if (error?.stdout) {
+        console.error(Buffer.from(error.stdout).toString());
+      }
+      throw new Error(
+        `Error building @swapkit/${pkgName} d.ts files
+         Fix the errors above and run "bun build:dts" again`,
+      );
     } finally {
       await $`rm -f ${scope}/.tsconfig.tmp.json`;
     }

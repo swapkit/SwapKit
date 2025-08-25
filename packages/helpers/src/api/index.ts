@@ -6,15 +6,8 @@ import * as tsStatic from "./thorswapStatic/endpoints";
 
 export * from "./microgard/types";
 export * from "./midgard/types";
-export * from "./thorswapStatic/types";
-export * from "./thornode/types";
 export * from "./swapkitApi/types";
+export * from "./thornode/types";
+export * from "./thorswapStatic/types";
 
-export const SwapKitApi = {
-  ...swapkit,
-  ...tsStatic,
-  mayachainMidgard,
-  microgard,
-  thorchainMidgard,
-  thornode,
-};
+export const SwapKitApi = { ...swapkit, ...tsStatic, mayachainMidgard, microgard, thorchainMidgard, thornode };

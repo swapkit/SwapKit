@@ -50,8 +50,8 @@ export default function Liquidity({
     const plugin = pluginMode === "mayaplugin" ? skClient.mayachain : skClient.thorchain;
 
     const result = await plugin.addLiquidity({
-      baseAssetValue: nativeAssetValue,
       assetValue: otherAssetValue,
+      baseAssetValue: nativeAssetValue,
       mode: "sym",
     });
     if (result?.baseAssetTx) {
@@ -68,8 +68,8 @@ export default function Liquidity({
 
     const tx = await plugin.withdraw({
       assetValue: nativeAsset,
-      percent: withdrawPercent,
       from: "sym",
+      percent: withdrawPercent,
       to: "baseAsset",
     });
 
@@ -84,8 +84,7 @@ export default function Liquidity({
           <select
             onChange={(e) => {
               setPluginMode(e.target.value);
-            }}
-          >
+            }}>
             <option value={"thorplugin"}>ThorPlugin</option>
             <option value={"mayaplugin"}>MayaPlugin</option>
           </select>
@@ -96,8 +95,7 @@ export default function Liquidity({
           <select
             onChange={(e) => {
               setMode(e.target.value);
-            }}
-          >
+            }}>
             <option value={"addliquidity"}>Add Liquidity</option>
             <option value={"withdraw"}>Withdraw</option>
           </select>
@@ -111,12 +109,12 @@ export default function Liquidity({
                 {pluginMode === "thorplugin" ? (
                   <div>
                     <span>Rune Amount:</span>
-                    <input placeholder="0.0" onChange={(e) => setRuneAmount(e.target.value)} />
+                    <input onChange={(e) => setRuneAmount(e.target.value)} placeholder="0.0" />
                   </div>
                 ) : (
                   <div>
                     <span>Cacao Amount:</span>
-                    <input placeholder="0.0" onChange={(e) => setRuneAmount(e.target.value)} />
+                    <input onChange={(e) => setRuneAmount(e.target.value)} placeholder="0.0" />
                   </div>
                 )}
               </div>
@@ -125,7 +123,7 @@ export default function Liquidity({
                 {otherAsset?.toSignificant(6)} {otherAsset?.ticker}
                 <div>
                   <span>Other Amount:</span>
-                  <input placeholder="0.0" onChange={(e) => setOtherAmount(e.target.value)} />
+                  <input onChange={(e) => setOtherAmount(e.target.value)} placeholder="0.0" />
                 </div>
               </div>
             </>
@@ -138,9 +136,9 @@ export default function Liquidity({
               <div>
                 <span>Withdraw Percent:</span>
                 <input
-                  type="number"
+                  onChange={(e) => setWithdrawPercent(Number.parseInt(e.target.value, 10))}
                   placeholder="0"
-                  onChange={(e) => setWithdrawPercent(Number.parseInt(e.target.value))}
+                  type="number"
                 />
               </div>
             </div>
@@ -153,14 +151,14 @@ export default function Liquidity({
 
         {mode === "addliquidity" && (
           <div>
-            <button type="button" onClick={handleAddLiquidity}>
+            <button onClick={handleAddLiquidity} type="button">
               Add Liquidity
             </button>
           </div>
         )}
         {mode === "withdraw" && (
           <div>
-            <button type="button" onClick={handleWithdraw}>
+            <button onClick={handleWithdraw} type="button">
               Withdraw
             </button>
           </div>

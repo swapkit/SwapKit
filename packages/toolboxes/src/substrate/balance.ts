@@ -23,10 +23,7 @@ export async function getSubstrateBalance(
     } = account;
 
     // Convert the free balance to string using SwapKitNumber for proper decimal handling
-    const freeBalance = SwapKitNumber.fromBigInt(
-      BigInt(free.toString()),
-      gasAsset.decimal,
-    ).getValue("string");
+    const freeBalance = SwapKitNumber.fromBigInt(BigInt(free.toString()), gasAsset.decimal).getValue("string");
 
     return [gasAsset.set(freeBalance)];
   } catch (error) {
@@ -62,10 +59,7 @@ export async function getChainflipBalance(
     }
 
     // Convert balance to string using SwapKitNumber
-    const balanceStr = SwapKitNumber.fromBigInt(
-      BigInt(balance.toString()),
-      gasAsset.decimal,
-    ).getValue("string");
+    const balanceStr = SwapKitNumber.fromBigInt(BigInt(balance.toString()), gasAsset.decimal).getValue("string");
 
     return [gasAsset.set(balanceStr)];
   } catch (error) {

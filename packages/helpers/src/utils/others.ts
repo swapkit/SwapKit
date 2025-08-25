@@ -5,10 +5,7 @@ import { Chain } from "../types";
 // MINIMUM_REGISTRATION_FEE = 11
 export function getTHORNameCost(numberOfYears: number) {
   if (numberOfYears < 0)
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_number_of_years",
-      info: { numberOfYears },
-    });
+    throw new SwapKitError({ errorKey: "helpers_invalid_number_of_years", info: { numberOfYears } });
   return 10 + numberOfYears;
 }
 
@@ -16,10 +13,7 @@ export function getTHORNameCost(numberOfYears: number) {
 // 1.0512 CACAO per year
 export function getMAYANameCost(numberOfYears: number) {
   if (numberOfYears < 0)
-    throw new SwapKitError({
-      errorKey: "helpers_invalid_number_of_years",
-      info: { numberOfYears },
-    });
+    throw new SwapKitError({ errorKey: "helpers_invalid_number_of_years", info: { numberOfYears } });
   // round to max 10 decimals
   return Math.round((10 + numberOfYears * 1.0512) * 1e10) / 1e10;
 }
@@ -53,11 +47,7 @@ export function getChainIdentifier<T extends Chain>(chain: T) {
 }
 
 const warnings = new Set();
-export function warnOnce({
-  condition,
-  id,
-  warning,
-}: { condition: boolean; id: string; warning: string }) {
+export function warnOnce({ condition, id, warning }: { condition: boolean; id: string; warning: string }) {
   if (condition) {
     if (warnings.has(id)) {
       return;

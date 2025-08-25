@@ -16,21 +16,18 @@ export const getSwapKitClient = ({
   skClient = createSwapKit({
     config: {
       apiKeys: {
+        keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
         swapKit: process.env.TEST_API_KEY,
         walletConnectProjectId: walletConnectProjectId || "",
-        keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
         xaman: process.env.XAMAN_API_KEY || "",
       },
       integrations: {
+        chainflip: { brokerUrl: brokerEndpoint || "" },
         keepKey: {
-          name: "swapKit-demo-app",
-          imageUrl:
-            "https://repository-images.githubusercontent.com/587472295/feec8a61-39b2-4615-b293-145e97f49b5a",
           basePath: "http://localhost:1646/spec/swagger.json",
+          imageUrl: "https://repository-images.githubusercontent.com/587472295/feec8a61-39b2-4615-b293-145e97f49b5a",
+          name: "swapKit-demo-app",
           url: "http://localhost:1646",
-        },
-        chainflip: {
-          brokerUrl: brokerEndpoint || "",
         },
       },
     },

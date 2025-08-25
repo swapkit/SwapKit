@@ -5,19 +5,13 @@ const require = createRequire(import.meta.url);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "storage.googleapis.com",
-        pathname: "/token-list-swapkit/**",
-      },
-    ],
+    remotePatterns: [{ hostname: "storage.googleapis.com", pathname: "/token-list-swapkit/**", protocol: "https" }],
   },
+  reactStrictMode: true,
+  typescript: { ignoreBuildErrors: true },
 
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
@@ -25,18 +19,18 @@ const nextConfig = {
 
       config.plugins.push(
         new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
           global: require.resolve("global"),
           process: "process/browser",
-          Buffer: ["buffer", "Buffer"],
         }),
       );
 
       config.plugins.push(
         new webpack.DefinePlugin({
+          "global.Buffer": "Buffer",
           "global.crypto": "crypto",
           "global.msCrypto": "crypto",
           "global.process": "process",
-          "global.Buffer": "Buffer",
           "global.Uint8Array": JSON.stringify(Uint8Array),
         }),
       );
@@ -46,29 +40,24 @@ const nextConfig = {
         buffer: require.resolve("buffer"),
         crypto: require.resolve("crypto-browserify"),
         fs: false,
-        stream: require.resolve("stream-browserify"),
         path: require.resolve("path-browserify"),
         process: require.resolve("process/browser"),
+        stream: require.resolve("stream-browserify"),
       };
 
       config.resolve.alias = {
         ...config.resolve.alias,
         crypto: require.resolve("crypto-browserify"),
-        path: require.resolve("path-browserify"),
-        process: require.resolve("process/browser"),
-        stream: require.resolve("stream-browserify"),
         http: require.resolve("stream-http"),
         https: require.resolve("https-browserify"),
         os: require.resolve("os-browserify/browser"),
+        path: require.resolve("path-browserify"),
+        process: require.resolve("process/browser"),
+        stream: require.resolve("stream-browserify"),
       };
     }
 
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-      syncWebAssembly: true,
-      topLevelAwait: true,
-    };
+    config.experiments = { ...config.experiments, asyncWebAssembly: true, syncWebAssembly: true, topLevelAwait: true };
 
     return config;
   },

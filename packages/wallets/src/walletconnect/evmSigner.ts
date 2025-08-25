@@ -43,20 +43,15 @@ class WalletconnectSigner extends AbstractSigner {
     // this is probably broken
     const txHash = (await this.walletconnect?.client.request({
       chainId: chainToChainId(this.chain),
+      request: { method: DEFAULT_EIP155_METHODS.ETH_SIGN, params: [message] },
       topic: this.walletconnect.session.topic || "",
-      request: {
-        method: DEFAULT_EIP155_METHODS.ETH_SIGN,
-        params: [message],
-      },
     })) as string;
 
     return txHash.startsWith("0x") ? txHash : `0x${txHash}`;
   };
 
   signTransaction = () => {
-    throw new SwapKitError("wallet_walletconnect_method_not_supported", {
-      method: "signTransaction",
-    });
+    throw new SwapKitError("wallet_walletconnect_method_not_supported", { method: "signTransaction" });
 
     // const baseTx = {
     //   from,
@@ -79,9 +74,7 @@ class WalletconnectSigner extends AbstractSigner {
 
   // ANCHOR (@Towan) - Implement in future
   signTypedData = () => {
-    throw new SwapKitError("wallet_walletconnect_method_not_supported", {
-      method: "signTypedData",
-    });
+    throw new SwapKitError("wallet_walletconnect_method_not_supported", { method: "signTypedData" });
 
     // const { toHexString } = await import('@swapkit/toolboxes/evm');
 
@@ -107,19 +100,11 @@ class WalletconnectSigner extends AbstractSigner {
   sendTransaction = async ({ from, to, value, data }: TransactionRequest) => {
     const { toHexString } = await import("@swapkit/toolboxes/evm");
 
-    const baseTx = {
-      from,
-      to,
-      value: toHexString(BigInt(value || 0)),
-      data,
-    };
+    const baseTx = { data, from, to, value: toHexString(BigInt(value || 0)) };
     const response = await this.walletconnect?.client.request({
       chainId: chainToChainId(this.chain),
+      request: { method: DEFAULT_EIP155_METHODS.ETH_SEND_TRANSACTION, params: [baseTx] },
       topic: this.walletconnect.session.topic,
-      request: {
-        method: DEFAULT_EIP155_METHODS.ETH_SEND_TRANSACTION,
-        params: [baseTx],
-      },
     });
 
     return response as TransactionResponse;
@@ -129,19 +114,12 @@ class WalletconnectSigner extends AbstractSigner {
     if (!provider) {
       throw new SwapKitError({
         errorKey: "wallet_provider_not_found",
-        info: { wallet: WalletOption.WALLETCONNECT, chain: this.chain },
+        info: { chain: this.chain, wallet: WalletOption.WALLETCONNECT },
       });
     }
 
-    return new WalletconnectSigner({
-      chain: this.chain,
-      walletconnect: this.walletconnect,
-      provider,
-    });
+    return new WalletconnectSigner({ chain: this.chain, provider, walletconnect: this.walletconnect });
   };
 }
-export const getEVMSigner = async ({
-  chain,
-  walletconnect,
-  provider,
-}: WalletconnectEVMSignerParams) => new WalletconnectSigner({ chain, walletconnect, provider });
+export const getEVMSigner = async ({ chain, walletconnect, provider }: WalletconnectEVMSignerParams) =>
+  new WalletconnectSigner({ chain, provider, walletconnect });

@@ -1,16 +1,11 @@
 import { SKConfig } from "./swapKitConfig";
 import { SwapKitError } from "./swapKitError";
 
-type RetryConfig = {
-  maxRetries?: number;
-  baseDelay?: number;
-  maxDelay?: number;
-  backoffMultiplier?: number;
-};
+type RetryConfig = { maxRetries?: number; baseDelay?: number; maxDelay?: number; backoffMultiplier?: number };
 
 type Options = RequestInit & {
   /**
-   * @deprecated Use onSuccess instead - will be removed in next major @MarkedV4
+   * @deprecated @V4 Use onSuccess instead - will be removed in next major
    */
   responseHandler?: (response: any) => any;
   json?: unknown;
@@ -31,14 +26,13 @@ const makeRequest = async (url: string, config: RequestInit) => {
   const response = await fetch(url, config);
   if (!response.ok) {
     const message = await response.text();
-    const errorData = { status: response.status, statusText: response.statusText, message };
+    const errorData = { message, status: response.status, statusText: response.statusText };
     throw new SwapKitError({ errorKey: "helpers_invalid_response", info: errorData }, errorData);
   }
   return response.json();
 };
 
 function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: maybe use sth like ky if possible to reduce logic
   return async function methodFetchWithConfig<T>(url: string, options: Options = {}): Promise<T> {
     const {
       searchParams,
@@ -71,9 +65,9 @@ function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
       try {
         const result = await makeRequest(requestUrl, {
           ...fetchOptions,
-          method,
           body: requestBody,
           headers: requestHeaders,
+          method,
           signal: controller.signal,
         });
 
@@ -96,10 +90,7 @@ function fetchWithConfig(method: "GET" | "POST", extendOptions: Options = {}) {
 }
 
 function buildHeaders(isJson: boolean, headers?: HeadersInit) {
-  return {
-    ...headers,
-    ...(isJson && { "Content-Type": "application/json" }),
-  };
+  return { ...headers, ...(isJson && { "Content-Type": "application/json" }) };
 }
 
 function buildUrl(url: string, searchParams?: Record<string, string>) {
@@ -109,11 +100,11 @@ function buildUrl(url: string, searchParams?: Record<string, string>) {
 }
 
 export const RequestClient = {
-  get: fetchWithConfig("GET"),
-  post: fetchWithConfig("POST"),
   extend: (extendOptions: Options) => ({
+    extend: (newOptions: Options) => RequestClient.extend({ ...extendOptions, ...newOptions }),
     get: fetchWithConfig("GET", extendOptions),
     post: fetchWithConfig("POST", extendOptions),
-    extend: (newOptions: Options) => RequestClient.extend({ ...extendOptions, ...newOptions }),
   }),
+  get: fetchWithConfig("GET"),
+  post: fetchWithConfig("POST"),
 };

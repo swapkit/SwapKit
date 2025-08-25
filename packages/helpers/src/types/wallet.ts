@@ -21,21 +21,14 @@ export type EthereumWindowProvider = BrowserProvider & {
   isTalisman?: boolean;
   on: (event: string, callback?: () => void) => void;
   overrideIsMetaMask?: boolean;
-  request: <T = unknown>(args: {
-    method: string;
-    params?: unknown[];
-  }) => Promise<T>;
+  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>;
   selectedProvider?: EthereumWindowProvider;
 };
 
 export type NetworkParams = {
   chainId: ChainId;
   chainName: string;
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
+  nativeCurrency: { name: string; symbol: string; decimals: number };
   rpcUrls: string[];
   blockExplorerUrls: string[];
 };
@@ -94,32 +87,19 @@ export type BaseWallet<T extends EmptyWallet | Record<string, unknown>> = {
   [key in Chain]: ChainWallet<key> & (T extends EmptyWallet ? T[key] : never);
 };
 
-export type EIP6963ProviderInfo = {
-  walletId: string;
-  uuid: string;
-  name: string;
-  icon: string;
-};
+export type EIP6963ProviderInfo = { walletId: string; uuid: string; name: string; icon: string };
 
-export type EIP6963ProviderDetail = {
-  info: EIP6963ProviderInfo;
-  provider: Eip1193Provider;
-};
+export type EIP6963ProviderDetail = { info: EIP6963ProviderInfo; provider: Eip1193Provider };
 
-export type EIP6963Provider = {
-  info: EIP6963ProviderInfo;
-  provider: Eip1193Provider;
-};
+export type EIP6963Provider = { info: EIP6963ProviderInfo; provider: Eip1193Provider };
 
 // This type represents the structure of an event dispatched by a wallet to announce its presence based on EIP-6963.
-export type EIP6963AnnounceProviderEvent = Event & {
-  detail: EIP6963Provider;
-};
+export type EIP6963AnnounceProviderEvent = Event & { detail: EIP6963Provider };
 
 export type ChainSigner<T, S> = {
-  signTransaction: (params: T) => Promise<S>;
-  getAddress: () => Promise<string>;
-  sign?: (message: string) => Promise<string>;
+  signTransaction: (params: T) => Promise<S> | S;
+  getAddress: () => Promise<string> | string;
+  sign?: (message: string) => Promise<string> | string;
 };
 
 export type GenericTransferParams = {
@@ -130,10 +110,7 @@ export type GenericTransferParams = {
   feeOptionKey?: FeeOption;
 };
 
-export type GenericCreateTransactionParams = Omit<
-  GenericTransferParams,
-  "feeOptionKey" & "feeRate"
-> & {
+export type GenericCreateTransactionParams = Omit<GenericTransferParams, "feeOptionKey" & "feeRate"> & {
   sender: string;
   feeRate: number;
 };

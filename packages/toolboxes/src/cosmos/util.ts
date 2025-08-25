@@ -1,36 +1,18 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
-import {
-  AssetValue,
-  BaseDecimal,
-  Chain,
-  type CosmosChain,
-  SwapKitError,
-  getRPCUrl,
-} from "@swapkit/helpers";
-
-import type { CosmosCreateTransactionParams } from "./thorchainUtils";
+import { AssetValue, BaseDecimal, Chain, type CosmosChain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
+import type { CosmosCreateTransactionParams } from "./types";
 
 export const USK_KUJIRA_FACTORY_DENOM =
   "FACTORY/KUJIRA1QK00H5ATUTPSV900X202PXX42NPJR9THG58DNQPA72F2P7M2LUASE444A7/UUSK";
 
-export const YUM_KUJIRA_FACTORY_DENOM =
-  "FACTORY/KUJIRA1YGFXN0ER40KLCNCK8THLTUPRDXLCK6WVNPKF2K/UYUM";
+export const YUM_KUJIRA_FACTORY_DENOM = "FACTORY/KUJIRA1YGFXN0ER40KLCNCK8THLTUPRDXLCK6WVNPKF2K/UYUM";
 
-export const DEFAULT_COSMOS_FEE_MAINNET = {
-  amount: [{ denom: "uatom", amount: "500" }],
-  gas: "200000",
-};
+export const DEFAULT_COSMOS_FEE_MAINNET = { amount: [{ amount: "500", denom: "uatom" }], gas: "200000" };
 
-export const DEFAULT_KUJI_FEE_MAINNET = {
-  amount: [{ denom: "ukuji", amount: "1000" }],
-  gas: "200000",
-};
+export const DEFAULT_KUJI_FEE_MAINNET = { amount: [{ amount: "1000", denom: "ukuji" }], gas: "200000" };
 
-export const DEFAULT_NOBLE_FEE_MAINNET = {
-  amount: [{ denom: "uusdc", amount: "1000" }],
-  gas: "200000",
-};
+export const DEFAULT_NOBLE_FEE_MAINNET = { amount: [{ amount: "1000", denom: "uusdc" }], gas: "200000" };
 
 export function getDefaultChainFee(chain: CosmosChain) {
   switch (chain) {
@@ -79,9 +61,7 @@ export const getDenomWithChain = ({ symbol, chain }: AssetValue) => {
   }
   if (chain === Chain.THORChain) {
     return (
-      ["RUNE", "TCY", "RUJI"].includes(symbol.toUpperCase())
-        ? `${Chain.THORChain}.${symbol}`
-        : symbol
+      ["RUNE", "TCY", "RUJI"].includes(symbol.toUpperCase()) ? `${Chain.THORChain}.${symbol}` : symbol
     ).toUpperCase();
   }
   return getMsgSendDenom(symbol, false);
@@ -95,12 +75,9 @@ export async function createStargateClient(url: string) {
   const defaultRequestHeaders =
     typeof window !== "undefined"
       ? ({} as Record<string, string>)
-      : { referrer: "https://sdk.swapkit.dev", referer: "https://sdk.swapkit.dev" };
+      : { referer: "https://sdk.swapkit.dev", referrer: "https://sdk.swapkit.dev" };
 
-  return StargateClient.connect({
-    url,
-    headers: defaultRequestHeaders,
-  });
+  return StargateClient.connect({ headers: defaultRequestHeaders, url });
 }
 
 export async function createSigningStargateClient(
@@ -109,25 +86,17 @@ export async function createSigningStargateClient(
   optionsOrBaseGas: string | SigningStargateClientOptions = {},
 ) {
   const imported = await import("@cosmjs/stargate");
-  const SigningStargateClient =
-    imported.SigningStargateClient ?? imported.default?.SigningStargateClient;
+  const SigningStargateClient = imported.SigningStargateClient ?? imported.default?.SigningStargateClient;
   const GasPrice = imported.GasPrice ?? imported.default?.GasPrice;
   const gasPrice = typeof optionsOrBaseGas === "string" ? optionsOrBaseGas : "0.0003uatom";
   const options = typeof optionsOrBaseGas === "string" ? {} : optionsOrBaseGas;
 
-  return SigningStargateClient.connectWithSigner(url, signer, {
-    gasPrice: GasPrice.fromString(gasPrice),
-    ...options,
-  });
+  return SigningStargateClient.connectWithSigner(url, signer, { gasPrice: GasPrice.fromString(gasPrice), ...options });
 }
 
-export async function createOfflineStargateClient(
-  wallet: OfflineSigner,
-  registry?: SigningStargateClientOptions,
-) {
+export async function createOfflineStargateClient(wallet: OfflineSigner, registry?: SigningStargateClientOptions) {
   const imported = await import("@cosmjs/stargate");
-  const SigningStargateClient =
-    imported.SigningStargateClient ?? imported.default?.SigningStargateClient;
+  const SigningStargateClient = imported.SigningStargateClient ?? imported.default?.SigningStargateClient;
   return SigningStargateClient.offline(wallet, registry);
 }
 
@@ -148,7 +117,7 @@ const getTransferMsgTypeByChain = (chain: CosmosChain) => {
 /**
  * Used to build tx for Cosmos and Kujira
  */
-export const cosmosCreateTransaction = async ({
+export async function cosmosCreateTransaction({
   sender,
   recipient,
   assetValue,
@@ -156,7 +125,7 @@ export const cosmosCreateTransaction = async ({
   feeRate,
   sequence,
   accountNumber,
-}: CosmosCreateTransactionParams) => {
+}: CosmosCreateTransactionParams) {
   const { chain, chainId } = assetValue;
 
   const rpcUrl = await getRPCUrl(chain);
@@ -173,15 +142,13 @@ export const cosmosCreateTransaction = async ({
 
   const txFee =
     feeAsset && feeRate
-      ? { amount: [{ denom: feeAsset, amount: feeRate.toString() }], gas: defaultFee.gas }
+      ? { amount: [{ amount: feeRate.toString(), denom: feeAsset }], gas: defaultFee.gas }
       : defaultFee;
 
   const msgSend = {
+    amount: [{ amount: assetValue.getBaseValue("string"), denom: getMsgSendDenom(assetValue.symbol) }],
     fromAddress: sender,
     toAddress: recipient,
-    amount: [
-      { amount: assetValue.getBaseValue("string"), denom: getMsgSendDenom(assetValue.symbol) },
-    ],
   };
 
   return {
@@ -189,39 +156,36 @@ export const cosmosCreateTransaction = async ({
     chainId,
     fee: txFee,
     memo,
-    sequence: sequence ?? accountOnChain.sequence,
     msgs: [{ typeUrl: getTransferMsgTypeByChain(chain as CosmosChain), value: msgSend }],
+    sequence: sequence ?? accountOnChain.sequence,
   };
-};
+}
 
 // Map of known denoms to their asset configurations
 const DENOM_MAP = {
-  // THORChain denoms
-  rune: { chain: Chain.THORChain, decimals: BaseDecimal[Chain.THORChain] },
-  tcy: { asset: "THOR.TCY", decimals: BaseDecimal[Chain.THORChain] },
-  "x/kuji": { asset: "THOR.KUJI", decimals: BaseDecimal[Chain.THORChain] },
-
-  // Cosmos denoms
-  uatom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
   atom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
 
   // Maya denoms
   cacao: { chain: Chain.Maya, decimals: 10 }, // Maya uses 10 decimals for CACAO
+  kuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
   maya: { asset: `${Chain.Maya}.${Chain.Maya}`, decimals: 4 }, // MAYA token uses 4 decimals
+  // THORChain denoms
+  rune: { chain: Chain.THORChain, decimals: BaseDecimal[Chain.THORChain] },
+  tcy: { asset: "THOR.TCY", decimals: BaseDecimal[Chain.THORChain] },
+
+  // Cosmos denoms
+  uatom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
 
   // Kujira denoms
   ukuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
-  kuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
+  usdc: { chain: Chain.Noble, decimals: BaseDecimal[Chain.Noble] },
 
   // Noble denoms
   uusdc: { chain: Chain.Noble, decimals: BaseDecimal[Chain.Noble] },
-  usdc: { chain: Chain.Noble, decimals: BaseDecimal[Chain.Noble] },
+  "x/kuji": { asset: "THOR.KUJI", decimals: BaseDecimal[Chain.THORChain] },
 
   // USK on Kujira (lowercase version of the factory denom)
-  [USK_KUJIRA_FACTORY_DENOM.toLowerCase()]: {
-    asset: `${Chain.Kujira}.USK`,
-    decimals: BaseDecimal[Chain.Kujira],
-  },
+  [USK_KUJIRA_FACTORY_DENOM.toLowerCase()]: { asset: `${Chain.Kujira}.USK`, decimals: BaseDecimal[Chain.Kujira] },
 };
 
 /**
@@ -236,26 +200,12 @@ export const getAssetFromDenom = (denom: string, amount: string) => {
   if (!config) {
     // For unknown denoms, default to 8 decimals (common for many Cosmos chains)
     // This preserves the original behavior while using fromBaseDecimal
-    return AssetValue.from({
-      asset: denom,
-      value: amount,
-      fromBaseDecimal: 8,
-    });
+    return AssetValue.from({ asset: denom, fromBaseDecimal: 8, value: amount });
   }
 
   const { chain, asset, decimals } = config;
 
-  const assetOrChain = (
-    chain
-      ? {
-          chain,
-        }
-      : { asset }
-  ) as { asset: string } | { chain: CosmosChain };
+  const assetOrChain = (chain ? { chain } : { asset }) as { asset: string } | { chain: CosmosChain };
 
-  return AssetValue.from({
-    ...assetOrChain,
-    value: amount,
-    fromBaseDecimal: decimals,
-  });
+  return AssetValue.from({ ...assetOrChain, fromBaseDecimal: decimals, value: amount });
 };

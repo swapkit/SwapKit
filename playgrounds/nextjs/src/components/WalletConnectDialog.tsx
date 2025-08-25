@@ -12,6 +12,7 @@ import { WalletIcon } from "~/components/ui/wallet-icon";
 import { useWalletConnect } from "~/hooks/useWalletConnect";
 
 const CHAIN_GROUPS: Record<string, Chain[]> = {
+  "Cosmos Chains": [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira],
   "EVM Chains": [
     Chain.Ethereum,
     Chain.BinanceSmartChain,
@@ -21,19 +22,11 @@ const CHAIN_GROUPS: Record<string, Chain[]> = {
     Chain.Optimism,
     Chain.Base,
   ],
-  "UTXO Chains": [Chain.Bitcoin, Chain.BitcoinCash, Chain.Litecoin, Chain.Dogecoin, Chain.Dash],
-  "Cosmos Chains": [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira],
   "Other Chains": [Chain.Solana, Chain.Polkadot, Chain.Radix, Chain.Chainflip],
+  "UTXO Chains": [Chain.Bitcoin, Chain.BitcoinCash, Chain.Litecoin, Chain.Dogecoin, Chain.Dash],
 };
 
 const WALLET_GROUPS = {
-  "Hardware Wallets": [
-    WalletOption.LEDGER,
-    WalletOption.LEDGER_LIVE,
-    WalletOption.TREZOR,
-    WalletOption.KEEPKEY,
-    WalletOption.KEEPKEY_BEX,
-  ],
   "Browser Extensions": [
     WalletOption.METAMASK,
     WalletOption.PHANTOM,
@@ -46,6 +39,13 @@ const WALLET_GROUPS = {
     WalletOption.POLKADOT_JS,
     WalletOption.TALISMAN,
     WalletOption.EIP6963,
+  ],
+  "Hardware Wallets": [
+    WalletOption.LEDGER,
+    WalletOption.LEDGER_LIVE,
+    WalletOption.TREZOR,
+    WalletOption.KEEPKEY,
+    WalletOption.KEEPKEY_BEX,
   ],
   "Mobile Wallets": [
     WalletOption.WALLETCONNECT,
@@ -215,12 +215,12 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl h-[80vh] flex flex-col p-0">
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="flex h-[80vh] max-w-5xl flex-col p-0">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl">Connect Wallet</DialogTitle>
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+            <Button onClick={() => onOpenChange(false)} size="icon" variant="ghost">
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -231,10 +231,6 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
             <div className="flex flex-col overflow-hidden">
               <div className="p-6 pb-4">
                 <Button
-                  variant={
-                    selectedChains.length === AllChainsSupported.length ? "default" : "outline"
-                  }
-                  size="sm"
                   className="w-full"
                   onClick={() => {
                     if (selectedChains.length === AllChainsSupported.length) {
@@ -243,10 +239,9 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                       setSelectedChains(AllChainsSupported);
                     }
                   }}
-                >
-                  {selectedChains.length === AllChainsSupported.length
-                    ? "Deselect All"
-                    : "Select All Chains"}
+                  size="sm"
+                  variant={selectedChains.length === AllChainsSupported.length ? "default" : "outline"}>
+                  {selectedChains.length === AllChainsSupported.length ? "Deselect All" : "Select All Chains"}
                 </Button>
               </div>
 
@@ -256,20 +251,15 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                   const someSelected = chains.some((chain) => selectedChains.includes(chain));
 
                   return (
-                    <div key={groupName} className="mb-6">
+                    <div className="mb-6" key={groupName}>
                       <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-between mb-2 font-bold"
+                        className="mb-2 w-full justify-between font-bold"
                         onClick={() => handleToggleGroup(chains)}
-                      >
+                        size="sm"
+                        variant="ghost">
                         {groupName}
-                        <span className="text-xs text-muted-foreground">
-                          {allSelected
-                            ? "(All Selected)"
-                            : someSelected
-                              ? "(Some Selected)"
-                              : "(None Selected)"}
+                        <span className="text-muted-foreground text-xs">
+                          {allSelected ? "(All Selected)" : someSelected ? "(Some Selected)" : "(None Selected)"}
                         </span>
                       </Button>
                       <div className="grid grid-cols-2 gap-2">
@@ -277,16 +267,15 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                           const isSelected = selectedChains.includes(chain);
                           return (
                             <Button
-                              key={chain}
-                              variant={isSelected ? "default" : "outline"}
-                              size="sm"
                               className="justify-start"
+                              key={chain}
                               onClick={() => {
                                 setSelectedChains((prev) =>
                                   isSelected ? prev.filter((c) => c !== chain) : [...prev, chain],
                                 );
                               }}
-                            >
+                              size="sm"
+                              variant={isSelected ? "default" : "outline"}>
                               <ChainIcon chain={chain} className="mr-2 h-5 w-5" />
                               <span className="truncate">{chain}</span>
                             </Button>
@@ -301,16 +290,14 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
 
             <div className="flex flex-col overflow-hidden">
               <div className="p-6 pb-4">
-                <h3 className="text-lg font-semibold">Select Wallet</h3>
+                <h3 className="font-semibold text-lg">Select Wallet</h3>
               </div>
 
               {selectedChains.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center text-center p-6">
+                <div className="flex flex-1 items-center justify-center p-6 text-center">
                   <div className="max-w-sm">
-                    <h3 className="font-semibold mb-2">No Chains Selected</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Select one or more chains to see compatible wallets
-                    </p>
+                    <h3 className="mb-2 font-semibold">No Chains Selected</h3>
+                    <p className="text-muted-foreground text-sm">Select one or more chains to see compatible wallets</p>
                   </div>
                 </div>
               ) : (
@@ -331,25 +318,22 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                         if (groupWallets.length === 0) return null;
 
                         return (
-                          <div key={groupName} className="mb-6">
-                            <h4 className="font-semibold mb-2">{groupName}</h4>
+                          <div className="mb-6" key={groupName}>
+                            <h4 className="mb-2 font-semibold">{groupName}</h4>
                             <div className="grid grid-cols-2 gap-2">
                               {groupWallets.map((wallet) => (
                                 <Button
-                                  key={wallet}
-                                  variant="outline"
-                                  size="lg"
-                                  className="justify-start h-auto py-4"
-                                  onClick={() => handleConnect(wallet)}
+                                  className="h-auto justify-start py-4"
                                   disabled={loadingWallet !== null}
-                                >
-                                  <WalletIcon wallet={wallet} className="mr-3 h-6 w-6" />
+                                  key={wallet}
+                                  onClick={() => handleConnect(wallet)}
+                                  size="lg"
+                                  variant="outline">
+                                  <WalletIcon className="mr-3 h-6 w-6" wallet={wallet} />
                                   <div className="flex flex-col items-start">
                                     <span className="font-medium">{wallet}</span>
                                     {loadingWallet === wallet && (
-                                      <span className="text-xs text-muted-foreground">
-                                        Connecting...
-                                      </span>
+                                      <span className="text-muted-foreground text-xs">Connecting...</span>
                                     )}
                                   </div>
                                 </Button>
@@ -364,10 +348,9 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                       return (
                         <div className="flex flex-1 items-center justify-center text-center">
                           <div className="max-w-sm">
-                            <h3 className="font-semibold mb-2">No Compatible Wallets</h3>
-                            <p className="text-sm text-muted-foreground">
-                              No wallets support this combination of chains. Please select different
-                              chains.
+                            <h3 className="mb-2 font-semibold">No Compatible Wallets</h3>
+                            <p className="text-muted-foreground text-sm">
+                              No wallets support this combination of chains. Please select different chains.
                             </p>
                           </div>
                         </div>

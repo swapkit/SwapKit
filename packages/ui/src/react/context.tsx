@@ -2,15 +2,7 @@ import { SKConfig, type SwapKit, type WalletOption, warnOnce } from "@swapkit/co
 import { SwapKitError } from "@swapkit/helpers";
 import type { PluginName } from "@swapkit/plugins";
 import type { SKWalletsSupportedChains } from "@swapkit/wallets";
-import {
-  type PropsWithChildren,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getSkClient } from "../utils";
 
 type SwapKitContextType<P extends PluginName[] = []> = {
@@ -42,12 +34,15 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
     async ({
       walletOption,
       chains,
-    }: { walletOption: WalletOption; chains: SKWalletsSupportedChains[WalletOption] }) => {
-      const { client, connectMethod } = await getSkClient({ walletOption, pluginNames });
+    }: {
+      walletOption: WalletOption;
+      chains: SKWalletsSupportedChains[WalletOption];
+    }) => {
+      const { client, connectMethod } = await getSkClient({ pluginNames, walletOption });
 
-      // @ts-ignore
+      // @ts-expect-error
       await client[connectMethod as keyof typeof client](chains);
-      // @ts-ignore
+      // @ts-expect-error
       setClient(client);
       return client;
     },
@@ -55,11 +50,7 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
   );
 
   const getClient = useCallback(() => {
-    warnOnce({
-      condition: !client,
-      id: "client_not_found",
-      warning: "Client not found. Please run connect first.",
-    });
+    warnOnce({ condition: !client, id: "client_not_found", warning: "Client not found. Please run connect first." });
 
     return client;
   }, [client]);
@@ -71,9 +62,9 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
     }
   }, []);
 
-  const contextValue = useMemo(() => ({ getClient, connect }), [connect, getClient]);
+  const contextValue = useMemo(() => ({ connect, getClient }), [connect, getClient]);
 
-  // @ts-ignore
+  // @ts-expect-error
   return <SwapKitContext.Provider value={contextValue}>{children}</SwapKitContext.Provider>;
 }
 

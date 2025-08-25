@@ -1,10 +1,7 @@
-import { Chain, SwapKitError, WalletOption, filterSupportedChains } from "@swapkit/helpers";
+import { Chain, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 export const polkadotWallet = createWallet({
-  name: "connectPolkadotJs",
-  walletType: WalletOption.POLKADOT_JS,
-  supportedChains: [Chain.Polkadot],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectPolkadotJs(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
@@ -13,12 +10,15 @@ export const polkadotWallet = createWallet({
         filteredChains.map(async (chain) => {
           const { address, ...walletMethods } = await getWalletMethods(chain);
 
-          addChain({ ...walletMethods, chain, address, walletType });
+          addChain({ ...walletMethods, address, chain, walletType });
         }),
       );
 
       return true;
     },
+  name: "connectPolkadotJs",
+  supportedChains: [Chain.Polkadot],
+  walletType: WalletOption.POLKADOT_JS,
 });
 
 export const POLKADOT_SUPPORTED_CHAINS = getWalletSupportedChains(polkadotWallet);
@@ -40,16 +40,12 @@ async function getWalletMethods(chain: Chain) {
       if (!account?.address) {
         throw new SwapKitError({
           errorKey: "wallet_missing_params",
-          info: { wallet: WalletOption.POLKADOT_JS, address: account?.address },
+          info: { address: account?.address, wallet: WalletOption.POLKADOT_JS },
         });
       }
 
       const address = toolbox.convertAddress(account.address, 0);
-      return {
-        ...toolbox,
-        getAddress: () => address,
-        address,
-      };
+      return { ...toolbox, address, getAddress: () => address };
     }
 
     default:

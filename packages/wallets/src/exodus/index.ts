@@ -3,12 +3,12 @@ import {
   type AssetValue,
   Chain,
   EVMChains,
-  type GenericTransferParams,
-  SwapKitError,
-  WalletOption,
   filterSupportedChains,
+  type GenericTransferParams,
   prepareNetworkSwitch,
+  SwapKitError,
   switchEVMWalletNetwork,
+  WalletOption,
 } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Psbt } from "bitcoinjs-lib";
@@ -18,18 +18,12 @@ import {
   BitcoinNetworkType,
   type GetAddressOptions,
   type GetAddressResponse,
-  type SignTransactionOptions,
   getAddress,
+  type SignTransactionOptions,
   signTransaction as satsSignTransaction,
 } from "sats-connect";
 
-async function getWalletMethods({
-  wallet,
-  chain,
-}: {
-  wallet: Wallet;
-  chain: Chain;
-}) {
+async function getWalletMethods({ wallet, chain }: { wallet: Wallet; chain: Chain }) {
   switch (chain) {
     case Chain.Bitcoin: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
@@ -45,17 +39,17 @@ async function getWalletMethods({
 
       const getAddressOptions: GetAddressOptions = {
         getProvider,
-        payload: {
-          purposes: [AddressPurpose.Payment],
-          message: "Address for receiving and sending payments",
-          network: { type: BitcoinNetworkType.Mainnet },
+        onCancel: () => {
+          throw new SwapKitError("wallet_exodus_request_canceled");
         },
         onFinish: (response: GetAddressResponse) => {
           if (!response.addresses[0]) throw new SwapKitError("wallet_exodus_no_address");
           address = response.addresses[0].address;
         },
-        onCancel: () => {
-          throw new SwapKitError("wallet_exodus_request_canceled");
+        payload: {
+          message: "Address for receiving and sending payments",
+          network: { type: BitcoinNetworkType.Mainnet },
+          purposes: [AddressPurpose.Payment],
         },
       };
 
@@ -66,22 +60,18 @@ async function getWalletMethods({
         let signedPsbt: Psbt | undefined;
         const signPsbtOptions: SignTransactionOptions = {
           getProvider,
-          payload: {
-            message: "Sign transaction",
-            network: {
-              type: BitcoinNetworkType.Mainnet,
-            },
-            psbtBase64: psbt.toBase64(),
-            broadcast: false,
-            inputsToSign: [
-              { address: address, signingIndexes: psbt.txInputs.map((_, index) => index) },
-            ],
+          onCancel: () => {
+            throw new SwapKitError("wallet_exodus_signature_canceled");
           },
           onFinish: (response) => {
             signedPsbt = Psbt.fromBase64(response.psbtBase64);
           },
-          onCancel: () => {
-            throw new SwapKitError("wallet_exodus_signature_canceled");
+          payload: {
+            broadcast: false,
+            inputsToSign: [{ address: address, signingIndexes: psbt.txInputs.map((_, index) => index) }],
+            message: "Sign transaction",
+            network: { type: BitcoinNetworkType.Mainnet },
+            psbtBase64: psbt.toBase64(),
           },
         };
 
@@ -90,10 +80,7 @@ async function getWalletMethods({
         return signedPsbt;
       }
 
-      const signer = {
-        signTransaction,
-        getAddress: () => Promise.resolve(address),
-      };
+      const signer = { getAddress: () => Promise.resolve(address), signTransaction };
       const toolbox = await getUtxoToolbox(chain, { signer });
 
       return { ...toolbox, address };
@@ -132,7 +119,7 @@ async function getWalletMethods({
         throw new SwapKitError("wallet_exodus_failed_to_switch_network", { chain });
       }
 
-      return { ...prepareNetworkSwitch({ toolbox, chain, provider: browserProvider }), address };
+      return { ...prepareNetworkSwitch({ chain, provider: browserProvider, toolbox }), address };
     }
 
     case Chain.Solana: {
@@ -163,10 +150,10 @@ async function getWalletMethods({
         const connection = await toolbox.getConnection();
 
         const transaction = await toolbox.createTransaction({
-          recipient,
           assetValue,
-          sender: address,
           isProgramDerivedAddress,
+          recipient,
+          sender: address,
         });
 
         const signedTransaction = await provider.signTransaction(transaction);
@@ -180,7 +167,7 @@ async function getWalletMethods({
         await provider.disconnect();
       };
 
-      return { ...toolbox, address, transfer, disconnect };
+      return { ...toolbox, address, disconnect, transfer };
     }
 
     default:
@@ -189,9 +176,6 @@ async function getWalletMethods({
 }
 
 export const exodusWallet = createWallet({
-  name: "connectExodusWallet",
-  walletType: WalletOption.EXODUS,
-  supportedChains: [...EVMChains, Chain.Bitcoin, Chain.Solana],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectExodusWallet(chains: Chain[], wallet: Wallet) {
       if (!wallet) throw new SwapKitError("wallet_exodus_instance_missing");
@@ -200,10 +184,7 @@ export const exodusWallet = createWallet({
       await Promise.all(
         filteredChains.map(async (chain) => {
           try {
-            const walletData = await getWalletMethods({
-              chain,
-              wallet,
-            });
+            const walletData = await getWalletMethods({ chain, wallet });
 
             const { address, ...walletMethods } = walletData;
             const disconnect = wallet.disconnect;
@@ -218,9 +199,9 @@ export const exodusWallet = createWallet({
 
             addChain({
               ...walletMethods,
-              disconnect: finalDisconnect,
-              chain,
               address,
+              chain,
+              disconnect: finalDisconnect,
               walletType: WalletOption.EXODUS,
             });
           } catch (error) {
@@ -232,8 +213,11 @@ export const exodusWallet = createWallet({
 
       return true;
     },
+  name: "connectExodusWallet",
+  supportedChains: [...EVMChains, Chain.Bitcoin, Chain.Solana],
+  walletType: WalletOption.EXODUS,
 });
 
 export const EXODUS_SUPPORTED_CHAINS = getWalletSupportedChains(exodusWallet);
-export * from "@passkeys/react";
 export * from "@passkeys/core";
+export * from "@passkeys/react";

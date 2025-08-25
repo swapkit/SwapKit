@@ -9,14 +9,25 @@ import wasm from "vite-plugin-wasm";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: { port: 3000 },
   base: "/SwapKit",
 
+  build: {
+    commonjsOptions: { transformMixedEsModules: true },
+    reportCompressedSize: true,
+    rollupOptions: { plugins: [nodePolyfills()] },
+    sourcemap: true,
+    target: "es2022",
+  },
+
   // NOTE: Have to be added to fix: Uncaught ReferenceError: process & global is not defined
-  define: {
-    "process.env": {},
-    "process.browser": true,
-    global: "globalThis",
+  define: { global: "globalThis", "process.browser": true, "process.env": {} },
+
+  esbuild: { logOverride: { "this-is-undefined-in-esm": "silent" }, target: "es2022" },
+  optimizeDeps: {
+    esbuildOptions: {
+      // NOTE: Have to be added to fix: Uncaught ReferenceError: global is not defined
+      define: { global: "globalThis" },
+    },
   },
   plugins: [
     nodePolyfills({
@@ -33,14 +44,7 @@ export default defineConfig({
     topLevelAwait(),
   ].concat(
     process.env.VISUALISE === "true"
-      ? [
-          visualizer({
-            gzipSize: true,
-            open: true,
-            sourcemap: true,
-            filename: "dist/stats.html",
-          }),
-        ]
+      ? [visualizer({ filename: "dist/stats.html", gzipSize: true, open: true, sourcemap: true })]
       : [],
   ),
   resolve: {
@@ -54,34 +58,12 @@ export default defineConfig({
       "@swapkit/wallets": resolve("../../packages/wallets/src"),
 
       crypto: "crypto-browserify",
-      stream: "stream-browserify",
       http: "stream-http",
       https: "https-browserify",
       os: "os-browserify/browser",
       path: "path-browserify",
+      stream: "stream-browserify",
     },
   },
-
-  build: {
-    target: "es2022",
-    reportCompressedSize: true,
-    sourcemap: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
-    rollupOptions: {
-      plugins: [nodePolyfills()],
-    },
-  },
-
-  esbuild: {
-    target: "es2022",
-    logOverride: { "this-is-undefined-in-esm": "silent" },
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      // NOTE: Have to be added to fix: Uncaught ReferenceError: global is not defined
-      define: { global: "globalThis" },
-    },
-  },
+  server: { port: 3000 },
 });

@@ -26,8 +26,7 @@ export interface TronTransferParams extends GenericTransferParams {
   // No additional fields needed - all inherited from GenericTransferParams
 }
 
-export interface TronCreateTransactionParams
-  extends Omit<GenericCreateTransactionParams, "feeRate"> {
+export interface TronCreateTransactionParams extends Omit<GenericCreateTransactionParams, "feeRate"> {
   // No additional fields needed - all inherited from GenericCreateTransactionParams
 }
 
@@ -42,15 +41,9 @@ export type TronApproveParams = {
   nonce?: number;
 };
 
-export type TronApprovedParams = {
-  assetAddress: string;
-  spenderAddress: string;
-  from: string;
-};
+export type TronApprovedParams = { assetAddress: string; spenderAddress: string; from: string };
 
-export type TronIsApprovedParams = TronApprovedParams & {
-  amount?: bigint | string | number;
-};
+export type TronIsApprovedParams = TronApprovedParams & { amount?: bigint | string | number };
 
 // TronGrid API Types
 export type TronGridTRC20Balance = Array<{
@@ -67,47 +60,23 @@ export interface TronGridAccountResponse {
     net_window_size: number;
     net_window_optimized: boolean;
     trc20: TronGridTRC20Balance;
-    assetV2?: Array<{
-      key: string;
-      value: number;
-    }>;
-    frozenV2?: Array<{
-      type?: string;
-    }>;
-    free_asset_net_usageV2?: Array<{
-      key: string;
-      value: number;
-    }>;
+    assetV2?: Array<{ key: string; value: number }>;
+    frozenV2?: Array<{ type?: string }>;
+    free_asset_net_usageV2?: Array<{ key: string; value: number }>;
     latest_consume_free_time?: number;
-    owner_permission?: {
-      keys: Array<{
-        address: string;
-        weight: number;
-      }>;
-      threshold: number;
-      permission_name: string;
-    };
+    owner_permission?: { keys: Array<{ address: string; weight: number }>; threshold: number; permission_name: string };
     active_permission?: Array<{
       operations: string;
-      keys: Array<{
-        address: string;
-        weight: number;
-      }>;
+      keys: Array<{ address: string; weight: number }>;
       threshold: number;
       id: number;
       type: string;
       permission_name: string;
     }>;
-    account_resource?: {
-      energy_window_optimized: boolean;
-      energy_window_size: number;
-    };
+    account_resource?: { energy_window_optimized: boolean; energy_window_size: number };
   }>;
   success: boolean;
-  meta: {
-    at: number;
-    page_size: number;
-  };
+  meta: { at: number; page_size: number };
 }
 
 export interface TronGridTokenInfo {

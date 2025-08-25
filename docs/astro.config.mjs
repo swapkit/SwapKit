@@ -7,21 +7,67 @@ import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 
 const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
 
-const openApiPlugin = starlightOpenAPI([
-  { base: "api", schema: "https://api.swapkit.dev/docs/json" },
-]);
+const openApiPlugin = starlightOpenAPI([{ base: "api", schema: "https://api.swapkit.dev/docs/json" }]);
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.REFERENCES ? "https://swapkit.github.io" : undefined,
   base: process.env.REFERENCES ? "/SwapKit" : undefined,
+  integrations: [
+    react(),
+    starlight({
+      customCss: ["./src/styles/global.css", "@shikijs/twoslash/style-rich.css"],
+      disable404Route: true,
+      expressiveCode: false,
+      lastUpdated: true,
+      logo: { dark: "./src/assets/logo-vertical-white.png", light: "./src/assets/logo-vertical-black.png" },
+      pagination: true,
+      plugins: [openApiPlugin, ...docsPlugins],
+      sidebar: [
+        {
+          items: [
+            { label: "Getting started", link: "/start/getting-started" },
+            { label: "Core Concepts", link: "/start/core-concepts" },
+            { label: "Configuration", link: "/start/configuration" },
+            { label: "Toolbox usage", link: "/start/toolbox-usage" },
+          ],
+          label: "Start Here",
+        },
+        {
+          items: [
+            { label: "API Reference", link: "/guides/api-reference" },
+            { label: "THORChain Features", link: "/guides/thorchain-features" },
+            { label: "Zcash Integration", link: "/guides/zcash-integration" },
+            { label: "Advanced Features", link: "/guides/advanced-features" },
+            { label: "Production Best Practices", link: "/guides/production-best-practices" },
+            { label: "Create custom plugin", link: "/guides/create-plugin" },
+            { label: "Create custom wallet", link: "/guides/create-wallet" },
+          ],
+          label: "Guides",
+        },
+        { autogenerate: { directory: "guides/actions" }, collapsed: true, label: "Actions" },
+        { autogenerate: { directory: "guides/integrations" }, collapsed: true, label: "Integrations" },
+        { autogenerate: { directory: "others" }, collapsed: true, label: "Others" },
+        ...openAPISidebarGroups,
+        {
+          collapsed: true,
+          items: process.env.REFERENCES ? [{ items: docsSidebarItems, label: "@swapkit" }] : [],
+          label: "References",
+        },
+      ],
+      social: [
+        { href: "https://github.com/swapkit/SwapKit", icon: "github", label: "GitHub" },
+        { href: "https://x.com/SwapKitPowered", icon: "x.com", label: "X" },
+        { href: "https://discord.gg/swapkit", icon: "discord", label: "Discord" },
+      ],
+      title: "",
+    }),
+  ],
   markdown: {
-    syntaxHighlight: "shiki",
     shikiConfig: {
       transformers: [
         transformerTwoslash({
+          renderer: rendererRich({ errorRendering: "hover" }),
           twoslashOptions: {
-            handbookOptions: { noErrorValidation: true, showEmit: false },
             filterNode: (node) => {
               if (node.type === "hover") {
                 for (const keyword of ["console", "(local var) error: unknown", "HTML"]) {
@@ -33,70 +79,15 @@ export default defineConfig({
 
               return true;
             },
+            handbookOptions: { noErrorValidation: true, showEmit: false },
           },
-          renderer: rendererRich({ errorRendering: "hover" }),
         }),
       ],
       wrap: true,
     },
+    syntaxHighlight: "shiki",
   },
-  integrations: [
-    react(),
-    starlight({
-      customCss: ["./src/styles/global.css", "@shikijs/twoslash/style-rich.css"],
-      disable404Route: true,
-      expressiveCode: false,
-      lastUpdated: true,
-      pagination: true,
-      plugins: [openApiPlugin, ...docsPlugins],
-      title: "",
-      logo: {
-        dark: "./src/assets/logo-vertical-white.png",
-        light: "./src/assets/logo-vertical-black.png",
-      },
-      social: [
-        { icon: "github", label: "GitHub", href: "https://github.com/swapkit/SwapKit" },
-        { icon: "x.com", label: "X", href: "https://x.com/SwapKitPowered" },
-        { icon: "discord", label: "Discord", href: "https://discord.gg/swapkit" },
-      ],
-      sidebar: [
-        {
-          label: "Start Here",
-          items: [
-            { label: "Getting started", link: "/start/getting-started" },
-            { label: "Core Concepts", link: "/start/core-concepts" },
-            { label: "Configuration", link: "/start/configuration" },
-            { label: "Toolbox usage", link: "/start/toolbox-usage" },
-          ],
-        },
-        {
-          label: "Guides",
-          items: [
-            { label: "API Reference", link: "/guides/api-reference" },
-            { label: "THORChain Features", link: "/guides/thorchain-features" },
-            { label: "Zcash Integration", link: "/guides/zcash-integration" },
-            { label: "Advanced Features", link: "/guides/advanced-features" },
-            { label: "Production Best Practices", link: "/guides/production-best-practices" },
-            { label: "Create custom plugin", link: "/guides/create-plugin" },
-            { label: "Create custom wallet", link: "/guides/create-wallet" },
-          ],
-        },
-        { label: "Actions", autogenerate: { directory: "guides/actions" }, collapsed: true },
-        {
-          label: "Integrations",
-          autogenerate: { directory: "guides/integrations" },
-          collapsed: true,
-        },
-        { label: "Others", autogenerate: { directory: "others" }, collapsed: true },
-        ...openAPISidebarGroups,
-        {
-          label: "References",
-          collapsed: true,
-          items: process.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : [],
-        },
-      ],
-    }),
-  ],
+  site: process.env.REFERENCES ? "https://swapkit.github.io" : undefined,
 });
 
 function createDocs() {
@@ -128,21 +119,16 @@ function createDocs() {
     "walletconnect",
   ];
   const base = createTypeDoc([
-    { label: "/core", entrypoint: "core/src/index.ts" },
-    { label: "/helpers", entrypoint: "helpers/src/index.ts" },
-    { label: "/helpers/api", entrypoint: "helpers/src/api/index.ts" },
+    { entrypoint: "core/src/index.ts", label: "/core" },
+    { entrypoint: "helpers/src/index.ts", label: "/helpers" },
+    { entrypoint: "helpers/src/api/index.ts", label: "/helpers/api" },
   ]);
   const pluginDocs = createTypeDoc(namesToPaths("plugins", pluginNames), "/plugins");
   const toolboxDocs = createTypeDoc(namesToPaths("toolboxes", toolboxNames), "/toolboxes");
   const walletDocs = createTypeDoc(namesToPaths("wallets", walletNames), "/wallets");
 
   return {
-    plugins: [
-      ...base.plugins,
-      ...pluginDocs.plugins,
-      ...toolboxDocs.plugins,
-      ...walletDocs.plugins,
-    ],
+    plugins: [...base.plugins, ...pluginDocs.plugins, ...toolboxDocs.plugins, ...walletDocs.plugins],
     sidebarItems: [...base.items, ...pluginDocs.items, ...toolboxDocs.items, ...walletDocs.items],
   };
 }
@@ -153,30 +139,24 @@ function createTypeDoc(docs, nest = "") {
       const [typeDoc, sidebarGroup] = createStarlightTypeDocPlugin();
       acc.plugins.push(
         typeDoc({
-          sidebar: { label, collapsed: true },
-          pagination: true,
           entryPoints: [`../packages/${entrypoint}`],
           output: `references${nest}${label}`,
+          pagination: true,
+          sidebar: { collapsed: true, label },
         }),
       );
       acc.items.push(sidebarGroup);
 
       return acc;
     },
-    { plugins: [], items: [] },
+    { items: [], plugins: [] },
   );
 
   return nest
-    ? {
-        plugins: generatedDocs.plugins,
-        items: [{ collapsed: true, label: nest, items: generatedDocs.items }],
-      }
+    ? { items: [{ collapsed: true, items: generatedDocs.items, label: nest }], plugins: generatedDocs.plugins }
     : generatedDocs;
 }
 
 function namesToPaths(base, names) {
-  return names.map((name) => ({
-    label: `/${name}`,
-    entrypoint: `${base}/src/${name}/index.ts`,
-  }));
+  return names.map((name) => ({ entrypoint: `${base}/src/${name}/index.ts`, label: `/${name}` }));
 }

@@ -4,13 +4,7 @@ import { LogOut } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { ChainIcon } from "~/components/ui/chain-icon";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "~/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
 import { useSwapKit } from "~/lib/swapKit";
 import { TokenBalance } from "./TokenBalance";
 import { TruncatedAddress } from "./TruncatedAddress";
@@ -42,7 +36,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
   }, [balances]);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet onOpenChange={onOpenChange} open={open}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Connected Wallets</SheetTitle>
@@ -60,7 +54,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
             const otherBalances = chainBalances.filter((b) => !b.isGasAsset);
 
             return (
-              <div key={chain} className="space-y-4">
+              <div className="space-y-4" key={chain}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ChainIcon chain={chain} className="h-6 w-6" />
@@ -75,28 +69,22 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
                     </div>
                   )}
                   {otherBalances.map((balance) => (
-                    <TokenBalance
-                      key={`${balance.chain}-${balance.ticker || balance.symbol}`}
-                      balance={balance}
-                    />
+                    <TokenBalance balance={balance} key={`${balance.chain}-${balance.ticker || balance.symbol}`} />
                   ))}
-                  {chainBalances.length === 0 && (
-                    <div className="text-sm text-muted-foreground">No balances found</div>
-                  )}
+                  {chainBalances.length === 0 && <div className="text-muted-foreground text-sm">No balances found</div>}
                 </div>
               </div>
             );
           })}
         </div>
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="absolute right-6 bottom-6 left-6">
           <Button
-            variant="destructive"
             className="w-full"
             onClick={() => {
               disconnectWallet();
               onOpenChange(false);
             }}
-          >
+            variant="destructive">
             <LogOut className="mr-2 h-4 w-4" />
             Disconnect
           </Button>

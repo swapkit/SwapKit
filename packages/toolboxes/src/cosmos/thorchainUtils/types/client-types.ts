@@ -1,10 +1,6 @@
 import type { EncodeObject } from "@cosmjs/proto-signing";
-import type {
-  Asset,
-  ChainId,
-  GenericCreateTransactionParams,
-  GenericTransferParams,
-} from "@swapkit/helpers";
+import type { Asset, ChainId, GenericTransferParams } from "@swapkit/helpers";
+import type { CosmosCreateTransactionParams } from "../../types";
 
 enum TxType {
   Transfer = "transfer",
@@ -20,10 +16,7 @@ type Tx = {
   hash: string; // Tx hash
 };
 
-export type NodeUrl = {
-  node: string;
-  rpc: string;
-};
+export type NodeUrl = { node: string; rpc: string };
 
 export type TxData = Pick<Tx, "from" | "to" | "type">;
 
@@ -41,11 +34,7 @@ export type ThorchainConstantsResponse = {
  * Response of `/cosmos/base/tendermint/v1beta1/node_info`
  * Note: We are interested in `network` (aka chain id) only
  */
-export type NodeInfoResponse = {
-  default_node_info: {
-    network: string;
-  };
-};
+export type NodeInfoResponse = { default_node_info: { network: string } };
 
 export type TransferTransaction = {
   memo: string;
@@ -56,15 +45,7 @@ export type TransferTransaction = {
   fee: { amount: { denom: string; amount: string }[]; gas: string };
 };
 
-export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
-  accountNumber?: number;
-  sequence?: number;
-};
-
-export type ThorchainCreateTransactionParams = Omit<
-  CosmosCreateTransactionParams,
-  "feeRate" | "recipient"
-> & {
+export type ThorchainCreateTransactionParams = Omit<CosmosCreateTransactionParams, "feeRate" | "recipient"> & {
   recipient?: string;
   asSignable?: boolean;
   asAminoMessage?: boolean;

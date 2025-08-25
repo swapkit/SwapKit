@@ -25,7 +25,7 @@
     "cosmjs-types": "~0.9.0",
     "near-api-js": "~6.1.0",
     "ripple-binary-codec": "~2.4.0",
-    "ts-pattern": "~5.7.0",
+    "ts-pattern": "^5.7.0",
     "xumm": "1.8.0"
   },
   "description": "SwapKit - Wallets",
@@ -41,28 +41,24 @@
     "@radixdlt/radix-dapp-toolkit": "2.2.1",
     "@scure/base": "1.2.6",
     "@scure/bip39": "1.6.0",
-    "@solana/web3.js": "1.98.2",
+    "@solana/web3.js": "1.98.4",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "@trezor/connect-web": "9.6.0",
+    "@trezor/connect-web": "9.6.2",
     "@walletconnect/logger": "2.1.2",
     "@walletconnect/modal": "2.7.0",
-    "@walletconnect/sign-client": "2.21.4",
-    "@walletconnect/types": "2.21.4",
+    "@walletconnect/sign-client": "2.21.8",
+    "@walletconnect/types": "2.21.8",
     "bitcoinjs-lib": "6.1.7",
     "blakejs": "1.2.1",
     "cosmjs-types": "0.9.0",
     "near-api-js": "6.1.0",
     "ripple-binary-codec": "2.4.1",
-    "ts-pattern": "5.7.1",
+    "ts-pattern": "5.8.0",
     "xumm": "1.8.0"
   },
   "exports": {
-    ".": {
-      "default": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
     "./bitget": {
       "default": "./dist/src/bitget/index.js",
       "require": "./dist/src/bitget/index.cjs",
@@ -153,15 +149,15 @@
       "require": "./dist/src/trezor.cjs",
       "types": "./dist/types/trezor.d.ts"
     },
-    "./vultisig": {
-      "default": "./dist/src/vultisig/index.js",
-      "require": "./dist/src/vultisig/index.cjs",
-      "types": "./dist/types/vultisig/index.d.ts"
-    },
     "./tronlink": {
       "default": "./dist/src/tronlink/index.js",
       "require": "./dist/src/tronlink/index.cjs",
       "types": "./dist/types/tronlink/index.d.ts"
+    },
+    "./vultisig": {
+      "default": "./dist/src/vultisig/index.js",
+      "require": "./dist/src/vultisig/index.cjs",
+      "types": "./dist/types/vultisig/index.d.ts"
     },
     "./walletconnect": {
       "default": "./dist/src/walletconnect/index.js",
@@ -178,10 +174,7 @@
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",

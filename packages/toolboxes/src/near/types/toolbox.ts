@@ -2,25 +2,14 @@ import type { AssetValue, DerivationPathArray } from "@swapkit/helpers";
 import type { Account, Contract, providers } from "near-api-js";
 import type { Action, SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import type { NEP141Token } from "../helpers/nep141";
-import type {
-  NearCreateTransactionParams,
-  NearFunctionCallParams,
-  NearSigner,
-  NearTransferParams,
-} from "../types";
+import type { NearCreateTransactionParams, NearFunctionCallParams, NearSigner, NearTransferParams } from "../types";
 import type { NearContractInterface, NearGasEstimateParams } from "../types/contract";
 
 // Type for serialized transaction data
 export interface SerializedTransaction {
   serialized: string;
   publicKey: string;
-  details: {
-    signerId: string;
-    receiverId?: string;
-    methodName?: string;
-    nonce: number;
-    blockHash: string;
-  };
+  details: { signerId: string; receiverId?: string; methodName?: string; nonce: number; blockHash: string };
 }
 
 // Type for batch transaction
@@ -53,12 +42,8 @@ export interface NearToolbox {
   provider: providers.JsonRpcProvider;
   transfer: (params: NearTransferParams) => Promise<string>;
   createTransaction: (params: NearCreateTransactionParams) => Promise<SerializedTransaction>;
-  createContractFunctionCall: (
-    params: ContractFunctionCallParams,
-  ) => Promise<SerializedTransaction>;
-  estimateTransactionFee: (
-    params: NearTransferParams | NearGasEstimateParams,
-  ) => Promise<AssetValue>;
+  createContractFunctionCall: (params: ContractFunctionCallParams) => Promise<SerializedTransaction>;
+  estimateTransactionFee: (params: NearTransferParams | NearGasEstimateParams) => Promise<AssetValue>;
   broadcastTransaction: (signedTransaction: SignedTransaction) => Promise<string>;
   signTransaction: (transaction: Transaction) => Promise<SignedTransaction>;
   getBalance: (address: string) => Promise<AssetValue[]>;
@@ -66,14 +51,8 @@ export interface NearToolbox {
   getSignerFromPhrase: (params: GetSignerFromPhraseParams) => Promise<NearSigner>;
   getSignerFromPrivateKey: (privateKey: string) => Promise<NearSigner>;
   callFunction: (params: NearFunctionCallParams) => Promise<string>;
-  createSubAccount: (
-    subAccountId: string,
-    publicKey: string,
-    initialBalance: string,
-  ) => Promise<string>;
-  createContract: <T extends Contract = Contract>(
-    contractInterface: NearContractInterface,
-  ) => Promise<T>;
+  createSubAccount: (subAccountId: string, publicKey: string, initialBalance: string) => Promise<string>;
+  createContract: <T extends Contract = Contract>(contractInterface: NearContractInterface) => Promise<T>;
   executeBatchTransaction: (batch: BatchTransaction) => Promise<string>;
   nep141: (contractId: string) => Promise<NEP141Token>;
   getGasPrice: () => Promise<string>;

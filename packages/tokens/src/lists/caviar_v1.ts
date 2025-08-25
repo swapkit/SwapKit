@@ -1,15 +1,10 @@
 export const list = {
-  provider: "CAVIAR_V1",
   chainId: "radix-mainnet",
-  name: "CAVIAR_V1",
-  timestamp: "2025-07-30T16:02:45.656Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 170,
+  keywords: [],
+  name: "CAVIAR_V1",
+  provider: "CAVIAR_V1",
+  timestamp: "2025-07-30T16:02:45.656Z",
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -1711,4 +1706,5 @@ export const list = {
       ticker: "ZRCK",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

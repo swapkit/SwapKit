@@ -3,16 +3,15 @@ import {
   Chain,
   DerivationPath,
   type DerivationPathArray,
+  derivationPathToString,
   FeeOption,
   type GenericTransferParams,
   SwapKitError,
   type UTXOChain,
-  derivationPathToString,
 } from "@swapkit/helpers";
-import type { Psbt } from "bitcoinjs-lib";
-
 import type { UTXOToolboxes } from "@swapkit/toolboxes/utxo";
-import { ChainToKeepKeyName, bip32ToAddressNList } from "../coins";
+import type { Psbt } from "bitcoinjs-lib";
+import { bip32ToAddressNList, ChainToKeepKeyName } from "../coins";
 
 interface KeepKeyInputObject {
   addressNList: number[];
@@ -35,18 +34,14 @@ export const utxoWalletMethods = async ({
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
   // This might not work for BCH
   const toolbox = await getUtxoToolbox(chain);
-  const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain)
-    ? ("p2wpkh" as const)
-    : ("p2pkh" as const);
+  const scriptType = [Chain.Bitcoin, Chain.Litecoin].includes(chain) ? ("p2wpkh" as const) : ("p2pkh" as const);
 
-  const derivationPathString = derivationPath
-    ? derivationPathToString(derivationPath)
-    : `${DerivationPath[chain]}/0`;
+  const derivationPathString = derivationPath ? derivationPathToString(derivationPath) : `${DerivationPath[chain]}/0`;
 
   const addressInfo = {
+    address_n: bip32ToAddressNList(derivationPathString),
     coin: ChainToKeepKeyName[chain],
     script_type: scriptType,
-    address_n: bip32ToAddressNList(derivationPathString),
   };
 
   const walletAddress: string = (await sdk.address.utxoGetAddress(addressInfo)).address;
@@ -68,15 +63,15 @@ export const utxoWalletMethods = async ({
         if (change || address === walletAddress) {
           return {
             addressNList: addressInfo.address_n,
-            isChange: true,
             addressType: "change",
             amount: value,
+            isChange: true,
             scriptType,
           };
         }
 
         if (outputAddress) {
-          return { address: outputAddress, amount: value, addressType: "spend" };
+          return { address: outputAddress, addressType: "spend", amount: value };
         }
 
         return null;
@@ -84,36 +79,24 @@ export const utxoWalletMethods = async ({
       .filter(Boolean);
 
     const removeNullAndEmptyObjectsFromArray = (arr: any[]) => {
-      return arr.filter(
-        (item) => item !== null && typeof item === "object" && Object.keys(item).length > 0,
-      );
+      return arr.filter((item) => item !== null && typeof item === "object" && Object.keys(item).length > 0);
     };
 
     const responseSign = await sdk.utxo.utxoSignTransaction({
       coin: ChainToKeepKeyName[chain],
       inputs,
-      outputs: removeNullAndEmptyObjectsFromArray(outputs),
       opReturnData: memo,
+      outputs: removeNullAndEmptyObjectsFromArray(outputs),
     });
 
     return responseSign.serializedTx?.toString();
   };
 
-  const transfer = async ({
-    recipient,
-    feeOptionKey,
-    feeRate,
-    memo,
-    ...rest
-  }: GenericTransferParams) => {
+  const transfer = async ({ recipient, feeOptionKey, feeRate, memo, ...rest }: GenericTransferParams) => {
     if (!walletAddress)
-      throw new SwapKitError("wallet_keepkey_invalid_params", {
-        reason: "From address must be provided",
-      });
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "From address must be provided" });
     if (!recipient)
-      throw new SwapKitError("wallet_keepkey_invalid_params", {
-        reason: "Recipient address must be provided",
-      });
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Recipient address must be provided" });
 
     const createTxMethod =
       chain === Chain.BitcoinCash
@@ -122,11 +105,11 @@ export const utxoWalletMethods = async ({
 
     const { psbt, inputs: rawInputs } = await createTxMethod({
       ...rest,
+      feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
+      fetchTxHex: true,
       memo,
       recipient,
-      feeRate: feeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast],
       sender: walletAddress,
-      fetchTxHex: true,
     });
 
     const inputs = rawInputs.map(({ value, index, hash, txHex }) => ({
@@ -143,5 +126,5 @@ export const utxoWalletMethods = async ({
     return toolbox.broadcastTx(txHex);
   };
 
-  return { ...toolbox, signTransaction, transfer, address: walletAddress };
+  return { ...toolbox, address: walletAddress, signTransaction, transfer };
 };

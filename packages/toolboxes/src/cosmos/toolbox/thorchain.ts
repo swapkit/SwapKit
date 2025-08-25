@@ -4,19 +4,19 @@ import {
   BaseDecimal,
   Chain,
   CosmosChainPrefixes,
+  derivationPathToString,
   FeeOption,
   type GenericTransferParams,
+  getRPCUrl,
   NetworkDerivationPath,
   RequestClient,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  derivationPathToString,
-  getRPCUrl,
   updateDerivationPath,
 } from "@swapkit/helpers";
 
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import {
   buildAminoMsg,
   buildEncodedTxBody,
@@ -27,8 +27,7 @@ import {
   parseAminoMessageForDirectSigning,
 } from "../thorchainUtils";
 import type { ThorchainConstantsResponse } from "../thorchainUtils/types/client-types";
-import type { MultisigTx } from "../types";
-import type { CosmosToolboxParams, MultiSigSigner } from "../types";
+import type { CosmosToolboxParams, MultiSigSigner, MultisigTx } from "../types";
 import {
   createOfflineStargateClient,
   createSigningStargateClient,
@@ -37,24 +36,14 @@ import {
 } from "../util";
 import { createCosmosToolbox } from "./cosmos";
 
-function secp256k1HdWalletFromMnemonic({
-  prefix,
-  derivationPath,
-}: {
-  prefix: string;
-  derivationPath?: string;
-}) {
+function secp256k1HdWalletFromMnemonic({ prefix, derivationPath }: { prefix: string; derivationPath?: string }) {
   return async function secp256k1HdWalletFromMnemonic(mnemonic: string, index = 0) {
     const importedAmino = await import("@cosmjs/amino");
-    const Secp256k1HdWallet =
-      importedAmino.Secp256k1HdWallet ?? importedAmino.default?.Secp256k1HdWallet;
+    const Secp256k1HdWallet = importedAmino.Secp256k1HdWallet ?? importedAmino.default?.Secp256k1HdWallet;
     const importedCrypto = await import("@cosmjs/crypto");
     const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
 
-    return Secp256k1HdWallet.fromMnemonic(mnemonic, {
-      hdPaths: [stringToPath(`${derivationPath}/${index}`)],
-      prefix,
-    });
+    return Secp256k1HdWallet.fromMnemonic(mnemonic, { hdPaths: [stringToPath(`${derivationPath}/${index}`)], prefix });
   };
 }
 
@@ -63,23 +52,13 @@ function exportSignature(signature: Uint8Array) {
 }
 
 function signMultisigTx(chain: Chain.THORChain | Chain.Maya) {
-  return async function signMultisigTx({
-    wallet,
-    tx,
-  }: {
-    wallet: Secp256k1HdWallet;
-    tx: string | MultisigTx;
-  }) {
-    const { msgs, accountNumber, sequence, chainId, fee, memo } =
-      typeof tx === "string" ? JSON.parse(tx) : tx;
+  return async function signMultisigTx({ wallet, tx }: { wallet: Secp256k1HdWallet; tx: string | MultisigTx }) {
+    const { msgs, accountNumber, sequence, chainId, fee, memo } = typeof tx === "string" ? JSON.parse(tx) : tx;
 
     const address = (await wallet.getAccounts())?.[0]?.address || "";
     const aminoTypes = await createDefaultAminoTypes(chain);
     const registry = await createDefaultRegistry();
-    const signingClient = await createOfflineStargateClient(wallet, {
-      registry,
-      aminoTypes,
-    });
+    const signingClient = await createOfflineStargateClient(wallet, { aminoTypes, registry });
     const msgForSigning = [];
 
     for (const msg of msgs) {
@@ -89,29 +68,15 @@ function signMultisigTx(chain: Chain.THORChain | Chain.Maya) {
 
     const {
       signatures: [signature],
-    } = await signingClient.sign(address, msgForSigning, fee, memo, {
-      accountNumber,
-      sequence,
-      chainId,
-    });
+    } = await signingClient.sign(address, msgForSigning, fee, memo, { accountNumber, chainId, sequence });
 
-    const bodyBytes = await buildEncodedTxBody({
-      chain,
-      memo,
-      msgs: msgs.map(parseAminoMessageForDirectSigning),
-    });
+    const bodyBytes = await buildEncodedTxBody({ chain, memo, msgs: msgs.map(parseAminoMessageForDirectSigning) });
 
-    return { signature: exportSignature(signature as Uint8Array), bodyBytes };
+    return { bodyBytes, signature: exportSignature(signature as Uint8Array) };
   };
 }
 
-function broadcastMultisigTx({
-  prefix,
-  rpcUrl,
-}: {
-  prefix: string;
-  rpcUrl: string;
-}) {
+function broadcastMultisigTx({ prefix, rpcUrl }: { prefix: string; rpcUrl: string }) {
   return async function broadcastMultisigTx(
     tx: string,
     signers: MultiSigSigner[],
@@ -147,8 +112,7 @@ function broadcastMultisigTx({
 }
 
 async function createMultisig(pubKeys: string[], threshold: number, noSortPubKeys = true) {
-  const { createMultisigThresholdPubkey, encodeSecp256k1Pubkey } = (await import("@cosmjs/amino"))
-    .default;
+  const { createMultisigThresholdPubkey, encodeSecp256k1Pubkey } = (await import("@cosmjs/amino")).default;
   return createMultisigThresholdPubkey(
     pubKeys.map((pubKey) => encodeSecp256k1Pubkey(base64.decode(pubKey))),
     threshold,
@@ -160,13 +124,7 @@ function importSignature(signature: string) {
   return base64.decode(signature);
 }
 
-async function signWithPrivateKey({
-  privateKey,
-  message,
-}: {
-  privateKey: Uint8Array;
-  message: string;
-}) {
+async function signWithPrivateKey({ privateKey, message }: { privateKey: Uint8Array; message: string }) {
   const { Secp256k1 } = (await import("@cosmjs/crypto")).default;
 
   const signature = await Secp256k1.createSignature(base64.decode(message), privateKey);
@@ -190,15 +148,10 @@ export async function createThorchainToolbox({
       ? toolboxParams.derivationPath
       : updateDerivationPath(NetworkDerivationPath[chain], { index });
 
-  const cosmosToolbox = await createCosmosToolbox({
-    chain,
-    ...toolboxParams,
-  });
+  const cosmosToolbox = await createCosmosToolbox({ chain, ...toolboxParams });
 
   const signer = await match(toolboxParams)
-    .with({ phrase: P.string }, ({ phrase }) =>
-      cosmosToolbox.getSignerFromPhrase({ phrase, derivationPath }),
-    )
+    .with({ phrase: P.string }, ({ phrase }) => cosmosToolbox.getSignerFromPhrase({ derivationPath, phrase }))
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
@@ -220,10 +173,7 @@ export async function createThorchainToolbox({
 
       fee = new SwapKitNumber(nativeFee);
     } catch {
-      fee = new SwapKitNumber({
-        value: isThorchain ? 0.02 : 1,
-        decimal: BaseDecimal[chain],
-      });
+      fee = new SwapKitNumber({ decimal: BaseDecimal[chain], value: isThorchain ? 0.02 : 1 });
     }
 
     return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };
@@ -241,36 +191,23 @@ export async function createThorchainToolbox({
     const isAminoSigner = "signAmino" in signer;
     const registry = await createDefaultRegistry();
     const aminoTypes = await createDefaultAminoTypes(chain);
-    const signingClient = await createSigningStargateClient(rpcUrl, signer, {
-      registry,
-      aminoTypes,
-    });
+    const signingClient = await createSigningStargateClient(rpcUrl, signer, { aminoTypes, registry });
 
-    const aminoMessage = buildAminoMsg({
-      assetValue,
-      sender,
-      recipient,
-      memo,
-    });
+    const aminoMessage = buildAminoMsg({ assetValue, memo, recipient, sender });
 
     if (isAminoSigner) {
       const msgSign = await convertToSignable(aminoMessage, chain);
 
-      const { signatures, authInfoBytes } = await signingClient.sign(
-        sender,
-        [msgSign],
-        defaultFee,
-        memo,
-      );
+      const { signatures, authInfoBytes } = await signingClient.sign(sender, [msgSign], defaultFee, memo);
 
       const tx = TxRaw.encode({
-        signatures,
         authInfoBytes,
         bodyBytes: await buildEncodedTxBody({
           chain,
-          msgs: [aminoMessage].map(parseAminoMessageForDirectSigning),
           memo,
+          msgs: [aminoMessage].map(parseAminoMessageForDirectSigning),
         }),
+        signatures,
       }).finish();
 
       const txResponse = await signingClient.broadcastTx(tx);
@@ -299,6 +236,10 @@ export async function createThorchainToolbox({
     getFees,
     importSignature,
     parseAminoMessageForDirectSigning,
+    pubkeyToAddress: async (pubkey: Pubkey) => {
+      const { pubkeyToAddress } = (await import("@cosmjs/amino")).default;
+      return pubkeyToAddress(pubkey, chainPrefix);
+    },
     secp256k1HdWalletFromMnemonic: secp256k1HdWalletFromMnemonic({
       derivationPath: derivationPathToString(derivationPath),
       prefix: chainPrefix,
@@ -306,9 +247,5 @@ export async function createThorchainToolbox({
     signMultisigTx: signMultisigTx(chain),
     signWithPrivateKey,
     transfer,
-    pubkeyToAddress: async (pubkey: Pubkey) => {
-      const { pubkeyToAddress } = (await import("@cosmjs/amino")).default;
-      return pubkeyToAddress(pubkey, chainPrefix);
-    },
   };
 }

@@ -1,14 +1,9 @@
 export const list = {
-  provider: "NEAR",
-  name: "NEAR",
-  timestamp: "2025-08-05T14:31:16.579Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 82,
+  keywords: [],
+  name: "NEAR",
+  provider: "NEAR",
+  timestamp: "2025-08-05T14:31:16.579Z",
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -602,8 +597,7 @@ export const list = {
       chainId: "near",
       decimals: 24,
       identifier: "NEAR.wNEAR-wrap.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.wnear-wrap.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.wnear-wrap.near.png",
       ticker: "wNEAR",
     },
     {
@@ -612,8 +606,7 @@ export const list = {
       chainId: "near",
       decimals: 18,
       identifier: "NEAR.ETH-eth.bridge.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.eth-eth.bridge.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.eth-eth.bridge.near.png",
       ticker: "ETH",
     },
     {
@@ -632,8 +625,7 @@ export const list = {
       chainId: "near",
       decimals: 6,
       identifier: "NEAR.USDT-usdt.tether-token.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.usdt-usdt.tether-token.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.usdt-usdt.tether-token.near.png",
       ticker: "USDT",
     },
     {
@@ -672,8 +664,7 @@ export const list = {
       chainId: "near",
       decimals: 24,
       identifier: "NEAR.BLACKDRAGON-blackdragon.tkn.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.blackdragon-blackdragon.tkn.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.blackdragon-blackdragon.tkn.near.png",
       ticker: "BLACKDRAGON",
     },
     {
@@ -682,8 +673,7 @@ export const list = {
       chainId: "near",
       decimals: 18,
       identifier: "NEAR.SHITZU-token.0xshitzu.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.shitzu-token.0xshitzu.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.shitzu-token.0xshitzu.near.png",
       ticker: "SHITZU",
     },
     {
@@ -692,8 +682,7 @@ export const list = {
       chainId: "near",
       decimals: 18,
       identifier: "NEAR.ABG-abg-966.meme-cooking.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.abg-abg-966.meme-cooking.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.abg-abg-966.meme-cooking.near.png",
       ticker: "ABG",
     },
     {
@@ -712,8 +701,7 @@ export const list = {
       chainId: "near",
       decimals: 6,
       identifier: "NEAR.mpDAO-mpdao-token.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.mpdao-mpdao-token.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.mpdao-mpdao-token.near.png",
       ticker: "mpDAO",
     },
     {
@@ -742,8 +730,7 @@ export const list = {
       chainId: "near",
       decimals: 18,
       identifier: "NEAR.SWEAT-token.sweat",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.sweat-token.sweat.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.sweat-token.sweat.png",
       ticker: "SWEAT",
     },
     {
@@ -752,8 +739,7 @@ export const list = {
       chainId: "near",
       decimals: 18,
       identifier: "NEAR.RHEA-token.rhealab.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.rhea-token.rhealab.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.rhea-token.rhealab.near.png",
       ticker: "RHEA",
     },
     {
@@ -762,8 +748,7 @@ export const list = {
       chainId: "near",
       decimals: 8,
       identifier: "NEAR.BTC-nbtc.bridge.near",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/near.btc-nbtc.bridge.near.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/near.btc-nbtc.bridge.near.png",
       ticker: "BTC",
     },
     {
@@ -806,4 +791,5 @@ export const list = {
       ticker: "NEAR",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

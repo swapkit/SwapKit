@@ -1,6 +1,6 @@
 import { SwapKitError } from "@swapkit/helpers";
 import base58check from "bs58check";
-// @ts-ignore
+// @ts-expect-error
 import cashaddr from "cashaddrjs";
 
 enum Format {
@@ -19,33 +19,16 @@ enum Type {
 
 const VERSION_BYTE = {
   [Format.Legacy]: {
-    [UtxoNetwork.Mainnet]: {
-      [Type.P2PKH]: 0,
-      [Type.P2SH]: 5,
-    },
-    [UtxoNetwork.Testnet]: {
-      [Type.P2PKH]: 111,
-      [Type.P2SH]: 196,
-    },
+    [UtxoNetwork.Mainnet]: { [Type.P2PKH]: 0, [Type.P2SH]: 5 },
+    [UtxoNetwork.Testnet]: { [Type.P2PKH]: 111, [Type.P2SH]: 196 },
   },
   [Format.Bitpay]: {
-    [UtxoNetwork.Mainnet]: {
-      [Type.P2PKH]: 28,
-      [Type.P2SH]: 40,
-    },
-    [UtxoNetwork.Testnet]: {
-      [Type.P2PKH]: 111,
-      [Type.P2SH]: 196,
-    },
+    [UtxoNetwork.Mainnet]: { [Type.P2PKH]: 28, [Type.P2SH]: 40 },
+    [UtxoNetwork.Testnet]: { [Type.P2PKH]: 111, [Type.P2SH]: 196 },
   },
 };
 
-type DecodedType = {
-  format: Format;
-  network: UtxoNetwork;
-  type: Type;
-  hash: any;
-};
+type DecodedType = { format: Format; network: UtxoNetwork; type: Type; hash: any };
 
 function isValidAddress(input: any) {
   try {
@@ -104,22 +87,22 @@ function decodeBase58Address(address: string) {
 
     switch (versionByte) {
       case VERSION_BYTE[Format.Legacy][UtxoNetwork.Mainnet][Type.P2PKH]:
-        return { hash, format: Format.Legacy, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
+        return { format: Format.Legacy, hash, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
 
       case VERSION_BYTE[Format.Legacy][UtxoNetwork.Mainnet][Type.P2SH]:
-        return { hash, format: Format.Legacy, network: UtxoNetwork.Mainnet, type: Type.P2SH };
+        return { format: Format.Legacy, hash, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       case VERSION_BYTE[Format.Legacy][UtxoNetwork.Testnet][Type.P2PKH]:
-        return { hash, format: Format.Legacy, network: UtxoNetwork.Testnet, type: Type.P2PKH };
+        return { format: Format.Legacy, hash, network: UtxoNetwork.Testnet, type: Type.P2PKH };
 
       case VERSION_BYTE[Format.Legacy][UtxoNetwork.Testnet][Type.P2SH]:
-        return { hash, format: Format.Legacy, network: UtxoNetwork.Testnet, type: Type.P2SH };
+        return { format: Format.Legacy, hash, network: UtxoNetwork.Testnet, type: Type.P2SH };
 
       case VERSION_BYTE[Format.Bitpay][UtxoNetwork.Mainnet][Type.P2PKH]:
-        return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
+        return { format: Format.Bitpay, hash, network: UtxoNetwork.Mainnet, type: Type.P2PKH };
 
       case VERSION_BYTE[Format.Bitpay][UtxoNetwork.Mainnet][Type.P2SH]:
-        return { hash, format: Format.Bitpay, network: UtxoNetwork.Mainnet, type: Type.P2SH };
+        return { format: Format.Bitpay, hash, network: UtxoNetwork.Mainnet, type: Type.P2SH };
 
       default:
         return;

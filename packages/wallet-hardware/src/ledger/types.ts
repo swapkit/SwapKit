@@ -12,12 +12,7 @@ import type {
 } from "./clients/evm";
 import type { THORChainLedger } from "./clients/thorchain";
 import type { TronLedger } from "./clients/tron";
-import type {
-  BitcoinCashLedger,
-  BitcoinLedger,
-  DogecoinLedger,
-  LitecoinLedger,
-} from "./clients/utxo";
+import type { BitcoinCashLedger, BitcoinLedger, DogecoinLedger, LitecoinLedger } from "./clients/utxo";
 
 export type UTXOLedgerClients =
   | ReturnType<typeof BitcoinLedger>
