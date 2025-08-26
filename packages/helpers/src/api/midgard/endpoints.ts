@@ -227,20 +227,44 @@ function getBalance(baseUrl: string) {
 }
 
 function getNameDetails(baseUrl: string) {
-  return function getNameDetails(name: string) {
-    return RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
+  return async function getNamesByAddress(name: string) {
+    try {
+      return await RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
+    } catch (error: any) {
+      // Return empty array when no names found for owner (404)
+      if (error?.info?.status === 404) {
+        return [];
+      }
+      throw error;
+    }
   };
 }
 
 function getNamesByAddress(baseUrl: string) {
-  return function getNamesByAddress(address: string) {
-    return RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
+  return async function getNamesByAddress(address: string) {
+    try {
+      return await RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
+    } catch (error: any) {
+      // Return empty array when no names found for owner (404)
+      if (error?.info?.status === 404) {
+        return [];
+      }
+      throw error;
+    }
   };
 }
 
 function getNamesByOwner(baseUrl: string) {
-  return function getNamesByOwner(address: string) {
-    return RequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
+  return async function getNamesByOwner(address: string) {
+    try {
+      return await RequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
+    } catch (error: any) {
+      // Return empty array when no names found for owner (404)
+      if (error?.info?.status === 404) {
+        return [];
+      }
+      throw error;
+    }
   };
 }
 
