@@ -146,7 +146,7 @@
     "url": "git+https://github.com/swapkit/SwapKit.git"
   },
   "scripts": {
-    "build": "bun rild.ts",
+    "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
     "test": "bun test",
