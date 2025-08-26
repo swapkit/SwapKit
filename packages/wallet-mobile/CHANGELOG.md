@@ -1,14 +1,14 @@
 # @swapkit/wallet-mobile
 
-## 4.0.1-beta.0
+## 4.0.1
 
 ### Patch Changes
 
 - [#1448](https://github.com/swapkit/SwapKit/pull/1448) [`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix cycling dependencies & update biome to v2
 
 - Updated dependencies [[`1d11e7f`](https://github.com/swapkit/SwapKit/commit/1d11e7fa5280aa5eb7d42df3f9e944d49b2c0d08), [`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c)]:
-  - @swapkit/helpers@4.0.1-beta.0
-  - @swapkit/toolboxes@4.0.1-beta.0
+  - @swapkit/helpers@4.0.1
+  - @swapkit/toolboxes@4.0.1
 
 ## 4.0.0
 

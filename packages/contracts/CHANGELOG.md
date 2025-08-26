@@ -1,6 +1,6 @@
 # @swapkit/contracts
 
-## 4.0.1-beta.0
+## 4.0.1
 
 ### Patch Changes
 
