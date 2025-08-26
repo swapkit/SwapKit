@@ -62,18 +62,12 @@ async function getTrezorWallet<T extends Chain>({
 
       const getAddress = async () => {
         const TrezorConnect = (await import("@trezor/connect-web")).default;
-        const { success, payload } = await TrezorConnect.getAddress({
-          path: derivationPathStr,
-          coin: "zec",
-        });
+        const { success, payload } = await TrezorConnect.getAddress({ coin: "zec", path: derivationPathStr });
 
         if (!success) {
           throw new SwapKitError({
             errorKey: "wallet_trezor_failed_to_get_address",
-            info: {
-              chain,
-              error: (payload as { error: string; code?: string }).error || "Unknown error",
-            },
+            info: { chain, error: (payload as { error: string; code?: string }).error || "Unknown error" },
           });
         }
 
@@ -99,23 +93,20 @@ async function getTrezorWallet<T extends Chain>({
 
           const inputs = zcashPsbt.txInputs.map((input, idx) => ({
             address_n,
+            amount: zcashPsbt.data.inputs[idx]?.witnessUtxo?.value?.toString() || "0",
             prev_hash: input.hash.reverse().toString("hex"),
             prev_index: input.index,
-            amount: zcashPsbt.data.inputs[idx]?.witnessUtxo?.value?.toString() || "0",
             script_type: "SPENDADDRESS" as const,
           }));
 
           const result = await TrezorConnect.signTransaction({
+            branchId,
             coin: "zec",
             inputs,
             outputs: zcashPsbt.txOutputs.map((output) => {
               // OP_RETURN
               if (!output.address) {
-                return {
-                  amount: "0",
-                  op_return_data: output.script.toString("hex"),
-                  script_type: "PAYTOOPRETURN",
-                };
+                return { amount: "0", op_return_data: output.script.toString("hex"), script_type: "PAYTOOPRETURN" };
               }
 
               const outputAddress = output.address;
@@ -123,26 +114,18 @@ async function getTrezorWallet<T extends Chain>({
               const isChangeAddress = outputAddress === address;
 
               return isChangeAddress
-                ? { amount: output.value.toString(), address_n, script_type: "PAYTOADDRESS" }
-                : {
-                    amount: output.value.toString(),
-                    address: outputAddress,
-                    script_type: "PAYTOADDRESS",
-                  };
+                ? { address_n, amount: output.value.toString(), script_type: "PAYTOADDRESS" }
+                : { address: outputAddress, amount: output.value.toString(), script_type: "PAYTOADDRESS" };
             }),
+            overwintered: true,
             version,
             versionGroupId,
-            branchId,
-            overwintered: true,
           }); // Type assertion needed due to Trezor Connect types not supporting PAYTOOPRETURN
 
           if (!result.success) {
             throw new SwapKitError({
               errorKey: "wallet_trezor_failed_to_sign_transaction",
-              info: {
-                chain,
-                error: (result.payload as { error: string; code?: string }).error,
-              },
+              info: { chain, error: (result.payload as { error: string; code?: string }).error },
             });
           }
 
@@ -159,19 +142,13 @@ async function getTrezorWallet<T extends Chain>({
         if (!(address && params.recipient)) {
           throw new SwapKitError({
             errorKey: "wallet_missing_params",
-            info: { wallet: WalletOption.TREZOR, address, recipient: params.recipient },
+            info: { address, recipient: params.recipient, wallet: WalletOption.TREZOR },
           });
         }
 
-        const feeRate =
-          params.feeRate || (await toolbox.getFeeRates())[params.feeOptionKey || FeeOption.Fast];
+        const feeRate = params.feeRate || (await toolbox.getFeeRates())[params.feeOptionKey || FeeOption.Fast];
 
-        const { psbt } = await toolbox.createTransaction({
-          ...params,
-          sender: address,
-          feeRate,
-          fetchTxHex: false,
-        });
+        const { psbt } = await toolbox.createTransaction({ ...params, feeRate, fetchTxHex: false, sender: address });
 
         const signedPsbt = await signer.signTransaction(psbt);
         // Extract the signed transaction hex that we stored
@@ -185,7 +162,7 @@ async function getTrezorWallet<T extends Chain>({
         return toolbox.broadcastTx(txHex);
       };
 
-      return { ...toolbox, address, transfer, signTransaction: signer.signTransaction };
+      return { ...toolbox, address, signTransaction: signer.signTransaction, transfer };
     }
 
     case Chain.Bitcoin:
