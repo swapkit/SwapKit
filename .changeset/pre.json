@@ -1,27 +1,5 @@
 {
-  "changesets": [
-    "chubby-sheep-remain",
-    "cute-rings-win",
-    "eight-hats-enter",
-    "empty-horses-flash",
-    "exodus-passkeys-v4-solana",
-    "fair-eggs-repair",
-    "fast-yaks-change",
-    "fix-wallet-connections",
-    "fluffy-crabs-ring",
-    "huge-cooks-carry",
-    "huge-guests-make",
-    "mighty-goats-fail",
-    "moody-tools-dig",
-    "nasty-carpets-hammer",
-    "olive-buttons-wave",
-    "puny-trains-find",
-    "red-readers-marry",
-    "shaky-wombats-tickle",
-    "tronlink-wallet-integration",
-    "twenty-baths-stare",
-    "zcash-exodus-lib-update"
-  ],
+  "changesets": ["modern-numbers-bake", "odd-months-switch", "petite-houses-yell"],
   "initialVersions": {
     "@internal/docs": "0.0.0",
     "@internal/playground-bun-backend": "0.0.0",
