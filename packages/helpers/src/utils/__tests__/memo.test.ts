@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { Chain, MemoType } from "../../types";
+import { Chain } from "@swapkit/types";
+import { MemoType } from "../../types";
 
 import {
   getMemoForDeposit,

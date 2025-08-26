@@ -1,5 +1,5 @@
+import { Chain } from "@swapkit/types";
 import { type ErrorKeys, SwapKitError } from "../modules/swapKitError";
-import { Chain } from "../types";
 
 // 10 rune for register, 1 rune per year
 // MINIMUM_REGISTRATION_FEE = 11

@@ -184,10 +184,14 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         const { accountNumber, sequence = 0 } = account;
 
         const msgs = [buildAminoMsg({ assetValue, memo, sender: address, ...rest })];
-
-        const chainId = ChainId.THORChain;
-
-        const signDoc = makeSignDoc(msgs, fee, chainId, memo, accountNumber?.toString(), sequence?.toString() || "0");
+        const signDoc = makeSignDoc(
+          msgs,
+          fee,
+          ChainId.THOR,
+          memo,
+          accountNumber?.toString(),
+          sequence?.toString() || "0",
+        );
 
         const signature: any = await signRequest(signDoc);
 

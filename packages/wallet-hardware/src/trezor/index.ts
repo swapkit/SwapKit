@@ -191,7 +191,7 @@ async function getTrezorWallet<T extends Chain>({
         }
 
         if (chain === Chain.BitcoinCash) {
-          const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
+          const toolbox = await getUtxoToolbox(chain as typeof Chain.BitcoinCash);
           return toolbox.stripPrefix(payload.address);
         }
 
@@ -205,7 +205,7 @@ async function getTrezorWallet<T extends Chain>({
         const address_n = derivationPath.map((pathElement, index) =>
           index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
         );
-        const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
+        const toolbox = await getUtxoToolbox(chain as typeof Chain.BitcoinCash);
 
         const result = await TrezorConnect.signTransaction({
           coin,

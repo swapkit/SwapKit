@@ -1,11 +1,11 @@
 import type { OfflineAminoSigner } from "@cosmjs/amino";
 import type { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type {
-  Chain,
   ChainId,
   CosmosChain,
   DerivationPathArray,
   GenericCreateTransactionParams,
+  TCLikeChain,
 } from "@swapkit/helpers";
 import type { buildAminoMsg } from "./thorchainUtils";
 import type { createCosmosToolbox } from "./toolbox/cosmos";
@@ -39,10 +39,10 @@ export type CosmosToolboxParams<T = CosmosChain> = { chain: T } & (
 export type BaseCosmosToolboxType = ReturnType<typeof createCosmosToolbox>;
 export type BaseCosmosWallet = Awaited<ReturnType<typeof createCosmosToolbox>>;
 export type CosmosWallets = {
-  [chain in Chain.Cosmos | Chain.Kujira | Chain.Noble]: BaseCosmosWallet;
+  [chain in Exclude<CosmosChain, TCLikeChain>]: BaseCosmosWallet;
 };
 
 export type ThorchainWallet = Awaited<Omit<ReturnType<typeof createThorchainToolbox>, "signMessage">>;
 export type ThorchainWallets = {
-  [chain in Chain.THORChain | Chain.Maya]: ThorchainWallet;
+  [chain in TCLikeChain]: ThorchainWallet;
 };

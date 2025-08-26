@@ -6,6 +6,7 @@ import {
   type ChainWallet,
   type ConditionalAssetValueReturn,
   CosmosChains,
+  type CryptoChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
@@ -191,7 +192,7 @@ export function SwapKit<
     if (chain === Chain.Fiat || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat>);
+    const wallet = getWallet(chain as CryptoChain);
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
@@ -216,10 +217,10 @@ export function SwapKit<
 
   function transfer({ assetValue, ...params }: GenericTransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
-    if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
+    if ([Chain.Fiat, Chain.Radix].includes(chain as typeof Chain.Fiat) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix | Chain.Near>);
+    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Fiat | typeof Chain.Radix | typeof Chain.Near>);
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });

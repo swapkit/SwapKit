@@ -1,4 +1,4 @@
-import type { Chain } from "./chains";
+import type { Chain } from "@swapkit/types";
 import type { ChainWallet, CryptoChain } from "./wallet";
 
 export type AddChainType<M = { [key in string]: any }> = <T extends CryptoChain>(

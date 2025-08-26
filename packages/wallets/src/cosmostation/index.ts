@@ -1,8 +1,8 @@
 import type { Keplr } from "@keplr-wallet/types";
-import { Chain, ChainId, ChainToChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
+import { Chain, ChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
-const cosmostationSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.Noble, ChainId.THORChain] as const;
+const cosmostationSupportedChainIds = [ChainId.GAIA, ChainId.KUJI, ChainId.NOBLE, ChainId.THOR] as const;
 const cosmostationSupportedEVMChains = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
@@ -22,7 +22,7 @@ declare global {
 async function connectCosmosChains(chains: Chain[], addChain: any, keplrProvider: Keplr) {
   await Promise.all(
     chains.map(async (chain) => {
-      const chainId = ChainToChainId[chain] as (typeof cosmostationSupportedChainIds)[number];
+      const chainId = ChainId[chain] as (typeof cosmostationSupportedChainIds)[number];
 
       await keplrProvider.enable(chainId);
       const signer = keplrProvider.getOfflineSignerOnlyAmino(chainId);
@@ -78,7 +78,7 @@ export const cosmostationWallet = createWallet({
       }
 
       const cosmosChains = filteredChains.filter((chain) =>
-        cosmostationSupportedChainIds.includes(ChainToChainId[chain] as any),
+        cosmostationSupportedChainIds.includes(ChainId[chain] as any),
       );
       const evmChains = filteredChains.filter((chain) => cosmostationSupportedEVMChains.includes(chain as any));
 

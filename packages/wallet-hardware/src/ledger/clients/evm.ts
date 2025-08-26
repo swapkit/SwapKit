@@ -11,7 +11,7 @@ import { AbstractSigner, type Provider, type TransactionRequest } from "ethers";
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
 class EVMLedgerInterface extends AbstractSigner {
-  chainId: ChainId = ChainId.Ethereum;
+  chainId: ChainId = ChainId.ETH;
   derivationPath = "";
   ledgerApp: InstanceType<typeof EthereumApp> | null = null;
   ledgerTimeout = 50000;
@@ -19,11 +19,11 @@ class EVMLedgerInterface extends AbstractSigner {
   constructor({
     provider,
     derivationPath = NetworkDerivationPath.OP,
-    chainId = ChainId.Optimism,
+    chainId = ChainId.OP,
   }: { provider: Provider; derivationPath?: DerivationPathArray | string; chainId?: ChainId }) {
     super(provider);
 
-    this.chainId = chainId || ChainId.Ethereum;
+    this.chainId = chainId || ChainId.ETH;
     this.derivationPath = typeof derivationPath === "string" ? derivationPath : derivationPathToString(derivationPath);
 
     Object.defineProperty(this, "provider", { enumerable: true, value: provider || null, writable: false });
@@ -123,29 +123,13 @@ class EVMLedgerInterface extends AbstractSigner {
 
 type LedgerParams = { provider: Provider; derivationPath?: DerivationPathArray };
 
-export const EthereumLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Ethereum, derivationPath, provider });
-
-export const AvalancheLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Avalanche, derivationPath, provider });
-
-export const BinanceSmartChainLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.BinanceSmartChain, derivationPath, provider });
-
-export const ArbitrumLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Arbitrum, derivationPath, provider });
-
-export const PolygonLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Polygon, derivationPath, provider });
-
-export const OptimismLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Optimism, derivationPath, provider });
-
-export const BaseLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Base, derivationPath, provider });
-
-export const AuroraLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Aurora, derivationPath, provider });
-
-export const GnosisLedger = ({ provider, derivationPath }: LedgerParams) =>
-  new EVMLedgerInterface({ chainId: ChainId.Gnosis, derivationPath, provider });
+export const ArbitrumLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.ARB });
+export const AuroraLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.AURORA });
+export const AvalancheLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.AVAX });
+export const BaseLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.BASE });
+export const EthereumLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.ETH });
+export const GnosisLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.GNO });
+export const OptimismLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.OP });
+export const PolygonLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.POL });
+export const BinanceSmartChainLedger = (params: LedgerParams) =>
+  new EVMLedgerInterface({ ...params, chainId: ChainId.BSC });

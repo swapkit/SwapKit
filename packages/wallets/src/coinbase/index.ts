@@ -1,4 +1,4 @@
-import { Chain, ChainToChainId, filterSupportedChains, SKConfig, WalletOption } from "@swapkit/helpers";
+import { Chain, ChainId, filterSupportedChains, SKConfig, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 import { getWalletMethods } from "./signer";
@@ -14,7 +14,7 @@ export const coinbaseWallet = createWallet({
 
       const coinbaseSdk = createCoinbaseWalletSDK({
         ...coinbaseConfig,
-        appChainIds: filteredChains.map((chain) => Number(ChainToChainId[chain])),
+        appChainIds: filteredChains.map((chain) => Number(ChainId[chain])),
       });
 
       await Promise.all(

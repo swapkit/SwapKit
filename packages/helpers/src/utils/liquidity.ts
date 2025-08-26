@@ -1,5 +1,5 @@
+import { Chain, getChainConfig } from "@swapkit/types";
 import { SwapKitNumber } from "../modules/swapKitNumber";
-import { BaseDecimal } from "../types/chains";
 
 type ShareParams<T extends {}> = T & { liquidityUnits: string; poolUnits: string };
 
@@ -70,7 +70,7 @@ export function getAsymmetricAssetWithdrawAmount({
 }
 
 function toTCSwapKitNumber(value: string) {
-  return SwapKitNumber.fromBigInt(BigInt(value), BaseDecimal.THOR);
+  return SwapKitNumber.fromBigInt(BigInt(value), getChainConfig(Chain.THORChain).baseDecimal);
 }
 
 export function getSymmetricPoolShare({

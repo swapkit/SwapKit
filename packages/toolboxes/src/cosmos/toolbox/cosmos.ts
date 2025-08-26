@@ -4,10 +4,8 @@ import { base64, bech32 } from "@scure/base";
 import {
   AssetValue,
   applyFeeMultiplier,
-  BaseDecimal,
   Chain,
   type ChainId,
-  ChainToChainId,
   type CosmosChain,
   CosmosChainPrefixes,
   DerivationPath,
@@ -15,11 +13,13 @@ import {
   derivationPathToString,
   FeeOption,
   type GenericTransferParams,
+  getChainConfig,
   getRPCUrl,
   NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
+  type TCLikeChain,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
@@ -177,7 +177,8 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
           .filter(({ denom }) => denom && !denom.includes("IBC/"))
           .map(({ denom, amount }) => {
             const fullDenom =
-              [Chain.THORChain, Chain.Maya].includes(chain) && (denom.includes("/") || denom.includes("˜"))
+              [Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) &&
+              (denom.includes("/") || denom.includes("˜"))
                 ? `${chain}.${denom}`
                 : denom;
             return getAssetFromDenom(fullDenom, amount);
@@ -242,18 +243,20 @@ export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: 
 
 function getPrefix<C extends CosmosChain>(chain?: C) {
   const { isStagenet } = SKConfig.get("envs");
-  const useStagenetPrefix = chain ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet : false;
+  const useStagenetPrefix = chain ? [Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) && isStagenet : false;
   const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
 
   return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
 }
 
 async function getFees(chain: Chain, safeDefault: number) {
-  const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
+  const { chainId, baseDecimal } = getChainConfig(chain);
+
+  const baseFee = await fetchFeeRateFromSwapKit(chainId, safeDefault);
   return {
-    average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
-    fast: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)), BaseDecimal[chain]),
-    fastest: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)), BaseDecimal[chain]),
+    average: SwapKitNumber.fromBigInt(BigInt(baseFee), baseDecimal),
+    fast: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)), baseDecimal),
+    fastest: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)), baseDecimal),
   } as { [key in FeeOption]: SwapKitNumber };
 }
 

@@ -19,7 +19,8 @@
       "!**/playgrounds",
       "!**/coverage",
       "!**/MsgCompiled.ts",
-      "!**/.astro"
+      "!**/.astro",
+      "!**/docs"
     ],
     "maxSize": 5242880
   },

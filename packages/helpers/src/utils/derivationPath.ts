@@ -1,4 +1,5 @@
-import { Chain, type DerivationPathArray, type EVMChain, EVMChains, NetworkDerivationPath } from "../types";
+import { Chain, type EVMChain, EVMChains } from "@swapkit/types";
+import { type DerivationPathArray, NetworkDerivationPath } from "../types";
 
 type Params = {
   chain: Chain;

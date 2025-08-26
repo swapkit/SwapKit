@@ -1,5 +1,6 @@
+import { Chain } from "@swapkit/types";
 import { createStore } from "zustand/vanilla";
-import { Chain, EXPLORER_URLS, FALLBACK_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
+import { EXPLORER_URLS, FALLBACK_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
 export type SKConfigIntegrations = {
@@ -103,7 +104,7 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
       explorerUrls: { ...s.explorerUrls, ...config.explorerUrls },
       feeMultipliers: config.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config.integrations },
-      nodeUrls: { ...s.nodeUrls, ...config.nodeUrls },
+      nodeUrls: { ...s.nodeUrls, ...config.nodeUrls } as typeof s.nodeUrls,
       rpcUrls: { ...s.rpcUrls, ...config.rpcUrls },
       wallets: s.wallets.concat(config.wallets || []),
     })),
@@ -113,7 +114,7 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   setFeeMultipliers: (multipliers) => set(() => ({ feeMultipliers: multipliers })),
   setIntegrationConfig: (integration, config) =>
     set((s) => ({ integrations: { ...s.integrations, [integration]: config } })),
-  setNodeUrl: (chain, url) => set((s) => ({ nodeUrls: { ...s.nodeUrls, [chain]: url } })),
+  setNodeUrl: (chain, url) => set((s) => ({ nodeUrls: { ...s.nodeUrls, [chain]: url } as typeof s.nodeUrls })),
   setRequestOptions: (options) =>
     set((s) => ({
       requestOptions: {

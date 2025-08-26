@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { BaseDecimal, Chain } from "../../types/chains";
+import { Chain, getChainConfig } from "@swapkit/types";
 import { AssetValue, getMinAmountByChain } from "../assetValue";
 
 describe("AssetValue", () => {
@@ -580,11 +580,12 @@ describe("AssetValue", () => {
   describe("fromChainOrSignature", () => {
     test("creates AssetValue from common asset string or chain", () => {
       const cosmosAsset = AssetValue.from({ chain: Chain.Cosmos });
+      const { baseDecimal: gaiaDecimal } = getChainConfig(Chain.Cosmos);
       expect(cosmosAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.Cosmos,
-          decimal: BaseDecimal.GAIA,
+          decimal: gaiaDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "ATOM",
@@ -594,11 +595,12 @@ describe("AssetValue", () => {
       );
 
       const bscAsset = AssetValue.from({ chain: Chain.BinanceSmartChain });
+      const { baseDecimal: bscDecimal } = getChainConfig(Chain.BinanceSmartChain);
       expect(bscAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.BinanceSmartChain,
-          decimal: BaseDecimal.BSC,
+          decimal: bscDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "BNB",
@@ -608,11 +610,12 @@ describe("AssetValue", () => {
       );
 
       const thorAsset = AssetValue.from({ chain: Chain.THORChain });
+      const { baseDecimal: thorDecimal } = getChainConfig(Chain.THORChain);
       expect(thorAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.THORChain,
-          decimal: BaseDecimal.THOR,
+          decimal: thorDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "RUNE",
@@ -622,11 +625,12 @@ describe("AssetValue", () => {
       );
 
       const cacaoAsset = AssetValue.from({ chain: Chain.Maya });
+      const { baseDecimal: cacaoDecimal } = getChainConfig(Chain.Maya);
       expect(cacaoAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.Maya,
-          decimal: 10,
+          decimal: cacaoDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "CACAO",
@@ -663,11 +667,12 @@ describe("AssetValue", () => {
       // );
 
       const arbAsset = AssetValue.from({ chain: Chain.Arbitrum });
+      const { baseDecimal: arbDecimal } = getChainConfig(Chain.Arbitrum);
       expect(arbAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.Arbitrum,
-          decimal: BaseDecimal.ARB,
+          decimal: arbDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "ETH",
@@ -677,11 +682,12 @@ describe("AssetValue", () => {
       );
 
       const opAsset = AssetValue.from({ chain: Chain.Optimism });
+      const { baseDecimal: opDecimal } = getChainConfig(Chain.Optimism);
       expect(opAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.Optimism,
-          decimal: BaseDecimal.OP,
+          decimal: opDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "ETH",
@@ -691,10 +697,11 @@ describe("AssetValue", () => {
       );
 
       const xrdAsset = AssetValue.from({ chain: Chain.Radix });
+      const { baseDecimal: xrdDecimal } = getChainConfig(Chain.Radix);
       expect(xrdAsset).toEqual(
         expect.objectContaining({
           chain: Chain.Radix,
-          decimal: BaseDecimal.XRD,
+          decimal: xrdDecimal,
           isGasAsset: true,
           isSynthetic: false,
           ticker: "XRD",
@@ -703,10 +710,11 @@ describe("AssetValue", () => {
       );
 
       const trxAsset = AssetValue.from({ chain: Chain.Tron });
+      const { baseDecimal: trxDecimal } = getChainConfig(Chain.Tron);
       expect(trxAsset).toEqual(
         expect.objectContaining({
           chain: Chain.Tron,
-          decimal: BaseDecimal.TRON,
+          decimal: trxDecimal,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "TRX",
@@ -716,10 +724,11 @@ describe("AssetValue", () => {
       );
 
       const trxAssetFromString = AssetValue.from({ asset: "TRON.TRX" });
+      const { baseDecimal: trxDecimalFromString } = getChainConfig(Chain.Tron);
       expect(trxAssetFromString).toEqual(
         expect.objectContaining({
           chain: Chain.Tron,
-          decimal: BaseDecimal.TRON,
+          decimal: trxDecimalFromString,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "TRX",

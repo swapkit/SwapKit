@@ -62,7 +62,7 @@ export async function mayachainWalletMethods({
     const signDoc = makeSignDoc(
       [msg],
       { amount: [], gas: "500000000" },
-      ChainId.Maya,
+      ChainId.MAYA,
       memo,
       accountNumber?.toString(),
       sequence,

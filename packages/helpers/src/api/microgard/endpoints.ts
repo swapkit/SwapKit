@@ -1,4 +1,5 @@
-import { AssetValue, BaseDecimal, type Chain, RequestClient, SwapKitNumber } from "@swapkit/helpers";
+import { AssetValue, getChainConfig, RequestClient, SwapKitNumber } from "@swapkit/helpers";
+import { Chain } from "@swapkit/types";
 import type { LiquidityPositionRaw, MicroguardTHORNameDetails, PoolDetail, PoolPeriod } from "./types";
 
 /**
@@ -34,18 +35,19 @@ export async function getTNSChainAddress({ chain, tns }: { chain: Chain; tns: st
 
 export async function getLiquidityPositions(addresses: string[]) {
   const rawLiquidityPositions = await getLiquidityPositionsRaw(addresses);
+  const fromBaseDecimal = getChainConfig(Chain.THORChain).baseDecimal;
 
   return rawLiquidityPositions.map((p) => ({
-    asset: AssetValue.from({ asset: p.pool, fromBaseDecimal: BaseDecimal.THOR, value: p.assetAdded }),
-    assetPending: AssetValue.from({ asset: p.pool, fromBaseDecimal: BaseDecimal.THOR, value: p.assetPending }),
+    asset: AssetValue.from({ asset: p.pool, fromBaseDecimal, value: p.assetAdded }),
+    assetPending: AssetValue.from({ asset: p.pool, fromBaseDecimal, value: p.assetPending }),
     assetRegisteredAddress: p.assetAddress,
-    assetWithdrawn: AssetValue.from({ asset: p.pool, fromBaseDecimal: BaseDecimal.THOR, value: p.assetWithdrawn }),
+    assetWithdrawn: AssetValue.from({ asset: p.pool, fromBaseDecimal, value: p.assetWithdrawn }),
     dateFirstAdded: p.dateFirstAdded,
     dateLastAdded: p.dateLastAdded,
     poolShare: new SwapKitNumber(p.sharedUnits).div(p.poolUnits),
-    rune: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal: BaseDecimal.THOR, value: p.runeAdded }),
-    runePending: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal: BaseDecimal.THOR, value: p.runePending }),
+    rune: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal, value: p.runeAdded }),
+    runePending: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal, value: p.runePending }),
     runeRegisteredAddress: p.runeAddress,
-    runeWithdrawn: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal: BaseDecimal.THOR, value: p.runeWithdrawn }),
+    runeWithdrawn: AssetValue.from({ asset: "THOR.RUNE", fromBaseDecimal, value: p.runeWithdrawn }),
   }));
 }

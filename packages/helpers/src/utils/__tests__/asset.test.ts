@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { BaseDecimal, Chain } from "../../types";
+import { Chain, getChainConfig } from "@swapkit/types";
 
 import { assetFromString, getAssetType, getDecimal } from "../asset";
 
@@ -52,13 +52,16 @@ describe("getDecimal", () => {
   /**
    * Test out native
    */
-  const filteredChains = Object.values(Chain).filter((c) => ![Chain.Ethereum, Chain.Avalanche].includes(c));
+  const filteredChains = Object.values(Chain).filter(
+    (c) => ![Chain.Ethereum, Chain.Avalanche].includes(c as typeof Chain.Ethereum),
+  );
 
   for (const chain of filteredChains) {
     describe(chain, () => {
       test(`returns proper decimal for native ${chain} asset`, async () => {
         const decimal = await getDecimal({ chain, symbol: chain });
-        expect(decimal).toBe(BaseDecimal[chain]);
+        const { baseDecimal } = getChainConfig(chain);
+        expect(decimal).toBe(baseDecimal);
       });
     });
   }
@@ -67,7 +70,7 @@ describe("getDecimal", () => {
     // TODO: if too many requests, this will fail due to timeout
     test.todo("returns proper decimal for eth and it's assets", async () => {
       const ethDecimal = await getDecimal({ chain: Chain.Ethereum, symbol: "ETH" });
-      expect(ethDecimal).toBe(BaseDecimal.ETH);
+      expect(ethDecimal).toBe(getChainConfig(Chain.Ethereum).baseDecimal);
       await Bun.sleep(500);
 
       const usdcDecimal = await getDecimal({
@@ -104,7 +107,7 @@ describe("getDecimal", () => {
     // TODO: if too many requests, this will fail due to timeout
     test.todo("returns proper decimal for avax and it's assets", async () => {
       const avaxDecimal = await getDecimal({ chain: Chain.Avalanche, symbol: "AVAX" });
-      expect(avaxDecimal).toBe(BaseDecimal.AVAX);
+      expect(avaxDecimal).toBe(getChainConfig(Chain.Avalanche).baseDecimal);
 
       const wbtceDecimal = await getDecimal({
         chain: Chain.Avalanche,
@@ -141,7 +144,7 @@ describe("getDecimal", () => {
   describe("Radix", () => {
     test.todo("returns proper decimal for radix and it's assets", async () => {
       const radixDecimal = await getDecimal({ chain: Chain.Radix, symbol: "XRD" });
-      expect(radixDecimal).toBe(BaseDecimal.XRD);
+      expect(radixDecimal).toBe(getChainConfig(Chain.Radix).baseDecimal);
       await Bun.sleep(500);
 
       const xwBTCDecimal = await getDecimal({

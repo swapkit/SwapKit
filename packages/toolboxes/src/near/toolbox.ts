@@ -1,4 +1,4 @@
-import { AssetValue, BaseDecimal, Chain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, Chain, getChainConfig, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import {
@@ -236,12 +236,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
       // NEAR doesn't support fee multipliers - gas price is fixed by the network
       const totalCostYocto = totalGasUnits * BigInt(gasPrice.toString());
+      const { baseDecimal } = getChainConfig(Chain.Near);
 
-      return AssetValue.from({
-        chain: Chain.Near,
-        fromBaseDecimal: BaseDecimal[Chain.Near],
-        value: totalCostYocto.toString(),
-      });
+      return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value: totalCostYocto.toString() });
     }
 
     // Handle new gas estimation params
@@ -347,6 +344,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   async function getBalance(address: string) {
+    const { baseDecimal } = getChainConfig(Chain.Near);
     try {
       const account = await getAccount(address);
 
@@ -354,9 +352,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       try {
         const value = await account.getBalance();
 
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value });
+        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value });
       } catch {
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: "0" });
+        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value: "0" });
       }
 
       //   // Then, fetch token balances from API
@@ -391,6 +389,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   async function estimateGas(params: NearGasEstimateParams, account?: Account) {
+    const { baseDecimal } = getChainConfig(Chain.Near);
+
     const gasInTGas = await match(params)
       .when(isSimpleTransfer, () => GAS_COSTS.SIMPLE_TRANSFER)
       .when(isContractCall, (p) => getContractMethodGas(p.methodName))
@@ -412,7 +412,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12); // Convert TGas to gas units
     const costInYoctoNear = gasInUnits * BigInt(gasPrice);
 
-    return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: costInYoctoNear });
+    return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value: costInYoctoNear });
   }
 
   // Get current gas price from network

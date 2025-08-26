@@ -1,6 +1,6 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { SigningStargateClientOptions } from "@cosmjs/stargate";
-import { AssetValue, BaseDecimal, Chain, type CosmosChain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, Chain, type CosmosChain, getChainConfig, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { CosmosCreateTransactionParams } from "./types";
 
 export const USK_KUJIRA_FACTORY_DENOM =
@@ -163,29 +163,32 @@ export async function cosmosCreateTransaction({
 
 // Map of known denoms to their asset configurations
 const DENOM_MAP = {
-  atom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
+  atom: { chain: Chain.Cosmos, decimals: getChainConfig(Chain.Cosmos).baseDecimal },
 
   // Maya denoms
   cacao: { chain: Chain.Maya, decimals: 10 }, // Maya uses 10 decimals for CACAO
-  kuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
+  kuji: { chain: Chain.Kujira, decimals: getChainConfig(Chain.Kujira).baseDecimal },
   maya: { asset: `${Chain.Maya}.${Chain.Maya}`, decimals: 4 }, // MAYA token uses 4 decimals
   // THORChain denoms
-  rune: { chain: Chain.THORChain, decimals: BaseDecimal[Chain.THORChain] },
-  tcy: { asset: "THOR.TCY", decimals: BaseDecimal[Chain.THORChain] },
+  rune: { chain: Chain.THORChain, decimals: getChainConfig(Chain.THORChain).baseDecimal },
+  tcy: { asset: "THOR.TCY", decimals: getChainConfig(Chain.THORChain).baseDecimal },
 
   // Cosmos denoms
-  uatom: { chain: Chain.Cosmos, decimals: BaseDecimal[Chain.Cosmos] },
+  uatom: { chain: Chain.Cosmos, decimals: getChainConfig(Chain.Cosmos).baseDecimal },
 
   // Kujira denoms
-  ukuji: { chain: Chain.Kujira, decimals: BaseDecimal[Chain.Kujira] },
-  usdc: { chain: Chain.Noble, decimals: BaseDecimal[Chain.Noble] },
+  ukuji: { chain: Chain.Kujira, decimals: getChainConfig(Chain.Kujira).baseDecimal },
+  usdc: { chain: Chain.Noble, decimals: getChainConfig(Chain.Noble).baseDecimal },
 
   // Noble denoms
-  uusdc: { chain: Chain.Noble, decimals: BaseDecimal[Chain.Noble] },
-  "x/kuji": { asset: "THOR.KUJI", decimals: BaseDecimal[Chain.THORChain] },
+  uusdc: { chain: Chain.Noble, decimals: getChainConfig(Chain.Noble).baseDecimal },
+  "x/kuji": { asset: "THOR.KUJI", decimals: getChainConfig(Chain.THORChain).baseDecimal },
 
   // USK on Kujira (lowercase version of the factory denom)
-  [USK_KUJIRA_FACTORY_DENOM.toLowerCase()]: { asset: `${Chain.Kujira}.USK`, decimals: BaseDecimal[Chain.Kujira] },
+  [USK_KUJIRA_FACTORY_DENOM.toLowerCase()]: {
+    asset: `${Chain.Kujira}.USK`,
+    decimals: getChainConfig(Chain.Kujira).baseDecimal,
+  },
 };
 
 /**

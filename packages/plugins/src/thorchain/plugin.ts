@@ -2,13 +2,13 @@ import {
   ApproveMode,
   type ApproveReturnType,
   AssetValue,
-  BaseDecimal,
   Chain,
   type CryptoChain,
   type ErrorKeys,
   type EVMChain,
   EVMChains,
   FeeOption,
+  getChainConfig,
   getMemoForDeposit,
   getMemoForLeaveAndBond,
   getMemoForNamePreferredAssetRegister,
@@ -22,6 +22,7 @@ import {
   ProviderName,
   SwapKitError,
   type SwapParams,
+  type TCLikeChain,
   wrapWithThrow,
 } from "@swapkit/helpers";
 import {
@@ -101,9 +102,7 @@ function getInboundDataFunction(type?: THORNodeType) {
   };
 }
 
-type PluginChain = Chain.Maya | Chain.THORChain;
-
-function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
+function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
   return function plugin({ getWallet }: SwapKitPluginParams) {
     const pluginType = pluginChain === Chain.Maya ? "mayachain" : "thorchain";
     const getInboundDataByChain = getInboundDataFunction(pluginType);
@@ -167,7 +166,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
         const abi = abis?.[chain as keyof typeof abis];
 
         if (!abi) {
-          const wallet = getWallet(chain as PluginChain);
+          const wallet = getWallet(chain as TCLikeChain);
           const shouldDeposit = pluginChain === chain && recipient === "";
           // @Towan: Is that the same action? :)
           return shouldDeposit ? wallet.deposit(params) : wallet.transfer(params);
@@ -402,11 +401,13 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
     async function claimTcy({ chain, thorAddress }: { chain: Chain; thorAddress: string }) {
       const inboundData = await getInboundDataByChain(chain);
       const dust_threshold = inboundData.dust_threshold;
+      const { baseDecimal: chainDecimal } = getChainConfig(chain);
+      const { baseDecimal: tcDecimal } = getChainConfig(Chain.THORChain);
 
       return deposit({
         assetValue: AssetValue.from({
           chain,
-          fromBaseDecimal: Math.min(BaseDecimal[chain], BaseDecimal[Chain.THORChain]),
+          fromBaseDecimal: Math.min(chainDecimal, tcDecimal),
           value: chain !== Chain.THORChain ? dust_threshold : 0,
         }),
         memo: getMemoForTcyClaim(MemoType.CLAIM_TCY, { address: thorAddress }),

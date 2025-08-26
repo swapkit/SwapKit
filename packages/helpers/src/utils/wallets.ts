@@ -1,8 +1,7 @@
+import { type Chain, getChainConfig } from "@swapkit/types";
 import type { BrowserProvider, JsonRpcProvider } from "ethers";
 import { SwapKitError } from "../modules/swapKitError";
 import {
-  type Chain,
-  ChainToHexChainId,
   type EIP6963AnnounceProviderEvent,
   type EIP6963Provider,
   type EthereumWindowProvider,
@@ -57,10 +56,12 @@ export function listWeb3EVMWallets() {
 }
 
 export async function switchEVMWalletNetwork(provider: BrowserProvider, chain: Chain, networkParams?: NetworkParams) {
+  const chainConfig = getChainConfig(chain);
+
   try {
     await providerRequest({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: ChainToHexChainId[chain] }],
+      params: [{ chainId: chainConfig.chainId }],
       provider,
     });
   } catch (error) {
@@ -108,7 +109,8 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   chain: Chain,
 ) {
   return (async (...args: any[]) => {
-    if ((await provider.getNetwork()).chainId.toString() === ChainToHexChainId[chain]) {
+    const { chainIdHex } = getChainConfig(chain);
+    if ((await provider.getNetwork()).chainId.toString() === chainIdHex) {
       return func(...args);
     }
     try {

@@ -171,7 +171,7 @@ export const NearPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
 
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, typeof Chain.Radix>);
 
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
