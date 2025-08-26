@@ -233,7 +233,7 @@ function getNameDetails(baseUrl: string) {
     } catch (error: any) {
       // Return empty array when no names found for owner (404)
       if (error?.info?.status === 404) {
-        return [];
+        return undefined;
       }
       throw error;
     }
