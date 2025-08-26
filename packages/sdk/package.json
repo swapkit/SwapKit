@@ -8,43 +8,25 @@
   },
   "description": "SwapKit - SDK",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
-    "./core": {
-      "import": "./dist/core.js",
-      "require": "./dist/core.cjs",
-      "types": "./dist/types/core.d.ts"
-    },
+    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    "./core": { "import": "./dist/core.js", "require": "./dist/core.cjs", "types": "./dist/types/core.d.ts" },
     "./plugins": {
       "import": "./dist/plugins.js",
       "require": "./dist/plugins.cjs",
       "types": "./dist/types/plugins.d.ts"
     },
-    "./server": {
-      "import": "./dist/server.js",
-      "require": "./dist/server.cjs",
-      "types": "./dist/types/server.d.ts"
-    },
+    "./server": { "import": "./dist/server.js", "require": "./dist/server.cjs", "types": "./dist/types/server.d.ts" },
     "./wallets": {
       "import": "./dist/wallets.js",
       "require": "./dist/wallets.cjs",
       "types": "./dist/types/wallets.d.ts"
     }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/sdk",
-  "repository": {
-    "directory": "packages/sdk",
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "directory": "packages/sdk", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
@@ -53,5 +35,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.2"
+  "version": "4.0.3"
 }

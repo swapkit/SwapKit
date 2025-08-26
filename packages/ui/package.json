@@ -1,41 +1,27 @@
 {
   "author": "swapkit-oss",
-  "dependencies": {
-    "@swapkit/browser": "workspace:*"
-  },
+  "dependencies": { "@swapkit/browser": "workspace:*" },
   "description": "SwapKit - UI",
-  "devDependencies": {
-    "react": "19.1.1"
-  },
+  "devDependencies": { "react": "19.1.1" },
   "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
     "./react": {
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/ui",
   "private": true,
-  "repository": {
-    "directory": "packages/ui",
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "directory": "packages/ui", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo"
   },
   "type": "module",
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

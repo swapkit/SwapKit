@@ -84,11 +84,7 @@
     "xrpl": "4.3.0"
   },
   "exports": {
-    ".": {
-      "default": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
     "./cosmos": {
       "default": "./dist/src/cosmos/index.js",
       "require": "./dist/src/cosmos/index.cjs",
@@ -135,16 +131,11 @@
       "types": "./dist/types/utxo/index.d.ts"
     }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/toolboxes",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
@@ -155,5 +146,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.1"
+  "version": "4.0.2"
 }

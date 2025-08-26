@@ -16,11 +16,7 @@
     "ts-pattern": "5.8.0"
   },
   "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
     "./chainflip": {
       "default": "./dist/chainflip/index.js",
       "require": "./dist/chainflip/index.cjs",
@@ -52,17 +48,11 @@
       "types": "./dist/types/thorchain/index.d.ts"
     }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",
-  "repository": {
-    "directory": "packages/plugins",
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "directory": "packages/plugins", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
@@ -71,5 +61,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.2"
+  "version": "4.0.3"
 }

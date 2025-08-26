@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.2
+
+### Patch Changes
+
+- [#1455](https://github.com/swapkit/SwapKit/pull/1455) [`bc7dc5a`](https://github.com/swapkit/SwapKit/commit/bc7dc5a01e65564aad8fa6745937254dfeaab699) Thanks [@towanTG](https://github.com/towanTG)! - Improves return of some midgard requests if 404 is coming from server
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.2
+
 ## 4.0.1
 
 ### Patch Changes

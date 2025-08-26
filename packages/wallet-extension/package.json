@@ -1,20 +1,11 @@
 {
   "author": "swapkit-oss",
-  "dependencies": {
-    "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*"
-  },
+  "dependencies": { "@swapkit/helpers": "workspace:*", "@swapkit/toolboxes": "workspace:*" },
   "description": "SwapKit - Wallet Extension",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    }
+    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallet-extension",
@@ -33,5 +24,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.1"
+  "version": "4.0.2"
 }
