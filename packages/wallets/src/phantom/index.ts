@@ -76,7 +76,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-      const toolbox = await getSolanaToolbox();
+      const toolbox = await getSolanaToolbox({ signer: provider });
 
       const transfer = async ({
         recipient,

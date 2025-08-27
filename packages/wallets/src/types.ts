@@ -7,7 +7,7 @@ import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
 import type { keepkeyWallet } from "@swapkit/wallet-hardware/keepkey";
 import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
-import type { BrowserProvider, Eip1193Provider } from "ethers";
+import type { Eip1193Provider } from "ethers";
 import type { bitgetWallet } from "./bitget";
 import type { coinbaseWallet } from "./coinbase";
 import type { cosmostationWallet } from "./cosmostation";
@@ -127,7 +127,7 @@ declare global {
       bitcoin: Eip1193Provider;
       bitcoincash: Eip1193Provider;
       dogecoin: Eip1193Provider;
-      ethereum: BrowserProvider;
+      ethereum: Eip1193Provider;
       keplr: Keplr;
       litecoin: Eip1193Provider;
       thorchain: Eip1193Provider;

@@ -150,7 +150,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
         });
       }
 
-      return prepareNetworkSwitch({ chain, provider: window.xfi?.ethereum, toolbox: { ...toolbox, ...ctrlMethods } });
+      return prepareNetworkSwitch({ chain, provider, toolbox: { ...toolbox, ...ctrlMethods } });
     }
 
     case Chain.Near: {
