@@ -1,37 +1,13 @@
 import { Chain, StagenetChain } from "@swapkit/types";
 
-export const BlockTimes: Record<Partial<Chain>, number> = {
-  [Chain.Arbitrum]: 0.3,
-  [Chain.Aurora]: 1,
-  [Chain.Avalanche]: 3,
-  [Chain.Base]: 2,
-  [Chain.Berachain]: 2,
-  [Chain.BinanceSmartChain]: 3,
-  [Chain.Bitcoin]: 600,
-  [Chain.BitcoinCash]: 600,
-  [Chain.Chainflip]: 5,
-  [Chain.Cosmos]: 2,
-  [Chain.Dash]: 150,
-  [Chain.Dogecoin]: 600,
-  [Chain.Ethereum]: 12.5,
-  [Chain.Fiat]: 60,
-  [Chain.Gnosis]: 5.2,
-  [Chain.Kujira]: 2.2,
-  [Chain.Litecoin]: 150,
-  [Chain.Maya]: 6,
-  [Chain.Near]: 1,
-  [Chain.Noble]: 1.3,
-  [Chain.Optimism]: 2,
-  [Chain.Polkadot]: 6,
-  [Chain.Polygon]: 2.1,
-  [Chain.Radix]: 5,
-  [Chain.Ripple]: 5,
-  [Chain.Solana]: 0.4,
-  [Chain.THORChain]: 6,
-  [Chain.Tron]: 3,
-  [Chain.Zcash]: 150,
-};
-
+/**
+ * @deprecated use getChainConfig instead
+ * @example
+ * ```diff
+ * -const rpcUrl = RPC_URLS[Chain.Ethereum];
+ * +const { rpcUrls: [rpcUrl] } = getChainConfig(Chain.Ethereum);
+ * ```
+ */
 export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Arbitrum]: "https://arb1.arbitrum.io/rpc",
   [Chain.Aurora]: "https://aurora-rpc.publicnode.com",
@@ -75,6 +51,9 @@ export const NODE_URLS = {
   [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",
 };
 
+/**
+ * @deprecated Removed in favor of supporting multiple RPC URLs
+ */
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: ["https://arb-mainnet.g.alchemy.com/v2/demo", "https://arbitrum.blockpi.network/v1/rpc/public"],
   [Chain.Aurora]: ["https://1rpc.io/aurora", "https://mainnet.aurora.dev"],
@@ -113,6 +92,13 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Zcash]: [],
 };
 
+/**
+ * @deprecated use getChainConfig instead
+ * @example
+ * ```diff
+ * -const explorerUrl = EXPLORER_URLS[Chain.Ethereum];
+ * +const { blockExplorerUrl } = getChainConfig(Chain.Ethereum);
+ */
 export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Arbitrum]: "https://arbiscan.io",
   [Chain.Aurora]: "https://explorer.mainnet.aurora.dev",

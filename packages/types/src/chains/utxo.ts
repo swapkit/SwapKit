@@ -3,6 +3,7 @@ import { createChain, mapChains } from "./_createChain";
 const BTC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/bitcoin",
+  blockTime: 600,
   chain: "BTC",
   chainId: "bitcoin",
   explorerUrl: "https://blockchair.com/bitcoin",
@@ -15,6 +16,7 @@ const BTC = createChain({
 const BCH = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.blockchair.com/bitcoin-cash",
+  blockTime: 600,
   chain: "BCH",
   chainId: "bitcoincash",
   explorerUrl: "https://www.blockchair.com/bitcoin-cash",
@@ -27,6 +29,7 @@ const BCH = createChain({
 const LTC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/litecoin",
+  blockTime: 150,
   chain: "LTC",
   chainId: "litecoin",
   explorerUrl: "https://blockchair.com/litecoin",
@@ -39,6 +42,7 @@ const LTC = createChain({
 const DOGE = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/dogecoin",
+  blockTime: 600,
   chain: "DOGE",
   chainId: "dogecoin",
   explorerUrl: "https://blockchair.com/dogecoin",
@@ -51,6 +55,7 @@ const DOGE = createChain({
 const DASH = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/dash",
+  blockTime: 150,
   chain: "DASH",
   chainId: "dash",
   explorerUrl: "https://blockchair.com/dash",
@@ -63,6 +68,7 @@ const DASH = createChain({
 const ZEC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/zcash",
+  blockTime: 150,
   chain: "ZEC",
   chainId: "zcash",
   explorerUrl: "https://blockchair.com/zcash",

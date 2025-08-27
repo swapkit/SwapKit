@@ -5,6 +5,7 @@ const type = "substrate";
 const DOT = createChain({
   baseDecimal: 10,
   blockExplorerUrl: "https://polkadot.subscan.io",
+  blockTime: 6,
   chain: "DOT",
   chainId: "polkadot",
   explorerUrl: "https://polkadot.subscan.io",
@@ -17,6 +18,7 @@ const DOT = createChain({
 const FLIP = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://explorer.polkascan.io/polkadot",
+  blockTime: 5,
   chain: "FLIP",
   chainId: "chainflip",
   explorerUrl: "https://explorer.polkascan.io/polkadot",

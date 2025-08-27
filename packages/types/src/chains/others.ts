@@ -5,6 +5,7 @@ const type = "others";
 const NEAR = createChain({
   baseDecimal: 24,
   blockExplorerUrl: "https://nearblocks.io",
+  blockTime: 1,
   chain: "NEAR",
   chainId: "near",
   explorerUrl: "https://nearblocks.io",
@@ -17,6 +18,7 @@ const NEAR = createChain({
 const XRD = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://dashboard.radixdlt.com",
+  blockTime: 5,
   chain: "XRD",
   chainId: "radix-mainnet",
   explorerUrl: "https://dashboard.radixdlt.com",
@@ -29,6 +31,7 @@ const XRD = createChain({
 const XRP = createChain({
   baseDecimal: 6,
   blockExplorerUrl: "https://livenet.xrpl.org/",
+  blockTime: 5,
   chain: "XRP",
   chainId: "ripple",
   explorerUrl: "https://livenet.xrpl.org/",
@@ -41,6 +44,7 @@ const XRP = createChain({
 const SOL = createChain({
   baseDecimal: 9,
   blockExplorerUrl: "https://solscan.io",
+  blockTime: 0.4,
   chain: "SOL",
   chainId: "solana",
   explorerUrl: "https://solscan.io",
@@ -53,6 +57,7 @@ const SOL = createChain({
 const TRON = createChain({
   baseDecimal: 6,
   blockExplorerUrl: "https://tronscan.org",
+  blockTime: 3,
   chain: "TRON",
   chainId: "728126428",
   chainIdHex: "0x2b6653dc",
@@ -66,6 +71,7 @@ const TRON = createChain({
 const FIAT = createChain({
   baseDecimal: 2,
   blockExplorerUrl: "",
+  blockTime: 60,
   chain: "FIAT",
   chainId: "fiat",
   explorerUrl: "",

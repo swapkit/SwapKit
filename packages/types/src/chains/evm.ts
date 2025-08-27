@@ -5,6 +5,7 @@ const type = "evm";
 const ETHConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://etherscan.io",
+  blockTime: 12.5,
   chain: "ETH",
   chainId: "1",
   chainIdHex: "0x1",
@@ -18,6 +19,7 @@ const ETHConfig = createChain({
 const BSCConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://bscscan.com",
+  blockTime: 3,
   chain: "BSC",
   chainId: "56",
   chainIdHex: "0x38",
@@ -31,6 +33,7 @@ const BSCConfig = createChain({
 const AVAXConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://snowtrace.io",
+  blockTime: 3,
   chain: "AVAX",
   chainId: "43114",
   chainIdHex: "0xa86a",
@@ -44,6 +47,7 @@ const AVAXConfig = createChain({
 const POLConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://polygonscan.com",
+  blockTime: 2.1,
   chain: "POL",
   chainId: "137",
   chainIdHex: "0x89",
@@ -57,6 +61,7 @@ const POLConfig = createChain({
 const ARBConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://arbiscan.io",
+  blockTime: 0.3,
   chain: "ARB",
   chainId: "42161",
   chainIdHex: "0xa4b1",
@@ -70,6 +75,7 @@ const ARBConfig = createChain({
 const OPConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://optimistic.etherscan.io",
+  blockTime: 2,
   chain: "OP",
   chainId: "10",
   chainIdHex: "0xa",
@@ -83,6 +89,7 @@ const OPConfig = createChain({
 const BASEConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://basescan.org",
+  blockTime: 2,
   chain: "BASE",
   chainId: "8453",
   chainIdHex: "0x2105",
@@ -96,6 +103,7 @@ const BASEConfig = createChain({
 const GNOConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://gnosisscan.io",
+  blockTime: 5.2,
   chain: "GNO",
   chainId: "100",
   chainIdHex: "0x64",
@@ -109,6 +117,7 @@ const GNOConfig = createChain({
 const AURORAConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://explorer.mainnet.aurora.dev",
+  blockTime: 1,
   chain: "AURORA",
   chainId: "1313161554",
   chainIdHex: "0x4e454152",
@@ -122,6 +131,7 @@ const AURORAConfig = createChain({
 const BERAConfig = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://berascan.com",
+  blockTime: 2,
   chain: "BERA",
   chainId: "80094",
   chainIdHex: "0x138de",
