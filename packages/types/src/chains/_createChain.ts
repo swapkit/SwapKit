@@ -25,5 +25,5 @@ type ExtractChains<T extends readonly any[]> = T extends readonly [...infer Item
   : never;
 
 export function mapChains<T extends readonly any[]>(chains: T) {
-  return chains.map((chain) => createChain(chain)) as ExtractChains<T>;
+  return chains.map(({ chain }) => chain) as ExtractChains<T>;
 }

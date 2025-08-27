@@ -53,5 +53,5 @@ const chainConfigMap = new Map<AllChainConfigs[number]["chain"], AllChainConfigs
 export function getChainConfig<T extends AllChainConfigs[number]["chain"]>(chain: T): ChainConfigMap[T] {
   const chainConfig = chainConfigMap.get(chain);
 
-  return chainConfig as ChainConfigMap[T];
+  return (chainConfig || {}) as ChainConfigMap[T];
 }

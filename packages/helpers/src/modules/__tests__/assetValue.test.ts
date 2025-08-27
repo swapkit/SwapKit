@@ -625,12 +625,11 @@ describe("AssetValue", () => {
       );
 
       const cacaoAsset = AssetValue.from({ chain: Chain.Maya });
-      const { baseDecimal: cacaoDecimal } = getChainConfig(Chain.Maya);
       expect(cacaoAsset).toEqual(
         expect.objectContaining({
           address: undefined,
           chain: Chain.Maya,
-          decimal: cacaoDecimal,
+          decimal: 10,
           isGasAsset: true,
           isSynthetic: false,
           symbol: "CACAO",
