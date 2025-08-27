@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 4.0.5
+
+### Patch Changes
+
+- [#1460](https://github.com/swapkit/SwapKit/pull/1460) [`8d3a6a9`](https://github.com/swapkit/SwapKit/commit/8d3a6a975645f205dcb3c0711319d6405e759533) Thanks [@towanTG](https://github.com/towanTG)! - Small improvements to chainflip and mayachain plugin
+
+- Updated dependencies [[`8d3a6a9`](https://github.com/swapkit/SwapKit/commit/8d3a6a975645f205dcb3c0711319d6405e759533)]:
+  - @swapkit/helpers@4.0.4
+  - @swapkit/toolboxes@4.0.4
+
 ## 4.0.4
 
 ### Patch Changes
