@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.1.2
+
+### Patch Changes
+
+- [#1458](https://github.com/swapkit/SwapKit/pull/1458) [`dc64af9`](https://github.com/swapkit/SwapKit/commit/dc64af96a23ecc01935f45f1b6cb060ccf33e49b) Thanks [@towanTG](https://github.com/towanTG)! - Minor improvements for phantom and ctrl wallet - setting signer + using correct provider
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.3
+  - @swapkit/toolboxes@4.0.3
+  - @swapkit/wallet-core@4.0.3
+  - @swapkit/wallet-hardware@4.1.2
+  - @swapkit/wallet-keystore@4.0.3
+
 ## 4.1.1
 
 ### Patch Changes
