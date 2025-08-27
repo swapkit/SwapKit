@@ -75,7 +75,7 @@ export const ThorchainPlugin = createPlugin({
 export const MayachainPlugin = createPlugin({
   methods: createTCBasedPlugin(Chain.Maya),
   name: "mayachain",
-  properties: { supportedSwapkitProviders: [ProviderName.MAYACHAIN] },
+  properties: { supportedSwapkitProviders: [ProviderName.MAYACHAIN, ProviderName.MAYACHAIN_STREAMING] },
 });
 
 function getInboundDataFunction(type?: THORNodeType) {

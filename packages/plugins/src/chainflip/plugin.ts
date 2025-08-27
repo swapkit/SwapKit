@@ -1,4 +1,4 @@
-import { AssetValue, type CryptoChain, ProviderName, SKConfig, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, type CryptoChain, ProviderName, SwapKitError } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { createPlugin } from "../utils";
 import type { RequestSwapDepositAddressParams } from "./types";
@@ -6,10 +6,8 @@ import type { RequestSwapDepositAddressParams } from "./types";
 export const ChainflipPlugin = createPlugin({
   methods: ({ getWallet }) => ({
     swap: async function chainflipSwap(swapParams: RequestSwapDepositAddressParams) {
-      const brokerUrl = SKConfig.get("integrations").chainflip?.brokerUrl;
-
-      if (!(swapParams?.route?.buyAsset && brokerUrl && swapParams.route.meta.chainflip)) {
-        throw new SwapKitError("core_swap_invalid_params", { ...swapParams, chainflipBrokerUrl: brokerUrl });
+      if (!(swapParams?.route?.buyAsset && swapParams.route.meta.chainflip)) {
+        throw new SwapKitError("core_swap_invalid_params", { ...swapParams });
       }
 
       const {

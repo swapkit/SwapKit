@@ -128,6 +128,6 @@ export const DashLedger = BaseLedgerUTXO({
 });
 
 export const ZcashLedger = BaseLedgerUTXO({
-  chain: "zcash",
   additionalSignParams: { additionals: ["zcash", "sapling"], segwit: false, useTrustedInputForSegwit: false },
+  chain: "zcash",
 });

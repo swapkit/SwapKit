@@ -130,7 +130,7 @@ export async function getChainflipDepositChannel(body: BrokerDepositChannelParam
   if (!destinationAddress) {
     throw new SwapKitError("chainflip_broker_invalid_params");
   }
-  const url = SKConfig.get("integrations").chainflip?.brokerUrl || getApiUrl("/channel");
+  const url = SKConfig.get("integrations").chainflip?.brokerUrl || getApiUrl("/chainflip/broker/channel");
 
   const response = await SKRequestClient.post<DepositChannelResponse>(url, { json: body });
 
