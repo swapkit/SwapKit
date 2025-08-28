@@ -1,17 +1,14 @@
 import {
   type AssetValue,
   Chain,
+  filterSupportedChains,
   type GenericTransferParams,
   SwapKitError,
   WalletOption,
-  filterSupportedChains,
 } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 export const phantomWallet = createWallet({
-  name: "connectPhantom",
-  walletType: WalletOption.PHANTOM,
-  supportedChains: [Chain.Bitcoin, Chain.Ethereum, Chain.Solana],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectPhantom(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
@@ -21,7 +18,7 @@ export const phantomWallet = createWallet({
           filteredChains.map(async (chain) => {
             const { address, ...methods } = await getWalletMethods(chain);
 
-            addChain({ ...methods, chain, address, walletType });
+            addChain({ ...methods, address, chain, walletType });
           }),
         );
 
@@ -32,6 +29,9 @@ export const phantomWallet = createWallet({
         throw new SwapKitError("wallet_connection_rejected_by_user", error);
       }
     },
+  name: "connectPhantom",
+  supportedChains: [Chain.Bitcoin, Chain.Ethereum, Chain.Solana],
+  walletType: WalletOption.PHANTOM,
 });
 
 export const PHANTOM_SUPPORTED_CHAINS = getWalletSupportedChains(phantomWallet);
@@ -62,7 +62,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
       const [address] = await provider.send("eth_requestAccounts", []);
 
       const signer = await provider.getSigner();
-      const toolbox = await getEvmToolbox(chain, { signer, provider });
+      const toolbox = await getEvmToolbox(chain, { provider, signer });
 
       return { ...toolbox, address };
     }
@@ -76,7 +76,7 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-      const toolbox = await getSolanaToolbox();
+      const toolbox = await getSolanaToolbox({ signer: provider });
 
       const transfer = async ({
         recipient,
@@ -94,10 +94,10 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         const connection = await toolbox.getConnection();
 
         const transaction = await toolbox.createTransaction({
-          recipient,
           assetValue,
-          sender: address,
           isProgramDerivedAddress,
+          recipient,
+          sender: address,
         });
 
         if (!transaction) {
@@ -115,11 +115,11 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
         return txid;
       };
 
-      return { ...toolbox, transfer, address };
+      return { ...toolbox, address, transfer };
     }
 
     default: {
-      throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.PHANTOM, chain });
+      throw new SwapKitError("wallet_chain_not_supported", { chain, wallet: WalletOption.PHANTOM });
     }
   }
 }

@@ -1,0 +1,981 @@
+---
+title: WalletConnect Integration
+description: Complete guide to integrating WalletConnect with SwapKit SDK v4 for mobile and desktop wallet support
+---
+
+WalletConnect is a protocol that enables seamless connection between dApps and mobile wallets through QR code scanning or deep linking. SwapKit SDK v4 provides comprehensive WalletConnect v2 support across multiple blockchain networks, enabling users to connect their favorite mobile wallets to your application.
+
+## Supported Chains
+
+SwapKit supports WalletConnect for these chains:
+
+- **EVM Compatible**: Ethereum, Arbitrum, Aurora, Avalanche, Base, BinanceSmartChain, Optimism, Polygon
+- **Cosmos Ecosystem**: Cosmos, Kujira, Maya, THORChain
+- **Layer 1 Alternatives**: Near, Tron
+- **Testnets**: Berachain (testnet)
+
+## Supported Wallets
+
+WalletConnect works with hundreds of wallets including:
+
+- **Mobile**: MetaMask Mobile, Trust Wallet, Rainbow, Coinbase Wallet, 1inch Wallet
+- **Desktop**: MetaMask, Coinbase Wallet, Brave Wallet
+- **Hardware**: Ledger Live, Trezor Suite (via WalletConnect)
+- **Multi-chain**: Keplr Mobile, Phantom Mobile, OKX Wallet
+
+## Installation and Setup
+
+### 1. Get WalletConnect Project ID
+
+1. Visit [WalletConnect Cloud](https:
+2. Create a new project
+3. Copy your Project ID
+4. Configure your project settings (name, description, icons, URLs)
+
+### 2. Configure Your Application
+
+Add WalletConnect metadata to your application:
+
+```json
+{
+  "name": "Your DApp Name",
+  "description": "Your DApp Description",
+  "url": "https:
+  "icons": ["https:
+}
+```
+
+### 3. Browser Requirements
+
+WalletConnect works in all modern browsers:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Full support
+- **Edge**: Full support
+- **Mobile browsers**: Full support
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+      walletConnectProjectId: "your-walletconnect-project-id",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+      walletConnectProjectId: "your-walletconnect-project-id",
+    },
+  },
+});
+```
+
+### Connecting WalletConnect
+
+#### Basic Connection
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function connectWalletConnect() {
+  try {
+    console.log("Opening WalletConnect modal...");
+    console.log(
+      "📱 Scan QR code with your mobile wallet or click a wallet to connect"
+    );
+
+    await swapKit.connectWalletconnect([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    const balance = await swapKit.getBalance(Chain.Ethereum, true);
+
+    console.log("✅ Connected via WalletConnect:", address);
+    console.log("ETH balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect via WalletConnect:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function connectMultipleChains() {
+  const supportedChains = [
+    Chain.Ethereum,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Cosmos,
+    Chain.THORChain,
+  ];
+
+  try {
+    await swapKit.connectWalletconnect(supportedChains);
+
+    const addresses = {};
+    for (const chain of supportedChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    const balances = await Promise.all(
+      supportedChains.map(async (chain) => {
+        try {
+          const balance = await swapKit.getBalance(chain, true);
+          return { chain, balance };
+        } catch (error) {
+          return { chain, balance: [], error: error.message };
+        }
+      })
+    );
+
+    return { success: true, addresses, balances };
+  } catch (error) {
+    console.error("Multi-chain WalletConnect failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Advanced Configuration
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function connectWithAdvancedOptions() {
+  const walletconnectOptions = {
+    metadata: {
+      name: "My DApp",
+      description: "My DApp Description",
+      url: "https:
+      icons: ["https:
+    },
+
+
+  };
+
+  try {
+    await swapKit.connectWalletconnect([Chain.Ethereum], walletconnectOptions);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Connected with custom options:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Advanced WalletConnect failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Ethereum Transactions
+
+#### ETH Transfer
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+
+await swapKit.connectWalletconnect([Chain.Ethereum]);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    console.log("Sending ETH via WalletConnect...");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("To:", recipient);
+    console.log("📱 Approve the transaction on your mobile wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ ETH transfer sent:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ETH transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### ERC-20 Token Transfer
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+await swapKit.connectWalletconnect([Chain.Ethereum]);
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    console.log("📱 Approve USDC transfer on your mobile wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent via WalletConnect:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Multi-Chain Transactions
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+
+await swapKit.connectWalletconnect([Chain.Ethereum, Chain.Polygon, Chain.Arbitrum]);
+
+async function sendOnPolygon() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+
+  try {
+    console.log("📱 Approve MATIC transfer on your mobile wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ MATIC transfer sent via WalletConnect:", txHash);
+    console.log("🔍 View on PolygonScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ MATIC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendOnArbitrum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ARB.ETH", 0.001);
+
+  try {
+    console.log("📱 Approve Arbitrum ETH transfer on your mobile wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Arbitrum ETH transfer sent:", txHash);
+    console.log("🔍 View on Arbiscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Arbitrum transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Cosmos Ecosystem Transactions
+
+#### Cosmos Hub Transaction
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+
+await swapKit.connectWalletconnect([Chain.Cosmos]);
+
+async function sendCosmos() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    console.log("📱 Approve ATOM transfer on your mobile wallet (Keplr, etc.)");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "WalletConnect Cosmos transaction",
+    });
+
+    console.log("✅ ATOM transfer sent via WalletConnect:", txHash);
+    console.log("🔍 View on Mintscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ATOM transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### THORChain Transaction
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+
+await swapKit.connectWalletconnect([Chain.THORChain]);
+
+async function sendTHORChain() {
+  const recipient = "thor1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 10);
+
+  try {
+    console.log("📱 Approve RUNE transfer on your mobile wallet");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "WalletConnect THORChain transaction",
+    });
+
+    console.log("✅ RUNE transfer sent via WalletConnect:", txHash);
+    console.log("🔍 View on THORChain Explorer:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ RUNE transfer failed:", error);
+    throw error;
+  }
+}
+
+
+async function depositToTHORChain() {
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 100);
+  const memo = "ADD:BTC.BTC:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  try {
+
+    const wallet = await swapKit.getWalletWithBalance(Chain.THORChain);
+    const txHash = await wallet.deposit({
+      assetValue: amount,
+      memo,
+    });
+
+    console.log("✅ THORChain deposit sent via WalletConnect:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ THORChain deposit failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Features
+
+### EVM Chain Support
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function connectEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+    Chain.Optimism,
+    Chain.Base,
+  ];
+
+  try {
+    await swapKit.connectWalletconnect(evmChains);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all chains):", address);
+
+    const chainStatus = {};
+    for (const chain of evmChains) {
+      try {
+        const balance = await swapKit.getBalance(chain, false);
+        chainStatus[chain] = { connected: true, balance };
+      } catch (error) {
+        chainStatus[chain] = { connected: false, error: error.message };
+      }
+    }
+
+    return { success: true, address, chainStatus };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### Cosmos Ecosystem Support
+
+```ts twoslash
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function connectCosmosEcosystem() {
+  const cosmosChains = [
+    Chain.Cosmos,
+    Chain.THORChain,
+    Chain.Kujira,
+    Chain.Maya,
+  ];
+
+  try {
+    await swapKit.connectWalletconnect(cosmosChains);
+
+    const addresses = {};
+    for (const chain of cosmosChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    return { success: true, addresses };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+    console.log("🔍 Attempting WalletConnect connection...");
+    console.log("📱 Please scan QR code or select a wallet from the modal");
+
+    await swapKit.connectWalletconnect([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("✅ Successfully connected via WalletConnect:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ WalletConnect connection failed:", error);
+
+    if (error.message.includes("project_id")) {
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Ensure WalletConnect Project ID is set correctly");
+      console.log("2. Check your project configuration at https:
+      console.log("3. Verify the project ID is valid and active");
+    }
+
+    if (error.message.includes("User rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in your wallet");
+    }
+
+    if (error.message.includes("timeout")) {
+      console.log("🔧 Connection timed out");
+      console.log("1. Ensure your mobile wallet supports WalletConnect v2");
+      console.log("2. Check your internet connection");
+      console.log("3. Try refreshing and connecting again");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+function checkWalletConnectConfig() {
+  const config = swapKit.getConfig();
+  const projectId = config.apiKeys?.walletConnectProjectId;
+
+  if (!projectId) {
+    console.error("❌ WalletConnect Project ID not configured");
+    console.log("🔧 Add your project ID to SwapKit config");
+    return { configured: false };
+  }
+
+  if (projectId.length < 32) {
+    console.warn("⚠️ WalletConnect Project ID seems too short");
+    console.log("🔧 Verify your project ID from WalletConnect Cloud");
+    return { configured: false, warning: "Invalid project ID format" };
+  }
+
+  console.log("✅ WalletConnect properly configured");
+  return { configured: true, projectId };
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient ETH balance");
+
+      const balance = await swapKit.getBalance(Chain.Ethereum, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more ETH to your wallet");
+    }
+
+    if (error.message.includes("User rejected")) {
+      console.error("❌ Transaction rejected on mobile wallet");
+      console.log("🔧 Please approve the transaction in your mobile wallet");
+    }
+
+    if (error.message.includes("timeout")) {
+      console.error("❌ Transaction request timed out");
+      console.log("🔧 Check mobile wallet and try again");
+      console.log("📱 Ensure your wallet app is open and connected");
+    }
+
+    if (error.message.includes("session")) {
+      console.error("❌ WalletConnect session expired or disconnected");
+      console.log("🔧 Reconnect your wallet and try again");
+    }
+
+    if (error.message.includes("method not supported")) {
+      console.error("❌ Transaction method not supported by wallet");
+      console.log("🔧 Try a different wallet that supports this operation");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Session Management
+
+```ts twoslash
+async function handleSessionIssues() {
+  try {
+    await swapKit.connectWalletconnect([Chain.Ethereum]);
+  } catch (error) {
+    if (
+      error.message.includes("session") ||
+      error.message.includes("connection")
+    ) {
+      console.log("🔧 Session issues detected:");
+      console.log("1. Your WalletConnect session may have expired");
+      console.log("2. Your mobile wallet may have disconnected");
+      console.log("3. Try connecting again to establish a new session");
+
+      try {
+        swapKit.disconnectAll();
+        console.log("✅ Old sessions cleared");
+      } catch (_) {}
+
+      console.log("🔄 Attempting to reconnect...");
+      await swapKit.connectWalletconnect([Chain.Ethereum]);
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+
+import { SwapKit, walletconnectWallet, Chain } from "@swapkit/sdk";
+
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID,
+    },
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Polygon]: "https:
+    },
+  },
+  wallets: { ...walletconnectWallet },
+});
+
+
+function validateAddress(address: string, chain: Chain): boolean {
+  switch (chain) {
+    case Chain.Ethereum:
+    case Chain.Polygon:
+    case Chain.Arbitrum:
+    case Chain.BinanceSmartChain:
+    case Chain.Avalanche:
+    case Chain.Optimism:
+    case Chain.Base:
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+    case Chain.Cosmos:
+      return /^cosmos[0-9a-z]{39}$/.test(address);
+    case Chain.THORChain:
+      return /^thor[0-9a-z]{39}$/.test(address);
+    default:
+      return false;
+  }
+}
+
+
+async function secureWalletConnectTransaction() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+
+  if (!validateAddress(recipient, Chain.Ethereum)) {
+    throw new Error("Invalid recipient address");
+  }
+
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", amount.toSignificant(6), "ETH");
+  console.log("Recipient:", recipient);
+  console.log("⚠️ Please verify these details on your mobile wallet before confirming");
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+
+    console.error("Transaction failed");
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+
+
+async function secureSessionManagement() {
+  try {
+    await swapKit.connectWalletconnect([Chain.Ethereum]);
+
+
+    window.addEventListener('beforeunload', () => {
+      swapKit.disconnectAll();
+    });
+
+  } catch (error) {
+    console.error("Connection failed:", error.message);
+    throw error;
+  }
+}
+```
+
+### Project Configuration Security
+
+```ts twoslash
+const getWalletConnectConfig = () => {
+  const projectId = process.env.WALLETCONNECT_PROJECT_ID;
+
+  if (!projectId) {
+    throw new Error("WalletConnect Project ID not configured");
+  }
+
+  return {
+    projectId,
+    metadata: {
+      name: process.env.APP_NAME || "Your DApp",
+      description: process.env.APP_DESCRIPTION || "Your DApp Description",
+      url: process.env.APP_URL || window.location.origin,
+      icons: [process.env.APP_ICON || `${window.location.origin}/icon.png`],
+    },
+  };
+};
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: getWalletConnectConfig(),
+  },
+  wallets: { ...walletconnectWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, walletconnectWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface WalletConnectProps {
+  onConnect: (addresses: Partial<Record<Chain, string>>) => void;
+  onError: (error: Error) => void;
+}
+
+export function WalletConnect({ onConnect, onError }: WalletConnectProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Partial<Record<Chain, string>>>({});
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([Chain.Ethereum]);
+
+  const swapKit = SwapKit({
+    config: {
+      apiKeys: {
+        walletConnectProjectId: process.env.REACT_APP_WALLETCONNECT_PROJECT_ID,
+      },
+    },
+    wallets: { ...walletconnectWallet },
+  });
+
+  const connectWalletConnect = async () => {
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectWalletconnect(selectedChains);
+
+      const connectedAddresses: Partial<Record<Chain, string>> = {};
+      for (const chain of selectedChains) {
+        connectedAddresses[chain] = swapKit.getAddress(chain);
+      }
+
+      setAddresses(connectedAddresses);
+      setIsConnected(true);
+      onConnect(connectedAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains(prev =>
+      prev.includes(chain)
+        ? prev.filter(c => c !== chain)
+        : [...prev, chain]
+    );
+  };
+
+
+  const isConfigured = !!process.env.REACT_APP_WALLETCONNECT_PROJECT_ID;
+
+  if (!isConfigured) {
+    return (
+      <div>
+        <h3>WalletConnect</h3>
+        <p>⚠️ WalletConnect Project ID not configured</p>
+        <p>Add REACT_APP_WALLETCONNECT_PROJECT_ID to your environment variables</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Get Project ID
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>WalletConnect</h3>
+      <p>📱 Connect your mobile wallet</p>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Chains:</h4>
+          {[
+            { chain: Chain.Ethereum, name: "Ethereum" },
+            { chain: Chain.Polygon, name: "Polygon" },
+            { chain: Chain.Arbitrum, name: "Arbitrum" },
+            { chain: Chain.BinanceSmartChain, name: "BSC" },
+            { chain: Chain.Cosmos, name: "Cosmos" },
+            { chain: Chain.THORChain, name: "THORChain" },
+          ].map(({ chain, name }) => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {name}
+            </label>
+          ))}
+
+          <button
+            onClick={connectWalletConnect}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect Wallet"}
+          </button>
+
+          {isConnecting && (
+            <p>📱 Scan QR code with your wallet app or select from the list</p>
+          )}
+        </div>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of WalletConnect integration with SwapKit SDK v4, including multi-chain support, mobile wallet connectivity, and security best practices for production applications.

@@ -68,10 +68,7 @@ export class AminoTypes {
         reason: `Type URL '${typeUrl}' does not exist in the Amino message type register.`,
       });
     }
-    return {
-      type: converter.aminoType,
-      value: converter.toAmino(value),
-    };
+    return { type: converter.aminoType, value: converter.toAmino(value) };
   }
 
   fromAmino({ type, value }: AminoMsg): EncodeObject {

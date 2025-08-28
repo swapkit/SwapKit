@@ -113,7 +113,7 @@ export function getKEEPKEYProvider<T extends Chain>(chain: T) {
   }
 }
 
-async function transaction({
+function transaction({
   method,
   params,
   chain,
@@ -126,7 +126,7 @@ async function transaction({
 
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
-      // @ts-ignore
+      // @ts-expect-error
       client.request({ method, params }, (err: string, tx: string) => {
         err ? reject(err) : resolve(tx);
       });
@@ -139,10 +139,7 @@ async function transaction({
 export async function getKEEPKEYAddress(chain: Chain) {
   const eipProvider = getKEEPKEYProvider(chain) as Eip1193Provider;
   if (!eipProvider) {
-    throw new SwapKitError({
-      errorKey: "wallet_provider_not_found",
-      info: { wallet: WalletOption.KEEPKEY, chain },
-    });
+    throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.KEEPKEY } });
   }
 
   let method = "request_accounts";
@@ -165,54 +162,56 @@ export async function walletTransfer(
   const from = await getKEEPKEYAddress(assetValue.chain);
   const params = [
     {
-      amount: {
-        amount: assetValue.getValue("string"),
-        decimals: assetValue.decimal,
-      },
+      amount: { amount: assetValue.getValue("string"), decimals: assetValue.decimal },
       asset: {
         chain: assetValue.chain,
         symbol: assetValue.symbol.toUpperCase(),
         ticker: assetValue.symbol.toUpperCase(),
       },
-      memo,
       from,
-      recipient,
       gasLimit,
+      memo,
+      recipient,
     },
   ];
 
-  return transaction({ method, params, chain: assetValue.chain });
+  return transaction({ chain: assetValue.chain, method, params });
 }
 
 export function getKEEPKEYMethods(provider: BrowserProvider, chain: EVMChain) {
   return {
-    call: async <T>({
-      contractAddress,
-      abi,
-      funcName,
-      funcParams = [],
-      txOverrides,
-    }: CallParams): Promise<T> => {
+    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
+      const { MAX_APPROVAL, getCreateContractTxObject, toHexString } = await import("@swapkit/toolboxes/evm");
+
+      const createTx = getCreateContractTxObject({ chain, provider });
+      const { value, to, data } = await createTx({
+        abi: erc20ABI,
+        contractAddress: assetAddress,
+        funcName: "approve",
+        funcParams: [spenderAddress, BigInt(amount || MAX_APPROVAL)],
+        txOverrides: { from },
+      });
+
+      return provider.send("eth_sendTransaction", [
+        { data: data || "0x", from, to, value: toHexString(BigInt(value || 0)) },
+      ]);
+    },
+    call: async <T>({ contractAddress, abi, funcName, funcParams = [], txOverrides }: CallParams): Promise<T> => {
       if (!contractAddress) {
         throw new SwapKitError("wallet_keepkey_contract_address_not_provided");
       }
-      const { createContract, getCreateContractTxObject, isStateChangingCall, toHexString } =
-        await import("@swapkit/toolboxes/evm");
+      const { createContract, getCreateContractTxObject, isStateChangingCall, toHexString } = await import(
+        "@swapkit/toolboxes/evm"
+      );
 
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const createTx = getCreateContractTxObject({ provider, chain });
-        const { value, from, to, data } = await createTx({
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        });
+        const createTx = getCreateContractTxObject({ chain, provider });
+        const { value, from, to, data } = await createTx({ abi, contractAddress, funcName, funcParams, txOverrides });
 
         return provider.send("eth_sendTransaction", [
-          { value: toHexString(BigInt(value || 0)), from, to, data: data || "0x" },
+          { data: data || "0x", from, to, value: toHexString(BigInt(value || 0)) },
         ]);
       }
       const contract = createContract(contractAddress, abi, provider);
@@ -220,24 +219,6 @@ export function getKEEPKEYMethods(provider: BrowserProvider, chain: EVMChain) {
       const result = await contract[funcName]?.(...funcParams);
 
       return typeof result?.hash === "string" ? result?.hash : result;
-    },
-    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, getCreateContractTxObject, toHexString } = await import(
-        "@swapkit/toolboxes/evm"
-      );
-
-      const createTx = getCreateContractTxObject({ provider, chain });
-      const { value, to, data } = await createTx({
-        contractAddress: assetAddress,
-        abi: erc20ABI,
-        funcName: "approve",
-        funcParams: [spenderAddress, BigInt(amount || MAX_APPROVAL)],
-        txOverrides: { from },
-      });
-
-      return provider.send("eth_sendTransaction", [
-        { value: toHexString(BigInt(value || 0)), from, to, data: data || "0x" },
-      ]);
     },
     sendTransaction: async (tx: EVMTxParams) => {
       const { from, to, data, value } = tx;
@@ -248,7 +229,7 @@ export function getKEEPKEYMethods(provider: BrowserProvider, chain: EVMChain) {
       const { toHexString } = await import("@swapkit/toolboxes/evm");
 
       return provider.send("eth_sendTransaction", [
-        { value: toHexString(BigInt(value || 0)), from, to, data: data || "0x" },
+        { data: data || "0x", from, to, value: toHexString(BigInt(value || 0)) },
       ]);
     },
   };

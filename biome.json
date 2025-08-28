@@ -1,65 +1,97 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "files": {
-    "ignore": ["node_modules", "dist", "coverage", "MsgCompiled.ts", ".astro"],
-    "maxSize": 5242880
-  },
-  "organizeImports": {
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    },
     "enabled": true
   },
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/playgrounds",
+      "!**/coverage",
+      "!**/MsgCompiled.ts",
+      "!**/.astro"
+    ],
+    "maxSize": 5242880
+  },
   "formatter": {
-    "indentStyle": "space",
+    "attributePosition": "auto",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "enabled": true,
+    "expand": "never",
     "formatWithErrors": true,
-    "lineWidth": 100,
+    "indentStyle": "space",
     "indentWidth": 2,
-    "lineEnding": "lf"
+    "lineEnding": "lf",
+    "lineWidth": 120
   },
+  "html": { "formatter": { "enabled": true } },
+  "javascript": { "formatter": { "semicolons": "always" }, "globals": ["React", "Bun", "Todo", "NotWorth"] },
   "json": {
-    "formatter": {
-      "indentStyle": "space"
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "semicolons": "always"
-    },
-    "globals": ["Bun", "React"]
+    "assist": { "enabled": true },
+    "formatter": { "enabled": true, "expand": "never", "indentStyle": "space", "indentWidth": 2 }
   },
   "linter": {
+    "domains": { "react": "all", "test": "all" },
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "style": {
-        "all": true,
-        "noDefaultExport": "off",
-        "noImplicitBoolean": "off",
-        "useBlockStatements": "off",
-        "useNamingConvention": "off",
-        "noNamespaceImport": "off",
-        "useExplicitLengthCheck": "off",
-        "useFilenamingConvention": "off",
-        "useNodejsImportProtocol": "off"
+      "complexity": {
+        "noBannedTypes": "off",
+        "noExcessiveCognitiveComplexity": { "level": "warn", "options": { "maxAllowedComplexity": 25 } },
+        "noImportantStyles": "off"
       },
-      "complexity": { "all": true, "noBannedTypes": "off" },
       "correctness": {
-        "all": true,
         "noNodejsModules": "off",
-        "noUndeclaredVariables": "error",
         "noUndeclaredDependencies": "off",
-        "useImportExtensions": "off"
-      },
-      "security": { "all": true },
-      "suspicious": {
-        "noEvolvingTypes": "off",
-        "noConsole": "off",
-        "all": true,
-        "useAwait": "error",
-        "noExplicitAny": "off",
-        "noReactSpecificProps": "off"
+        "noUndeclaredVariables": "error",
+        "noUnusedImports": { "fix": "safe", "level": "error" }
       },
       "nursery": {
+        "noFloatingPromises": "on",
+        "noImportCycles": "on",
         "recommended": true,
-        "noDescendingSpecificity": "off"
+        "useExplicitType": "off",
+        "useSortedClasses": { "fix": "safe", "level": "warn", "options": {} }
+      },
+      "performance": { "noNamespaceImport": "off" },
+      "recommended": true,
+      "security": {},
+      "style": {
+        "noDefaultExport": "off",
+        "noDescendingSpecificity": "off",
+        "noImplicitBoolean": "off",
+        "noInferrableTypes": "error",
+        "noParameterAssign": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "useAsConstAssertion": "error",
+        "useBlockStatements": "off",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useExplicitLengthCheck": "off",
+        "useFilenamingConvention": "off",
+        "useNamingConvention": "off",
+        "useNodejsImportProtocol": "off",
+        "useNumberNamespace": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noEvolvingTypes": "off",
+        "noExplicitAny": "off",
+        "noReactSpecificProps": "off",
+        "useAwait": "error"
       }
     }
   }

@@ -3,9 +3,9 @@ import {
   ChainId,
   type EVMChain,
   type GenericTransferParams,
-  SKConfig,
-  SwapKitError,
+  getRPCUrl,
   prepareNetworkSwitch,
+  SwapKitError,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
 import type { NearToolbox } from "@swapkit/toolboxes/near";
@@ -24,13 +24,11 @@ const cosmosTransfer =
     const { keplr: wallet } = window.okxwallet;
     const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
 
-    const cosmJS = await createSigningStargateClient(SKConfig.get("rpcUrls").GAIA, offlineSigner);
+    const rpcUrl = await getRPCUrl(Chain.Cosmos);
+    const cosmJS = await createSigningStargateClient(rpcUrl, offlineSigner);
 
     const coins = [
-      {
-        denom: assetValue?.symbol === "MUON" ? "umuon" : "uatom",
-        amount: assetValue.getBaseValue("string"),
-      },
+      { amount: assetValue.getBaseValue("string"), denom: assetValue?.symbol === "MUON" ? "umuon" : "uatom" },
     ];
 
     const { transactionHash } = await cosmJS.sendTokens(sender, recipient, coins, 1.6, memo);
@@ -40,7 +38,10 @@ const cosmosTransfer =
 async function getWeb3WalletMethods({
   walletProvider,
   chain,
-}: { walletProvider: Eip1193Provider | undefined; chain: EVMChain }) {
+}: {
+  walletProvider: Eip1193Provider | undefined;
+  chain: EVMChain;
+}) {
   const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
   const { BrowserProvider } = await import("ethers");
   if (!walletProvider) throw new SwapKitError("wallet_okx_not_found");
@@ -57,7 +58,7 @@ async function getWeb3WalletMethods({
     throw new SwapKitError("wallet_okx_failed_to_switch_network", { chain });
   }
 
-  return prepareNetworkSwitch({ toolbox, provider, chain });
+  return prepareNetworkSwitch({ chain, provider, toolbox });
 }
 
 export async function getWalletMethods(chain: Chain) {
@@ -82,10 +83,7 @@ export async function getWalletMethods(chain: Chain) {
           throw new SwapKitError("wallet_okx_not_found", { chain });
         }
 
-        const evmWallet = await getWeb3WalletMethods({
-          chain: chain as EVMChain,
-          walletProvider: window.okxwallet,
-        });
+        const evmWallet = await getWeb3WalletMethods({ chain: chain as EVMChain, walletProvider: window.okxwallet });
         const address: string = (await window.okxwallet.send("eth_requestAccounts", [])).result[0];
 
         return { ...evmWallet, address };
@@ -102,15 +100,12 @@ export async function getWalletMethods(chain: Chain) {
       const address = (await wallet.connect()).address;
 
       const signer = {
+        getAddress: async () => Promise.resolve(address),
         signTransaction: async (psbt: InstanceType<typeof Psbt>) => {
-          const signedPsbt = await wallet.signPsbt(psbt.toHex(), {
-            from: address,
-            type: "list",
-          });
+          const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });
 
           return Psbt.fromHex(signedPsbt);
         },
-        getAddress: async () => Promise.resolve(address),
       };
 
       const toolbox = await getUtxoToolbox(Chain.Bitcoin, { signer });

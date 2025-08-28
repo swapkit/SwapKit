@@ -20,7 +20,7 @@ async function blake256(initData: Buffer | string) {
   let data = initData;
 
   if (!(data instanceof Buffer)) {
-    // @ts-ignore
+    // @ts-expect-error
     data = Buffer.from(data, "hex");
   }
 
@@ -36,20 +36,15 @@ export async function encryptToKeyStore(phrase: string, password: string) {
   const cipher = "aes-128-ctr";
   const iv = randomBytes(16);
   const salt = randomBytes(32);
-  const kdfParams = { c: 262144, prf: "hmac-sha256", dklen: 32, salt: salt.toString("hex") };
+  const kdfParams = { c: 262144, dklen: 32, prf: "hmac-sha256", salt: salt.toString("hex") };
 
   const derivedKey = pbkdf2Sync(password, salt, kdfParams.c, kdfParams.dklen, "sha256");
   const cipherIV = createCipheriv(cipher, derivedKey.subarray(0, 16), iv);
-  const ciphertext = Buffer.concat([
-    cipherIV.update(Buffer.from(phrase, "utf8")),
-    cipherIV.final(),
-  ]);
+  const ciphertext = Buffer.concat([cipherIV.update(Buffer.from(phrase, "utf8")), cipherIV.final()]);
   const initData = Buffer.concat([derivedKey.subarray(16, 32), Buffer.from(ciphertext)]);
   const mac = await blake256(initData);
 
   return {
-    meta: "xchain-keystore",
-    version: 1,
     crypto: {
       cipher,
       cipherparams: { iv: iv.toString("hex") },
@@ -58,6 +53,8 @@ export async function encryptToKeyStore(phrase: string, password: string) {
       kdfparams: kdfParams,
       mac,
     },
+    meta: "xchain-keystore",
+    version: 1,
   };
 }
 

@@ -1,16 +1,16 @@
 import { Chain, SwapKitError, type UTXOChain } from "@swapkit/helpers";
 
 import {
-  TX_OVERHEAD,
-  UTXOScriptType,
   calculateTxSize,
   getInputSize,
   getOutputSize,
   getScriptTypeForAddress,
-} from "../helpers";
+  TX_OVERHEAD,
+  UTXOScriptType,
+} from "../helpers/txSize";
 import type { TargetOutput, UTXOCalculateTxSizeParams, UTXOType } from "../types";
 
-export const getDustThreshold = (chain: UTXOChain) => {
+export function getDustThreshold(chain: UTXOChain) {
   switch (chain) {
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
@@ -25,19 +25,15 @@ export const getDustThreshold = (chain: UTXOChain) => {
     default:
       throw new SwapKitError("toolbox_utxo_not_supported", { chain });
   }
-};
+}
 
-export const accumulative = ({
+export function accumulative({
   inputs,
   outputs,
   feeRate: initialFeeRate = 1,
   chain = Chain.Bitcoin,
   changeAddress = "",
-}: UTXOCalculateTxSizeParams & {
-  outputs: TargetOutput[];
-  chain: UTXOChain;
-  changeAddress?: string;
-}) => {
+}: UTXOCalculateTxSizeParams & { outputs: TargetOutput[]; chain: UTXOChain; changeAddress?: string }) {
   const feeRate = Math.ceil(initialFeeRate);
 
   const newTxType =
@@ -80,24 +76,17 @@ export const accumulative = ({
       const remainderAfterExtraOutput = inputsValue - (amountToSend + feeAfterExtraOutput);
 
       // is it worth a change output aka can we send it in the future?
-      if (
-        remainderAfterExtraOutput >
-        Math.max(getInputSize({} as UTXOType) * feeRate, getDustThreshold(chain))
-      ) {
+      if (remainderAfterExtraOutput > Math.max(getInputSize({} as UTXOType) * feeRate, getDustThreshold(chain))) {
         return {
-          inputs: inputsToUse,
-          outputs: outputs.concat({ value: remainderAfterExtraOutput, address: changeAddress }),
           fee: feeAfterExtraOutput,
+          inputs: inputsToUse,
+          outputs: outputs.concat({ address: changeAddress, value: remainderAfterExtraOutput }),
         };
       }
     }
-    return {
-      inputs: inputsToUse,
-      outputs,
-      fee: fees,
-    };
+    return { fee: fees, inputs: inputsToUse, outputs };
   }
 
   // We don't have enough inputs, let's calculate transaction fee accrude to the last input
-  return { fee: feeRate * calculateTxSize({ inputs, outputs, feeRate }) };
-};
+  return { fee: feeRate * calculateTxSize({ feeRate, inputs, outputs }) };
+}

@@ -1,0 +1,1221 @@
+---
+title: Security
+description: Comprehensive security guide for SwapKit applications including private key management, secure transaction signing, and production best practices
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Security is paramount when building blockchain applications with SwapKit. This guide covers private key management, secure transaction signing, production best practices, and common security pitfalls to avoid.
+
+## Private Key Management
+
+### Never Handle Raw Private Keys
+
+SwapKit is designed to work with secure wallet providers that manage private keys internally:
+
+<Tabs>
+  <TabItem label="✅ Secure Approach">
+    ```typescript
+    import { SwapKit } from '@swapkit/core';
+    import { evmWallet } from '@swapkit/wallets/evm-extensions';
+    import { ledgerWallet } from '@swapkit/wallets/ledger';
+    import { Chain } from '@swapkit/types';
+
+    const swapKit = SwapKit({
+      wallets: {
+        evm: evmWallet,
+        ledger: ledgerWallet
+      }
+    });
+
+
+    await swapKit.connectEVMWallet([Chain.Ethereum]);
+    await swapKit.connectLedger([Chain.Bitcoin]);
+    ```
+
+  </TabItem>
+  <TabItem label="❌ Dangerous Approach">
+    ```typescript
+
+    const NEVER_DO_THIS = {
+      privateKey: '0x1234567890abcdef...',
+      mnemonic: 'word1 word2 word3...',
+
+
+      localStorage: {
+        privateKey: '0x...',
+        phrase: 'abandon abandon...'
+      }
+    };
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Keystore Wallet Security
+
+When using keystore wallets, follow security best practices:
+
+```typescript
+// @noErrorValidation
+import { SwapKit } from "@swapkit/core";
+import { keystoreWallet } from "@swapkit/wallets/keystore";
+
+const swapKit = SwapKit({
+  wallets: { keystore: keystoreWallet },
+});
+
+class SecureKeystoreManager {
+  private phrase: string | null = null;
+
+  async connectSecurely() {
+    this.phrase = await this.getSecurePhrase();
+
+    if (!this.phrase) {
+      throw new Error("No secure phrase available");
+    }
+
+    try {
+      await swapKit.connectKeystore([Chain.Ethereum], this.phrase);
+    } finally {
+      this.clearPhrase();
+    }
+  }
+
+  private async getSecurePhrase(): Promise<string | null> {
+    return prompt("Enter your recovery phrase (never share this)");
+  }
+
+  private clearPhrase() {
+    if (this.phrase) {
+      this.phrase = "0".repeat(this.phrase.length);
+      this.phrase = null;
+    }
+  }
+}
+```
+
+### Environment Variable Security
+
+For server-side applications, use environment variables securely:
+
+<Tabs>
+  <TabItem label=".env.example">
+    ```bash
+    # API Keys (never commit actual values)
+    SWAPKIT_API_KEY=your_api_key_here
+    THORNODE_API_KEY=your_thornode_key_here
+    
+    # Wallet Connect (for dApp integration)
+    WALLETCONNECT_PROJECT_ID=your_project_id_here
+    
+    # For testing only - never use in production
+    TEST_PHRASE=your_test_phrase_for_development
+    ```
+  </TabItem>
+  <TabItem label="Environment Setup">
+    ```typescript
+
+    import { SKConfig } from '@swapkit/helpers';
+
+    export function configureSecurely() {
+
+      const requiredEnvVars = ['SWAPKIT_API_KEY'];
+      const missing = requiredEnvVars.filter(key => !process.env[key]);
+
+      if (missing.length > 0) {
+        throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+      }
+
+
+      SKConfig.set({
+        apiKeys: {
+          swapKit: process.env.SWAPKIT_API_KEY!,
+          walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID
+        },
+        envs: {
+          isDev: process.env.NODE_ENV === 'development'
+        }
+      });
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Secure Transaction Signing
+
+### Hardware Wallet Integration
+
+Hardware wallets provide the highest security for transaction signing:
+
+```typescript
+// @noErrorValidation
+import { SwapKit } from "@swapkit/core";
+import { ledgerWallet, trezorWallet } from "@swapkit/wallets";
+import { Chain, AssetValue, SwapKitError } from "@swapkit/helpers";
+
+const swapKit = SwapKit({
+  wallets: {
+    ledger: ledgerWallet,
+    trezor: trezorWallet,
+  },
+});
+
+class HardwareWalletManager {
+  async connectSecurely(walletType: "ledger" | "trezor", chains: Chain[]) {
+    try {
+      switch (walletType) {
+        case "ledger":
+          await swapKit.connectLedger(chains);
+          break;
+        case "trezor":
+          await swapKit.connectTrezor(chains);
+          break;
+      }
+
+      return { success: true };
+    } catch (error) {
+      return this.handleHardwareWalletError(error);
+    }
+  }
+
+  async secureTransfer(params: {
+    assetValue: AssetValue;
+    recipient: string;
+    memo?: string;
+  }) {
+    try {
+      const isValidRecipient = swapKit.validateAddress(
+        params.recipient,
+        params.assetValue.asset.chain
+      );
+
+      if (!isValidRecipient) {
+        throw new SwapKitError("core_transaction_invalid_recipient_address");
+      }
+
+      const txHash = await swapKit.transfer(params);
+
+      return { success: true, txHash };
+    } catch (error) {
+      if (error instanceof SwapKitError) {
+        const errorKey = error.message.split(":")[0];
+
+        switch (errorKey) {
+          case "wallet_ledger_device_not_found":
+            return {
+              success: false,
+              error: "Ledger device not connected. Please connect your Ledger.",
+              action: "connect_device",
+            };
+
+          case "wallet_ledger_app_not_open":
+            return {
+              success: false,
+              error: "Please open the appropriate app on your Ledger device.",
+              action: "open_app",
+            };
+
+          case "core_transaction_user_rejected":
+            return {
+              success: false,
+              error: "Transaction rejected on device.",
+              action: "retry",
+            };
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  private handleHardwareWalletError(error: any) {
+    if (error instanceof SwapKitError) {
+      const errorKey = error.message.split(":")[0];
+
+      switch (errorKey) {
+        case "wallet_ledger_webusb_not_supported":
+          return {
+            success: false,
+            error: "WebUSB not supported. Please use Ledger Live bridge.",
+            action: "use_bridge",
+          };
+
+        case "wallet_trezor_transport_error":
+          return {
+            success: false,
+            error: "Trezor connection failed. Please reconnect.",
+            action: "reconnect",
+          };
+
+        default:
+          return {
+            success: false,
+            error: "Hardware wallet error. Please try again.",
+            action: "retry",
+          };
+      }
+    }
+
+    return {
+      success: false,
+      error: "Unknown hardware wallet error",
+      action: "contact_support",
+    };
+  }
+}
+```
+
+### Transaction Validation
+
+Always validate transactions before signing:
+
+```typescript
+// @noErrorValidation
+import { AssetValue, SwapKitError } from "@swapkit/helpers";
+
+interface TransactionValidation {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+class TransactionValidator {
+  static validate(params: {
+    assetValue: AssetValue;
+    recipient: string;
+    memo?: string;
+    userBalance?: AssetValue;
+  }): TransactionValidation {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (
+      !swapKit.validateAddress(params.recipient, params.assetValue.asset.chain)
+    ) {
+      errors.push("Invalid recipient address");
+    }
+
+    if (params.userBalance) {
+      if (params.assetValue.gt(params.userBalance)) {
+        errors.push("Insufficient balance");
+      }
+
+      const percentageUsed = params.assetValue.div(params.userBalance).mul(100);
+      if (
+        percentageUsed.gt(
+          AssetValue.fromString(params.assetValue.asset.toString(), "90")
+        )
+      ) {
+        warnings.push("Transaction uses more than 90% of your balance");
+      }
+    }
+
+    if (params.memo && params.memo.length > 80) {
+      errors.push("Memo too long (max 80 characters)");
+    }
+
+    if (
+      this.checkAddressFormat(params.recipient, params.assetValue.asset.chain)
+    ) {
+      warnings.push("Address format looks unusual. Please double-check.");
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
+
+  private static checkAddressFormat(address: string, chain: string): boolean {
+    const commonIssues = [
+      address.includes(" "),
+      address !== address.trim(),
+      /[O0Il1]/.test(address) && chain === "BTC",
+    ];
+
+    return commonIssues.some(Boolean);
+  }
+}
+
+async function secureTransaction(params: TransactionParams) {
+  const wallet = await swapKit.getWalletWithBalance(
+    params.assetValue.asset.chain
+  );
+  const balance = wallet.balance.find(
+    (b) => b.asset.toString() === params.assetValue.asset.toString()
+  );
+
+  const validation = TransactionValidator.validate({
+    ...params,
+    userBalance: balance,
+  });
+
+  if (!validation.isValid) {
+    throw new SwapKitError("core_transaction_invalid_params", {
+      errors: validation.errors,
+    });
+  }
+
+  if (validation.warnings.length > 0) {
+    console.warn("Transaction warnings:", validation.warnings);
+  }
+
+  return swapKit.transfer(params);
+}
+```
+
+### Multi-Signature Support
+
+For enhanced security, use multi-signature patterns:
+
+```typescript
+// @noErrorValidation
+interface MultiSigTransaction {
+  transaction: any;
+  requiredSignatures: number;
+  signatures: Array<{
+    signer: string;
+    signature: string;
+    timestamp: number;
+  }>;
+}
+
+class MultiSigManager {
+  private pendingTransactions = new Map<string, MultiSigTransaction>();
+
+  async createMultiSigTransaction(
+    transaction: any,
+    requiredSignatures: number = 2
+  ): Promise<string> {
+    const transactionId = this.generateTransactionId();
+
+    this.pendingTransactions.set(transactionId, {
+      transaction,
+      requiredSignatures,
+      signatures: [],
+    });
+
+    return transactionId;
+  }
+
+  async signTransaction(
+    transactionId: string,
+    signerAddress: string
+  ): Promise<{
+    success: boolean;
+    readyToExecute: boolean;
+    signatures: number;
+    required: number;
+  }> {
+    const multiSigTx = this.pendingTransactions.get(transactionId);
+
+    if (!multiSigTx) {
+      throw new SwapKitError("core_transaction_not_found");
+    }
+
+    const alreadySigned = multiSigTx.signatures.some(
+      (sig) => sig.signer === signerAddress
+    );
+
+    if (alreadySigned) {
+      throw new SwapKitError("core_transaction_already_signed");
+    }
+
+    const signature = await this.getSignatureFromWallet(
+      multiSigTx.transaction,
+      signerAddress
+    );
+
+    multiSigTx.signatures.push({
+      signer: signerAddress,
+      signature,
+      timestamp: Date.now(),
+    });
+
+    const readyToExecute =
+      multiSigTx.signatures.length >= multiSigTx.requiredSignatures;
+
+    return {
+      success: true,
+      readyToExecute,
+      signatures: multiSigTx.signatures.length,
+      required: multiSigTx.requiredSignatures,
+    };
+  }
+
+  async executeMultiSigTransaction(transactionId: string): Promise<string> {
+    const multiSigTx = this.pendingTransactions.get(transactionId);
+
+    if (!multiSigTx) {
+      throw new SwapKitError("core_transaction_not_found");
+    }
+
+    if (multiSigTx.signatures.length < multiSigTx.requiredSignatures) {
+      throw new SwapKitError("core_transaction_insufficient_signatures");
+    }
+
+    const txHash = await this.broadcastTransaction(multiSigTx);
+
+    this.pendingTransactions.delete(transactionId);
+
+    return txHash;
+  }
+
+  private generateTransactionId(): string {
+    return crypto.randomUUID();
+  }
+
+  private async getSignatureFromWallet(
+    transaction: any,
+    signerAddress: string
+  ): Promise<string> {
+    const wallet = swapKit.getWallet(signerAddress);
+    return wallet.signMessage(JSON.stringify(transaction));
+  }
+
+  private async broadcastTransaction(
+    multiSigTx: MultiSigTransaction
+  ): Promise<string> {
+    return swapKit.broadcastTransaction(multiSigTx.transaction);
+  }
+}
+```
+
+## Production Security Best Practices
+
+### API Security
+
+Secure your API endpoints and external calls:
+
+```typescript
+// @noErrorValidation
+
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+
+export const securityMiddleware = [
+
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: [
+          "'self'",
+          "https:
+          "https:
+        ]
+      }
+    }
+  }),
+
+
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Too many requests from this IP',
+    standardHeaders: true,
+    legacyHeaders: false
+  })
+];
+
+
+export async function secureApiCall(
+  endpoint: string,
+  params: any,
+  userApiKey?: string
+) {
+
+  if (!endpoint || typeof endpoint !== 'string') {
+    throw new SwapKitError('api_invalid_endpoint');
+  }
+
+
+  const sanitizedParams = sanitizeApiParams(params);
+
+
+  const apiKey = process.env.SWAPKIT_API_KEY;
+
+  if (!apiKey) {
+    throw new SwapKitError('api_key_not_configured');
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'User-Agent': 'SwapKit-Secure-Client/1.0'
+      },
+      body: JSON.stringify(sanitizedParams)
+    });
+
+    if (!response.ok) {
+      throw new SwapKitError('api_request_failed', {
+        status: response.status,
+        statusText: response.statusText
+      });
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Secure API call failed:', error);
+    throw error;
+  }
+}
+
+function sanitizeApiParams(params: any): any {
+
+  const sanitized = { ...params };
+  delete sanitized.privateKey;
+  delete sanitized.mnemonic;
+  delete sanitized.phrase;
+
+
+  Object.keys(sanitized).forEach(key => {
+    const value = sanitized[key];
+
+    if (typeof value === 'string') {
+
+      sanitized[key] = value.replace(/[<>'"]/g, '');
+
+
+      if (sanitized[key].length > 1000) {
+        sanitized[key] = sanitized[key].substring(0, 1000);
+      }
+    }
+  });
+
+  return sanitized;
+}
+```
+
+### Content Security Policy
+
+Implement strict CSP headers:
+
+```typescript
+// @noErrorValidation
+
+export const contentSecurityPolicy = {
+  directives: {
+    defaultSrc: ["'self'"],
+
+
+    scriptSrc: [
+      "'self'",
+      "'wasm-unsafe-eval'",
+      "https:
+    ],
+
+
+    styleSrc: [
+      "'self'",
+      "'unsafe-inline'"
+    ],
+
+
+    imgSrc: [
+      "'self'",
+      "data:",
+      "https:
+      "https:
+    ],
+
+
+    connectSrc: [
+      "'self'",
+
+      "https:
+
+
+      "https:
+      "https:
+      "https:
+
+
+      "https:
+      "https:
+
+
+      "wss:
+    ],
+
+
+    frameSrc: [
+      "https:
+    ],
+
+
+    objectSrc: ["'none'"],
+    baseUri: ["'self'"],
+
+
+    formAction: ["'self'"],
+
+
+    upgradeInsecureRequests: []
+  }
+};
+```
+
+### Input Validation and Sanitization
+
+Implement comprehensive input validation:
+
+```typescript
+// @noErrorValidation
+import { z } from "zod";
+
+const AddressSchema = z
+  .string()
+  .min(1)
+  .max(100)
+  .regex(/^[a-zA-Z0-9]+$/);
+const AmountSchema = z
+  .string()
+  .regex(/^\d+(\.\d+)?$/)
+  .refine((val) => parseFloat(val) > 0, "Amount must be positive");
+const AssetSchema = z.string().regex(/^[A-Z]+\.[A-Z]+(-.+)?$/);
+const MemoSchema = z.string().max(80).optional();
+
+const SwapParamsSchema = z.object({
+  sellAsset: AssetSchema,
+  buyAsset: AssetSchema,
+  sellAmount: AmountSchema,
+  senderAddress: AddressSchema,
+  recipientAddress: AddressSchema,
+  memo: MemoSchema,
+  slippage: z.number().min(0).max(50).optional(),
+});
+
+export function validateSwapParams(params: unknown) {
+  try {
+    return SwapParamsSchema.parse(params);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new SwapKitError("core_swap_invalid_params", {
+        validationErrors: error.errors,
+      });
+    }
+    throw error;
+  }
+}
+
+class SecurityValidator {
+  static validateAddress(address: string, chain: string): boolean {
+    switch (chain) {
+      case "ETH":
+        return /^0x[a-fA-F0-9]{40}$/.test(address);
+      case "BTC":
+        return /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$/.test(address);
+      case "THOR":
+        return /^thor1[a-z0-9]{38}$/.test(address);
+      default:
+        return false;
+    }
+  }
+
+  static sanitizeUserInput(input: string): string {
+    return input
+      .replace(/[<>'"]/g, "")
+      .trim()
+      .substring(0, 1000);
+  }
+
+  static validateTransaction(tx: any): boolean {
+    const suspiciousPatterns = [
+      /javascript:/i,
+      /<script/i,
+      /eval\(/i,
+      /document\./i,
+    ];
+
+    const txString = JSON.stringify(tx);
+    return !suspiciousPatterns.some((pattern) => pattern.test(txString));
+  }
+}
+```
+
+## Common Security Pitfalls
+
+### Avoiding Common Mistakes
+
+<Tabs>
+  <TabItem label="❌ Dangerous Practices">
+    ```typescript
+
+    console.log('User phrase:', userPhrase);
+    console.log('Private key:', privateKey);
+
+
+    localStorage.setItem('privateKey', key);
+    sessionStorage.setItem('mnemonic', phrase);
+
+
+    const amount = userInput;
+    const address = params.address;
+
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+
+    const apiUrl = 'http:
+
+
+    const apiKey = 'sk_live_1234567890';
+    ```
+
+  </TabItem>
+  <TabItem label="✅ Secure Practices">
+    ```typescript
+
+    console.log('Transaction initiated', {
+      txId: txId,
+      chain: chain,
+
+    });
+
+
+
+    let temporaryData: string | null = null;
+
+
+    temporaryData = null;
+
+
+    const amount = validateAndSanitizeAmount(userInput);
+    const address = validateAddress(params.address, chain);
+
+
+
+
+
+    const apiUrl = 'https:
+
+
+    const apiKey = process.env.SWAPKIT_API_KEY;
+    if (!apiKey) throw new Error('API key not configured');
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Security Checklist
+
+```typescript
+// @noErrorValidation
+interface SecurityChecklist {
+  privateKeyManagement: {
+    neverInCode: boolean;
+    neverInLogs: boolean;
+    neverInStorage: boolean;
+    useSecureWallets: boolean;
+  };
+  inputValidation: {
+    validateAddresses: boolean;
+    sanitizeInput: boolean;
+    validateAmounts: boolean;
+    checkMemoLength: boolean;
+  };
+  networkSecurity: {
+    useHttps: boolean;
+    validateCertificates: boolean;
+    rateLimiting: boolean;
+    contentSecurityPolicy: boolean;
+  };
+  errorHandling: {
+    noSensitiveDataInErrors: boolean;
+    gracefulFailure: boolean;
+    properLogging: boolean;
+  };
+}
+
+class SecurityAudit {
+  static audit(): SecurityChecklist {
+    return {
+      privateKeyManagement: {
+        neverInCode: this.checkNoHardcodedKeys(),
+        neverInLogs: this.checkLogSafety(),
+        neverInStorage: this.checkStorageSafety(),
+        useSecureWallets: this.checkWalletSecurity(),
+      },
+      inputValidation: {
+        validateAddresses: this.checkAddressValidation(),
+        sanitizeInput: this.checkInputSanitization(),
+        validateAmounts: this.checkAmountValidation(),
+        checkMemoLength: this.checkMemoValidation(),
+      },
+      networkSecurity: {
+        useHttps: this.checkHttpsUsage(),
+        validateCertificates: this.checkCertificateValidation(),
+        rateLimiting: this.checkRateLimiting(),
+        contentSecurityPolicy: this.checkCSP(),
+      },
+      errorHandling: {
+        noSensitiveDataInErrors: this.checkErrorSafety(),
+        gracefulFailure: this.checkGracefulFailure(),
+        properLogging: this.checkLoggingSecurity(),
+      },
+    };
+  }
+
+  private static checkNoHardcodedKeys(): boolean {
+    return true;
+  }
+}
+```
+
+### Incident Response
+
+Prepare for security incidents:
+
+```typescript
+// @noErrorValidation
+interface SecurityIncident {
+  type:
+    | "unauthorized_access"
+    | "data_breach"
+    | "suspicious_transaction"
+    | "system_compromise";
+  severity: "low" | "medium" | "high" | "critical";
+  timestamp: number;
+  description: string;
+  affectedUsers?: string[];
+  actions: string[];
+}
+
+class SecurityIncidentManager {
+  private incidents: SecurityIncident[] = [];
+
+  async reportIncident(incident: Omit<SecurityIncident, "timestamp">) {
+    const fullIncident: SecurityIncident = {
+      ...incident,
+      timestamp: Date.now(),
+    };
+
+    this.incidents.push(fullIncident);
+
+    switch (incident.severity) {
+      case "critical":
+        await this.handleCriticalIncident(fullIncident);
+        break;
+      case "high":
+        await this.handleHighSeverityIncident(fullIncident);
+        break;
+      default:
+        await this.logIncident(fullIncident);
+    }
+  }
+
+  private async handleCriticalIncident(incident: SecurityIncident) {
+    await this.alertSecurityTeam(incident);
+
+    await this.disableAffectedSystems(incident);
+
+    await this.preserveEvidence(incident);
+
+    if (incident.affectedUsers) {
+      await this.notifyAffectedUsers(incident);
+    }
+  }
+
+  private async handleHighSeverityIncident(incident: SecurityIncident) {
+    await this.alertSecurityTeam(incident);
+
+    await this.initiateInvestigation(incident);
+
+    await this.logIncident(incident);
+  }
+
+  private async alertSecurityTeam(incident: SecurityIncident) {
+    console.error("SECURITY INCIDENT:", incident);
+  }
+
+  private async disableAffectedSystems(incident: SecurityIncident) {
+    console.log("Disabling affected systems:", incident.type);
+  }
+
+  private async preserveEvidence(incident: SecurityIncident) {
+    console.log("Preserving evidence for incident:", incident.timestamp);
+  }
+
+  private async notifyAffectedUsers(incident: SecurityIncident) {
+    console.log("Notifying affected users:", incident.affectedUsers?.length);
+  }
+
+  private async initiateInvestigation(incident: SecurityIncident) {
+    console.log("Initiating investigation for:", incident.type);
+  }
+
+  private async logIncident(incident: SecurityIncident) {
+    console.log("Logging security incident:", incident.timestamp);
+  }
+}
+```
+
+## Monitoring and Alerting
+
+### Security Monitoring
+
+Implement comprehensive security monitoring:
+
+```typescript
+// @noErrorValidation
+interface SecurityMetrics {
+  failedLogins: number;
+  suspiciousTransactions: number;
+  rateLimitHits: number;
+  invalidAddresses: number;
+  largeTransactions: number;
+}
+
+class SecurityMonitor {
+  private metrics: SecurityMetrics = {
+    failedLogins: 0,
+    suspiciousTransactions: 0,
+    rateLimitHits: 0,
+    invalidAddresses: 0,
+    largeTransactions: 0,
+  };
+
+  private alerts = new Set<string>();
+
+  trackFailedLogin(userAgent: string, ip: string) {
+    this.metrics.failedLogins++;
+
+    if (this.metrics.failedLogins > 10) {
+      this.sendAlert("HIGH_FAILED_LOGIN_RATE", {
+        count: this.metrics.failedLogins,
+        userAgent,
+        ip,
+      });
+    }
+  }
+
+  trackSuspiciousTransaction(tx: any, reason: string) {
+    this.metrics.suspiciousTransactions++;
+
+    this.sendAlert("SUSPICIOUS_TRANSACTION", {
+      txId: tx.id,
+      reason,
+      amount: tx.amount,
+      from: tx.from,
+      to: tx.to,
+    });
+  }
+
+  trackRateLimitHit(ip: string, endpoint: string) {
+    this.metrics.rateLimitHits++;
+
+    const alertKey = `RATE_LIMIT_${ip}`;
+    if (!this.alerts.has(alertKey)) {
+      this.sendAlert("RATE_LIMIT_EXCEEDED", {
+        ip,
+        endpoint,
+        timestamp: Date.now(),
+      });
+      this.alerts.add(alertKey);
+
+      setTimeout(() => this.alerts.delete(alertKey), 60 * 60 * 1000);
+    }
+  }
+
+  trackInvalidAddress(address: string, chain: string, ip?: string) {
+    this.metrics.invalidAddresses++;
+
+    if (this.metrics.invalidAddresses > 50) {
+      this.sendAlert("HIGH_INVALID_ADDRESS_RATE", {
+        count: this.metrics.invalidAddresses,
+        lastAddress: address,
+        chain,
+        ip,
+      });
+    }
+  }
+
+  trackLargeTransaction(amount: string, asset: string, from: string) {
+    this.metrics.largeTransactions++;
+
+    const amountNum = parseFloat(amount);
+    if (amountNum > 100000) {
+      this.sendAlert("LARGE_TRANSACTION", {
+        amount,
+        asset,
+        from,
+        timestamp: Date.now(),
+      });
+    }
+  }
+
+  getMetrics(): SecurityMetrics {
+    return { ...this.metrics };
+  }
+
+  resetMetrics() {
+    this.metrics = {
+      failedLogins: 0,
+      suspiciousTransactions: 0,
+      rateLimitHits: 0,
+      invalidAddresses: 0,
+      largeTransactions: 0,
+    };
+  }
+
+  private sendAlert(type: string, data: any) {
+    console.warn(`SECURITY ALERT [${type}]:`, data);
+  }
+}
+
+export const securityMonitor = new SecurityMonitor();
+```
+
+## Compliance and Legal Considerations
+
+### Data Protection
+
+Implement GDPR-compliant data handling:
+
+```typescript
+// @noErrorValidation
+interface UserData {
+  id: string;
+  addresses: Record<string, string>;
+  preferences: any;
+  createdAt: number;
+  lastActive: number;
+}
+
+class DataProtectionManager {
+  private userData = new Map<string, UserData>();
+
+  async storeUserData(userId: string, data: Partial<UserData>) {
+    const sanitizedData = this.sanitizeUserData(data);
+
+    const existing = this.userData.get(userId);
+    const updated: UserData = {
+      id: userId,
+      addresses: {},
+      preferences: {},
+      createdAt: existing?.createdAt || Date.now(),
+      lastActive: Date.now(),
+      ...existing,
+      ...sanitizedData,
+    };
+
+    this.userData.set(userId, updated);
+
+    this.logDataAccess("STORE", userId);
+  }
+
+  async getUserData(userId: string): Promise<UserData | null> {
+    this.logDataAccess("ACCESS", userId);
+    return this.userData.get(userId) || null;
+  }
+
+  async deleteUserData(userId: string): Promise<boolean> {
+    const deleted = this.userData.delete(userId);
+
+    if (deleted) {
+      this.logDataAccess("DELETE", userId);
+    }
+
+    return deleted;
+  }
+
+  async exportUserData(userId: string): Promise<any> {
+    const data = await this.getUserData(userId);
+    this.logDataAccess("EXPORT", userId);
+    return data;
+  }
+
+  private sanitizeUserData(data: Partial<UserData>): Partial<UserData> {
+    const sanitized = { ...data };
+
+    if (sanitized.preferences) {
+      delete sanitized.preferences.privateKey;
+      delete sanitized.preferences.mnemonic;
+      delete sanitized.preferences.phrase;
+    }
+
+    return sanitized;
+  }
+
+  private logDataAccess(action: string, userId: string) {
+    console.log(
+      `Data access: ${action} for user ${userId} at ${new Date().toISOString()}`
+    );
+  }
+
+  async cleanupOldData(maxAge: number = 365 * 24 * 60 * 60 * 1000) {
+    const cutoff = Date.now() - maxAge;
+    let cleaned = 0;
+
+    for (const [userId, userData] of this.userData.entries()) {
+      if (userData.lastActive < cutoff) {
+        this.userData.delete(userId);
+        cleaned++;
+      }
+    }
+
+    console.log(`Cleaned up ${cleaned} old user records`);
+    return cleaned;
+  }
+}
+```
+
+## Best Practices Summary
+
+### Security Checklist
+
+- **Private Keys**: Never handle, store, or log private keys directly
+- **Wallet Integration**: Use secure wallet providers (hardware wallets preferred)
+- **Input Validation**: Validate all user inputs before processing
+- **API Security**: Use HTTPS, rate limiting, and secure headers
+- **Error Handling**: Never expose sensitive data in error messages
+- **Monitoring**: Implement comprehensive security monitoring
+- **Incident Response**: Have procedures for security incidents
+- **Data Protection**: Comply with privacy regulations
+- **Regular Audits**: Conduct regular security assessments
+- **Updates**: Keep dependencies updated and monitor for vulnerabilities
+
+### Development Guidelines
+
+```typescript
+// @noErrorValidation
+
+const securityGuidelines = {
+  defaultConfig: {
+    useHttps: true,
+    validateCertificates: true,
+    rateLimiting: true,
+    inputValidation: true,
+  },
+
+  errorHandling: {
+    defaultDeny: true,
+    logSecurely: true,
+    gracefulDegradation: true,
+  },
+
+  codeReview: {
+    noHardcodedSecrets: true,
+    validateAllInputs: true,
+    minimizePermissions: true,
+    regularUpdates: true,
+  },
+};
+```
+
+## Next Steps
+
+- Implement [Error Handling](/guides/error-handling) with security considerations
+- Follow [Testing](/guides/testing) practices for security testing
+- Optimize [Performance](/guides/performance) without compromising security
+- Apply [Production Best Practices](/guides/production-best-practices) with security focus

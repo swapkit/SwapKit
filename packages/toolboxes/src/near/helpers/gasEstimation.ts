@@ -3,30 +3,25 @@ import type { NearGasEstimateParams } from "../types/contract";
 
 // Gas constants (in TGas - 10^12 gas units)
 export const GAS_COSTS = {
-  SIMPLE_TRANSFER: "1", // 1 TGas
-  TOKEN_TRANSFER: "100", // 100 TGas
-  CONTRACT_CALL: "100", // 100 TGas base
-  ACCOUNT_CREATION: "30", // 30 TGas
-  CONTRACT_DEPLOYMENT: "200", // 200 TGas
   ACCESS_KEY_ADDITION: "5", // 5 TGas
   ACCESS_KEY_DELETION: "5", // 5 TGas
+  ACCOUNT_CREATION: "30", // 30 TGas
+  CONTRACT_CALL: "100", // 100 TGas base
+  CONTRACT_DEPLOYMENT: "200", // 200 TGas
+  SIMPLE_TRANSFER: "1", // 1 TGas
   STAKE: "10", // 10 TGas
   STORAGE_DEPOSIT: "100", // 100 TGas
+  TOKEN_TRANSFER: "100", // 100 TGas
 } as const;
 
 // Type guards for discriminated union
-export function isSimpleTransfer(
-  params: NearGasEstimateParams,
-): params is { recipient: string; amount: string } {
+export function isSimpleTransfer(params: NearGasEstimateParams): params is { recipient: string; amount: string } {
   return "recipient" in params && "amount" in params && !("contractId" in params);
 }
 
-export function isContractCall(params: NearGasEstimateParams): params is {
-  contractId: string;
-  methodName: string;
-  args?: Record<string, any>;
-  attachedDeposit?: string;
-} {
+export function isContractCall(
+  params: NearGasEstimateParams,
+): params is { contractId: string; methodName: string; args?: Record<string, any>; attachedDeposit?: string } {
   return "contractId" in params && "methodName" in params;
 }
 
@@ -34,22 +29,19 @@ export function isBatchTransaction(params: NearGasEstimateParams): params is { a
   return "actions" in params;
 }
 
-export function isAccountCreation(params: NearGasEstimateParams): params is {
-  newAccountId: string;
-  publicKey?: string;
-} {
+export function isAccountCreation(
+  params: NearGasEstimateParams,
+): params is { newAccountId: string; publicKey?: string } {
   return "newAccountId" in params;
 }
 
-export function isContractDeployment(
-  params: NearGasEstimateParams,
-): params is { contractCode: Uint8Array } {
+export function isContractDeployment(params: NearGasEstimateParams): params is { contractCode: Uint8Array } {
   return "contractCode" in params;
 }
 
-export function isCustomEstimator(params: NearGasEstimateParams): params is {
-  customEstimator: (account: Account) => Promise<string>;
-} {
+export function isCustomEstimator(
+  params: NearGasEstimateParams,
+): params is { customEstimator: (account: Account) => Promise<string> } {
   return "customEstimator" in params;
 }
 

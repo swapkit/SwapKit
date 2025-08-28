@@ -13,21 +13,13 @@ export function TokenBalance({ balance }: TokenBalanceProps) {
 
   return (
     <div
-      className={`flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors ${balance.isGasAsset ? "bg-accent/25" : ""}`}
-    >
+      className={`flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-accent/50 ${balance.isGasAsset ? "bg-accent/25" : ""}`}>
       <div className="flex items-center gap-2">
         {iconUrl ? (
-          <Image
-            src={iconUrl}
-            alt={displaySymbol}
-            width={24}
-            height={24}
-            className="rounded-full"
-          />
+          <Image alt={displaySymbol} className="rounded-full" height={24} src={iconUrl} width={24} />
         ) : (
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${balance.isGasAsset ? "bg-primary text-primary-foreground" : "bg-accent"}`}
-          >
+            className={`flex h-6 w-6 items-center justify-center rounded-full font-medium text-xs ${balance.isGasAsset ? "bg-primary text-primary-foreground" : "bg-accent"}`}>
             {displaySymbol.slice(0, 2)}
           </div>
         )}

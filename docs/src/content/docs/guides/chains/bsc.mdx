@@ -1,0 +1,674 @@
+---
+title: BNB Smart Chain Integration
+description: Complete guide to integrating BNB Smart Chain with SwapKit SDK for DeFi operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers BNB Smart Chain (BSC) integration with SwapKit, including wallet connections, BEP-20 token transfers, cross-chain swaps, and BSC-specific DeFi protocols.
+
+## Overview
+
+BNB Smart Chain is a fast, low-cost blockchain compatible with Ethereum Virtual Machine. SwapKit provides comprehensive BSC support through:
+
+- **BSC Toolbox**: Fast operations with low BNB gas costs
+- **Cross-Chain Bridging**: Seamless transfers between BSC and other networks
+- **DEX Integration**: Access to PancakeSwap, Venus, and other BSC protocols
+- **BEP-20 Token Support**: Full support for BSC's token standard
+- **Multi-Wallet Support**: Compatible with MetaMask, Trust Wallet, and others
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const bscWallet = await swapKit.getWallet(Chain.BinanceSmartChain);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getBSCToolbox } from '@swapkit/toolboxes/evm';
+
+
+const bscToolbox = await getBSCToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 60, 0, 0, 0]
+});
+
+
+const bscToolbox = await getBSCToolbox({
+  signer: customBSCSigner,
+  provider: customBSCProvider
+});
+````
+
+</TabItem>
+</Tabs>
+
+## BSC Toolbox
+
+### Wallet Connection
+
+Connect to BSC using Ethereum-compatible wallets:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore(
+  [Chain.BinanceSmartChain],
+  "your mnemonic phrase"
+);
+
+await swapKit.connectBrowserWallet(Chain.BinanceSmartChain);
+
+await swapKit.connectWalletConnect([Chain.BinanceSmartChain]);
+
+await swapKit.connectLedger([Chain.BinanceSmartChain]);
+```
+
+### Native BNB Transfers
+
+BNB is the native gas and utility token of BSC:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.BinanceSmartChain,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### BEP-20 Token Transfers
+
+BSC supports BEP-20 tokens (compatible with ERC-20):
+
+```typescript
+// @noErrorValidation
+
+const usdtTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.BinanceSmartChain,
+    symbol: "USDT",
+    address: "0x55d398326f99059fF775485246999027B3197955",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const cakeTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.BinanceSmartChain,
+    symbol: "CAKE",
+    address: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+    value: "10",
+  }),
+});
+
+const toolbox = await getBSCToolbox({ phrase: "..." });
+
+const batchTokenTransfers = async () => {
+  const bscTokens = [
+    {
+      symbol: "BUSD",
+      address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+      amount: "50",
+    },
+    {
+      symbol: "XVS",
+      address: "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63",
+      amount: "5",
+    },
+    {
+      symbol: "VAI",
+      address: "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7",
+      amount: "100",
+    },
+  ];
+
+  for (const { symbol, address, amount } of bscTokens) {
+    const tx = await toolbox.transfer({
+      recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+      assetValue: AssetValue.from({
+        chain: Chain.BinanceSmartChain,
+        address,
+        value: amount,
+      }),
+    });
+    console.log(`${symbol} transfer: ${tx}`);
+  }
+};
+```
+
+### Smart Contract Interactions
+
+BSC contracts execute quickly with low gas costs:
+
+```typescript
+// @noErrorValidation
+
+const cakeBalance = await toolbox.call({
+  contractAddress: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+  abi: erc20ABI,
+  funcName: "balanceOf",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"],
+});
+
+const cakeTransferTx = await toolbox.call({
+  contractAddress: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+  abi: erc20ABI,
+  funcName: "transfer",
+  funcParams: [
+    "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    "1000000000000000000",
+  ],
+  txOverrides: {
+    gasLimit: "65000",
+    gasPrice: "5000000000",
+  },
+});
+
+const pancakeswapTrade = await toolbox.call({
+  contractAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+  abi: pancakeRouterABI,
+  funcName: "swapExactETHForTokens",
+  funcParams: [
+    "0",
+    [
+      "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+    ],
+    swapKit.getAddress(Chain.BinanceSmartChain),
+    Date.now() + 600000,
+  ],
+  txOverrides: {
+    value: "100000000000000000",
+    gasLimit: "250000",
+  },
+});
+```
+
+### Gas Management
+
+BSC uses BNB for gas with low, predictable costs:
+
+```typescript
+// @noErrorValidation
+
+const gasInfo = await toolbox.getGasPrices();
+console.log({
+  slow: gasInfo.average,
+  standard: gasInfo.fast,
+  fast: gasInfo.fastest,
+});
+
+const txParams = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.BinanceSmartChain, value: "0.1" }),
+  gasLimit: "21000",
+  gasPrice: "5000000000",
+});
+
+const legacyTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.BinanceSmartChain, value: "0.1" }),
+  gasPrice: "10000000000",
+});
+```
+
+## Cross-Chain Operations
+
+### Bridging Assets
+
+```typescript
+// @noErrorValidation
+
+const bridgeQuote = await swapKit.getQuote({
+  sellAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  sellAmount: "1000",
+  buyAsset: "BSC.USDC-0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+});
+
+const bridgeTx = await swapKit.swap({
+  route: bridgeQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const ethToBnbBridge = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "0.5",
+  buyAsset: "BSC.BNB",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+});
+```
+
+### Cross-Chain Swaps via THORChain
+
+```typescript
+// @noErrorValidation
+
+const cakeToBtcQuote = await swapKit.getQuote({
+  sellAsset: "BSC.CAKE-0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+  sellAmount: "100",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+const crossChainSwap = await swapKit.swap({
+  route: cakeToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const bnbToRuneQuote = await swapKit.getQuote({
+  sellAsset: "BSC.BNB",
+  sellAmount: "1",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## BSC DEX Integration
+
+Access PancakeSwap and other BSC DEXs:
+
+```typescript
+// @noErrorValidation
+
+const pancakeQuote = await swapKit.getQuote({
+  sellAsset: "BSC.BNB",
+  sellAmount: "1",
+  buyAsset: "BSC.USDT-0x55d398326f99059fF775485246999027B3197955",
+  senderAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  recipientAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  providers: ["PANCAKESWAP"],
+});
+
+const pancakeSwap = await swapKit.swap({
+  route: pancakeQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const complexSwapQuote = await swapKit.getQuote({
+  sellAsset: "BSC.BUSD-0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+  sellAmount: "500",
+  buyAsset: "BSC.CAKE-0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+  senderAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  recipientAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+  providers: ["PANCAKESWAP"],
+});
+```
+
+## BSC-Specific Features
+
+### Popular BSC Tokens
+
+```typescript
+// @noErrorValidation
+
+const bscTokens = {
+  WBNB: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+  BUSD: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+  USDT: "0x55d398326f99059fF775485246999027B3197955",
+  USDC: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+  CAKE: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+  XVS: "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63",
+  VAI: "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7",
+  SXP: "0x47BEAd2563dCBf3bF2c9407fEa4dC236fAbA485A",
+};
+
+const getBSCPortfolio = async () => {
+  const balances = {};
+  const address = swapKit.getAddress(Chain.BinanceSmartChain);
+
+  for (const [symbol, tokenAddress] of Object.entries(bscTokens)) {
+    const balance = await toolbox.getBalance(address, tokenAddress);
+    balances[symbol] = balance.toString();
+  }
+
+  return balances;
+};
+```
+
+### Venus Protocol Integration
+
+```typescript
+// @noErrorValidation
+
+const venusSupply = await toolbox.call({
+  contractAddress: "0xA07c5b74C9B40447a954e1466938b865b6BBea36",
+  abi: vTokenABI,
+  funcName: "mint",
+  funcParams: [],
+  txOverrides: {
+    value: "1000000000000000000",
+    gasLimit: "200000",
+  },
+});
+
+const venusBorrow = await toolbox.call({
+  contractAddress: "0x95c78222B3D6e262426ccC130db8F054F4Cc82Dc",
+  abi: vTokenABI,
+  funcName: "borrow",
+  funcParams: ["100000000000000000000"],
+});
+
+const venusRepay = await toolbox.call({
+  contractAddress: "0x95c78222B3D6e262426ccC130db8F054F4Cc82Dc",
+  abi: vTokenABI,
+  funcName: "repayBorrow",
+  funcParams: ["50000000000000000000"],
+});
+```
+
+### PancakeSwap Farming
+
+```typescript
+// @noErrorValidation
+
+const cakeStaking = await toolbox.call({
+  contractAddress: "0x73feaa1eE314F8c655E354234017bE2193C9E24E",
+  abi: masterChefABI,
+  funcName: "deposit",
+  funcParams: [0, "10000000000000000000"],
+});
+
+const addLiquidity = await toolbox.call({
+  contractAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+  abi: pancakeRouterABI,
+  funcName: "addLiquidityETH",
+  funcParams: [
+    "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+    "5000000000000000000",
+    "0",
+    "0",
+    swapKit.getAddress(Chain.BinanceSmartChain),
+    Date.now() + 600000,
+  ],
+  txOverrides: {
+    value: "500000000000000000",
+    gasLimit: "300000",
+  },
+});
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.BinanceSmartChain, [
+  "https:
+  "https:
+  "https:
+  "https:
+]);
+
+
+import { JsonRpcProvider } from 'ethers';
+
+const bscProvider = new JsonRpcProvider("https:
+const toolbox = await getBSCToolbox({
+  phrase: "your mnemonic",
+  provider: bscProvider
+});
+```
+
+### Working with BSC Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.BinanceSmartChain, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetTokens = {
+  BUSD: "0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7",
+  USDT: "0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684"
+};
+```
+
+## Error Handling
+
+Handle BSC-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_evm_insufficient_funds":
+        console.error("Insufficient BNB for gas");
+        break;
+      case "network_bsc_congestion":
+        console.error("BSC network congestion, increase gas price");
+        break;
+      case "toolbox_evm_transaction_failed":
+        console.error("Transaction failed:", error.cause);
+        break;
+      case "bridge_bsc_validator_issue":
+        console.error("BSC bridge validator issue");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Batch Operations
+
+```typescript
+// @noErrorValidation
+
+const batchTransactions = async () => {
+  const batchOps = [];
+
+  const tokens = [
+    "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+    "0x55d398326f99059fF775485246999027B3197955",
+  ];
+
+  for (const tokenAddress of tokens) {
+    const approve = toolbox.approve({
+      contractAddress: tokenAddress,
+      spenderAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+      amount: "1000000000000000000000",
+    });
+    batchOps.push(approve);
+  }
+
+  const results = await Promise.all(batchOps);
+  return results;
+};
+```
+
+### Gas Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizedTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.BinanceSmartChain, value: "0.1" }),
+  gasLimit: "21000",
+  gasPrice: "5000000000",
+});
+
+const multicallData = [
+  {
+    target: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+    callData: "0x70a08231...",
+  },
+  {
+    target: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+    callData: "0x70a08231...",
+  },
+  {
+    target: "0x55d398326f99059fF775485246999027B3197955",
+    callData: "0x70a08231...",
+  },
+];
+
+const results = await toolbox.multicall(multicallData);
+```
+
+## Best Practices
+
+1. **Leverage Low Gas Costs**:
+
+   ```typescript
+   const complexTx = await toolbox.call({
+     contractAddress: "0x...",
+     abi: complexDeFiABI,
+     funcName: "multiStepOperation",
+     funcParams: [
+       /* many parameters */
+     ],
+     gasLimit: "500000",
+   });
+   ```
+
+2. **Use Native BSC Tokens When Possible**:
+
+   ```typescript
+   const preferNative = {
+     USDT: "0x55d398326f99059fF775485246999027B3197955",
+     BUSD: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+     USDC: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+   };
+   ```
+
+3. **Monitor Gas Price Fluctuations**:
+
+   ```typescript
+   const gasPrice = await toolbox.getGasPrices();
+
+   if (gasPrice.fast > 20000000000) {
+     console.warn("High gas prices detected on BSC");
+   }
+   ```
+
+4. **Use PancakeSwap for Best Liquidity**:
+
+   ```typescript
+   const pancakeQuote = await swapKit.getQuote({
+     sellAsset: "BSC.BNB",
+     sellAmount: "10",
+     buyAsset: "BSC.USDT-0x55d398326f99059fF775485246999027B3197955",
+     senderAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+     recipientAddress: swapKit.getAddress(Chain.BinanceSmartChain),
+     providers: ["PANCAKESWAP"],
+   });
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **BEP-20 vs ERC-20 token confusion**:
+
+   ```typescript
+   const correctTokens = {
+     "USDT-BSC": "0x55d398326f99059fF775485246999027B3197955",
+     "USDT-ETH": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+   };
+   ```
+
+2. **Gas price too low**:
+
+   ```typescript
+   const minGasTx = await toolbox.buildTransaction({
+     recipient: "0x...",
+     amount: AssetValue.from({ chain: Chain.BinanceSmartChain, value: "0.1" }),
+     gasPrice: "5000000000",
+   });
+   ```
+
+3. **RPC rate limits**:
+
+   ```typescript
+
+   const rpcEndpoints = [
+     "https:
+     "https:
+     "https:
+   ];
+
+   SKConfig.setRpcUrl(Chain.BinanceSmartChain, rpcEndpoints);
+   ```
+
+## API Reference Summary
+
+### Core Methods (Same as Ethereum)
+
+- `getBalance()` - Get BNB or BEP-20 token balance
+- `transfer()` - Send BNB or tokens
+- `buildTransaction()` - Construct transaction parameters
+- `call()` - Execute smart contract functions
+- `estimateCall()` - Estimate gas for contract calls
+
+### Gas Management
+
+- `getGasPrices()` - Get current gas prices in gwei
+- `estimateGas()` - Estimate gas usage
+- `waitForTransaction()` - Wait for ~3 second confirmation
+
+### BSC Specific
+
+- `getBlockNumber()` - Get latest block (updates every ~3 seconds)
+- `multicall()` - Batch multiple contract reads efficiently
+
+## Next Steps
+
+- Learn about other [EVM chains](/guides/chains/polygon) like Polygon
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using BSC
+- Check out [Ethereum Integration](/guides/chains/ethereum) for comparison
+- Read about [Production Best Practices](/guides/production-best-practices)

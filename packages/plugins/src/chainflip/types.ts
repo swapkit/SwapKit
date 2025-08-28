@@ -17,11 +17,7 @@ export type DepositChannelRequest = {
   refundParameters?: SwapRefundParameters;
 };
 
-export type ccmMetadata = {
-  message: string;
-  gasBudget: string;
-  cfParameters: string;
-};
+export type ccmMetadata = { message: string; gasBudget: string; cfParameters: string };
 
 export type SwapDepositResponse = {
   depositChannelId: string;
@@ -33,16 +29,9 @@ export type SwapDepositResponse = {
   brokerCommissionBPS: number;
 };
 
-export type AffiliateBroker = {
-  brokerAddress: string;
-  basisPoints: number;
-};
+export type AffiliateBroker = { brokerAddress: string; basisPoints: number };
 
-export type SwapRefundParameters = {
-  retryDuration: number;
-  refundAddress: string;
-  minPrice: string;
-};
+export type SwapRefundParameters = { retryDuration: number; refundAddress: string; minPrice: string };
 
 export type RequestSwapDepositAddressParams = Partial<SwapParams<"chainflip", QuoteResponseRoute>> &
   Partial<DepositChannelRequest>;

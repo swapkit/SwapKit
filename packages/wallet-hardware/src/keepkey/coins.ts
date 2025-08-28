@@ -25,14 +25,11 @@ export function bip32Like(path: string) {
   return /^m(((\/[0-9]+h)+|(\/[0-9]+H)+|(\/[0-9]+')*)((\/[0-9]+)*))$/.test(path);
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactor
 export function bip32ToAddressNList(initPath: string): number[] {
   let path = initPath;
 
   if (!bip32Like(path)) {
-    throw new SwapKitError("wallet_keepkey_invalid_params", {
-      reason: `Not a bip32 path: '${path}'`,
-    });
+    throw new SwapKitError("wallet_keepkey_invalid_params", { reason: `Not a bip32 path: '${path}'` });
   }
 
   if (/^m\//i.test(path)) {
@@ -49,8 +46,7 @@ export function bip32ToAddressNList(initPath: string): number[] {
     const segment = segments[i];
     if (segment) {
       const tmp = /(\d+)([hH']?)/.exec(segment);
-      if (tmp === null)
-        throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Invalid input" });
+      if (tmp === null) throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Invalid input" });
 
       const [, num = "", modifier = ""] = tmp;
 

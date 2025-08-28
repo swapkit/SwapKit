@@ -5,20 +5,10 @@ import type {
   StateEntityFungiblesPageRequest,
   StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
-import {
-  AssetValue,
-  Chain,
-  SKConfig,
-  SwapKitError,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, filterSupportedChains, SKConfig, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 export const radixWallet = createWallet({
-  name: "connectRadixWallet",
-  walletType: WalletOption.RADIX_WALLET,
-  supportedChains: [Chain.Radix],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectRadixWallet(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
@@ -38,6 +28,9 @@ export const radixWallet = createWallet({
 
       return true;
     },
+  name: "connectRadixWallet",
+  supportedChains: [Chain.Radix],
+  walletType: WalletOption.RADIX_WALLET,
 });
 
 export const RADIX_SUPPORTED_CHAINS = getWalletSupportedChains(radixWallet);
@@ -45,7 +38,7 @@ export const RADIX_SUPPORTED_CHAINS = getWalletSupportedChains(radixWallet);
 async function fetchFungibleResources(address: string): Promise<FungibleResourcesCollectionItem[]> {
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
   const { applicationName } = SKConfig.get("integrations").radix;
-  const networkApi = GatewayApiClient.initialize({ networkId: 1, applicationName });
+  const networkApi = GatewayApiClient.initialize({ applicationName, networkId: 1 });
 
   let hasNextPage = true;
   let nextCursor: string | undefined;
@@ -56,9 +49,9 @@ async function fetchFungibleResources(address: string): Promise<FungibleResource
   while (hasNextPage) {
     const stateEntityFungiblesPageRequest: StateEntityFungiblesPageRequest = {
       address: address,
-      limit_per_page: 100,
-      cursor: nextCursor,
       at_ledger_state: { state_version: stateVersion },
+      cursor: nextCursor,
+      limit_per_page: 100,
     };
 
     const stateEntityFungiblesPageResponse: StateEntityFungiblesPageResponse =
@@ -77,17 +70,16 @@ async function fetchFungibleResources(address: string): Promise<FungibleResource
   return fungibleResources;
 }
 
-async function currentStateVersion(networkApi: GatewayApiClient) {
+function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
 // TODO - @Towan: is that still needed with SwapKitApi.getChainBalance()?
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Split into multiple functions
 async function getBalance(address: string): Promise<AssetValue[]> {
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
   const resources = await fetchFungibleResources(address);
   const { applicationName } = SKConfig.get("integrations").radix;
-  const networkApi = GatewayApiClient.initialize({ networkId: 1, applicationName });
+  const networkApi = GatewayApiClient.initialize({ applicationName, networkId: 1 });
 
   const balances: AssetValue[] = [];
   const BATCH_SIZE = 50;
@@ -108,8 +100,7 @@ async function getBalance(address: string): Promise<AssetValue[]> {
     for (const result of response) {
       if (result.details !== undefined) {
         const metaDataSymbol = result.metadata?.items.find((item) => item.key === "symbol");
-        const symbol =
-          metaDataSymbol?.value.typed.type === "String" ? metaDataSymbol.value.typed.value : "?";
+        const symbol = metaDataSymbol?.value.typed.type === "String" ? metaDataSymbol.value.typed.value : "?";
 
         if (result.details.type === "FungibleResource") {
           divisibilities.set(result.address, { decimals: result.details.divisibility, symbol });
@@ -176,18 +167,12 @@ async function getWalletMethods() {
   const address = getAddress() || (await getNewAddress());
 
   return {
-    radixDappToolkit: rdt,
     address,
     getAddress,
     getBalance: () => getBalance(address),
-    transfer: (_params: { assetValue: AssetValue; recipient: string; from: string }) => {
-      throw new SwapKitError("wallet_radix_method_not_supported", { method: "transfer" });
-    },
+    radixDappToolkit: rdt,
     signAndBroadcast: async ({ manifest, message }: { manifest: string; message: string }) => {
-      const tx = await rdt.walletApi.sendTransaction({
-        transactionManifest: manifest,
-        message,
-      });
+      const tx = await rdt.walletApi.sendTransaction({ message, transactionManifest: manifest });
 
       const txResult = tx.unwrapOr(null)?.transactionIntentHash;
 
@@ -196,6 +181,9 @@ async function getWalletMethods() {
       }
 
       return txResult;
+    },
+    transfer: (_params: { assetValue: AssetValue; recipient: string; from: string }) => {
+      throw new SwapKitError("wallet_radix_method_not_supported", { method: "transfer" });
     },
   };
 }

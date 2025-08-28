@@ -1,0 +1,890 @@
+---
+title: Dogecoin Integration
+description: Complete guide to integrating Dogecoin with SwapKit SDK for UTXO operations and cross-chain swaps
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Dogecoin integration with SwapKit, including wallet connections, UTXO management, fast block times, and cross-chain swaps.
+
+## Overview
+
+Dogecoin is a fun, friendly cryptocurrency originally created as a joke but has become widely adopted for tipping and micropayments. SwapKit provides comprehensive Dogecoin support through:
+
+- **Dogecoin Toolbox**: UTXO management optimized for DOGE's unique characteristics
+- **Fast Block Times**: ~1 minute block confirmations
+- **Very Low Fees**: Optimized for micropayments and tipping
+- **Cross-Chain Swaps**: Seamless swaps with other cryptocurrencies via THORChain
+- **Multi-Wallet Support**: Compatible with hardware and software wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const dogeWallet = await swapKit.getWallet(Chain.Dogecoin);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getDogecoinToolbox } from '@swapkit/toolboxes/utxo';
+
+
+const dogeToolbox = await getDogecoinToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 3, 0, 0, 0]
+});
+
+
+const dogeToolbox = await getDogecoinToolbox({
+  signer: customDogecoinSigner,
+  network: "mainnet"
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Dogecoin Toolbox
+
+### Wallet Connection
+
+Connect to Dogecoin using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Dogecoin], "your mnemonic phrase");
+
+await swapKit.connectLedger([Chain.Dogecoin]);
+
+await swapKit.connectTrezor([Chain.Dogecoin]);
+```
+
+### Address Generation
+
+Dogecoin uses a legacy address format:
+
+```typescript
+// @noErrorValidation
+
+const dogeAddress = swapKit.getAddress(Chain.Dogecoin);
+
+console.log("Dogecoin address:", dogeAddress);
+
+const validateDogeAddress = (address: string): boolean => {
+  return address.startsWith("D") && address.length === 34;
+};
+
+console.log("Valid DOGE address:", validateDogeAddress(dogeAddress));
+```
+
+### Dogecoin Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapKit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  assetValue: AssetValue.from({
+    chain: Chain.Dogecoin,
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Dogecoin transaction hash: ${txHash}`);
+
+const tip = await dogeToolbox.transfer({
+  recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  assetValue: AssetValue.from({ chain: Chain.Dogecoin, value: "1" }),
+  feeRate: 1000,
+});
+
+console.log("Much wow! Tip sent:", tip);
+
+const batchTips = async () => {
+  const recipients = [
+    {
+      address: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+      amount: "5",
+      note: "Great meme!",
+    },
+    {
+      address: "DFundmtrigzA6E25Swr2pRe4Eb79bGP8G1",
+      amount: "10",
+      note: "Such helpful!",
+    },
+    {
+      address: "DAecAe6RkjvqmzrCLKJeH4fLHMdQ3wKtSC",
+      amount: "2",
+      note: "Very nice post!",
+    },
+  ];
+
+  for (const { address, amount, note } of recipients) {
+    const tx = await dogeToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({ chain: Chain.Dogecoin, value: amount }),
+      feeRate: 1000,
+      memo: note,
+    });
+    console.log(`Tipped ${amount} DOGE to ${address}: ${tx}`);
+  }
+};
+```
+
+### UTXO Management
+
+Dogecoin uses the UTXO model like Bitcoin:
+
+```typescript
+// @noErrorValidation
+
+const utxos = await dogeToolbox.getUTXOs("DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L");
+
+console.log("Available UTXOs:");
+utxos.forEach((utxo, index) => {
+  console.log(
+    `UTXO ${index}: ${utxo.value} DOGE (${utxo.txHash}:${utxo.index})`
+  );
+});
+
+const txParams = await dogeToolbox.buildTransaction({
+  recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  assetValue: AssetValue.from({ chain: Chain.Dogecoin, value: "50" }),
+  feeRate: 1000,
+  utxos: utxos.slice(0, 3),
+});
+
+console.log(`Transaction size: ${txParams.size} bytes`);
+console.log(`Transaction fee: ${txParams.fee} DOGE`);
+
+const efficiency = (txParams.fee / parseFloat("50")) * 100;
+console.log(`Fee efficiency: ${efficiency.toFixed(4)}% - such low!`);
+```
+
+### Fee Management
+
+Dogecoin has unique fee characteristics:
+
+```typescript
+// @noErrorValidation
+
+const feeRates = await dogeToolbox.getFeeRates();
+console.log({
+  slow: feeRates.average,
+  standard: feeRates.fast,
+  fast: feeRates.fastest,
+});
+
+const calculateFeeValue = (feeInDoge: number, dogePrice: number) => {
+  const feeUsd = feeInDoge * dogePrice;
+  console.log(`Fee: ${feeInDoge} DOGE (~$${feeUsd.toFixed(6)})`);
+  console.log("Much affordable! Very cheap!");
+  return feeUsd;
+};
+
+const feeEstimate = await dogeToolbox.estimateTransactionFee({
+  recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  assetValue: AssetValue.from({ chain: Chain.Dogecoin, value: "100" }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+calculateFeeValue(feeEstimate.toNumber(), 0.08);
+
+const optimizeFee = (purpose: "tip" | "payment" | "transfer") => {
+  const feeRates = {
+    tip: 1000,
+    payment: 1000,
+    transfer: 5000,
+  };
+
+  return feeRates[purpose];
+};
+```
+
+### Transaction History
+
+```typescript
+// @noErrorValidation
+
+const transactions = await dogeToolbox.getTransactionHistory(
+  "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  0,
+  25
+);
+
+console.log("Recent Dogecoin transactions:");
+transactions.forEach((tx) => {
+  console.log(`${tx.hash}: ${tx.amount} DOGE (${tx.type})`);
+  console.log(`  Block: ${tx.blockHeight}, Confirmations: ${tx.confirmations}`);
+  console.log(`  Fee: ${tx.fee} DOGE - such efficient!`);
+  console.log(`  Date: ${new Date(tx.date)}`);
+});
+
+const analyzeTippingActivity = (transactions: any[]) => {
+  const smallTxs = transactions.filter((tx) => Math.abs(tx.amount) < 10);
+  const totalTipped = smallTxs.reduce(
+    (sum, tx) => sum + Math.abs(tx.amount),
+    0
+  );
+
+  console.log("Tipping Analysis:");
+  console.log(`- Small transactions (tips): ${smallTxs.length}`);
+  console.log(`- Total tipped: ${totalTipped} DOGE`);
+  console.log(
+    `- Average tip: ${(totalTipped / smallTxs.length).toFixed(2)} DOGE`
+  );
+  console.log("Much generous! Very community!");
+};
+```
+
+## Cross-Chain Swaps
+
+Dogecoin is supported in THORChain cross-chain swaps:
+
+```typescript
+// @noErrorValidation
+
+const dogeToBtcQuote = await swapKit.getQuote({
+  sellAsset: "DOGE.DOGE",
+  sellAmount: "10000",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Dogecoin),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("DOGE -> BTC quote:", {
+  expectedOutput: dogeToBtcQuote.expectedOutput,
+  fees: dogeToBtcQuote.fees,
+  priceImpact: dogeToBtcQuote.priceImpact,
+});
+
+const swapTx = await swapKit.swap({
+  route: dogeToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const dogeToUsdcQuote = await swapKit.getQuote({
+  sellAsset: "DOGE.DOGE",
+  sellAmount: "5000",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Dogecoin),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const dogeToRuneQuote = await swapKit.getQuote({
+  sellAsset: "DOGE.DOGE",
+  sellAmount: "1000",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Dogecoin),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+
+console.log("Much swap! Very cross-chain! Wow!");
+```
+
+## Advanced Dogecoin Features
+
+### Community Tipping Bot Integration
+
+```typescript
+// @noErrorValidation
+
+const tippingBot = {
+  balances: new Map<string, number>(),
+
+  async processTip(fromUser: string, toUser: string, amount: number) {
+    const fromBalance = this.balances.get(fromUser) || 0;
+
+    if (fromBalance < amount) {
+      return {
+        success: false,
+        message: "Such insufficient! Much need more DOGE!",
+      };
+    }
+
+    this.balances.set(fromUser, fromBalance - amount);
+    this.balances.set(toUser, (this.balances.get(toUser) || 0) + amount);
+
+    if (amount > 100) {
+      const txHash = await dogeToolbox.transfer({
+        recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+        assetValue: AssetValue.from({
+          chain: Chain.Dogecoin,
+          value: amount.toString(),
+        }),
+        feeRate: 1000,
+      });
+
+      return {
+        success: true,
+        message: `Much tip! Very generous! ${amount} DOGE sent on-chain: ${txHash}`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `${amount} DOGE tipped! Such nice! Very community!`,
+    };
+  },
+
+  async deposit(user: string, amount: number) {
+    this.balances.set(user, (this.balances.get(user) || 0) + amount);
+    return { success: true, message: `${amount} DOGE deposited! Much wealth!` };
+  },
+
+  async withdraw(user: string, address: string, amount: number) {
+    const balance = this.balances.get(user) || 0;
+
+    if (balance < amount) {
+      return { success: false, message: "Such insufficient! Very sad!" };
+    }
+
+    const txHash = await dogeToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: amount.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    this.balances.set(user, balance - amount);
+
+    return {
+      success: true,
+      message: `${amount} DOGE withdrawn! Much success! Tx: ${txHash}`,
+    };
+  },
+};
+```
+
+### Micropayment System
+
+```typescript
+// @noErrorValidation
+
+const micropaymentSystem = {
+  async payForContent(contentId: string, amount: number) {
+    if (amount < 1) {
+      throw new Error("Minimum payment is 1 DOGE - much reasonable!");
+    }
+
+    const payment = await dogeToolbox.transfer({
+      recipient: "DContentCreatorAddressHere1234567890",
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: amount.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    return {
+      contentId,
+      paymentTx: payment,
+      amount,
+      message: `${amount} DOGE paid for content! Much support! Very creator!`,
+    };
+  },
+
+  async paySubscription(creatorAddress: string, monthlyAmount: number) {
+    const payment = await dogeToolbox.transfer({
+      recipient: creatorAddress,
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: monthlyAmount.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    console.log(`Monthly subscription: ${monthlyAmount} DOGE - such support!`);
+    return payment;
+  },
+
+  async donate(causeAddress: string, amount: number, cause: string) {
+    const donation = await dogeToolbox.transfer({
+      recipient: causeAddress,
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: amount.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    console.log(
+      `Donated ${amount} DOGE to ${cause} - much charitable! Very good!`
+    );
+    return donation;
+  },
+};
+```
+
+### Gaming Integration
+
+```typescript
+// @noErrorValidation
+
+const gamingRewards = {
+  async rewardPlayer(
+    playerAddress: string,
+    achievement: string,
+    reward: number
+  ) {
+    const rewardTx = await dogeToolbox.transfer({
+      recipient: playerAddress,
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: reward.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    return {
+      achievement,
+      reward,
+      tx: rewardTx,
+      message: `${reward} DOGE earned for ${achievement}! Much skill! Very game!`,
+    };
+  },
+
+  async distributePrizes(winners: Array<{ address: string; prize: number }>) {
+    const distributions = [];
+
+    for (const winner of winners) {
+      const prizeTx = await dogeToolbox.transfer({
+        recipient: winner.address,
+        assetValue: AssetValue.from({
+          chain: Chain.Dogecoin,
+          value: winner.prize.toString(),
+        }),
+        feeRate: 1000,
+      });
+
+      distributions.push({
+        address: winner.address,
+        prize: winner.prize,
+        tx: prizeTx,
+      });
+    }
+
+    console.log(
+      "Tournament prizes distributed! Much competition! Very esports!"
+    );
+    return distributions;
+  },
+
+  async buyGameItem(itemId: string, price: number, gameAddress: string) {
+    const purchase = await dogeToolbox.transfer({
+      recipient: gameAddress,
+      assetValue: AssetValue.from({
+        chain: Chain.Dogecoin,
+        value: price.toString(),
+      }),
+      feeRate: 1000,
+    });
+
+    return {
+      itemId,
+      price,
+      tx: purchase,
+      message: `Bought ${itemId} for ${price} DOGE! Much item! Very purchase!`,
+    };
+  },
+};
+```
+
+## Network Configuration
+
+### Custom Node Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Dogecoin, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customDogeRpc = "https:
+SKConfig.setRpcUrl(Chain.Dogecoin, customDogeRpc);
+
+
+const dogeToolbox = await getDogecoinToolbox({
+  phrase: "your mnemonic",
+  network: "mainnet",
+  apiUrl: "https:
+});
+```
+
+### Working with Dogecoin Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Dogecoin, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetToolbox = await getDogecoinToolbox({
+  phrase: "your mnemonic",
+  network: "testnet",
+  derivationPath: [44, 1, 0, 0, 0]
+});
+
+
+const testnetAddress = testnetToolbox.getAddress();
+console.log("DOGE Testnet address:", testnetAddress);
+```
+
+## Error Handling
+
+Handle Dogecoin-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_doge_insufficient_funds":
+        console.error("Such insufficient! Much need more DOGE!");
+        break;
+      case "toolbox_doge_invalid_address":
+        console.error("Very wrong address! Much invalid!");
+        break;
+      case "toolbox_doge_fee_too_low":
+        console.error("Fee too low! Need more DOGE for network!");
+        break;
+      case "toolbox_doge_network_error":
+        console.error("Network error! Such problems:", error.cause);
+        break;
+      case "toolbox_doge_dust_amount":
+        console.error("Amount too small! Much dust! Very tiny!");
+        break;
+      default:
+        console.error("Unknown DOGE error! Much confusion:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Fast Block Optimization
+
+```typescript
+// @noErrorValidation
+
+const fastTransactionStrategy = async () => {
+  const strategies = {
+    instant: {
+      feeRate: 5000,
+      expectedTime: "~1 minute",
+    },
+    standard: {
+      feeRate: 1000,
+      expectedTime: "~1-3 minutes",
+    },
+    economical: {
+      feeRate: 1000,
+      expectedTime: "~1-5 minutes",
+    },
+  };
+
+  console.log("Dogecoin strategies - much fast! Very confirm!");
+  return strategies;
+};
+```
+
+### Bulk Operations
+
+```typescript
+// @noErrorValidation
+
+const bulkOperations = async () => {
+  const recipients = Array.from({ length: 50 }, (_, i) => ({
+    address: `DRecipient${i}AddressHere1234567890`,
+    amount: Math.floor(Math.random() * 10) + 1,
+  }));
+
+  console.log(
+    `Processing ${recipients.length} DOGE transfers - much generous!`
+  );
+
+  const batchSize = 10;
+  for (let i = 0; i < recipients.length; i += batchSize) {
+    const batch = recipients.slice(i, i + batchSize);
+
+    const batchPromises = batch.map(({ address, amount }) =>
+      dogeToolbox.transfer({
+        recipient: address,
+        assetValue: AssetValue.from({
+          chain: Chain.Dogecoin,
+          value: amount.toString(),
+        }),
+        feeRate: 1000,
+      })
+    );
+
+    const batchResults = await Promise.all(batchPromises);
+    console.log(
+      `Batch ${Math.floor(i / batchSize) + 1} completed:`,
+      batchResults.length,
+      "transfers"
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  console.log("All transfers completed! Much success! Very bulk!");
+};
+```
+
+## Best Practices
+
+1. **Embrace the Meme Culture**:
+
+   ```typescript
+   const communityTip = async (
+     recipient: string,
+     amount: number,
+     message: string
+   ) => {
+     const tip = await dogeToolbox.transfer({
+       recipient,
+       assetValue: AssetValue.from({
+         chain: Chain.Dogecoin,
+         value: amount.toString(),
+       }),
+       feeRate: 1000,
+     });
+
+     console.log(`${message} - ${amount} DOGE sent! Much wow!`);
+     return tip;
+   };
+   ```
+
+2. **Use for Micropayments**:
+
+   ```typescript
+   const micropayment = async (amount: number) => {
+     if (amount < 0.1) {
+       console.log("Even tiny payments work on DOGE! Much affordable!");
+     }
+
+     return await dogeToolbox.transfer({
+       recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+       assetValue: AssetValue.from({
+         chain: Chain.Dogecoin,
+         value: amount.toString(),
+       }),
+       feeRate: 1000,
+     });
+   };
+   ```
+
+3. **Leverage Fast Confirmations**:
+
+   ```typescript
+   const realTimePayment = async () => {
+     const start = Date.now();
+
+     const tx = await dogeToolbox.transfer({
+       recipient: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+       assetValue: AssetValue.from({ chain: Chain.Dogecoin, value: "5" }),
+       feeRate: 2000,
+     });
+
+     console.log(`Payment sent in ${Date.now() - start}ms - much speed!`);
+     return tx;
+   };
+   ```
+
+4. **Be Generous with Community**:
+
+   ```typescript
+   const communitySupport = async () => {
+     const causes = [
+       {
+         name: "Open Source Project",
+         address: "DOpenSourceProject123456789",
+         amount: 1000,
+       },
+       {
+         name: "Charity Drive",
+         address: "DCharityDrive234567890",
+         amount: 500,
+       },
+       {
+         name: "Community Event",
+         address: "DCommunityEvent345678901",
+         amount: 250,
+       },
+     ];
+
+     for (const cause of causes) {
+       await dogeToolbox.transfer({
+         recipient: cause.address,
+         assetValue: AssetValue.from({
+           chain: Chain.Dogecoin,
+           value: cause.amount.toString(),
+         }),
+         feeRate: 1000,
+       });
+
+       console.log(
+         `Donated ${cause.amount} DOGE to ${cause.name} - such support!`
+       );
+     }
+   };
+   ```
+
+## Address Validation
+
+```typescript
+// @noErrorValidation
+import { validateDogecoinAddress } from "@swapkit/toolboxes/utxo";
+
+const validateDogeAddr = (address: string): boolean => {
+  if (!address.startsWith("D") || address.length !== 34) {
+    return false;
+  }
+
+  return validateDogecoinAddress(address);
+};
+
+const testAddresses = [
+  "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+  "DFundmtrigzA6E25Swr2pRe4Eb79bGP8G1",
+  "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "invalid_address",
+];
+
+testAddresses.forEach((address) => {
+  const isValid = validateDogeAddr(address);
+  console.log(`${address}: ${isValid ? "Valid" : "Invalid"} DOGE address`);
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Fee calculation confusion**:
+
+   ```typescript
+   const calculateDogeFee = (sizeBytes: number, feeRatePerKB: number) => {
+     const sizeKB = sizeBytes / 1000;
+     const fee = sizeKB * feeRatePerKB;
+     console.log(
+       `${sizeBytes} bytes = ${sizeKB} KB * ${feeRatePerKB} DOGE/KB = ${fee} DOGE`
+     );
+     return fee;
+   };
+   ```
+
+2. **Large numbers handling**:
+
+   ```typescript
+   const formatDogeAmount = (amount: number): string => {
+     if (amount >= 1000000) {
+       return `${(amount / 1000000).toFixed(1)}M DOGE`;
+     } else if (amount >= 1000) {
+       return `${(amount / 1000).toFixed(1)}K DOGE`;
+     }
+     return `${amount} DOGE`;
+   };
+
+   console.log(formatDogeAmount(5000000));
+   ```
+
+3. **Network congestion (very rare)**:
+   ```typescript
+   const checkDogeNetwork = async () => {
+     const feeRates = await dogeToolbox.getFeeRates();
+
+     if (feeRates.fastest > 10000) {
+       console.warn(
+         "DOGE network unusually congested - very rare! Much surprise!"
+       );
+       return false;
+     }
+
+     console.log("DOGE network healthy - much fast! Very smooth!");
+     return true;
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get Dogecoin balance in DOGE
+- `transfer()` - Send DOGE with automatic UTXO selection
+- `buildTransaction()` - Construct transaction with custom parameters
+- `getUTXOs()` - Fetch unspent transaction outputs
+- `getTransactionHistory()` - Get transaction history
+
+### Fee Management
+
+- `getFeeRates()` - Get current network fee rates (in DOGE per KB)
+- `estimateTransactionFee()` - Estimate fee for transaction
+- `estimateTransactionSize()` - Estimate transaction size in bytes
+
+### Address Methods
+
+- `getAddress()` - Generate Dogecoin address (D...)
+- `validateDogecoinAddress()` - Validate DOGE address format
+
+### Transaction Methods
+
+- `getTransaction()` - Get transaction details by hash
+- `broadcastTransaction()` - Broadcast signed transaction
+- `signTransaction()` - Sign transaction with private key
+
+### Community Features
+
+- `calculateTip()` - Helper for tipping calculations
+- `formatAmount()` - Format DOGE amounts for display
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) using Dogecoin
+- Explore other [Bitcoin family chains](/guides/chains/bitcoin) for comparison
+- Check out [Cosmos ecosystem chains](/guides/chains/cosmos) for different architecture
+- Read about [Production Best Practices](/guides/production-best-practices)
+
+Remember: Do Only Good Everyday! 🐕🚀🌙

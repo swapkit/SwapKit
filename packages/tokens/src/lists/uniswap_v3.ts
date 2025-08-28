@@ -1,14 +1,9 @@
 export const list = {
-  provider: "UNISWAP_V3",
-  name: "UNISWAP_V3",
-  timestamp: "2025-07-29T08:04:43.001Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 2040,
+  keywords: [],
+  name: "UNISWAP_V3",
+  provider: "UNISWAP_V3",
+  timestamp: "2025-07-29T08:04:43.001Z",
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -2935,8 +2930,7 @@ export const list = {
       chain: "BASE",
       chainId: "8453",
       decimals: 18,
-      identifier:
-        "BASE.4a6dca4077d484b995ff8891f5361a5a-0x32cd26bcd05e8d42ba72e117f5a28b0b3df7df9d",
+      identifier: "BASE.4a6dca4077d484b995ff8891f5361a5a-0x32cd26bcd05e8d42ba72e117f5a28b0b3df7df9d",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/base.4a6dca4077d484b995ff8891f5361a5a-0x32cd26bcd05e8d42ba72e117f5a28b0b3df7df9d.png",
       ticker: "4a6dca4077d484b995ff8891f5361a5a",
@@ -20412,4 +20406,5 @@ export const list = {
       ticker: "ZZ",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

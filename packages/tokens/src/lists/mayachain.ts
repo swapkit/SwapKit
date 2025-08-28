@@ -1,15 +1,10 @@
 export const list = {
-  provider: "MAYACHAIN",
   chainId: "mayachain-mainnet-v1",
-  name: "MAYACHAIN",
-  timestamp: "2025-07-30T16:01:28.884Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 53,
+  keywords: [],
+  name: "MAYACHAIN",
+  provider: "MAYACHAIN",
+  timestamp: "2025-07-30T16:01:28.884Z",
   tokens: [
     {
       chain: "ARB",
@@ -506,4 +501,5 @@ export const list = {
       ticker: "ZEC",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

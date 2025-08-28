@@ -1,0 +1,718 @@
+---
+const props = {
+  description: "Get real-time swap quotes from the SwapKit API",
+  title: "Live Swap Quote Demo",
+  ...Astro.props,
+};
+---
+
+<div class="swap-demo">
+  <div class="demo-header">
+    <h3 class="demo-title">{props.title}</h3>
+    <p class="demo-description">{props.description}</p>
+  </div>
+  
+  <div class="demo-content">
+    <div class="demo-form">
+      <div class="form-section">
+        <h4 class="section-title">Swap Configuration</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">From Asset</label>
+            <select class="form-select" id="sellAsset">
+              <option value="ETH.ETH">ETH (Ethereum)</option>
+              <option value="BTC.BTC">BTC (Bitcoin)</option>
+              <option value="ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48">USDC (Ethereum)</option>
+              <option value="THOR.RUNE">RUNE (THORChain)</option>
+              <option value="AVAX.AVAX">AVAX (Avalanche)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">To Asset</label>
+            <select class="form-select" id="buyAsset">
+              <option value="BTC.BTC">BTC (Bitcoin)</option>
+              <option value="ETH.ETH">ETH (Ethereum)</option>
+              <option value="ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48">USDC (Ethereum)</option>
+              <option value="THOR.RUNE">RUNE (THORChain)</option>
+              <option value="AVAX.AVAX">AVAX (Avalanche)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Amount</label>
+            <input 
+              type="number" 
+              class="form-input" 
+              id="sellAmount" 
+              placeholder="0.1" 
+              value="0.1"
+              step="0.0001"
+              min="0"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Slippage (%)</label>
+            <input 
+              type="number" 
+              class="form-input" 
+              id="slippage" 
+              placeholder="1" 
+              value="1"
+              step="0.1"
+              min="0.1"
+              max="50"
+            />
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button class="get-quote-btn primary-btn" id="getQuoteBtn">
+            <span class="btn-icon">💱</span>
+            Get Quote
+          </button>
+          <button class="clear-btn secondary-btn" id="clearBtn">
+            <span class="btn-icon">🗑️</span>
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-output">
+      <div class="output-header">
+        <span class="output-title">Quote Results</span>
+        <div class="status-indicator" id="quoteStatus">Ready</div>
+      </div>
+      
+      <div class="output-content" id="outputContent">
+        <div class="placeholder-message">
+          <div class="placeholder-icon">💡</div>
+          <p>Configure your swap above and click "Get Quote" to see live pricing from multiple DEX aggregators.</p>
+        </div>
+      </div>
+      
+      <div class="code-section" id="codeSection" style="display: none;">
+        <div class="code-header">
+          <span class="code-title">API Request Code</span>
+          <button class="copy-btn" id="copyApiBtn">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Code
+          </button>
+        </div>
+        <pre class="code-block"><code id="apiCode"></code></pre>
+      </div>
+    </div>
+  </div>
+  
+  <div class="demo-disclaimer">
+    <strong>Note:</strong> This demo uses simulated data for demonstration purposes. 
+    Real quotes would require API keys and actual network calls.
+    <br>
+    <a href="https://api.swapkit.dev" target="_blank" rel="noopener noreferrer">
+      Get your SwapKit API key →
+    </a>
+  </div>
+</div>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  const getQuoteBtn = document.getElementById('getQuoteBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const outputContent = document.getElementById('outputContent');
+  const codeSection = document.getElementById('codeSection');
+  const apiCode = document.getElementById('apiCode');
+  const copyApiBtn = document.getElementById('copyApiBtn');
+  const quoteStatus = document.getElementById('quoteStatus');
+  
+  const sellAssetSelect = document.getElementById('sellAsset');
+  const buyAssetSelect = document.getElementById('buyAsset');
+  const sellAmountInput = document.getElementById('sellAmount');
+  const slippageInput = document.getElementById('slippage');
+  
+  if (!getQuoteBtn || !clearBtn || !outputContent || !codeSection || !apiCode || !copyApiBtn || !quoteStatus || !sellAssetSelect || !buyAssetSelect || !sellAmountInput || !slippageInput) {
+    return;
+  }
+  
+  const mockQuotes = {
+    'ETH.ETH_BTC.BTC': {
+      expectedBuyAmount: '0.03847',
+      fee: { asset: 'ETH.ETH', amount: '0.0012' },
+      provider: 'THORChain',
+      estimatedTime: '~15 minutes'
+    },
+    'BTC.BTC_ETH.ETH': {
+      expectedBuyAmount: '25.8',
+      fee: { asset: 'BTC.BTC', amount: '0.0001' },
+      provider: 'Chainflip',
+      estimatedTime: '~8 minutes'
+    },
+    'ETH.ETH_ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': {
+      expectedBuyAmount: '2456.78',
+      fee: { asset: 'ETH.ETH', amount: '0.0008' },
+      provider: 'Uniswap V3',
+      estimatedTime: '~2 minutes'
+    }
+  };
+  
+  function generateApiCode() {
+    const sellAsset = sellAssetSelect.value;
+    const buyAsset = buyAssetSelect.value;
+    const sellAmount = sellAmountInput.value;
+    const slippage = slippageInput.value;
+    
+    return `import { SwapKitApi } from '@swapkit/helpers/api';
+
+const quoteResponse = await SwapKitApi.getSwapQuote({
+  sellAsset: '${sellAsset}',
+  buyAsset: '${buyAsset}',
+  sellAmount: '${sellAmount}',
+  slippage: ${slippage},
+  sourceAddress: 'your-wallet-address-here',
+  destinationAddress: 'destination-address-here'
+});
+
+if (quoteResponse.success) {
+  const routes = quoteResponse.data.routes;
+  const bestRoute = routes[0];
+  
+  console.log('Expected output:', bestRoute.expectedBuyAmount);
+  console.log('Estimated time:', bestRoute.estimatedTime);
+  console.log('Provider:', bestRoute.provider);
+} else {
+  console.error('Quote failed:', quoteResponse.error);
+}`;
+  }
+  
+  function simulateQuote() {
+    const sellAsset = sellAssetSelect.value;
+    const buyAsset = buyAssetSelect.value;
+    const sellAmount = parseFloat(sellAmountInput.value) || 0.1;
+    const slippage = parseFloat(slippageInput.value) || 1;
+    
+    const quoteKey = `${sellAsset}_${buyAsset}`;
+    const mockData = mockQuotes[quoteKey] || {
+      expectedBuyAmount: (Math.random() * 100 + 1).toFixed(6),
+      fee: { asset: sellAsset, amount: (sellAmount * 0.003).toFixed(6) },
+      provider: 'Mock Provider',
+      estimatedTime: '~5 minutes'
+    };
+    
+    const adjustedOutput = (parseFloat(mockData.expectedBuyAmount) * sellAmount / 0.1).toFixed(6);
+    const adjustedFee = (parseFloat(mockData.fee.amount) * sellAmount / 0.1).toFixed(6);
+    
+    return {
+      ...mockData,
+      expectedBuyAmount: adjustedOutput,
+      fee: { ...mockData.fee, amount: adjustedFee },
+      slippage: slippage,
+      sellAmount: sellAmount.toString()
+    };
+  }
+  
+  function displayQuoteResult(quote) {
+    const sellSymbol = sellAssetSelect.value.split('.').pop().split('-')[0];
+    const buySymbol = buyAssetSelect.value.split('.').pop().split('-')[0];
+    const feeSymbol = quote.fee.asset.split('.').pop().split('-')[0];
+    
+    const html = `
+      <div class="quote-result">
+        <div class="quote-main">
+          <div class="quote-amounts">
+            <div class="sell-amount">
+              <span class="amount-label">You pay:</span>
+              <span class="amount-value">${quote.sellAmount} ${sellSymbol}</span>
+            </div>
+            <div class="swap-arrow">→</div>
+            <div class="buy-amount">
+              <span class="amount-label">You get:</span>
+              <span class="amount-value">${quote.expectedBuyAmount} ${buySymbol}</span>
+            </div>
+          </div>
+          
+          <div class="quote-details">
+            <div class="detail-item">
+              <span class="detail-label">Provider:</span>
+              <span class="detail-value">${quote.provider}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Est. Time:</span>
+              <span class="detail-value">${quote.estimatedTime}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Fee:</span>
+              <span class="detail-value">${quote.fee.amount} ${feeSymbol}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Slippage:</span>
+              <span class="detail-value">${quote.slippage}%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="quote-actions">
+          <div class="rate-info">
+            Rate: 1 ${sellSymbol} = ${(parseFloat(quote.expectedBuyAmount) / parseFloat(quote.sellAmount)).toFixed(6)} ${buySymbol}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    outputContent.innerHTML = html;
+  }
+  
+  getQuoteBtn.addEventListener('click', function() {
+    const sellAmount = parseFloat(sellAmountInput.value);
+    if (!sellAmount || sellAmount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    if (sellAssetSelect.value === buyAssetSelect.value) {
+      alert('Please select different assets for swap');
+      return;
+    }
+    
+    getQuoteBtn.disabled = true;
+    getQuoteBtn.innerHTML = '<span class="btn-icon">⏳</span> Getting Quote...';
+    quoteStatus.textContent = 'Loading...';
+    quoteStatus.className = 'status-indicator loading';
+    
+    outputContent.innerHTML = '<div class="loading-message">Fetching quotes from multiple providers...</div>';
+    
+    setTimeout(() => {
+      const quote = simulateQuote();
+      displayQuoteResult(quote);
+      
+      const code = generateApiCode();
+      apiCode.textContent = code;
+      codeSection.style.display = 'block';
+      
+      getQuoteBtn.disabled = false;
+      getQuoteBtn.innerHTML = '<span class="btn-icon">💱</span> Get Quote';
+      quoteStatus.textContent = 'Success';
+      quoteStatus.className = 'status-indicator success';
+    }, 2000);
+  });
+  
+  clearBtn.addEventListener('click', function() {
+    outputContent.innerHTML = `
+      <div class="placeholder-message">
+        <div class="placeholder-icon">💡</div>
+        <p>Configure your swap above and click "Get Quote" to see live pricing from multiple DEX aggregators.</p>
+      </div>
+    `;
+    codeSection.style.display = 'none';
+    quoteStatus.textContent = 'Ready';
+    quoteStatus.className = 'status-indicator ready';
+  });
+  
+  copyApiBtn.addEventListener('click', async function() {
+    try {
+      await navigator.clipboard.writeText(apiCode.textContent || '');
+      copyApiBtn.innerHTML = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20,6 9,17 4,12"/></svg>Copied!';
+      setTimeout(function() {
+        copyApiBtn.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Code';
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy code: ', err);
+    }
+  });
+});
+</script>
+
+<style>
+.swap-demo {
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+.demo-header {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-sidebar);
+  border-bottom: 1px solid var(--sl-color-hairline);
+  text-align: center;
+}
+
+.demo-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.demo-description {
+  margin: 0;
+  color: var(--sl-color-text-accent);
+  font-size: 0.9rem;
+}
+
+.demo-content {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 0;
+  min-height: 500px;
+}
+
+.demo-form {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-sidebar);
+  border-right: 1px solid var(--sl-color-hairline);
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.form-select, .form-input {
+  padding: 0.75rem;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  color: var(--sl-color-text);
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-select:focus, .form-input:focus {
+  outline: none;
+  border-color: var(--sl-color-accent);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.primary-btn, .secondary-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.primary-btn {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-white);
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: var(--sl-color-accent-high);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background: var(--sl-color-bg-nav);
+  color: var(--sl-color-text);
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.secondary-btn:hover {
+  background: var(--sl-color-bg-accent);
+}
+
+.demo-output {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-nav);
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.output-title {
+  font-weight: 600;
+  color: var(--sl-color-text);
+  font-size: 0.9rem;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-indicator.ready {
+  background: rgba(156, 163, 175, 0.1);
+  color: rgb(107, 114, 128);
+}
+
+.status-indicator.loading {
+  background: rgba(251, 191, 36, 0.1);
+  color: rgb(251, 191, 36);
+}
+
+.status-indicator.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+}
+
+.placeholder-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--sl-color-text-accent);
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--sl-color-text-accent);
+  font-style: italic;
+}
+
+.quote-result {
+  background: var(--sl-color-bg-sidebar);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.quote-amounts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--sl-color-bg-nav);
+  border-radius: 0.375rem;
+}
+
+.sell-amount, .buy-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.amount-label {
+  font-size: 0.75rem;
+  color: var(--sl-color-text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.amount-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--sl-color-text);
+}
+
+.swap-arrow {
+  font-size: 1.5rem;
+  color: var(--sl-color-accent);
+  font-weight: bold;
+}
+
+.quote-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  color: var(--sl-color-text-accent);
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.quote-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sl-color-hairline);
+}
+
+.rate-info {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--sl-color-text-accent);
+  background: var(--sl-color-bg-nav);
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.code-section {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background: var(--sl-color-bg-sidebar);
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-bg-nav);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.code-title {
+  font-weight: 600;
+  color: var(--sl-color-text);
+  font-size: 0.875rem;
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.25rem;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: var(--sl-color-bg-accent);
+  color: var(--sl-color-text);
+}
+
+.copy-icon, .check-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke-width: 2;
+}
+
+.code-block {
+  padding: 1rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  background: var(--sl-color-bg-sidebar);
+  color: var(--sl-color-text);
+}
+
+.code-block code {
+  background: none;
+  padding: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.demo-disclaimer {
+  padding: 1rem 1.5rem;
+  background: var(--sl-color-accent-low);
+  border-top: 1px solid var(--sl-color-hairline);
+  font-size: 0.875rem;
+  color: var(--sl-color-text);
+}
+
+.demo-disclaimer a {
+  color: var(--sl-color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.demo-disclaimer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .demo-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .demo-form {
+    border-right: none;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .quote-amounts {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .swap-arrow {
+    transform: rotate(90deg);
+  }
+  
+  .quote-details {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

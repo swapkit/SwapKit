@@ -1,0 +1,625 @@
+---
+title: Ethereum Integration
+description: Complete guide to integrating Ethereum with SwapKit SDK for DeFi operations and cross-chain swaps
+---
+
+import { Card, CardGrid, Code, Tabs, TabItem } from "@astrojs/starlight/components";
+
+This guide covers Ethereum integration with SwapKit, including wallet connections, token transfers, cross-chain swaps, and EVM-specific features.
+
+## Overview
+
+Ethereum is the leading smart contract blockchain and the foundation of DeFi. SwapKit provides comprehensive Ethereum support through:
+
+- **Ethereum Toolbox**: Core blockchain operations (transfers, contract calls, gas estimation)
+- **EVM Plugin**: Enhanced features for decentralized exchanges and cross-chain operations
+- **ERC-20 Support**: Full support for Ethereum's token standard
+- **Multi-Wallet Support**: Compatible with MetaMask, WalletConnect, Coinbase Wallet, and hardware wallets
+- **Gas Optimization**: EIP-1559 support with dynamic fee estimation
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const ethWallet = await swapKit.getWallet(Chain.Ethereum);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getEthereumToolbox } from '@swapkit/toolboxes/evm';
+
+
+const ethToolbox = await getEthereumToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 60, 0, 0, 0]
+});
+
+
+const ethToolbox = await getEthereumToolbox({
+  signer: customEthereumSigner,
+  provider: customProvider
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Ethereum Toolbox
+
+### Wallet Connection
+
+Connect to Ethereum using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Ethereum], "your mnemonic phrase");
+
+await swapKit.connectBrowserWallet(Chain.Ethereum);
+
+await swapKit.connectWalletConnect([Chain.Ethereum]);
+
+await swapKit.connectLedger([Chain.Ethereum]);
+```
+
+### Native ETH Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Ethereum,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### ERC-20 Token Transfers
+
+```typescript
+// @noErrorValidation
+
+const usdcTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Ethereum,
+    symbol: "USDC",
+    address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const toolbox = await getEthereumToolbox({ phrase: "..." });
+
+const balance = await toolbox.getBalance(
+  "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+);
+
+const tokenInfo = await toolbox.getTokenInfo(
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+);
+console.log(tokenInfo);
+```
+
+### Smart Contract Interactions
+
+The Ethereum toolbox provides multiple ways to interact with smart contracts:
+
+```typescript
+// @noErrorValidation
+
+const result = await toolbox.call({
+  contractAddress: "0x...",
+  abi: contractABI,
+  funcName: "balanceOf",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"],
+});
+
+const txHash = await toolbox.call({
+  contractAddress: "0x...",
+  abi: contractABI,
+  funcName: "transfer",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7", "1000000"],
+  txOverrides: {
+    gasLimit: "100000",
+    value: "0",
+  },
+});
+
+const gasEstimate = await toolbox.estimateCall({
+  contractAddress: "0x...",
+  abi: contractABI,
+  funcName: "complexOperation",
+  funcParams: [
+    /* ... */
+  ],
+});
+```
+
+### Token Approvals
+
+ERC-20 tokens require approvals before they can be spent by contracts:
+
+```typescript
+// @noErrorValidation
+
+const isApproved = await toolbox.isApproved({
+  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  spenderAddress: "0x...",
+  amount: "1000000000",
+});
+
+if (!isApproved) {
+  const approveTx = await toolbox.approve({
+    contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    spenderAddress: "0x...",
+    amount: "1000000000",
+  });
+
+  console.log(`Approval transaction: ${approveTx}`);
+
+  await toolbox.waitForTransaction(approveTx);
+}
+```
+
+### Gas Management
+
+Ethereum supports both legacy and EIP-1559 fee structures:
+
+```typescript
+// @noErrorValidation
+
+const txParams = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Ethereum, value: "0.1" }),
+  feeOptionKey: FeeOption.Fast,
+
+  maxFeePerGas: "20000000000",
+  maxPriorityFeePerGas: "2000000000",
+});
+
+const legacyTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Ethereum, value: "0.1" }),
+  feeOptionKey: FeeOption.Fast,
+  gasPrice: "20000000000",
+});
+
+const gasInfo = await toolbox.getGasPrices();
+console.log({
+  slow: gasInfo.average,
+  standard: gasInfo.fast,
+  fast: gasInfo.fastest,
+});
+```
+
+## Cross-Chain Swaps
+
+Use Ethereum as source or destination for cross-chain swaps via THORChain:
+
+```typescript
+// @noErrorValidation
+
+const ethToBtcQuote = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "1",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+const swapTx = await swapKit.swap({
+  route: ethToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const usdcToRuneQuote = await swapKit.getQuote({
+  sellAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  sellAmount: "1000",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+
+const swapResult = await swapKit.swap({
+  route: usdcToRuneQuote.routes[0],
+  feeOptionKey: FeeOption.Average,
+});
+```
+
+## DEX Integration
+
+SwapKit supports major Ethereum DEXs through integrated routing:
+
+```typescript
+// @noErrorValidation
+
+const uniswapQuote = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "1",
+  buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+  providers: ["UNISWAPV3"],
+});
+
+const oneinchQuote = await swapKit.getQuote({
+  sellAsset: "ETH.DAI-0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  sellAmount: "1000",
+  buyAsset: "ETH.WBTC-0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+  providers: ["ONEINCH"],
+});
+
+const dexSwap = await swapKit.swap({
+  route: oneinchQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+```
+
+## Address Validation
+
+```typescript
+// @noErrorValidation
+import { validateEthereumAddress } from "@swapkit/toolboxes/evm";
+
+const isValidAddress = validateEthereumAddress(
+  "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"
+);
+console.log(isValidAddress);
+
+import { getAddress } from "ethers";
+
+try {
+  const checksumAddress = getAddress(
+    "0x742c4b4f3e0b5b069f5dcf8a65eaf8d3e888a3e7"
+  );
+  console.log(checksumAddress);
+} catch (error) {
+  console.error("Invalid address");
+}
+```
+
+## Fee Rate Configuration
+
+Configure gas fees based on network conditions:
+
+```typescript
+// @noErrorValidation
+import { FeeOption } from "@swapkit/sdk";
+
+const feeOptions = {
+  [FeeOption.Average]: 1.0,
+  [FeeOption.Fast]: 1.5,
+  [FeeOption.Fastest]: 2.0,
+};
+
+const customTx = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({ chain: Chain.Ethereum, value: "0.1" }),
+  gasLimit: "21000",
+  maxFeePerGas: "30000000000",
+  maxPriorityFeePerGas: "2000000000",
+});
+```
+
+## Error Handling
+
+Handle Ethereum-specific errors appropriately:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_evm_insufficient_funds":
+        console.error("Insufficient ETH for transaction");
+        break;
+      case "toolbox_evm_gas_estimation_failed":
+        console.error("Could not estimate gas");
+        break;
+      case "toolbox_evm_transaction_failed":
+        console.error("Transaction failed:", error.cause);
+        break;
+      case "toolbox_evm_invalid_address":
+        console.error("Invalid Ethereum address");
+        break;
+      case "toolbox_evm_token_not_approved":
+        console.error("Token approval required");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Advanced Features
+
+### Custom Provider Configuration
+
+```typescript
+// @noErrorValidation
+import { JsonRpcProvider } from 'ethers';
+
+
+const customProvider = new JsonRpcProvider("https:
+
+const toolbox = await getEthereumToolbox({
+  phrase: "your mnemonic",
+  provider: customProvider
+});
+
+
+import { SKConfig } from '@swapkit/sdk';
+
+SKConfig.setRpcUrl(Chain.Ethereum, [
+  "https:
+  "https:
+  "https:
+]);
+```
+
+### Working with Test Networks
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Ethereum, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testToolbox = await getEthereumToolbox({ phrase: "..." });
+```
+
+### Transaction Monitoring
+
+```typescript
+// @noErrorValidation
+
+const txHash = await swapKit.transfer({
+  /* ... */
+});
+
+const receipt = await toolbox.waitForTransaction(txHash);
+console.log(`Confirmed in block ${receipt.blockNumber}`);
+
+const status = await toolbox.getTransactionStatus(txHash);
+console.log(status);
+
+const txDetails = await toolbox.getTransaction(txHash);
+console.log({
+  blockNumber: txDetails.blockNumber,
+  gasUsed: txDetails.gasUsed,
+  status: txDetails.status,
+});
+```
+
+## Best Practices
+
+1. **Always validate addresses** before sending transactions:
+
+   ```typescript
+   import { isAddress } from "ethers";
+
+   if (!isAddress(recipient)) {
+     throw new Error("Invalid Ethereum address");
+   }
+   ```
+
+2. **Check balances** before transactions:
+
+   ```typescript
+   const balance = await toolbox.getBalance(senderAddress);
+   const requiredAmount = AssetValue.from({
+     chain: Chain.Ethereum,
+     value: "0.1",
+   });
+
+   if (balance.lt(requiredAmount.add(estimatedGas))) {
+     throw new Error("Insufficient balance");
+   }
+   ```
+
+3. **Use appropriate gas limits** for different operations:
+
+   ```typescript
+   const gasLimits = {
+     ethTransfer: "21000",
+     erc20Transfer: "65000",
+     contractCall: "100000-500000",
+     complexDeFi: "500000+",
+   };
+   ```
+
+4. **Handle network congestion**:
+
+   ```typescript
+   const gasInfo = await toolbox.getGasPrices();
+
+   if (gasInfo.fast > 50000000000) {
+     console.warn("Network is congested, consider waiting");
+   }
+   ```
+
+5. **Batch operations** when possible:
+
+   ```typescript
+   const multicallResults = await toolbox.multicall([
+     { target: "0x...", callData: "0x..." },
+     { target: "0x...", callData: "0x..." },
+   ]);
+   ```
+
+## Chain-Specific Features
+
+### ENS (Ethereum Name Service)
+
+```typescript
+// @noErrorValidation
+
+const address = await toolbox.resolveName("vitalik.eth");
+console.log(address);
+
+const ensName = await toolbox.lookupAddress(
+  "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+);
+console.log(ensName);
+```
+
+### MEV Protection
+
+```typescript
+// @noErrorValidation
+
+const protectedProvider = new JsonRpcProvider("https:
+
+
+const privateTx = await toolbox.sendPrivateTransaction({
+  /* transaction parameters */
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Insufficient funds for gas"**
+
+   - Ensure you have enough ETH to cover transaction gas costs
+   - Check gas price isn't set too high
+
+2. **"Transaction underpriced"**
+
+   - Increase gas price or use EIP-1559 with higher maxFeePerGas
+   - Use FeeOption.Fast or FeeOption.Fastest
+
+3. **"Nonce too low"**
+
+   - Transaction nonce conflicts with pending transaction
+   - Wait for previous transactions to confirm
+
+4. **Token transfer fails**
+   - Check token approval status
+   - Verify token contract address is correct
+   - Ensure recipient address can receive tokens
+
+### Debug Mode
+
+```typescript
+// @noErrorValidation
+
+import { SKConfig } from "@swapkit/sdk";
+
+SKConfig.setEnv("debug", true);
+
+const txParams = await toolbox.buildTransaction({
+  recipient: "0x...",
+  amount: AssetValue.from({ chain: Chain.Ethereum, value: "0.1" }),
+});
+
+console.log("Transaction parameters:", txParams);
+```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get ETH or token balance
+- `transfer()` - Send ETH or tokens
+- `buildTransaction()` - Construct transaction parameters
+- `call()` - Execute smart contract functions
+- `estimateCall()` - Estimate gas for contract calls
+
+### Token Methods
+
+- `approve()` - Approve token spending
+- `isApproved()` - Check approval status
+- `getTokenInfo()` - Get token metadata
+
+### Utility Methods
+
+- `getGasPrices()` - Get current gas prices
+- `waitForTransaction()` - Wait for confirmation
+- `getTransaction()` - Get transaction details
+- `validateAddress()` - Validate address format
+
+## Related Chain Integrations
+
+<CardGrid>
+  <Card title="🌐 Other EVM Chains" icon="rocket">
+    Leverage the same patterns on other EVM-compatible networks. -
+    [Arbitrum](/guides/chains/arbitrum) - Layer 2 scaling with lower fees -
+    [Polygon](/guides/chains/polygon) - Faster transactions and DeFi ecosystem -
+    [Avalanche](/guides/chains/avalanche) - High-throughput smart contracts -
+    [BNB Smart Chain](/guides/chains/bsc) - BSC DeFi ecosystem
+  </Card>
+
+  <Card title="🔄 Cross-Chain Operations" icon="puzzle">
+    Use Ethereum in cross-chain swaps and DeFi strategies. - [Cross-Chain
+    Swaps](/guides/actions/swap) - ETH ↔ BTC, ETH ↔ THOR - [THORChain
+    Features](/guides/thorchain-features) - Native liquidity access - [Advanced
+    Features](/guides/advanced-features) - Synthetic assets and more
+  </Card>
+
+  <Card title="💳 Wallet Integration" icon="open">
+    Connect Ethereum wallets across different types and providers. -
+    [MetaMask](/guides/wallets/browser-extensions/metamask) - Most popular
+    browser wallet -
+    [WalletConnect](/guides/wallets/mobile-desktop/walletconnect) - Mobile
+    wallet connections - [Hardware Wallets](/guides/wallets/hardware/ledger) -
+    Secure hardware signing
+  </Card>
+
+  <Card title="📋 Production Deployment" icon="star">
+    Optimize your Ethereum integration for production use. - [Production Best
+    Practices](/guides/production-best-practices) - Deployment guidelines -
+    [Security Guidelines](/guides/security) - Protect user funds and data -
+    [Performance Tips](/guides/performance) - Optimize gas and speed
+  </Card>
+</CardGrid>
+
+## Quick Navigation
+
+**New to SwapKit?** Start with [Getting Started](/start/getting-started) to learn the basics.
+
+**Building multi-chain apps?** Explore [Bitcoin](/guides/chains/bitcoin) and [Cosmos](/guides/chains/cosmos) integrations.
+
+**Need help?** Join our [Discord community](https:

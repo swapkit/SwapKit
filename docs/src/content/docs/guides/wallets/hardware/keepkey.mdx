@@ -1,0 +1,879 @@
+---
+title: KeepKey Hardware Wallet Integration
+description: Complete guide to integrating KeepKey hardware wallets with SwapKit SDK v4
+---
+
+KeepKey is a premium hardware wallet that provides secure cryptocurrency storage with a large OLED display for transaction verification. SwapKit SDK v4 supports KeepKey devices across multiple blockchain networks through the KeepKey SDK integration.
+
+## Supported Chains
+
+SwapKit supports KeepKey devices on these chains:
+
+- **EVM Compatible**: Ethereum, Arbitrum, Avalanche, Base, BinanceSmartChain, Optimism, Polygon
+- **UTXO Chains**: Bitcoin, Bitcoin Cash, Dash, Dogecoin, Litecoin
+- **Cosmos Ecosystem**: Cosmos, THORChain, Maya
+- **Other Chains**: Ripple
+
+## Installation and Setup
+
+### 1. Hardware Requirements
+
+- KeepKey hardware wallet device
+- USB connection
+- KeepKey Desktop application installed
+
+### 2. Install KeepKey Desktop
+
+1. Download KeepKey Desktop from [keepkey.com](https:
+2. Install and run the desktop application
+3. The desktop app provides the bridge service required for web integration
+4. Ensure the KeepKey Desktop is running in the background
+
+### 3. Device Setup
+
+Using KeepKey Desktop:
+
+- Initialize your device with a recovery seed
+- Set up a PIN for device access
+- Update to the latest firmware
+- Enable supported cryptocurrencies
+
+### 4. Browser Requirements
+
+KeepKey works with modern browsers through the desktop bridge:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Full support
+- **Edge**: Full support
+
+## SwapKit Integration
+
+### Configuration Setup
+
+Before using KeepKey, you need to configure the integration settings:
+
+```ts twoslash
+
+import { SwapKit, keepkeyWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+      keepKey: "your-keepkey-api-key",
+    },
+    integrations: {
+      keepKey: {
+
+        serviceName: "SwapKit",
+        serviceImageUrl: "https:
+
+      },
+    },
+  },
+  wallets: { ...keepkeyWallet },
+});
+```
+
+### Basic Connection
+
+#### Single Chain Connection
+
+```ts twoslash
+
+import { SwapKit, keepkeyWallet, Chain, NetworkDerivationPath } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      keepKey: {
+        serviceName: "My DApp",
+        serviceImageUrl: "https:
+      },
+    },
+  },
+  wallets: { ...keepkeyWallet },
+});
+
+async function connectKeepKeyBitcoin() {
+  try {
+
+    await swapKit.connectKeepkey([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    const balance = await swapKit.getBalance(Chain.Bitcoin, true);
+
+    console.log("Bitcoin address:", address);
+    console.log("Balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect KeepKey:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+
+import { SwapKit, keepkeyWallet, Chain, NetworkDerivationPath, type DerivationPathArray } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    integrations: {
+      keepKey: {
+        serviceName: "Multi-Chain DApp",
+        serviceImageUrl: "https:
+      },
+    },
+  },
+  wallets: { ...keepkeyWallet },
+});
+
+async function connectMultipleChains() {
+  const chains = [Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos];
+
+  try {
+
+    await swapKit.connectKeepkey(chains);
+
+    const addresses = {};
+    for (const chain of chains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    return { success: true, addresses };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Custom Derivation Paths
+
+```ts twoslash
+import {
+  SwapKit,
+  keepkeyWallet,
+  Chain,
+  type DerivationPathArray,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keepkeyWallet },
+});
+
+async function connectWithCustomPaths() {
+  const derivationPaths: Record<Chain, DerivationPathArray> = {
+    [Chain.Bitcoin]: [84, 0, 0, 0, 0],
+    [Chain.Ethereum]: [44, 60, 0, 0, 0],
+    [Chain.Cosmos]: [44, 118, 0, 0, 0],
+  };
+
+  const chains = [Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos];
+
+  try {
+    await swapKit.connectKeepkey(chains, derivationPaths);
+
+    const results = chains.map((chain) => ({
+      chain,
+      address: swapKit.getAddress(chain),
+      derivationPath: derivationPaths[chain],
+    }));
+
+    console.log("Connected chains:", results);
+    return { success: true, connections: results };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Bitcoin Transaction
+
+```ts twoslash
+import { SwapKit, keepkeyWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keepkeyWallet },
+});
+
+await swapKit.connectKeepkey([Chain.Bitcoin]);
+
+async function sendBitcoin() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    console.log("Preparing Bitcoin transaction...");
+    console.log("Amount:", amount.toSignificant(6), "BTC");
+    console.log("Recipient:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "KeepKey Transaction",
+    });
+
+    console.log("✅ Transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ Bitcoin transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Ethereum Transaction
+
+```ts twoslash
+import { SwapKit, keepkeyWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keepkeyWallet },
+});
+
+await swapKit.connectKeepkey([Chain.Ethereum]);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("ETH transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("ETH transaction failed:", error);
+    throw error;
+  }
+}
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("USDC transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("USDC transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Cosmos Transaction
+
+```ts twoslash
+import { SwapKit, keepkeyWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keepkeyWallet },
+});
+
+await swapKit.connectKeepkey([Chain.Cosmos]);
+
+async function sendCosmos() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "KeepKey Cosmos transaction",
+    });
+
+    console.log("ATOM transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("ATOM transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### THORChain Transaction
+
+```ts twoslash
+import { SwapKit, keepkeyWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keepkeyWallet },
+});
+
+await swapKit.connectKeepkey([Chain.THORChain]);
+
+async function sendThorchain() {
+  const recipient = "thor1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 10);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "KeepKey THORChain transaction",
+    });
+
+    console.log("RUNE transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("RUNE transaction failed:", error);
+    throw error;
+  }
+}
+
+async function depositToThorchain() {
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 100);
+  const memo = "ADD:BTC.BTC:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  try {
+    const wallet = await swapKit.getWalletWithBalance(Chain.THORChain);
+    const txHash = await wallet.deposit({
+      assetValue: amount,
+      memo,
+    });
+
+    console.log("THORChain deposit sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("THORChain deposit failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Setup
+
+### EVM Chains Configuration
+
+```ts twoslash
+import { SwapKit, keepkeyWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...keepkeyWallet } });
+
+async function setupEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Polygon,
+    Chain.BinanceSmartChain,
+    Chain.Optimism,
+    Chain.Base,
+  ];
+
+  try {
+    await swapKit.connectKeepkey(evmChains);
+
+    const evmAddress = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all EVM chains):", evmAddress);
+
+    const balances = await Promise.all(
+      evmChains.map(async (chain) => {
+        const balance = await swapKit.getBalance(chain, true);
+        return { chain, balance };
+      })
+    );
+
+    return { success: true, address: evmAddress, balances };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### UTXO Chains Configuration
+
+```ts twoslash
+import {
+  SwapKit,
+  keepkeyWallet,
+  Chain,
+  type DerivationPathArray,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...keepkeyWallet } });
+
+async function setupUTXOChains() {
+  const utxoChains = [
+    Chain.Bitcoin,
+    Chain.Litecoin,
+    Chain.Dogecoin,
+    Chain.Dash,
+  ];
+
+  const derivationPaths: Record<Chain, DerivationPathArray> = {
+    [Chain.Bitcoin]: [84, 0, 0, 0, 0],
+    [Chain.Litecoin]: [84, 2, 0, 0, 0],
+    [Chain.Dogecoin]: [84, 3, 0, 0, 0],
+    [Chain.Dash]: [84, 5, 0, 0, 0],
+  };
+
+  try {
+    await swapKit.connectKeepkey(utxoChains, derivationPaths);
+
+    const addresses = {};
+    for (const chain of utxoChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    return { success: true, addresses };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, keepkeyWallet, Chain } from "@swapkit/sdk";
+
+async function diagnosticConnection() {
+  try {
+    console.log("🔍 Checking KeepKey Desktop availability...");
+
+
+    const isAvailable = await checkKeepkeyAvailability();
+    if (!isAvailable) {
+      console.log("❌ KeepKey Desktop not running");
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Install KeepKey Desktop from https:
+      console.log("2. Launch KeepKey Desktop application");
+      console.log("3. Ensure it's running in the background");
+      return { success: false, error: "KeepKey Desktop not available" };
+    }
+
+    console.log("✅ KeepKey Desktop is available");
+
+    const swapKit = SwapKit({
+      config: {
+        integrations: {
+          keepKey: {
+            serviceName: "Diagnostic Test",
+            serviceImageUrl: "https:
+          },
+        },
+      },
+      wallets: { ...keepkeyWallet },
+    });
+
+    console.log("🔗 Attempting to connect to KeepKey...");
+    await swapKit.connectKeepkey([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("✅ KeepKey connected successfully");
+    console.log("Address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("Device not found")) {
+      console.log("🔧 Device troubleshooting:");
+      console.log("1. Connect KeepKey via USB");
+      console.log("2. Unlock your KeepKey device");
+      console.log("3. Ensure KeepKey Desktop recognizes the device");
+    }
+
+    if (error.message.includes("Pairing")) {
+      console.log("🔧 Pairing issues:");
+      console.log("1. Complete initial pairing in KeepKey Desktop");
+      console.log("2. Ensure pairing info is correctly configured");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkKeepkeyAvailability(): Promise<boolean> {
+  try {
+    const response = await fetch("http:
+    return response.status === 200;
+  } catch (error) {
+    return false;
+  }
+}
+```
+
+### Pairing Issues
+
+```ts twoslash
+
+
+async function handleFirstTimePairing() {
+  try {
+    const swapKit = SwapKit({
+      config: {
+        apiKeys: {
+          keepKey: "1234",
+        },
+        integrations: {
+          keepKey: {
+            serviceName: "My DApp",
+            serviceImageUrl: "https:
+          },
+        },
+      },
+      wallets: { ...keepkeyWallet },
+    });
+
+    console.log("🔗 Initiating first-time pairing...");
+    console.log("📱 Please follow instructions on your KeepKey device");
+
+    await swapKit.connectKeepkey([Chain.Bitcoin]);
+
+    console.log("✅ Pairing successful!");
+    console.log("💾 Pairing information has been saved for future sessions");
+
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Pairing failed:", error);
+
+    if (error.message.includes("User cancelled")) {
+      console.log("🔧 User cancelled pairing - please try again");
+    }
+
+    if (error.message.includes("Timeout")) {
+      console.log("🔧 Pairing timed out - please ensure device is unlocked");
+    }
+
+    return { success: false, error };
+  }
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient balance for transaction + fees");
+
+      const balance = await swapKit.getBalance(Chain.Bitcoin, true);
+      console.log("Current balance:", balance);
+    }
+
+    if (error.message.includes("User rejected")) {
+      console.error("❌ Transaction rejected on KeepKey device");
+      console.log("Please approve the transaction on your device screen");
+    }
+
+    if (error.message.includes("Device disconnected")) {
+      console.error("❌ KeepKey disconnected during transaction");
+      console.log("Please reconnect your device and try again");
+    }
+
+    if (error.message.includes("Invalid fee")) {
+      console.error("❌ Invalid fee rate");
+      console.log(
+        "Fee rate may be too low or too high for current network conditions"
+      );
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+
+
+const secureConfig = {
+  config: {
+    apiKeys: {
+      keepKey: process.env.KEEPKEY_API_KEY,
+    },
+    integrations: {
+      keepKey: {
+        serviceName: "Your App Name",
+        serviceImageUrl: "https:
+      },
+    },
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+    },
+  },
+  wallets: { ...keepkeyWallet },
+};
+
+
+async function verifyAddressOnDevice() {
+  const swapKit = SwapKit(secureConfig);
+  await swapKit.connectKeepkey([Chain.Bitcoin]);
+
+  const address = swapKit.getAddress(Chain.Bitcoin);
+
+  console.log("Address from SwapKit:", address);
+  console.log("⚠️ Please verify this address on your KeepKey screen");
+
+
+  return address;
+}
+
+
+async function secureTransaction() {
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", amount.toSignificant(6), "BTC");
+  console.log("Recipient:", recipient);
+  console.log("⚠️ Please verify these details on your KeepKey screen");
+
+  const txHash = await swapKit.transfer({
+    assetValue: amount,
+    recipient,
+  });
+
+  return txHash;
+}
+
+
+async function secureErrorHandling() {
+  try {
+
+  } catch (error) {
+
+    console.error("Transaction failed:", error.message);
+
+
+    throw new Error("Transaction failed. Please check your device and try again.");
+  }
+}
+```
+
+### Network Security
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+    rpcUrls: {
+
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+      [Chain.Cosmos]: "https:
+    },
+
+    allowInsecureConnection: false,
+  },
+  wallets: { ...keepkeyWallet },
+});
+```
+
+## Advanced Usage
+
+### Multi-Account Support
+
+```ts twoslash
+
+class KeepKeyAccountManager {
+  private swapKit: any;
+  private accounts: Map<number, Record<Chain, string>> = new Map();
+
+  constructor() {
+    this.swapKit = SwapKit({
+      config: {
+        integrations: {
+          keepKey: {
+            serviceName: "Multi-Account Manager",
+            serviceImageUrl: "https:
+          },
+        },
+      },
+      wallets: { ...keepkeyWallet },
+    });
+  }
+
+  async connectAccount(accountIndex: number, chains: Chain[]) {
+
+    const derivationPaths: Record<Chain, DerivationPathArray> = {};
+
+    for (const chain of chains) {
+      switch (chain) {
+        case Chain.Bitcoin:
+          derivationPaths[chain] = [84, 0, accountIndex, 0, 0];
+          break;
+        case Chain.Ethereum:
+          derivationPaths[chain] = [44, 60, accountIndex, 0, 0];
+          break;
+        case Chain.Cosmos:
+          derivationPaths[chain] = [44, 118, accountIndex, 0, 0];
+          break;
+        default:
+          throw new Error(`Unsupported chain: ${chain}`);
+      }
+    }
+
+    await this.swapKit.connectKeepkey(chains, derivationPaths);
+
+    const accountAddresses: Record<Chain, string> = {};
+    for (const chain of chains) {
+      accountAddresses[chain] = this.swapKit.getAddress(chain);
+    }
+
+    this.accounts.set(accountIndex, accountAddresses);
+    return accountAddresses;
+  }
+
+  getAccount(accountIndex: number) {
+    return this.accounts.get(accountIndex);
+  }
+
+  getAllAccounts() {
+    return Array.from(this.accounts.entries());
+  }
+}
+```
+
+### React Integration
+
+```tsx twoslash
+import React, { useState, useEffect } from "react";
+import { SwapKit, keepkeyWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface KeepKeyWalletProps {
+  onConnect: (addresses: Record<Chain, string>) => void;
+  onError: (error: Error) => void;
+}
+
+export function KeepKeyWallet({ onConnect, onError }: KeepKeyWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Record<Chain, string>>({});
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([
+    Chain.Bitcoin,
+  ]);
+
+  const swapKit = SwapKit({
+    config: {
+      integrations: {
+        keepKey: {
+          serviceName: "React DApp",
+          serviceImageUrl: `${window.location.origin}/icon.png`,
+        },
+      },
+    },
+    wallets: { ...keepkeyWallet },
+  });
+
+  const connectKeepKey = async () => {
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectKeepkey(selectedChains);
+
+      const connectedAddresses: Record<Chain, string> = {};
+      for (const chain of selectedChains) {
+        connectedAddresses[chain] = swapKit.getAddress(chain);
+      }
+
+      setAddresses(connectedAddresses);
+      setIsConnected(true);
+      onConnect(connectedAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains((prev) =>
+      prev.includes(chain) ? prev.filter((c) => c !== chain) : [...prev, chain]
+    );
+  };
+
+  return (
+    <div>
+      <h3>KeepKey Wallet</h3>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Chains:</h4>
+          {[Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos].map((chain) => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {chain}
+            </label>
+          ))}
+
+          <button
+            onClick={connectKeepKey}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect KeepKey"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of KeepKey integration with SwapKit SDK v4, including setup, usage, troubleshooting, and advanced features. The KeepKey integration provides secure hardware wallet functionality with support for multiple blockchain networks through a user-friendly interface.

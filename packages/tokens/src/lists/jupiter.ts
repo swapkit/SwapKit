@@ -1,15 +1,10 @@
 export const list = {
-  provider: "JUPITER",
   chainId: "solana",
-  name: "JUPITER",
-  timestamp: "2025-07-30T16:02:49.708Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 996,
+  keywords: [],
+  name: "JUPITER",
+  provider: "JUPITER",
+  timestamp: "2025-07-30T16:02:49.708Z",
   tokens: [
     {
       address: "9qriMjPPAJTMCtfQnz7Mo9BsV2jAWTr2ff7yc3JWpump",
@@ -9970,4 +9965,5 @@ export const list = {
       ticker: "ZYN",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

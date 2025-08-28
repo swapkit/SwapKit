@@ -5,14 +5,10 @@ import {
   BaseDecimal,
   Chain,
   type CryptoChain,
+  type ErrorKeys,
   type EVMChain,
   EVMChains,
-  type ErrorKeys,
   FeeOption,
-  MemoType,
-  ProviderName,
-  SwapKitError,
-  type SwapParams,
   getMemoForDeposit,
   getMemoForLeaveAndBond,
   getMemoForNamePreferredAssetRegister,
@@ -22,6 +18,10 @@ import {
   getMemoForUnbond,
   getMemoForWithdraw,
   getMinAmountByChain,
+  MemoType,
+  ProviderName,
+  SwapKitError,
+  type SwapParams,
   wrapWithThrow,
 } from "@swapkit/helpers";
 import {
@@ -64,40 +64,30 @@ const TCSpecificAbi = {
   [Chain.Ethereum]: TCEthereumVaultAbi,
 };
 
-const MayaSpecificAbi = {
-  [Chain.Arbitrum]: MayaArbitrumVaultAbi,
-  [Chain.Ethereum]: MayaEthereumVaultAbi,
-};
+const MayaSpecificAbi = { [Chain.Arbitrum]: MayaArbitrumVaultAbi, [Chain.Ethereum]: MayaEthereumVaultAbi };
 
 export const ThorchainPlugin = createPlugin({
-  name: "thorchain",
   methods: createTCBasedPlugin(Chain.THORChain),
-  properties: {
-    supportedSwapkitProviders: [ProviderName.THORCHAIN, ProviderName.THORCHAIN_STREAMING],
-  },
+  name: "thorchain",
+  properties: { supportedSwapkitProviders: [ProviderName.THORCHAIN, ProviderName.THORCHAIN_STREAMING] },
 });
 
 export const MayachainPlugin = createPlugin({
-  name: "mayachain",
   methods: createTCBasedPlugin(Chain.Maya),
-  properties: {
-    supportedSwapkitProviders: [ProviderName.MAYACHAIN],
-  },
+  name: "mayachain",
+  properties: { supportedSwapkitProviders: [ProviderName.MAYACHAIN, ProviderName.MAYACHAIN_STREAMING] },
 });
 
 function getInboundDataFunction(type?: THORNodeType) {
   return async function getInboundDataByChain<T extends Chain>(chain: T) {
-    if (
-      (type === "thorchain" && chain === Chain.THORChain) ||
-      (type === "mayachain" && chain === Chain.Maya)
-    ) {
+    if ((type === "thorchain" && chain === Chain.THORChain) || (type === "mayachain" && chain === Chain.Maya)) {
       return {
-        gas_rate: "0",
-        router: "",
         address: "",
-        halted: false,
         chain,
         dust_threshold: "0",
+        gas_rate: "0",
+        halted: false,
+        router: "",
       } as InboundAddressesItem;
     }
 
@@ -118,11 +108,13 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
     const pluginType = pluginChain === Chain.Maya ? "mayachain" : "thorchain";
     const getInboundDataByChain = getInboundDataFunction(pluginType);
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: refactor/split
     async function approve<T extends ApproveMode>({
       assetValue,
       type = "checkOnly" as T,
-    }: { type: T; assetValue: AssetValue }) {
+    }: {
+      type: T;
+      assetValue: AssetValue;
+    }) {
       const router = (await getInboundDataByChain(assetValue.chain)).router as string;
 
       const chain = assetValue.chain as EVMChain;
@@ -154,13 +146,8 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       });
     }
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor
-    async function deposit({
-      assetValue,
-      recipient,
-      router,
-      ...rest
-    }: CoreTxParams & { router?: string }) {
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
+    async function deposit({ assetValue, recipient, router, ...rest }: CoreTxParams & { router?: string }) {
       const abis = pluginType === "thorchain" ? TCSpecificAbi : MayaSpecificAbi;
       const { chain, symbol, ticker } = assetValue;
 
@@ -174,7 +161,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
         throw new SwapKitError("core_transaction_invalid_sender_address");
       }
 
-      const params = prepareTxParams({ from: address, assetValue, recipient, router, ...rest });
+      const params = prepareTxParams({ assetValue, from: address, recipient, router, ...rest });
 
       try {
         const abi = abis?.[chain as keyof typeof abis];
@@ -198,7 +185,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
             getChecksumAddressFromAsset({ chain, symbol, ticker }, chain as EVMChain),
             assetValue.getBaseValue("string"),
             params.memo,
-            rest.expiration || Number.parseInt(`${(Date.now() + 15 * 60 * 1000) / 1000}`),
+            rest.expiration || Number.parseInt(`${(Date.now() + 15 * 60 * 1000) / 1000}`, 10),
           ],
           txOverrides: {
             from: params.from,
@@ -227,10 +214,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       }
     }
 
-    async function depositToProtocol({
-      memo,
-      assetValue,
-    }: { assetValue: AssetValue; memo: string }) {
+    async function depositToProtocol({ memo, assetValue }: { assetValue: AssetValue; memo: string }) {
       const mimir = await SwapKitApi.thornode.getMimirInfo(pluginType);
 
       // check if trading is halted or not
@@ -238,26 +222,26 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
         throw new SwapKitError("thorchain_chain_halted");
       }
 
-      return deposit({ assetValue, recipient: "", memo });
+      return deposit({ assetValue, memo, recipient: "" });
     }
 
     async function depositToPool({
       assetValue,
       memo,
       feeOptionKey = FeeOption.Fast,
-    }: { assetValue: AssetValue; memo: string; feeOptionKey?: FeeOption }) {
-      const {
-        gas_rate = "0",
-        router,
-        address: poolAddress,
-      } = await getInboundDataByChain(assetValue.chain);
+    }: {
+      assetValue: AssetValue;
+      memo: string;
+      feeOptionKey?: FeeOption;
+    }) {
+      const { gas_rate = "0", router, address: poolAddress } = await getInboundDataByChain(assetValue.chain);
 
       return deposit({
         assetValue,
-        recipient: poolAddress,
+        feeRate: Number.parseInt(gas_rate, 10) * gasFeeMultiplier[feeOptionKey],
         memo,
+        recipient: poolAddress,
         router,
-        feeRate: Number.parseInt(gas_rate) * gasFeeMultiplier[feeOptionKey],
       });
     }
 
@@ -306,11 +290,10 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const memo =
         type === MemoType.UNBOND
           ? getMemoForUnbond({ address, unbondAmount: assetValue.getBaseValue("number") })
-          : getMemoForLeaveAndBond({ type, address });
+          : getMemoForLeaveAndBond({ address, type });
 
-      const assetToTransfer =
-        type === MemoType.BOND ? assetValue : getMinAmountByChain(pluginChain);
-      return depositToProtocol({ memo, assetValue: assetToTransfer });
+      const assetToTransfer = type === MemoType.BOND ? assetValue : getMinAmountByChain(pluginChain);
+      return depositToProtocol({ assetValue: assetToTransfer, memo });
     }
 
     async function createLiquidity({ baseAssetValue, assetValue }: CreateLiquidityParams) {
@@ -329,34 +312,26 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       }, "core_transaction_create_liquidity_base_error");
 
       const assetTx = await wrapWithThrow(() => {
-        return depositToPool({
-          assetValue,
-          memo: getMemoForDeposit({ ...assetValue, address: baseAssetAddress }),
-        });
+        return depositToPool({ assetValue, memo: getMemoForDeposit({ ...assetValue, address: baseAssetAddress }) });
       }, "core_transaction_create_liquidity_asset_error");
 
-      return { baseAssetTx, assetTx };
+      return { assetTx, baseAssetTx };
     }
 
-    function addLiquidityPart({
-      assetValue,
-      poolAddress,
-      address,
-      symmetric,
-    }: AddLiquidityPartParams) {
+    function addLiquidityPart({ assetValue, poolAddress, address, symmetric }: AddLiquidityPartParams) {
       if (symmetric && !address) {
         throw new SwapKitError("core_transaction_add_liquidity_invalid_params");
       }
       const memo = getMemoForDeposit({
+        address: symmetric ? address : "",
         chain: poolAddress.split(".")[0] as Chain,
         symbol: poolAddress.split(".")[1] as string,
-        address: symmetric ? address : "",
       });
 
       return depositToPool({ assetValue, memo });
     }
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactor
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
     async function addLiquidity({
       baseAssetValue,
       assetValue,
@@ -373,8 +348,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const baseAssetWalletAddress = getWallet(pluginChain).address;
 
       const baseAddress = includeBaseAddress ? baseAssetAddr || baseAssetWalletAddress : "";
-      const assetAddress =
-        isSym || mode === "asset" ? assetAddr || getWallet(chain as CryptoChain).address : "";
+      const assetAddress = isSym || mode === "asset" ? assetAddr || getWallet(chain as CryptoChain).address : "";
 
       if (!(baseTransfer || assetTransfer)) {
         throw new SwapKitError("core_transaction_add_liquidity_invalid_params");
@@ -388,7 +362,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
           ? await wrapWithThrow(() => {
               return depositToPool({
                 assetValue: baseAssetValue,
-                memo: getMemoForDeposit({ chain, symbol, address: assetAddress }),
+                memo: getMemoForDeposit({ address: assetAddress, chain, symbol }),
               });
             }, "core_transaction_add_liquidity_base_error")
           : undefined;
@@ -396,14 +370,11 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const assetTx =
         assetTransfer && assetValue
           ? await wrapWithThrow(() => {
-              return depositToPool({
-                assetValue,
-                memo: getMemoForDeposit({ chain, symbol, address: baseAddress }),
-              });
+              return depositToPool({ assetValue, memo: getMemoForDeposit({ address: baseAddress, chain, symbol }) });
             }, "core_transaction_add_liquidity_asset_error")
           : undefined;
 
-      return { baseAssetTx, assetTx };
+      return { assetTx, baseAssetTx };
     }
 
     function withdraw({ memo, assetValue, percent, from, to }: WithdrawParams) {
@@ -418,11 +389,11 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const memoString =
         memo ||
         getMemoForWithdraw({
-          symbol: assetValue.symbol,
-          chain: assetValue.chain,
-          ticker: assetValue.ticker,
           basisPoints: Math.min(10000, Math.round(percent * 100)),
+          chain: assetValue.chain,
+          symbol: assetValue.symbol,
           targetAsset: targetAsset?.toString(),
+          ticker: assetValue.ticker,
         });
 
       return depositToPool({ assetValue: value, memo: memoString });
@@ -438,8 +409,8 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
           fromBaseDecimal: Math.min(BaseDecimal[chain], BaseDecimal[Chain.THORChain]),
           value: chain !== Chain.THORChain ? dust_threshold : 0,
         }),
-        recipient: inboundData.address,
         memo: getMemoForTcyClaim(MemoType.CLAIM_TCY, { address: thorAddress }),
+        recipient: inboundData.address,
         router: inboundData.router,
       });
     }
@@ -454,31 +425,24 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
 
         return deposit({
           assetValue: params.assetValue,
-          recipient: "",
           memo: getMemoForTcyStake(MemoType.STAKE_TCY, {}),
+          recipient: "",
         });
       }
 
       return deposit({
-        assetValue: AssetValue.from({
-          chain: Chain.THORChain,
-        }),
+        assetValue: AssetValue.from({ chain: Chain.THORChain }),
+        memo: getMemoForTcyStake(MemoType.UNSTAKE_TCY, { unstakeBps: params.unstakeBps }),
         recipient: "",
-        memo: getMemoForTcyStake(MemoType.UNSTAKE_TCY, {
-          unstakeBps: params.unstakeBps,
-        }),
       });
     }
 
-    async function swap({
-      feeOptionKey,
-      route,
-    }: SwapParams<typeof pluginType, QuoteResponseRoute>) {
+    async function swap({ feeOptionKey, route }: SwapParams<typeof pluginType, QuoteResponseRoute>) {
       const { memo, expiration, targetAddress } = route;
 
       const assetValue = await AssetValue.from({
-        asyncTokenLookup: true,
         asset: route.sellAsset,
+        asyncTokenLookup: true,
         value: route.sellAmount,
       });
 
@@ -498,12 +462,12 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       const { address: recipient } = await getInboundDataByChain(assetValue.chain);
 
       return deposit({
-        expiration: Number(expiration),
         assetValue,
-        memo,
+        expiration: Number(expiration),
         feeOptionKey,
-        router: targetAddress,
+        memo,
         recipient,
+        router: targetAddress,
       });
     }
 
@@ -511,6 +475,7 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       addLiquidity,
       addLiquidityPart,
       approveAssetValue,
+      claimTcy,
       createLiquidity,
       deposit,
       depositToPool,
@@ -519,7 +484,6 @@ function createTCBasedPlugin<T extends PluginChain>(pluginChain: T) {
       nodeAction,
       registerName,
       registerPreferredAsset,
-      claimTcy,
       stakeTcyAction,
       swap,
       withdraw,

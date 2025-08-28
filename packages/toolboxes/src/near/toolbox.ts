@@ -1,4 +1,4 @@
-import { AssetValue, BaseDecimal, Chain, SKConfig, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, BaseDecimal, Chain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import {
@@ -8,8 +8,8 @@ import {
   getValidateNearAddress,
 } from "./helpers/core";
 import {
-  GAS_COSTS,
   estimateBatchGas,
+  GAS_COSTS,
   getContractMethodGas,
   isAccountCreation,
   isBatchTransaction,
@@ -45,7 +45,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
-  const url = SKConfig.get("rpcUrls")[Chain.Near];
+  const url = await getRPCUrl(Chain.Near);
 
   const provider = new providers.JsonRpcProvider({ url });
 
@@ -92,23 +92,16 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       const amount = assetValue.getBaseValue("string");
 
       return callFunction({
+        args: { amount, memo: params.memo, receiver_id: recipient },
         contractId,
         methodName: "ft_transfer",
-        args: {
-          receiver_id: recipient,
-          amount,
-          memo: params.memo,
-        },
       });
     }
 
     try {
       const transferAmount = assetValue.getBaseValue("string");
 
-      const result = await account.transfer({
-        receiverId: recipient,
-        amount: transferAmount,
-      });
+      const result = await account.transfer({ amount: transferAmount, receiverId: recipient });
 
       return result.transaction_outcome.id;
     } catch (error) {
@@ -116,9 +109,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     }
   }
 
-  async function createTransaction(
-    params: NearCreateTransactionParams,
-  ): Promise<SerializedTransaction> {
+  async function createTransaction(params: NearCreateTransactionParams): Promise<SerializedTransaction> {
     const { recipient, assetValue, memo, feeRate: gas, attachedDeposit, sender: signerId } = params;
     const validateNearAddress = await getValidateNearAddress();
 
@@ -138,16 +129,12 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       }
 
       return createContractFunctionCall({
-        sender: signerId,
-        contractId,
-        methodName: "ft_transfer",
-        args: {
-          receiver_id: recipient,
-          amount: assetValue.getBaseValue("string"),
-          memo: memo || null,
-        },
-        gas: gas.toString() || "100000000000000", // 100 TGas default
+        args: { amount: assetValue.getBaseValue("string"), memo: memo || null, receiver_id: recipient },
         attachedDeposit: "1", // 1 yoctoNEAR required for NEP-141 transfers
+        contractId,
+        gas: gas.toString() || "100000000000000", // 100 TGas default
+        methodName: "ft_transfer",
+        sender: signerId,
       });
     }
 
@@ -161,40 +148,25 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const txActions = [transactions.transfer(baseAmount)];
 
     if (memo && attachedDeposit) {
-      txActions.push(
-        transactions.functionCall("memo", { memo }, BigInt(gas), BigInt(attachedDeposit)),
-      );
+      txActions.push(transactions.functionCall("memo", { memo }, BigInt(gas), BigInt(attachedDeposit)));
     }
 
     const block = await provider.block({ finality: "final" });
     const blockHash = utils.serialize.base_decode(block.header.hash);
 
-    const transaction = transactions.createTransaction(
-      signerId,
-      publicKey,
-      recipient,
-      nonce,
-      txActions,
-      blockHash,
-    );
+    const transaction = transactions.createTransaction(signerId, publicKey, recipient, nonce, txActions, blockHash);
 
     const serializedTx = utils.serialize.serialize(SCHEMA.Transaction, transaction);
     const serializedBase64 = Buffer.from(serializedTx).toString("base64");
 
     return {
-      serialized: serializedBase64,
+      details: { blockHash: utils.serialize.base_encode(blockHash), nonce: nonce, signerId },
       publicKey: publicKey.toString(),
-      details: {
-        signerId,
-        nonce: nonce,
-        blockHash: utils.serialize.base_encode(blockHash),
-      },
+      serialized: serializedBase64,
     };
   }
 
-  async function createContractFunctionCall(
-    params: ContractFunctionCallParams,
-  ): Promise<SerializedTransaction> {
+  async function createContractFunctionCall(params: ContractFunctionCallParams): Promise<SerializedTransaction> {
     const { sender: accountId } = params;
 
     const { publicKey, nonce } = await getFullAccessPublicKey(provider, accountId);
@@ -226,15 +198,15 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const serializedBase64 = Buffer.from(serializedTx).toString("base64");
 
     return {
-      serialized: serializedBase64,
-      publicKey: publicKey.toString(),
       details: {
-        signerId: accountId,
-        receiverId: params.contractId,
+        blockHash: utils.serialize.base_encode(blockHash),
         methodName: params.methodName,
         nonce: nonce,
-        blockHash: utils.serialize.base_encode(blockHash),
+        receiverId: params.contractId,
+        signerId: accountId,
       },
+      publicKey: publicKey.toString(),
+      serialized: serializedBase64,
     };
   }
 
@@ -267,8 +239,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
       return AssetValue.from({
         chain: Chain.Near,
-        value: totalCostYocto.toString(),
         fromBaseDecimal: BaseDecimal[Chain.Near],
+        value: totalCostYocto.toString(),
       });
     }
 
@@ -280,11 +252,11 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   async function getCurrentGasPrice() {
     try {
       const result = await provider.query({
-        request_type: "call_function",
-        finality: "final",
         account_id: "system",
-        method_name: "gas_price",
         args_base64: "",
+        finality: "final",
+        method_name: "gas_price",
+        request_type: "call_function",
       });
 
       return result;
@@ -293,11 +265,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     }
   }
 
-  async function createSubAccount(
-    subAccountId: string,
-    publicKey: string,
-    initialBalance: string,
-  ): Promise<string> {
+  async function createSubAccount(subAccountId: string, publicKey: string, initialBalance: string): Promise<string> {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
@@ -327,11 +295,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       const { contractId, methodName, args, deposit } = params;
       const account = await getAccount();
 
-      const estimatedGas = await estimateGas({
-        methodName,
-        args: args || {},
-        contractId,
-      });
+      const estimatedGas = await estimateGas({ args: args || {}, contractId, methodName });
 
       const functionAction = transactions.functionCall(
         methodName,
@@ -340,10 +304,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         BigInt(deposit || "0"),
       );
 
-      const result = await account.signAndSendTransaction({
-        receiverId: contractId,
-        actions: [functionAction],
-      });
+      const result = await account.signAndSendTransaction({ actions: [functionAction], receiverId: contractId });
 
       return result.transaction_outcome.id;
     } catch (error) {
@@ -352,16 +313,14 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   // Create typed contract interface
-  async function createContract<T extends Contract = Contract>(
-    contractInterface: NearContractInterface,
-  ): Promise<T> {
+  async function createContract<T extends Contract = Contract>(contractInterface: NearContractInterface): Promise<T> {
     const account = await getAccount();
 
     return createNearContract<T>({
       account,
+      changeMethods: contractInterface.changeMethods,
       contractId: contractInterface.contractId,
       viewMethods: contractInterface.viewMethods,
-      changeMethods: contractInterface.changeMethods,
     });
   }
 
@@ -377,17 +336,14 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const account = await getAccount();
 
     // Use account.signAndSendTransaction for batch operations
-    const result = await account.signAndSendTransaction({
-      receiverId: batch.receiverId,
-      actions: batch.actions,
-    });
+    const result = await account.signAndSendTransaction({ actions: batch.actions, receiverId: batch.receiverId });
 
     return result.transaction.hash;
   }
 
   async function nep141(contractId: string) {
     const account = await getAccount();
-    return createNEP141Token({ contractId, account });
+    return createNEP141Token({ account, contractId });
   }
 
   async function getBalance(address: string) {
@@ -398,17 +354,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       try {
         const value = await account.getBalance();
 
-        nativeBalance = AssetValue.from({
-          chain: Chain.Near,
-          value,
-          fromBaseDecimal: BaseDecimal[Chain.Near],
-        });
+        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value });
       } catch {
-        nativeBalance = AssetValue.from({
-          chain: Chain.Near,
-          value: "0",
-          fromBaseDecimal: BaseDecimal[Chain.Near],
-        });
+        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: "0" });
       }
 
       //   // Then, fetch token balances from API
@@ -464,11 +412,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12); // Convert TGas to gas units
     const costInYoctoNear = gasInUnits * BigInt(gasPrice);
 
-    return AssetValue.from({
-      chain: Chain.Near,
-      value: costInYoctoNear,
-      fromBaseDecimal: BaseDecimal[Chain.Near],
-    });
+    return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: costInYoctoNear });
   }
 
   // Get current gas price from network
@@ -483,25 +427,25 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   return {
-    getAddress,
-    getPublicKey: async () => (signer ? (await signer.getPublicKey()).toString() : ""),
-    provider,
-    transfer,
-    createTransaction,
-    createContractFunctionCall,
-    estimateTransactionFee,
     broadcastTransaction,
-    signTransaction,
+    callFunction,
+    createContract,
+    createContractFunctionCall,
+    createSubAccount,
+    createTransaction,
+    estimateGas,
+    estimateTransactionFee,
+    executeBatchTransaction,
+    getAddress,
     getBalance,
-    validateAddress: await getValidateNearAddress(),
+    getGasPrice,
+    getPublicKey: async () => (signer ? (await signer.getPublicKey()).toString() : ""),
     getSignerFromPhrase: (params: GetSignerFromPhraseParams) => getNearSignerFromPhrase(params),
     getSignerFromPrivateKey: getNearSignerFromPrivateKey,
-    callFunction,
-    createSubAccount,
-    createContract,
-    executeBatchTransaction,
     nep141,
-    getGasPrice,
-    estimateGas,
+    provider,
+    signTransaction,
+    transfer,
+    validateAddress: await getValidateNearAddress(),
   };
 }

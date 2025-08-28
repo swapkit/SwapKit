@@ -1,8 +1,4 @@
 name: Release
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-  TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
 
 on:
   workflow_dispatch:
@@ -15,6 +11,9 @@ on:
 jobs:
   build-lint-test:
     runs-on: ubuntu-latest
+    env:
+      TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +33,10 @@ jobs:
   publish:
     needs: [build-lint-test]
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -104,6 +107,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_name == 'develop'
     needs: [build-lint-test]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+
     permissions:
       contents: read
       pages: write

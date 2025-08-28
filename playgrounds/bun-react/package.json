@@ -1,37 +1,33 @@
 {
-  "name": "@internal/playground-bun-react",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "main": "src/server.tsx",
-  "module": "src/server.tsx",
-  "scripts": {
-    "clean": "rm -rf dist node_modules",
-    "dev": "bun --hot src/server.tsx",
-    "start": "NODE_ENV=production bun src/server.tsx",
-    "build-playground": "bun run build.ts"
-  },
   "dependencies": {
-    "@hookform/resolvers": "5.1.1",
+    "@hookform/resolvers": "5.2.1",
     "@radix-ui/react-label": "2.1.7",
-    "@radix-ui/react-select": "2.2.5",
+    "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.3",
     "@swapkit/ui": "workspace:*",
     "bun-plugin-tailwind": "0.0.15",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "lucide-react": "0.525.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-hook-form": "7.60.0",
+    "lucide-react": "0.541.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-hook-form": "7.62.0",
     "tailwind-merge": "3.3.1",
-    "tailwindcss": "4.1.11",
+    "tailwindcss": "4.1.12",
     "tailwindcss-animate": "1.0.7",
     "zod": "3.25.74"
   },
-  "devDependencies": {
-    "@types/bun": "1.2.18",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6"
-  }
+  "devDependencies": { "@types/bun": "1.2.20" },
+  "main": "src/server.tsx",
+  "module": "src/server.tsx",
+  "name": "@internal/playground-bun-react",
+  "private": true,
+  "scripts": {
+    "build-playground": "bun run build.ts",
+    "clean": "rm -rf dist node_modules",
+    "dev": "bun --hot src/server.tsx",
+    "start": "NODE_ENV=production bun src/server.tsx"
+  },
+  "type": "module",
+  "version": "0.0.0"
 }

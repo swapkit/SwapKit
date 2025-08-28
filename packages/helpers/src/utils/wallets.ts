@@ -32,14 +32,12 @@ export function isDetected(walletOption: WalletOption) {
 
 export function listWeb3EVMWallets() {
   const metamaskEnabled = window?.ethereum && !window.ethereum?.isBraveWallet;
-  // @ts-ignore that should be implemented in ctrl and hooked up via swapkit core
   const ctrlEnabled = window?.xfi || window?.ethereum?.__XDEFI;
   const vultisigEnabled = window?.vultisig;
   const braveEnabled = window?.ethereum?.isBraveWallet;
   const trustEnabled = window?.ethereum?.isTrust || window?.trustwallet;
   const coinbaseEnabled =
-    (window?.ethereum?.overrideIsMetaMask &&
-      window?.ethereum?.selectedProvider?.isCoinbaseWallet) ||
+    (window?.ethereum?.overrideIsMetaMask && window?.ethereum?.selectedProvider?.isCoinbaseWallet) ||
     window?.coinbaseWalletExtension;
   const bitgetEnabled = window?.bitkeep?.ethereum;
   const onekeyEnabled = window?.$onekey?.ethereum;
@@ -58,16 +56,12 @@ export function listWeb3EVMWallets() {
   return wallets;
 }
 
-export async function switchEVMWalletNetwork(
-  provider: BrowserProvider,
-  chain: Chain,
-  networkParams?: NetworkParams,
-) {
+export async function switchEVMWalletNetwork(provider: BrowserProvider, chain: Chain, networkParams?: NetworkParams) {
   try {
     await providerRequest({
-      provider,
       method: "wallet_switchEthereumChain",
       params: [{ chainId: ChainToHexChainId[chain] }],
+      provider,
     });
   } catch (error) {
     if (!networkParams) {
@@ -84,24 +78,26 @@ export function filterSupportedChains<T extends string[]>({
   chains,
   supportedChains,
   walletType,
-}: { chains: Chain[]; supportedChains: T; walletType?: WalletOption }) {
+}: {
+  chains: Chain[];
+  supportedChains: T;
+  walletType?: WalletOption;
+}) {
   const supported = chains.filter((chain) => !chain || supportedChains.includes(chain));
 
   if (supported.length === 0) {
-    throw new SwapKitError("wallet_chain_not_supported", {
-      wallet: walletType,
-      chain: chains.join(", "),
-    });
+    throw new SwapKitError("wallet_chain_not_supported", { chain: chains.join(", "), wallet: walletType });
   }
 
   const unsupported = chains.filter((chain) => !supportedChains.includes(chain));
 
-  warnOnce(
-    unsupported.length > 0,
-    `${walletType} wallet does not support the following chains: ${unsupported.join(
+  warnOnce({
+    condition: unsupported.length > 0,
+    id: `wallet_chain_not_supported_${walletType}`,
+    warning: `${walletType} wallet does not support the following chains: ${unsupported.join(
       ", ",
     )}. These chains will be ignored.`,
-  );
+  });
 
   return supported as T;
 }
@@ -112,13 +108,13 @@ export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   chain: Chain,
 ) {
   return (async (...args: any[]) => {
+    if ((await provider.getNetwork()).chainId.toString() === ChainToHexChainId[chain]) {
+      return func(...args);
+    }
     try {
       await switchEVMWalletNetwork(provider, chain);
     } catch (error) {
-      throw new SwapKitError({
-        errorKey: "helpers_failed_to_switch_network",
-        info: { error },
-      });
+      throw new SwapKitError({ errorKey: "helpers_failed_to_switch_network", info: { error } });
     }
     return func(...args);
   }) as unknown as T;
@@ -129,7 +125,12 @@ export function prepareNetworkSwitch<T extends Record<string, unknown>, M extend
   chain,
   provider = window.ethereum,
   methodNames = [],
-}: { toolbox: T; chain: Chain; provider?: BrowserProvider | JsonRpcProvider; methodNames?: M[] }) {
+}: {
+  toolbox: T;
+  chain: Chain;
+  provider?: BrowserProvider | JsonRpcProvider;
+  methodNames?: M[];
+}) {
   const methodsToWrap = [
     ...methodNames,
     "approve",
@@ -165,7 +166,7 @@ export function prepareNetworkSwitch<T extends Record<string, unknown>, M extend
 }
 
 export function addEVMWalletNetwork(provider: BrowserProvider, networkParams: NetworkParams) {
-  return providerRequest({ provider, method: "wallet_addEthereumChain", params: [networkParams] });
+  return providerRequest({ method: "wallet_addEthereumChain", params: [networkParams], provider });
 }
 
 export function addAccountsChangedCallback(callback: () => void) {
@@ -174,8 +175,7 @@ export function addAccountsChangedCallback(callback: () => void) {
 }
 
 export function getETHDefaultWallet() {
-  const { isTrust, isBraveWallet, __XDEFI, overrideIsMetaMask, selectedProvider } =
-    window?.ethereum || {};
+  const { isTrust, isBraveWallet, __XDEFI, overrideIsMetaMask, selectedProvider } = window?.ethereum || {};
   if (isTrust) return WalletOption.TRUSTWALLET_WEB;
   if (isBraveWallet) return WalletOption.BRAVE;
   if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;

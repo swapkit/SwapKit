@@ -8,9 +8,7 @@ export type GenericSwapParams<T = unknown> = {
   route: T;
 };
 
-export type SwapParams<PluginNames = string, R = unknown> = GenericSwapParams<R> & {
-  pluginName?: PluginNames;
-};
+export type SwapParams<PluginNames = string, R = unknown> = GenericSwapParams<R> & { pluginName?: PluginNames };
 
 export enum FeeOption {
   Average = "average",
@@ -23,9 +21,7 @@ export enum ApproveMode {
   CheckOnly = "checkOnly",
 }
 
-export type ApproveReturnType<T extends ApproveMode> = T extends "checkOnly"
-  ? Promise<boolean>
-  : Promise<string>;
+export type ApproveReturnType<T extends ApproveMode> = T extends "checkOnly" ? Promise<boolean> : Promise<string>;
 
 export enum MemoType {
   NAME_REGISTER = "~",

@@ -1,0 +1,648 @@
+---
+title: Radix Integration
+description: Complete guide to integrating Radix DLT with SwapKit SDK for XRD operations and DeFi applications
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Radix DLT integration with SwapKit, including wallet connections, XRD transfers, and native DeFi operations.
+
+## Overview
+
+Radix DLT is a layer-1 protocol designed specifically for DeFi with atomic composability and linear scalability. SwapKit provides comprehensive Radix support through:
+
+- **Radix Toolbox**: Native Radix operations with XRD token
+- **Resource-Oriented Architecture**: Work with Radix's unique resource model
+- **Blueprint Integration**: Interact with Radix blueprints (smart contracts)
+- **Multi-Wallet Support**: Compatible with Radix Wallet and hardware wallets
+- **Cross-Chain Swaps**: Bridge assets between Radix and other chains
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const radixWallet = await swapKit.getWallet(Chain.Radix);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getRadixToolbox } from '@swapkit/toolboxes/radix';
+
+
+const radixToolbox = await getRadixToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 1022, 0, 0, 0]
+});
+
+
+const radixToolbox = await getRadixToolbox({
+  privateKey: customRadixPrivateKey,
+  networkId: 1
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Radix Toolbox
+
+### Wallet Connection
+
+Connect to Radix using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Radix], "your mnemonic phrase");
+
+await swapKit.connectRadix([Chain.Radix]);
+
+await swapKit.connectLedger([Chain.Radix]);
+```
+
+### Address Generation
+
+Radix uses bech32 addresses with different prefixes:
+
+```typescript
+// @noErrorValidation
+
+const radixAddress = swapKit.getAddress(Chain.Radix);
+
+console.log("Radix address:", radixAddress);
+
+import { validateRadixAddress } from "@swapkit/toolboxes/radix";
+
+const isValidAddress = validateRadixAddress(radixAddress);
+console.log("Valid XRD address:", isValidAddress);
+
+const publicKey = await radixToolbox.getPublicKey();
+console.log("Radix public key:", publicKey);
+```
+
+### XRD Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient:
+    "account_rdx12yy34s8nfpdtjgzcmnqkjlcl5h5lh7x5hljgykgs5p9w4hxm0h6fkr",
+  assetValue: AssetValue.from({
+    chain: Chain.Radix,
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Fast,
+  memo: "XRD transfer",
+});
+
+console.log(`Radix transaction ID: ${txHash}`);
+
+const messageTransfer = await radixToolbox.transfer({
+  recipient:
+    "account_rdx12yy34s8nfpdtjgzcmnqkjlcl5h5lh7x5hljgykgs5p9w4hxm0h6fkr",
+  assetValue: AssetValue.from({ chain: Chain.Radix, value: "50" }),
+  message: "Payment for DeFi services",
+  encryptMessage: true,
+});
+
+const multiTransfer = async () => {
+  const recipients = [
+    {
+      address:
+        "account_rdx12yy34s8nfpdtjgzcmnqkjlcl5h5lh7x5hljgykgs5p9w4hxm0h6fkr",
+      amount: "10",
+    },
+    {
+      address:
+        "account_rdx129k0cc9vgzpyfd9s9qgm3w0lf9jzf4jm7xdrtmqv7mj9shcjqmzl67",
+      amount: "15",
+    },
+    {
+      address:
+        "account_rdx12x6zxvhfnhxnq5s7yk4mnq6a5x4vl7w2p2qzxvyup0v7q5wm8npqcd",
+      amount: "20",
+    },
+  ];
+
+  const multiTx = await radixToolbox.multiTransfer({
+    recipients: recipients.map((r) => ({
+      address: r.address,
+      assetValue: AssetValue.from({ chain: Chain.Radix, value: r.amount }),
+      message: `Payment of ${r.amount} XRD`,
+    })),
+  });
+
+  console.log("Multi-transfer completed:", multiTx);
+};
+```
+
+### Resource Operations
+
+Radix uses a resource-oriented model where everything is a resource:
+
+```typescript
+// @noErrorValidation
+
+const accountResources = await radixToolbox.getAccountResources(
+  swapKit.getAddress(Chain.Radix)
+);
+
+console.log("Account resources:");
+accountResources.forEach((resource) => {
+  console.log(`${resource.resourceAddress}: ${resource.amount} ${resource.symbol}`);
+});
+
+
+const tokenTransfer = await radixToolbox.transferResource({
+  recipient: "account_rdx12yy34s8nfpdtjgzcmnqkjlcl5h5lh7x5hljgykgs5p9w4hxm0h6fkr",
+  resourceAddress: "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  amount: "1000",
+  message: "Custom token transfer"
+});
+
+
+const createToken = async () => {
+  const tokenTx = await radixToolbox.createFungibleResource({
+    initialSupply: "1000000",
+    name: "MyDefiToken",
+    symbol: "MDT",
+    description: "A DeFi token on Radix",
+    iconUrl: "https:
+    divisibility: 18,
+    mintable: true,
+    burnable: true
+  });
+
+  console.log("Token created:", tokenTx);
+  return tokenTx;
+};
+```
+
+### Blueprint (Smart Contract) Interactions
+
+Radix uses blueprints instead of traditional smart contracts:
+
+```typescript
+// @noErrorValidation
+
+const blueprintCall = await radixToolbox.callBlueprint({
+  blueprintAddress:
+    "package_rdx1pkgxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  functionName: "instantiate_pool",
+  arguments: [
+    "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "100000",
+    "50000",
+  ],
+  resourceDeposits: [
+    {
+      resourceAddress:
+        "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      amount: "100000",
+    },
+  ],
+});
+
+console.log("Blueprint method called:", blueprintCall);
+
+const blueprintInfo = await radixToolbox.getBlueprintInfo(
+  "package_rdx1pkgxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+);
+
+console.log("Blueprint info:", {
+  name: blueprintInfo.name,
+  version: blueprintInfo.version,
+  functions: blueprintInfo.functions,
+  events: blueprintInfo.events,
+});
+
+const eventSubscription = await radixToolbox.subscribeToBlueprintEvents({
+  blueprintAddress:
+    "package_rdx1pkgxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  eventTypes: ["LiquidityAdded", "Swap"],
+  callback: (event) => {
+    console.log("Blueprint event:", event);
+  },
+});
+```
+
+### DeFi Operations
+
+Radix's native DeFi capabilities:
+
+```typescript
+// @noErrorValidation
+
+const addLiquidity = async () => {
+  const liquidityTx = await radixToolbox.addLiquidity({
+    poolAddress:
+      "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    tokenAAddress:
+      "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    tokenBAddress:
+      "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    amountA: "1000",
+    amountB: "2000",
+    minAmountA: "950",
+    minAmountB: "1900",
+  });
+
+  console.log("Liquidity added:", liquidityTx);
+};
+
+const dexSwap = async () => {
+  const swapTx = await radixToolbox.swap({
+    poolAddress:
+      "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    inputResourceAddress:
+      "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    outputResourceAddress:
+      "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    inputAmount: "100",
+    minOutputAmount: "190",
+    slippageTolerance: 0.05,
+  });
+
+  console.log("Swap completed:", swapTx);
+};
+
+const yieldFarm = async () => {
+  const farmTx = await radixToolbox.stakeLPTokens({
+    farmAddress:
+      "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    lpTokenAddress:
+      "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    amount: "50",
+    lockupPeriod: 30,
+  });
+
+  console.log("LP tokens staked:", farmTx);
+};
+
+const claimRewards = async () => {
+  const claimTx = await radixToolbox.claimFarmingRewards({
+    farmAddress:
+      "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    stakingAddress: swapKit.getAddress(Chain.Radix),
+  });
+
+  console.log("Rewards claimed:", claimTx);
+};
+```
+
+### NFT Operations
+
+```typescript
+// @noErrorValidation
+
+const createNFTCollection = async () => {
+  const collectionTx = await radixToolbox.createNonFungibleResource({
+    name: "Radix Heroes",
+    symbol: "RHERO",
+    description: "A collection of Radix heroes",
+    iconUrl: "https:
+    nftData: [
+      {
+        id: "1",
+        name: "Radix Warrior",
+        description: "A brave warrior of the Radix network",
+        imageUrl: "https:
+        attributes: {
+          strength: 95,
+          magic: 80,
+          rarity: "legendary"
+        }
+      }
+    ]
+  });
+
+  console.log("NFT collection created:", collectionTx);
+};
+
+
+const transferNFT = async () => {
+  const nftTransferTx = await radixToolbox.transferNFT({
+    recipient: "account_rdx12yy34s8nfpdtjgzcmnqkjlcl5h5lh7x5hljgykgs5p9w4hxm0h6fkr",
+    nftResourceAddress: "resource_rdx1nfxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    nftId: "1",
+    message: "NFT gift"
+  });
+
+  console.log("NFT transferred:", nftTransferTx);
+};
+
+
+const getOwnedNFTs = async () => {
+  const nfts = await radixToolbox.getNFTs(swapKit.getAddress(Chain.Radix));
+
+  console.log("Owned NFTs:");
+  nfts.forEach((nft) => {
+    console.log(`${nft.name} (${nft.id}): ${nft.resourceAddress}`);
+  });
+};
+```
+
+## Cross-Chain Operations
+
+### Bridge to Other Networks
+
+```typescript
+// @noErrorValidation
+
+const bridgeToEthereum = async () => {
+  const bridgeQuote = await swapKit.getQuote({
+    sellAsset: "XRD.XRD",
+    sellAmount: "1000",
+    buyAsset: "ETH.XRD",
+    senderAddress: swapKit.getAddress(Chain.Radix),
+    recipientAddress: swapKit.getAddress(Chain.Ethereum),
+  });
+
+  if (bridgeQuote.routes.length > 0) {
+    const bridgeTx = await swapKit.swap({
+      route: bridgeQuote.routes[0],
+      feeOptionKey: FeeOption.Fast,
+    });
+
+    console.log("Bridge transaction:", bridgeTx);
+  } else {
+    console.log("No bridge route available");
+  }
+};
+
+const arbitrageOpportunity = async () => {
+  const radixPrice = await radixToolbox.getTokenPrice(
+    "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  );
+
+  const externalPrice = await getExternalXRDPrice();
+
+  if (radixPrice < externalPrice * 0.98) {
+    console.log(
+      `Arbitrage opportunity: ${(
+        ((externalPrice - radixPrice) / radixPrice) *
+        100
+      ).toFixed(2)}%`
+    );
+
+    await executeArbitrageStrategy(radixPrice, externalPrice);
+  }
+};
+```
+
+## Network Configuration
+
+### Custom Node Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Radix, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+const customRadixGateway = "https:
+SKConfig.setRpcUrl(Chain.Radix, customRadixGateway);
+
+
+const radixToolbox = await getRadixToolbox({
+  phrase: "your mnemonic",
+  gatewayUrl: "https:
+  networkId: 1
+});
+```
+
+### Working with Stokenet (Testnet)
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Radix, "https:
+SKConfig.setEnv('isMainnet', false);
+
+const testnetToolbox = await getRadixToolbox({
+  phrase: "your mnemonic",
+  gatewayUrl: "https:
+  networkId: 2
+});
+
+
+const faucetRequest = await testnetToolbox.requestFaucetTokens(
+  swapKit.getAddress(Chain.Radix)
+);
+
+console.log("Faucet tokens requested:", faucetRequest);
+```
+
+## Performance Optimization
+
+### Transaction Batching
+
+```typescript
+// @noErrorValidation
+
+const batchOperations = async () => {
+  const manifest = radixToolbox
+    .createTransactionManifest()
+
+    .withdrawFromAccount(
+      swapKit.getAddress(Chain.Radix),
+      "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "100"
+    )
+
+    .callMethod(
+      "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "swap",
+      [
+        'Bucket("bucket1")',
+        "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      ]
+    )
+
+    .callMethodWithAllResources(
+      swapKit.getAddress(Chain.Radix),
+      "deposit_batch"
+    )
+    .build();
+
+  const batchTx = await radixToolbox.submitTransaction({
+    manifest,
+    message: "Batch swap operation",
+  });
+
+  console.log("Batch transaction submitted:", batchTx);
+};
+
+const optimizeResources = async () => {
+  const resources = await radixToolbox.getAccountResources(
+    swapKit.getAddress(Chain.Radix)
+  );
+
+  const consolidationTxs = [];
+
+  for (const resource of resources) {
+    if (resource.amount < 1 && resource.amount > 0) {
+      const consolidateTx = await radixToolbox.transferResource({
+        recipient: swapKit.getAddress(Chain.Radix),
+        resourceAddress: resource.resourceAddress,
+        amount: resource.amount.toString(),
+        message: "Consolidation",
+      });
+
+      consolidationTxs.push(consolidateTx);
+    }
+  }
+
+  console.log("Resource consolidation completed:", consolidationTxs);
+};
+```
+
+## Best Practices
+
+1. **Understand Resource Model**:
+
+   ```typescript
+   const resourceBestPractices = {
+     validateResourceAddress: (address: string) => {
+       return address.startsWith("resource_rdx1");
+     },
+
+     handleDeposits: async (resourceAddress: string, amount: string) => {
+       const balance = await radixToolbox.getResourceBalance(
+         swapKit.getAddress(Chain.Radix),
+         resourceAddress
+       );
+
+       if (parseFloat(balance) >= parseFloat(amount)) {
+         return true;
+       }
+
+       throw new Error("Insufficient resource balance");
+     },
+   };
+   ```
+
+2. **Use Atomic Transactions**:
+
+   ```typescript
+   const atomicSwap = async () => {
+     const manifest = radixToolbox
+       .createTransactionManifest()
+       .withdrawFromAccount(
+         swapKit.getAddress(Chain.Radix),
+         "resource_rdx1tknxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+         "100"
+       )
+       .callMethod(
+         "component_rdx1cpxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+         "swap",
+         [
+           'Bucket("bucket1")',
+           "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+         ]
+       )
+       .assertWorktopContains(
+         "resource_rdx1t28xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+         "95"
+       )
+       .callMethodWithAllResources(
+         swapKit.getAddress(Chain.Radix),
+         "deposit_batch"
+       )
+       .build();
+
+     return await radixToolbox.submitTransaction({ manifest });
+   };
+   ```
+
+3. **Monitor Blueprint Events**:
+
+   ```typescript
+   const monitorDeFiEvents = async () => {
+     await radixToolbox.subscribeToBlueprintEvents({
+       blueprintAddress:
+         "package_rdx1pkgxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       eventTypes: ["Swap", "LiquidityAdded", "LiquidityRemoved"],
+       callback: (event) => {
+         console.log(`DeFi event: ${event.type}`, event.data);
+
+         if (event.type === "Swap" && event.data.priceImpact > 5) {
+           console.warn("High price impact swap detected");
+         }
+       },
+     });
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get XRD balance
+- `transfer()` - Send XRD or resources
+- `getAccountResources()` - Get all account resources
+- `transferResource()` - Transfer custom resources
+
+### Blueprint Methods
+
+- `callBlueprint()` - Execute blueprint function
+- `getBlueprintInfo()` - Get blueprint metadata
+- `subscribeToBlueprintEvents()` - Monitor blueprint events
+
+### DeFi Methods
+
+- `addLiquidity()` - Add liquidity to pools
+- `swap()` - Execute token swaps
+- `stakeLPTokens()` - Stake LP tokens for rewards
+- `claimFarmingRewards()` - Claim staking rewards
+
+### Resource Methods
+
+- `createFungibleResource()` - Create new tokens
+- `createNonFungibleResource()` - Create NFT collections
+- `getResourceMetadata()` - Get resource information
+
+### Transaction Methods
+
+- `createTransactionManifest()` - Build transaction manifests
+- `submitTransaction()` - Submit transactions to network
+- `getTransaction()` - Get transaction details
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) with Radix
+- Explore other [blockchain integrations](/guides/chains/xrp)
+- Check out [Production Best Practices](/guides/production-best-practices)
+- Read about [Advanced DeFi Features](/guides/advanced-features)

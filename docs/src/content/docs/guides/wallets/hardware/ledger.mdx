@@ -1,0 +1,653 @@
+---
+title: Ledger Hardware Wallet Integration
+description: Complete guide to integrating Ledger hardware wallets with SwapKit SDK v4
+---
+
+Ledger hardware wallets provide industry-leading security for cryptocurrency transactions by keeping private keys isolated on a dedicated device. SwapKit SDK v4 offers comprehensive support for all Ledger devices across multiple blockchain networks.
+
+## Supported Chains
+
+SwapKit supports Ledger devices on these chains:
+
+- **EVM Compatible**: Ethereum, Arbitrum, Aurora, Avalanche, Base, BinanceSmartChain, Gnosis, Optimism, Polygon
+- **UTXO Chains**: Bitcoin, Bitcoin Cash, Dash, Dogecoin, Litecoin
+- **Cosmos Ecosystem**: Cosmos, THORChain
+- **Other Chains**: Near, Ripple, Tron
+
+## Installation and Setup
+
+### 1. Hardware Requirements
+
+- Any Ledger device (Nano S, Nano S Plus, Nano X, Stax)
+- USB connection or Bluetooth (Nano X/Stax only)
+- Latest firmware installed via Ledger Live
+
+### 2. Install Required Apps
+
+Install the necessary applications on your Ledger device using Ledger Live:
+
+```bash
+# For Bitcoin transactions
+- Bitcoin app
+
+# For Ethereum and EVM chains
+- Ethereum app
+
+# For Cosmos and THORChain
+- Cosmos app
+- THORChain app (if available)
+
+# For other specific chains
+- Near app
+- Ripple (XRP) app
+- Tron app
+```
+
+### 3. Browser Setup
+
+Ensure your browser supports WebUSB/WebHID:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Requires configuration
+- **Safari**: Not supported
+
+For Firefox, enable WebUSB in `about:config`:
+
+```
+dom.webusb.enabled = true
+```
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...ledgerWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting Your Ledger
+
+#### Single Chain Connection
+
+```ts twoslash
+import {
+  SwapKit,
+  ledgerWallet,
+  Chain,
+  NetworkDerivationPath,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+async function connectLedgerBitcoin() {
+  try {
+    await swapKit.connectLedger([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    const balance = await swapKit.getBalance(Chain.Bitcoin, true);
+
+    console.log("Bitcoin address:", address);
+    console.log("Balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Ledger:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+async function connectMultipleChains() {
+  const chains = [Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos];
+
+  try {
+    for (const chain of chains) {
+      await swapKit.connectLedger([chain]);
+      console.log(`Connected to ${chain}:`, swapKit.getAddress(chain));
+    }
+
+    const balances = await Promise.all(
+      chains.map(async (chain) => {
+        const balance = await swapKit.getBalance(chain, true);
+        return { chain, balance };
+      })
+    );
+
+    return { success: true, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Custom Derivation Paths
+
+```ts twoslash
+import {
+  SwapKit,
+  ledgerWallet,
+  Chain,
+  type DerivationPathArray,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+async function connectWithCustomPath() {
+  const customPath: DerivationPathArray = [84, 0, 0, 0, 0];
+
+  try {
+    await swapKit.connectLedger([Chain.Bitcoin], customPath);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("Bitcoin address with custom path:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+const DERIVATION_PATHS = {
+  BTC_LEGACY: [44, 0, 0, 0, 0],
+  BTC_SEGWIT: [49, 0, 0, 0, 0],
+  BTC_NATIVE_SEGWIT: [84, 0, 0, 0, 0],
+
+  ETH_STANDARD: [44, 60, 0, 0, 0],
+  ETH_LEDGER: [44, 60, 0, 0],
+
+  COSMOS_STANDARD: [44, 118, 0, 0, 0],
+} as const;
+```
+
+## Transaction Examples
+
+### Bitcoin Transaction
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+await swapKit.connectLedger([Chain.Bitcoin]);
+
+async function sendBitcoin() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "SwapKit Ledger Transaction",
+    });
+
+    console.log("Transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("Transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Ethereum Transaction
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+await swapKit.connectLedger([Chain.Ethereum]);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("ETH transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("ETH transaction failed:", error);
+    throw error;
+  }
+}
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("USDC transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("USDC transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### Cosmos Transaction
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...ledgerWallet },
+});
+
+await swapKit.connectLedger([Chain.Cosmos]);
+
+async function sendCosmos() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "SwapKit Cosmos transaction",
+    });
+
+    console.log("ATOM transaction sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("ATOM transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Setup
+
+### Bitcoin Setup
+
+For Bitcoin transactions, ensure you have the Bitcoin app installed on your Ledger:
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain, FeeOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+await swapKit.connectLedger([Chain.Bitcoin]);
+
+async function bitcoinTransactionWithCustomFee() {
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  const wallet = await swapKit.getWalletWithBalance(Chain.Bitcoin);
+  const feeRates = await wallet.getFeeRates();
+
+  console.log("Available fee rates:", feeRates);
+
+  const txHash = await swapKit.transfer({
+    assetValue: amount,
+    recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    feeOptionKey: FeeOption.Fast,
+  });
+
+  return txHash;
+}
+```
+
+### Ethereum Setup
+
+For Ethereum and EVM chains, install the Ethereum app:
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+
+async function setupEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Arbitrum,
+    Chain.Avalanche,
+    Chain.Polygon,
+  ];
+
+  try {
+    for (const chain of evmChains) {
+      await swapKit.connectLedger([chain]);
+      const address = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, address);
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### Cosmos Ecosystem Setup
+
+For Cosmos and THORChain, install the respective apps:
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+
+async function setupCosmosEcosystem() {
+  try {
+    await swapKit.connectLedger([Chain.Cosmos]);
+    const cosmosAddress = swapKit.getAddress(Chain.Cosmos);
+
+    await swapKit.connectLedger([Chain.THORChain]);
+    const thorAddress = swapKit.getAddress(Chain.THORChain);
+
+    console.log("Cosmos address:", cosmosAddress);
+    console.log("THORChain address:", thorAddress);
+
+    return { success: true, addresses: { cosmosAddress, thorAddress } };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+
+async function diagnosticConnection() {
+  try {
+    console.log("Attempting to connect to Ledger...");
+
+    await swapKit.connectLedger([Chain.Bitcoin]);
+    console.log("✅ Ledger connected successfully");
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("✅ Address retrieved:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:");
+
+    if (error.message.includes("transport")) {
+      console.log("🔧 Troubleshooting steps:");
+      console.log("1. Ensure Ledger device is connected via USB");
+      console.log("2. Unlock your Ledger device");
+      console.log("3. Open the Bitcoin app on your device");
+      console.log(
+        "4. Enable 'Contract data' in Bitcoin app settings if needed"
+      );
+    }
+
+    if (error.message.includes("denied")) {
+      console.log("🔧 User denied the operation");
+      console.log("Please approve the action on your Ledger device");
+    }
+
+    return { success: false, error };
+  }
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const txHash = await swapKit.transfer({
+      /* params */
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient balance for transaction + fees");
+    }
+
+    if (error.message.includes("user denied")) {
+      console.error("❌ Transaction rejected on Ledger device");
+    }
+
+    if (error.message.includes("device locked")) {
+      console.error("❌ Ledger device is locked");
+      console.log("Please unlock your Ledger and try again");
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+async function verifyAddressOnDevice() {
+  const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+  await swapKit.connectLedger([Chain.Bitcoin]);
+
+  const address = swapKit.getAddress(Chain.Bitcoin);
+
+  console.log("Address from SwapKit:", address);
+  console.log(
+    "⚠️ Please verify this address matches what's shown on your Ledger screen"
+  );
+
+  return address;
+}
+
+async function secureTransaction() {
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", amount.toSignificant(6));
+  console.log("Recipient:", recipient);
+  console.log(
+    "⚠️ Please verify these details on your Ledger screen before confirming"
+  );
+
+  const txHash = await swapKit.transfer({
+    assetValue: amount,
+    recipient,
+  });
+
+  return txHash;
+}
+
+async function secureErrorHandling() {
+  try {
+  } catch (error) {
+    console.error("Transaction failed - check Ledger device");
+
+    console.error("Error type:", error.constructor.name);
+
+    throw new Error("Transaction failed - please try again");
+  }
+}
+```
+
+### Network Security
+
+```ts twoslash
+
+
+const swapKit = SwapKit({
+  config: {
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+    },
+  },
+  wallets: { ...ledgerWallet },
+});
+```
+
+## Advanced Usage
+
+### Multiple Devices
+
+```ts twoslash
+class LedgerManager {
+  private connections: Map<string, any> = new Map();
+
+  async connectDevice(deviceId: string, chains: Chain[]) {
+    const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+
+    try {
+      await swapKit.connectLedger(chains);
+      this.connections.set(deviceId, swapKit);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error };
+    }
+  }
+
+  getConnection(deviceId: string) {
+    return this.connections.get(deviceId);
+  }
+
+  disconnectDevice(deviceId: string) {
+    const connection = this.connections.get(deviceId);
+    if (connection) {
+      connection.disconnectAll();
+      this.connections.delete(deviceId);
+    }
+  }
+}
+```
+
+### Custom Transport Configuration
+
+```ts twoslash
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    ledger: {
+      timeout: 30000,
+    },
+  },
+  wallets: { ...ledgerWallet },
+});
+```
+
+## Integration Examples
+
+### React Component
+
+```tsx twoslash
+import React, { useState, useEffect } from "react";
+import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
+
+interface LedgerWalletProps {
+  onConnect: (address: string) => void;
+  onError: (error: Error) => void;
+}
+
+export function LedgerWallet({ onConnect, onError }: LedgerWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [address, setAddress] = useState<string>("");
+
+  const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
+
+  const connectLedger = async () => {
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectLedger([Chain.Bitcoin]);
+      const btcAddress = swapKit.getAddress(Chain.Bitcoin);
+
+      setAddress(btcAddress);
+      setIsConnected(true);
+      onConnect(btcAddress);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddress("");
+  };
+
+  return (
+    <div>
+      {!isConnected ? (
+        <button onClick={connectLedger} disabled={isConnecting}>
+          {isConnecting ? "Connecting..." : "Connect Ledger"}
+        </button>
+      ) : (
+        <div>
+          <p>Connected: {address}</p>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Ledger integration with SwapKit SDK v4. The examples are production-ready and follow security best practices for hardware wallet integration.

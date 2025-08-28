@@ -20,25 +20,18 @@ export function createWallet<
   supportedChains: SupportedChains;
   walletType?: WalletType | string;
 }) {
-  function connectWallet(connectParams: {
-    addChain: AddChainType;
-  }) {
-    return connect({ ...connectParams, walletType: walletType as WalletType, supportedChains });
+  function connectWallet(connectParams: { addChain: AddChainType }) {
+    return connect({ ...connectParams, supportedChains, walletType: walletType as WalletType });
   }
 
-  return {
-    [name]: { supportedChains, connectWallet },
-  } as unknown as {
-    [key in Name]: {
-      connectWallet: typeof connectWallet;
-      supportedChains: SupportedChains;
-    };
+  return { [name]: { connectWallet, supportedChains } } as unknown as {
+    [key in Name]: { connectWallet: typeof connectWallet; supportedChains: SupportedChains };
   };
 }
 
-export function getWalletSupportedChains<
-  T extends ReturnType<typeof createWallet<any, any, any, any>>,
->(wallet: T): T[keyof T]["supportedChains"] {
+export function getWalletSupportedChains<T extends ReturnType<typeof createWallet<any, any, any, any>>>(
+  wallet: T,
+): T[keyof T]["supportedChains"] {
   const walletName = Object.keys(wallet)?.[0] || "";
   return wallet?.[walletName]?.supportedChains || [];
 }

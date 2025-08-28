@@ -3,12 +3,11 @@ import {
   ChainId,
   type DerivationPathArray,
   FeeOption,
+  filterSupportedChains,
   type GenericTransferParams,
-  SKConfig,
-  StagenetChain,
+  getRPCUrl,
   SwapKitError,
   WalletOption,
-  filterSupportedChains,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { UTXOBuildTxParams } from "@swapkit/toolboxes/utxo";
@@ -17,6 +16,18 @@ import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { getLedgerAddress, getLedgerClient } from "./helpers";
 
 export const ledgerWallet = createWallet({
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectLedger(chains: Chain[], derivationPath?: DerivationPathArray) {
+      const [chain] = filterSupportedChains({ chains, supportedChains, walletType });
+
+      if (!chain) return false;
+
+      const walletMethods = await getWalletMethods({ chain, derivationPath });
+
+      addChain({ ...walletMethods, chain, walletType: WalletOption.LEDGER });
+
+      return true;
+    },
   name: "connectLedger",
   supportedChains: [
     Chain.Arbitrum,
@@ -38,20 +49,9 @@ export const ledgerWallet = createWallet({
     Chain.Ripple,
     Chain.THORChain,
     Chain.Tron,
+    Chain.Zcash,
   ],
   walletType: WalletOption.LEDGER,
-  connect: ({ addChain, supportedChains, walletType }) =>
-    async function connectLedger(chains: Chain[], derivationPath?: DerivationPathArray) {
-      const [chain] = filterSupportedChains({ chains, supportedChains, walletType });
-
-      if (!chain) return false;
-
-      const walletMethods = await getWalletMethods({ chain, derivationPath });
-
-      addChain({ ...walletMethods, chain, walletType: WalletOption.LEDGER });
-
-      return true;
-    },
 });
 
 export const LEDGER_SUPPORTED_CHAINS = getWalletSupportedChains(ledgerWallet);
@@ -60,9 +60,7 @@ export const LEDGER_SUPPORTED_CHAINS = getWalletSupportedChains(ledgerWallet);
 function reduceMemo(memo?: string, affiliateAddress = "t") {
   if (!memo?.includes("=:")) return memo;
 
-  const removedAffiliate = memo.includes(`:${affiliateAddress}:`)
-    ? memo.split(`:${affiliateAddress}:`)[0]
-    : memo;
+  const removedAffiliate = memo.includes(`:${affiliateAddress}:`) ? memo.split(`:${affiliateAddress}:`)[0] : memo;
 
   return removedAffiliate?.substring(0, removedAffiliate.lastIndexOf(":"));
 }
@@ -93,16 +91,14 @@ function stringifyKeysInOrder(data: any) {
   return JSON.stringify(recursivelyOrderKeys(data));
 }
 
-async function getWalletMethods({
-  chain,
-  derivationPath,
-}: { chain: Chain; derivationPath?: DerivationPathArray }) {
+async function getWalletMethods({ chain, derivationPath }: { chain: Chain; derivationPath?: DerivationPathArray }) {
   switch (chain) {
     case Chain.BitcoinCash:
     case Chain.Bitcoin:
     case Chain.Dash:
     case Chain.Dogecoin:
-    case Chain.Litecoin: {
+    case Chain.Litecoin:
+    case Chain.Zcash: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
       const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
 
@@ -116,9 +112,9 @@ async function getWalletMethods({
         const { psbt, inputs } = await toolbox.createTransaction({
           ...params,
           feeRate,
+          fetchTxHex: true,
           memo,
           sender: address,
-          fetchTxHex: true,
         });
         const txHex = await signer.signTransaction(psbt, inputs);
         const tx = await toolbox.broadcastTx(txHex);
@@ -168,11 +164,8 @@ async function getWalletMethods({
           toAddress: recipient,
         };
 
-        const signingClient = await createSigningStargateClient(
-          SKConfig.get("rpcUrls")[chain],
-          signer,
-          "0.007uatom",
-        );
+        const rpcUrl = await getRPCUrl(chain);
+        const signingClient = await createSigningStargateClient(rpcUrl, signer, "0.007uatom");
 
         const { transactionHash } = await signingClient.signAndBroadcast(
           address,
@@ -192,8 +185,7 @@ async function getWalletMethods({
       const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx.js");
       const importedSigning = await import("@cosmjs/proto-signing");
       const encodePubkey = importedSigning.encodePubkey ?? importedSigning.default?.encodePubkey;
-      const makeAuthInfoBytes =
-        importedSigning.makeAuthInfoBytes ?? importedSigning.default?.makeAuthInfoBytes;
+      const makeAuthInfoBytes = importedSigning.makeAuthInfoBytes ?? importedSigning.default?.makeAuthInfoBytes;
       const {
         createStargateClient,
         buildEncodedTxBody,
@@ -215,7 +207,6 @@ async function getWalletMethods({
         memo = "",
         assetValue,
         ...rest
-        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Refactor to reduce complexity
       }: GenericTransferParams | ThorchainDepositParams) => {
         const account = await toolbox.getAccount(address);
         if (!account) throw new SwapKitError("wallet_ledger_invalid_account");
@@ -225,9 +216,7 @@ async function getWalletMethods({
         const { accountNumber, sequence: sequenceNumber } = account;
         const sequence = (sequenceNumber || 0).toString();
 
-        const orderedMessages = recursivelyOrderKeys([
-          buildAminoMsg({ sender: address, assetValue, memo, ...rest }),
-        ]);
+        const orderedMessages = recursivelyOrderKeys([buildAminoMsg({ assetValue, memo, sender: address, ...rest })]);
 
         // get tx signing msg
         const rawSendTx = stringifyKeysInOrder({
@@ -244,28 +233,24 @@ async function getWalletMethods({
 
         const pubkey = encodePubkey({ type: "tendermint/PubKeySecp256k1", value });
         const msgs = orderedMessages.map(parseAminoMessageForDirectSigning);
-        const bodyBytes = await buildEncodedTxBody({ msgs, chain, memo });
+        const bodyBytes = await buildEncodedTxBody({ chain, memo, msgs });
 
         const authInfoBytes = makeAuthInfoBytes(
           [{ pubkey, sequence: Number(sequence) }],
           fee.amount,
-          Number.parseInt(fee.gas),
+          Number.parseInt(fee.gas, 10),
           undefined,
           undefined,
           SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
         );
 
-        const signature = signatures?.[0]?.signature
-          ? fromBase64(signatures[0].signature)
-          : Uint8Array.from([]);
+        const signature = signatures?.[0]?.signature ? fromBase64(signatures[0].signature) : Uint8Array.from([]);
 
-        const txRaw = TxRaw.fromPartial({ bodyBytes, authInfoBytes, signatures: [signature] });
+        const txRaw = TxRaw.fromPartial({ authInfoBytes, bodyBytes, signatures: [signature] });
         const txBytes = TxRaw.encode(txRaw).finish();
-        const { isStagenet } = SKConfig.get("envs");
+        const rpcUrl = await getRPCUrl(Chain.THORChain);
 
-        const broadcaster = await createStargateClient(
-          SKConfig.get("rpcUrls")[isStagenet ? StagenetChain.THORChain : Chain.THORChain],
-        );
+        const broadcaster = await createStargateClient(rpcUrl);
         const { transactionHash } = await broadcaster.broadcastTx(txBytes);
 
         return transactionHash;
@@ -274,7 +259,7 @@ async function getWalletMethods({
       const transfer = (params: GenericTransferParams) => thorchainTransfer(params);
       const deposit = (params: ThorchainDepositParams) => thorchainTransfer(params);
 
-      return { ...toolbox, address, deposit, transfer, signMessage };
+      return { ...toolbox, address, deposit, signMessage, transfer };
     }
 
     case Chain.Near: {

@@ -1,21 +1,20 @@
 import {
   AssetValue,
   Chain,
-  NetworkDerivationPath,
-  SKConfig,
-  SwapKitError,
   derivationPathToString,
+  getRPCUrl,
+  NetworkDerivationPath,
+  SwapKitError,
   updateDerivationPath,
   warnOnce,
 } from "@swapkit/helpers";
-import { P, match } from "ts-pattern";
-
 import type { TronWeb } from "tronweb";
+import { match, P } from "ts-pattern";
 import { trc20ABI } from "./helpers/trc20.abi";
 import { fetchAccountFromTronGrid } from "./helpers/trongrid";
 import type {
-  TronApproveParams,
   TronApprovedParams,
+  TronApproveParams,
   TronCreateTransactionParams,
   TronIsApprovedParams,
   TronSignedTransaction,
@@ -55,11 +54,7 @@ export async function getTronPrivateKeyFromMnemonic({
 }) {
   const derivationPathToUse =
     customPath ||
-    derivationPathToString(
-      updateDerivationPath(NetworkDerivationPath[Chain.Tron], {
-        index: index || 0,
-      }),
-    );
+    derivationPathToString(updateDerivationPath(NetworkDerivationPath[Chain.Tron], { index: index || 0 }));
 
   const { HDKey } = await import("@scure/bip32");
   const { mnemonicToSeedSync } = await import("@scure/bip39");
@@ -130,15 +125,11 @@ export const createTronToolbox = async (
   const TW = await import("tronweb");
   const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
 
-  // Always get configuration from SKConfig
-  const rpcUrl = SKConfig.get("rpcUrls")[Chain.Tron];
+  const rpcUrl = await getRPCUrl(Chain.Tron);
   // Note: TRON API key support can be added to SKConfig apiKeys when needed
   const headers = undefined; // No API key needed for basic TronGrid access
 
-  const tronWeb = new TronWeb({
-    fullHost: rpcUrl,
-    headers,
-  });
+  const tronWeb = new TronWeb({ fullHost: rpcUrl, headers });
 
   // Handle derivation path and index
   const index = "index" in options ? options.index || 0 : 0;
@@ -150,9 +141,7 @@ export const createTronToolbox = async (
 
   // Create signer based on options using pattern matching
   const signer: TronSigner | undefined = await match(options)
-    .with({ phrase: P.string }, async ({ phrase }) =>
-      createKeysForPath({ phrase, derivationPath, tronWeb }),
-    )
+    .with({ phrase: P.string }, async ({ phrase }) => createKeysForPath({ derivationPath, phrase, tronWeb }))
     .with({ signer: P.any }, ({ signer }) => Promise.resolve(signer as TronSigner))
     .otherwise(() => Promise.resolve(undefined));
 
@@ -178,17 +167,13 @@ export const createTronToolbox = async (
       }
 
       return {
-        energyFee: paramMap.getEnergyFee || 420, // SUN per energy unit
         bandwidthFee: paramMap.getTransactionFee || 1000, // SUN per bandwidth unit
         createAccountFee: paramMap.getCreateAccountFee || 100000, // 0.1 TRX in SUN
+        energyFee: paramMap.getEnergyFee || 420, // SUN per energy unit
       };
     } catch {
       // Return default values if unable to fetch
-      return {
-        energyFee: 420,
-        bandwidthFee: 1000,
-        createAccountFee: 100000,
-      };
+      return { bandwidthFee: 1000, createAccountFee: 100000, energyFee: 420 };
     }
   };
 
@@ -217,10 +202,7 @@ export const createTronToolbox = async (
           total: resources.NetLimit || 0,
           used: resources.NetUsed || 0,
         },
-        energy: {
-          total: resources.EnergyLimit || 0,
-          used: resources.EnergyUsed || 0,
-        },
+        energy: { total: resources.EnergyLimit || 0, used: resources.EnergyUsed || 0 },
       };
     } catch {
       // Return default structure if unable to fetch
@@ -242,9 +224,9 @@ export const createTronToolbox = async (
         return 0n;
       }
 
-      const balance = (await contract.methods.balanceOf(address).call())[0] as string;
+      const [balance] = await contract.methods.balanceOf(address).call();
 
-      return BigInt(balance || 0); // Convert to BigInt for consistency
+      return balance ? (typeof balance === "bigint" ? balance : BigInt(balance)) : 0n;
     } catch (err) {
       console.warn(`balanceOf() failed for ${contractAddress}:`, err);
       return 0n;
@@ -270,26 +252,20 @@ export const createTronToolbox = async (
           .catch(() => "18"),
       ]);
 
-      return {
-        symbol: symbolRaw ?? "UNKNOWN",
-        decimals: Number(decimalsRaw ?? 18),
-      };
+      return { decimals: Number(decimalsRaw ?? 18), symbol: symbolRaw ?? "UNKNOWN" };
     } catch (error) {
-      warnOnce(
-        true,
-        `Failed to get token balance for ${contractAddress}: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_get_token_metadata_failed",
+        warning: `Failed to get token metadata for ${contractAddress}: ${error instanceof Error ? error.message : error}`,
+      });
       return null;
     }
   };
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
   const getBalance = async (address: string, _scamFilter = true) => {
-    const fallbackBalance = [
-      AssetValue.from({
-        chain: Chain.Tron,
-      }),
-    ];
+    const fallbackBalance = [AssetValue.from({ chain: Chain.Tron })];
     // Try primary source (TronGrid)
     try {
       const accountData = await fetchAccountFromTronGrid(address);
@@ -297,13 +273,7 @@ export const createTronToolbox = async (
         const balances: AssetValue[] = [];
 
         // Add TRX balance
-        balances.push(
-          AssetValue.from({
-            chain: Chain.Tron,
-            value: accountData.balance,
-            fromBaseDecimal: 6,
-          }),
-        );
+        balances.push(AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 6, value: accountData.balance }));
 
         // Add TRC20 balances
 
@@ -319,8 +289,8 @@ export const createTronToolbox = async (
           balances.push(
             AssetValue.from({
               asset: `TRON.${tokenMetaData.symbol}-${contractAddress}`,
-              value: BigInt(balance || 0),
               fromBaseDecimal: tokenMetaData.decimals,
+              value: BigInt(balance || 0),
             }),
           );
         }
@@ -329,33 +299,24 @@ export const createTronToolbox = async (
       }
       return fallbackBalance;
     } catch (error) {
-      warnOnce(
-        true,
-        `Tron API getBalance failed: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_get_balance_failed",
+        warning: `Tron API getBalance failed: ${error instanceof Error ? error.message : error}`,
+      });
 
       // Fallback: get TRX and USDT directly
       const balances: AssetValue[] = [];
 
       const trxBalanceInSun = await tronWeb.trx.getBalance(address);
       if (trxBalanceInSun && Number(trxBalanceInSun) > 0) {
-        balances.push(
-          AssetValue.from({
-            chain: Chain.Tron,
-            value: trxBalanceInSun,
-            fromBaseDecimal: 6,
-          }),
-        );
+        balances.push(AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 6, value: trxBalanceInSun }));
       }
 
       const usdtBalance = await fetchTokenBalance(address, TRON_USDT_CONTRACT);
       if (usdtBalance) {
         balances.push(
-          AssetValue.from({
-            asset: `TRON.USDT-${TRON_USDT_CONTRACT}`,
-            value: usdtBalance,
-            fromBaseDecimal: 6,
-          }),
+          AssetValue.from({ asset: `TRON.USDT-${TRON_USDT_CONTRACT}`, fromBaseDecimal: 6, value: usdtBalance }),
         );
       }
 
@@ -372,19 +333,11 @@ export const createTronToolbox = async (
 
     if (isNative) {
       // Native TRX Transfer (amount in SUN - base units)
-      const transaction = await tronWeb.transactionBuilder.sendTrx(
-        recipient,
-        assetValue.getBaseValue("number"),
-        from,
-      );
+      const transaction = await tronWeb.transactionBuilder.sendTrx(recipient, assetValue.getBaseValue("number"), from);
 
       // Add memo if provided
       if (memo) {
-        const transactionWithMemo = await tronWeb.transactionBuilder.addUpdateData(
-          transaction,
-          memo,
-          "utf8",
-        );
+        const transactionWithMemo = await tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8");
         const signedTx = await signer.signTransaction(transactionWithMemo);
         const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
         return txid;
@@ -396,12 +349,7 @@ export const createTronToolbox = async (
     }
 
     // TRC20 Token Transfer - always use createTransaction + sign pattern
-    const transaction = await createTransaction({
-      recipient,
-      assetValue,
-      memo,
-      sender: from,
-    });
+    const transaction = await createTransaction({ assetValue, memo, recipient, sender: from });
 
     const signedTx = await signer.signTransaction(transaction);
     const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
@@ -417,7 +365,7 @@ export const createTronToolbox = async (
     assetValue,
     recipient,
     sender,
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
   }: TronTransferParams & { sender?: string }) => {
     const isNative = assetValue.isGasAsset;
 
@@ -427,8 +375,8 @@ export const createTronToolbox = async (
       if (!senderAddress) {
         // If no signer, return conservative estimate
         return isNative
-          ? AssetValue.from({ chain: Chain.Tron, value: 0.1, fromBaseDecimal: 0 })
-          : AssetValue.from({ chain: Chain.Tron, value: 15, fromBaseDecimal: 0 });
+          ? AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 0, value: 0.1 })
+          : AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 0, value: 15 });
       }
 
       // Get chain parameters for current resource prices
@@ -444,8 +392,7 @@ export const createTronToolbox = async (
       if (isNative) {
         // Calculate bandwidth needed for TRX transfer
         const bandwidthNeeded = TRX_TRANSFER_BANDWIDTH;
-        const availableBandwidth =
-          resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
+        const availableBandwidth = resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
 
         let bandwidthFee = 0;
         if (bandwidthNeeded > availableBandwidth) {
@@ -459,8 +406,8 @@ export const createTronToolbox = async (
 
         return AssetValue.from({
           chain: Chain.Tron,
-          value: totalFeeSun,
           fromBaseDecimal: 6, // SUN to TRX
+          value: totalFeeSun,
         });
       }
 
@@ -468,8 +415,7 @@ export const createTronToolbox = async (
       const bandwidthNeeded = TRC20_TRANSFER_BANDWIDTH;
       const energyNeeded = TRC20_TRANSFER_ENERGY;
 
-      const availableBandwidth =
-        resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
+      const availableBandwidth = resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
       const availableEnergy = resources.energy.total - resources.energy.used;
 
       let bandwidthFee = 0;
@@ -489,15 +435,16 @@ export const createTronToolbox = async (
 
       return AssetValue.from({
         chain: Chain.Tron,
-        value: totalFeeSun,
         fromBaseDecimal: 6, // SUN to TRX
+        value: totalFeeSun,
       });
     } catch (error) {
       // Fallback to conservative estimates if calculation fails
-      warnOnce(
-        true,
-        `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
-      );
+      warnOnce({
+        condition: true,
+        id: "tron_toolbox_fee_estimation_failed",
+        warning: `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
+      });
 
       throw new SwapKitError("toolbox_tron_fee_estimation_failed", { error });
     }
@@ -526,9 +473,7 @@ export const createTronToolbox = async (
     // This is a simplified version - in practice, you'd build the contract call transaction
     const contractAddress = assetValue.address;
     if (!contractAddress) {
-      throw new SwapKitError("toolbox_tron_invalid_token_identifier", {
-        identifier: assetValue.toString(),
-      });
+      throw new SwapKitError("toolbox_tron_invalid_token_identifier", { identifier: assetValue.toString() });
     }
 
     // Build TRC20 transfer transaction
@@ -540,10 +485,7 @@ export const createTronToolbox = async (
         { type: "uint256", value: assetValue.getBaseValue("string") },
       ];
 
-      const options = {
-        feeLimit: calculateFeeLimit(),
-        callValue: 0,
-      };
+      const options = { callValue: 0, feeLimit: calculateFeeLimit() };
 
       const result = await tronWeb.transactionBuilder.triggerSmartContract(
         contractAddress,
@@ -585,10 +527,9 @@ export const createTronToolbox = async (
         throw new SwapKitError("toolbox_tron_invalid_token_contract");
       }
 
-      const allowance = (
-        await contract.methods.allowance(from, spenderAddress).call()
-      )[0] as string;
-      return BigInt(allowance || 0);
+      const [allowance] = await contract.methods.allowance(from, spenderAddress).call();
+
+      return allowance ? (typeof allowance === "bigint" ? allowance : BigInt(allowance)) : 0n;
     } catch (error) {
       throw new SwapKitError("toolbox_tron_allowance_check_failed", { error });
     }
@@ -597,13 +538,8 @@ export const createTronToolbox = async (
   /**
    * Check if a spender is approved for a specific amount
    */
-  const isApproved = async ({
-    assetAddress,
-    spenderAddress,
-    from,
-    amount,
-  }: TronIsApprovedParams) => {
-    const allowance = await getApprovedAmount({ assetAddress, spenderAddress, from });
+  const isApproved = async ({ assetAddress, spenderAddress, from, amount }: TronIsApprovedParams) => {
+    const allowance = await getApprovedAmount({ assetAddress, from, spenderAddress });
 
     if (!amount) {
       // If no amount specified, check if there's any approval
@@ -631,10 +567,7 @@ export const createTronToolbox = async (
     ];
 
     const feeLimit = calculateFeeLimit();
-    const options = {
-      feeLimit,
-      callValue: 0,
-    };
+    const options = { callValue: 0, feeLimit };
 
     try {
       const { transaction } = await tronWeb.transactionBuilder.triggerSmartContract(
@@ -659,17 +592,17 @@ export const createTronToolbox = async (
   };
 
   return {
-    tronWeb,
-    getAddress,
-    validateAddress: await getTronAddressValidator(),
-    getBalance,
-    transfer,
-    estimateTransactionFee,
-    createTransaction,
-    signTransaction,
-    broadcastTransaction,
     approve,
-    isApproved,
+    broadcastTransaction,
+    createTransaction,
+    estimateTransactionFee,
+    getAddress,
     getApprovedAmount,
+    getBalance,
+    isApproved,
+    signTransaction,
+    transfer,
+    tronWeb,
+    validateAddress: await getTronAddressValidator(),
   };
 };

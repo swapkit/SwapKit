@@ -1,11 +1,7 @@
 import { BaseDecimal } from "../types/chains";
 import type { SwapKitNumber } from "./swapKitNumber";
 
-type NumberPrimitivesType = {
-  bigint: bigint;
-  number: number;
-  string: string;
-};
+type NumberPrimitivesType = { bigint: bigint; number: number; string: string };
 export type NumberPrimitives = bigint | number | string;
 type InitialisationValueType = NumberPrimitives | BigIntArithmetics | SwapKitNumber;
 
@@ -14,8 +10,7 @@ type AllowedNumberTypes = "bigint" | "number" | "string";
 
 const DEFAULT_DECIMAL = 8;
 const toMultiplier = (decimal: number) => 10n ** BigInt(decimal);
-const decimalFromMultiplier = (multiplier: bigint) =>
-  Math.log10(Number.parseFloat(multiplier.toString()));
+const decimalFromMultiplier = (multiplier: bigint) => Math.log10(Number.parseFloat(multiplier.toString()));
 
 export function formatBigIntToSafeValue({
   value,
@@ -40,18 +35,15 @@ export function formatBigIntToSafeValue({
   let decimalString = valueString.slice(-decimal);
 
   // Check if we need to round up
-  if (Number.parseInt(decimalString[bigIntDecimal] || "0") >= 5) {
+  if (Number.parseInt(decimalString[bigIntDecimal] || "0", 10) >= 5) {
     // Increment the last decimal place and slice off the rest
-    decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(Number.parseInt(decimalString[bigIntDecimal - 1] || "0") + 1).toString()}`;
+    decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(Number.parseInt(decimalString[bigIntDecimal - 1] || "0", 10) + 1).toString()}`;
   } else {
     // Just slice off the extra digits
     decimalString = decimalString.substring(0, bigIntDecimal);
   }
 
-  return `${isNegative ? "-" : ""}${valueString.slice(0, decimalIndex)}.${decimalString}`.replace(
-    /\.?0*$/,
-    "",
-  );
+  return `${isNegative ? "-" : ""}${valueString.slice(0, decimalIndex)}.${decimalString}`.replace(/\.?0*$/, "");
 }
 
 function divideBigIntWithRounding(n: bigint, d: bigint) {
@@ -73,23 +65,12 @@ export class BigIntArithmetics {
   static fromBigInt(value: bigint, decimal?: number) {
     return new BigIntArithmetics({
       decimal,
-      value: formatBigIntToSafeValue({ value, bigIntDecimal: decimal, decimal }),
+      value: formatBigIntToSafeValue({ bigIntDecimal: decimal, decimal, value }),
     });
   }
 
-  static shiftDecimals({
-    value,
-    from,
-    to,
-  }: {
-    value: InstanceType<typeof SwapKitNumber>;
-    from: number;
-    to: number;
-  }) {
-    return BigIntArithmetics.fromBigInt(
-      (value.getBaseValue("bigint") * toMultiplier(to)) / toMultiplier(from),
-      to,
-    );
+  static shiftDecimals({ value, from, to }: { value: InstanceType<typeof SwapKitNumber>; from: number; to: number }) {
+    return BigIntArithmetics.fromBigInt((value.getBaseValue("bigint") * toMultiplier(to)) / toMultiplier(from), to);
   }
 
   constructor(params: SKBigIntParams) {
@@ -109,9 +90,9 @@ export class BigIntArithmetics {
     // @ts-expect-error False positive
     return new this.constructor({
       decimal: this.decimal,
-      value,
       // @ts-expect-error False positive
       identifier: this.toString({ includeSynthProtocol: true }),
+      value,
     });
   }
   add(...args: InitialisationValueType[]) {
@@ -162,8 +143,7 @@ export class BigIntArithmetics {
   }
 
   getBaseValue<T extends AllowedNumberTypes>(type: T, decimal?: number): NumberPrimitivesType[T] {
-    const divisor =
-      this.decimalMultiplier / toMultiplier(decimal || this.decimal || BaseDecimal.THOR);
+    const divisor = this.decimalMultiplier / toMultiplier(decimal || this.decimal || BaseDecimal.THOR);
     const baseValue = divideBigIntWithRounding(this.bigIntValue, divisor);
 
     switch (type) {
@@ -192,7 +172,7 @@ export class BigIntArithmetics {
     const [int, dec] = this.getValue("string").split(".");
     const integer = int || "";
     const decimal = dec || "";
-    const valueLength = Number.parseInt(integer) ? integer.length + decimal.length : decimal.length;
+    const valueLength = Number.parseInt(integer, 10) ? integer.length + decimal.length : decimal.length;
 
     if (valueLength <= significantDigits) {
       return this.getValue("string");
@@ -202,20 +182,17 @@ export class BigIntArithmetics {
       return integer.slice(0, significantDigits).padEnd(integer.length, "0");
     }
 
-    if (Number.parseInt(integer)) {
+    if (Number.parseInt(integer, 10)) {
       return `${integer}.${decimal.slice(0, significantDigits - integer.length)}`.padEnd(
         significantDigits - integer.length,
         "0",
       );
     }
 
-    const trimmedDecimal = Number.parseInt(decimal);
+    const trimmedDecimal = Number.parseInt(decimal, 10);
     const slicedDecimal = `${trimmedDecimal}`.slice(0, significantDigits);
 
-    return `0.${slicedDecimal.padStart(
-      decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length,
-      "0",
-    )}`;
+    return `0.${slicedDecimal.padStart(decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length, "0")}`;
   }
 
   toFixed(fixedDigits = 6) {
@@ -223,17 +200,14 @@ export class BigIntArithmetics {
     const integer = int || "";
     const decimal = dec || "";
 
-    if (Number.parseInt(integer)) {
+    if (Number.parseInt(integer, 10)) {
       return `${integer}.${decimal.slice(0, fixedDigits)}`.padEnd(fixedDigits, "0");
     }
 
-    const trimmedDecimal = Number.parseInt(decimal);
+    const trimmedDecimal = Number.parseInt(decimal, 10);
     const slicedDecimal = `${trimmedDecimal}`.slice(0, fixedDigits);
 
-    return `0.${slicedDecimal.padStart(
-      decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length,
-      "0",
-    )}`;
+    return `0.${slicedDecimal.padStart(decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length, "0")}`;
   }
 
   toAbbreviation(digits = 2) {
@@ -252,12 +226,7 @@ export class BigIntArithmetics {
 
   toCurrency(
     currency = "$",
-    {
-      currencyPosition = "start",
-      decimal = 2,
-      decimalSeparator = ".",
-      thousandSeparator = ",",
-    } = {},
+    { currencyPosition = "start", decimal = 2, decimalSeparator = ".", thousandSeparator = "," } = {},
   ) {
     const value = this.getValue("number");
     const [int = "", dec = ""] = value.toFixed(6).split(".");
@@ -267,20 +236,15 @@ export class BigIntArithmetics {
       int || dec
         ? int === "0"
           ? `${Number.parseFloat(`0.${dec}`)}`.replace(".", decimalSeparator)
-          : `${integer}${Number.parseInt(dec) ? `${decimalSeparator}${dec.slice(0, decimal)}` : ""}`
+          : `${integer}${Number.parseInt(dec, 10) ? `${decimalSeparator}${dec.slice(0, decimal)}` : ""}`
         : "0.00";
 
-    return `${currencyPosition === "start" ? currency : ""}${parsedValue}${
-      currencyPosition === "end" ? currency : ""
-    }`;
+    return `${currencyPosition === "start" ? currency : ""}${parsedValue}${currencyPosition === "end" ? currency : ""}`;
   }
 
   formatBigIntToSafeValue(value: bigint, decimal?: number) {
     const bigIntDecimal = decimal || this.decimal || DEFAULT_DECIMAL;
-    const decimalToUseForConversion = Math.max(
-      bigIntDecimal,
-      decimalFromMultiplier(this.decimalMultiplier),
-    );
+    const decimalToUseForConversion = Math.max(bigIntDecimal, decimalFromMultiplier(this.decimalMultiplier));
     const isNegative = value < 0n;
 
     const valueString = value.toString().substring(isNegative ? 1 : 0);
@@ -292,18 +256,15 @@ export class BigIntArithmetics {
     let decimalString = parsedValueString.slice(-decimalToUseForConversion);
 
     // Check if we need to round up
-    if (Number.parseInt(decimalString[bigIntDecimal] || "0") >= 5) {
+    if (Number.parseInt(decimalString[bigIntDecimal] || "0", 10) >= 5) {
       // Increment the last decimal place and slice off the rest
-      decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(Number.parseInt(decimalString[bigIntDecimal - 1] || "0") + 1).toString()}`;
+      decimalString = `${decimalString.substring(0, bigIntDecimal - 1)}${(Number.parseInt(decimalString[bigIntDecimal - 1] || "0", 10) + 1).toString()}`;
     } else {
       // Just slice off the extra digits
       decimalString = decimalString.substring(0, bigIntDecimal);
     }
 
-    return `${isNegative ? "-" : ""}${parsedValueString.slice(
-      0,
-      decimalIndex,
-    )}.${decimalString}`.replace(/\.?0*$/, "");
+    return `${isNegative ? "-" : ""}${parsedValueString.slice(0, decimalIndex)}.${decimalString}`.replace(/\.?0*$/, "");
   }
 
   #arithmetics(method: "add" | "sub" | "mul" | "div", ...args: InitialisationValueType[]): this {
@@ -342,18 +303,14 @@ export class BigIntArithmetics {
       (this.bigIntValue * precisionDecimalMultiplier) / this.decimalMultiplier,
     );
 
-    const value = formatBigIntToSafeValue({
-      bigIntDecimal: decimal,
-      decimal,
-      value: result,
-    });
+    const value = formatBigIntToSafeValue({ bigIntDecimal: decimal, decimal, value: result });
 
     // @ts-expect-error False positive
     return new this.constructor({
-      decimalMultiplier: toMultiplier(decimal),
       decimal: this.decimal,
-      value,
+      decimalMultiplier: toMultiplier(decimal),
       identifier: this.toString(),
+      value,
     });
   }
 
@@ -407,19 +364,13 @@ export class BigIntArithmetics {
   }
 }
 
-const numberFormatter = Intl.NumberFormat("fullwide", {
-  useGrouping: false,
-  maximumFractionDigits: 20,
-});
+const numberFormatter = Intl.NumberFormat("fullwide", { maximumFractionDigits: 20, useGrouping: false });
 
 function toSafeValue(value: InitialisationValueType) {
-  const parsedValue =
-    typeof value === "number" ? numberFormatter.format(value) : getStringValue(value);
+  const parsedValue = typeof value === "number" ? numberFormatter.format(value) : getStringValue(value);
   const splitValue = `${parsedValue}`.replaceAll(",", ".").split(".");
 
-  return splitValue.length > 1
-    ? `${splitValue.slice(0, -1).join("")}.${splitValue.at(-1)}`
-    : splitValue[0] || "0";
+  return splitValue.length > 1 ? `${splitValue.slice(0, -1).join("")}.${splitValue.at(-1)}` : splitValue[0] || "0";
 }
 
 function getFloatDecimals(value: string) {
@@ -428,9 +379,5 @@ function getFloatDecimals(value: string) {
 }
 
 function getStringValue(param: SKBigIntParams) {
-  return typeof param === "object"
-    ? "getValue" in param
-      ? param.getValue("string")
-      : param.value
-    : param;
+  return typeof param === "object" ? ("getValue" in param ? param.getValue("string") : param.value) : param;
 }

@@ -1,9 +1,9 @@
 export const list = {
-  provider: "CAMELOT_V3",
   chainId: "42161",
-  name: "CAMELOT_V3",
-  timestamp: "1744043449737",
   count: 1605,
+  name: "CAMELOT_V3",
+  provider: "CAMELOT_V3",
+  timestamp: "1744043449737",
   tokens: [
     {
       address: "0xda39A32c9c5Bb2C9E99d4e2a24bc55A418599F90",
@@ -12850,8 +12850,7 @@ export const list = {
       chain: "ARB",
       chainId: "42161",
       decimals: 6,
-      identifier:
-        "ARB.Shibai 0xD8224642535d33887857efA4E45721D7dB4117f3-0x62e50Cdac9A5e36389D62020E82853172B531C18",
+      identifier: "ARB.Shibai 0xD8224642535d33887857efA4E45721D7dB4117f3-0x62e50Cdac9A5e36389D62020E82853172B531C18",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit/images/arb.shibai 0xd8224642535d33887857efa4e45721d7db4117f3-0x62e50cdac9a5e36389d62020e82853172b531c18.png",
       ticker: "Shibai 0xD8224642535d33887857efA4E45721D7dB4117f3",

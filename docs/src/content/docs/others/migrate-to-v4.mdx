@@ -2,7 +2,8 @@
 title: Migrate to v4
 description: Guide for upgrading from SwapKit v3 to v4
 ---
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 This guide provides a comprehensive overview of all breaking changes and migration steps from SwapKit v3 to v4.
 
@@ -13,6 +14,7 @@ This guide provides a comprehensive overview of all breaking changes and migrati
 v4 fundamentally changes how packages are organized:
 
 **v3 Structure**: Individual packages for each component
+
 ```bash
 @swapkit/plugin-chainflip
 @swapkit/plugin-evm
@@ -22,6 +24,7 @@ v4 fundamentally changes how packages are organized:
 ```
 
 **v4 Structure**: Consolidated monolithic packages with submodule exports
+
 ```bash
 @swapkit/plugins/*     # All plugins in one package
 @swapkit/toolboxes/*   # All toolboxes in one package
@@ -35,23 +38,23 @@ v4 fundamentally changes how packages are organized:
 All imports must be updated:
 
 ```diff
-// Plugins
+
 - import { ChainflipPlugin } from "@swapkit/plugin-chainflip";
 - import { EVMPlugin } from "@swapkit/plugin-evm";
 + import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 + import { EVMPlugin } from "@swapkit/plugins/evm";
 
-// Toolboxes
+
 - import { getToolboxByChain } from "@swapkit/toolbox-cosmos";
 - import { EVMToolbox } from "@swapkit/toolbox-evm";
 + import { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 + import { getEvmToolbox } from "@swapkit/toolboxes/evm";
 
-// Wallets
+
 - import { keystoreWallet } from "@swapkit/wallet-keystore";
 + import { keystoreWallet } from "@swapkit/wallets/keystore";
 
-// API (moved to helpers)
+
 - import { SwapKitApi } from "@swapkit/api";
 + import { SwapKitApi } from "@swapkit/helpers/api";
 ```
@@ -61,7 +64,7 @@ All imports must be updated:
 The SwapKit client initialization has changed:
 
 ```diff
-// v3
+
 - import { SwapKit } from "@swapkit/core";
 - const client = SwapKit({
 -   apis: { /* custom APIs */ },
@@ -71,7 +74,7 @@ The SwapKit client initialization has changed:
 -   wallets: { ...keystoreWallet }
 - });
 
-// v4
+
 + import { SwapKit } from "@swapkit/core";
 + const client = SwapKit({
 +   config: {
@@ -88,16 +91,16 @@ The SwapKit client initialization has changed:
 v4 introduces a centralized configuration system:
 
 ```diff
-// v3 - Direct configuration
+
 - const client = SwapKit({
 -   apis: { [Chain.Ethereum]: customEthApi },
--   rpcUrls: { [Chain.Ethereum]: "https://eth-rpc.com" }
+-   rpcUrls: { [Chain.Ethereum]: "https:
 - });
 
-// v4 - SKConfig system
+
 + import { SKConfig } from "@swapkit/helpers";
 + SKConfig.set({
-+   rpcUrls: { [Chain.Ethereum]: "https://eth-rpc.com" },
++   rpcUrls: { [Chain.Ethereum]: "https:
 +   apiKeys: {
 +     blockchair: "YOUR_KEY",
 +     swapKit: "YOUR_KEY"
@@ -110,7 +113,7 @@ v4 introduces a centralized configuration system:
 Plugins now use the `createPlugin` helper:
 
 ```diff
-// v3
+
 - export function plugin({ getWallet, config }: SwapKitPluginParams<ConnectConfig>) {
 -   return {
 -     swap,
@@ -118,7 +121,7 @@ Plugins now use the `createPlugin` helper:
 -   };
 - }
 
-// v4
+
 + import { createPlugin } from "@swapkit/plugins";
 + export const MyPlugin = createPlugin({
 +   name: "myPlugin",
@@ -132,13 +135,13 @@ Plugins now use the `createPlugin` helper:
 Wallets now use the `createWallet` helper:
 
 ```diff
-// v3
+
 - export const keystoreWallet: SwapKitWallet<[chains: CryptoChain[], phrase: string]> =
 -   ({ addChain, apis, rpcUrls }) => {
 -     return async (chains, phrase) => { /* ... */ };
 -   };
 
-// v4
+
 + import { createWallet } from "@swapkit/wallets";
 + export const keystoreWallet = createWallet({
 +   name: "keystore",
@@ -153,16 +156,16 @@ Wallets now use the `createWallet` helper:
 Toolboxes no longer accept RPC URLs directly:
 
 ```diff
-// v3
+
 - const toolbox = getToolboxByChain(chain, {
 -   api: customApi,
--   rpcUrl: "https://rpc.url",
+-   rpcUrl: "https:
 -   signer
 - });
 
-// v4 - RPC URLs from SKConfig only
+
 + const toolbox = getEvmToolbox(chain, { signer });
-// RPC URL automatically retrieved from SKConfig
+
 ```
 
 ### 8. Type Changes
@@ -170,15 +173,15 @@ Toolboxes no longer accept RPC URLs directly:
 Several type imports have changed:
 
 ```diff
-// Wallet types
+
 - import type { EVMWallets } from "@swapkit/toolbox-evm";
 + import type { EVMToolboxes } from "@swapkit/toolboxes/evm";
 
-// API types
+
 - import type { QuoteRequest } from "@swapkit/api";
 + import type { QuoteRequest } from "@swapkit/helpers/api";
 
-// Plugin params simplified
+
 - SwapKitPluginParams<ConnectConfig>
 + SwapKitPluginParams
 ```
@@ -205,6 +208,7 @@ Several type imports have changed:
     # or individual packages
     bun add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
     ```
+
   </TabItem>
   <TabItem label="pnpm">
     ```bash
@@ -216,6 +220,7 @@ Several type imports have changed:
     # or individual packages
     pnpm add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
     ```
+
   </TabItem>
   <TabItem label="npm">
     ```bash
@@ -227,6 +232,7 @@ Several type imports have changed:
     # or individual packages
     npm install @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
     ```
+
   </TabItem>
   <TabItem label="yarn">
     ```bash
@@ -238,6 +244,7 @@ Several type imports have changed:
     # or individual packages
     yarn add @swapkit/core @swapkit/plugins @swapkit/toolboxes @swapkit/wallets
     ```
+
   </TabItem>
 </Tabs>
 
@@ -263,7 +270,7 @@ Replace all v3 imports with v4 equivalents:
 
 -const client = new SwapKitCore({
 +const client = createSwapKit({
-  // config
+
 });
 ```
 
@@ -273,16 +280,13 @@ The wallet connection pattern remains similar but uses the new import paths:
 
 ```typescript
 // @noErrorValidation
+
 import { createSwapKit, Chain } from "@swapkit/sdk";
 
-const client = createSwapKit({
-  // your config
-});
+const client = createSwapKit({});
 
-// Connect EVM wallet
 await client.connectEVMWallet([Chain.Ethereum]);
 
-// Connect keystore wallet
 const chains = [Chain.Bitcoin, Chain.Ethereum, Chain.Cosmos];
 const phrase = "your mnemonic phrase here";
 await client.connectKeystore(chains, phrase);
@@ -295,41 +299,45 @@ await client.connectKeystore(chains, phrase);
 The biggest improvement in v4 is the ability to update configuration at runtime without recreating the SwapKit client.
 
 #### v3 Approach (Client Recreation Required)
+
 ```typescript
-// v3 - Had to recreate entire client for config changes
+// @noErrorValidation
+
 const client1 = SwapKit({
-  rpcUrls: { [Chain.Ethereum]: "https://public-rpc.com" },
+  rpcUrls: { [Chain.Ethereum]: "https:
   apis: { [Chain.Bitcoin]: customBtcApi }
 });
 
-// To change RPC URL, needed to create new client
+
 const client2 = SwapKit({
-  rpcUrls: { [Chain.Ethereum]: "https://premium-rpc.com" },
+  rpcUrls: { [Chain.Ethereum]: "https:
   apis: { [Chain.Bitcoin]: customBtcApi }
 });
 ```
 
 #### v4 Approach (Runtime Updates)
+
 ```typescript
+// @noErrorValidation
 import { createSwapKit, SKConfig, Chain } from '@swapkit/sdk';
 
-// Create client once
+
 const swapKit = createSwapKit({
   config: {
-    rpcUrls: { [Chain.Ethereum]: "https://public-rpc.com" },
+    rpcUrls: { [Chain.Ethereum]: "https:
     apiKeys: { blockchair: "basic-key" }
   }
 });
 
-// Update configuration at runtime - client continues working with new config
-SKConfig.setRpcUrl(Chain.Ethereum, "https://premium-rpc.com");
+
+SKConfig.setRpcUrl(Chain.Ethereum, "https:
 SKConfig.setApiKey("blockchair", "premium-api-key");
 
-// Switch to testnet mode
+
 SKConfig.setEnv("isStagenet", true);
 
-// All subsequent operations automatically use new configuration!
-const balance = await swapKit.getBalance(Chain.Ethereum); // Uses premium RPC
+
+const balance = await swapKit.getBalance(Chain.Ethereum);
 ```
 
 ### 2. Individual Configuration Updates
@@ -337,21 +345,22 @@ const balance = await swapKit.getBalance(Chain.Ethereum); // Uses premium RPC
 Update specific parts of configuration without affecting others:
 
 ```typescript
-// Update API keys individually
+// @noErrorValidation
+
 SKConfig.setApiKey("swapKit", "your-swapkit-api-key");
 SKConfig.setApiKey("walletConnectProjectId", "your-wc-project-id");
 SKConfig.setApiKey("blockchair", "your-blockchair-key");
 
-// Update RPC URLs for specific chains
-SKConfig.setRpcUrl(Chain.Ethereum, "https://ethereum-rpc.com");
-SKConfig.setRpcUrl(Chain.Arbitrum, "https://arbitrum-rpc.com");
-SKConfig.setRpcUrl(Chain.Avalanche, "https://avalanche-rpc.com");
 
-// Update environment settings
+SKConfig.setRpcUrl(Chain.Ethereum, "https:
+SKConfig.setRpcUrl(Chain.Arbitrum, "https:
+SKConfig.setRpcUrl(Chain.Avalanche, "https:
+
+
 SKConfig.setEnv("isDev", false);
 SKConfig.setEnv("isStagenet", true);
 
-// Update integration configurations
+
 SKConfig.setIntegrationConfig("radix", {
   dAppDefinitionAddress: "account_rdx...",
   applicationName: "My DeFi App",
@@ -365,12 +374,13 @@ SKConfig.setIntegrationConfig("radix", {
 Update multiple configurations at once:
 
 ```typescript
-// Update multiple settings simultaneously
+// @noErrorValidation
+
 SKConfig.set({
   rpcUrls: {
-    [Chain.Ethereum]: "https://ethereum-rpc.com",
-    [Chain.Arbitrum]: "https://arbitrum-rpc.com",
-    [Chain.Avalanche]: "https://avalanche-rpc.com"
+    [Chain.Ethereum]: "https:
+    [Chain.Arbitrum]: "https:
+    [Chain.Avalanche]: "https:
   },
   apiKeys: {
     blockchair: "premium-blockchair-key",
@@ -389,20 +399,21 @@ SKConfig.set({
 Switch between mainnet and testnet without recreating client:
 
 ```typescript
-// Start on mainnet
+// @noErrorValidation
+
 const swapKit = createSwapKit();
 
-// Switch to testnet for testing
+
 SKConfig.setEnv("isStagenet", true);
-SKConfig.setRpcUrl(Chain.THORChain, "https://stagenet-thornode.ninerealms.com");
+SKConfig.setRpcUrl(Chain.THORChain, "https:
 
-// All operations now use testnet
+
 await swapKit.connectKeystore([Chain.THORChain], phrase);
-const balance = await swapKit.getBalance(Chain.THORChain); // Testnet balance
+const balance = await swapKit.getBalance(Chain.THORChain);
 
-// Switch back to mainnet
+
 SKConfig.setEnv("isStagenet", false);
-SKConfig.setRpcUrl(Chain.THORChain, "https://thornode.ninerealms.com");
+SKConfig.setRpcUrl(Chain.THORChain, "https:
 ```
 
 ### 5. How Toolboxes Automatically Use Updated Config
@@ -410,25 +421,28 @@ SKConfig.setRpcUrl(Chain.THORChain, "https://thornode.ninerealms.com");
 All toolboxes in v4 dynamically retrieve configuration from SKConfig:
 
 ```typescript
-// When you call this...
+// @noErrorValidation
+
 const ethToolbox = await getEvmToolbox(Chain.Ethereum);
 
-// Internally, it gets the RPC URL from SKConfig
+
 const rpcUrl = SKConfig.get("rpcUrls")[Chain.Ethereum];
 const provider = new JsonRpcProvider(rpcUrl);
 
-// So when you update the RPC URL...
-SKConfig.setRpcUrl(Chain.Ethereum, "https://new-rpc.com");
 
-// The next toolbox instance automatically uses the new URL
-const newEthToolbox = await getEvmToolbox(Chain.Ethereum); // Uses new RPC!
+SKConfig.setRpcUrl(Chain.Ethereum, "https:
+
+
+const newEthToolbox = await getEvmToolbox(Chain.Ethereum);
 ```
 
 ### 6. Standardized Creation Helpers
+
 - **`createPlugin`**: Streamlined plugin creation with consistent interface
 - **`createWallet`**: Simplified wallet adapter development
 
 ### 7. Enhanced Chain Support
+
 - **Improved Solana Support**: Jupiter API integration for real-time token metadata
 - **Dynamic Cosmos Fees**: Automatic fee estimation when not provided
 - **Ripple Support**: Full XRP toolbox implementation
@@ -439,16 +453,15 @@ const newEthToolbox = await getEvmToolbox(Chain.Ethereum); // Uses new RPC!
 Updates preserve existing configuration:
 
 ```typescript
-// Set initial API key
+// @noErrorValidation
+
 SKConfig.setApiKey("swapKit", "key1");
 
-// Add another API key - preserves existing ones
 SKConfig.setApiKey("blockchair", "key2");
 
-// Both keys are now available
 const apiKeys = SKConfig.get("apiKeys");
-console.log(apiKeys.swapKit);    // "key1"
-console.log(apiKeys.blockchair); // "key2"
+console.log(apiKeys.swapKit);
+console.log(apiKeys.blockchair);
 ```
 
 ## Common Migration Issues
@@ -456,10 +469,8 @@ console.log(apiKeys.blockchair); // "key2"
 ### 1. TypeScript Errors
 
 ```typescript
-// @errors: 2305
-// Error: Module '@swapkit/api' has no exported member 'SwapKitApi'
+// @noErrorValidation
 
-// Solution: Update import
 import { SwapKitApi } from "@swapkit/sdk";
 ```
 
@@ -467,12 +478,13 @@ import { SwapKitApi } from "@swapkit/sdk";
 
 ```typescript
 // @noErrorValidation
-// Error: Argument of type '{ signer }' is not assignable...
 
-// Solution: Configure via SKConfig
+
+
+
 import { SKConfig, Chain, getEvmToolbox } from "@swapkit/sdk";
 
-SKConfig.set({ rpcUrls: { [Chain.Ethereum]: "https://..." } });
+SKConfig.set({ rpcUrls: { [Chain.Ethereum]: "https:
 const signer = /* your signer instance */;
 const toolbox = getEvmToolbox(Chain.Ethereum, { signer });
 ```
@@ -481,16 +493,16 @@ const toolbox = getEvmToolbox(Chain.Ethereum, { signer });
 
 ```typescript
 // @noErrorValidation
-// Error: Type '{ swap }' is not assignable...
 
-// Solution: Use createPlugin helper
 import { createPlugin } from "@swapkit/sdk";
 
-const swap = async (params) => { /* implementation */ };
+const swap = async (params) => {
+  /* implementation */
+};
 
 export const MyPlugin = createPlugin({
   name: "myPlugin",
-  methods: ({ getWallet }) => ({ swap })
+  methods: ({ getWallet }) => ({ swap }),
 });
 ```
 
@@ -507,6 +519,6 @@ export const MyPlugin = createPlugin({
 
 ## Need Help?
 
-- 💬 [Join our Discord](https://discord.gg/swapkit) for migration support
-- 🐛 [Report issues on GitHub](https://github.com/swapkit/SwapKit/issues)
+- 💬 [Join our Discord](https://discord.gg/swapkit) for community support
+- 🐛 [Report issues on GitHub](https://github.com/swapkit/swapkit/issues)
 - 📚 Check the [Getting Started guide](/start/getting-started) for v4 patterns

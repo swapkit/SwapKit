@@ -12,15 +12,14 @@ import {
   Chain,
   DerivationPath,
   type DerivationPathArray,
-  type GenericCreateTransactionParams,
-  NetworkDerivationPath,
-  SKConfig,
-  SwapKitError,
   derivationPathToString,
+  type GenericCreateTransactionParams,
+  getRPCUrl,
+  NetworkDerivationPath,
+  SwapKitError,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { P } from "ts-pattern";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import type { SolanaCreateTransactionParams, SolanaProvider, SolanaTransferParams } from "./index";
 
 type SolanaSigner = SolanaProvider | Signer;
@@ -56,18 +55,12 @@ async function getSolanaBalance(address: string) {
   const solBalance = await connection.getBalance(publicKey);
   if (solBalance > 0) {
     balances.push(
-      AssetValue.from({
-        chain: Chain.Solana,
-        value: solBalance,
-        fromBaseDecimal: BaseDecimal[Chain.Solana],
-      }),
+      AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: BaseDecimal[Chain.Solana], value: solBalance }),
     );
   }
 
   // Get token balances
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
-    programId: TOKEN_PROGRAM_ID,
-  });
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID });
 
   for (const { account } of tokenAccounts.value) {
     const tokenInfo = account.data.parsed.info;
@@ -82,11 +75,7 @@ async function getSolanaBalance(address: string) {
     const decimals = metadata?.decimals || tokenInfo.tokenAmount.decimals;
 
     balances.push(
-      AssetValue.from({
-        asset: `${Chain.Solana}.${symbol}-${mintAddress}`,
-        value: amount,
-        fromBaseDecimal: decimals,
-      }),
+      AssetValue.from({ asset: `${Chain.Solana}.${symbol}-${mintAddress}`, fromBaseDecimal: decimals, value: amount }),
     );
   }
 
@@ -107,9 +96,7 @@ export async function getSolanaAddressValidator() {
 }
 
 export async function getSolanaToolbox(
-  toolboxParams?:
-    | { signer?: SolanaSigner }
-    | { phrase?: string; index?: number; derivationPath?: DerivationPathArray },
+  toolboxParams?: { signer?: SolanaSigner } | { phrase?: string; index?: number; derivationPath?: DerivationPathArray },
 ) {
   const index = toolboxParams && "index" in toolboxParams ? toolboxParams.index || 0 : 0;
   const derivationPath = derivationPathToString(
@@ -119,7 +106,7 @@ export async function getSolanaToolbox(
   );
 
   const signer = await match(toolboxParams)
-    .with({ phrase: P.string }, ({ phrase }) => createKeysForPath({ phrase, derivationPath }))
+    .with({ phrase: P.string }, ({ phrase }) => createKeysForPath({ derivationPath, phrase }))
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
@@ -128,30 +115,27 @@ export async function getSolanaToolbox(
   }
 
   return {
-    getConnection,
-    getAddress,
+    broadcastTransaction: broadcastTransaction(getConnection),
     createKeysForPath,
-    getAddressFromPubKey,
-    getPubkeyFromAddress,
     createTransaction: createTransaction(getConnection),
     createTransactionFromInstructions,
+    estimateTransactionFee: estimateTransactionFee(getConnection),
+    getAddress,
+    getAddressFromPubKey,
+    getAddressValidator: getSolanaAddressValidator,
     getBalance: (addressParam?: string) => {
       const address = addressParam || getAddress();
       if (!address) throw new SwapKitError("core_wallet_connection_not_found");
       return getSolanaBalance(address);
     },
-    transfer: transfer(getConnection, signer),
-    broadcastTransaction: broadcastTransaction(getConnection),
-    getAddressValidator: getSolanaAddressValidator,
-    signTransaction: signTransaction(getConnection, signer),
-    estimateTransactionFee: estimateTransactionFee(getConnection),
-
-    // Keep original signTransaction for backward compatibility
-    // New unified naming for consistency across toolboxes
+    getConnection,
+    getPubkeyFromAddress,
     signAndBroadcastTransaction: async (transaction: Transaction | VersionedTransaction) => {
       const signedTx = await signTransaction(getConnection, signer)(transaction);
       return broadcastTransaction(getConnection)(signedTx);
     },
+    signTransaction: signTransaction(getConnection, signer),
+    transfer: transfer(getConnection, signer),
   };
 }
 
@@ -162,16 +146,14 @@ function estimateTransactionFee(getConnection: () => Promise<Connection>) {
     memo,
     isProgramDerivedAddress,
     sender,
-  }: Omit<GenericCreateTransactionParams, "feeRate"> & {
-    isProgramDerivedAddress?: boolean;
-  }) => {
+  }: Omit<GenericCreateTransactionParams, "feeRate"> & { isProgramDerivedAddress?: boolean }) => {
     const connection = await getConnection();
 
     const transaction = await createTransaction(getConnection)({
-      recipient,
       assetValue,
-      memo,
       isProgramDerivedAddress,
+      memo,
+      recipient,
       sender,
     });
 
@@ -179,32 +161,25 @@ function estimateTransactionFee(getConnection: () => Promise<Connection>) {
     const feeInLamports = await connection.getFeeForMessage(message);
 
     if (feeInLamports.value === null) {
-      throw new SwapKitError(
-        "toolbox_solana_fee_estimation_failed",
-        "Could not estimate Solana fee.",
-      );
+      throw new SwapKitError("toolbox_solana_fee_estimation_failed", "Could not estimate Solana fee.");
     }
 
     return AssetValue.from({
       chain: Chain.Solana,
-      value: feeInLamports.value,
       fromBaseDecimal: BaseDecimal[Chain.Solana],
+      value: feeInLamports.value,
     });
   };
 }
 
 async function getConnection() {
   const { Connection } = await import("@solana/web3.js");
-  return new Connection(SKConfig.get("rpcUrls").SOL, "confirmed");
+  const rpcUrl = await getRPCUrl(Chain.Solana);
+  return new Connection(rpcUrl, "confirmed");
 }
 
 function createAssetTransaction(getConnection: () => Promise<Connection>) {
-  return async ({
-    assetValue,
-    recipient,
-    sender,
-    isProgramDerivedAddress,
-  }: SolanaCreateTransactionParams) => {
+  return async ({ assetValue, recipient, sender, isProgramDerivedAddress }: SolanaCreateTransactionParams) => {
     const connection = await getConnection();
     const fromPubkey = await getPubkeyFromAddress(sender);
 
@@ -225,9 +200,9 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
         connection,
         decimals: assetValue.decimal as number,
         from: fromPubkey,
+        isProgramDerivedAddress,
         recipient,
         tokenAddress: assetValue.address,
-        isProgramDerivedAddress,
       });
     }
 
@@ -281,37 +256,19 @@ async function createSolanaTokenTransaction({
 
   if (!recipientAccountExists) {
     transaction.add(
-      createAssociatedTokenAccountInstruction(
-        from,
-        recipientSPLAddress,
-        recipientPublicKey,
-        tokenPublicKey,
-      ),
+      createAssociatedTokenAccountInstruction(from, recipientSPLAddress, recipientPublicKey, tokenPublicKey),
     );
   }
 
   transaction.add(
-    createTransferCheckedInstruction(
-      fromSPLAddress,
-      tokenPublicKey,
-      recipientSPLAddress,
-      from,
-      amount,
-      decimals,
-    ),
+    createTransferCheckedInstruction(fromSPLAddress, tokenPublicKey, recipientSPLAddress, from, amount, decimals),
   );
 
   return transaction;
 }
 
 function createTransaction(getConnection: () => Promise<Connection>) {
-  return async ({
-    recipient,
-    assetValue,
-    memo,
-    isProgramDerivedAddress,
-    sender,
-  }: SolanaCreateTransactionParams) => {
+  return async ({ recipient, assetValue, memo, isProgramDerivedAddress, sender }: SolanaCreateTransactionParams) => {
     const { createMemoInstruction } = await import("@solana/spl-memo");
 
     const fromPubkey = await getPubkeyFromAddress(sender);
@@ -324,9 +281,9 @@ function createTransaction(getConnection: () => Promise<Connection>) {
     const connection = await getConnection();
     const transaction = await createAssetTransaction(getConnection)({
       assetValue,
+      isProgramDerivedAddress,
       recipient,
       sender,
-      isProgramDerivedAddress,
     });
 
     if (!transaction) {
@@ -345,7 +302,10 @@ function createTransaction(getConnection: () => Promise<Connection>) {
 
 async function createTransactionFromInstructions({
   instructions,
-}: { instructions: TransactionInstruction[]; isProgramDerivedAddress?: boolean }) {
+}: {
+  instructions: TransactionInstruction[];
+  isProgramDerivedAddress?: boolean;
+}) {
   const { Transaction } = await import("@solana/web3.js");
   const transaction = new Transaction().add(...instructions);
 
@@ -362,15 +322,13 @@ function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigne
       throw new SwapKitError("core_transaction_invalid_sender_address");
     }
 
-    const sender =
-      signer.publicKey?.toString() ??
-      (await (signer as SolanaProvider).connect()).publicKey.toString();
+    const sender = signer.publicKey?.toString() ?? (await (signer as SolanaProvider).connect()).publicKey.toString();
 
     const transaction = await createTransaction(getConnection)({
-      recipient,
       assetValue,
-      memo,
       isProgramDerivedAddress,
+      memo,
+      recipient,
       sender,
     });
 
@@ -420,7 +378,10 @@ function signTransaction(getConnection: () => Promise<Connection>, signer?: Sola
 export async function createKeysForPath({
   phrase,
   derivationPath = DerivationPath.SOL,
-}: { phrase: string; derivationPath?: string }) {
+}: {
+  phrase: string;
+  derivationPath?: string;
+}) {
   const { HDKey } = await import("micro-key-producer/slip10.js");
   const { mnemonicToSeedSync } = await import("@scure/bip39");
   const { Keypair } = await import("@solana/web3.js");

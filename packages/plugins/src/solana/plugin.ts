@@ -3,18 +3,12 @@ import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import { createPlugin } from "../utils";
 
 export const SolanaPlugin = createPlugin({
-  name: "solana",
-  properties: {
-    supportedSwapkitProviders: [ProviderName.JUPITER],
-  },
   methods: ({ getWallet }) => ({
     swap: async function solanaSwap({ route }: SwapParams<"solana", QuoteResponseRoute>) {
       const { VersionedTransaction } = await import("@solana/web3.js");
       const { tx, sellAsset } = route;
 
-      const assetValue = await AssetValue.from({
-        asset: sellAsset,
-      });
+      const assetValue = await AssetValue.from({ asset: sellAsset });
 
       const chain = assetValue.chain;
       if (!(chain === Chain.Solana && tx)) throw new SwapKitError("core_swap_invalid_params");
@@ -27,4 +21,6 @@ export const SolanaPlugin = createPlugin({
       return wallet.broadcastTransaction(signedTransaction);
     },
   }),
+  name: "solana",
+  properties: { supportedSwapkitProviders: [ProviderName.JUPITER] },
 });

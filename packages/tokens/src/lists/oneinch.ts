@@ -1,14 +1,9 @@
 export const list = {
-  provider: "ONEINCH",
-  name: "ONEINCH",
-  timestamp: "2025-07-30T16:01:31.779Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
   count: 1464,
+  keywords: ["oneinch", "1inch", "1inch.exchange", "1inch.exchange v1"],
+  name: "ONEINCH",
+  provider: "ONEINCH",
+  timestamp: "2025-07-30T16:01:31.779Z",
   tokens: [
     {
       address: "0x2e9a6df78e42a30712c10a9dc4b1c8656f8f2879",
@@ -14644,4 +14639,5 @@ export const list = {
       ticker: "zUSD",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

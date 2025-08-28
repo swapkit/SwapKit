@@ -5,8 +5,8 @@ hero:
   title: SwapKit
   tagline: Cross-chain swaps made easy
   image:
-    dark: '../../assets/logo-white.png'
-    light: '../../assets/logo-black.png'
+    dark: "../../assets/logo-white.png"
+    light: "../../assets/logo-black.png"
     alt: SwapKit logo
   actions:
     - text: Get Started
@@ -19,26 +19,34 @@ hero:
       variant: secondary
 ---
 
-import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
+import PlaygroundLinks from "../../components/PlaygroundLinks.astro";
+import TryItYourself from "../../components/TryItYourself.astro";
 
 <div class="hero-section">
 
 ## Build Cross-Chain DeFi in Minutes
 
-SwapKit provides everything you need to integrate blockchain functionality into your application with a single, unified API.
+SwapKit provides everything you need to integrate blockchain functionality into your application with a single, unified API. Now with v4's enhanced architecture and runtime flexibility.
 
 <CardGrid stagger>
   <Card title="20+ Blockchains" icon="rocket">
-    Support for EVM chains, Bitcoin, Cosmos ecosystem, Solana, NEAR Protocol, Ripple (XRP), and more - all through one consistent interface.
+    Support for EVM chains, Bitcoin, Cosmos ecosystem, Solana, Ripple (XRP), and
+    more - all through one consistent interface. [Explore Networks
+    →](/guides/chains/ethereum)
   </Card>
   <Card title="Multi-Wallet Support" icon="open">
-    Connect with 20+ wallets including MetaMask, WalletConnect, Ledger, Keystore, and hardware wallets.
+    Connect with 20+ wallets including MetaMask, WalletConnect, Ledger,
+    Keystore, and hardware wallets. [Wallet Integration
+    →](/guides/wallets/browser-extensions/metamask)
   </Card>
   <Card title="DeFi Protocols" icon="puzzle">
-    Built-in integrations with THORChain, Chainflip, 1inch, and other leading DeFi protocols.
+    Built-in integrations with THORChain, Chainflip, 1inch, and other leading
+    DeFi protocols. [View API Reference →](/guides/api-reference)
   </Card>
-  <Card title="Type-Safe & Modern" icon="document">
-    Built with TypeScript for complete type safety and excellent developer experience.
+  <Card title="Runtime Configuration" icon="setting">
+    **New in v4**: Update API keys, RPC URLs, and settings at runtime without
+    recreating your client. [Learn About v4 →](/guides/whats-new-v4)
   </Card>
 </CardGrid>
 
@@ -46,33 +54,31 @@ SwapKit provides everything you need to integrate blockchain functionality into 
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit, Chain, SwapKitApi } from '@swapkit/sdk';
 
-// Initialize SwapKit
+import { createSwapKit, Chain, SwapKitApi } from "@swapkit/sdk";
+
 const swapKit = createSwapKit();
 
-// Connect a keystore wallet (supports 20+ chains)
-await swapKit.connectKeystore([Chain.Ethereum, Chain.Bitcoin, Chain.Ripple], 'your mnemonic phrase');
+await swapKit.connectKeystore(
+  [Chain.Ethereum, Chain.Bitcoin, Chain.Ripple],
+  "your mnemonic phrase"
+);
 
-// Get wallet balances
 const ethBalance = await swapKit.getBalance(Chain.Ethereum);
 const btcBalance = await swapKit.getBalance(Chain.Bitcoin);
 const xrpBalance = await swapKit.getBalance(Chain.Ripple);
 
-// Get a swap quote
 const { routes } = await SwapKitApi.getSwapQuote({
-  sellAsset: 'ETH.ETH',
-  sellAmount: '1000000000000000000', // 1 ETH in wei
-  buyAsset: 'BTC.BTC',
+  sellAsset: "ETH.ETH",
+  sellAmount: "1000000000000000000",
+  buyAsset: "BTC.BTC",
   sourceAddress: swapKit.getAddress(Chain.Ethereum),
   destinationAddress: swapKit.getAddress(Chain.Bitcoin),
-  slippage: 3
+  slippage: 3,
 });
 
-// Execute the swap
 if (routes.length > 0) {
-  const txHash = await swapKit
-    .swap({ route: routes[0] });
+  const txHash = await swapKit.swap({ route: routes[0] });
 }
 ```
 
@@ -80,16 +86,55 @@ if (routes.length > 0) {
 
 <CardGrid>
   <Card title="Unified API" icon="setting">
-    One consistent API for all chains and protocols. No need to learn different interfaces for each blockchain.
+    One consistent API for all chains and protocols. No need to learn different
+    interfaces for each blockchain. [Essential Actions
+    →](/guides/actions/connect-wallet)
   </Card>
   <Card title="Production Ready" icon="star">
     Battle-tested in production by THORSwap and other leading DeFi applications.
+    [Best Practices →](/guides/production-best-practices)
   </Card>
   <Card title="Modular Design" icon="puzzle">
     Use only what you need - from lightweight toolboxes to the full SDK.
+    [Framework Integration →](/guides/integrations/nextjs)
   </Card>
   <Card title="Active Development" icon="github">
     Regular updates, new chain integrations, and responsive community support.
+    [What's New →](/guides/whats-new-v4)
+  </Card>
+</CardGrid>
+
+## Popular Integration Paths
+
+Whether you're building a simple wallet connector or a complex DeFi protocol, SwapKit has the right approach for your needs:
+
+<CardGrid>
+  <Card title="🚀 Quick Start" icon="rocket">
+    **Perfect for**: New developers, prototyping, learning Get up and running in
+    minutes with the complete SDK package. - Full feature set out of the box -
+    All wallets and chains included - Production-ready defaults [Get Started
+    →](/start/getting-started)
+  </Card>
+
+  <Card title="⚡ Essential Actions" icon="star">
+    **Perfect for**: Basic DeFi apps, wallet integrations Learn the core
+    functionality every SwapKit app needs. - Connect wallets across 20+ chains -
+    Send transactions with proper fee handling - Perform cross-chain swaps
+    [Essential Actions →](/guides/actions/connect-wallet)
+  </Card>
+
+  <Card title="🌐 Multi-Chain Focus" icon="puzzle">
+    **Perfect for**: Cross-chain applications, portfolio trackers Dive deep into
+    specific blockchain ecosystems. - EVM networks (Ethereum, Arbitrum, Polygon)
+    - Bitcoin family (BTC, BCH, LTC, DOGE) - Cosmos ecosystem (ATOM, THOR, MAYA)
+    [Explore Chains →](/guides/chains/ethereum)
+  </Card>
+
+  <Card title="🔧 Advanced Development" icon="setting">
+    **Perfect for**: Custom protocols, enterprise applications Extend SwapKit
+    with your own plugins and wallets. - Create custom plugins for new protocols
+    - Build wallet adapters for new providers - Optimize for production
+    environments [Advanced Features →](/guides/advanced-features)
   </Card>
 </CardGrid>
 
@@ -104,46 +149,39 @@ if (routes.length > 0) {
 - **📱 Mobile Ready**: Works in React Native and mobile environments
 - **⚡ Optimized Performance**: Efficient caching and request batching
 
+<PlaygroundLinks
+  title="🚀 Jump Right In!"
+  description="Experience SwapKit in action with our interactive playgrounds and examples"
+  stackblitzUrl="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs"
+  codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
+/>
+
 ## Get Started in 3 Steps
 
 ### 1. Install SwapKit
 
 <Tabs syncKey="package-manager">
   <TabItem label="bun" icon="bun">
-    ```bash
-    bun add @swapkit/sdk
-    ```
+    ```bash bun add @swapkit/sdk ```
   </TabItem>
-  <TabItem label="pnpm">
-    ```bash
-    pnpm add @swapkit/sdk
-    ```
-  </TabItem>
-  <TabItem label="npm">
-    ```bash
-    npm install @swapkit/sdk
-    ```
-  </TabItem>
-  <TabItem label="yarn">
-    ```bash
-    yarn add @swapkit/sdk
-    ```
-  </TabItem>
+  <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
+  <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
+  <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
 </Tabs>
 
 ### 2. Initialize the SDK
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit } from '@swapkit/sdk';
+
+import { createSwapKit } from "@swapkit/sdk";
 
 const swapKit = createSwapKit({
   config: {
-    // Optional: Add SwapKit API key for enhanced features
     apiKeys: {
-      swapKit: 'your-swapkit-api-key', // Get from https://api.swapkit.dev
-    }
-  }
+      swapKit: "your-swapkit-api-key",
+    },
+  },
 });
 ```
 
@@ -151,29 +189,39 @@ const swapKit = createSwapKit({
 
 ```typescript
 // @noErrorValidation
-import { createSwapKit, Chain, AssetValue, FeeOption } from '@swapkit/sdk';
 
-// Initialize SwapKit
+import { createSwapKit, Chain, AssetValue, FeeOption } from "@swapkit/sdk";
+
 const swapKit = createSwapKit();
 
-// Connect EVM wallet (MetaMask)
 await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-// Get wallet balance
 const balance = await swapKit.getBalance(Chain.Ethereum);
 
-// Transfer ETH
 const assetValue = AssetValue.from({
-  asset: 'ETH.ETH',
-  value: '0.1'
+  asset: "ETH.ETH",
+  value: "0.1",
 });
 
 const txHash = await swapKit.transfer({
   assetValue,
-  recipient: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321',
-  feeOptionKey: FeeOption.Fast
+  recipient: "0x742d35Cc6634C0532925a3b844Bc9e7595f6E321",
+  feeOptionKey: FeeOption.Fast,
 });
 ```
+
+<TryItYourself
+  title="Ready to Build?"
+  description="Take this code for a spin in one of our live environments"
+  variant="accent"
+  icon="play"
+>
+  <PlaygroundLinks
+    compact={true}
+    stackblitzUrl="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs"
+    codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
+  />
+</TryItYourself>
 
 ## Join the Community
 
@@ -181,12 +229,14 @@ const txHash = await swapKit.transfer({
   <Card title="Discord" icon="open">
     Join our Discord server for support and discussions with the community.
 
-    [Join Discord →](https://discord.gg/swapkit)
+    [Join Discord →](https:
+
   </Card>
   <Card title="GitHub" icon="github">
     Contribute to SwapKit development or report issues on GitHub.
 
-    [View on GitHub →](https://github.com/swapkit/swapkit)
+    [View on GitHub →](https:
+
   </Card>
 </CardGrid>
 

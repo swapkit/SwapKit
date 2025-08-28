@@ -20,14 +20,7 @@ import {
 } from "./constants";
 
 export const getAddressByChain = (
-  chain:
-    | EVMChain
-    | Chain.THORChain
-    | Chain.Maya
-    | Chain.Kujira
-    | Chain.Cosmos
-    | Chain.Near
-    | Chain.Tron,
+  chain: EVMChain | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Cosmos | Chain.Near | Chain.Tron,
   accounts: string[],
 ) => {
   const account = accounts.find((account) => account.startsWith(chainToChainId(chain))) || "";

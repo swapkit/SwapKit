@@ -1,26 +1,12 @@
-import type {
-  GenericCreateTransactionParams,
-  GenericTransferParams,
-  Witness,
-} from "@swapkit/helpers";
+import type { GenericCreateTransactionParams, GenericTransferParams, Witness } from "@swapkit/helpers";
 
 import type { UTXOScriptType } from "./helpers";
 
-export type TransactionType = {
-  toHex(): string;
-};
+export type TransactionType = { toHex(): string };
 
-export type TargetOutput =
-  | { address: string; script?: Buffer; value: number }
-  | { script: Buffer; value: number };
+export type TargetOutput = { address: string; script?: Buffer; value: number } | { script: Buffer; value: number };
 
-export type UTXOType = {
-  hash: string;
-  index: number;
-  value: number;
-  txHex?: string;
-  witnessUtxo?: Witness;
-};
+export type UTXOType = { hash: string; index: number; value: number; txHex?: string; witnessUtxo?: Witness };
 
 export type UTXOInputWithScriptType = UTXOType & { type: UTXOScriptType; address: string };
 
@@ -34,11 +20,7 @@ export type UTXOBuildTxParams = GenericCreateTransactionParams & { fetchTxHex?: 
 
 export type UTXOTransferParams = GenericTransferParams;
 
-export type BchECPair = {
-  getAddress: (index?: number) => string;
-  publicKey: Buffer;
-  toWIF: () => string;
-};
+export type BchECPair = { getAddress: (index?: number) => string; publicKey: Buffer; toWIF: () => string };
 
 export type TransactionBuilderType = {
   inputs: any[];

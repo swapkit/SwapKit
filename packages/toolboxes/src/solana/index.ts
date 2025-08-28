@@ -38,18 +38,12 @@ export interface SolanaProvider {
     transaction: Transaction | VersionedTransaction,
     opts?: SendOptions,
   ) => Promise<{ signature: string; publicKey: PublicKey }>;
-  signTransaction: <T extends Transaction | VersionedTransaction = Transaction>(
-    transaction: T,
-  ) => Promise<T>;
-  signAllTransactions: <T extends Transaction | VersionedTransaction = Transaction>(
-    transactions: T[],
-  ) => Promise<T[]>;
+  signTransaction: <T extends Transaction | VersionedTransaction = Transaction>(transaction: T) => Promise<T>;
+  signAllTransactions: <T extends Transaction | VersionedTransaction = Transaction>(transactions: T[]) => Promise<T[]>;
 }
 
 export type SolanaCreateTransactionParams = Omit<GenericCreateTransactionParams, "feeRate"> & {
   isProgramDerivedAddress?: boolean;
 };
 
-export type SolanaTransferParams = Omit<GenericTransferParams, "feeRate"> & {
-  isProgramDerivedAddress?: boolean;
-};
+export type SolanaTransferParams = Omit<GenericTransferParams, "feeRate"> & { isProgramDerivedAddress?: boolean };

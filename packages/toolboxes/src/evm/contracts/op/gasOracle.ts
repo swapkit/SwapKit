@@ -92,13 +92,7 @@ export const gasOracleAbi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
     inputs: [],
     name: "scalar",

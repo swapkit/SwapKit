@@ -1,12 +1,9 @@
-import { Chain, EVMChains, WalletOption, filterSupportedChains } from "@swapkit/helpers";
+import { Chain, EVMChains, filterSupportedChains, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
 import { getWalletMethods } from "./helpers";
 
 export const bitgetWallet = createWallet({
-  name: "connectBitget",
-  walletType: WalletOption.BITGET,
-  supportedChains: [...EVMChains, Chain.Cosmos, Chain.Bitcoin, Chain.Solana, Chain.Tron],
   connect: ({ addChain, walletType, supportedChains }) =>
     async function connectBitget(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
@@ -21,6 +18,9 @@ export const bitgetWallet = createWallet({
 
       return true;
     },
+  name: "connectBitget",
+  supportedChains: [...EVMChains, Chain.Cosmos, Chain.Bitcoin, Chain.Solana, Chain.Tron],
+  walletType: WalletOption.BITGET,
 });
 
 export const BITGET_SUPPORTED_CHAINS = getWalletSupportedChains(bitgetWallet);

@@ -10,6 +10,7 @@ SwapKit provides a unified interface for creating and executing transactions acr
 You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages (recommended for frontend):
+
    ```ts
    import { SwapKit, evmWallet } from "@swapkit/sdk";
    ```
@@ -26,41 +27,35 @@ The most common transaction is transferring assets from one address to another.
 ### Granular Approach (Frontend Recommended)
 
 ```ts twoslash
-// @noErrorValidation
+import {
+  AssetValue,
+  Chain,
+  FeeOption,
+  SwapKit,
+  keystoreWallet,
+} from "@swapkit/sdk";
 
-import { AssetValue, Chain, FeeOption, SwapKit, keystoreWallet } from "@swapkit/sdk";
-
-// Initialize SwapKit with specific wallets
 const swapKit = SwapKit({
   wallets: { ...keystoreWallet },
 });
 
-// Connect a wallet (required before making transactions)
-await swapKit.connectKeystore(
-  [Chain.Ethereum],
-  "your secret phrase here"
-);
+await swapKit.connectKeystore([Chain.Ethereum], "your secret phrase here");
 
-// Create an AssetValue representing the amount to transfer
 const amount = AssetValue.from({
   chain: Chain.Ethereum,
   symbol: "ETH",
-  value: "0.01", // 0.01 ETH
+  value: "0.01",
 });
 
-// Execute the transaction
 async function transferAsset() {
   try {
-    // Transfer the asset to a recipient
     const txHash = await swapKit.transfer({
       assetValue: amount,
       recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-      memo: "Payment for services", // Optional memo
-      feeOptionKey: FeeOption.Fast, // Fee speed preference
-    })
+      memo: "Payment for services",
+      feeOptionKey: FeeOption.Fast,
+    });
 
-
-    // Get explorer URL for the transaction
     const txUrl = swapKit.getExplorerTxUrl({
       chain: Chain.Ethereum,
       txHash,
@@ -76,27 +71,18 @@ async function transferAsset() {
 ### All-in-one Approach (Backend)
 
 ```ts twoslash
-// @noErrorValidation
-
 import { AssetValue, Chain, FeeOption, createSwapKit } from "@swapkit/sdk";
 
-// Initialize the SwapKit client with all wallets included
 const swapKit = createSwapKit();
 
-// Connect a wallet (required before making transactions)
-await swapKit.connectKeystore(
-  [Chain.Ethereum],
-  "your secret phrase here"
-);
+await swapKit.connectKeystore([Chain.Ethereum], "your secret phrase here");
 
-// Create an AssetValue representing the amount to transfer
 const amount = AssetValue.from({
   chain: Chain.Ethereum,
   symbol: "ETH",
-  value: "0.01", // 0.01 ETH
+  value: "0.01",
 });
 
-// Execute the transaction
 async function transferAsset() {
   try {
     const txHash = await swapKit.transfer({
@@ -117,29 +103,23 @@ async function transferAsset() {
 ### Transferring ERC20 Tokens
 
 ```ts twoslash
-// @noErrorValidation
-
 import { AssetValue, Chain, FeeOption, SwapKit, evmWallet } from "@swapkit/sdk";
 
-// Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
   wallets: { ...evmWallet },
 });
 
 await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-// Transfer ERC20 tokens (USDC example)
 async function transferERC20() {
-  // Create an AssetValue for USDC
   const usdcAmount = AssetValue.from({
     chain: Chain.Ethereum,
     symbol: "USDC",
     ticker: "USDC",
-    address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC contract address
-    value: "10", // 10 USDC
+    address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    value: "10",
   });
 
-  // Transfer USDC
   const txHash = await swapKit.transfer({
     assetValue: usdcAmount,
     recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
@@ -153,27 +133,27 @@ async function transferERC20() {
 ### Transferring Bitcoin
 
 ```ts twoslash
-// @noErrorValidation
+import {
+  AssetValue,
+  Chain,
+  FeeOption,
+  SwapKit,
+  keystoreWallet,
+} from "@swapkit/sdk";
 
-import { AssetValue, Chain, FeeOption, SwapKit, keystoreWallet } from "@swapkit/sdk";
-
-// Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
   wallets: { ...keystoreWallet },
 });
 
 await swapKit.connectKeystore([Chain.Bitcoin], "your secret phrase here");
 
-// Transfer Bitcoin
 async function transferBitcoin() {
-  // Create an AssetValue for Bitcoin
   const btcAmount = AssetValue.from({
     chain: Chain.Bitcoin,
     symbol: "BTC",
-    value: "0.001", // 0.001 BTC
+    value: "0.001",
   });
 
-  // Transfer BTC
   const txHash = await swapKit.transfer({
     assetValue: btcAmount,
     recipient: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
@@ -188,27 +168,27 @@ async function transferBitcoin() {
 ### Transferring Cosmos Assets
 
 ```ts twoslash
-// @noErrorValidation
+import {
+  AssetValue,
+  Chain,
+  FeeOption,
+  SwapKit,
+  keplrWallet,
+} from "@swapkit/sdk";
 
-import { AssetValue, Chain, FeeOption, SwapKit, keplrWallet } from "@swapkit/sdk";
-
-// Initialize SwapKit and connect wallet
 const swapKit = SwapKit({
   wallets: { ...keplrWallet },
 });
 
 await swapKit.connectKeplr([Chain.Cosmos]);
 
-// Transfer Cosmos assets
 async function transferCosmos() {
-  // Create an AssetValue for ATOM
   const atomAmount = AssetValue.from({
     chain: Chain.Cosmos,
     symbol: "ATOM",
-    value: "0.1", // 0.1 ATOM
+    value: "0.1",
   });
 
-  // Transfer ATOM
   const txHash = await swapKit.transfer({
     assetValue: atomAmount,
     recipient: "cosmos1abcd1234abcd1234abcd1234abcd1234abcd12",
@@ -227,28 +207,22 @@ For lower-level control, you can use the toolboxes directly instead of SwapKit's
 ### EVM Toolbox Transfers
 
 ```ts twoslash
-// @noErrorValidation
-
 import { AssetValue, Chain, FeeOption, getEvmToolbox } from "@swapkit/sdk";
 import { getProvider } from "@swapkit/helpers";
 import { ethers } from "ethers";
 
 async function directEVMTransfer() {
-  // Create a signer
   const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key-here", provider);
 
-  // Create a toolbox with the signer
   const ethToolbox = await getEvmToolbox(Chain.Ethereum, { signer });
 
-  // Create an asset value
   const amount = AssetValue.from({
     chain: Chain.Ethereum,
     symbol: "ETH",
     value: "0.01",
   });
 
-  // Transfer ETH
   const txHash = await ethToolbox.transfer({
     assetValue: amount,
     recipient: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
@@ -263,14 +237,11 @@ async function directEVMTransfer() {
 ### UTXO Toolbox Transfers
 
 ```ts twoslash
-// @noErrorValidation
-
 import { AssetValue, Chain, FeeOption, getUtxoToolbox } from "@swapkit/sdk";
 
 async function directBitcoinTransfer() {
   const btcToolbox = await getUtxoToolbox(Chain.Bitcoin);
 
-  // Generate keys from a mnemonic phrase
   const keys = await btcToolbox.createKeysForPath({
     phrase: "your twelve word mnemonic phrase here",
     derivationPath: "m/84'/0'/0'/0/0",
@@ -278,28 +249,31 @@ async function directBitcoinTransfer() {
 
   const fromAddress = btcToolbox.getAddressFromKeys(keys);
 
-  // Create a function to sign transactions
-  async function signTransaction({ builder, utxos }: { builder: any, utxos: any[] }) {
+  async function signTransaction({
+    builder,
+    utxos,
+  }: {
+    builder: any;
+    utxos: any[];
+  }) {
     utxos.forEach((utxo, index) => {
       builder.sign(index, keys);
     });
     return builder.build();
   }
 
-  // Create an asset value
   const amount = AssetValue.from({
     chain: Chain.Bitcoin,
     symbol: "BTC",
     value: "0.001",
   });
 
-  // Transfer BTC
   const txHash = await btcToolbox.transfer({
     assetValue: amount,
     recipient: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
     from: fromAddress,
     feeOptionKey: FeeOption.Fast,
-    // @ts-ignore - it should return PSBT and it's usually using psbt to sign tx
+
     signTransaction,
   });
 
@@ -312,25 +286,18 @@ async function directBitcoinTransfer() {
 For EVM chains, you can interact with smart contracts using the EVM toolbox:
 
 ```ts twoslash
-// @noErrorValidation
-
 import { Chain, getEvmToolbox, erc20ABI } from "@swapkit/sdk";
 import { getProvider } from "@swapkit/helpers";
 import { ethers } from "ethers";
 
-
 async function interactWithContract() {
-  // Create a provider and signer
   const provider = await getProvider(Chain.Ethereum);
   const signer = new ethers.Wallet("your-private-key-here", provider);
 
-  // Get the EVM toolbox
-  const ethToolbox =  await getEvmToolbox(Chain.Ethereum, {signer });
+  const ethToolbox = await getEvmToolbox(Chain.Ethereum, { signer });
 
-  // USDC contract address
   const contractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 
-  // Get token details
   const tokenName = await ethToolbox.call({
     contractAddress,
     abi: erc20ABI,
@@ -349,7 +316,6 @@ async function interactWithContract() {
     funcName: "decimals",
   });
 
-  // Get balance
   const balance = await ethToolbox.call<string>({
     contractAddress,
     abi: erc20ABI,
@@ -357,7 +323,6 @@ async function interactWithContract() {
     funcParams: [signer.address],
   });
 
-  // Format the balance using decimals
   const formattedBalance = ethers.formatUnits(balance, tokenDecimals);
 
   return {
@@ -368,9 +333,3 @@ async function interactWithContract() {
   };
 }
 ```
-
-
-
-
-
-

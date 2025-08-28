@@ -3,6 +3,7 @@ import type { Account } from "@cosmjs/stargate";
 import { base64, bech32 } from "@scure/base";
 import {
   AssetValue,
+  applyFeeMultiplier,
   BaseDecimal,
   Chain,
   type ChainId,
@@ -11,18 +12,18 @@ import {
   CosmosChainPrefixes,
   DerivationPath,
   type DerivationPathArray,
+  derivationPathToString,
   FeeOption,
   type GenericTransferParams,
+  getRPCUrl,
   NetworkDerivationPath,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
-  applyFeeMultiplier,
-  derivationPathToString,
   updateDerivationPath,
 } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import type { CosmosToolboxParams } from "../types";
 import {
   cosmosCreateTransaction,
@@ -48,14 +49,10 @@ export async function getSignerFromPhrase({
   phrase,
   prefix,
   ...derivationParams
-}: { phrase: string; prefix?: string } & (
-  | { chain: Chain; index?: number }
-  | { derivationPath: string }
-)) {
+}: { phrase: string; prefix?: string } & ({ chain: Chain; index?: number } | { derivationPath: string })) {
   const importedProtoSigning = await import("@cosmjs/proto-signing");
   const DirectSecp256k1HdWallet =
-    importedProtoSigning.DirectSecp256k1HdWallet ??
-    importedProtoSigning.default?.DirectSecp256k1HdWallet;
+    importedProtoSigning.DirectSecp256k1HdWallet ?? importedProtoSigning.default?.DirectSecp256k1HdWallet;
   const importedCrypto = await import("@cosmjs/crypto");
   const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
 
@@ -64,23 +61,13 @@ export async function getSignerFromPhrase({
       ? derivationParams.derivationPath
       : `${DerivationPath[derivationParams.chain]}/${derivationParams.index}`;
 
-  return DirectSecp256k1HdWallet.fromMnemonic(phrase, {
-    prefix,
-    hdPaths: [stringToPath(derivationPath)],
-  });
+  return DirectSecp256k1HdWallet.fromMnemonic(phrase, { hdPaths: [stringToPath(derivationPath)], prefix });
 }
 
-export async function getSignerFromPrivateKey({
-  privateKey,
-  prefix,
-}: {
-  privateKey: Uint8Array;
-  prefix: string;
-}) {
+export async function getSignerFromPrivateKey({ privateKey, prefix }: { privateKey: Uint8Array; prefix: string }) {
   const importedProtoSigning = await import("@cosmjs/proto-signing");
   const DirectSecp256k1Wallet =
-    importedProtoSigning.DirectSecp256k1Wallet ??
-    importedProtoSigning.default?.DirectSecp256k1Wallet;
+    importedProtoSigning.DirectSecp256k1Wallet ?? importedProtoSigning.default?.DirectSecp256k1Wallet;
 
   return DirectSecp256k1Wallet.fromKey(privateKey, prefix);
 }
@@ -107,8 +94,7 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
     if (!account?.pubkey) throw new SwapKitError("toolbox_cosmos_verify_signature_no_pubkey");
 
     const importedCrypto = await import("@cosmjs/crypto");
-    const Secp256k1Signature =
-      importedCrypto.Secp256k1Signature ?? importedCrypto.default?.Secp256k1Signature;
+    const Secp256k1Signature = importedCrypto.Secp256k1Signature ?? importedCrypto.default?.Secp256k1Signature;
     const Secp256k1 = importedCrypto.Secp256k1 ?? importedCrypto.default?.Secp256k1;
 
     const secpSignature = Secp256k1Signature.fromFixedLength(base64.decode(signature));
@@ -117,7 +103,7 @@ export function verifySignature(getAccount: (address: string) => Promise<Account
 }
 
 export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToolboxParams) {
-  const rpcUrl = SKConfig.get("rpcUrls")[chain];
+  const rpcUrl = await getRPCUrl(chain);
   const chainPrefix = CosmosChainPrefixes[chain];
 
   const index = "index" in toolboxParams ? toolboxParams.index || 0 : 0;
@@ -128,9 +114,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
   );
 
   const signer = await match(toolboxParams)
-    .with({ phrase: P.string }, ({ phrase }) =>
-      getSignerFromPhrase({ phrase, prefix: chainPrefix, derivationPath }),
-    )
+    .with({ phrase: P.string }, ({ phrase }) => getSignerFromPhrase({ derivationPath, phrase, prefix: chainPrefix }))
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
 
@@ -165,38 +149,27 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
     }
 
-    const feeAssetValue = AssetValue.from({
-      chain,
-    });
+    const feeAssetValue = AssetValue.from({ chain });
     const assetDenom = getDenomWithChain(feeAssetValue);
 
-    const txFee =
-      feeRate ||
-      feeToStdFee((await getFees(chain, SafeDefaultFeeValues[chain]))[feeOptionKey], assetDenom);
+    const txFee = feeRate || feeToStdFee((await getFees(chain, SafeDefaultFeeValues[chain]))[feeOptionKey], assetDenom);
 
     const signingClient = await createSigningStargateClient(rpcUrl, signer);
     const message = [
-      {
-        denom: getMsgSendDenom(`u${assetValue.symbol}`).toLowerCase(),
-        amount: assetValue.getBaseValue("string"),
-      },
+      { amount: assetValue.getBaseValue("string"), denom: getMsgSendDenom(`u${assetValue.symbol}`).toLowerCase() },
     ];
 
-    const { transactionHash } = await signingClient.sendTokens(
-      from,
-      recipient,
-      message,
-      txFee,
-      memo,
-    );
+    const { transactionHash } = await signingClient.sendTokens(from, recipient, message, txFee, memo);
 
     return transactionHash;
   }
 
   return {
-    transfer,
-    getAddress,
+    createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
+    createTransaction: cosmosCreateTransaction,
+    fetchFeeRateFromSwapKit,
     getAccount,
+    getAddress,
     getBalance: async (address: string, _potentialScamFilter?: boolean) => {
       const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
       return await Promise.all(
@@ -204,23 +177,22 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
           .filter(({ denom }) => denom && !denom.includes("IBC/"))
           .map(({ denom, amount }) => {
             const fullDenom =
-              [Chain.THORChain, Chain.Maya].includes(chain) &&
-              (denom.includes("/") || denom.includes("˜"))
+              [Chain.THORChain, Chain.Maya].includes(chain) && (denom.includes("/") || denom.includes("˜"))
                 ? `${chain}.${denom}`
                 : denom;
             return getAssetFromDenom(fullDenom, amount);
           }),
       );
     },
-    getSignerFromPhrase: async ({
-      phrase,
-      derivationPath,
-    }: { phrase: string; derivationPath: DerivationPathArray }) =>
+    getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
+    getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
+    getPubKey,
+    getSignerFromPhrase: async ({ phrase, derivationPath }: { phrase: string; derivationPath: DerivationPathArray }) =>
       getSignerFromPhrase({
-        phrase,
-        prefix: chainPrefix,
         derivationPath: derivationPathToString(derivationPath),
         index,
+        phrase,
+        prefix: chainPrefix,
       }),
     getSignerFromPrivateKey: async (privateKey: Uint8Array) => {
       const importedSigning = await import("@cosmjs/proto-signing");
@@ -228,13 +200,8 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         importedSigning.DirectSecp256k1Wallet ?? importedSigning.default?.DirectSecp256k1Wallet;
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
-    createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
+    transfer,
     validateAddress: getCosmosValidateAddress(chainPrefix),
-    getPubKey,
-    getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
-    fetchFeeRateFromSwapKit,
-    getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
-    createTransaction: cosmosCreateTransaction,
     verifySignature: verifySignature(getAccount),
   };
 }
@@ -259,10 +226,7 @@ export function cosmosValidateAddress({
   address,
   chain,
   prefix: chainPrefix,
-}: { address: string } & (
-  | { prefix: string; chain?: undefined }
-  | { chain: CosmosChain; prefix?: undefined }
-)) {
+}: { address: string } & ({ prefix: string; chain?: undefined } | { chain: CosmosChain; prefix?: undefined })) {
   const prefix = chainPrefix || getPrefix(chain);
 
   if (!(prefix && address)) {
@@ -272,19 +236,13 @@ export function cosmosValidateAddress({
   return getCosmosValidateAddress(prefix)(address);
 }
 
-export function estimateTransactionFee({
-  assetValue: { chain },
-}: {
-  assetValue: AssetValue;
-}) {
+export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: AssetValue }) {
   return AssetValue.from({ chain, value: getMinTransactionFee(chain) });
 }
 
 function getPrefix<C extends CosmosChain>(chain?: C) {
   const { isStagenet } = SKConfig.get("envs");
-  const useStagenetPrefix = chain
-    ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet
-    : false;
+  const useStagenetPrefix = chain ? [Chain.THORChain, Chain.Maya].includes(chain) && isStagenet : false;
   const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
 
   return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
@@ -294,33 +252,20 @@ async function getFees(chain: Chain, safeDefault: number) {
   const baseFee = await fetchFeeRateFromSwapKit(ChainToChainId[chain], safeDefault);
   return {
     average: SwapKitNumber.fromBigInt(BigInt(baseFee), BaseDecimal[chain]),
-    fast: SwapKitNumber.fromBigInt(
-      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)),
-      BaseDecimal[chain],
-    ),
-    fastest: SwapKitNumber.fromBigInt(
-      BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)),
-      BaseDecimal[chain],
-    ),
+    fast: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fast, true)), BaseDecimal[chain]),
+    fastest: SwapKitNumber.fromBigInt(BigInt(applyFeeMultiplier(baseFee, FeeOption.Fastest, true)), BaseDecimal[chain]),
   } as { [key in FeeOption]: SwapKitNumber };
 }
 
 function feeToStdFee(fee: SwapKitNumber, denom: string): StdFee {
-  return {
-    amount: [{ denom, amount: fee.getBaseValue("string") }],
-    gas: "200000",
-  };
+  return { amount: [{ amount: fee.getBaseValue("string"), denom }], gas: "200000" };
 }
 
 function getMinTransactionFee(chain: Chain) {
   return (
-    {
-      [Chain.Cosmos]: 0.007,
-      [Chain.Kujira]: 0.02,
-      [Chain.Noble]: 0.01,
-      [Chain.THORChain]: 0.02,
-      [Chain.Maya]: 0.02,
-    }[chain as CosmosChain] || 0
+    { [Chain.Cosmos]: 0.007, [Chain.Kujira]: 0.02, [Chain.Noble]: 0.01, [Chain.THORChain]: 0.02, [Chain.Maya]: 0.02 }[
+      chain as CosmosChain
+    ] || 0
   );
 }
 
@@ -359,18 +304,13 @@ function createPrivateKeyFromPhrase(derivationPath: string) {
     const stringToPath = importedCrypto.stringToPath ?? importedCrypto.default?.stringToPath;
     const Slip10Curve = importedCrypto.Slip10Curve ?? importedCrypto.default?.Slip10Curve;
     const Slip10 = importedCrypto.Slip10 ?? importedCrypto.default?.Slip10;
-    const EnglishMnemonic =
-      importedCrypto.EnglishMnemonic ?? importedCrypto.default?.EnglishMnemonic;
+    const EnglishMnemonic = importedCrypto.EnglishMnemonic ?? importedCrypto.default?.EnglishMnemonic;
     const Bip39 = importedCrypto.Bip39 ?? importedCrypto.default?.Bip39;
 
     const mnemonicChecked = new EnglishMnemonic(phrase);
     const seed = await Bip39.mnemonicToSeed(mnemonicChecked);
 
-    const { privkey } = Slip10.derivePath(
-      Slip10Curve.Secp256k1,
-      seed,
-      stringToPath(derivationPath),
-    );
+    const { privkey } = Slip10.derivePath(Slip10Curve.Secp256k1, seed, stringToPath(derivationPath));
 
     return privkey;
   };

@@ -1,9 +1,9 @@
 import type TronApp from "@ledgerhq/hw-app-trx";
 import {
   type DerivationPathArray,
+  derivationPathToString,
   NetworkDerivationPath,
   SwapKitError,
-  derivationPathToString,
 } from "@swapkit/helpers";
 import type { TronSignedTransaction, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
 
@@ -45,10 +45,7 @@ export class TronLedgerInterface implements TronSigner {
 
     if (!result) throw new SwapKitError("wallet_ledger_failed_to_get_address");
 
-    return {
-      address: result.address,
-      publicKey: result.publicKey,
-    };
+    return { address: result.address, publicKey: result.publicKey };
   };
 
   showAddressAndPubKey = async () => {
@@ -78,15 +75,11 @@ export class TronLedgerInterface implements TronSigner {
       }
 
       // Return the signed transaction in Tron's expected format
-      return {
-        ...transaction,
-        signature: [signature],
-      };
+      return { ...transaction, signature: [signature] };
     } catch (error) {
       throw new SwapKitError("wallet_ledger_signing_error", { error });
     }
   };
 }
 
-export const TronLedger = (derivationPath?: DerivationPathArray) =>
-  new TronLedgerInterface(derivationPath);
+export const TronLedger = (derivationPath?: DerivationPathArray) => new TronLedgerInterface(derivationPath);

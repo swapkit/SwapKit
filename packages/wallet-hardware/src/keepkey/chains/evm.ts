@@ -3,9 +3,9 @@ import {
   type Chain,
   ChainToChainId,
   type DerivationPathArray,
+  derivationPathToString,
   NetworkDerivationPath,
   SwapKitError,
-  derivationPathToString,
 } from "@swapkit/helpers";
 import type { JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 import { AbstractSigner } from "ethers";
@@ -49,8 +49,7 @@ export class KeepKeySigner extends AbstractSigner {
     return address;
   };
 
-  signMessage = (message: string) =>
-    this.sdk.eth.ethSign({ address: this.address, message }) as Promise<string>;
+  signMessage = (message: string) => this.sdk.eth.ethSign({ address: this.address, message }) as Promise<string>;
 
   signTransaction = async ({
     to,
@@ -61,21 +60,16 @@ export class KeepKeySigner extends AbstractSigner {
     maxFeePerGas,
     maxPriorityFeePerGas,
     gasPrice,
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
   }: TransactionRequest) => {
-    if (!to)
-      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing to address" });
-    if (!gasLimit)
-      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing gasLimit" });
+    if (!to) throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing to address" });
+    if (!gasLimit) throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing gasLimit" });
     if (!data) throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing data" });
 
     const isEIP1559 = !!((maxFeePerGas || maxPriorityFeePerGas) && !gasPrice);
     if (isEIP1559 && !maxFeePerGas)
       throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing maxFeePerGas" });
     if (isEIP1559 && !maxPriorityFeePerGas)
-      throw new SwapKitError("wallet_keepkey_invalid_params", {
-        reason: "Missing maxPriorityFeePerGas",
-      });
+      throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing maxPriorityFeePerGas" });
     if (!(isEIP1559 || gasPrice))
       throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Missing gasPrice" });
 
@@ -86,14 +80,14 @@ export class KeepKeySigner extends AbstractSigner {
       : BigInt(await this.provider.getTransactionCount(await this.getAddress(), "pending"));
 
     const input = {
-      gas: toHexString(BigInt(gasLimit)),
       addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
-      from: this.address,
       chainId: toHexString(BigInt(ChainToChainId[this.chain])),
+      data,
+      from: this.address,
+      gas: toHexString(BigInt(gasLimit)),
+      nonce: toHexString(nonceValue),
       to: to.toString(),
       value: toHexString(BigInt(value || 0)),
-      nonce: toHexString(nonceValue),
-      data,
       ...(isEIP1559 && {
         maxFeePerGas: toHexString(BigInt(maxFeePerGas?.toString() || "0")),
         maxPriorityFeePerGas: toHexString(BigInt(maxPriorityFeePerGas?.toString() || "0")),
@@ -116,10 +110,5 @@ export class KeepKeySigner extends AbstractSigner {
   };
 
   connect = (provider: Provider) =>
-    new KeepKeySigner({
-      sdk: this.sdk,
-      chain: this.chain,
-      derivationPath: this.derivationPath,
-      provider,
-    });
+    new KeepKeySigner({ chain: this.chain, derivationPath: this.derivationPath, provider, sdk: this.sdk });
 }

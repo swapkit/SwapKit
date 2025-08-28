@@ -3,12 +3,11 @@ import {
   Chain,
   DerivationPath,
   type DerivationPathArray,
-  type GenericTransferParams,
   derivationPathToString,
+  type GenericTransferParams,
 } from "@swapkit/helpers";
-import { bip32ToAddressNList } from "../coins";
-
 import { getRippleToolbox } from "@swapkit/toolboxes/ripple";
+import { bip32ToAddressNList } from "../coins";
 
 export const rippleWalletMethods = async ({
   sdk,
@@ -23,7 +22,6 @@ export const rippleWalletMethods = async ({
     : `${DerivationPath[Chain.Ripple]}/0`;
 
   // Fetch address from KeepKey
-  // @ts-ignore - keepkey-sdk typings may not yet include xrpGetAddress
   const { address } = await (sdk as any).address.xrpGetAddress({
     address_n: bip32ToAddressNList(derivationPathString),
   });
@@ -40,40 +38,18 @@ export const rippleWalletMethods = async ({
 
   const transfer = async ({ recipient, assetValue, memo }: GenericTransferParams) => {
     // Build XRPL Payment tx using toolbox helper
-    const tx = await toolbox.createTransaction({
-      assetValue,
-      recipient,
-      memo,
-      sender: address,
-    });
+    const tx = await toolbox.createTransaction({ assetValue, memo, recipient, sender: address });
 
     // Convert toolbox Payment tx into KeepKey StdTx wrapper (KeepKey-specific format)
     const stdTx = {
       type: "auth/StdTx",
       value: {
-        fee: {
-          amount: [
-            {
-              amount: "1000",
-              denom: "drop",
-            },
-          ],
-          gas: "28000",
-        },
+        fee: { amount: [{ amount: "1000", denom: "drop" }], gas: "28000" },
         memo: memo && memo.length > 0 ? memo : "",
         msg: [
           {
             type: "ripple-sdk/MsgSend",
-            value: {
-              amount: [
-                {
-                  amount: tx.Amount,
-                  denom: "drop",
-                },
-              ],
-              from_address: address,
-              to_address: recipient,
-            },
+            value: { amount: [{ amount: tx.Amount, denom: "drop" }], from_address: address, to_address: recipient },
           },
         ],
         signatures: null,
@@ -82,19 +58,18 @@ export const rippleWalletMethods = async ({
 
     const unsignedTx = {
       addressNList: bip32ToAddressNList(derivationPathString),
-      tx: stdTx,
       flags: tx.Flags === 0 ? undefined : tx.Flags,
       lastLedgerSequence: tx.LastLedgerSequence?.toString(),
-      sequence: (tx.Sequence ?? 0).toString(),
       payment: {
         amount: tx.Amount,
         destination: tx.Destination,
         destinationTag: (tx.DestinationTag ?? "0").toString(),
       },
+      sequence: (tx.Sequence ?? 0).toString(),
+      tx: stdTx,
     } as any;
 
     // Sign with KeepKey
-    // @ts-ignore - typings missing
     const responseSign = JSON.parse(await (sdk as any).xrp.xrpSignTransaction(unsignedTx));
 
     // keepkey-sdk may return either { tx_blob } or StdTx with Base64 serializedTx
@@ -109,10 +84,5 @@ export const rippleWalletMethods = async ({
     return toolbox.broadcastTransaction(txBlobHex);
   };
 
-  return {
-    ...toolbox,
-    address,
-    getAddress: () => address,
-    transfer,
-  };
+  return { ...toolbox, address, getAddress: () => address, transfer };
 };

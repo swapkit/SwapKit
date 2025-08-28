@@ -1,0 +1,268 @@
+---
+title: What's New in SwapKit v4
+description: Discover the latest features, improvements, and breaking changes in SwapKit v4
+---
+
+import { Card, CardGrid, Badge } from "@astrojs/starlight/components";
+
+SwapKit v4 brings significant improvements to developer experience, runtime flexibility, and overall architecture. Here's everything new and exciting in this major release.
+
+## 🚀 Major Features
+
+<CardGrid>
+  <Card title="Runtime Configuration Updates" icon="setting">
+    <Badge text="Game Changer" variant="success" size="small" />
+    
+    Update API keys, RPC URLs, and settings without recreating the SwapKit client. Perfect for production environments and dynamic configuration management.
+    
+    ```typescript
+    import { SKConfig } from '@swapkit/sdk';
+
+
+    SKConfig.setRpcUrl(Chain.Ethereum, "https:
+    SKConfig.setApiKey("swapKit", "new-api-key");
+    ```
+
+    [Learn more →](/others/migrate-to-v4#major-breaking-changes)
+
+  </Card>
+  
+  <Card title="Monolithic Package Structure" icon="puzzle">
+    <Badge text="Breaking Change" variant="caution" size="small" />
+    
+    Simplified package management with consolidated packages for better maintainability and smaller bundle sizes when using the full SDK.
+    
+    ```typescript
+
+    import { createSwapKit, Chain } from '@swapkit/sdk';
+    import { ThorchainPlugin } from '@swapkit/plugins/thorchain';
+    ```
+
+    [Migration guide →](/others/migrate-to-v4)
+
+  </Card>
+  
+  <Card title="Enhanced Chain Support" icon="rocket">
+    <Badge text="New" variant="success" size="small" />
+    
+    Improved support for Solana with Jupiter API integration, dynamic Cosmos fees, full Ripple support, and OneKey wallet integration.
+    
+    - **Solana**: Real-time token metadata via Jupiter API
+    - **Cosmos**: Automatic fee estimation
+    - **Ripple**: Complete XRP toolbox implementation
+    - **OneKey**: New wallet integration
+  </Card>
+  
+  <Card title="Standardized Creation Helpers" icon="star">
+    <Badge text="Developer Experience" variant="tip" size="small" />
+    
+    New `createPlugin` and `createWallet` helpers provide consistent interfaces for extending SwapKit functionality.
+    
+    ```typescript
+    import { createPlugin } from '@swapkit/plugins';
+    
+    export const MyPlugin = createPlugin({
+      name: "myPlugin",
+      methods: ({ getWallet }) => ({ customMethod })
+    });
+    ```
+  </Card>
+</CardGrid>
+
+## 🔄 Breaking Changes Summary
+
+### Package Structure
+
+- Individual packages consolidated into monolithic packages with submodule exports
+- All imports must be updated to new paths
+- See [complete migration guide](/others/migrate-to-v4) for details
+
+### Configuration System
+
+- Introduced centralized `SKConfig` system
+- Removed direct API/RPC parameters from constructors
+- Runtime configuration updates now possible
+
+### Plugin & Wallet Interfaces
+
+- New `createPlugin` and `createWallet` helpers required
+- Simplified parameter interfaces
+- Better type safety and consistency
+
+## ⚡ Performance Improvements
+
+<CardGrid>
+  <Card title="Efficient Configuration Management" icon="setting">
+    No more client recreation for configuration changes. Update settings
+    on-the-fly without losing wallet connections or cached data.
+  </Card>
+
+  <Card title="Better Bundle Size Control" icon="document">
+    Use only what you need with the new modular structure. Import specific
+    plugins and wallets for smaller production bundles.
+  </Card>
+
+  <Card title="Optimized Chain Operations" icon="rocket">
+    Improved toolbox initialization and better caching for frequently accessed
+    chain operations.
+  </Card>
+</CardGrid>
+
+## 🛠️ Developer Experience Enhancements
+
+### Simplified Client Creation
+
+```typescript
+// @noErrorValidation
+
+const client = SwapKit({
+  apis: { [Chain.Ethereum]: customApi },
+  rpcUrls: { [Chain.Ethereum]: "https:
+  config: { stagenet: false },
+  plugins: { ...ThorchainPlugin },
+  wallets: { ...keystoreWallet }
+});
+
+
+const client = createSwapKit({
+  config: {
+    rpcUrls: { [Chain.Ethereum]: "https:
+    apiKeys: { blockchair: "your-key" }
+  },
+  plugins: { ...ThorchainPlugin },
+  wallets: { ...keystoreWallet }
+});
+```
+
+### Runtime Environment Switching
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setEnv("isStagenet", true);
+SKConfig.setRpcUrl(Chain.THORChain, "https:
+
+
+const balance = await swapKit.getBalance(Chain.THORChain);
+```
+
+### Enhanced Error Handling
+
+Improved error messages with more context and better debugging information for faster issue resolution.
+
+## 🌟 New Chain & Wallet Support
+
+### Enhanced Solana Integration
+
+- **Jupiter API Integration**: Real-time token metadata and routing
+- **Improved Transaction Handling**: Better fee estimation and confirmation
+- **Phantom Wallet**: Enhanced support with latest features
+
+### Complete Ripple (XRP) Support
+
+- **Full XRP Toolbox**: Complete implementation for XRP Ledger operations
+- **Destination Tags**: Proper handling of XRP memos and destination tags
+- **Enhanced Validation**: Better address and transaction validation
+
+### OneKey Wallet Integration
+
+- **Multi-Chain Support**: Hardware wallet support across all supported chains
+- **Secure Operations**: Hardware-level security for sensitive operations
+- **User-Friendly Interface**: Streamlined connection and transaction flow
+
+### Dynamic Cosmos Ecosystem
+
+- **Auto Fee Estimation**: Automatic fee calculation when not provided
+- **Better Gas Management**: Improved gas estimation across Cosmos chains
+- **Enhanced IBC Support**: Better Inter-Blockchain Communication handling
+
+## 🔧 Configuration Flexibility
+
+### Individual Updates
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setApiKey("swapKit", "premium-key");
+SKConfig.setApiKey("blockchair", "enterprise-key");
+
+
+SKConfig.setRpcUrl(Chain.Ethereum, "https:
+SKConfig.setRpcUrl(Chain.Arbitrum, "https:
+```
+
+### Bulk Configuration
+
+```typescript
+// @noErrorValidation
+
+SKConfig.set({
+  rpcUrls: {
+    [Chain.Ethereum]: "https:
+    [Chain.Arbitrum]: "https:
+  },
+  apiKeys: {
+    blockchair: "enterprise-key",
+    swapKit: "premium-key"
+  },
+  envs: {
+    isStagenet: false,
+    isDev: false
+  }
+});
+```
+
+### Environment-Specific Configurations
+
+```typescript
+// @noErrorValidation
+
+SKConfig.set({
+  envs: { isDev: false, isStagenet: false },
+  apiKeys: {
+    swapKit: process.env.SWAPKIT_PROD_KEY,
+    blockchair: process.env.BLOCKCHAIR_PROD_KEY,
+  },
+});
+
+SKConfig.set({
+  envs: { isDev: true, isStagenet: true },
+  apiKeys: {
+    swapKit: process.env.SWAPKIT_DEV_KEY,
+    blockchair: process.env.BLOCKCHAIR_DEV_KEY,
+  },
+});
+```
+
+## 🚦 Migration Path
+
+Ready to upgrade? Follow our comprehensive migration guide:
+
+1. **[Review Breaking Changes](/others/migrate-to-v4#major-breaking-changes)** - Understand what's changed
+2. **[Update Dependencies](/others/migrate-to-v4#step-1-update-dependencies)** - Install v4 packages
+3. **[Update Imports](/others/migrate-to-v4#step-2-update-imports)** - Fix import paths
+4. **[Refactor Configuration](/others/migrate-to-v4#step-3-update-client-initialization)** - Use SKConfig system
+5. **[Test Integration](/others/migrate-to-v4#migration-checklist)** - Verify everything works
+
+## 💬 Community & Support
+
+<CardGrid>
+  <Card title="Migration Help" icon="github">
+    Need help migrating? Our community is here to help with specific migration
+    challenges. [Get Migration Support →](https:
+  </Card>
+
+  <Card title="Bug Reports" icon="warning">
+    Found an issue in v4? Report it on GitHub with detailed reproduction steps.
+    [Report Issues →](https:
+  </Card>
+
+  <Card title="Feature Requests" icon="star">
+    Have ideas for v4 improvements? We'd love to hear your feedback and
+    suggestions. [Share Ideas →](https:
+  </Card>
+</CardGrid>
+
+---
+
+**Ready to get started with v4?** Head over to our [Getting Started guide](/start/getting-started) to build your first v4 application, or check out the [Migration guide](/others/migrate-to-v4) if you're upgrading from v3.

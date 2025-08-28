@@ -24,26 +24,9 @@ export interface NearCallParams {
 
 // Gas estimation using discriminated unions for type inference
 export type NearGasEstimateParams =
-  | {
-      recipient: string;
-      amount: string;
-    }
-  | {
-      contractId: string;
-      methodName: string;
-      args?: Record<string, any>;
-      attachedDeposit?: string;
-    }
-  | {
-      actions: Action[];
-    }
-  | {
-      newAccountId: string;
-      publicKey?: string;
-    }
-  | {
-      contractCode: Uint8Array;
-    }
-  | {
-      customEstimator: (account: Account) => Promise<string>;
-    };
+  | { recipient: string; amount: string }
+  | { contractId: string; methodName: string; args?: Record<string, any>; attachedDeposit?: string }
+  | { actions: Action[] }
+  | { newAccountId: string; publicKey?: string }
+  | { contractCode: Uint8Array }
+  | { customEstimator: (account: Account) => Promise<string> };

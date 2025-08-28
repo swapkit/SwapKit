@@ -1,0 +1,709 @@
+---
+title: Optimism Integration
+description: Complete guide to integrating Optimism with SwapKit SDK for Layer 2 scaling and DeFi operations
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Optimism integration with SwapKit, including wallet connections, token transfers, cross-chain swaps, and Optimism-specific features.
+
+## Overview
+
+Optimism is an Ethereum Layer 2 scaling solution using optimistic rollups for fast, cheap transactions. SwapKit provides comprehensive Optimism support through:
+
+- **Optimism Toolbox**: Fast operations with minimal ETH gas costs on L2
+- **Cross-Chain Bridging**: Seamless transfers between Ethereum and Optimism
+- **DEX Integration**: Access to Velodrome, Uniswap V3, and other Optimism DEXs
+- **ERC-20 Compatibility**: Full support for Optimism's token ecosystem
+- **Multi-Wallet Support**: Compatible with MetaMask and other Ethereum wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapkit/sdk';
+
+const swapKit = createSwapKit();
+
+const opWallet = await swapKit.getWallet(Chain.Optimism);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getOptimismToolbox } from '@swapkit/toolboxes/evm';
+
+
+const opToolbox = await getOptimismToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 60, 0, 0, 0]
+});
+
+
+const opToolbox = await getOptimismToolbox({
+  signer: customOptimismSigner,
+  provider: customOptimismProvider
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Optimism Toolbox
+
+### Wallet Connection
+
+Connect to Optimism using Ethereum-compatible wallets:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Optimism], "your mnemonic phrase");
+
+await swapKit.connectBrowserWallet(Chain.Optimism);
+
+await swapKit.connectWalletConnect([Chain.Optimism]);
+
+await swapKit.connectLedger([Chain.Optimism]);
+```
+
+### Native ETH Transfers
+
+ETH on Optimism is the same as Ethereum ETH, just on Layer 2:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapKit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Optimism,
+    value: "0.1",
+  }),
+  feeOptionKey: FeeOption.Fast,
+});
+
+console.log(`Transaction hash: ${txHash}`);
+```
+
+### ERC-20 Token Transfers
+
+Optimism supports ERC-20 tokens with much lower costs than Ethereum:
+
+```typescript
+// @noErrorValidation
+
+const usdcTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Optimism,
+    symbol: "USDC",
+    address: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const opTransfer = await swapKit.transfer({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  assetValue: AssetValue.from({
+    chain: Chain.Optimism,
+    symbol: "OP",
+    address: "0x4200000000000000000000000000000000000042",
+    value: "10",
+  }),
+});
+
+const toolbox = await getOptimismToolbox({ phrase: "..." });
+
+const batchOptimismTransfers = async () => {
+  const optimismTokens = [
+    {
+      symbol: "USDT",
+      address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+      amount: "50",
+    },
+    {
+      symbol: "DAI",
+      address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      amount: "100",
+    },
+    {
+      symbol: "WBTC",
+      address: "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+      amount: "0.01",
+    },
+  ];
+
+  for (const { symbol, address, amount } of optimismTokens) {
+    const tx = await toolbox.transfer({
+      recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+      assetValue: AssetValue.from({
+        chain: Chain.Optimism,
+        address,
+        value: amount,
+      }),
+    });
+    console.log(`${symbol} transfer: ${tx}`);
+  }
+};
+```
+
+### Smart Contract Interactions
+
+Optimism contracts execute quickly with low gas costs:
+
+```typescript
+// @noErrorValidation
+
+const veloBalance = await toolbox.call({
+  contractAddress: "0x3c8B650257cFb5f272f799F5e2b4e65093a11a05",
+  abi: erc20ABI,
+  funcName: "balanceOf",
+  funcParams: ["0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7"],
+});
+
+const snxTransfer = await toolbox.call({
+  contractAddress: "0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4",
+  abi: erc20ABI,
+  funcName: "transfer",
+  funcParams: [
+    "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+    "1000000000000000000",
+  ],
+  txOverrides: {
+    gasLimit: "65000",
+  },
+});
+
+const velodromeSwap = await toolbox.call({
+  contractAddress: "0x9c12939390052919aF3155f41Bf4160Fd3666A6f",
+  abi: velodromeRouterABI,
+  funcName: "swapExactETHForTokens",
+  funcParams: [
+    "0",
+    [
+      {
+        from: "0x4200000000000000000000000000000000000006",
+        to: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+        stable: false,
+      },
+    ],
+    swapKit.getAddress(Chain.Optimism),
+    Date.now() + 600000,
+  ],
+  txOverrides: {
+    value: "100000000000000000",
+    gasLimit: "300000",
+  },
+});
+```
+
+### Gas Management
+
+Optimism uses ETH for gas with optimized L2 costs:
+
+```typescript
+// @noErrorValidation
+
+const gasInfo = await toolbox.getGasPrices();
+console.log({
+  slow: gasInfo.average,
+  standard: gasInfo.fast,
+  fast: gasInfo.fastest,
+});
+
+const txParams = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Optimism, value: "0.1" }),
+  gasLimit: "21000",
+  gasPrice: "1000000000",
+});
+
+const eip1559Tx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Optimism, value: "0.1" }),
+  maxFeePerGas: "2000000000",
+  maxPriorityFeePerGas: "100000000",
+});
+```
+
+## Cross-Chain Operations
+
+### Bridging Assets
+
+```typescript
+// @noErrorValidation
+
+const bridgeQuote = await swapKit.getQuote({
+  sellAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  sellAmount: "1000",
+  buyAsset: "OP.USDC-0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Optimism),
+});
+
+const bridgeTx = await swapKit.swap({
+  route: bridgeQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const ethToOpBridge = await swapKit.getQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "0.5",
+  buyAsset: "OP.ETH",
+  senderAddress: swapKit.getAddress(Chain.Ethereum),
+  recipientAddress: swapKit.getAddress(Chain.Optimism),
+});
+```
+
+### Cross-Chain Swaps via THORChain
+
+```typescript
+// @noErrorValidation
+
+const opToBtcQuote = await swapKit.getQuote({
+  sellAsset: "OP.OP-0x4200000000000000000000000000000000000042",
+  sellAmount: "100",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Optimism),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+const crossChainSwap = await swapKit.swap({
+  route: opToBtcQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+
+const usdcToRuneQuote = await swapKit.getQuote({
+  sellAsset: "OP.USDC-0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  sellAmount: "500",
+  buyAsset: "THOR.RUNE",
+  senderAddress: swapKit.getAddress(Chain.Optimism),
+  recipientAddress: swapKit.getAddress(Chain.THORChain),
+});
+```
+
+## Optimism DEX Integration
+
+Access native Optimism DEXs for optimal liquidity:
+
+```typescript
+// @noErrorValidation
+
+const velodromeQuote = await swapKit.getQuote({
+  sellAsset: "OP.ETH",
+  sellAmount: "0.1",
+  buyAsset: "OP.USDC-0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  senderAddress: swapKit.getAddress(Chain.Optimism),
+  recipientAddress: swapKit.getAddress(Chain.Optimism),
+  providers: ["VELODROME"],
+});
+
+const uniswapQuote = await swapKit.getQuote({
+  sellAsset: "OP.USDC-0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  sellAmount: "500",
+  buyAsset: "OP.WETH-0x4200000000000000000000000000000000000006",
+  senderAddress: swapKit.getAddress(Chain.Optimism),
+  recipientAddress: swapKit.getAddress(Chain.Optimism),
+  providers: ["UNISWAPV3"],
+});
+
+const bestRateQuote = await swapKit.getQuote({
+  sellAsset: "OP.DAI-0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+  sellAmount: "1000",
+  buyAsset: "OP.SNX-0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4",
+  senderAddress: swapKit.getAddress(Chain.Optimism),
+  recipientAddress: swapKit.getAddress(Chain.Optimism),
+  providers: ["VELODROME", "UNISWAPV3"],
+});
+
+const dexSwap = await swapKit.swap({
+  route: bestRateQuote.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+```
+
+## Optimism-Specific Features
+
+### Popular Optimism Tokens
+
+```typescript
+// @noErrorValidation
+
+const optimismTokens = {
+  WETH: "0x4200000000000000000000000000000000000006",
+  USDC: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  USDT: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+  DAI: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+  WBTC: "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+  OP: "0x4200000000000000000000000000000000000042",
+  SNX: "0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4",
+  VELO: "0x3c8B650257cFb5f272f799F5e2b4e65093a11a05",
+};
+
+const getOptimismPortfolio = async () => {
+  const balances = {};
+  const address = swapKit.getAddress(Chain.Optimism);
+
+  balances.ETH = await toolbox.getBalance(address);
+
+  for (const [symbol, tokenAddress] of Object.entries(optimismTokens)) {
+    const balance = await toolbox.getBalance(address, tokenAddress);
+    balances[symbol] = balance.toString();
+  }
+
+  return balances;
+};
+```
+
+### OP Token Operations
+
+```typescript
+// @noErrorValidation
+
+const opStaking = await toolbox.call({
+  contractAddress: "0x...",
+  abi: opGovernanceABI,
+  funcName: "stake",
+  funcParams: ["1000000000000000000"],
+});
+
+const delegate = await toolbox.call({
+  contractAddress: "0x4200000000000000000000000000000000000042",
+  abi: erc20VotesABI,
+  funcName: "delegate",
+  funcParams: ["0x..."],
+});
+
+const vote = await toolbox.call({
+  contractAddress: "0x...",
+  abi: governorABI,
+  funcName: "castVote",
+  funcParams: [proposalId, 1],
+});
+```
+
+### Velodrome Integration
+
+```typescript
+// @noErrorValidation
+
+const addLiquidity = await toolbox.call({
+  contractAddress: "0x9c12939390052919aF3155f41Bf4160Fd3666A6f",
+  abi: velodromeRouterABI,
+  funcName: "addLiquidity",
+  funcParams: [
+    "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    "0x4200000000000000000000000000000000000006",
+    false,
+    "1000000000",
+    "500000000000000000",
+    "0",
+    "0",
+    swapKit.getAddress(Chain.Optimism),
+    Date.now() + 600000,
+  ],
+});
+
+const stakeLp = await toolbox.call({
+  contractAddress: "0x...",
+  abi: gaugeABI,
+  funcName: "deposit",
+  funcParams: ["1000000000000000000"],
+});
+
+const claimRewards = await toolbox.call({
+  contractAddress: "0x...",
+  abi: gaugeABI,
+  funcName: "getReward",
+  funcParams: [swapKit.getAddress(Chain.Optimism)],
+});
+```
+
+### Synthetix Integration
+
+```typescript
+// @noErrorValidation
+
+const mintSusd = await toolbox.call({
+  contractAddress: "0x...",
+  abi: synthetixABI,
+  funcName: "issueSynths",
+  funcParams: ["100000000000000000000"],
+});
+
+const exchangeSynths = await toolbox.call({
+  contractAddress: "0x...",
+  abi: exchangerABI,
+  funcName: "exchange",
+  funcParams: [
+    "0x7355534400000000000000000000000000000000000000000000000000000000",
+    "50000000000000000000",
+    "0x7342544300000000000000000000000000000000000000000000000000000000",
+  ],
+});
+```
+
+## Network Configuration
+
+### Custom RPC Setup
+
+```typescript
+// @noErrorValidation
+import { SKConfig } from '@swapkit/sdk';
+
+
+SKConfig.setRpcUrl(Chain.Optimism, [
+  "https:
+  "https:
+  "https:
+]);
+
+
+import { JsonRpcProvider } from 'ethers';
+
+const optimismProvider = new JsonRpcProvider("https:
+const toolbox = await getOptimismToolbox({
+  phrase: "your mnemonic",
+  provider: optimismProvider
+});
+```
+
+### Working with Optimism Goerli Testnet
+
+```typescript
+// @noErrorValidation
+
+SKConfig.setRpcUrl(Chain.Optimism, "https:
+SKConfig.setEnv('isMainnet', false);
+
+
+const testnetTokens = {
+  USDC: "0x7E07E15D2a87A24492740D16f5bdF58c16db0c4E",
+  DAI: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1"
+};
+```
+
+## Error Handling
+
+Handle Optimism-specific errors:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/sdk";
+
+try {
+  await swapKit.transfer({
+    /* ... */
+  });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    switch (error.code) {
+      case "toolbox_evm_insufficient_funds":
+        console.error("Insufficient ETH for gas on Optimism");
+        break;
+      case "network_optimism_sequencer_down":
+        console.error("Optimism sequencer is down, try again later");
+        break;
+      case "toolbox_evm_transaction_failed":
+        console.error("Transaction failed:", error.cause);
+        break;
+      case "bridge_optimism_withdrawal_delay":
+        console.error("Optimism withdrawal has 7-day delay");
+        break;
+      default:
+        console.error("Unknown error:", error);
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Gas Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizedTx = await toolbox.buildTransaction({
+  recipient: "0x742c4B4F3e0b5b069F5DCF8A65Eaf8d3E888a3E7",
+  amount: AssetValue.from({ chain: Chain.Optimism, value: "0.1" }),
+  gasLimit: "21000",
+  gasPrice: "1000000000",
+});
+
+const complexTx = await toolbox.call({
+  contractAddress: "0x...",
+  abi: complexABI,
+  funcName: "multiStepOperation",
+  funcParams: [
+    /* complex parameters */
+  ],
+  gasLimit: "1000000",
+});
+```
+
+### Batch Operations
+
+```typescript
+// @noErrorValidation
+
+const batchOperations = async () => {
+  const operations = [];
+
+  const tokens = [
+    "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "0x4200000000000000000000000000000000000006",
+  ];
+
+  for (const tokenAddress of tokens) {
+    const approve = toolbox.approve({
+      contractAddress: tokenAddress,
+      spenderAddress: "0x9c12939390052919aF3155f41Bf4160Fd3666A6f",
+      amount:
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    });
+    operations.push(approve);
+  }
+
+  const results = await Promise.all(operations);
+  return results;
+};
+```
+
+## Best Practices
+
+1. **Leverage Ultra-Low Gas Costs**:
+
+   ```typescript
+   const affordableComplexTx = await toolbox.call({
+     contractAddress: "0x...",
+     abi: complexProtocolABI,
+     funcName: "complexMultiStepOperation",
+     funcParams: [
+       /* many parameters */
+     ],
+     gasLimit: "2000000",
+   });
+   ```
+
+2. **Use Native Optimism Infrastructure**:
+
+   ```typescript
+   const veloQuote = await swapKit.getQuote({
+     sellAsset: "OP.ETH",
+     sellAmount: "1",
+     buyAsset: "OP.USDC-0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+     senderAddress: swapKit.getAddress(Chain.Optimism),
+     recipientAddress: swapKit.getAddress(Chain.Optimism),
+     providers: ["VELODROME"],
+   });
+   ```
+
+3. **Plan for Withdrawal Delays**:
+
+   ```typescript
+   const planWithdrawal = async () => {
+     console.log("Note: Optimism to Ethereum withdrawals take 7 days");
+   };
+   ```
+
+4. **Monitor Sequencer Status**:
+   ```typescript
+   const checkSequencer = async () => {
+     try {
+       const blockNumber = await toolbox.getBlockNumber();
+       console.log("Sequencer is operational:", blockNumber);
+       return true;
+     } catch (error) {
+       console.error("Sequencer may be down");
+       return false;
+     }
+   };
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Bridge deposit delays**:
+
+   ```typescript
+   const checkBridgeStatus = async (l1TxHash: string) => {
+     const status = await toolbox.getBridgeDeposit(l1TxHash);
+     console.log(`Bridge status: ${status.status}`);
+     return status.status === "RELAYED";
+   };
+   ```
+
+2. **Withdrawal complexity**:
+
+   ```typescript
+   const initiateWithdrawal = async () => {
+     console.warn("Consider using cross-chain swaps instead of native bridge");
+   };
+   ```
+
+3. **Gas estimation edge cases**:
+
+   ```typescript
+   const safeGasLimit = await toolbox.estimateCall({
+     contractAddress: "0x...",
+     abi: contractABI,
+     funcName: "complexFunction",
+     funcParams: [
+       /* params */
+     ],
+   });
+
+   const gasLimit = Math.floor(Number(safeGasLimit) * 1.2);
+   ```
+
+## API Reference Summary
+
+### Core Methods (Same as Ethereum)
+
+- `getBalance()` - Get ETH or token balance
+- `transfer()` - Send ETH or tokens
+- `buildTransaction()` - Construct transaction parameters
+- `call()` - Execute smart contract functions
+- `estimateCall()` - Estimate gas for contract calls
+
+### Gas Management
+
+- `getGasPrices()` - Get current L2 gas prices
+- `estimateGas()` - Estimate gas with L2 optimizations
+- `waitForTransaction()` - Wait for ~2 second confirmation
+
+### Optimism Specific
+
+- `getBridgeDeposit()` - Check bridge deposit status
+- `getSequencerStatus()` - Monitor sequencer health
+- `multicall()` - Batch contract reads efficiently
+
+## Next Steps
+
+- Learn about other [Layer 2 solutions](/guides/chains/arbitrum) like Arbitrum
+- Explore [Cross-Chain Swaps](/guides/actions/swap) using Optimism
+- Check out [Ethereum Integration](/guides/chains/ethereum) for L1 comparison
+- Read about [Production Best Practices](/guides/production-best-practices)

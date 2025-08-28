@@ -1,5 +1,92 @@
 # @swapkit/sdk
 
+## 4.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`8d3a6a9`](https://github.com/swapkit/SwapKit/commit/8d3a6a975645f205dcb3c0711319d6405e759533)]:
+  - @swapkit/plugins@4.0.5
+  - @swapkit/core@4.0.4
+  - @swapkit/server@4.0.4
+  - @swapkit/wallets@4.1.3
+
+## 4.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`dc64af9`](https://github.com/swapkit/SwapKit/commit/dc64af96a23ecc01935f45f1b6cb060ccf33e49b)]:
+  - @swapkit/wallets@4.1.2
+  - @swapkit/server@4.0.3
+  - @swapkit/core@4.0.3
+  - @swapkit/plugins@4.0.4
+
+## 4.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.2
+  - @swapkit/plugins@4.0.3
+  - @swapkit/server@4.0.2
+  - @swapkit/wallets@4.1.1
+
+## 4.0.2
+
+### Patch Changes
+
+- [#1448](https://github.com/swapkit/SwapKit/pull/1448) [`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix cycling dependencies & update biome to v2
+
+- Updated dependencies [[`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c), [`1d11e7f`](https://github.com/swapkit/SwapKit/commit/1d11e7fa5280aa5eb7d42df3f9e944d49b2c0d08)]:
+  - @swapkit/plugins@4.0.2
+  - @swapkit/wallets@4.1.0
+  - @swapkit/server@4.0.1
+  - @swapkit/core@4.0.1
+
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`bc1edaa`](https://github.com/swapkit/SwapKit/commit/bc1edaaf3137833a0a6edf0b6c9a38d72ea26eac)]:
+  - @swapkit/plugins@4.0.1
+
+## 4.0.0
+
+### Patch Changes
+
+- [`94fd9b2`](https://github.com/swapkit/SwapKit/commit/94fd9b2002db030bafae72b6b86bf949e0cac674) Thanks [@towanTG](https://github.com/towanTG)! - Adds SDK package support for tronlink
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- [#1404](https://github.com/swapkit/SwapKit/pull/1404) [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Server/Client split, type definitions and new goodies
+
+- [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773) Thanks [@towanTG](https://github.com/towanTG)! - Updated Zcash transaction building to use bitgo package
+
+- Updated dependencies [[`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5), [`fb6d225`](https://github.com/swapkit/SwapKit/commit/fb6d22564b6237f497256fbed6aa56a520126b91), [`94fd9b2`](https://github.com/swapkit/SwapKit/commit/94fd9b2002db030bafae72b6b86bf949e0cac674), [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2), [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f), [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc), [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773), [`cc74719`](https://github.com/swapkit/SwapKit/commit/cc747193dfef3b4b9b120b6b1dcc649e1cfd9d0c), [`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5), [`0f2e55a`](https://github.com/swapkit/SwapKit/commit/0f2e55aba9efcdbfa74fcf9a4311534b9da780ed)]:
+  - @swapkit/wallets@4.0.0
+  - @swapkit/plugins@4.0.0
+  - @swapkit/server@4.0.0
+  - @swapkit/core@4.0.0
+
+## 4.0.0-beta.72
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.0-beta.68
+  - @swapkit/plugins@4.0.0-beta.67
+  - @swapkit/server@4.0.0-beta.18
+  - @swapkit/wallets@4.0.0-beta.71
+
+## 4.0.0-beta.71
+
+### Patch Changes
+
+- Updated dependencies [[`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5)]:
+  - @swapkit/wallets@4.0.0-beta.70
+  - @swapkit/core@4.0.0-beta.67
+  - @swapkit/plugins@4.0.0-beta.66
+  - @swapkit/server@4.0.0-beta.17
+
 ## 4.0.0-beta.70
 
 ### Patch Changes

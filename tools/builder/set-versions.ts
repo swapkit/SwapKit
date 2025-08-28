@@ -7,9 +7,7 @@ const versions: Record<string, string> = {};
 async function setVersions() {
   const files = await readdir("./packages", { recursive: true });
 
-  const onlyPackageJson = files.filter(
-    (file) => !file.includes("node_modules") && file.endsWith("package.json"),
-  );
+  const onlyPackageJson = files.filter((file) => !file.includes("node_modules") && file.endsWith("package.json"));
 
   for (const file of onlyPackageJson) {
     const { version } = await import(`${cwd}/packages/${file}`);

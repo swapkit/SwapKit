@@ -1,4 +1,3 @@
-export * from "@swapkit/wallet-keystore";
 export * from "@swapkit/helpers";
 export * from "@swapkit/helpers/api";
 export * from "@swapkit/helpers/contracts";
@@ -10,3 +9,4 @@ export * from "@swapkit/toolboxes/radix";
 export * from "@swapkit/toolboxes/solana";
 export * from "@swapkit/toolboxes/substrate";
 export * from "@swapkit/toolboxes/utxo";
+export * from "@swapkit/wallet-keystore";

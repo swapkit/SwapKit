@@ -12,14 +12,8 @@ import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { SwapKitPluginParams } from "../types";
 import { createPlugin } from "../utils";
 
-function approve<T extends ApproveMode>({
-  approveMode,
-  getWallet,
-}: { approveMode: T } & SwapKitPluginParams) {
-  return function approveEVM({
-    assetValue,
-    spenderAddress,
-  }: { spenderAddress: string; assetValue: AssetValue }) {
+function approve<T extends ApproveMode>({ approveMode, getWallet }: { approveMode: T } & SwapKitPluginParams) {
+  return function approveEVM({ assetValue, spenderAddress }: { spenderAddress: string; assetValue: AssetValue }) {
     const evmChain = assetValue.chain as EVMChain;
     const isEVMChain = EVMChains.includes(evmChain);
     const isNativeEVM = isEVMChain && assetValue.isGasAsset;
@@ -46,6 +40,22 @@ function approve<T extends ApproveMode>({
 }
 
 export const EVMPlugin = createPlugin({
+  methods: ({ getWallet }) => ({
+    approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
+    isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
+    swap: async function evmSwap({ route: { tx, sellAsset }, feeOptionKey }: SwapParams<"evm", QuoteResponseRoute>) {
+      const assetValue = await AssetValue.from({ asset: sellAsset, asyncTokenLookup: true });
+      const evmChain = assetValue.chain as EVMChain;
+      const wallet = getWallet(evmChain);
+
+      if (!(EVMChains.includes(evmChain) && tx)) {
+        throw new SwapKitError("core_swap_invalid_params");
+      }
+
+      const { from, to, data, value } = tx as EVMTransaction;
+      return wallet.sendTransaction({ data, feeOptionKey, from, to, value: BigInt(value) });
+    },
+  }),
   name: "evm",
   properties: {
     supportedSwapkitProviders: [
@@ -60,23 +70,4 @@ export const EVMPlugin = createPlugin({
       ProviderName.UNISWAP_V3,
     ],
   },
-  methods: ({ getWallet }) => ({
-    approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
-    isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
-    swap: async function evmSwap({
-      route: { tx, sellAsset },
-      feeOptionKey,
-    }: SwapParams<"evm", QuoteResponseRoute>) {
-      const assetValue = await AssetValue.from({ asset: sellAsset, asyncTokenLookup: true });
-      const evmChain = assetValue.chain as EVMChain;
-      const wallet = getWallet(evmChain);
-
-      if (!(EVMChains.includes(evmChain) && tx)) {
-        throw new SwapKitError("core_swap_invalid_params");
-      }
-
-      const { from, to, data, value } = tx as EVMTransaction;
-      return wallet.sendTransaction({ from, to, data, value: BigInt(value), feeOptionKey });
-    },
-  }),
 });

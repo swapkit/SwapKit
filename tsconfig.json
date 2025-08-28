@@ -1,7 +1,5 @@
 {
-  "extends": "./tools/typescript/base.json",
-  "compilerOptions": {
-    "types": ["bun-types"]
-  },
-  "exclude": ["node_modules", "dist"]
+  "compilerOptions": { "types": ["bun-types"] },
+  "exclude": ["node_modules", "dist"],
+  "extends": "./tools/typescript/base.json"
 }

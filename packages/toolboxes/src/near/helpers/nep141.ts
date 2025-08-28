@@ -39,11 +39,7 @@ export interface NEP141Contract extends Contract {
   storage_balance_bounds(): Promise<StorageBalanceBounds>;
 
   // Change methods
-  ft_transfer(
-    args: { receiver_id: string; amount: string; memo?: string },
-    gas: BN,
-    deposit: BN,
-  ): Promise<void>;
+  ft_transfer(args: { receiver_id: string; amount: string; memo?: string }, gas: BN, deposit: BN): Promise<void>;
   ft_transfer_call(
     args: { receiver_id: string; amount: string; msg: string; memo?: string },
     gas: BN,
@@ -85,9 +81,9 @@ export async function createNearContract<T extends Contract>({
   const { Contract } = await import("near-api-js");
 
   return new Contract(account, contractId, {
-    viewMethods,
     changeMethods,
     useLocalViewExecution: true, // Enable local view execution for efficiency
+    viewMethods,
   }) as T;
 }
 
@@ -102,21 +98,9 @@ export async function createNEP141Token({
 
   const contract = await createNearContract<NEP141Contract>({
     account,
+    changeMethods: ["ft_transfer", "ft_transfer_call", "storage_deposit", "storage_withdraw", "storage_unregister"],
     contractId,
-    viewMethods: [
-      "ft_balance_of",
-      "ft_total_supply",
-      "ft_metadata",
-      "storage_balance_of",
-      "storage_balance_bounds",
-    ],
-    changeMethods: [
-      "ft_transfer",
-      "ft_transfer_call",
-      "storage_deposit",
-      "storage_withdraw",
-      "storage_unregister",
-    ],
+    viewMethods: ["ft_balance_of", "ft_total_supply", "ft_metadata", "storage_balance_of", "storage_balance_bounds"],
   });
 
   // Helper to ensure storage before transfers
@@ -136,31 +120,12 @@ export async function createNEP141Token({
   };
 
   return {
-    transfer: async (receiverId: string, amount: string, memo?: string) => {
-      // Ensure recipient has storage before transfer
-      await ensureStorageFor(receiverId);
-
-      return contract.ft_transfer(
-        { receiver_id: receiverId, amount, memo },
-        new BN("100000000000000"), // 100 TGas
-        new BN("1"), // 1 yoctoNEAR for security
-      );
-    },
-
-    transferCall: async (receiverId: string, amount: string, msg: string, memo?: string) => {
-      // Ensure recipient has storage before transfer
-      await ensureStorageFor(receiverId);
-
-      return contract.ft_transfer_call(
-        { receiver_id: receiverId, amount, memo, msg },
-        new BN("100000000000000"), // 100 TGas
-        new BN("1"), // 1 yoctoNEAR for security
-      );
-    },
-
     balanceOf: (accountId: string) => contract.ft_balance_of({ account_id: accountId }),
 
-    totalSupply: () => contract.ft_total_supply(),
+    // Raw contract access for advanced use cases
+    contract,
+
+    ensureStorage: ensureStorageFor,
 
     metadata: () => contract.ft_metadata(),
 
@@ -173,9 +138,27 @@ export async function createNEP141Token({
         new BN(amount || DEFAULT_STORAGE_DEPOSIT),
       ),
 
-    ensureStorage: ensureStorageFor,
+    totalSupply: () => contract.ft_total_supply(),
+    transfer: async (receiverId: string, amount: string, memo?: string) => {
+      // Ensure recipient has storage before transfer
+      await ensureStorageFor(receiverId);
 
-    // Raw contract access for advanced use cases
-    contract,
+      return contract.ft_transfer(
+        { amount, memo, receiver_id: receiverId },
+        new BN("100000000000000"), // 100 TGas
+        new BN("1"), // 1 yoctoNEAR for security
+      );
+    },
+
+    transferCall: async (receiverId: string, amount: string, msg: string, memo?: string) => {
+      // Ensure recipient has storage before transfer
+      await ensureStorageFor(receiverId);
+
+      return contract.ft_transfer_call(
+        { amount, memo, msg, receiver_id: receiverId },
+        new BN("100000000000000"), // 100 TGas
+        new BN("1"), // 1 yoctoNEAR for security
+      );
+    },
   };
 }

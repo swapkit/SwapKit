@@ -1,17 +1,9 @@
 import { networks as zcashNetworks } from "@bitgo/utxo-lib";
-import {
-  Chain,
-  RequestClient,
-  SKConfig,
-  SwapKitError,
-  type UTXOChain,
-  warnOnce,
-} from "@swapkit/helpers";
+import { Chain, getRPCUrl, RequestClient, SKConfig, SwapKitError, type UTXOChain, warnOnce } from "@swapkit/helpers";
 import { networks } from "bitcoinjs-lib";
-import { uniqid } from "../../utils";
-
-// @ts-ignore
+// @ts-expect-error
 import coininfo from "coininfo";
+import { uniqid } from "../../utils";
 
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
 type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
@@ -29,17 +21,9 @@ async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string
 
   try {
     const response = await RequestClient.post<{
-      data: {
-        transaction_hash: string;
-      } | null;
-      context: {
-        code: number;
-        error?: string;
-      };
-    }>(url, {
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
+      data: { transaction_hash: string } | null;
+      context: { code: number; error?: string };
+    }>(url, { body, headers: { "Content-Type": "application/json" } });
 
     if (response.context.code !== 200) {
       throw new SwapKitError("toolbox_utxo_broadcast_failed", {
@@ -50,31 +34,22 @@ async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string
     return response.data?.transaction_hash || txHash;
   } catch (error) {
     // Fallback to RPC if Blockchair fails
-    const rpcUrl = SKConfig.get("rpcUrls")[chain];
+    const rpcUrl = await getRPCUrl(chain);
     if (rpcUrl) {
-      const rpcBody = JSON.stringify({
-        jsonrpc: "2.0",
-        method: "sendrawtransaction",
-        params: [txHash],
-        id: uniqid(),
-      });
+      const rpcBody = JSON.stringify({ id: uniqid(), jsonrpc: "2.0", method: "sendrawtransaction", params: [txHash] });
 
       const rpcResponse = await RequestClient.post<{
         id: string;
         result: string;
         error: { message: string; code?: number } | null;
-      }>(rpcUrl, { headers: { "Content-Type": "application/json" }, body: rpcBody });
+      }>(rpcUrl, { body: rpcBody, headers: { "Content-Type": "application/json" } });
 
       if (rpcResponse.error) {
-        throw new SwapKitError("toolbox_utxo_broadcast_failed", {
-          error: rpcResponse.error?.message,
-        });
+        throw new SwapKitError("toolbox_utxo_broadcast_failed", { error: rpcResponse.error?.message });
       }
 
       if (rpcResponse.result.includes('"code":-26')) {
-        throw new SwapKitError("toolbox_utxo_invalid_transaction", {
-          error: "Transaction amount was too low",
-        });
+        throw new SwapKitError("toolbox_utxo_invalid_transaction", { error: "Transaction amount was too low" });
       }
 
       return rpcResponse.result;
@@ -146,18 +121,13 @@ async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
   );
 
   if (!response || response.context.code !== 200)
-    throw new SwapKitError("toolbox_utxo_api_error", {
-      error: `Failed to query ${url}`,
-    });
+    throw new SwapKitError("toolbox_utxo_api_error", { error: `Failed to query ${url}` });
 
   return response.data as T;
 }
 
 async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
-  if (!address)
-    throw new SwapKitError("toolbox_utxo_invalid_params", {
-      error: "Address is required",
-    });
+  if (!address) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
   try {
     const response = await blockchairRequest<BlockchairAddressResponse>(
@@ -167,25 +137,18 @@ async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ add
 
     return response[address];
   } catch (_error) {
-    return { utxo: [], address: { balance: 0, transaction_count: 0 } };
+    return { address: { balance: 0, transaction_count: 0 }, utxo: [] };
   }
 }
 
-async function getUnconfirmedBalance({
-  address,
-  chain,
-  apiKey,
-}: BlockchairParams<{ address?: string }>) {
-  const response = await getAddressData({ address, chain, apiKey });
+async function getUnconfirmedBalance({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
+  const response = await getAddressData({ address, apiKey, chain });
 
   return response?.address.balance || 0;
 }
 
 async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
-  if (!txHash)
-    throw new SwapKitError("toolbox_utxo_invalid_params", {
-      error: "TxHash is required",
-    });
+  if (!txHash) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "TxHash is required" });
 
   try {
     const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
@@ -199,13 +162,7 @@ async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
   }
 }
 
-async function fetchUtxosBatch({
-  chain,
-  address,
-  apiKey,
-  offset = 0,
-  limit = 30,
-}: BlockchairFetchUnspentUtxoParams) {
+async function fetchUtxosBatch({ chain, address, apiKey, offset = 0, limit = 30 }: BlockchairFetchUnspentUtxoParams) {
   // Only fetch the fields we need to reduce payload size
   const fields = "is_spent,transaction_hash,index,value,script_hex,block_id,spending_signature_hex";
 
@@ -216,22 +173,14 @@ async function fetchUtxosBatch({
   );
 
   const txs = response.map(
-    ({
-      is_spent,
-      script_hex,
-      block_id,
-      transaction_hash,
-      index,
-      value,
-      spending_signature_hex,
-    }) => ({
+    ({ is_spent, script_hex, block_id, transaction_hash, index, value, spending_signature_hex }) => ({
       hash: transaction_hash,
       index,
-      value,
-      txHex: spending_signature_hex,
-      script_hex,
       is_confirmed: block_id !== -1,
       is_spent,
+      script_hex,
+      txHex: spending_signature_hex,
+      value,
     }),
   );
 
@@ -273,20 +222,10 @@ async function getUnspentUtxos({
   offset = 0,
   limit = 30,
 }: BlockchairFetchUnspentUtxoParams): Promise<Awaited<ReturnType<typeof fetchUtxosBatch>>> {
-  if (!address)
-    throw new SwapKitError("toolbox_utxo_invalid_params", {
-      error: "Address is required",
-    });
+  if (!address) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
   try {
-    const utxos = await fetchUtxosBatch({
-      targetValue,
-      chain,
-      address,
-      apiKey,
-      offset,
-      limit,
-    });
+    const utxos = await fetchUtxosBatch({ address, apiKey, chain, limit, offset, targetValue });
     const utxosCount = utxos.length;
     const isComplete = utxosCount < limit;
 
@@ -302,12 +241,12 @@ async function getUnspentUtxos({
     }
 
     const nextBatch = await getUnspentUtxos({
-      chain,
+      accumulativeValue: totalCurrentValue,
       address,
       apiKey,
-      offset: offset + limit,
+      chain,
       limit,
-      accumulativeValue: totalCurrentValue,
+      offset: offset + limit,
       targetValue,
     });
 
@@ -326,19 +265,15 @@ async function getUtxos({
   apiKey,
   fetchTxHex = true,
   targetValue,
-}: BlockchairParams<{
-  address: string;
-  fetchTxHex?: boolean;
-  targetValue?: number;
-}>) {
-  const utxos = await getUnspentUtxos({ chain, address, apiKey, targetValue });
+}: BlockchairParams<{ address: string; fetchTxHex?: boolean; targetValue?: number }>) {
+  const utxos = await getUnspentUtxos({ address, apiKey, chain, targetValue });
 
   const results = [];
 
   for (const { hash, index, script_hex, value } of utxos) {
     let txHex: string | undefined;
     if (fetchTxHex) {
-      txHex = await getRawTx({ txHash: hash, chain, apiKey });
+      txHex = await getRawTx({ apiKey, chain, txHash: hash });
     }
     results.push({
       address,
@@ -346,7 +281,7 @@ async function getUtxos({
       index,
       txHex,
       value,
-      witnessUtxo: { value, script: Buffer.from(script_hex, "hex") },
+      witnessUtxo: { script: Buffer.from(script_hex, "hex"), value },
     });
   }
   return results;
@@ -355,19 +290,20 @@ async function getUtxos({
 function utxoApi(chain: UTXOChain) {
   const apiKey = SKConfig.get("apiKeys").blockchair || "";
 
-  warnOnce(!apiKey, "No Blockchair API key found. Functionality will be limited.");
+  warnOnce({
+    condition: !apiKey,
+    id: "no_blockchair_api_key_warning",
+    warning: "No Blockchair API key found. Functionality will be limited.",
+  });
 
   return {
-    broadcastTx: (txHash: string) => broadcastUTXOTx({ txHash, chain }),
-    getRawTx: (txHash: string) => getRawTx({ txHash, chain, apiKey }),
+    broadcastTx: (txHash: string) => broadcastUTXOTx({ chain, txHash }),
+    getAddressData: (address: string) => getAddressData({ address, apiKey, chain }),
+    getBalance: (address: string) => getUnconfirmedBalance({ address, apiKey, chain }),
+    getRawTx: (txHash: string) => getRawTx({ apiKey, chain, txHash }),
     getSuggestedTxFee: () => getSuggestedTxFee(chain),
-    getBalance: (address: string) => getUnconfirmedBalance({ address, chain, apiKey }),
-    getAddressData: (address: string) => getAddressData({ address, chain, apiKey }),
-    getUtxos: (params: {
-      address: string;
-      fetchTxHex?: boolean;
-      targetValue?: number;
-    }) => getUtxos({ ...params, chain, apiKey }),
+    getUtxos: (params: { address: string; fetchTxHex?: boolean; targetValue?: number }) =>
+      getUtxos({ ...params, apiKey, chain }),
   };
 }
 
@@ -382,7 +318,11 @@ export function getUtxoApi(chain: UTXOChain) {
   const customUtxoApi = SKConfig.get("apis")[chain];
 
   if (customUtxoApi) {
-    warnOnce(true, "Using custom UTXO API. Be sure to implement all methods to avoid issues.");
+    warnOnce({
+      condition: true,
+      id: "custom_utxo_api_warning",
+      warning: "Using custom UTXO API. Be sure to implement all methods to avoid issues.",
+    });
     return customUtxoApi as ReturnType<typeof utxoApi>;
   }
 
@@ -421,24 +361,14 @@ export function getUtxoNetwork() {
 interface BlockchairVin {
   txid: string;
   vout: number;
-  scriptSig: {
-    asm: string;
-    hex: string;
-  };
+  scriptSig: { asm: string; hex: string };
   sequence: number;
 }
 
 interface BlockchairVout {
   value: number;
   n: number;
-  scriptPubKey: {
-    asm: string;
-    hex: string;
-    address: string;
-    type: string;
-    addresses: string[];
-    reqSigs: number;
-  };
+  scriptPubKey: { asm: string; hex: string; address: string; type: string; addresses: string[]; reqSigs: number };
 }
 
 interface BlockchairTransaction {
@@ -507,16 +437,10 @@ interface BlockchairSpendingBlockData {
 }
 
 interface BlockchairAddressResponse {
-  [key: string]: {
-    address: BlockchairAddressCoreData;
-    transactions: BlockchairTransaction[];
-    utxo: BlockchairUtxo[];
-  };
+  [key: string]: { address: BlockchairAddressCoreData; transactions: BlockchairTransaction[]; utxo: BlockchairUtxo[] };
 }
 
-interface BlockchairOutputsResponse
-  extends BlockchairSpendingBlockData,
-    BlockchairInputOutputCommonData {}
+interface BlockchairOutputsResponse extends BlockchairSpendingBlockData, BlockchairInputOutputCommonData {}
 
 interface BlockchairRawTransactionResponse {
   [key: string]: {
@@ -543,13 +467,7 @@ interface BlockchairResponse<T> {
     results: number;
     state: number;
     market_price_usd: number;
-    cache: {
-      live: boolean;
-      duration: number;
-      since: string;
-      until: string;
-      time: any;
-    };
+    cache: { live: boolean; duration: number; since: string; until: string; time: any };
     api: {
       version: string;
       last_major_update: string;

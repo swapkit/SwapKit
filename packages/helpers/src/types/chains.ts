@@ -1,6 +1,3 @@
-import { match } from "ts-pattern";
-import { SwapKitError } from "../modules/swapKitError";
-
 export enum Chain {
   Arbitrum = "ARB",
   Aurora = "AURORA",
@@ -151,11 +148,11 @@ export const BaseDecimal: Record<Chain, number> = {
   GNO: 18,
   KUJI: 6,
   LTC: 8,
-  POL: 18,
   MAYA: 8,
   NEAR: 24,
   NOBLE: 6,
   OP: 18,
+  POL: 18,
   SOL: 9,
   THOR: 8,
   TRON: 6,
@@ -224,13 +221,7 @@ export const EVMChains = [
   Chain.Polygon,
 ] as const;
 
-export type UTXOChain =
-  | Chain.Bitcoin
-  | Chain.BitcoinCash
-  | Chain.Dash
-  | Chain.Dogecoin
-  | Chain.Litecoin
-  | Chain.Zcash;
+export type UTXOChain = Chain.Bitcoin | Chain.BitcoinCash | Chain.Dash | Chain.Dogecoin | Chain.Litecoin | Chain.Zcash;
 
 export const UTXOChains = [
   Chain.Bitcoin,
@@ -242,13 +233,7 @@ export const UTXOChains = [
 ] as const;
 
 export type CosmosChain = Chain.Cosmos | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Noble;
-export const CosmosChains = [
-  Chain.Cosmos,
-  Chain.THORChain,
-  Chain.Maya,
-  Chain.Kujira,
-  Chain.Noble,
-] as const;
+export const CosmosChains = [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Noble] as const;
 export const CosmosChainPrefixes = {
   [Chain.Cosmos]: "cosmos",
   [Chain.THORChain]: "thor",
@@ -293,10 +278,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
 
-export const NODE_URLS: Record<
-  Chain.THORChain | Chain.Maya | StagenetChain.THORChain | StagenetChain.Maya,
-  string
-> = {
+export const NODE_URLS: Record<Chain.THORChain | Chain.Maya | StagenetChain.THORChain | StagenetChain.Maya, string> = {
   [Chain.THORChain]: "https://thornode.thorswap.net",
   [Chain.Maya]: "https://mayanode.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
@@ -304,27 +286,15 @@ export const NODE_URLS: Record<
 };
 
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
-  [Chain.Arbitrum]: [
-    "https://arb-mainnet.g.alchemy.com/v2/demo",
-    "https://arbitrum.blockpi.network/v1/rpc/public",
-  ],
+  [Chain.Arbitrum]: ["https://arb-mainnet.g.alchemy.com/v2/demo", "https://arbitrum.blockpi.network/v1/rpc/public"],
   [Chain.Aurora]: ["https://1rpc.io/aurora", "https://mainnet.aurora.dev"],
-  [Chain.Avalanche]: [
-    "https://api.avax.network/ext/bc/C/rpc",
-    "https://avalanche-c-chain-rpc.publicnode.com",
-  ],
+  [Chain.Avalanche]: ["https://api.avax.network/ext/bc/C/rpc", "https://avalanche-c-chain-rpc.publicnode.com"],
   [Chain.Base]: ["https://base.blockpi.network/v1/rpc/public", "https://1rpc.io/base"],
-  [Chain.BinanceSmartChain]: [
-    "https://bsc-rpc.gateway.pokt.network",
-    "https://bsc-dataseed2.binance.org",
-  ],
+  [Chain.BinanceSmartChain]: ["https://bsc-rpc.gateway.pokt.network", "https://bsc-dataseed2.binance.org"],
   [Chain.Berachain]: ["https://rpc.berachain.com", "https://berachain.drpc.org"],
   [Chain.Bitcoin]: ["https://bitcoin.publicnode.com"],
   [Chain.BitcoinCash]: ["https://bch-dataseed.binance.org", "https://bch.getblock.io/mainnet"],
-  [Chain.Chainflip]: [
-    "wss://archive-1.mainnet.chainflip.io",
-    "wss://archive-2.mainnet.chainflip.io",
-  ],
+  [Chain.Chainflip]: ["wss://archive-1.mainnet.chainflip.io", "wss://archive-2.mainnet.chainflip.io"],
   [Chain.Cosmos]: ["https://cosmos-rpc.publicnode.com"],
   [Chain.Dash]: ["https://dash-rpc.publicnode.com"],
   [Chain.Dogecoin]: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
@@ -342,19 +312,13 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   ],
   [Chain.Noble]: ["https://rpc.noble.xyz", "https://rpc.cosmos.directory/noble"],
   [Chain.Optimism]: ["https://optimism.llamarpc.com", "https://1rpc.io/op"],
-  [Chain.Polkadot]: [
-    "wss://polkadot-rpc.dwellir.com",
-    "wss://polkadot.api.onfinality.io/public-ws",
-  ],
+  [Chain.Polkadot]: ["wss://polkadot-rpc.dwellir.com", "wss://polkadot.api.onfinality.io/public-ws"],
   [Chain.Polygon]: ["https://polygon.llamarpc.com", "https://polygon-bor-rpc.publicnode.com"],
   [Chain.Radix]: ["https://mainnet.radixdlt.com", "https://radix-mainnet.rpc.grove.city/v1"],
   [Chain.Ripple]: ["wss://s1.ripple.com/", "wss://s2.ripple.com/"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
-  [Chain.Solana]: [
-    "https://api.mainnet-beta.solana.com",
-    "https://solana-mainnet.rpc.extrnode.com",
-  ],
+  [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://solana-mainnet.rpc.extrnode.com"],
   [Chain.Tron]: ["https://api.tronstack.io", "https://api.tron.network"],
   [Chain.Zcash]: [],
 };
@@ -389,129 +353,6 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Solana]: "https://solscan.io",
   [Chain.Tron]: "https://tronscan.org",
   [Chain.Zcash]: "https://blockchair.com/zcash",
-};
-
-let RPCUrlsMerged = RPC_URLS;
-
-const getRpcBody = (chain: Chain | StagenetChain) => {
-  return match(chain)
-    .with(
-      Chain.Arbitrum,
-      Chain.Aurora,
-      Chain.Avalanche,
-      Chain.Base,
-      Chain.Berachain,
-      Chain.BinanceSmartChain,
-      Chain.Ethereum,
-      Chain.Gnosis,
-      Chain.Optimism,
-      Chain.Polygon,
-      () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }),
-    )
-    .with(
-      Chain.Bitcoin,
-      Chain.Dogecoin,
-      Chain.BitcoinCash,
-      Chain.Dash,
-      Chain.Litecoin,
-      Chain.Zcash,
-      () => ({
-        id: "test",
-        jsonrpc: "1.0",
-        method: "getblockchaininfo",
-        params: [],
-      }),
-    )
-    .with(
-      Chain.Cosmos,
-      Chain.Kujira,
-      Chain.Noble,
-      Chain.Maya,
-      Chain.THORChain,
-      StagenetChain.Maya,
-      StagenetChain.THORChain,
-      () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }),
-    )
-    .with(Chain.Polkadot, Chain.Chainflip, () => ({
-      id: 1,
-      jsonrpc: "2.0",
-      method: "system_health",
-      params: [],
-    }))
-    .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
-    .with(Chain.Tron, Chain.Radix, Chain.Fiat, () => "")
-    .with(Chain.Near, () => ({
-      jsonrpc: "2.0",
-      id: "dontcare",
-      method: "status",
-      params: [],
-    }))
-    .with(Chain.Ripple, () => ({
-      method: "ping",
-      params: [{}],
-      id: 1,
-      jsonrpc: "2.0",
-    }))
-    .otherwise(() => {
-      throw new SwapKitError("helpers_chain_not_supported", { chain });
-    });
-};
-
-function getChainStatusEndpoint(chain: Chain | StagenetChain) {
-  return match(chain)
-    .with(Chain.Radix, () => "/status/network-configuration")
-    .with(Chain.Tron, () => "/wallet/getnowblock")
-    .otherwise(() => "");
-}
-
-const testRPCConnection = async (chain: Chain | StagenetChain, url: string) => {
-  try {
-    const endpoint = url.startsWith("wss") ? url.replace("wss", "https") : url;
-    const response = await fetch(`${endpoint}${getChainStatusEndpoint(chain)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(getRpcBody(chain)),
-      signal: AbortSignal.timeout(3000),
-    });
-
-    return response.ok;
-  } catch {
-    return false;
-  }
-};
-
-const getRPCUrlWithFallback = async (chain: Chain | StagenetChain) => {
-  const primaryUrl = RPC_URLS[chain];
-
-  if (await testRPCConnection(chain, primaryUrl)) {
-    return primaryUrl;
-  }
-
-  for (const fallbackUrl of FALLBACK_URLS[chain]) {
-    if (await testRPCConnection(chain, fallbackUrl)) {
-      return fallbackUrl;
-    }
-  }
-
-  return primaryUrl;
-};
-
-export const initializeRPCUrlsWithFallback = async (
-  chains: (Chain | StagenetChain)[] = [...Object.values(Chain), ...Object.values(StagenetChain)],
-) => {
-  const workingUrls: Record<Chain | StagenetChain, string> = {} as Record<
-    Chain | StagenetChain,
-    string
-  >;
-
-  await Promise.all(
-    chains.map(async (chain) => {
-      const workingUrl = await getRPCUrlWithFallback(chain);
-      workingUrls[chain] = workingUrl;
-    }),
-  );
-
-  RPCUrlsMerged = { ...RPCUrlsMerged, ...workingUrls };
 };
 
 const ChainToChainName = chains.reduce(

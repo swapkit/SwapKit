@@ -1,14 +1,9 @@
 export const list = {
-  provider: "CHAINFLIP",
-  name: "CHAINFLIP",
-  timestamp: "2025-07-30T16:01:25.340Z",
-  version: {
-    major: 1,
-    minor: 0,
-    patch: 0,
-  },
-  keywords: [],
   count: 10,
+  keywords: [],
+  name: "CHAINFLIP",
+  provider: "CHAINFLIP",
+  timestamp: "2025-07-30T16:01:25.340Z",
   tokens: [
     {
       chain: "ARB",
@@ -101,4 +96,5 @@ export const list = {
       ticker: "USDC",
     },
   ],
+  version: { major: 1, minor: 0, patch: 0 },
 } as const;

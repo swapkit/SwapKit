@@ -3,19 +3,19 @@ title: API Reference
 description: Complete reference for SwapKit API methods and endpoints
 ---
 
-import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
 
 The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/helpers/api` import.
 
 ## Getting Started
 
 ```typescript
-import { SwapKitApi } from '@swapkit/helpers/api';
+// @noErrorValidation
+import { SwapKitApi } from "@swapkit/helpers/api";
 
-// All methods are static - no initialization needed
 const price = await SwapKitApi.getPrice({
-  identifier: 'ETH.ETH',
-  currency: 'USD'
+  identifier: "ETH.ETH",
+  currency: "USD",
 });
 ```
 
@@ -23,47 +23,76 @@ const price = await SwapKitApi.getPrice({
 
 ### getSwapQuote
 
-Get swap quotes from multiple providers with best route selection:
+Get swap quotes from multiple providers with enhanced v4 features:
 
 ```typescript
+// @noErrorValidation
 const { routes } = await SwapKitApi.getSwapQuote({
   sellAsset: 'ETH.ETH',
-  sellAmount: '1000000000000000000', // 1 ETH in base units
+  sellAmount: '1000000000000000000',
   buyAsset: 'BTC.BTC',
-  sourceAddress: '0x...',             // Your ETH address
-  destinationAddress: 'bc1q...',     // Your BTC address
-  slippage: 3,                        // 3% slippage tolerance
-  providers: ['thorchain', 'chainflip', '1inch'], // Optional: specific providers
-  affiliate: 'your-affiliate-id',    // Optional: affiliate tracking
-  affiliateFee: 100                   // Optional: basis points (100 = 1%)
+  sourceAddress: '0x...',
+  destinationAddress: 'bc1q...',
+  slippage: 3,
+  providers: ['THORCHAIN', 'CHAINFLIP', 'UNISWAP_V3'],
+  affiliate: 'your-affiliate-id',
+  affiliateFee: 100,
+  prioritizeBy: 'output',
+  isStreaming: false,
+  streamingInterval: 10,
+  streamingQuantity: 5,
+  refundAddress: '0x...',
+  maxSlippage: 5
 });
 
-// Response structure
+
 {
   routes: [{
     providers: ['THORCHAIN'],
     sellAsset: 'ETH.ETH',
     sellAmount: '1000000000000000000',
     buyAsset: 'BTC.BTC',
-    expectedBuyAmount: '62500000',        // 0.625 BTC
-    expectedBuyAmountMaxSlippage: '60625000', // With 3% slippage
+    expectedBuyAmount: '62500000',
+    expectedBuyAmountMaxSlippage: '60625000',
     sourceAddress: '0x...',
     destinationAddress: 'bc1q...',
-    targetAddress: '0x...', // Contract to send to
+    targetAddress: '0x...',
     memo: 'SWAP:BTC.BTC:bc1q...',
     expiration: '2024-01-01T00:00:00Z',
+    priceImpact: 0.15,
     fee: {
       asset: 'ETH.ETH',
-      networkFee: '5000000000000000',     // Network fee
-      affiliateFee: '10000000000000000',  // Affiliate fee
-      totalFee: '15000000000000000'       // Total fees
+      networkFee: '5000000000000000',
+      protocolFee: '3000000000000000',
+      affiliateFee: '10000000000000000',
+      totalFee: '18000000000000000'
     },
     estimatedTime: {
-      inbound: 600,    // 10 minutes inbound
-      outbound: 600,   // 10 minutes outbound
-      total: 1200      // 20 minutes total
-    }
-  }]
+      inbound: 600,
+      outbound: 600,
+      total: 1200
+    },
+    warnings: [],
+    isStreaming: false,
+    streamingMeta: null,
+    legs: [
+      {
+        provider: 'THORCHAIN',
+        sellAsset: 'ETH.ETH',
+        buyAsset: 'BTC.BTC',
+        sellAmount: '1000000000000000000',
+        buyAmount: '62500000',
+        priceImpact: 0.15
+      }
+    ]
+  }],
+  meta: {
+    quoteId: 'quote_123456',
+    timestamp: 1704067200,
+    validFor: 300,
+    totalProviders: 15,
+    failedProviders: []
+  }
 }
 ```
 
@@ -74,27 +103,20 @@ const { routes } = await SwapKitApi.getSwapQuote({
 Get current asset prices:
 
 ```typescript
-// Single asset price
+// @noErrorValidation
+
 const priceData = await SwapKitApi.getPrice({
-  identifier: 'ETH.ETH',
-  currency: 'USD'  // Optional, defaults to USD
+  identifier: "ETH.ETH",
+  currency: "USD",
 });
-// Returns: [{ identifier: 'ETH.ETH', price: 2500.50 }]
 
-// Multiple assets
 const prices = await SwapKitApi.getPrice({
-  identifiers: ['ETH.ETH', 'BTC.BTC', 'AVAX.AVAX'],
-  currency: 'USD'
+  identifiers: ["ETH.ETH", "BTC.BTC", "AVAX.AVAX"],
+  currency: "USD",
 });
-// Returns: [
-//   { identifier: 'ETH.ETH', price: 2500.50 },
-//   { identifier: 'BTC.BTC', price: 45000.00 },
-//   { identifier: 'AVAX.AVAX', price: 35.20 }
-// ]
 
-// With specific token addresses
 const tokenPrice = await SwapKitApi.getPrice({
-  identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+  identifier: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 });
 ```
 
@@ -105,25 +127,25 @@ const tokenPrice = await SwapKitApi.getPrice({
 Get all token balances for an address on a specific chain with scam filtering:
 
 ```typescript
+// @noErrorValidation
 const balances = await SwapKitApi.getChainBalance({
-  chain: 'ETH',
-  address: '0x742d35Cc6634C0532925a3b844Bc9e7595f6E321',
-  scamFilter: true  // Optional, defaults to true
+  chain: "ETH",
+  address: "0x742d35Cc6634C0532925a3b844Bc9e7595f6E321",
+  scamFilter: true,
 });
 
-// Response includes native and token balances
 [
   {
-    identifier: 'ETH.ETH',
-    value: '1500000000000000000', // 1.5 ETH
-    decimal: 18
+    identifier: "ETH.ETH",
+    value: "1500000000000000000",
+    decimal: 18,
   },
   {
-    identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    value: '1000000000', // 1000 USDC
-    decimal: 6
-  }
-]
+    identifier: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    value: "1000000000",
+    decimal: 6,
+  },
+];
 ```
 
 ## Gas Rates
@@ -133,25 +155,26 @@ const balances = await SwapKitApi.getChainBalance({
 Get current gas rates for supported chains:
 
 ```typescript
-// Get gas rates for all chains
+// @noErrorValidation
+
 const gasRates = await SwapKitApi.getGasRate();
 
-// Response format
+
 {
   ETH: {
-    low: '20',      // Gwei
-    average: '25',  // Gwei
-    high: '30'      // Gwei
+    low: '12',
+    average: '18',
+    high: '25'
   },
   BTC: {
-    low: '5',       // Satoshis per byte
-    average: '10',  // Satoshis per byte
-    high: '15'      // Satoshis per byte
+    low: '8',
+    average: '15',
+    high: '25'
   },
   AVAX: {
-    low: '25',      // nAVAX
-    average: '30',  // nAVAX
-    high: '35'      // nAVAX
+    low: '25',
+    average: '30',
+    high: '40'
   }
 }
 ```
@@ -163,10 +186,11 @@ const gasRates = await SwapKitApi.getGasRate();
 Get comprehensive token metadata from a specific provider:
 
 ```typescript
-// Get tokens from a specific provider
+// @noErrorValidation
+
 const tokens = await SwapKitApi.getTokenList('UNISWAP_V2');
 
-// Response structure
+
 [
   {
     chain: 'ETH',
@@ -175,7 +199,7 @@ const tokens = await SwapKitApi.getTokenList('UNISWAP_V2');
     identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     decimals: 6,
-    logoURL: 'https://...',
+    logoURL: 'https:
     name: 'USD Coin'
   }
 ]
@@ -186,13 +210,14 @@ const tokens = await SwapKitApi.getTokenList('UNISWAP_V2');
 Get list of available token list providers:
 
 ```typescript
+// @noErrorValidation
 const providers = await SwapKitApi.getTokenListProviders();
 
-// Returns available providers
+
 [
-  { name: '1inch', url: 'https://...' },
-  { name: 'coingecko', url: 'https://...' },
-  { name: 'uniswap', url: 'https://...' }
+  { name: '1inch', url: 'https:
+  { name: 'coingecko', url: 'https:
+  { name: 'uniswap', url: 'https:
 ]
 ```
 
@@ -203,14 +228,15 @@ const providers = await SwapKitApi.getTokenListProviders();
 Track transaction status and progress:
 
 ```typescript
+// @noErrorValidation
 const status = await SwapKitApi.getTrackerDetails({
   txHash: '0x123...',
   chain: 'ETH',
-  provider: 'thorchain',  // Optional: specific provider
-  actionId: 'swap_123'    // Optional: action identifier
+  provider: 'thorchain',
+  actionId: 'swap_123'
 });
 
-// Response for swap transactions
+
 {
   status: 'completed',
   startTime: 1234567890,
@@ -232,10 +258,11 @@ const status = await SwapKitApi.getTrackerDetails({
 Get token list from static CDN:
 
 ```typescript
-// Get specific token list
+// @noErrorValidation
+
 const tokens = await SwapKitApi.getStaticTokenList('UNISWAP_V2');
 
-// Response contains comprehensive token data
+
 [
   {
     chain: 'ETH',
@@ -244,7 +271,7 @@ const tokens = await SwapKitApi.getStaticTokenList('UNISWAP_V2');
     identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     decimals: 6,
-    logoURL: 'https://static.thorswap.net/token-list/images/eth.usdc.png',
+    logoURL: 'https:
     name: 'USD Coin'
   }
 ]
@@ -255,13 +282,13 @@ const tokens = await SwapKitApi.getStaticTokenList('UNISWAP_V2');
 Get logo URL for any asset:
 
 ```typescript
-// Get asset logo
-const logoUrl = SwapKitApi.getLogoForAsset('ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48');
-// Returns: 'https://static.thorswap.net/token-list/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
+// @noErrorValidation
 
-// Native assets
-const ethLogo = SwapKitApi.getLogoForAsset('ETH.ETH');
-// Returns: 'https://static.thorswap.net/token-list/images/eth.eth.png'
+const logoUrl = SwapKitApi.getLogoForAsset(
+  "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+);
+
+const ethLogo = SwapKitApi.getLogoForAsset("ETH.ETH");
 ```
 
 ### getChainLogoForAsset
@@ -269,9 +296,11 @@ const ethLogo = SwapKitApi.getLogoForAsset('ETH.ETH');
 Get chain logo for any asset:
 
 ```typescript
-// Get chain logo
-const chainLogo = SwapKitApi.getChainLogoForAsset('ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48');
-// Returns: 'https://static.thorswap.net/token-list/images/eth.png'
+// @noErrorValidation
+
+const chainLogo = SwapKitApi.getChainLogoForAsset(
+  "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+);
 ```
 
 ### getProviderLogo
@@ -279,36 +308,348 @@ const chainLogo = SwapKitApi.getChainLogoForAsset('ETH.USDC-0xA0b86991c6218b36c1
 Get logo URL for token list providers:
 
 ```typescript
-const providerLogo = await SwapKitApi.getProviderLogo('1inch');
-// Returns: 'https://...'
+// @noErrorValidation
+const providerLogo = await SwapKitApi.getProviderLogo("1inch");
 ```
 
-## Provider-Specific APIs
+## New Provider Support
+
+### getProviders
+
+Get list of all supported swap providers with their capabilities:
+
+```typescript
+// @noErrorValidation
+const providers = await SwapKitApi.getProviders();
+
+
+[
+  {
+    name: 'CHAINFLIP',
+    provider: 'CHAINFLIP',
+    count: 45,
+    logoURI: 'https:
+    url: 'https:
+    keywords: ['defi', 'cross-chain', 'swap'],
+    enabledChainIds: ['1', '43114', '137', 'bitcoin', 'polkadot'],
+    supportedChainIds: ['1', '43114', '137', 'bitcoin', 'polkadot'],
+    supportedActions: ['swap']
+  },
+  {
+    name: 'THORCHAIN',
+    provider: 'THORCHAIN',
+    count: 128,
+    logoURI: 'https:
+    url: 'https:
+    keywords: ['defi', 'thorchain', 'native-swap'],
+    enabledChainIds: ['1', '43114', '56', 'bitcoin', 'thorchain-1'],
+    supportedChainIds: ['1', '43114', '56', 'bitcoin', 'thorchain-1'],
+    supportedActions: ['swap', 'addLiquidity', 'withdrawLiquidity', 'addSavers', 'withdrawSavers']
+  }
+
+]
+```
+
+### Enhanced getTokenList
+
+The token list API now supports provider-specific filtering:
+
+```typescript
+// @noErrorValidation
+
+const chainflipTokens = await SwapKitApi.getTokenList('CHAINFLIP');
+const jupiterTokens = await SwapKitApi.getTokenList('JUPITER');
+
+
+{
+  provider: 'CHAINFLIP',
+  chainId: '1',
+  name: 'Chainflip Token List',
+  timestamp: '2024-01-01T00:00:00Z',
+  version: { major: 1, minor: 0, patch: 0 },
+  keywords: ['chainflip', 'defi'],
+  count: 45,
+  tokens: [
+    {
+      chain: 'ETH',
+      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+      chainId: '1',
+      ticker: 'USDC',
+      identifier: 'ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+      symbol: 'USDC',
+      name: 'USD Coin',
+      decimals: 6,
+      logoURI: 'https:
+      extensions: {},
+      shortCode: 'USDC',
+      coingeckoId: 'usd-coin'
+    }
+  ]
+}
+```
+
+## Transaction Tracking
+
+### trackTransaction
+
+Track any transaction across all supported providers and chains:
+
+```typescript
+// @noErrorValidation
+
+const status = await SwapKitApi.trackTransaction({
+  hash: '0x123...',
+  chain: 'ETH'
+});
+
+
+const detailedStatus = await SwapKitApi.trackTransaction({
+  hash: '0x123...',
+  chain: 'ETH',
+  provider: 'THORCHAIN',
+  actionType: 'swap',
+  fromAddress: '0xabc...',
+  toAddress: 'bc1q...'
+});
+
+
+{
+  status: 'completed',
+  progress: {
+    current: 3,
+    total: 3,
+    percentage: 100
+  },
+  startTime: 1704067200,
+  endTime: 1704067800,
+  estimatedDuration: 600,
+  legs: [
+    {
+      chain: 'ETH',
+      hash: '0x123...',
+      status: 'completed',
+      blockHeight: 18900000,
+      confirmations: 12,
+      inAmount: '1000000000000000000',
+      outAmount: '0',
+      gasUsed: '21000',
+      gasPrice: '20000000000',
+      timestamp: 1704067200
+    },
+    {
+      chain: 'BTC',
+      hash: 'abc123...',
+      status: 'completed',
+      blockHeight: 820000,
+      confirmations: 2,
+      inAmount: '0',
+      outAmount: '6250000',
+      timestamp: 1704067800
+    }
+  ],
+  fees: {
+    networkFees: [
+      { chain: 'ETH', amount: '420000000000000', asset: 'ETH.ETH' },
+      { chain: 'BTC', amount: '1000', asset: 'BTC.BTC' }
+    ],
+    protocolFees: [
+      { amount: '3000000000000000', asset: 'ETH.ETH', type: 'liquidity' }
+    ],
+    affiliateFees: [
+      { amount: '1000000000000000', asset: 'ETH.ETH', recipient: 'your-affiliate' }
+    ]
+  },
+  errors: []
+}
+```
+
+## Address Screening
+
+### screenAddress
+
+Screen addresses for compliance and risk assessment:
+
+```typescript
+// @noErrorValidation
+
+const screening = await SwapKitApi.screenAddress({
+  address: '0x123...',
+  chain: 'ETH'
+});
+
+
+const detailedScreening = await SwapKitApi.screenAddress({
+  address: '0x123...',
+  chain: 'ETH',
+  amount: '1000000000000000000',
+  asset: 'ETH.ETH',
+  action: 'swap',
+  userCountry: 'US'
+});
+
+
+{
+  address: '0x123...',
+  chain: 'ETH',
+  riskScore: 0.15,
+  riskLevel: 'low',
+  sanctions: {
+    isBlocked: false,
+    lists: [],
+    lastUpdated: '2024-01-01T00:00:00Z'
+  },
+  categories: [
+    {
+      name: 'exchange',
+      confidence: 0.95,
+      source: 'chainalysis'
+    }
+  ],
+  labels: [
+    {
+      name: 'Binance Hot Wallet',
+      confidence: 0.92,
+      source: 'elliptic'
+    }
+  ],
+  compliance: {
+    kyc: {
+      required: false,
+      level: 0
+    },
+    jurisdiction: {
+      allowed: true,
+      restrictions: []
+    }
+  },
+  recommendation: 'proceed',
+  lastUpdated: '2024-01-01T00:00:00Z'
+}
+```
+
+## Gas History
+
+### getGasHistory
+
+Retrieve historical gas price data for better fee estimation:
+
+```typescript
+// @noErrorValidation
+
+const gasHistory = await SwapKitApi.getGasHistory({
+  chain: 'ETH',
+  period: '24h'
+});
+
+
+const customHistory = await SwapKitApi.getGasHistory({
+  chain: 'ETH',
+  startTime: 1704067200,
+  endTime: 1704153600,
+  interval: '1h'
+});
+
+
+{
+  chain: 'ETH',
+  period: '24h',
+  interval: '1h',
+  unit: 'gwei',
+  data: [
+    {
+      timestamp: 1704067200,
+      low: 18.5,
+      average: 22.1,
+      high: 28.7,
+      percentile95: 35.2,
+      volume: 145623,
+      utilization: 0.65
+    }
+
+  ],
+  statistics: {
+    min: 12.3,
+    max: 89.1,
+    mean: 24.7,
+    median: 21.8,
+    volatility: 0.23
+  },
+  recommendations: {
+    slow: 19.5,
+    standard: 22.1,
+    fast: 28.7,
+    instant: 35.2
+  }
+}
+```
+
+## NEAR Integration
+
+### createNearChannel
+
+Create deposit channels for NEAR-based swaps:
+
+```typescript
+// @noErrorValidation
+const nearChannel = await SwapKitApi.createNearChannel({
+  sellAsset: 'NEAR.NEAR',
+  buyAsset: 'ETH.ETH',
+  sellAmount: '10000000000000000000000000',
+  destinationAddress: '0x...',
+  slippage: 3,
+  affiliateAddress: 'your-near-account.near',
+  affiliateFee: 100
+});
+
+
+{
+  channelId: 'near_channel_123',
+  depositAddress: 'swap.near',
+  functionCall: {
+    contractId: 'swap.near',
+    methodName: 'swap',
+    args: {
+      destination_address: '0x...',
+      min_amount_out: '1450000000000000000'
+    },
+    gas: '50000000000000',
+    deposit: '10000000000000000000000001'
+  },
+  estimatedOutput: '1500000000000000000',
+  estimatedOutputWithSlippage: '1455000000000000000',
+  estimatedTime: 120,
+  expiresAt: 1704067800,
+  fees: {
+    protocolFee: '100000000000000000000000',
+    affiliateFee: '100000000000000000000000',
+    networkFee: '50000000000000000000000'
+  }
+}
+```
 
 ### Microgard API
 
 Access THORChain microgard services:
 
 ```typescript
-// Get THORName details
-const thorname = await SwapKitApi.microgard.getTHORNameDetails('myname');
+// @noErrorValidation
 
-// Get THORNames by owner
-const names = await SwapKitApi.microgard.getTHORNamesByOwner('thor1...');
+const thorname = await SwapKitApi.microgard.getTHORNameDetails("myname");
 
-// Get THORNames by address
-const names = await SwapKitApi.microgard.getTHORNamesByAddress('0x...');
+const names = await SwapKitApi.microgard.getTHORNamesByOwner("thor1...");
 
-// Get THORChain pools
-const pools = await SwapKitApi.microgard.getTHORChainPools('7d'); // '1h', '24h', '7d', '30d', '365d'
+const names = await SwapKitApi.microgard.getTHORNamesByAddress("0x...");
 
-// Get liquidity positions
-const positions = await SwapKitApi.microgard.getLiquidityPositions(['thor1...', 'thor2...']);
+const pools = await SwapKitApi.microgard.getTHORChainPools("7d");
 
-// Get TNS chain address
+const positions = await SwapKitApi.microgard.getLiquidityPositions([
+  "thor1...",
+  "thor2...",
+]);
+
 const address = await SwapKitApi.microgard.getTNSChainAddress({
-  chain: 'ETH',
-  tns: 'myname'
+  chain: "ETH",
+  tns: "myname",
 });
 ```
 
@@ -317,39 +658,32 @@ const address = await SwapKitApi.microgard.getTNSChainAddress({
 Direct access to THORChain node data:
 
 ```typescript
-// Get last block
-const lastBlock = await SwapKitApi.thornode.getLastBlock('thorchain'); // or 'mayachain'
+// @noErrorValidation
 
-// Get THORChain queue
+const lastBlock = await SwapKitApi.thornode.getLastBlock("thorchain");
+
 const queue = await SwapKitApi.thornode.getThorchainQueue();
 
-// Get node list
 const nodes = await SwapKitApi.thornode.getNodes();
 
-// Get Mimir settings
 const mimir = await SwapKitApi.thornode.getMimirInfo();
 
-// Get inbound addresses
 const inboundAddresses = await SwapKitApi.thornode.getInboundAddresses();
 
-// Get THORNode TNS details
 const tnsDetails = await SwapKitApi.thornode.getTHORNodeTNSDetails({
-  name: 'myname',
-  type: 'thorchain' // or 'mayachain'
+  name: "myname",
+  type: "thorchain",
 });
 
-// Get TNS preferred asset
 const preferredAsset = await SwapKitApi.thornode.getTNSPreferredAsset({
-  tns: 'myname',
-  type: 'thorchain'
+  tns: "myname",
+  type: "thorchain",
 });
 
-// Get RUNEPool info
 const runePool = await SwapKitApi.thornode.getRunePoolInfo();
 
-// Get RUNEPool provider info
 const providerInfo = await SwapKitApi.thornode.getRunePoolProviderInfo({
-  thorAddress: 'thor1...'
+  thorAddress: "thor1...",
 });
 ```
 
@@ -358,22 +692,26 @@ const providerInfo = await SwapKitApi.thornode.getRunePoolProviderInfo({
 Access THORChain and Maya midgard data:
 
 ```typescript
-// THORChain Midgard
-// Get liquidity position
-const thorLiquidity = await SwapKitApi.thorchainMidgard.getLiquidityPosition('thor1...');
+// @noErrorValidation
 
-// Get THORName details
-const thorName = await SwapKitApi.thorchainMidgard.getNameDetails('myname');
+const thorLiquidity = await SwapKitApi.thorchainMidgard.getLiquidityPosition(
+  "thor1..."
+);
 
-// Get THORNames by address
-const namesByAddress = await SwapKitApi.thorchainMidgard.getNamesByAddress('0x...');
+const thorName = await SwapKitApi.thorchainMidgard.getNameDetails("myname");
 
-// Get THORNames by owner
-const namesByOwner = await SwapKitApi.thorchainMidgard.getNamesByOwner('thor1...');
+const namesByAddress = await SwapKitApi.thorchainMidgard.getNamesByAddress(
+  "0x..."
+);
 
-// Maya Midgard - same methods available
-const mayaLiquidity = await SwapKitApi.mayachainMidgard.getLiquidityPosition('maya1...');
-const mayaName = await SwapKitApi.mayachainMidgard.getNameDetails('myname');
+const namesByOwner = await SwapKitApi.thorchainMidgard.getNamesByOwner(
+  "thor1..."
+);
+
+const mayaLiquidity = await SwapKitApi.mayachainMidgard.getLiquidityPosition(
+  "maya1..."
+);
+const mayaName = await SwapKitApi.mayachainMidgard.getNameDetails("myname");
 ```
 
 ### Chainflip
@@ -381,6 +719,7 @@ const mayaName = await SwapKitApi.mayachainMidgard.getNameDetails('myname');
 Create deposit channels for Chainflip swaps:
 
 ```typescript
+// @noErrorValidation
 const channel = await SwapKitApi.getChainflipDepositChannel({
   sellAsset: {
     chain: 'ETH',
@@ -391,34 +730,34 @@ const channel = await SwapKitApi.getChainflipDepositChannel({
     asset: 'BTC'
   },
   destinationAddress: 'bc1q...',
-  brokerCommissionBps: 100, // Optional: 1% commission
-  affiliateFees: [          // Optional: affiliate fees
+  brokerCommissionBps: 100,
+  affiliateFees: [
     {
       brokerAddress: '0x...',
       feeBps: 50
     }
   ],
-  channelMetadata: {        // Optional: additional parameters
+  channelMetadata: {
     cfParameters: '...',
     gasBudget: '1000000',
     message: 'Swap via SwapKit'
   },
-  refundParameters: {       // Optional: refund settings
+  refundParameters: {
     minPrice: '0.01',
     refundAddress: '0x...',
     retryDuration: 3600
   },
-  dcaParameters: {          // Optional: DCA settings
+  dcaParameters: {
     numberOfChunks: 10,
     chunkInterval: 600
   },
-  maxBoostFeeBps: 200      // Optional: max boost fee
+  maxBoostFeeBps: 200
 });
 
-// Response
+
 {
   depositChannelId: '123456',
-  depositAddress: '0x...', // Send funds here
+  depositAddress: '0x...',
   brokerCommissionBps: 100,
   estimatedExpiryTime: 1234567890,
   expiryBlock: 123456,
@@ -437,14 +776,15 @@ The SwapKit API has rate limits that vary by endpoint:
 Configure your API key in [Configuration](/start/configuration):
 
 ```typescript
-import { createSwapKit } from '@swapkit/sdk';
+// @noErrorValidation
+import { createSwapKit } from "@swapkit/sdk";
 
 const swapKit = createSwapKit({
   config: {
     apiKeys: {
-      swapKit: 'your-api-key'
-    }
-  }
+      swapKit: "your-api-key",
+    },
+  },
 });
 ```
 
@@ -453,18 +793,19 @@ const swapKit = createSwapKit({
 All API methods can throw errors that should be handled:
 
 ```typescript
+// @noErrorValidation
 import { SwapKitError } from '@swapkit/sdk';
 
 try {
   const quote = await SwapKitApi.getSwapQuote({...});
 } catch (error) {
   if (error instanceof SwapKitError) {
-    // Handle SwapKit-specific errors
+
     console.error('API Error:', error.message);
 
-    // Check for rate limiting
+
     if (error.code === 'api_rate_limit') {
-      // Wait and retry
+
     }
   }
 }
@@ -477,6 +818,7 @@ try {
 When getting swap quotes, the first route is typically the best:
 
 ```typescript
+// @noErrorValidation
 import { AssetValue } from '@swapkit/sdk';
 
 const { routes } = await SwapKitApi.getSwapQuote({...});
@@ -484,7 +826,7 @@ const { routes } = await SwapKitApi.getSwapQuote({...});
 if (routes.length > 0) {
   const bestRoute = routes[0];
 
-  // Check if route meets your requirements
+
   const minOutput = AssetValue.from({
     asset: bestRoute.buyAsset,
     value: bestRoute.expectedBuyAmountMaxSlippage,
@@ -502,18 +844,19 @@ if (routes.length > 0) {
 Calculate price impact for large swaps:
 
 ```typescript
+// @noErrorValidation
 const quote = await SwapKitApi.getSwapQuote({...});
 const route = quote.routes[0];
 
-// Get current prices
+
 const sellPrice = await SwapKitApi.getPrice(route.sellAsset);
 const buyPrice = await SwapKitApi.getPrice(route.buyAsset);
 
-// Calculate expected value
+
 const sellValue = Number(route.sellAmount) * sellPrice;
 const buyValue = Number(route.expectedBuyAmount) * buyPrice;
 
-// Calculate price impact
+
 const priceImpact = ((sellValue - buyValue) / sellValue) * 100;
 console.log(`Price impact: ${priceImpact.toFixed(2)}%`);
 ```
@@ -523,6 +866,7 @@ console.log(`Price impact: ${priceImpact.toFixed(2)}%`);
 Validate tokens before swapping:
 
 ```typescript
+// @noErrorValidation
 async function validateToken(identifier: string) {
   try {
     const token = await SwapKitApi.getTokenList(identifier);
@@ -530,7 +874,7 @@ async function validateToken(identifier: string) {
       valid: true,
       decimals: token.decimals,
       name: token.name,
-      logo: token.logoURL
+      logo: token.logoURL,
     };
   } catch {
     return { valid: false };
@@ -547,19 +891,20 @@ The `SKConfig` API provides methods to manage SwapKit's configuration at runtime
 ### Core Methods
 
 ```typescript
+// @noErrorValidation
 import { SKConfig } from '@swapkit/sdk';
 
-// Get configuration values
+
 const rpcUrls = SKConfig.get('rpcUrls');
 const apiKeys = SKConfig.get('apiKeys');
 const midgardUrls = SKConfig.get('midgardUrls');
 const apiHeaders = SKConfig.get('apiHeaders');
 
-// Set complete configuration
+
 SKConfig.set({
-  rpcUrls: { ETH: 'https://new-rpc.com' },
+  rpcUrls: { ETH: 'https://eth-mainnet.g.alchemy.com/v2/your-key',
   apiKeys: { swapKit: 'new-key' },
-  midgardUrls: { THOR: 'https://custom-midgard.com' },
+  midgardUrls: { THOR: 'https:
   apiHeaders: { midgard: { 'X-API-Key': 'secret' } }
 });
 ```
@@ -567,71 +912,75 @@ SKConfig.set({
 ### API Keys
 
 ```typescript
-// Set individual API keys
-SKConfig.setApiKey('swapKit', 'your-swapkit-key');
-SKConfig.setApiKey('blockchair', 'your-blockchair-key');
-SKConfig.setApiKey('walletConnectProjectId', 'your-wc-id');
+// @noErrorValidation
+
+SKConfig.setApiKey("swapKit", "your-swapkit-key");
+SKConfig.setApiKey("blockchair", "your-blockchair-key");
+SKConfig.setApiKey("walletConnectProjectId", "your-wc-id");
 ```
 
 ### RPC URLs
 
 ```typescript
+// @noErrorValidation
 import { Chain } from '@swapkit/sdk';
 
-// Set RPC URL for specific chain
-SKConfig.setRpcUrl(Chain.Ethereum, 'https://eth-mainnet.g.alchemy.com/v2/key');
-SKConfig.setRpcUrl(Chain.Avalanche, 'https://api.avax.network/ext/bc/C/rpc');
+
+SKConfig.setRpcUrl(Chain.Ethereum, 'https:
+SKConfig.setRpcUrl(Chain.Avalanche, 'https:
 ```
 
 ### Midgard URLs
 
 ```typescript
+// @noErrorValidation
 import { Chain } from '@swapkit/sdk';
 
-// Set custom Midgard URLs
-SKConfig.setMidgardUrl(Chain.THORChain, 'https://custom-midgard.com');
-SKConfig.setMidgardUrl(Chain.Maya, 'https://maya-midgard.com');
 
-// Note: When isStagenet is true, SwapKit automatically uses stagenet URLs:
-// - THORChain: https://stagenet-midgard.ninerealms.com
-// - Maya: https://stagenet-midgard.mayachain.info
+SKConfig.setMidgardUrl(Chain.THORChain, 'https:
+SKConfig.setMidgardUrl(Chain.Maya, 'https:
+
+
+
+
 ```
 
 ### API Headers
 
 ```typescript
-// Set headers for specific APIs
-SKConfig.setApiHeaders('midgard', {
-  'X-Client-ID': 'your-client-id'
+// @noErrorValidation
+
+SKConfig.setApiHeaders("midgard", {
+  "X-Client-ID": "your-client-id",
 });
 
-// Headers for THORNode API
-SKConfig.setApiHeaders('thornode', {
-  'X-Client-ID': 'your-client-id'
+SKConfig.setApiHeaders("thornode", {
+  "X-Client-ID": "your-client-id",
 });
 
-// Headers for SwapKit API (in addition to automatic x-api-key)
-SKConfig.setApiHeaders('swapkitApi', {
-  'X-API-Key': 'additional-api-key'
+SKConfig.setApiHeaders("swapkitApi", {
+  "X-API-Key": "additional-api-key",
 });
 ```
 
 ### Environment Settings
 
 ```typescript
-// Set environment flags
+// @noErrorValidation
+
 SKConfig.setEnv('isDev', true);
 SKConfig.setEnv('isStagenet', true);
 
-// API URLs
-SKConfig.setEnv('apiUrl', 'https://api.swapkit.dev');
-SKConfig.setEnv('devApiUrl', 'https://dev-api.swapkit.dev');
+
+SKConfig.setEnv('apiUrl', 'https:
+SKConfig.setEnv('devApiUrl', 'https:
 ```
 
 ### Integration Configurations
 
 ```typescript
-// Radix configuration
+// @noErrorValidation
+
 SKConfig.setIntegrationConfig('radix', {
   dAppDefinitionAddress: 'account_rdx...',
   applicationName: 'My dApp',
@@ -639,43 +988,45 @@ SKConfig.setIntegrationConfig('radix', {
   network: {
     networkId: 1,
     networkName: 'mainnet',
-    dashboardBase: 'https://dashboard.radixdlt.com'
+    dashboardBase: 'https:
   }
 });
 
-// Chainflip configuration
+
 SKConfig.setIntegrationConfig('chainflip', {
   useSDKBroker: true,
-  brokerUrl: 'https://broker.chainflip.io'
+  brokerUrl: 'https:
 });
 ```
 
 ### Explorer URLs
 
 ```typescript
-// Set custom explorer URLs
-SKConfig.setExplorerUrl(Chain.Ethereum, 'https://etherscan.io');
-SKConfig.setExplorerUrl(Chain.Bitcoin, 'https://blockstream.info');
+// @noErrorValidation
+
+SKConfig.setExplorerUrl(Chain.Ethereum, 'https:
+SKConfig.setExplorerUrl(Chain.Bitcoin, 'https:
 ```
 
 ### Complete Example
 
 ```typescript
+// @noErrorValidation
 import { SKConfig, Chain, StagenetChain } from '@swapkit/sdk';
 
-// Configure multiple settings at once
+
 SKConfig.set({
   apiKeys: {
     swapKit: process.env.SWAPKIT_API_KEY,
     blockchair: process.env.BLOCKCHAIR_API_KEY
   },
   rpcUrls: {
-    [Chain.Ethereum]: 'https://eth-mainnet.g.alchemy.com/v2/key',
-    [Chain.Polygon]: 'https://polygon-rpc.com'
+    [Chain.Ethereum]: 'https:
+    [Chain.Polygon]: 'https:
   },
   midgardUrls: {
-    [Chain.THORChain]: 'https://private-midgard.com',
-    [StagenetChain.THORChain]: 'https://stagenet-midgard.com'
+    [Chain.THORChain]: 'https:
+    [StagenetChain.THORChain]: 'https:
   },
   apiHeaders: {
     midgard: {
@@ -691,10 +1042,10 @@ SKConfig.set({
   }
 });
 
-// Later, update individual settings
+
 if (userPrefersTestnet) {
   SKConfig.setEnv('isStagenet', true);
-  // Midgard URLs automatically switch to stagenet when isStagenet is true
+
 }
 ```
 
@@ -703,23 +1054,21 @@ if (userPrefersTestnet) {
 SwapKit provides a unified fee multiplier system across all chains:
 
 ```typescript
-import { FeeOption, getFeeMultiplier } from '@swapkit/sdk';
+// @noErrorValidation
+import { FeeOption, getFeeMultiplier } from "@swapkit/sdk";
 
-// Get fee multiplier for different options
-const slowMultiplier = getFeeMultiplier(FeeOption.Slow);      // 0.75x
-const avgMultiplier = getFeeMultiplier(FeeOption.Average);    // 1x (default)
-const fastMultiplier = getFeeMultiplier(FeeOption.Fast);      // 1.5x
-const fastestMultiplier = getFeeMultiplier(FeeOption.Fastest); // 2.25x
+const slowMultiplier = getFeeMultiplier(FeeOption.Slow);
+const avgMultiplier = getFeeMultiplier(FeeOption.Average);
+const fastMultiplier = getFeeMultiplier(FeeOption.Fast);
+const fastestMultiplier = getFeeMultiplier(FeeOption.Fastest);
 
-// Apply to fee calculations
-const baseFee = 1000000; // Base fee in smallest unit
+const baseFee = 1000000;
 const fastFee = Math.floor(baseFee * getFeeMultiplier(FeeOption.Fast));
 
-// Use in transfers
 await wallet.transfer({
   recipient: "0x...",
   assetValue: AssetValue.from({ chain: Chain.Ethereum, value: "1" }),
-  feeOptionKey: FeeOption.Fast // Automatically applies 1.5x multiplier
+  feeOptionKey: FeeOption.Fast,
 });
 ```
 
@@ -730,6 +1079,313 @@ await wallet.transfer({
 - **Runtime Updates**: All configuration can be updated dynamically without recreating SwapKit instances
 - **Environment-Based Config**: Easily switch between development, staging, and production environments
 - **Unified Fee System**: Consistent fee multipliers across all supported chains
+
+## TypeScript Type Definitions
+
+All SwapKit API methods are fully typed. Here are the comprehensive type definitions:
+
+```typescript
+// @noErrorValidation
+
+interface SwapQuoteRequest {
+  sellAsset: string;
+  sellAmount: string;
+  buyAsset: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  slippage?: number;
+  providers?: ProviderName[];
+  affiliate?: string;
+  affiliateFee?: number;
+  prioritizeBy?: "output" | "time" | "fees";
+  isStreaming?: boolean;
+  streamingInterval?: number;
+  streamingQuantity?: number;
+  refundAddress?: string;
+  maxSlippage?: number;
+}
+
+interface SwapQuoteResponse {
+  routes: SwapRoute[];
+  meta: QuoteMeta;
+}
+
+interface SwapRoute {
+  providers: ProviderName[];
+  sellAsset: string;
+  sellAmount: string;
+  buyAsset: string;
+  expectedBuyAmount: string;
+  expectedBuyAmountMaxSlippage: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  targetAddress: string;
+  memo: string;
+  expiration: string;
+  priceImpact: number;
+  fee: RouteFees;
+  estimatedTime: TimeEstimate;
+  warnings: string[];
+  isStreaming: boolean;
+  streamingMeta?: StreamingMeta;
+  legs: RouteLeg[];
+}
+
+interface RouteFees {
+  asset: string;
+  networkFee: string;
+  protocolFee: string;
+  affiliateFee: string;
+  totalFee: string;
+}
+
+interface TimeEstimate {
+  inbound: number;
+  outbound: number;
+  total: number;
+}
+
+type ProviderName =
+  | "THORCHAIN"
+  | "THORCHAIN_STREAMING"
+  | "CHAINFLIP"
+  | "CHAINFLIP_STREAMING"
+  | "MAYACHAIN"
+  | "MAYACHAIN_STREAMING"
+  | "UNISWAP_V2"
+  | "UNISWAP_V3"
+  | "SUSHISWAP_V2"
+  | "PANCAKESWAP"
+  | "TRADERJOE_V2"
+  | "PANGOLIN_V1"
+  | "CAMELOT_V3"
+  | "CAVIAR_V1"
+  | "OCISWAP_V1"
+  | "OPENOCEAN_V2"
+  | "JUPITER"
+  | "ONEINCH"
+  | "OKX"
+  | "NEAR";
+
+interface Provider {
+  name: ProviderName;
+  provider: ProviderName;
+  count: number;
+  logoURI?: string;
+  url?: string;
+  keywords: string[];
+  enabledChainIds: ChainId[];
+  supportedChainIds: ChainId[];
+  supportedActions: ProviderAction[];
+}
+
+type ProviderAction =
+  | "swap"
+  | "aggregation"
+  | "addLiquidity"
+  | "withdrawLiquidity"
+  | "addSavers"
+  | "withdrawSavers"
+  | "borrow"
+  | "repay"
+  | "name"
+  | "donate"
+  | "claim"
+  | "stake"
+  | "unstake";
+
+type ChainId =
+  | "1"
+  | "0x1"
+  | "56"
+  | "0x38"
+  | "137"
+  | "0x89"
+  | "43114"
+  | "0xa86a"
+  | "42161"
+  | "0xa4b1"
+  | "10"
+  | "0xa"
+  | "8453"
+  | "0x2105"
+  | "100"
+  | "0x64"
+  | "bitcoin"
+  | "litecoin"
+  | "bitcoincash"
+  | "dogecoin"
+  | "dash"
+  | "thorchain-1"
+  | "thorchain-stagenet-v2"
+  | "mayachain-mainnet-v1"
+  | "mayachain-stagenet-v1"
+  | "cosmoshub-4"
+  | "noble-1"
+  | "kaiyo-1"
+  | "solana"
+  | "near"
+  | "ripple"
+  | "polkadot"
+  | "radix-mainnet"
+  | "728126428"
+  | "0x2b6653dc"
+  | "zcash"
+  | "chainflip"
+  | "fiat";
+
+interface TokenInfo {
+  chain: string;
+  address?: string;
+  chainId: ChainId;
+  ticker: string;
+  identifier: string;
+  symbol: string;
+  name?: string;
+  decimals: number;
+  logoURI?: string;
+  extensions?: Record<string, any>;
+  shortCode?: string;
+  coingeckoId?: string;
+}
+
+interface TrackTransactionRequest {
+  hash: string;
+  chain: string;
+  provider?: ProviderName;
+  actionType?: string;
+  fromAddress?: string;
+  toAddress?: string;
+}
+
+interface TransactionStatus {
+  status: "pending" | "processing" | "completed" | "failed";
+  progress: {
+    current: number;
+    total: number;
+    percentage: number;
+  };
+  startTime: number;
+  endTime?: number;
+  estimatedDuration?: number;
+  legs: TransactionLeg[];
+  fees: TransactionFees;
+  errors: TransactionError[];
+}
+
+interface TransactionLeg {
+  chain: string;
+  hash: string;
+  status: string;
+  blockHeight?: number;
+  confirmations?: number;
+  inAmount: string;
+  outAmount: string;
+  gasUsed?: string;
+  gasPrice?: string;
+  timestamp: number;
+}
+
+interface ScreenAddressRequest {
+  address: string;
+  chain: string;
+  amount?: string;
+  asset?: string;
+  action?: string;
+  userCountry?: string;
+}
+
+interface AddressScreeningResult {
+  address: string;
+  chain: string;
+  riskScore: number;
+  riskLevel: "low" | "medium" | "high" | "blocked";
+  sanctions: SanctionsInfo;
+  categories: RiskCategory[];
+  labels: AddressLabel[];
+  compliance: ComplianceInfo;
+  recommendation: "proceed" | "review" | "block";
+  lastUpdated: string;
+}
+
+interface SanctionsInfo {
+  isBlocked: boolean;
+  lists: string[];
+  lastUpdated: string;
+}
+
+interface GasHistoryRequest {
+  chain: string;
+  period?: "1h" | "6h" | "24h" | "7d" | "30d";
+  startTime?: number;
+  endTime?: number;
+  interval?: "5m" | "15m" | "1h" | "4h" | "1d";
+}
+
+interface GasHistoryResponse {
+  chain: string;
+  period: string;
+  interval: string;
+  unit: string;
+  data: GasDataPoint[];
+  statistics: GasStatistics;
+  recommendations: GasRecommendations;
+}
+
+interface GasDataPoint {
+  timestamp: number;
+  low: number;
+  average: number;
+  high: number;
+  percentile95: number;
+  volume: number;
+  utilization: number;
+}
+
+interface CreateNearChannelRequest {
+  sellAsset: string;
+  buyAsset: string;
+  sellAmount: string;
+  destinationAddress: string;
+  slippage?: number;
+  affiliateAddress?: string;
+  affiliateFee?: number;
+}
+
+interface NearChannelResponse {
+  channelId: string;
+  depositAddress: string;
+  functionCall: NearFunctionCall;
+  estimatedOutput: string;
+  estimatedOutputWithSlippage: string;
+  estimatedTime: number;
+  expiresAt: number;
+  fees: NearChannelFees;
+}
+
+interface ChainBalance {
+  identifier: string;
+  value: string;
+  decimal: number;
+}
+
+interface PriceRequest {
+  identifier?: string;
+  identifiers?: string[];
+  currency?: string;
+}
+
+interface PriceData {
+  identifier: string;
+  price: number;
+}
+
+interface SwapKitApiError {
+  error: string;
+  message: string;
+  data?: any;
+}
+```
 
 ## Next Steps
 

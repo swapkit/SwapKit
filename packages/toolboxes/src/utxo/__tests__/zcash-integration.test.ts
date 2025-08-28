@@ -3,8 +3,7 @@ import { Chain, DerivationPath } from "@swapkit/helpers";
 import { getUtxoToolbox } from "../toolbox";
 
 describe("UTXO Toolbox Zcash Integration", () => {
-  const testPhrase =
-    "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
+  const testPhrase = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
 
   it("should create Zcash toolbox through main UTXO toolbox factory", async () => {
     const toolbox = await getUtxoToolbox(Chain.Zcash);
@@ -19,18 +18,14 @@ describe("UTXO Toolbox Zcash Integration", () => {
   });
 
   it("should create Zcash toolbox with phrase", async () => {
-    const toolbox = await getUtxoToolbox(Chain.Zcash, {
-      phrase: testPhrase,
-    });
+    const toolbox = await getUtxoToolbox(Chain.Zcash, { phrase: testPhrase });
 
     expect(toolbox).toBeDefined();
     expect(() => toolbox.getAddress()).not.toThrow();
   });
 
   it("should generate valid Zcash addresses", async () => {
-    const toolbox = await getUtxoToolbox(Chain.Zcash, {
-      phrase: testPhrase,
-    });
+    const toolbox = await getUtxoToolbox(Chain.Zcash, { phrase: testPhrase });
 
     const address = await toolbox.getAddress();
     expect(address).toBeDefined();
@@ -65,9 +60,7 @@ describe("UTXO Toolbox Zcash Integration", () => {
       warnMessage = message;
     };
 
-    const isValid = toolbox.validateAddress(
-      "zs1z7rejlpsa98s2rrrfkwmaxu2xldqmfq5nj2m3hq6s7r8qjq8eqqqq9p4e7x",
-    );
+    const isValid = toolbox.validateAddress("zs1z7rejlpsa98s2rrrfkwmaxu2xldqmfq5nj2m3hq6s7r8qjq8eqqqq9p4e7x");
 
     expect(isValid).toBe(false);
     expect(warnCalled).toBe(true);
@@ -79,14 +72,9 @@ describe("UTXO Toolbox Zcash Integration", () => {
   });
 
   it("should create keys for derivation path", async () => {
-    const toolbox = await getUtxoToolbox(Chain.Zcash, {
-      phrase: testPhrase,
-    });
+    const toolbox = await getUtxoToolbox(Chain.Zcash, { phrase: testPhrase });
 
-    const keys = await toolbox.createKeysForPath({
-      phrase: testPhrase,
-      derivationPath: DerivationPath.ZEC,
-    });
+    const keys = await toolbox.createKeysForPath({ derivationPath: DerivationPath.ZEC, phrase: testPhrase });
 
     expect(keys).toBeDefined();
     expect(keys.publicKey).toBeDefined();
@@ -99,14 +87,9 @@ describe("UTXO Toolbox Zcash Integration", () => {
   });
 
   it("should get WIF private key from mnemonic", async () => {
-    const toolbox = await getUtxoToolbox(Chain.Zcash, {
-      phrase: testPhrase,
-    });
+    const toolbox = await getUtxoToolbox(Chain.Zcash, { phrase: testPhrase });
 
-    const wif = await toolbox.getPrivateKeyFromMnemonic({
-      phrase: testPhrase,
-      derivationPath: DerivationPath.ZEC,
-    });
+    const wif = await toolbox.getPrivateKeyFromMnemonic({ derivationPath: DerivationPath.ZEC, phrase: testPhrase });
 
     expect(typeof wif).toBe("string");
     expect(wif.length).toBeGreaterThan(50); // WIF keys are typically 51-52 characters

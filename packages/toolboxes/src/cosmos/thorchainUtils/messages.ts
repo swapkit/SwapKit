@@ -1,12 +1,7 @@
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
 import { AssetValue, Chain, ChainToChainId, SwapKitError } from "@swapkit/helpers";
 
-import {
-  createStargateClient,
-  getDefaultChainFee,
-  getDenomWithChain,
-  getMsgSendDenom,
-} from "../util";
+import { createStargateClient, getDefaultChainFee, getDenomWithChain, getMsgSendDenom } from "../util";
 
 import { createDefaultAminoTypes, createDefaultRegistry } from "./registry";
 import type { ThorchainCreateTransactionParams } from "./types";
@@ -14,9 +9,7 @@ import type { ThorchainCreateTransactionParams } from "./types";
 type MsgSend = ReturnType<typeof transferMsgAmino>;
 type MsgDeposit = ReturnType<typeof depositMsgAmino>;
 type DirectMsgSendForBroadcast = ReturnType<typeof parseAminoMessageForDirectSigning<MsgSend>>;
-type DirectMsgDepositForBroadcast = ReturnType<
-  typeof parseAminoMessageForDirectSigning<MsgDeposit>
->;
+type DirectMsgDepositForBroadcast = ReturnType<typeof parseAminoMessageForDirectSigning<MsgDeposit>>;
 
 export const THORCHAIN_GAS_VALUE = getDefaultChainFee(Chain.THORChain).gas;
 export const MAYA_GAS_VALUE = getDefaultChainFee(Chain.Maya).gas;
@@ -34,14 +27,9 @@ export const transferMsgAmino = ({
   return {
     type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend` as const,
     value: {
+      amount: [{ amount: assetValue.getBaseValue("string"), denom: getMsgSendDenom(assetValue.symbol, true) }],
       from_address: sender,
       to_address: recipient,
-      amount: [
-        {
-          amount: assetValue.getBaseValue("string"),
-          denom: getMsgSendDenom(assetValue.symbol, true),
-        },
-      ],
     },
   };
 };
@@ -59,14 +47,9 @@ export const depositMsgAmino = ({
   return {
     type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgDeposit` as const,
     value: {
-      coins: [
-        {
-          amount: assetValue.getBaseValue("string"),
-          asset: getDenomWithChain(assetValue),
-        },
-      ],
-      signer: sender,
+      coins: [{ amount: assetValue.getBaseValue("string"), asset: getDenomWithChain(assetValue) }],
       memo,
+      signer: sender,
     },
   };
 };
@@ -84,16 +67,13 @@ export const buildAminoMsg = ({
 }) => {
   const isDeposit = !recipient;
   const msg = isDeposit
-    ? depositMsgAmino({ sender, assetValue, memo })
-    : transferMsgAmino({ sender, recipient, assetValue });
+    ? depositMsgAmino({ assetValue, memo, sender })
+    : transferMsgAmino({ assetValue, recipient, sender });
 
   return msg;
 };
 
-export const convertToSignable = async (
-  msg: MsgSend | MsgDeposit,
-  chain: Chain.THORChain | Chain.Maya,
-) => {
+export const convertToSignable = async (msg: MsgSend | MsgDeposit, chain: Chain.THORChain | Chain.Maya) => {
   const aminoTypes = await createDefaultAminoTypes(chain);
 
   return aminoTypes.fromAmino(msg);
@@ -115,23 +95,10 @@ export function getCreateTransaction(rpcUrl: string) {
     const { assetValue, recipient, memo, sender, asSignable, asAminoMessage } = params;
 
     if (recipient) {
-      return buildTransferTx(rpcUrl)({
-        sender,
-        recipient,
-        assetValue,
-        memo,
-        asSignable,
-        asAminoMessage,
-      });
+      return buildTransferTx(rpcUrl)({ asAminoMessage, asSignable, assetValue, memo, recipient, sender });
     }
 
-    return buildDepositTx(rpcUrl)({
-      sender,
-      assetValue,
-      memo,
-      asSignable,
-      asAminoMessage,
-    });
+    return buildDepositTx(rpcUrl)({ asAminoMessage, asSignable, assetValue, memo, sender });
   };
 }
 
@@ -150,26 +117,19 @@ export const buildTransferTx =
     const account = await getAccount({ rpcUrl, sender });
     const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
-    const transferMsg = transferMsgAmino({
-      sender,
-      recipient,
-      assetValue,
-    });
+    const transferMsg = transferMsgAmino({ assetValue, recipient, sender });
 
     const msg = asSignable
-      ? await convertToSignable(
-          asAminoMessage ? transferMsg : parseAminoMessageForDirectSigning(transferMsg),
-          chain,
-        )
+      ? await convertToSignable(asAminoMessage ? transferMsg : parseAminoMessageForDirectSigning(transferMsg), chain)
       : transferMsg;
 
     const transaction = {
-      chainId: ChainToChainId[chain],
       accountNumber: accountNumber || account.accountNumber,
-      sequence: sequence || account.sequence,
-      msgs: [msg],
+      chainId: ChainToChainId[chain],
       fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
       memo,
+      msgs: [msg],
+      sequence: sequence || account.sequence,
     };
 
     return transaction;
@@ -189,7 +149,7 @@ export const buildDepositTx =
     const account = await getAccount({ rpcUrl, sender });
     const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
 
-    const depositMsg = depositMsgAmino({ sender, assetValue, memo });
+    const depositMsg = depositMsgAmino({ assetValue, memo, sender });
 
     const msg = asSignable
       ? await convertToSignable(
@@ -199,12 +159,12 @@ export const buildDepositTx =
       : depositMsg;
 
     const transaction = {
-      chainId: ChainToChainId[chain],
       accountNumber: accountNumber || account.accountNumber,
-      sequence: sequence || account.sequence,
-      msgs: [msg],
+      chainId: ChainToChainId[chain],
       fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
       memo,
+      msgs: [msg],
+      sequence: sequence || account.sequence,
     };
 
     return transaction;
@@ -220,22 +180,10 @@ export function parseAminoMessageForDirectSigning<T extends MsgDeposit | MsgSend
       coins: (msg as MsgDeposit).value.coins.map((coin: { asset: string; amount: string }) => {
         const assetValue = AssetValue.from({ asset: coin.asset });
 
-        const symbol = (
-          assetValue.isSynthetic ? assetValue.symbol.split("/")?.[1] : assetValue.symbol
-        )?.toUpperCase();
-        const chain = (
-          assetValue.isSynthetic ? assetValue.symbol.split("/")?.[0] : assetValue.chain
-        )?.toUpperCase();
+        const symbol = (assetValue.isSynthetic ? assetValue.symbol.split("/")?.[1] : assetValue.symbol)?.toUpperCase();
+        const chain = (assetValue.isSynthetic ? assetValue.symbol.split("/")?.[0] : assetValue.chain)?.toUpperCase();
 
-        return {
-          ...coin,
-          asset: {
-            chain,
-            symbol,
-            ticker: assetValue.ticker,
-            synth: assetValue.isSynthetic,
-          },
-        };
+        return { ...coin, asset: { chain, symbol, synth: assetValue.isSynthetic, ticker: assetValue.ticker } };
       }),
     },
   };

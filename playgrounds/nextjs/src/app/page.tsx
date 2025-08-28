@@ -20,7 +20,6 @@ import {
 } from "~/components/ui/select";
 import { useSwapKit } from "~/lib/swapKit";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: ignore
 export default function SwapPage() {
   const { balances, swapKit, isWalletConnected } = useSwapKit();
   const [inputAsset, setInputAsset] = useState<string>();
@@ -46,10 +45,7 @@ export default function SwapPage() {
       {} as Record<Chain, AssetValue[]>,
     );
 
-    return {
-      chains: Object.keys(balanceGroupedByChain) as Chain[],
-      balanceGroupedByChain,
-    };
+    return { balanceGroupedByChain, chains: Object.keys(balanceGroupedByChain) as Chain[] };
   }, [balances]);
 
   const handleSwap = async (route: QuoteResponseRoute) => {
@@ -57,9 +53,7 @@ export default function SwapPage() {
 
     try {
       setIsSwapping(true);
-      const swap = await swapKit.swap({
-        route,
-      });
+      const swap = await swapKit.swap({ route });
 
       await swap.wait();
       setAmount("");
@@ -98,9 +92,7 @@ export default function SwapPage() {
       }
     } catch (error) {
       console.error("Swap process failed:", error);
-      toast.error(
-        `Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -116,13 +108,13 @@ export default function SwapPage() {
       const destinationAddress = swapKit.getAddress(outputAsset.split(".")[0] as Chain);
 
       const quote = await SwapKitApi.getSwapQuote({
-        sellAsset: inputAsset,
         buyAsset: outputAsset,
-        sellAmount: amount,
-        sourceAddress,
         destinationAddress,
-        slippage: 3,
         includeTx: true,
+        sellAmount: amount,
+        sellAsset: inputAsset,
+        slippage: 3,
+        sourceAddress,
       });
 
       if (quote?.routes?.length) {
@@ -131,9 +123,7 @@ export default function SwapPage() {
       }
     } catch (error) {
       console.error("Failed to get quote:", error);
-      toast.error(
-        `Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`);
       setEstimatedOutput(undefined);
       setRoutes([]);
     }
@@ -149,9 +139,7 @@ export default function SwapPage() {
         <CardTitle className="flex items-center justify-between">
           <span>Swap</span>
           {!isWalletConnected && (
-            <span className="text-sm font-normal text-muted-foreground">
-              Connect wallet to start swapping
-            </span>
+            <span className="font-normal text-muted-foreground text-sm">Connect wallet to start swapping</span>
           )}
         </CardTitle>
       </CardHeader>
@@ -160,7 +148,7 @@ export default function SwapPage() {
         <div className="space-y-4">
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Select value={inputAsset} onValueChange={setInputAsset}>
+              <Select onValueChange={setInputAsset} value={inputAsset}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select input asset" />
                 </SelectTrigger>
@@ -171,11 +159,9 @@ export default function SwapPage() {
                         <SelectLabel>{chain}</SelectLabel>
                         {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
                           <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                            <div className="flex items-center justify-between w-full">
+                            <div className="flex w-full items-center justify-between">
                               <span>{assetValue.symbol}</span>
-                              <span className="text-muted-foreground">
-                                {assetValue.getValue("number").toFixed(6)}
-                              </span>
+                              <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -185,11 +171,11 @@ export default function SwapPage() {
                 </SelectContent>
               </Select>
               <Input
-                type="number"
-                placeholder="Amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
                 disabled={!inputAsset || isSwapping}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Amount"
+                type="number"
+                value={amount}
               />
             </div>
 
@@ -199,22 +185,21 @@ export default function SwapPage() {
               </div>
               <div className="relative flex justify-center">
                 <Button
-                  variant="outline"
-                  size="icon"
-                  className="bg-background h-8 w-8"
+                  className="h-8 w-8 bg-background"
                   onClick={() => {
                     const temp = inputAsset;
                     setInputAsset(outputAsset);
                     setOutputAsset(temp);
                   }}
-                >
+                  size="icon"
+                  variant="outline">
                   <ArrowDownUp className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
             <div className="grid gap-2">
-              <Select value={outputAsset} onValueChange={setOutputAsset}>
+              <Select onValueChange={setOutputAsset} value={outputAsset}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select output asset" />
                 </SelectTrigger>
@@ -225,11 +210,9 @@ export default function SwapPage() {
                         <SelectLabel>{chain}</SelectLabel>
                         {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
                           <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                            <div className="flex items-center justify-between w-full">
+                            <div className="flex w-full items-center justify-between">
                               <span>{assetValue.symbol}</span>
-                              <span className="text-muted-foreground">
-                                {assetValue.getValue("number").toFixed(6)}
-                              </span>
+                              <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -239,9 +222,7 @@ export default function SwapPage() {
                 </SelectContent>
               </Select>
               {estimatedOutput && (
-                <div className="text-sm text-muted-foreground text-right">
-                  Expected output: {estimatedOutput}
-                </div>
+                <div className="text-right text-muted-foreground text-sm">Expected output: {estimatedOutput}</div>
               )}
             </div>
           </div>
@@ -255,21 +236,14 @@ export default function SwapPage() {
           onClick={async () => {
             if (!(routes.length && inputAsset)) return;
             try {
-              const assetValue = await AssetValue.from({
-                asyncTokenLookup: true,
-                asset: inputAsset,
-                amount,
-              });
+              const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
               const amountValue = assetValue.set(amount);
               await swap(routes[0], amountValue);
             } catch (error) {
               console.error("Failed to prepare swap:", error);
-              toast.error(
-                `Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`,
-              );
+              toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
             }
-          }}
-        >
+          }}>
           {isSwapping ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -1,0 +1,820 @@
+---
+title: Keplr Browser Extension Integration
+description: Complete guide to integrating Keplr wallet with SwapKit SDK v4 for Cosmos ecosystem support
+---
+
+Keplr is the leading browser extension wallet for the Cosmos ecosystem, providing secure access to Cosmos-based networks. SwapKit SDK v4 offers comprehensive support for Keplr, enabling seamless integration with Cosmos, THORChain, and other IBC-enabled chains.
+
+## Supported Chains
+
+SwapKit supports Keplr for these Cosmos ecosystem chains:
+
+- **Cosmos Hub (GAIA)**: The main Cosmos network
+- **THORChain**: Cross-chain liquidity protocol
+- **Kujira**: DeFi-focused Cosmos chain
+- **Noble**: USDC issuer for Cosmos
+- **Custom IBC Chains**: Any Cosmos SDK-based chain
+
+## Installation and Setup
+
+### 1. Install Keplr Extension
+
+Install Keplr from the official sources:
+
+- **Chrome/Chromium**: [Chrome Web Store](https:
+- **Firefox**: [Firefox Add-ons](https:
+- **Brave**: Available through Chrome Web Store
+
+### 2. Set Up Keplr Wallet
+
+1. Create a new wallet or import existing one using your seed phrase
+2. Set up a secure password
+3. The wallet will automatically include major Cosmos chains
+4. Additional chains can be added as needed
+
+### 3. Browser Requirements
+
+Keplr works in:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support
+- **Brave**: Full support
+- **Edge**: Full support
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...keplrWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting Keplr
+
+#### Basic Cosmos Connection
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+async function connectKeplr() {
+  try {
+    await swapKit.connectKeplr([Chain.Cosmos]);
+
+    const address = swapKit.getAddress(Chain.Cosmos);
+    const balance = await swapKit.getBalance(Chain.Cosmos, true);
+
+    console.log("Cosmos address:", address);
+    console.log("ATOM balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect Keplr:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+async function connectMultipleCosmosChains() {
+  const cosmosChains = [
+    Chain.Cosmos,
+    Chain.THORChain,
+    Chain.Kujira,
+    Chain.Noble,
+  ];
+
+  try {
+    await swapKit.connectKeplr(cosmosChains);
+
+    const addresses = {};
+    for (const chain of cosmosChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    const balances = await Promise.all(
+      cosmosChains.map(async (chain) => {
+        const balance = await swapKit.getBalance(chain, true);
+        return { chain, balance };
+      })
+    );
+
+    return { success: true, addresses, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Using Leap Wallet
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+async function connectLeapWallet() {
+  try {
+    await swapKit.connectKeplr([Chain.Cosmos], WalletOption.LEAP);
+
+    const address = swapKit.getAddress(Chain.Cosmos);
+    console.log("Leap Wallet address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Leap Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Cosmos Hub Transaction
+
+```ts twoslash
+
+import { SwapKit, keplrWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+
+await swapKit.connectKeplr([Chain.Cosmos]);
+
+async function sendAtom() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    console.log("Sending ATOM transaction...");
+    console.log("Amount:", amount.toSignificant(6), "ATOM");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "Keplr transaction via SwapKit",
+    });
+
+    console.log("✅ Transaction sent:", txHash);
+    console.log("🔍 View on Mintscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ATOM transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### THORChain Transaction
+
+```ts twoslash
+
+import { SwapKit, keplrWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+
+await swapKit.connectKeplr([Chain.THORChain]);
+
+async function sendRune() {
+  const recipient = "thor1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 10);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "THORChain transaction",
+    });
+
+    console.log("✅ RUNE transfer sent:", txHash);
+    console.log("🔍 View on THORChain Explorer:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ RUNE transfer failed:", error);
+    throw error;
+  }
+}
+
+
+async function depositToThorchain() {
+  const amount = AssetValue.fromChainOrSignature("THOR.RUNE", 100);
+  const memo = "ADD:BTC.BTC:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  try {
+
+    const wallet = await swapKit.getWalletWithBalance(Chain.THORChain);
+    const txHash = await wallet.deposit({
+      assetValue: amount,
+      memo,
+    });
+
+    console.log("✅ THORChain deposit sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ THORChain deposit failed:", error);
+    throw error;
+  }
+}
+```
+
+### IBC Transfers
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+await swapKit.connectKeplr([Chain.Cosmos, Chain.Noble]);
+
+async function ibcTransfer() {
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+  const recipient = "noble1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "IBC transfer to Noble",
+    });
+
+    console.log("✅ IBC transfer initiated:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ IBC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Noble USDC Operations
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+await swapKit.connectKeplr([Chain.Noble]);
+
+async function sendUSDCOnNoble() {
+  const recipient = "noble1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("NOBLE.USDC", 100);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "USDC transfer on Noble",
+    });
+
+    console.log("✅ Noble USDC transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ Noble USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Setup
+
+### Adding Custom Cosmos Chains
+
+```ts twoslash
+
+import { SwapKit, keplrWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+async function addCustomCosmosChain() {
+
+
+
+  try {
+
+
+    await swapKit.connectKeplr([Chain.Cosmos]);
+
+    console.log("✅ Custom chain added and connected");
+  } catch (error) {
+    if (error.message.includes("chain_not_supported")) {
+      console.log("🔧 Custom chain configuration needed");
+      console.log("SwapKit will prompt Keplr to add the chain");
+    }
+    throw error;
+  }
+}
+
+
+async function manuallyAddChain() {
+  if (window.keplr) {
+    try {
+
+      await window.keplr.experimentalSuggestChain({
+        chainId: "custom-chain-1",
+        chainName: "Custom Chain",
+        rpc: "https:
+        rest: "https:
+        bip44: {
+          coinType: 118,
+        },
+        bech32Config: {
+          bech32PrefixAccAddr: "custom",
+          bech32PrefixAccPub: "custompub",
+          bech32PrefixValAddr: "customvaloper",
+          bech32PrefixValPub: "customvaloperpub",
+          bech32PrefixConsAddr: "customvalcons",
+          bech32PrefixConsPub: "customvalconspub",
+        },
+        currencies: [
+          {
+            coinDenom: "CUSTOM",
+            coinMinimalDenom: "ucustom",
+            coinDecimals: 6,
+          },
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: "CUSTOM",
+            coinMinimalDenom: "ucustom",
+            coinDecimals: 6,
+            gasPriceStep: {
+              low: 0.01,
+              average: 0.025,
+              high: 0.04,
+            },
+          },
+        ],
+        stakeCurrency: {
+          coinDenom: "CUSTOM",
+          coinMinimalDenom: "ucustom",
+          coinDecimals: 6,
+        },
+      });
+
+      console.log("✅ Custom chain added to Keplr");
+    } catch (error) {
+      console.error("❌ Failed to add custom chain:", error);
+    }
+  }
+}
+```
+
+### Gas and Fee Configuration
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+await swapKit.connectKeplr([Chain.Cosmos]);
+
+async function transactionWithCustomGas() {
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+  try {
+    const wallet = await swapKit.getWalletWithBalance(Chain.Cosmos);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "Custom gas transaction",
+    });
+
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed");
+      console.log("🔧 Try adjusting gas settings in Keplr");
+    }
+    throw error;
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, keplrWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...keplrWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+
+    if (typeof window.keplr === 'undefined') {
+      console.error("❌ Keplr extension not found");
+      console.log("🔧 Install Keplr extension from https:
+      return { success: false, error: "Keplr not installed" };
+    }
+
+    console.log("🔍 Keplr detected, attempting connection...");
+
+    await swapKit.connectKeplr([Chain.Cosmos]);
+
+    const address = swapKit.getAddress(Chain.Cosmos);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in Keplr");
+    }
+
+    if (error.message.includes("locked")) {
+      console.log("🔧 Keplr wallet is locked");
+      console.log("Please unlock your Keplr wallet");
+    }
+
+    if (error.message.includes("chain_not_supported")) {
+      console.log("🔧 Chain not supported or not added to Keplr");
+      console.log("Keplr will prompt to add the chain");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkKeplrStatus() {
+  if (!window.keplr) {
+    return { installed: false };
+  }
+
+  try {
+
+    const key = await window.keplr.getKey("cosmoshub-4");
+
+    return {
+      installed: true,
+      connected: true,
+      address: key.bech32Address,
+      name: key.name,
+    };
+  } catch (error) {
+    return {
+      installed: true,
+      connected: false,
+      error: error.message,
+    };
+  }
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      memo: "Test transaction",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient ATOM balance");
+
+      const balance = await swapKit.getBalance(Chain.Cosmos, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more ATOM to your wallet");
+    }
+
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed");
+      console.log("🔧 Check network status or try increasing gas in Keplr");
+    }
+
+    if (error.message.includes("sequence")) {
+      console.error("❌ Sequence mismatch (nonce issue)");
+      console.log("🔧 Wait a moment and try again");
+    }
+
+    if (error.message.includes("rejected")) {
+      console.error("❌ Transaction rejected in Keplr");
+      console.log("🔧 Please approve the transaction in Keplr popup");
+    }
+
+    if (error.message.includes("timeout")) {
+      console.error("❌ Transaction timed out");
+      console.log("🔧 Check network connectivity and try again");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Chain Addition Issues
+
+```ts twoslash
+async function handleChainAdditionIssues() {
+  try {
+    await swapKit.connectKeplr([Chain.THORChain]);
+  } catch (error) {
+    if (error.message.includes("chain_not_supported")) {
+      console.log("🔧 Chain not in Keplr, attempting to add...");
+
+      try {
+        if (window.keplr) {
+          console.log("Keplr will prompt to add the chain");
+        }
+      } catch (addError) {
+        console.error("❌ Failed to add chain:", addError);
+        console.log("🔧 Please add the chain manually in Keplr settings");
+      }
+    }
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, keplrWallet, Chain } from "@swapkit/sdk";
+
+async function verifyAddress() {
+  const swapKit = SwapKit({ wallets: { ...keplrWallet } });
+  await swapKit.connectKeplr([Chain.Cosmos]);
+
+  const address = swapKit.getAddress(Chain.Cosmos);
+
+  console.log("Connected address:", address);
+  console.log("⚠️ Please verify this matches your Keplr address");
+
+  if (!address.startsWith("cosmos")) {
+    console.warn("⚠️ Address format unexpected for Cosmos");
+  }
+
+  return address;
+}
+
+async function secureTransaction() {
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const memo = "Secure transaction";
+
+  if (!recipient.startsWith("cosmos")) {
+    throw new Error("Invalid Cosmos address format");
+  }
+
+  console.log("📋 Transaction Details:");
+  console.log("Amount:", amount.toSignificant(6), "ATOM");
+  console.log("Recipient:", recipient);
+  console.log("Memo:", memo);
+  console.log("⚠️ Please verify these details in Keplr before signing");
+
+  const txHash = await swapKit.transfer({
+    assetValue: amount,
+    recipient,
+    memo,
+  });
+
+  return txHash;
+}
+
+async function secureErrorHandling() {
+  try {
+  } catch (error) {
+    console.error("Transaction failed:", error.message);
+
+    throw new Error(
+      "Transaction failed. Please check your wallet and try again."
+    );
+  }
+}
+```
+
+### Network Security
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+    rpcUrls: {
+
+      [Chain.Cosmos]: "https:
+      [Chain.THORChain]: "https:
+    },
+    apiKeys: {
+      swapKit: process.env.SWAPKIT_API_KEY,
+    },
+  },
+  wallets: { ...keplrWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, keplrWallet, Chain, WalletOption, AssetValue } from "@swapkit/sdk";
+
+interface KeplrWalletProps {
+  onConnect: (addresses: Record<Chain, string>) => void;
+  onError: (error: Error) => void;
+}
+
+export function KeplrWallet({ onConnect, onError }: KeplrWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Record<Chain, string>>({});
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([Chain.Cosmos]);
+
+  const swapKit = SwapKit({ wallets: { ...keplrWallet } });
+
+
+  const isKeplrInstalled = typeof window !== 'undefined' &&
+    typeof window.keplr !== 'undefined';
+
+  useEffect(() => {
+    if (!isKeplrInstalled) return;
+
+
+    const handleAccountChange = () => {
+      if (isConnected) {
+
+        connectKeplr();
+      }
+    };
+
+    window.addEventListener('keplr_keystorechange', handleAccountChange);
+
+    return () => {
+      window.removeEventListener('keplr_keystorechange', handleAccountChange);
+    };
+  }, [isConnected, isKeplrInstalled]);
+
+  const connectKeplr = async () => {
+    if (!isKeplrInstalled) {
+      onError(new Error("Keplr not installed"));
+      return;
+    }
+
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectKeplr(selectedChains);
+
+      const connectedAddresses: Record<Chain, string> = {};
+      for (const chain of selectedChains) {
+        connectedAddresses[chain] = swapKit.getAddress(chain);
+      }
+
+      setAddresses(connectedAddresses);
+      setIsConnected(true);
+      onConnect(connectedAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains(prev =>
+      prev.includes(chain)
+        ? prev.filter(c => c !== chain)
+        : [...prev, chain]
+    );
+  };
+
+  if (!isKeplrInstalled) {
+    return (
+      <div>
+        <h3>Keplr Wallet</h3>
+        <p>Keplr extension not detected</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Install Keplr
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>Keplr Wallet</h3>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Chains:</h4>
+          {[Chain.Cosmos, Chain.THORChain, Chain.Kujira, Chain.Noble].map(chain => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {chain}
+            </label>
+          ))}
+
+          <button
+            onClick={connectKeplr}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect Keplr"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of Keplr wallet integration with SwapKit SDK v4, including Cosmos ecosystem support, IBC transfers, and advanced features specific to Cosmos-based chains.

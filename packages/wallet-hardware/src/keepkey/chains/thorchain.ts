@@ -1,64 +1,49 @@
-import type {
-  KeepKeySdk,
-  TypesThorchainSignDocDeposit,
-  TypesThorchainSignDocTransfer,
-} from "@keepkey/keepkey-sdk";
+import type { KeepKeySdk, TypesThorchainSignDocDeposit, TypesThorchainSignDocTransfer } from "@keepkey/keepkey-sdk";
 import {
   type AssetValue,
   Chain,
   ChainId,
   DerivationPath,
   type DerivationPathArray,
-  type GenericTransferParams,
-  SKConfig,
-  SwapKitError,
   derivationPathToString,
+  type GenericTransferParams,
+  getRPCUrl,
+  SwapKitError,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 
 import { bip32ToAddressNList } from "../coins";
 
-type SignTransactionParams = {
-  assetValue: AssetValue;
-  recipient?: string;
-  sender: string;
-  memo: string | undefined;
-};
+type SignTransactionParams = { assetValue: AssetValue; recipient?: string; sender: string; memo: string | undefined };
 
-export const thorchainWalletMethods = async ({
+export async function thorchainWalletMethods({
   sdk,
   derivationPath,
 }: {
   sdk: KeepKeySdk;
   derivationPath?: DerivationPathArray;
-}) => {
+}): Promise<any> {
   const importedAmino = await import("@cosmjs/amino");
   const makeSignDoc = importedAmino.makeSignDoc ?? importedAmino.default?.makeSignDoc;
-  const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } =
-    await import("@swapkit/toolboxes/cosmos");
+  const { buildAminoMsg, getDefaultChainFee, createStargateClient, getCosmosToolbox } = await import(
+    "@swapkit/toolboxes/cosmos"
+  );
 
   const toolbox = await getCosmosToolbox(Chain.THORChain);
-  const derivationPathString = derivationPath
-    ? derivationPathToString(derivationPath)
-    : `${DerivationPath.THOR}/0`;
+  const derivationPathString = derivationPath ? derivationPathToString(derivationPath) : `${DerivationPath.THOR}/0`;
 
   const { address: fromAddress } = (await sdk.address.thorchainGetAddress({
     address_n: bip32ToAddressNList(derivationPathString),
   })) as { address: string };
 
-  const signTransaction = async ({
-    assetValue,
-    recipient,
-    sender,
-    memo,
-  }: SignTransactionParams) => {
+  const signTransaction = async ({ assetValue, recipient, sender, memo }: SignTransactionParams) => {
     const account = await toolbox.getAccount(sender);
     if (!account) throw new SwapKitError("wallet_keepkey_account_not_found");
     const { accountNumber, sequence = 0 } = account;
 
     const isTransfer = recipient && recipient !== "";
 
-    const msg = buildAminoMsg({ sender, recipient, assetValue, memo });
+    const msg = buildAminoMsg({ assetValue, memo, recipient, sender });
 
     const chainId = ChainId.THORChain;
 
@@ -85,25 +70,18 @@ export const thorchainWalletMethods = async ({
   };
 
   const transfer = async ({ assetValue, recipient, memo }: GenericTransferParams) => {
-    const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
-    const signedTransaction = await signTransaction({
-      assetValue,
-      recipient,
-      memo,
-      sender: fromAddress,
-    });
+    const rpcUrl = await getRPCUrl(Chain.THORChain);
+    const stargateClient = await createStargateClient(rpcUrl);
+    const signedTransaction = await signTransaction({ assetValue, memo, recipient, sender: fromAddress });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 
     return transactionHash;
   };
 
   const deposit = async ({ assetValue, memo }: ThorchainDepositParams) => {
-    const stargateClient = await createStargateClient(SKConfig.get("rpcUrls")[Chain.THORChain]);
-    const signedTransaction = await signTransaction({
-      assetValue,
-      memo,
-      sender: fromAddress,
-    });
+    const rpcUrl = await getRPCUrl(Chain.THORChain);
+    const stargateClient = await createStargateClient(rpcUrl);
+    const signedTransaction = await signTransaction({ assetValue, memo, sender: fromAddress });
     const { transactionHash } = await stargateClient.broadcastTx(signedTransaction);
 
     return transactionHash;
@@ -114,5 +92,5 @@ export const thorchainWalletMethods = async ({
   //   // return signedTx;
   // };
 
-  return { ...toolbox, transfer, deposit, address: fromAddress };
-};
+  return { ...toolbox, address: fromAddress, deposit, transfer };
+}

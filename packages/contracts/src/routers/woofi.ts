@@ -25,12 +25,7 @@ export const woofiRouter = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "enum IWooRouterV2.SwapType",
-        name: "swapType",
-        type: "uint8",
-      },
+      { indexed: false, internalType: "enum IWooRouterV2.SwapType", name: "swapType", type: "uint8" },
       { indexed: true, internalType: "address", name: "fromToken", type: "address" },
       { indexed: true, internalType: "address", name: "toToken", type: "address" },
       { indexed: false, internalType: "uint256", name: "fromAmount", type: "uint256" },
@@ -104,13 +99,7 @@ export const woofiRouter = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
     inputs: [{ internalType: "address", name: "newPool", type: "address" }],
     name: "setPool",

@@ -1,5 +1,97 @@
 # @swapkit/helpers
 
+## 4.0.4
+
+### Patch Changes
+
+- [#1460](https://github.com/swapkit/SwapKit/pull/1460) [`8d3a6a9`](https://github.com/swapkit/SwapKit/commit/8d3a6a975645f205dcb3c0711319d6405e759533) Thanks [@towanTG](https://github.com/towanTG)! - Small improvements to chainflip and mayachain plugin
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.4
+
+## 4.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.3
+
+## 4.0.2
+
+### Patch Changes
+
+- [#1455](https://github.com/swapkit/SwapKit/pull/1455) [`bc7dc5a`](https://github.com/swapkit/SwapKit/commit/bc7dc5a01e65564aad8fa6745937254dfeaab699) Thanks [@towanTG](https://github.com/towanTG)! - Improves return of some midgard requests if 404 is coming from server
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.2
+
+## 4.0.1
+
+### Patch Changes
+
+- [#1454](https://github.com/swapkit/SwapKit/pull/1454) [`1d11e7f`](https://github.com/swapkit/SwapKit/commit/1d11e7fa5280aa5eb7d42df3f9e944d49b2c0d08) Thanks [@towanTG](https://github.com/towanTG)! - Adds network check before network switch for web3 wallets
+
+- [#1448](https://github.com/swapkit/SwapKit/pull/1448) [`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix cycling dependencies & update biome to v2
+
+- Updated dependencies [[`c1b3ac4`](https://github.com/swapkit/SwapKit/commit/c1b3ac42119519bc42b1f3949ae64b8710db995c)]:
+  - @swapkit/contracts@4.0.1
+  - @swapkit/tokens@4.0.1
+
+## 4.0.0
+
+### Major Changes
+
+- [`0f2e55a`](https://github.com/swapkit/SwapKit/commit/0f2e55aba9efcdbfa74fcf9a4311534b9da780ed) Thanks [@towanTG](https://github.com/towanTG)! - Changes Tron Chain identifier from TRX to TRON
+
+### Patch Changes
+
+- [`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5) Thanks [@towanTG](https://github.com/towanTG)! - Small fixes and zcash signer update
+
+- [`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8) Thanks [@towanTG](https://github.com/towanTG)! - Exports near token list
+
+- [#1426](https://github.com/swapkit/SwapKit/pull/1426) [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Update for new exports and usability
+
+- [`3c3a3da`](https://github.com/swapkit/SwapKit/commit/3c3a3da284989bc6209fcd10af4b328d89a11b92) Thanks [@towanTG](https://github.com/towanTG)! - Exports midgard types
+
+- [`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af) Thanks [@towanTG](https://github.com/towanTG)! - Moves generate tokenlist to token package
+
+- [`3fdd6c3`](https://github.com/swapkit/SwapKit/commit/3fdd6c396f486a4cb9b1a84820cabef752e7904f) Thanks [@towanTG](https://github.com/towanTG)! - Adds general wallet error for locked state
+
+- [#1404](https://github.com/swapkit/SwapKit/pull/1404) [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Server/Client split, type definitions and new goodies
+
+- [`66d9b26`](https://github.com/swapkit/SwapKit/commit/66d9b2611b7eba507209c119a254b6cdd8d23197) Thanks [@towanTG](https://github.com/towanTG)! - Adds all midgard endpoint and updates Swapkit Api types
+
+- [#1418](https://github.com/swapkit/SwapKit/pull/1418) [`a333581`](https://github.com/swapkit/SwapKit/commit/a333581318eeb6c8d47be567e84d1efaab790cc5) Thanks [@towanTG](https://github.com/towanTG)! - Add TronLink wallet integration
+
+  - Add TRONLINK to WalletOption enum
+  - Implement TronLink wallet connector with support for Tron chain
+  - Use hybrid provider detection with `tronlink#initialized` event
+  - Handle account and network change events
+  - Implement robust error handling for user rejection
+  - Add network verification during connection
+
+- [`ec8cc57`](https://github.com/swapkit/SwapKit/commit/ec8cc5726d5adb9e9fbb07eab743de1d7bd64773) Thanks [@towanTG](https://github.com/towanTG)! - Updated Zcash transaction building to use bitgo package
+
+- Updated dependencies [[`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436), [`c963338`](https://github.com/swapkit/SwapKit/commit/c96333881e81b8a14937dcde5f0d98c005981bb8), [`bd61ef7`](https://github.com/swapkit/SwapKit/commit/bd61ef7b0f5adf4f5a517b76d5988cb42bd002b2), [`52a6412`](https://github.com/swapkit/SwapKit/commit/52a6412c95e14430c33d66de09ef1242028442af), [`0c7a3a2`](https://github.com/swapkit/SwapKit/commit/0c7a3a24dbfdfe0562b838993f34ded4dbe573bc), [`e80a902`](https://github.com/swapkit/SwapKit/commit/e80a9027f28d0fc388a457a16526605b714fce65)]:
+  - @swapkit/tokens@4.0.0
+  - @swapkit/contracts@4.0.0
+
+## 4.0.0-beta.50
+
+### Patch Changes
+
+- Updated dependencies [[`1ad81e7`](https://github.com/swapkit/SwapKit/commit/1ad81e76e6848a9e1ea8346da1b6ea8fab602436)]:
+  - @swapkit/tokens@4.0.0-beta.18
+
+## 4.0.0-beta.49
+
+### Patch Changes
+
+- [`cc7514f`](https://github.com/swapkit/SwapKit/commit/cc7514fa39cc2a0f91be28fe51415a56ac657ce5) Thanks [@towanTG](https://github.com/towanTG)! - Small fixes and zcash signer update
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.0-beta.17
+
 ## 4.0.0-beta.48
 
 ### Patch Changes

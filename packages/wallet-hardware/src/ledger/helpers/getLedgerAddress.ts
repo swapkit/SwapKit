@@ -41,7 +41,8 @@ export const getLedgerAddress = async <
     case Chain.BitcoinCash:
     case Chain.Dash:
     case Chain.Dogecoin:
-    case Chain.Litecoin: {
+    case Chain.Litecoin:
+    case Chain.Zcash: {
       const ledger = ledgerClient as UTXOLedgerClients;
       await ledger.connect();
       const address = await ledger.getAddress();
@@ -62,6 +63,6 @@ export const getLedgerAddress = async <
     }
 
     default:
-      throw new SwapKitError("wallet_chain_not_supported", { wallet: WalletOption.LEDGER, chain });
+      throw new SwapKitError("wallet_chain_not_supported", { chain, wallet: WalletOption.LEDGER });
   }
 };

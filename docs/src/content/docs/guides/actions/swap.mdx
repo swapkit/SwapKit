@@ -3,6 +3,11 @@ title: Performing Swaps
 description: How to perform token swaps across different chains with SwapKit
 ---
 
+import InteractiveExample from "../../../../components/InteractiveExample.astro";
+import TryItYourself from "../../../../components/TryItYourself.astro";
+import PlaygroundLinks from "../../../../components/PlaygroundLinks.astro";
+import SwapQuoteDemo from "../../../../components/SwapQuoteDemo.astro";
+
 SwapKit provides a unified interface for swapping tokens across different chains and protocols. This guide covers how to get quotes and execute swaps using both the granular and all-in-one approaches.
 
 Before starting, make sure you understand [Core Concepts](/start/core-concepts) like [AssetValue](/start/core-concepts#assetvalue) and [Chain types](/start/core-concepts#chain-types). For detailed API methods, see the [API Reference](/guides/api-reference).
@@ -12,6 +17,7 @@ Before starting, make sure you understand [Core Concepts](/start/core-concepts) 
 You can use SwapKit in two ways:
 
 1. **Granular approach** - Import only what you need from individual packages (recommended for frontend):
+
    ```ts
    import { SwapKit, ThorchainPlugin, evmWallet } from "@swapkit/sdk";
    ```
@@ -30,15 +36,35 @@ The typical flow for performing a swap consists of these steps:
 3. Approve tokens (if needed)
 4. Execute the swap transaction
 
+<TryItYourself
+  title="🚀 Live Swap Demo"
+  description="See SwapKit swaps in action with our interactive playground"
+  variant="primary"
+  icon="lightning"
+>
+  <PlaygroundLinks
+    compact={true}
+    title=""
+    description=""
+    stackblitzUrl="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs"
+    codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
+  />
+</TryItYourself>
+
 ## Setting Up SwapKit for Swaps
 
 ### Granular Approach (Frontend Recommended)
 
 ```ts twoslash
-// @noErrorValidation
-import { Chain, SwapKit, evmWallet, keystoreWallet, ThorchainPlugin, EVMPlugin } from "@swapkit/sdk";
+import {
+  Chain,
+  SwapKit,
+  evmWallet,
+  keystoreWallet,
+  ThorchainPlugin,
+  EVMPlugin,
+} from "@swapkit/sdk";
 
-// Initialize SwapKit with necessary plugins and wallets
 const swapKit = SwapKit({
   config: {
     apiKeys: {
@@ -51,13 +77,9 @@ const swapKit = SwapKit({
   wallets: { ...evmWallet, ...keystoreWallet },
 });
 
-// Connect necessary wallets
 async function connectWallets() {
-  // Connect EVM wallet for Ethereum
   await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-  // If doing cross-chain swaps, connect other chains as needed
-  // For example, to swap from ETH to BTC:
   await swapKit.connectKeystore([Chain.Bitcoin], "your secret phrase here");
 
   const connectedWallets = Object.keys(swapKit.getAllWallets());
@@ -67,10 +89,8 @@ async function connectWallets() {
 ### All-in-one Approach (Backend)
 
 ```ts twoslash
-// @noErrorValidation
 import { Chain, createSwapKit } from "@swapkit/sdk";
 
-// Initialize SwapKit with all plugins and wallets included
 const swapKit = createSwapKit({
   config: {
     apiKeys: {
@@ -81,9 +101,7 @@ const swapKit = createSwapKit({
   },
 });
 
-// Connect necessary wallets
 async function connectWallets() {
-  // Connect wallets for the chains involved in the swap
   await swapKit.connectKeystore(
     [Chain.Ethereum, Chain.Bitcoin],
     "your secret phrase here"
@@ -95,19 +113,17 @@ async function connectWallets() {
 
 Before executing a swap, you need to get a quote to see available routes, prices, and fees. See [getSwapQuote](/guides/api-reference#getswapquote) in the API Reference for all available parameters:
 
+<SwapQuoteDemo />
+
 ```ts twoslash
-// @noErrorValidation
 import { SwapKitApi } from "@swapkit/helpers/api";
 
-// Basic swap quote
 async function getSwapQuote() {
-  // Define the assets to swap
-  const sellAsset = "ETH.ETH"; // Ethereum on Ethereum chain
-  const buyAsset = "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // USDC on Ethereum
-  const sellAmount = "0.1"; // 0.1 ETH
+  const sellAsset = "ETH.ETH";
+  const buyAsset = "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+  const sellAmount = "0.1";
 
   try {
-    // Get quotes from all available providers
     const quoteResponse = await SwapKitApi.getSwapQuote({
       sellAsset,
       buyAsset,
@@ -120,11 +136,7 @@ async function getSwapQuote() {
       throw new Error(`Failed to get quote: ${quoteResponse.error}`);
     }
 
-    // Routes sorted by best rate
     const routes = quoteResponse.data.routes;
-
-    // Found ${routes.length} routes for swapping ${sellAmount} ${sellAsset} to ${buyAsset}`
-    // Best rate: 1 ETH = ${Number(routes[0].buyAmount) / Number(sellAmount)} USDC`
 
     return routes;
   } catch (error) {
@@ -132,17 +144,15 @@ async function getSwapQuote() {
   }
 }
 
-// Get quotes from a specific provider
 async function getProviderQuote() {
   const { ProviderName } = await import("@swapkit/sdk");
   const { SwapKitApi } = await import("@swapkit/helpers/api");
 
-  // For example, get quotes only from Uniswap V3
   const quoteResponse = await SwapKitApi.getSwapQuote({
     sellAsset: "ETH.ETH",
     buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     sellAmount: "0.1",
-    providers: [ProviderName.UNISWAP_V3], // Specify provider(s)
+    providers: [ProviderName.UNISWAP_V3],
     sourceAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
   });
 
@@ -157,7 +167,6 @@ Once you have a quote, you can execute the swap:
 ### Granular Approach
 
 ```ts twoslash
-// @noErrorValidation
 import {
   AssetValue,
   Chain,
@@ -169,19 +178,15 @@ import {
   EVMPlugin,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit with necessary plugins and wallets
 const swapKit = SwapKit({
   plugins: { ...EVMPlugin },
   wallets: { ...evmWallet },
 });
 
-// Connect wallet
 await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-// Complete swap flow
 async function executeSwap() {
   try {
-    // 1. Get quotes
     const quoteResponse = await SwapKitApi.getSwapQuote({
       sellAsset: "ETH.ETH",
       buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -194,17 +199,14 @@ async function executeSwap() {
       throw new Error("No swap routes available");
     }
 
-    // 2. Select the best route (first one is usually best rate)
     const selectedRoute = quoteResponse.data.routes[0];
 
-    // 3. Create asset value for approvals
     const assetValue = await AssetValue.from({
       asset: selectedRoute.sellAsset,
       value: selectedRoute.sellAmount,
       asyncTokenLookup: true,
     });
 
-    // 4. Check if we need to approve tokens (for ERC20 tokens)
     if (!assetValue.isGasAsset && selectedRoute.tx) {
       const isApproved = await swapKit.isAssetValueApproved(
         assetValue,
@@ -212,20 +214,19 @@ async function executeSwap() {
       );
 
       if (!isApproved) {
-        // "Approval needed, approving tokens..."
         await swapKit.approveAssetValue(assetValue, selectedRoute.tx.from);
-        // "Tokens approved!"
       }
     }
 
-    // 5. Execute the swap
-    const txHash = await swapKit.swap({
+    const txHash = (await swapKit.swap({
       route: selectedRoute,
       feeOptionKey: FeeOption.Fast,
-    }) as string;
+    })) as string;
 
-    // 6. Get transaction URL
-    const txUrl = swapKit.getExplorerTxUrl({ chain: assetValue.chain as Chain, txHash });
+    const txUrl = swapKit.getExplorerTxUrl({
+      chain: assetValue.chain as Chain,
+      txHash,
+    });
 
     return { txHash, txUrl };
   } catch (error) {
@@ -237,7 +238,6 @@ async function executeSwap() {
 ### All-in-one Approach
 
 ```ts twoslash
-// @noErrorValidation
 import {
   AssetValue,
   Chain,
@@ -246,16 +246,12 @@ import {
   createSwapKit,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit
 const swapKit = createSwapKit();
 
-// Connect wallet
 await swapKit.connectKeystore([Chain.Ethereum], "your secret phrase here");
 
-// Execute swap
 async function executeSwap() {
   try {
-    // 1. Get quotes
     const quoteResponse = await SwapKitApi.getSwapQuote({
       sellAsset: "ETH.ETH",
       buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -267,10 +263,8 @@ async function executeSwap() {
       throw new Error("No swap routes available");
     }
 
-    // 2. Select the best route
     const selectedRoute = quoteResponse.data.routes[0];
 
-    // 3. Execute the swap
     const txHash = await swapKit.swap({
       route: selectedRoute,
       feeOptionKey: FeeOption.Fast,
@@ -288,7 +282,7 @@ async function executeSwap() {
 SwapKit supports cross-chain swaps through Chainflip:
 
 ```ts twoslash
-// @noErrorValidation
+
 import {
   Chain,
   FeeOption,
@@ -299,47 +293,47 @@ import {
   ChainflipPlugin,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit with necessary plugins
+
 const swapKit = SwapKit({
   plugins: { ...ChainflipPlugin },
   wallets: { ...evmWallet },
   config: {
     integrations: {
       chainflip: {
-        brokerUrl: "https://broker.chainflip.io", // Chainflip broker URL
+        brokerUrl: "https:
       },
     },
   },
 });
 
-// Connect source chain wallet (Ethereum)
+
 await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-// Perform a cross-chain swap from ETH to BTC
+
 async function crossChainSwap() {
   try {
-    // Get cross-chain quotes
+
     const quoteResponse = await SwapKitApi.getSwapQuote({
-      sellAsset: "ETH.ETH", // Ethereum
-      buyAsset: "BTC.BTC", // Bitcoin
-      sellAmount: "0.1", // 0.1 ETH
-      providers: [ProviderName.CHAINFLIP], // Use Chainflip for cross-chain
+      sellAsset: "ETH.ETH",
+      buyAsset: "BTC.BTC",
+      sellAmount: "0.1",
+      providers: [ProviderName.CHAINFLIP],
       sourceAddress: swapKit.getAddress(Chain.Ethereum),
-      destinationAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq", // BTC destination
+      destinationAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
     });
 
     if (!quoteResponse.success || !quoteResponse.data.routes.length) {
       throw new Error("No cross-chain swap routes available");
     }
 
-    // Select the route
+
     const route = quoteResponse.data.routes[0];
 
-    // Execute the cross-chain swap
+
     const txHash = await swapKit.swap({
       route,
       feeOptionKey: FeeOption.Fast,
-      // Optional: provide maxBoostFeeBps to speed up the swap if needed
+
     });
 
 
@@ -355,7 +349,6 @@ async function crossChainSwap() {
 SwapKit also supports swaps through THORChain:
 
 ```ts twoslash
-// @noErrorValidation
 import {
   Chain,
   FeeOption,
@@ -367,28 +360,22 @@ import {
   ThorchainPlugin,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit
 const swapKit = SwapKit({
   plugins: { ...ThorchainPlugin },
   wallets: { ...evmWallet, ...keystoreWallet },
 });
 
-// Setup for THORChain swap
 async function setupAndSwap() {
-  // Connect source chain wallet (e.g., Ethereum)
   await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-  // Connect THORChain wallet if doing a swap to RUNE
   await swapKit.connectKeystore([Chain.THORChain], "your secret phrase here");
 
-  // Perform a swap through THORChain
   try {
-    // Get quotes from THORChain
     const quoteResponse = await SwapKitApi.getSwapQuote({
-      sellAsset: "ETH.ETH", // Ethereum
-      buyAsset: "THOR.RUNE", // RUNE on THORChain
-      sellAmount: "0.1", // 0.1 ETH
-      providers: [ProviderName.THORCHAIN], // Use THORChain
+      sellAsset: "ETH.ETH",
+      buyAsset: "THOR.RUNE",
+      sellAmount: "0.1",
+      providers: [ProviderName.THORCHAIN],
       sourceAddress: swapKit.getAddress(Chain.Ethereum),
       destinationAddress: swapKit.getAddress(Chain.THORChain),
     });
@@ -397,10 +384,8 @@ async function setupAndSwap() {
       throw new Error("No THORChain swap routes available");
     }
 
-    // Select the route
     const route = quoteResponse.data.routes[0];
 
-    // Execute the THORChain swap
     const txHash = await swapKit.swap({
       route,
       feeOptionKey: FeeOption.Fast,
@@ -418,7 +403,6 @@ async function setupAndSwap() {
 Before executing a swap, you can estimate the transaction fees:
 
 ```ts twoslash
-// @noErrorValidation
 import {
   AssetValue,
   Chain,
@@ -429,19 +413,15 @@ import {
   EVMPlugin,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit
 const swapKit = SwapKit({
   plugins: { ...EVMPlugin },
   wallets: { ...evmWallet },
 });
 
-// Connect wallet
 await swapKit.connectEVMWallet([Chain.Ethereum]);
 
-// Estimate swap fees
 async function estimateSwapFees() {
   try {
-    // 1. Get quotes
     const quoteResponse = await SwapKitApi.getSwapQuote({
       sellAsset: "ETH.ETH",
       buyAsset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -453,17 +433,14 @@ async function estimateSwapFees() {
       throw new Error("No swap routes available");
     }
 
-    // 2. Select a route
     const route = quoteResponse.data.routes[0];
 
-    // 3. Create asset value
     const assetValue = await AssetValue.from({
       asset: route.sellAsset,
       value: route.sellAmount,
       asyncTokenLookup: true,
     });
 
-    // 4. Estimate the swap fee
     const estimatedFee = await swapKit.estimateTransactionFee({
       type: "swap",
       feeOptionKey: FeeOption.Fast,
@@ -485,7 +462,6 @@ async function estimateSwapFees() {
 For more advanced use cases, you can customize swap parameters:
 
 ```ts twoslash
-// @noErrorValidation
 import {
   Chain,
   FeeOption,
@@ -497,53 +473,38 @@ import {
   ChainflipPlugin,
 } from "@swapkit/sdk";
 
-// Initialize SwapKit
 const swapKit = SwapKit({
   plugins: { ...ThorchainPlugin, ...ChainflipPlugin },
   wallets: { ...evmWallet },
 });
 
-// Connect wallets
 await swapKit.connectEVMWallet([Chain.Ethereum, Chain.BinanceSmartChain]);
 
-// Advanced swap with custom parameters
 async function advancedSwap() {
   try {
-    // Custom quote parameters
     const quoteResponse = await SwapKitApi.getSwapQuote({
       sellAsset: "ETH.ETH",
       buyAsset: "BNB.BNB",
       sellAmount: "0.5",
-      // Specific providers to use
-      providers: [
-        ProviderName.THORCHAIN,
-        ProviderName.CHAINFLIP,
-      ],
-      // Custom addresses
+
+      providers: [ProviderName.THORCHAIN, ProviderName.CHAINFLIP],
+
       sourceAddress: swapKit.getAddress(Chain.Ethereum),
       destinationAddress: swapKit.getAddress(Chain.BinanceSmartChain),
-      // Custom slippage tolerance (2.5%)
+
       slippage: 2.5,
-      // Affiliate fee (optional)
-      // affiliateBps: 20, // 0.2% fee
-      // affiliateAddress: "thor1youraffiliateaddresshere",
     });
 
     if (!quoteResponse.success || !quoteResponse.data.routes.length) {
       throw new Error("No advanced swap routes available");
     }
 
-    // Get the best route
     const route = quoteResponse.data.routes[0];
 
-    // Execute the swap with custom parameters
     const txHash = await swapKit.swap({
       route,
       feeOptionKey: FeeOption.Fast,
-      // Additional Chainflip-specific parameters
-      // maxBoostFeeBps: 5, // 0.05% max fee boost
     });
-
 
     return { txHash };
   } catch (error) {
@@ -551,8 +512,3 @@ async function advancedSwap() {
   }
 }
 ```
-
-
-
-
-

@@ -12,20 +12,11 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.OKX, async () => (await import("./okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("./onekey")).onekeyWallet)
     .with(WalletOption.EXODUS, async () => (await import("./exodus")).exodusWallet)
-    .with(
-      WalletOption.KEEPKEY,
-      async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet,
-    )
+    .with(WalletOption.KEEPKEY, async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet)
     .with(WalletOption.KEEPKEY_BEX, async () => (await import("./keepkey-bex")).keepkeyBexWallet)
-    .with(
-      WalletOption.WALLETCONNECT,
-      async () => (await import("./walletconnect")).walletconnectWallet,
-    )
+    .with(WalletOption.WALLETCONNECT, async () => (await import("./walletconnect")).walletconnectWallet)
     .with(WalletOption.KEPLR, WalletOption.LEAP, async () => (await import("./keplr")).keplrWallet)
-    .with(
-      WalletOption.COSMOSTATION,
-      async () => (await import("./cosmostation")).cosmostationWallet,
-    )
+    .with(WalletOption.COSMOSTATION, async () => (await import("./cosmostation")).cosmostationWallet)
     .with(
       WalletOption.BRAVE,
       WalletOption.COINBASE_WEB,
@@ -37,10 +28,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     )
 
     .with(WalletOption.KEYSTORE, async () => (await import("./keystore")).keystoreWallet)
-    .with(
-      WalletOption.TREZOR,
-      async () => (await import("@swapkit/wallet-hardware/trezor")).trezorWallet,
-    )
+    .with(WalletOption.TREZOR, async () => (await import("@swapkit/wallet-hardware/trezor")).trezorWallet)
     .with(
       WalletOption.LEDGER,
       // TODO: Remove

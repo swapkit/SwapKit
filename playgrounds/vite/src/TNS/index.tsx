@@ -19,10 +19,10 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
 
     try {
       const txHash = await skClient.thorchain.registerName({
-        assetValue: AssetValue.from({ chain: Chain.THORChain, value: 1 }),
         address,
-        name,
+        assetValue: AssetValue.from({ chain: Chain.THORChain, value: 1 }),
         chain: selectedChain,
+        name,
       });
 
       window.open(`${skClient.getExplorerTxUrl({ chain: Chain.THORChain, txHash })}`, "_blank");
@@ -47,12 +47,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
       </div>
 
       <div style={{ cursor: skClient ? "default" : "not-allowed" }}>
-        <div
-          style={{
-            pointerEvents: skClient ? "all" : "none",
-            opacity: skClient ? 1 : 0.5,
-          }}
-        >
+        <div style={{ opacity: skClient ? 1 : 0.5, pointerEvents: skClient ? "all" : "none" }}>
           <div style={{ display: "flex", flex: 1, flexDirection: "row" }}>
             <div>
               <select onChange={(e) => setSelectedChain(e.target.value as Chain)}>

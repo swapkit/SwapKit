@@ -1,23 +1,31 @@
-import {
-  AssetValue,
-  Chain,
-  ChainIdToChain,
-  SwapKitError,
-  WalletOption,
-  filterSupportedChains,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, ChainIdToChain, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { Eip1193Provider } from "ethers";
 import {
-  type WalletTxParams,
   getKEEPKEYAddress,
   getKEEPKEYMethods,
   getKEEPKEYProvider,
   getProviderNameFromChain,
+  type WalletTxParams,
   walletTransfer,
 } from "./walletHelpers";
 
 export const keepkeyBexWallet = createWallet({
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectKeepkeyBex(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+
+      await Promise.all(
+        filteredChains.map(async (chain) => {
+          const address = await getKEEPKEYAddress(chain);
+          const walletMethods = await getWalletMethods(chain);
+
+          addChain({ ...walletMethods, address, chain, walletType });
+        }),
+      );
+
+      return true;
+    },
   name: "connectKeepkeyBex",
   supportedChains: [
     Chain.Arbitrum,
@@ -40,21 +48,6 @@ export const keepkeyBexWallet = createWallet({
     Chain.THORChain,
   ],
   walletType: WalletOption.KEEPKEY_BEX,
-  connect: ({ addChain, supportedChains, walletType }) =>
-    async function connectKeepkeyBex(chains: Chain[]) {
-      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-
-      await Promise.all(
-        filteredChains.map(async (chain) => {
-          const address = await getKEEPKEYAddress(chain);
-          const walletMethods = await getWalletMethods(chain);
-
-          addChain({ ...walletMethods, address, chain, walletType });
-        }),
-      );
-
-      return true;
-    },
 });
 
 export const KEEPKEY_BEX_SUPPORTED_CHAINS = getWalletSupportedChains(keepkeyBexWallet);
@@ -63,9 +56,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
   switch (chain) {
     case Chain.Maya:
     case Chain.THORChain: {
-      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolboxes/cosmos"
-      );
+      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import("@swapkit/toolboxes/cosmos");
 
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
       const toolbox = getCosmosToolbox(chain);
@@ -105,9 +96,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const getBalance = async () => {
         const providerChain = getProviderNameFromChain(chain);
         // @ts-expect-error We assuming there chains via switch
-        const balance = await window?.keepkey?.[providerChain]?.request({
-          method: "request_balance",
-        });
+        const balance = await window?.keepkey?.[providerChain]?.request({ method: "request_balance" });
         const assetValue = AssetValue.from({ chain, value: balance[0].balance });
         return [assetValue];
       };
@@ -144,15 +133,11 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       } catch (_error) {
         throw new SwapKitError({
           errorKey: "wallet_failed_to_add_or_switch_network",
-          info: { wallet: WalletOption.KEEPKEY, chain },
+          info: { chain, wallet: WalletOption.KEEPKEY },
         });
       }
 
-      return prepareNetworkSwitch({
-        provider,
-        chain,
-        toolbox: { ...toolbox, ...keepkeyMethods },
-      });
+      return prepareNetworkSwitch({ chain, provider, toolbox: { ...toolbox, ...keepkeyMethods } });
     }
 
     default:

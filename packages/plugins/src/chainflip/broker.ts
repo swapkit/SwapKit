@@ -28,7 +28,7 @@ const registerAsBroker = (toolbox: ChainflipToolbox) => () => {
     throw new SwapKitError("chainflip_broker_register");
   }
 
-  return toolbox.signAndBroadcast({ tx: extrinsic, address: toolbox.getAddress() });
+  return toolbox.signAndBroadcast({ address: toolbox.getAddress(), tx: extrinsic });
 };
 
 const withdrawFee =
@@ -37,9 +37,7 @@ const withdrawFee =
     const isFeeChainPolkadot = feeAsset.chain === Chain.Polkadot;
 
     const recipientAddress = wrapWithThrow(() => {
-      return isFeeChainPolkadot
-        ? toolbox.encodeAddress(toolbox.decodeAddress(recipient), "hex")
-        : recipient;
+      return isFeeChainPolkadot ? toolbox.encodeAddress(toolbox.decodeAddress(recipient), "hex") : recipient;
     }, "chainflip_broker_recipient_error");
 
     return new Promise<WithdrawFeeResponse>((resolve) => {
@@ -52,35 +50,24 @@ const withdrawFee =
       }
 
       toolbox.signAndBroadcast({
-        tx: extrinsic,
-        callback: async (result) => {
+        callback: (result) => {
           if (!result.status?.isFinalized) {
             return;
           }
 
-          const withdrawEvent = result.events.find(
-            (event) => event.event.method === "WithdrawalRequested",
-          );
+          const withdrawEvent = result.events.find((event) => event.event.method === "WithdrawalRequested");
 
           if (!withdrawEvent) {
-            throw new SwapKitError(
-              "chainflip_channel_error",
-              "Could not find 'WithdrawalRequested' event",
-            );
+            throw new SwapKitError("chainflip_channel_error", "Could not find 'WithdrawalRequested' event");
           }
           const {
             event: {
               data: { egressId, egressAsset, egressAmount, egressFee, destinationAddress },
             },
           } = withdrawEvent.toHuman() as any;
-          resolve({
-            egressId,
-            egressAsset,
-            egressAmount,
-            egressFee,
-            destinationAddress,
-          });
+          resolve({ destinationAddress, egressAmount, egressAsset, egressFee, egressId });
         },
+        tx: extrinsic,
       });
     });
   };
@@ -108,9 +95,7 @@ const fundStateChainAccount =
       throw new SwapKitError("chainflip_broker_fund_invalid_address");
     }
 
-    const hexAddress = isHex(stateChainAccount)
-      ? stateChainAccount
-      : u8aToHex(decodeAddress(stateChainAccount));
+    const hexAddress = isHex(stateChainAccount) ? stateChainAccount : u8aToHex(decodeAddress(stateChainAccount));
 
     return evmToolbox.call<string>({
       abi: chainflipGateway,
@@ -121,7 +106,7 @@ const fundStateChainAccount =
   };
 
 export const ChainflipBroker = (chainflipToolbox: ChainflipToolbox) => ({
-  registerAsBroker: registerAsBroker(chainflipToolbox),
   fundStateChainAccount: fundStateChainAccount(chainflipToolbox),
+  registerAsBroker: registerAsBroker(chainflipToolbox),
   withdrawFee: withdrawFee(chainflipToolbox),
 });

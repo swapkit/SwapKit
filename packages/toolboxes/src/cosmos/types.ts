@@ -1,22 +1,24 @@
 import type { OfflineAminoSigner } from "@cosmjs/amino";
 import type { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing";
-import type { Chain, ChainId, CosmosChain, DerivationPathArray } from "@swapkit/helpers";
+import type {
+  Chain,
+  ChainId,
+  CosmosChain,
+  DerivationPathArray,
+  GenericCreateTransactionParams,
+} from "@swapkit/helpers";
 import type { buildAminoMsg } from "./thorchainUtils";
 import type { createCosmosToolbox } from "./toolbox/cosmos";
 import type { createThorchainToolbox } from "./toolbox/thorchain";
 import type { getDefaultChainFee } from "./util";
 
-export type CosmosSDKClientParams = {
-  server: string;
-  chainId: ChainId;
-  prefix?: string;
-  stagenet?: boolean;
+export type CosmosSDKClientParams = { server: string; chainId: ChainId; prefix?: string; stagenet?: boolean };
+export type CosmosCreateTransactionParams = GenericCreateTransactionParams & {
+  accountNumber?: number;
+  sequence?: number;
 };
 
-export type MultiSigSigner = {
-  pubKey: string;
-  signature: string;
-};
+export type MultiSigSigner = { pubKey: string; signature: string };
 
 export type MultisigTx = {
   msgs: ReturnType<typeof buildAminoMsg>[];
@@ -29,9 +31,7 @@ export type MultisigTx = {
 
 export type CosmosSigner = DirectSecp256k1HdWallet | OfflineDirectSigner | OfflineAminoSigner;
 
-export type CosmosToolboxParams<T = CosmosChain> = {
-  chain: T;
-} & (
+export type CosmosToolboxParams<T = CosmosChain> = { chain: T } & (
   | { signer?: CosmosSigner }
   | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }
 );
@@ -42,9 +42,7 @@ export type CosmosWallets = {
   [chain in Chain.Cosmos | Chain.Kujira | Chain.Noble]: BaseCosmosWallet;
 };
 
-export type ThorchainWallet = Awaited<
-  Omit<ReturnType<typeof createThorchainToolbox>, "signMessage">
->;
+export type ThorchainWallet = Awaited<Omit<ReturnType<typeof createThorchainToolbox>, "signMessage">>;
 export type ThorchainWallets = {
   [chain in Chain.THORChain | Chain.Maya]: ThorchainWallet;
 };

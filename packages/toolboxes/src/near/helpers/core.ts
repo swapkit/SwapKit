@@ -1,5 +1,5 @@
 import type { Provider } from "@near-js/providers";
-import { type DerivationPathArray, SwapKitError, derivationPathToString } from "@swapkit/helpers";
+import { type DerivationPathArray, derivationPathToString, SwapKitError } from "@swapkit/helpers";
 import { type KeyPair, KeyPairSigner } from "near-api-js";
 import type { NearSigner } from "../types";
 
@@ -70,14 +70,12 @@ function createNearSignerFromKeyPair(keyPair: KeyPair): NearSigner {
 export async function getFullAccessPublicKey(provider: Provider, accountId: string) {
   // Get the first full access key for the account
   const response = await provider.query({
-    request_type: "view_access_key_list",
-    finality: "final",
     account_id: accountId,
+    finality: "final",
+    request_type: "view_access_key_list",
   });
 
-  const fullAccessKey = (response as any).keys.find(
-    (key: any) => key.access_key.permission === "FullAccess",
-  );
+  const fullAccessKey = (response as any).keys.find((key: any) => key.access_key.permission === "FullAccess");
 
   if (!fullAccessKey) {
     throw new SwapKitError("toolbox_near_invalid_address");
@@ -87,5 +85,5 @@ export async function getFullAccessPublicKey(provider: Provider, accountId: stri
   const publicKey = utils.PublicKey.fromString(fullAccessKey.public_key);
   const nonce = (fullAccessKey.access_key.nonce as number) || 0;
 
-  return { publicKey, nonce };
+  return { nonce, publicKey };
 }

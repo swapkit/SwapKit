@@ -2,9 +2,7 @@ import { beforeAll, describe, expect, test } from "bun:test";
 import { Chain } from "@swapkit/helpers";
 import { getEvmToolbox } from "../toolbox";
 
-const context: {
-  validateAddress: (address: string) => boolean;
-} = {} as any;
+const context: { validateAddress: (address: string) => boolean } = {} as any;
 
 beforeAll(async () => {
   // Get EVM toolbox for address validation

@@ -1,13 +1,14 @@
+import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
 import {
   Chain,
   type DerivationPathArray,
+  derivationPathToString,
   FeeOption,
+  filterSupportedChains,
   type GenericTransferParams,
   SKConfig,
   SwapKitError,
   WalletOption,
-  derivationPathToString,
-  filterSupportedChains,
 } from "@swapkit/helpers";
 import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
@@ -29,7 +30,10 @@ function getScriptType(derivationPath: DerivationPathArray) {
 async function getTrezorWallet<T extends Chain>({
   chain,
   derivationPath,
-}: { chain: T; derivationPath: DerivationPathArray }) {
+}: {
+  chain: T;
+  derivationPath: DerivationPathArray;
+}) {
   switch (chain) {
     case Chain.Arbitrum:
     case Chain.Aurora:
@@ -51,6 +55,116 @@ async function getTrezorWallet<T extends Chain>({
       return { ...toolbox, address };
     }
 
+    case Chain.Zcash: {
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+
+      const derivationPathStr = derivationPathToString(derivationPath);
+
+      const getAddress = async () => {
+        const TrezorConnect = (await import("@trezor/connect-web")).default;
+        const { success, payload } = await TrezorConnect.getAddress({ coin: "zec", path: derivationPathStr });
+
+        if (!success) {
+          throw new SwapKitError({
+            errorKey: "wallet_trezor_failed_to_get_address",
+            info: { chain, error: (payload as { error: string; code?: string }).error || "Unknown error" },
+          });
+        }
+
+        return payload.address;
+      };
+
+      const address = await getAddress();
+
+      // Create a signer that works with ZcashPsbt
+      const signer = {
+        getAddress: async () => address,
+        signTransaction: async (zcashPsbt: ZcashPsbt) => {
+          const TrezorConnect = (await import("@trezor/connect-web")).default;
+          const address_n = derivationPath.map((pathElement, index) =>
+            index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
+          );
+
+          // Extract Zcash-specific parameters from the PSBT
+          // Use getVersion() method instead of accessing protected tx property
+          const version = 4; // Sapling version
+          const versionGroupId = 0x892f2085; // Sapling
+          const branchId = 0xe9ff75a6; // Canopy
+
+          const inputs = zcashPsbt.txInputs.map((input, idx) => ({
+            address_n,
+            amount: zcashPsbt.data.inputs[idx]?.witnessUtxo?.value?.toString() || "0",
+            prev_hash: input.hash.reverse().toString("hex"),
+            prev_index: input.index,
+            script_type: "SPENDADDRESS" as const,
+          }));
+
+          const result = await TrezorConnect.signTransaction({
+            branchId,
+            coin: "zec",
+            inputs,
+            outputs: zcashPsbt.txOutputs.map((output) => {
+              // OP_RETURN
+              if (!output.address) {
+                return { amount: "0", op_return_data: output.script.toString("hex"), script_type: "PAYTOOPRETURN" };
+              }
+
+              const outputAddress = output.address;
+
+              const isChangeAddress = outputAddress === address;
+
+              return isChangeAddress
+                ? { address_n, amount: output.value.toString(), script_type: "PAYTOADDRESS" }
+                : { address: outputAddress, amount: output.value.toString(), script_type: "PAYTOADDRESS" };
+            }),
+            overwintered: true,
+            version,
+            versionGroupId,
+          }); // Type assertion needed due to Trezor Connect types not supporting PAYTOOPRETURN
+
+          if (!result.success) {
+            throw new SwapKitError({
+              errorKey: "wallet_trezor_failed_to_sign_transaction",
+              info: { chain, error: (result.payload as { error: string; code?: string }).error },
+            });
+          }
+
+          // Trezor returns the fully signed transaction hex
+          // We need to update the PSBT with the signatures and finalize it
+          // For now, we'll store the signed tx hex in a way the toolbox can use
+          return result.payload.serializedTx;
+        },
+      };
+
+      const toolbox = await getUtxoToolbox(Chain.Zcash);
+
+      const transfer = async (params: GenericTransferParams) => {
+        if (!(address && params.recipient)) {
+          throw new SwapKitError({
+            errorKey: "wallet_missing_params",
+            info: { address, recipient: params.recipient, wallet: WalletOption.TREZOR },
+          });
+        }
+
+        const feeRate = params.feeRate || (await toolbox.getFeeRates())[params.feeOptionKey || FeeOption.Fast];
+
+        const { psbt } = await toolbox.createTransaction({ ...params, feeRate, fetchTxHex: false, sender: address });
+
+        const signedPsbt = await signer.signTransaction(psbt);
+        // Extract the signed transaction hex that we stored
+        const txHex = (signedPsbt as any).signedTxHex;
+        if (!txHex) {
+          throw new SwapKitError({
+            errorKey: "wallet_trezor_failed_to_sign_transaction",
+            info: { chain, error: "No signed transaction hex returned" },
+          });
+        }
+        return toolbox.broadcastTx(txHex);
+      };
+
+      return { ...toolbox, address, signTransaction: signer.signTransaction, transfer };
+    }
+
     case Chain.Bitcoin:
     case Chain.BitcoinCash:
     case Chain.Dash:
@@ -60,28 +174,19 @@ async function getTrezorWallet<T extends Chain>({
       const scriptType = getScriptType(derivationPath);
 
       if (!scriptType) {
-        throw new SwapKitError({
-          errorKey: "wallet_trezor_derivation_path_not_supported",
-          info: { derivationPath },
-        });
+        throw new SwapKitError({ errorKey: "wallet_trezor_derivation_path_not_supported", info: { derivationPath } });
       }
 
       const coin = chain.toLowerCase();
 
       const getAddress = async (path: DerivationPathArray = derivationPath) => {
         const TrezorConnect = (await import("@trezor/connect-web")).default;
-        const { success, payload } = await TrezorConnect.getAddress({
-          path: derivationPathToString(path),
-          coin,
-        });
+        const { success, payload } = await TrezorConnect.getAddress({ coin, path: derivationPathToString(path) });
 
         if (!success) {
           throw new SwapKitError({
             errorKey: "wallet_trezor_failed_to_get_address",
-            info: {
-              chain,
-              error: (payload as { error: string; code?: string }).error || "Unknown error",
-            },
+            info: { chain, error: (payload as { error: string; code?: string }).error || "Unknown error" },
           });
         }
 
@@ -107,32 +212,26 @@ async function getTrezorWallet<T extends Chain>({
           inputs: inputs.map(({ hash, index, value }) => ({
             // Hardens the first 3 elements of the derivation path - required by trezor
             address_n,
-            prev_hash: hash,
-            prev_index: index,
             // object needs amount but does not use it for signing
             amount: value,
+            prev_hash: hash,
+            prev_index: index,
             script_type: scriptType.input,
           })),
           outputs: psbt.txOutputs.map((output) => {
             // OP_RETURN
             if (!output.address) {
-              return {
-                amount: "0",
-                op_return_data: Buffer.from(memo).toString("hex"),
-                script_type: "PAYTOOPRETURN",
-              };
+              return { amount: "0", op_return_data: Buffer.from(memo).toString("hex"), script_type: "PAYTOOPRETURN" };
             }
 
             const outputAddress =
-              chain === Chain.BitcoinCash
-                ? toolbox.stripPrefix(toCashAddress(output.address))
-                : output.address;
+              chain === Chain.BitcoinCash ? toolbox.stripPrefix(toCashAddress(output.address)) : output.address;
 
             const isChangeAddress = outputAddress === address;
 
             return isChangeAddress
-              ? { amount: output.value, address_n, script_type: scriptType.output }
-              : { amount: output.value, address: outputAddress, script_type: "PAYTOADDRESS" };
+              ? { address_n, amount: output.value, script_type: scriptType.output }
+              : { address: outputAddress, amount: output.value, script_type: "PAYTOADDRESS" };
           }),
         });
 
@@ -142,10 +241,7 @@ async function getTrezorWallet<T extends Chain>({
 
         throw new SwapKitError({
           errorKey: "wallet_trezor_failed_to_sign_transaction",
-          info: {
-            chain,
-            error: (result.payload as { error: string; code?: string }).error,
-          },
+          info: { chain, error: (result.payload as { error: string; code?: string }).error },
         });
       };
 
@@ -159,14 +255,13 @@ async function getTrezorWallet<T extends Chain>({
         if (!(address && recipient)) {
           throw new SwapKitError({
             errorKey: "wallet_missing_params",
-            info: { wallet: WalletOption.TREZOR, memo, address, recipient },
+            info: { address, memo, recipient, wallet: WalletOption.TREZOR },
           });
         }
 
         const toolbox = await getUtxoToolbox(chain);
 
-        const feeRate =
-          paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
+        const feeRate = paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
 
         const createTxMethod =
           chain === Chain.BitcoinCash
@@ -175,11 +270,11 @@ async function getTrezorWallet<T extends Chain>({
 
         const { psbt, inputs } = await createTxMethod({
           ...rest,
+          feeRate,
+          fetchTxHex: true,
           memo,
           recipient,
-          feeRate,
           sender: address,
-          fetchTxHex: true,
         });
 
         const txHex = await signTransaction(psbt, inputs, memo);
@@ -190,36 +285,15 @@ async function getTrezorWallet<T extends Chain>({
 
       const toolbox = await getUtxoToolbox(chain);
 
-      return { ...toolbox, address, transfer, signTransaction };
+      return { ...toolbox, address, signTransaction, transfer };
     }
 
     default:
-      throw new SwapKitError({
-        errorKey: "wallet_chain_not_supported",
-        info: { chain, wallet: WalletOption.TREZOR },
-      });
+      throw new SwapKitError({ errorKey: "wallet_chain_not_supported", info: { chain, wallet: WalletOption.TREZOR } });
   }
 }
 
 export const trezorWallet = createWallet({
-  name: "connectTrezor",
-  walletType: WalletOption.TREZOR,
-  supportedChains: [
-    Chain.Arbitrum,
-    Chain.Aurora,
-    Chain.Avalanche,
-    Chain.Base,
-    Chain.BinanceSmartChain,
-    Chain.Bitcoin,
-    Chain.BitcoinCash,
-    Chain.Dash,
-    Chain.Dogecoin,
-    Chain.Ethereum,
-    Chain.Gnosis,
-    Chain.Litecoin,
-    Chain.Optimism,
-    Chain.Polygon,
-  ],
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectTrezor(chains: Chain[], derivationPath: DerivationPathArray) {
       const [chain] = filterSupportedChains({ chains, supportedChains, walletType });
@@ -236,15 +310,8 @@ export const trezorWallet = createWallet({
       if (!success) {
         const trezorConfig = SKConfig.get("integrations").trezor;
         const manifest = trezorConfig
-          ? {
-              ...trezorConfig,
-              appName: (trezorConfig as any).appName || "SwapKit",
-            }
-          : {
-              appUrl: "",
-              email: "",
-              appName: "SwapKit",
-            };
+          ? { ...trezorConfig, appName: (trezorConfig as any).appName || "SwapKit" }
+          : { appName: "SwapKit", appUrl: "", email: "" };
         TrezorConnect.init({ lazyLoad: true, manifest });
       }
 
@@ -254,6 +321,25 @@ export const trezorWallet = createWallet({
 
       return true;
     },
+  name: "connectTrezor",
+  supportedChains: [
+    Chain.Arbitrum,
+    Chain.Aurora,
+    Chain.Avalanche,
+    Chain.Base,
+    Chain.BinanceSmartChain,
+    Chain.Bitcoin,
+    Chain.BitcoinCash,
+    Chain.Dash,
+    Chain.Dogecoin,
+    Chain.Ethereum,
+    Chain.Gnosis,
+    Chain.Litecoin,
+    Chain.Optimism,
+    Chain.Polygon,
+    Chain.Zcash,
+  ],
+  walletType: WalletOption.TREZOR,
 });
 
 export const TREZOR_SUPPORTED_CHAINS = getWalletSupportedChains(trezorWallet);

@@ -7,10 +7,10 @@ import Multisig from "./Multisig";
 import NearNames from "./NearNames";
 import Send from "./Send";
 import Swap from "./Swap";
+import { getSwapKitClient } from "./swapKitClient";
 import TNS from "./TNS";
 import { Wallet } from "./Wallet";
 import { WalletPicker } from "./WalletPicker";
-import { getSwapKitClient } from "./swapKitClient";
 
 const apiKeys = ["walletConnectProjectId"] as const;
 
@@ -23,15 +23,14 @@ const App = () => {
   const [stagenet, setStagenet] = useState(false);
 
   const [keys, setKeys] = useState({
+    brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
     swapKit: (import.meta.env.VITE_TEST_API_KEY || "") as string,
     walletConnectProjectId: (import.meta.env.WALLETCONNECT_PROJECT_ID || "") as string,
-    brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
   });
 
-  const [{ inputAsset, outputAsset }, setSwapAssets] = useState<{
-    inputAsset?: AssetValue;
-    outputAsset?: AssetValue;
-  }>({});
+  const [{ inputAsset, outputAsset }, setSwapAssets] = useState<{ inputAsset?: AssetValue; outputAsset?: AssetValue }>(
+    {},
+  );
 
   const skClient = getSwapKitClient(keys);
 
@@ -72,18 +71,12 @@ const App = () => {
 
   const Screen = useMemo(
     () => ({
-      swap: skClient ? (
-        <Swap inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} />
-      ) : null,
-      tns: skClient ? <TNS skClient={skClient} /> : null,
-      send: skClient ? <Send inputAsset={inputAsset} skClient={skClient} /> : null,
       earn: <div>Earn</div>,
-      multisig: skClient ? (
-        <Multisig inputAsset={inputAsset} phrase={phrase} skClient={skClient} />
-      ) : null,
-      liquidity: skClient ? (
-        <Liquidity otherAsset={outputAsset} nativeAsset={inputAsset} skClient={skClient} />
-      ) : null,
+      liquidity: skClient ? <Liquidity nativeAsset={inputAsset} otherAsset={outputAsset} skClient={skClient} /> : null,
+      multisig: skClient ? <Multisig inputAsset={inputAsset} phrase={phrase} skClient={skClient} /> : null,
+      send: skClient ? <Send inputAsset={inputAsset} skClient={skClient} /> : null,
+      swap: skClient ? <Swap inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} /> : null,
+      tns: skClient ? <TNS skClient={skClient} /> : null,
     }),
     [skClient, inputAsset, outputAsset, phrase],
   );
@@ -112,20 +105,14 @@ const App = () => {
           style={{
             display: "flex",
             flexDirection: "row",
-            pointerEvents: skClient ? "all" : "none",
             opacity: skClient ? 1 : 0.5,
-          }}
-        >
+            pointerEvents: skClient ? "all" : "none",
+          }}>
           <div style={{ display: "flex", flex: 1, flexDirection: "row" }}>
-            {skClient && (
-              <WalletPicker setPhrase={setPhrase} setWallet={setWallet} skClient={skClient} />
-            )}
+            {skClient && <WalletPicker setPhrase={setPhrase} setWallet={setWallet} skClient={skClient} />}
 
             <div>
-              <select
-                onChange={(e) => setFeature(e.target.value as "swap" | "earn")}
-                style={{ marginBottom: 10 }}
-              >
+              <select onChange={(e) => setFeature(e.target.value as "swap" | "earn")} style={{ marginBottom: 10 }}>
                 {Object.keys(Screen).map((screen) => (
                   <option key={screen} value={screen}>
                     {screen}
@@ -141,25 +128,24 @@ const App = () => {
             {skClient && (
               <>
                 <button onClick={disconnectAll} type="button">
-                  Disconnect All:{" "}
-                  {Array.isArray(wallet) ? wallet[0]?.walletType : wallet?.walletType}
+                  Disconnect All: {Array.isArray(wallet) ? wallet[0]?.walletType : wallet?.walletType}
                 </button>
 
                 {Array.isArray(wallet) ? (
                   wallet.map((walletData) => (
                     <Wallet
+                      disconnect={() => disconnectChain(walletData?.balance?.[0]?.chain as Chain)}
                       key={`${walletData?.address}-${walletData?.balance?.[0]?.chain}`}
                       setAsset={setAsset}
                       walletData={walletData}
-                      disconnect={() => disconnectChain(walletData?.balance?.[0]?.chain as Chain)}
                     />
                   ))
                 ) : (
                   <Wallet
+                    disconnect={() => disconnectChain(wallet?.balance?.[0]?.chain as Chain)}
                     key={`${wallet?.address}-${wallet?.balance?.[0]?.chain}`}
                     setAsset={setAsset}
                     walletData={wallet as FullWallet[Chain]}
-                    disconnect={() => disconnectChain(wallet?.balance?.[0]?.chain as Chain)}
                   />
                 )}
               </>
@@ -173,9 +159,9 @@ const App = () => {
       {/* NEAR Names Registration Modal - Only render when NEAR wallet is connected */}
       {skClient &&
         wallet &&
-        (Array.isArray(wallet)
-          ? wallet.some((w) => w.chain === Chain.Near)
-          : wallet?.chain === Chain.Near) && <NearNames skClient={skClient} />}
+        (Array.isArray(wallet) ? wallet.some((w) => w.chain === Chain.Near) : wallet?.chain === Chain.Near) && (
+          <NearNames skClient={skClient} />
+        )}
     </div>
   );
 };

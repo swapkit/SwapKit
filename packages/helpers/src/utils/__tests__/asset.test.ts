@@ -3,14 +3,17 @@ import { BaseDecimal, Chain } from "../../types";
 
 import { assetFromString, getAssetType, getDecimal } from "../asset";
 
+// TODO: this should be handled via AssetValue
 const tickerMap: Record<string, string> = {
-  [Chain.THORChain]: "RUNE",
-  [Chain.Cosmos]: "ATOM",
+  [Chain.Arbitrum]: "ETH",
+  [Chain.Aurora]: "ETH",
+  [Chain.Base]: "ETH",
   [Chain.BinanceSmartChain]: "BNB",
+  [Chain.Cosmos]: "ATOM",
   [Chain.Maya]: "CACAO",
   [Chain.Optimism]: "ETH",
-  [Chain.Arbitrum]: "ETH",
-  [Chain.Base]: "ETH",
+  [Chain.THORChain]: "RUNE",
+  [Chain.Tron]: "TRX",
 };
 
 describe("getAssetType", () => {
@@ -49,9 +52,7 @@ describe("getDecimal", () => {
   /**
    * Test out native
    */
-  const filteredChains = Object.values(Chain).filter(
-    (c) => ![Chain.Ethereum, Chain.Avalanche].includes(c),
-  );
+  const filteredChains = Object.values(Chain).filter((c) => ![Chain.Ethereum, Chain.Avalanche].includes(c));
 
   for (const chain of filteredChains) {
     describe(chain, () => {
@@ -158,36 +159,25 @@ describe("assetFromString", () => {
     const assetString = "THOR.RUNE";
     const result = assetFromString(assetString);
 
-    expect(result).toEqual({
-      chain: Chain.THORChain,
-      symbol: "RUNE",
-      ticker: "RUNE",
-      synth: false,
-    });
+    expect(result).toEqual({ chain: Chain.THORChain, symbol: "RUNE", synth: false, ticker: "RUNE" });
   });
 
   test("should return the correct object for multiple dashes", () => {
     const assetString = "ETH.PENDLE-LPT-0x1234";
     const result = assetFromString(assetString);
 
-    expect(result).toEqual({
-      chain: Chain.Ethereum,
-      symbol: "PENDLE-LPT-0x1234",
-      ticker: "PENDLE-LPT",
-      synth: false,
-    });
+    expect(result).toEqual({ chain: Chain.Ethereum, symbol: "PENDLE-LPT-0x1234", synth: false, ticker: "PENDLE-LPT" });
   });
 
   test.todo("should return the correct object for Radix resource", () => {
-    const assetString =
-      "XRD.xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75";
+    const assetString = "XRD.xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75";
     const result = assetFromString(assetString);
 
     expect(result).toEqual({
       chain: Chain.Radix,
       symbol: "xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
-      ticker: "xwBTC",
       synth: false,
+      ticker: "xwBTC",
     });
   });
 });

@@ -1,0 +1,916 @@
+---
+title: MetaMask Browser Extension Integration
+description: Complete guide to integrating MetaMask and EVM browser extensions with SwapKit SDK v4
+---
+
+MetaMask is the most popular Ethereum browser extension wallet, providing secure access to Ethereum and EVM-compatible networks. SwapKit SDK v4 offers comprehensive support for MetaMask and other EVM browser extensions through a unified interface.
+
+## Supported Extensions
+
+SwapKit's EVM extension integration supports:
+
+- **MetaMask**: The most popular Ethereum wallet extension
+- **Brave Wallet**: Built into Brave browser
+- **Coinbase Wallet**: Browser extension version
+- **Trust Wallet**: Browser extension version
+- **OKX Wallet**: Browser extension version
+- **Any EIP-6963 compatible wallet**: Standard for wallet discovery
+
+## Supported Chains
+
+All EVM-compatible chains are supported:
+
+- **Layer 1**: Ethereum, BinanceSmartChain, Avalanche, Polygon
+- **Layer 2**: Arbitrum, Optimism, Base
+- **Side Chains**: Gnosis, Aurora
+- **Custom Networks**: Any EVM-compatible chain
+
+## Installation and Setup
+
+### 1. Install Browser Extension
+
+Install your preferred EVM wallet extension:
+
+- **MetaMask**: [Chrome Web Store](https:
+- **Brave Wallet**: Built into Brave browser
+- **Coinbase Wallet**: [Chrome Web Store](https:
+- **Trust Wallet**: [Chrome Web Store](https:
+
+### 2. Set Up Wallet
+
+1. Create or import a wallet using your seed phrase
+2. Set up a secure password
+3. Add the networks you want to use (if not already present)
+
+### 3. Browser Requirements
+
+EVM extensions work in:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support (depends on extension)
+- **Edge**: Full support
+- **Brave**: Built-in wallet support
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...evmWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting MetaMask
+
+#### Basic Connection
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectMetaMask() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    const balance = await swapKit.getBalance(Chain.Ethereum, true);
+
+    console.log("Connected address:", address);
+    console.log("ETH balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect MetaMask:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectMultipleEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+  ];
+
+  try {
+    await swapKit.connectEVMWallet(evmChains, WalletOption.METAMASK);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all chains):", address);
+
+    const balances = await Promise.all(
+      evmChains.map(async (chain) => {
+        const balance = await swapKit.getBalance(chain, true);
+        return { chain, balance };
+      })
+    );
+
+    return { success: true, address, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+### Connecting Other EVM Extensions
+
+#### Brave Wallet
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectBraveWallet() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.BRAVE);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Brave Wallet address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Brave Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Coinbase Wallet Extension
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectCoinbaseWallet() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.COINBASE_WEB);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Coinbase Wallet address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Coinbase Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Trust Wallet Extension
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function connectTrustWallet() {
+  try {
+    await swapKit.connectEVMWallet(
+      [Chain.Ethereum],
+      WalletOption.TRUSTWALLET_WEB
+    );
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("Trust Wallet address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect Trust Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### EIP-6963 Compatible Wallets
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+function getEIP6963Wallets() {
+  return new Promise((resolve) => {
+    const wallets = [];
+
+    window.addEventListener("eip6963:announceProvider", (event) => {
+      wallets.push(event.detail);
+    });
+
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+    setTimeout(() => resolve(wallets), 100);
+  });
+}
+
+async function connectEIP6963Wallet(providerDetail) {
+  try {
+    const { provider } = providerDetail;
+
+    await swapKit.connectEVMWallet(
+      [Chain.Ethereum],
+      WalletOption.EIP6963,
+      provider
+    );
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log(`${providerDetail.info.name} address:`, address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error(`Failed to connect ${providerDetail.info.name}:`, error);
+    return { success: false, error };
+  }
+}
+
+async function showAvailableWallets() {
+  const wallets = await getEIP6963Wallets();
+
+  console.log("Available wallets:");
+  wallets.forEach((wallet) => {
+    console.log(`- ${wallet.info.name}: ${wallet.info.rdns}`);
+  });
+
+  if (wallets.length > 0) {
+    await connectEIP6963Wallet(wallets[0]);
+  }
+}
+```
+
+## Transaction Examples
+
+### Basic ETH Transfer
+
+```ts twoslash
+
+import { SwapKit, evmWallet, Chain, AssetValue, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+
+await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+async function sendEther() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    console.log("Sending ETH transaction...");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Transaction sent:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Transaction failed:", error);
+    throw error;
+  }
+}
+```
+
+### ERC-20 Token Transfer
+
+```ts twoslash
+import {
+  SwapKit,
+  evmWallet,
+  Chain,
+  AssetValue,
+  WalletOption,
+} from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendAnyERC20Token(
+  tokenAddress: string,
+  amount: number,
+  recipient: string,
+  decimals: number = 18
+) {
+  const tokenAsset = AssetValue.fromChainOrSignature(
+    `ETH.TOKEN-${tokenAddress}`,
+    amount
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: tokenAsset,
+      recipient,
+    });
+
+    console.log(`✅ Token transfer sent:`, txHash);
+    return txHash;
+  } catch (error) {
+    console.error(`❌ Token transfer failed:`, error);
+    throw error;
+  }
+}
+```
+
+### Multi-Chain Transactions
+
+```ts twoslash
+
+import { SwapKit, evmWallet, Chain, AssetValue, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+
+await swapKit.connectEVMWallet([Chain.Ethereum, Chain.Polygon, Chain.Arbitrum], WalletOption.METAMASK);
+
+async function sendOnPolygon() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ MATIC transfer sent:", txHash);
+    console.log("🔍 View on PolygonScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ MATIC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendOnArbitrum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ARB.ETH", 0.001);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Arbitrum ETH transfer sent:", txHash);
+    console.log("🔍 View on Arbiscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Arbitrum transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Network Management
+
+### Automatic Network Switching
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function switchAndTransact() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+    await swapKit.connectEVMWallet([Chain.Polygon], WalletOption.METAMASK);
+
+    const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+    const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("Transaction on Polygon:", txHash);
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("network")) {
+      console.error("❌ Network switch failed");
+      console.log("Please manually switch to Polygon network in MetaMask");
+    }
+    throw error;
+  }
+}
+```
+
+### Adding Custom Networks
+
+```ts twoslash
+
+
+
+
+async function addCustomNetwork() {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x89',
+            chainName: 'Polygon Mainnet',
+            nativeCurrency: {
+              name: 'MATIC',
+              symbol: 'MATIC',
+              decimals: 18,
+            },
+            rpcUrls: ['https:
+            blockExplorerUrls: ['https:
+          },
+        ],
+      });
+
+      console.log('✅ Network added successfully');
+    } catch (error) {
+      console.error('❌ Failed to add network:', error);
+    }
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+import { SwapKit, evmWallet, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...evmWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+    if (typeof window.ethereum === "undefined") {
+      console.error("❌ No Ethereum provider found");
+      console.log("🔧 Install MetaMask or another Ethereum wallet");
+      return { success: false, error: "No provider" };
+    }
+
+    if (!window.ethereum.isMetaMask) {
+      console.warn("⚠️ MetaMask not detected as active provider");
+      console.log("🔧 Ensure MetaMask is enabled and active");
+    }
+
+    console.log("🔍 Attempting to connect...");
+
+    await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("User rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in MetaMask");
+    }
+
+    if (error.message.includes("Already processing")) {
+      console.log("🔧 MetaMask is busy processing another request");
+      console.log("Please wait and try again");
+    }
+
+    return { success: false, error };
+  }
+}
+
+async function checkWalletStatus() {
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_accounts",
+    });
+
+    if (accounts.length === 0) {
+      console.log("❌ No accounts connected");
+      return { connected: false };
+    }
+
+    const chainId = await window.ethereum.request({
+      method: "eth_chainId",
+    });
+
+    console.log("✅ Wallet connected");
+    console.log("Account:", accounts[0]);
+    console.log("Chain ID:", chainId);
+
+    return {
+      connected: true,
+      account: accounts[0],
+      chainId,
+    };
+  } catch (error) {
+    console.error("Failed to check wallet status:", error);
+    return { connected: false, error };
+  }
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient ETH for transaction + gas fees");
+
+      const balance = await swapKit.getBalance(Chain.Ethereum, true);
+      console.log("Current balance:", balance);
+      console.log(
+        "🔧 Add more ETH to your wallet or reduce transaction amount"
+      );
+    }
+
+    if (error.message.includes("User denied")) {
+      console.error("❌ Transaction rejected in MetaMask");
+      console.log("🔧 Please approve the transaction in MetaMask");
+    }
+
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed or gas limit too low");
+      console.log("🔧 Try increasing gas limit or check network congestion");
+    }
+
+    if (error.message.includes("nonce")) {
+      console.error("❌ Nonce issues");
+      console.log(
+        "🔧 Reset account in MetaMask (Settings > Advanced > Reset Account)"
+      );
+    }
+
+    if (error.message.includes("network")) {
+      console.error("❌ Wrong network selected");
+      console.log("🔧 Switch to the correct network in MetaMask");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Network Issues
+
+```ts twoslash
+
+async function handleNetworkIssues() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Polygon], WalletOption.METAMASK);
+  } catch (error) {
+    if (error.message.includes("failed_to_switch_network")) {
+      console.error("❌ Failed to switch to Polygon network");
+
+
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: '0x89',
+              chainName: 'Polygon Mainnet',
+              nativeCurrency: {
+                name: 'MATIC',
+                symbol: 'MATIC',
+                decimals: 18,
+              },
+              rpcUrls: ['https:
+              blockExplorerUrls: ['https:
+            },
+          ],
+        });
+
+        console.log("✅ Network added, please try connecting again");
+      } catch (addError) {
+        console.error("❌ Failed to add network:", addError);
+        console.log("🔧 Please add Polygon network manually in MetaMask");
+      }
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+async function verifyConnection() {
+  const swapKit = SwapKit({ wallets: { ...evmWallet } });
+  await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+  const address = swapKit.getAddress(Chain.Ethereum);
+
+  console.log("Connected address:", address);
+  console.log("⚠️ Please verify this is your intended address");
+
+  return address;
+}
+
+async function secureTransaction() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+    console.log("📋 Transaction Details:");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("Recipient:", recipient);
+    console.log("⚠️ Please verify these details in MetaMask before confirming");
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error("Transaction failed");
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+
+function isValidEthereumAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+async function safeTransfer(recipient: string, amount: number) {
+  if (!isValidEthereumAddress(recipient)) {
+    throw new Error("Invalid recipient address");
+  }
+
+  const assetValue = AssetValue.fromChainOrSignature("ETH.ETH", amount);
+
+  if (amount <= 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  return await swapKit.transfer({
+    assetValue,
+    recipient,
+  });
+}
+```
+
+### Secure Configuration
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Polygon]: "https:
+      [Chain.Arbitrum]: "https:
+    },
+
+    apiKeys: {
+      swapKit: process.env.SWAPKIT_API_KEY,
+    },
+  },
+  wallets: { ...evmWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, evmWallet, Chain, WalletOption, AssetValue } from "@swapkit/sdk";
+
+interface MetaMaskWalletProps {
+  onConnect: (address: string) => void;
+  onError: (error: Error) => void;
+}
+
+export function MetaMaskWallet({ onConnect, onError }: MetaMaskWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [address, setAddress] = useState<string>("");
+  const [selectedChain, setSelectedChain] = useState<Chain>(Chain.Ethereum);
+
+  const swapKit = SwapKit({ wallets: { ...evmWallet } });
+
+
+  const isMetaMaskInstalled = typeof window !== 'undefined' &&
+    typeof window.ethereum !== 'undefined';
+
+  useEffect(() => {
+    if (!isMetaMaskInstalled) return;
+
+
+    const handleAccountsChanged = (accounts: string[]) => {
+      if (accounts.length === 0) {
+
+        setIsConnected(false);
+        setAddress("");
+      } else if (accounts[0] !== address) {
+
+        setAddress(accounts[0]);
+        onConnect(accounts[0]);
+      }
+    };
+
+
+    const handleChainChanged = (chainId: string) => {
+
+      console.log("Chain changed to:", chainId);
+    };
+
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    window.ethereum.on('chainChanged', handleChainChanged);
+
+    return () => {
+      if (window.ethereum.removeListener) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      }
+    };
+  }, [address, isMetaMaskInstalled]);
+
+  const connectMetaMask = async () => {
+    if (!isMetaMaskInstalled) {
+      onError(new Error("MetaMask not installed"));
+      return;
+    }
+
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectEVMWallet([selectedChain], WalletOption.METAMASK);
+      const walletAddress = swapKit.getAddress(selectedChain);
+
+      setAddress(walletAddress);
+      setIsConnected(true);
+      onConnect(walletAddress);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = async () => {
+    try {
+      swapKit.disconnectAll();
+      setIsConnected(false);
+      setAddress("");
+    } catch (error) {
+      console.error("Disconnect failed:", error);
+    }
+  };
+
+  if (!isMetaMaskInstalled) {
+    return (
+      <div>
+        <p>MetaMask not installed</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Install MetaMask
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>MetaMask Wallet</h3>
+
+      {!isConnected ? (
+        <div>
+          <select
+            value={selectedChain}
+            onChange={(e) => setSelectedChain(e.target.value as Chain)}
+            disabled={isConnecting}
+          >
+            <option value={Chain.Ethereum}>Ethereum</option>
+            <option value={Chain.Polygon}>Polygon</option>
+            <option value={Chain.Arbitrum}>Arbitrum</option>
+            <option value={Chain.BinanceSmartChain}>BSC</option>
+          </select>
+
+          <button
+            onClick={connectMetaMask}
+            disabled={isConnecting}
+          >
+            {isConnecting ? "Connecting..." : "Connect MetaMask"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <p><strong>Chain:</strong> {selectedChain}</p>
+          <p><strong>Address:</strong> {address}</p>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of MetaMask and EVM browser extension integration with SwapKit SDK v4, including setup, usage, troubleshooting, and security best practices.

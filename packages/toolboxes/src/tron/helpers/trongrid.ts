@@ -43,14 +43,11 @@ export async function fetchAccountFromTronGrid(address: string) {
     }
 
     // Return simplified object with balance and trc20 array
-    return {
-      balance: account.balance,
-      trc20: account.trc20 || [],
-    };
+    return { balance: account.balance, trc20: account.trc20 || [] };
   } catch (error) {
     throw new SwapKitError("toolbox_tron_trongrid_api_error", {
-      message: error instanceof Error ? error.message : "Unknown error",
       address,
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }

@@ -4,20 +4,18 @@ import {
   Chain,
   type ChainSigner,
   type GenericTransferParams,
-  SKConfig,
+  getRPCUrl,
   SwapKitError,
   SwapKitNumber,
 } from "@swapkit/helpers";
 import type { Transaction } from "xrpl";
-import { Client, type Payment, Wallet, isValidAddress, xrpToDrops } from "xrpl";
+import { Client, isValidAddress, type Payment, Wallet, xrpToDrops } from "xrpl";
 
 export type RippleWallet = Awaited<ReturnType<typeof getRippleToolbox>>;
 
 export { hashes, type Transaction } from "xrpl";
 
-const RIPPLE_ERROR_CODES = {
-  ACCOUNT_NOT_FOUND: 19,
-} as const;
+const RIPPLE_ERROR_CODES = { ACCOUNT_NOT_FOUND: 19 } as const;
 
 // Note: Ripple seeds generate a single address, no derivation path/index support.
 function createSigner(phrase: string): ChainSigner<Transaction, { tx_blob: string; hash: string }> {
@@ -48,12 +46,9 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
         ? createSigner(params.phrase)
         : undefined;
 
-  const rpcUrl = SKConfig.get("rpcUrls")[Chain.Ripple];
+  const rpcUrl = await getRPCUrl(Chain.Ripple);
   if (!rpcUrl) {
-    throw new SwapKitError({
-      errorKey: "toolbox_ripple_rpc_not_configured",
-      info: { chain: Chain.Ripple },
-    });
+    throw new SwapKitError({ errorKey: "toolbox_ripple_rpc_not_configured", info: { chain: Chain.Ripple } });
   }
 
   const client = new Client(rpcUrl);
@@ -70,30 +65,17 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     const addr = address || (await getAddress());
 
     try {
-      const accountInfo = await client.request({ command: "account_info", account: addr });
+      const accountInfo = await client.request({ account: addr, command: "account_info" });
 
       const balance = accountInfo.result.account_data.Balance;
 
-      return [
-        AssetValue.from({
-          chain: Chain.Ripple,
-          value: balance,
-          fromBaseDecimal: BaseDecimal[Chain.Ripple],
-        }),
-      ];
+      return [AssetValue.from({ chain: Chain.Ripple, fromBaseDecimal: BaseDecimal[Chain.Ripple], value: balance })];
     } catch (error) {
       // empty account
       if ((error as any).data.error_code === RIPPLE_ERROR_CODES.ACCOUNT_NOT_FOUND) {
-        return [
-          AssetValue.from({
-            chain: Chain.Ripple,
-            value: 0,
-          }),
-        ];
+        return [AssetValue.from({ chain: Chain.Ripple, value: 0 })];
       }
-      throw new SwapKitError("toolbox_ripple_get_balance_error", {
-        info: { address: addr, error },
-      });
+      throw new SwapKitError("toolbox_ripple_get_balance_error", { info: { address: addr, error } });
     }
   };
 
@@ -112,7 +94,12 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     recipient,
     memo,
     sender,
-  }: { assetValue: AssetValue; recipient: string; sender?: string; memo?: string }) => {
+  }: {
+    assetValue: AssetValue;
+    recipient: string;
+    sender?: string;
+    memo?: string;
+  }) => {
     if (!rippleValidateAddress(recipient)) {
       throw new SwapKitError({ errorKey: "core_transaction_invalid_recipient_address" });
     }
@@ -127,10 +114,10 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     }
 
     const transaction: Payment = {
-      TransactionType: "Payment",
       Account: senderAddress,
       Amount: xrpToDrops(assetValue.getValue("string")),
       Destination: recipient,
+      TransactionType: "Payment",
     };
 
     if (memo) {
@@ -156,10 +143,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
       return result.hash;
     }
 
-    throw new SwapKitError({
-      errorKey: "toolbox_ripple_broadcast_error",
-      info: { chain: Chain.Ripple },
-    });
+    throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple } });
   };
 
   const transfer = async (params: GenericTransferParams) => {
@@ -175,18 +159,18 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
   const disconnect = () => client.disconnect();
 
   return {
-    // Signer related
-    signer, // Expose the signer instance if created/provided
+    broadcastTransaction,
     createSigner, // Expose the helper
+    createTransaction,
+    disconnect,
+    estimateTransactionFee,
     // Core methods
     getAddress,
-    validateAddress: rippleValidateAddress,
     getBalance,
-    createTransaction,
+    // Signer related
+    signer, // Expose the signer instance if created/provided
     signTransaction,
-    broadcastTransaction,
     transfer,
-    estimateTransactionFee,
-    disconnect,
+    validateAddress: rippleValidateAddress,
   };
 };

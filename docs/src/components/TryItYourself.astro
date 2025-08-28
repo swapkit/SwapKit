@@ -1,0 +1,168 @@
+---
+const props = {
+  description: "Ready to experiment? Run this code in your own environment.",
+  icon: "rocket",
+  title: "Try it Yourself",
+  variant: "primary" as "primary" | "secondary" | "accent",
+  ...Astro.props,
+};
+
+const variantClasses = { accent: "try-it-accent", primary: "try-it-primary", secondary: "try-it-secondary" };
+
+const iconSvg: Record<string, string> = {
+  code: '<polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/>',
+  lightning: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+  play: '<polygon points="5,3 19,12 5,21"/>',
+  rocket: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+};
+---
+
+<div class={`try-it-yourself ${variantClasses[props.variant]}`}>
+  <div class="try-it-header">
+    <div class="try-it-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <Fragment set:html={iconSvg[props.icon] || iconSvg.rocket} />
+      </svg>
+    </div>
+    <div class="try-it-text">
+      <h3 class="try-it-title">{props.title}</h3>
+      <p class="try-it-description">{props.description}</p>
+    </div>
+  </div>
+  
+  <div class="try-it-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+.try-it-yourself {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+}
+
+.try-it-primary {
+  --bg-start: var(--sl-color-accent-low);
+  --bg-end: var(--sl-color-bg-nav);
+  --border-color: var(--sl-color-accent);
+  --icon-color: var(--sl-color-accent);
+  border-color: var(--border-color);
+}
+
+.try-it-secondary {
+  --bg-start: var(--sl-color-bg-nav);
+  --bg-end: var(--sl-color-bg-sidebar);
+  --border-color: var(--sl-color-hairline);
+  --icon-color: var(--sl-color-text-accent);
+  border-color: var(--border-color);
+}
+
+.try-it-accent {
+  --bg-start: var(--sl-color-bg-accent);
+  --bg-end: var(--sl-color-bg-nav);
+  --border-color: var(--sl-color-accent);
+  --icon-color: var(--sl-color-white);
+  border-color: var(--border-color);
+  color: var(--sl-color-white);
+}
+
+.try-it-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.try-it-icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: var(--icon-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sl-color-white);
+}
+
+.try-it-accent .try-it-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--sl-color-white);
+}
+
+.try-it-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.try-it-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.try-it-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.try-it-accent .try-it-title {
+  color: var(--sl-color-white);
+}
+
+.try-it-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--sl-color-text-accent);
+  line-height: 1.4;
+}
+
+.try-it-accent .try-it-description {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.try-it-content {
+  position: relative;
+}
+
+.try-it-content :global(.playground-links) {
+  margin: 1rem 0 0 0;
+}
+
+.try-it-content :global(.interactive-example) {
+  margin: 1rem 0 0 0;
+}
+
+
+@media (max-width: 640px) {
+  .try-it-yourself {
+    padding: 1.25rem;
+  }
+  
+  .try-it-header {
+    gap: 0.75rem;
+  }
+  
+  .try-it-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .try-it-icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .try-it-title {
+    font-size: 1rem;
+  }
+  
+  .try-it-description {
+    font-size: 0.875rem;
+  }
+}
+</style>

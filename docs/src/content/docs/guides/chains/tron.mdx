@@ -1,0 +1,601 @@
+---
+title: Tron Integration
+description: Complete guide to integrating Tron with SwapKit SDK for TRX operations and TRC-20 tokens
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This guide covers Tron integration with SwapKit, including wallet connections, TRX transfers, TRC-20 token operations, and cross-chain swaps.
+
+## Overview
+
+Tron is a blockchain platform designed for high throughput and smart contract support. SwapKit provides comprehensive Tron support through:
+
+- **Tron Toolbox**: Native Tron operations with TRX token
+- **TRC-20 Support**: Full support for Tron's token standard
+- **Energy/Bandwidth System**: Optimize resource usage for transactions
+- **Smart Contract Interaction**: Deploy and interact with Tron contracts
+- **Multi-Wallet Support**: Compatible with TronLink and hardware wallets
+
+## Getting Started
+
+### Installation
+
+```bash
+# Full SDK (recommended)
+bun add @swapkit/sdk
+
+# Individual packages for smaller bundles
+bun add @swapkit/toolboxes @swapkit/plugins
+```
+
+### Basic Setup
+
+<Tabs>
+<TabItem label="With SDK">
+```typescript
+// @noErrorValidation
+import { createSwapKit, Chain } from '@swapKit/sdk';
+
+const swapKit = createSwapKit();
+
+const tronWallet = await swapKit.getWallet(Chain.Tron);
+
+````
+</TabItem>
+<TabItem label="Standalone Toolbox">
+```typescript
+// @noErrorValidation
+import { getTronToolbox } from '@swapkit/toolboxes/tron';
+
+
+const tronToolbox = await getTronToolbox({
+  phrase: "your twelve word mnemonic phrase here",
+
+  derivationPath: [44, 195, 0, 0, 0]
+});
+
+
+const tronToolbox = await getTronToolbox({
+  privateKey: "your_tron_private_key",
+  fullNodeUrl: "https:
+  solidityNodeUrl: "https:
+});
+````
+
+</TabItem>
+</Tabs>
+
+## Tron Toolbox
+
+### Wallet Connection
+
+Connect to Tron using various wallet types:
+
+```typescript
+// @noErrorValidation
+import { Chain, FeeOption } from "@swapkit/sdk";
+
+await swapKit.connectKeystore([Chain.Tron], "your mnemonic phrase");
+
+await swapKit.connectTronLink([Chain.Tron]);
+
+await swapKit.connectLedger([Chain.Tron]);
+```
+
+### Address Generation and Validation
+
+Tron addresses start with 'T' and are base58-encoded:
+
+```typescript
+// @noErrorValidation
+
+const tronAddress = swapKit.getAddress(Chain.Tron);
+
+console.log("Tron address:", tronAddress);
+
+import { validateTronAddress } from "@swapkit/toolboxes/tron";
+
+const isValidAddress = validateTronAddress(tronAddress);
+console.log("Valid TRX address:", isValidAddress);
+
+const accountInfo = await tronToolbox.getAccount(tronAddress);
+console.log("Account info:", {
+  balance: accountInfo.balance,
+  bandwidth: accountInfo.bandwidth,
+  energy: accountInfo.energy,
+  frozenBalance: accountInfo.frozenBalance,
+});
+```
+
+### TRX Transfers
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapKit/sdk";
+
+const txHash = await swapKit.transfer({
+  recipient: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  assetValue: AssetValue.from({
+    chain: Chain.Tron,
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Fast,
+  memo: "TRX payment",
+});
+
+console.log(`Tron transaction hash: ${txHash}`);
+
+const optimizedTransfer = await tronToolbox.transfer({
+  recipient: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  assetValue: AssetValue.from({ chain: Chain.Tron, value: "50" }),
+  feeLimit: 10000000,
+  memo: "Optimized transfer",
+});
+
+const batchTransfers = async () => {
+  const recipients = [
+    { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", amount: "10" },
+    { address: "TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax", amount: "15" },
+    { address: "THPvaUhoh2Qn2PIJ4B3jK88irTiM65W9A", amount: "20" },
+  ];
+
+  for (const { address, amount } of recipients) {
+    const tx = await tronToolbox.transfer({
+      recipient: address,
+      assetValue: AssetValue.from({ chain: Chain.Tron, value: amount }),
+      feeLimit: 5000000,
+    });
+    console.log(`TRX sent to ${address}: ${tx}`);
+  }
+};
+```
+
+### TRC-20 Token Operations
+
+Tron's TRC-20 tokens are similar to ERC-20 but with different resource model:
+
+```typescript
+// @noErrorValidation
+
+const usdtTransfer = await swapKit.transfer({
+  recipient: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  assetValue: AssetValue.from({
+    chain: Chain.Tron,
+    symbol: "USDT",
+    address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    value: "100",
+  }),
+  feeOptionKey: FeeOption.Average,
+});
+
+const tokenBalance = await tronToolbox.getTRC20Balance(
+  "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+);
+
+console.log(`USDT balance: ${tokenBalance} USDT`);
+
+const allTokens = await tronToolbox.getAllTRC20Tokens(
+  swapKit.getAddress(Chain.Tron)
+);
+
+console.log("TRC-20 tokens owned:");
+allTokens.forEach((token) => {
+  console.log(`${token.symbol}: ${token.balance} (${token.contractAddress})`);
+});
+
+const energyOptimizedTransfer = async () => {
+  const energyPrice = await tronToolbox.getEnergyPrice();
+  const estimatedEnergy = await tronToolbox.estimateEnergy({
+    contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    functionSelector: "transfer(address,uint256)",
+    parameter: "0x...",
+  });
+
+  const energyCost = estimatedEnergy * energyPrice;
+  console.log(`Estimated energy cost: ${energyCost} sun`);
+
+  const transferTx = await tronToolbox.transferTRC20({
+    contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    recipient: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    amount: "50000000",
+    feeLimit: energyCost * 2,
+  });
+
+  return transferTx;
+};
+```
+
+### Smart Contract Interactions
+
+Tron supports smart contracts with TVM (Tron Virtual Machine):
+
+```typescript
+// @noErrorValidation
+
+const deployContract = async () => {
+  const deployTx = await tronToolbox.deployContract({
+    contractName: "MyToken",
+    abi: contractABI,
+    bytecode: "0x608060405234801561001057600080fd5b5...",
+    constructorParameters: ["MyToken", "MTK", 18, "1000000000000000000000000"],
+    feeLimit: 100000000,
+    callValue: 0,
+    userFeePercentage: 0,
+    originEnergyLimit: 10000000,
+  });
+
+  console.log("Contract deployed:", deployTx);
+  return deployTx;
+};
+
+const readContractData = async () => {
+  const result = await tronToolbox.callContract({
+    contractAddress: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    functionSelector: "balanceOf(address)",
+    parameter:
+      "0x000000000000000000000000418dae2c50b4ab7a88a2d0a0b3b0b4e5d6f7e8f9",
+  });
+
+  console.log("Contract call result:", result);
+  return result;
+};
+
+const executeContract = async () => {
+  const executeTx = await tronToolbox.triggerSmartContract({
+    contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    functionSelector: "transfer(address,uint256)",
+    parameter:
+      "0x000000000000000000000000418dae2c50b4ab7a88a2d0a0b3b0b4e5d6f7e8f90000000000000000000000000000000000000000000000000000000005f5e100",
+    feeLimit: 20000000,
+    callValue: 0,
+  });
+
+  console.log("Contract executed:", executeTx);
+};
+
+const subscribeToEvents = async () => {
+  const eventSubscription = await tronToolbox.subscribeToContractEvents({
+    contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    eventName: "Transfer",
+    callback: (event) => {
+      console.log("Transfer event:", {
+        from: event.data.from,
+        to: event.data.to,
+        value: event.data.value,
+        blockNumber: event.block_number,
+      });
+    },
+  });
+
+  return eventSubscription;
+};
+```
+
+### Resource Management
+
+Tron uses bandwidth and energy for transaction costs:
+
+```typescript
+// @noErrorValidation
+
+const getResources = async () => {
+  const resources = await tronToolbox.getAccountResources(
+    swapKit.getAddress(Chain.Tron)
+  );
+
+  console.log("Account resources:", {
+    bandwidth: {
+      used: resources.freeNetUsed,
+      limit: resources.freeNetLimit,
+      remaining: resources.freeNetLimit - resources.freeNetUsed,
+    },
+    energy: {
+      used: resources.EnergyUsed,
+      limit: resources.EnergyLimit,
+      remaining: resources.EnergyLimit - resources.EnergyUsed,
+    },
+  });
+};
+
+const freezeForResources = async () => {
+  const freezeTx = await tronToolbox.freezeBalance({
+    amount: "1000000000",
+    duration: 3,
+    resource: "ENERGY",
+    receiverAddress: swapKit.getAddress(Chain.Tron),
+  });
+
+  console.log("TRX frozen for energy:", freezeTx);
+  return freezeTx;
+};
+
+const unfreezeResources = async () => {
+  const unfreezeTx = await tronToolbox.unfreezeBalance({
+    resource: "ENERGY",
+    receiverAddress: swapKit.getAddress(Chain.Tron),
+  });
+
+  console.log("TRX unfrozen:", unfreezeTx);
+};
+
+const delegateResources = async () => {
+  const delegateTx = await tronToolbox.delegateResource({
+    resource: "ENERGY",
+    balance: "500000000",
+    receiverAddress: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  });
+
+  console.log("Resources delegated:", delegateTx);
+};
+```
+
+### Voting and Staking
+
+Tron uses DPoS consensus with voting for Super Representatives:
+
+```typescript
+// @noErrorValidation
+
+const getSuperRepresentatives = async () => {
+  const srs = await tronToolbox.getSuperRepresentatives();
+
+  console.log("Top 10 Super Representatives:");
+  srs.slice(0, 10).forEach((sr, index) => {
+    console.log(`${index + 1}. ${sr.name}: ${sr.voteCount} votes`);
+  });
+
+  return srs;
+};
+
+const voteForSRs = async () => {
+  const votes = [
+    { srAddress: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 100 },
+    { srAddress: "TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax", voteCount: 50 },
+  ];
+
+  const voteTx = await tronToolbox.vote({
+    votes: votes.map((vote) => ({
+      vote_address: vote.srAddress,
+      vote_count: vote.voteCount,
+    })),
+  });
+
+  console.log("Votes cast:", voteTx);
+};
+
+const claimRewards = async () => {
+  const rewardsTx = await tronToolbox.withdrawRewards();
+  console.log("Rewards withdrawn:", rewardsTx);
+};
+```
+
+## Cross-Chain Operations
+
+Tron tokens can be bridged to other networks:
+
+```typescript
+// @noErrorValidation
+
+const trxToBtcQuote = await swapKit.getQuote({
+  sellAsset: "TRON.TRX",
+  sellAmount: "10000",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Tron),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+console.log("TRX -> BTC quote:", {
+  expectedOutput: trxToBtcQuote.expectedOutput,
+  fees: trxToBtcQuote.fees,
+  timeEstimate: trxToBtcQuote.timeEstimate,
+});
+
+const usdtBridge = await swapKit.getQuote({
+  sellAsset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  sellAmount: "1000",
+  buyAsset: "ETH.USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  senderAddress: swapKit.getAddress(Chain.Tron),
+  recipientAddress: swapKit.getAddress(Chain.Ethereum),
+});
+
+const bridgeTx = await swapKit.swap({
+  route: usdtBridge.routes[0],
+  feeOptionKey: FeeOption.Fast,
+});
+```
+
+## Performance Optimization
+
+### Resource Optimization
+
+```typescript
+// @noErrorValidation
+
+const optimizeTransaction = async () => {
+  const account = await tronToolbox.getAccount(swapKit.getAddress(Chain.Tron));
+
+  const requiredEnergy = 50000;
+  const requiredBandwidth = 265;
+
+  if (account.energy < requiredEnergy) {
+    console.log("Insufficient energy - will consume TRX as fee");
+
+    const energyPrice = await tronToolbox.getEnergyPrice();
+    const energyCostInTrx = (requiredEnergy * energyPrice) / 1000000;
+
+    if (energyCostInTrx > 5) {
+      await tronToolbox.freezeBalance({
+        amount: "10000000000",
+        duration: 3,
+        resource: "ENERGY",
+      });
+    }
+  }
+
+  if (account.bandwidth < requiredBandwidth) {
+    console.log("Insufficient bandwidth - will consume TRX as fee");
+  }
+};
+
+const batchOptimize = async () => {
+  const transfers = [
+    { to: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", amount: "100000000" },
+    { to: "TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax", amount: "200000000" },
+    { to: "THPvaUhoh2Qn2PIJ4B3jK88irTiM65W9A", amount: "150000000" },
+  ];
+
+  const promises = transfers.map((transfer) =>
+    tronToolbox.transferTRC20({
+      contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      recipient: transfer.to,
+      amount: transfer.amount,
+      feeLimit: 20000000,
+    })
+  );
+
+  const results = await Promise.all(promises);
+  console.log("Batch transfers completed:", results);
+};
+```
+
+## Best Practices
+
+1. **Manage Resources Efficiently**:
+
+   ```typescript
+   const resourceManagement = {
+     async checkResources(estimatedEnergy: number = 50000) {
+       const account = await tronToolbox.getAccount(
+         swapKit.getAddress(Chain.Tron)
+       );
+
+       if (account.energy < estimatedEnergy) {
+         console.warn(
+           `Low energy: ${account.energy}/${estimatedEnergy} needed`
+         );
+         return false;
+       }
+
+       return true;
+     },
+
+     async optimizeFreeze(monthlyTxCount: number) {
+       const energyPerTx = 50000;
+       const totalEnergyNeeded = monthlyTxCount * energyPerTx;
+       const energyPrice = await tronToolbox.getEnergyPrice();
+       const costWithoutFreeze = (totalEnergyNeeded * energyPrice) / 1000000;
+
+       if (costWithoutFreeze > 1000) {
+         console.log(
+           `Consider freezing ${Math.ceil(
+             costWithoutFreeze * 2
+           )} TRX for energy`
+         );
+       }
+     },
+   };
+   ```
+
+2. **Handle Address Formats**:
+
+   ```typescript
+   const addressUtils = {
+     convertAddress: (address: string) => {
+       if (address.startsWith("T")) {
+         return tronToolbox.addressToHex(address);
+       } else if (address.startsWith("0x41")) {
+         return tronToolbox.hexToAddress(address);
+       }
+       throw new Error("Invalid address format");
+     },
+
+     validateAndConvert: (address: string) => {
+       if (!validateTronAddress(address)) {
+         throw new Error("Invalid Tron address");
+       }
+       return this.convertAddress(address);
+     },
+   };
+   ```
+
+3. **Monitor Transaction Status**:
+   ```typescript
+   const monitorTransaction = async (txId: string) => {
+     let attempts = 0;
+     const maxAttempts = 20;
+
+     while (attempts < maxAttempts) {
+       try {
+         const tx = await tronToolbox.getTransaction(txId);
+
+         if (tx && tx.ret && tx.ret[0].contractRet === "SUCCESS") {
+           console.log("Transaction confirmed:", {
+             id: tx.txID,
+             blockNumber: tx.blockNumber,
+             energyUsage: tx.receipt?.energy_usage || 0,
+             netUsage: tx.receipt?.net_usage || 0,
+           });
+           return tx;
+         }
+       } catch (error) {
+         console.log(`Checking transaction status, attempt ${attempts + 1}`);
+       }
+
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       attempts++;
+     }
+
+     throw new Error("Transaction confirmation timeout");
+   };
+   ```
+
+## API Reference Summary
+
+### Core Methods
+
+- `getBalance()` - Get TRX balance
+- `transfer()` - Send TRX
+- `getAccount()` - Get account information
+- `getAccountResources()` - Get bandwidth/energy info
+
+### TRC-20 Methods
+
+- `getTRC20Balance()` - Get token balance
+- `transferTRC20()` - Send TRC-20 tokens
+- `getAllTRC20Tokens()` - Get all tokens owned
+
+### Contract Methods
+
+- `deployContract()` - Deploy smart contract
+- `triggerSmartContract()` - Execute contract method
+- `callContract()` - Read contract data
+- `subscribeToContractEvents()` - Monitor events
+
+### Resource Methods
+
+- `freezeBalance()` - Freeze TRX for resources
+- `unfreezeBalance()` - Unfreeze TRX
+- `delegateResource()` - Delegate resources
+- `getEnergyPrice()` - Get current energy price
+
+### Governance Methods
+
+- `getSuperRepresentatives()` - Get SR list
+- `vote()` - Vote for Super Representatives
+- `withdrawRewards()` - Claim voting rewards
+
+### Utility Methods
+
+- `estimateEnergy()` - Estimate energy usage
+- `getTransaction()` - Get transaction details
+- `addressToHex()` - Convert address format
+- `hexToAddress()` - Convert hex to address
+
+## Next Steps
+
+- Learn about [Cross-Chain Swaps](/guides/actions/swap) using Tron
+- Explore other [blockchain integrations](/guides/chains/ethereum)
+- Check out [Production Best Practices](/guides/production-best-practices)
+- Read about [Resource Optimization](/guides/advanced-features)

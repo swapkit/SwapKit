@@ -3,8 +3,7 @@ import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
 import { createTronToolbox, getTronAddressValidator } from "../toolbox";
 
 // Test mnemonic for consistent testing
-const TEST_PHRASE =
-  "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
+const TEST_PHRASE = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
 
 const context: {
   toolbox: Awaited<ReturnType<typeof createTronToolbox>>;
@@ -13,11 +12,7 @@ const context: {
 
 beforeAll(async () => {
   // Set up TRON mainnet configuration
-  SKConfig.set({
-    rpcUrls: {
-      [Chain.Tron]: "https://api.trongrid.io",
-    },
-  });
+  SKConfig.set({ rpcUrls: { [Chain.Tron]: "https://api.trongrid.io" } });
 
   // Get the address validator
   context.validateAddress = await getTronAddressValidator();
@@ -89,12 +84,12 @@ describe("TRON Address Validation", () => {
 
     // Create a transaction
     const transaction = await toolbox.createTransaction({
-      recipient: toAddress,
-      sender: fromAddress,
       assetValue: AssetValue.from({
         chain: Chain.Tron,
         value: "1", // 1 TRX
       }),
+      recipient: toAddress,
+      sender: fromAddress,
     });
 
     expect(transaction).toBeDefined();
@@ -112,12 +107,12 @@ describe("TRON Address Validation", () => {
 
     // Create a transaction
     const transaction = await toolbox.createTransaction({
-      recipient: toAddress,
-      sender: fromAddress,
       assetValue: AssetValue.from({
-        asset: "TRX.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         value: "100", // 1 TRX
       }),
+      recipient: toAddress,
+      sender: fromAddress,
     });
 
     expect(transaction).toBeDefined();

@@ -6,18 +6,11 @@ import type { createSwapKit } from "@swapkit/sdk";
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 
-type KeystoreFile = {
-  keystore: import("@swapkit/wallets/keystore").Keystore;
-  file: File;
-  chains: Chain[];
-} | null;
+type KeystoreFile = { keystore: import("@swapkit/wallets/keystore").Keystore; file: File; chains: Chain[] } | null;
 
 const swapKitAtom = atom<ReturnType<typeof createSwapKit> | null>(null);
 const balanceAtom = atom<AssetValue[]>([]);
-const walletState = atom<{ connected: boolean; type: WalletOption | null }>({
-  connected: false,
-  type: null,
-});
+const walletState = atom<{ connected: boolean; type: WalletOption | null }>({ connected: false, type: null });
 const keystoreFileAtom = atom<KeystoreFile>(null);
 const isKeystoreOpenAtom = atom<boolean>(false);
 const isKeystoreDecryptingAtom = atom<boolean>(false);
@@ -34,16 +27,16 @@ export const useSwapKit = () => {
       const swapKitClient = createSwapKit({
         config: {
           apiKeys: {
+            keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
             swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
             walletConnectProjectId: "",
-            keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
           },
           integrations: {
             keepKey: {
-              name: "SwapKit",
+              basePath: "http://localhost:1646/spec/swagger.json",
               imageUrl:
                 "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
-              basePath: "http://localhost:1646/spec/swagger.json",
+              name: "SwapKit",
               url: "http://localhost:1646",
             },
           },
@@ -183,10 +176,7 @@ export const useSwapKit = () => {
     setWalletState({ connected: false, type: null });
   }, [setWalletState, swapKit]);
 
-  const checkIfChainConnected = useCallback(
-    (chain: Chain) => !!swapKit?.getAddress(chain),
-    [swapKit?.getAddress],
-  );
+  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
 
   const [keystoreFile, setKeystoreFile] = useAtom(keystoreFileAtom);
   const [isKeystoreOpen, setIsKeystoreOpen] = useAtom(isKeystoreOpenAtom);
@@ -222,33 +212,25 @@ export const useSwapKit = () => {
         setIsKeystoreDecrypting(false);
       }
     },
-    [
-      keystoreFile,
-      swapKit,
-      setWalletState,
-      setBalances,
-      setIsKeystoreOpen,
-      setKeystoreFile,
-      setIsKeystoreDecrypting,
-    ],
+    [keystoreFile, swapKit, setWalletState, setBalances, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
   );
 
   return {
     balances,
     checkIfChainConnected,
+    connectKeystore,
     connectWallet,
     disconnectWallet,
     getBalances,
+    isKeystoreDecrypting,
+    isKeystoreOpen,
     isWalletConnected,
-    swapKit,
-    walletType,
     // Keystore related
     keystoreFile,
-    setKeystoreFile,
-    isKeystoreOpen,
-    setIsKeystoreOpen,
-    isKeystoreDecrypting,
     setIsKeystoreDecrypting,
-    connectKeystore,
+    setIsKeystoreOpen,
+    setKeystoreFile,
+    swapKit,
+    walletType,
   };
 };

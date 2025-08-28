@@ -1,0 +1,853 @@
+---
+title: Error Handling
+description: Comprehensive guide to handling errors in SwapKit applications
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Proper error handling is crucial for building robust SwapKit applications. This guide covers the SwapKitError system, common error scenarios, debugging techniques, and recovery patterns.
+
+## SwapKitError System
+
+SwapKit provides a comprehensive error system with specific error codes for different failure scenarios.
+
+### SwapKitError Class
+
+The `SwapKitError` class extends the native `Error` class with additional context:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/helpers";
+
+try {
+  await swapKit.swap({ route });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    console.log("Error code:", error.message.split(":")[0]);
+    console.log("Error details:", error.cause);
+  }
+}
+```
+
+### Error Categories
+
+SwapKit errors are organized by category with specific numeric codes:
+
+<Tabs>
+  <TabItem label="Core Errors (10xxx)">
+    ```typescript
+
+    const coreErrors = {
+      core_wallet_connection_not_found: 10101,
+      core_wallet_connection_failed: 10114,
+      core_swap_invalid_params: 10201,
+      core_transaction_user_rejected: 10315,
+      core_transaction_failed: 10316,
+    };
+    ```
+
+  </TabItem>
+  <TabItem label="Wallet Errors (20xxx)">
+    ```typescript
+
+    const walletErrors = {
+      wallet_connection_rejected_by_user: 20001,
+      wallet_ledger_device_not_found: 20104,
+      wallet_metamask_not_found: 21803,
+      wallet_keepkey_not_found: 20901,
+    };
+    ```
+
+  </TabItem>
+  <TabItem label="Toolbox Errors (50xxx)">
+    ```typescript
+
+    const toolboxErrors = {
+      toolbox_evm_no_signer: 50213,
+      toolbox_utxo_insufficient_balance: 50303,
+      toolbox_cosmos_invalid_params: 50103,
+    };
+    ```
+
+  </TabItem>
+  <TabItem label="API Errors (60xxx)">
+    ```typescript
+
+    const apiErrors = {
+      api_v2_invalid_response: 60001,
+      api_v2_server_error: 60002,
+      helpers_invalid_response: 70011,
+    };
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Common Error Scenarios
+
+### Wallet Connection Errors
+
+Handle wallet connection failures gracefully:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/helpers";
+import { Chain } from "@swapkit/types";
+
+async function connectWallet() {
+  try {
+    await swapKit.connectEVMWallet([Chain.Ethereum]);
+    return { success: true };
+  } catch (error) {
+    if (error instanceof SwapKitError) {
+      switch (error.message.split(":")[0]) {
+        case "wallet_evm_extensions_not_found":
+          return {
+            success: false,
+            message: "Please install MetaMask or another Web3 wallet",
+            action: "install_wallet",
+          };
+
+        case "wallet_connection_rejected_by_user":
+          return {
+            success: false,
+            message: "Connection cancelled by user",
+            action: "retry_connection",
+          };
+
+        case "wallet_failed_to_add_or_switch_network":
+          return {
+            success: false,
+            message: "Failed to switch network. Please switch manually",
+            action: "manual_network_switch",
+          };
+
+        default:
+          return {
+            success: false,
+            message: "Failed to connect wallet",
+            action: "generic_error",
+          };
+      }
+    }
+
+    return {
+      success: false,
+      message: "Unexpected error occurred",
+      action: "unknown_error",
+    };
+  }
+}
+```
+
+### Transaction Errors
+
+Handle transaction-related failures:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError, AssetValue } from "@swapkit/helpers";
+
+async function executeTransaction(params: TransactionParams) {
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: AssetValue.fromString("ETH.ETH", "0.1"),
+      recipient: params.recipient,
+    });
+
+    return { success: true, txHash };
+  } catch (error) {
+    if (error instanceof SwapKitError) {
+      const errorKey = error.message.split(":")[0];
+
+      switch (errorKey) {
+        case "core_transaction_insufficient_funds_error":
+          return {
+            success: false,
+            error: "Insufficient balance for this transaction",
+            code: "INSUFFICIENT_FUNDS",
+            recoverable: false,
+          };
+
+        case "core_transaction_deposit_gas_error":
+          return {
+            success: false,
+            error: "Insufficient gas for transaction",
+            code: "INSUFFICIENT_GAS",
+            recoverable: true,
+            suggestion: "Reduce transaction amount or increase gas",
+          };
+
+        case "core_transaction_user_rejected":
+          return {
+            success: false,
+            error: "Transaction cancelled by user",
+            code: "USER_REJECTED",
+            recoverable: true,
+          };
+
+        case "toolbox_evm_error_sending_transaction":
+          return {
+            success: false,
+            error: "Network error. Please try again",
+            code: "NETWORK_ERROR",
+            recoverable: true,
+          };
+
+        default:
+          return {
+            success: false,
+            error: `Transaction failed: ${errorKey}`,
+            code: "TRANSACTION_FAILED",
+            recoverable: false,
+          };
+      }
+    }
+
+    return {
+      success: false,
+      error: "Unknown error occurred",
+      code: "UNKNOWN_ERROR",
+      recoverable: false,
+    };
+  }
+}
+```
+
+### Swap Execution Errors
+
+Handle swap-specific errors with context:
+
+```typescript
+// @noErrorValidation
+import { SwapKitError } from "@swapkit/helpers";
+
+async function performSwap(route: SwapRoute) {
+  try {
+    const txHash = await swapKit.swap({ route });
+    return { success: true, txHash };
+  } catch (error) {
+    if (error instanceof SwapKitError) {
+      const errorKey = error.message.split(":")[0];
+
+      switch (errorKey) {
+        case "core_swap_invalid_params":
+          const errorInfo = JSON.parse(error.message.split(": ")[1] || "{}");
+          return {
+            success: false,
+            error: "Invalid swap parameters",
+            details: errorInfo,
+            action: "validate_inputs",
+          };
+
+        case "core_swap_route_not_complete":
+          return {
+            success: false,
+            error: "No available route for this swap",
+            action: "try_different_assets",
+          };
+
+        case "thorchain_chain_halted":
+          return {
+            success: false,
+            error: "THORChain trading is temporarily halted",
+            action: "wait_and_retry",
+            retryAfter: 300000,
+          };
+
+        case "chainflip_unknown_asset":
+          return {
+            success: false,
+            error: "Asset not supported by Chainflip",
+            action: "select_different_asset",
+          };
+
+        default:
+          return {
+            success: false,
+            error: `Swap failed: ${errorKey}`,
+            action: "contact_support",
+          };
+      }
+    }
+
+    return {
+      success: false,
+      error: "Swap failed unexpectedly",
+      action: "contact_support",
+    };
+  }
+}
+```
+
+## Error Recovery Patterns
+
+### Automatic Retry Logic
+
+Implement retry logic for transient errors:
+
+```typescript
+// @noErrorValidation
+interface RetryOptions {
+  maxRetries: number;
+  baseDelay: number;
+  backoffMultiplier: number;
+  retryableErrors: string[];
+}
+
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  options: RetryOptions = {
+    maxRetries: 3,
+    baseDelay: 1000,
+    backoffMultiplier: 2,
+    retryableErrors: [
+      "api_v2_server_error",
+      "toolbox_evm_error_sending_transaction",
+      "helpers_invalid_response",
+    ],
+  }
+): Promise<T> {
+  let attempt = 0;
+  let lastError: Error;
+
+  while (attempt <= options.maxRetries) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+
+      if (error instanceof SwapKitError) {
+        const errorKey = error.message.split(":")[0];
+
+        if (!options.retryableErrors.includes(errorKey)) {
+          throw error;
+        }
+      }
+
+      if (attempt >= options.maxRetries) {
+        break;
+      }
+
+      const delay =
+        options.baseDelay * Math.pow(options.backoffMultiplier, attempt);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      attempt++;
+    }
+  }
+
+  throw lastError!;
+}
+
+const quote = await withRetry(() => swapKitApi.getSwapQuote(params));
+```
+
+### Circuit Breaker Pattern
+
+Prevent cascading failures:
+
+```typescript
+// @noErrorValidation
+class CircuitBreaker {
+  private failures = 0;
+  private lastFailTime = 0;
+  private state: "CLOSED" | "OPEN" | "HALF_OPEN" = "CLOSED";
+
+  constructor(private threshold: number = 5, private timeout: number = 60000) {}
+
+  async execute<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.state === "OPEN") {
+      if (Date.now() - this.lastFailTime < this.timeout) {
+        throw new SwapKitError("core_chain_halted", {
+          message: "Service temporarily unavailable",
+        });
+      } else {
+        this.state = "HALF_OPEN";
+      }
+    }
+
+    try {
+      const result = await operation();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
+    }
+  }
+
+  private onSuccess() {
+    this.failures = 0;
+    this.state = "CLOSED";
+  }
+
+  private onFailure() {
+    this.failures++;
+    this.lastFailTime = Date.now();
+
+    if (this.failures >= this.threshold) {
+      this.state = "OPEN";
+    }
+  }
+}
+
+const circuitBreaker = new CircuitBreaker(3, 30000);
+
+const performSwapWithCircuitBreaker = async (route: SwapRoute) => {
+  return circuitBreaker.execute(() => swapKit.swap({ route }));
+};
+```
+
+### Fallback Strategies
+
+Implement fallback mechanisms for critical operations:
+
+```typescript
+// @noErrorValidation
+interface FallbackConfig {
+  primary: () => Promise<any>;
+  fallbacks: (() => Promise<any>)[];
+  validator?: (result: any) => boolean;
+}
+
+async function withFallback<T>(config: FallbackConfig): Promise<T> {
+  const operations = [config.primary, ...config.fallbacks];
+  let lastError: Error;
+
+  for (const [index, operation] of operations.entries()) {
+    try {
+      const result = await operation();
+
+      if (config.validator && !config.validator(result)) {
+        throw new Error("Invalid result from operation");
+      }
+
+      if (index > 0) {
+        console.warn(`Used fallback #${index}`);
+      }
+
+      return result;
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`Operation ${index} failed:`, error);
+    }
+  }
+
+  throw lastError!;
+}
+
+const getQuoteWithFallback = async (params: QuoteParams) => {
+  return withFallback({
+    primary: () => swapKitApi.getSwapQuote(params),
+    fallbacks: [
+      () => thorchainApi.getSwapQuote(params),
+      () => localQuoteCalculation(params),
+    ],
+    validator: (quote) => quote && quote.routes && quote.routes.length > 0,
+  });
+};
+```
+
+## Debugging Techniques
+
+### Error Context Collection
+
+Collect comprehensive error context:
+
+```typescript
+// @noErrorValidation
+interface ErrorContext {
+  timestamp: number;
+  userAgent: string;
+  url: string;
+  userId?: string;
+  walletAddress?: string;
+  chain?: string;
+  operation: string;
+  params?: any;
+  stackTrace?: string;
+}
+
+class ErrorTracker {
+  static captureError(error: Error, context: Partial<ErrorContext>) {
+    const errorData: ErrorContext = {
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      operation: "unknown",
+      ...context,
+      stackTrace: error.stack,
+    };
+
+    if (errorData.params) {
+      const sanitizedParams = { ...errorData.params };
+      delete sanitizedParams.phrase;
+      delete sanitizedParams.privateKey;
+      delete sanitizedParams.mnemonic;
+      errorData.params = sanitizedParams;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      console.error("SwapKit Error:", error);
+      console.error("Context:", errorData);
+    }
+
+    this.sendToErrorService(error, errorData);
+  }
+
+  private static async sendToErrorService(error: Error, context: ErrorContext) {
+    try {
+      await fetch("/api/errors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: error.message,
+          name: error.name,
+          context,
+        }),
+      });
+    } catch {}
+  }
+}
+
+async function trackedSwap(route: SwapRoute) {
+  try {
+    return await swapKit.swap({ route });
+  } catch (error) {
+    ErrorTracker.captureError(error as Error, {
+      operation: "swap",
+      chain: route.sellAsset.split(".")[0],
+      params: {
+        sellAsset: route.sellAsset,
+        buyAsset: route.buyAsset,
+        sellAmount: route.sellAmount,
+      },
+    });
+    throw error;
+  }
+}
+```
+
+### Network Debugging
+
+Debug network-related issues:
+
+```typescript
+// @noErrorValidation
+interface NetworkDiagnostics {
+  rpcStatus: Record<string, boolean>;
+  apiStatus: Record<string, boolean>;
+  connectivity: boolean;
+}
+
+async function diagnoseNetwork(): Promise<NetworkDiagnostics> {
+  const diagnostics: NetworkDiagnostics = {
+    rpcStatus: {},
+    apiStatus: {},
+    connectivity: false
+  };
+
+
+  try {
+    await fetch('https:
+    diagnostics.connectivity = true;
+  } catch {
+    diagnostics.connectivity = false;
+  }
+
+
+  const rpcTests = [
+    { name: 'ethereum', url: 'https:
+    { name: 'thorchain', url: 'https:
+  ];
+
+  await Promise.allSettled(
+    rpcTests.map(async ({ name, url }) => {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            method: 'health',
+            params: [],
+            id: 1
+          })
+        });
+        diagnostics.rpcStatus[name] = response.ok;
+      } catch {
+        diagnostics.rpcStatus[name] = false;
+      }
+    })
+  );
+
+
+  const apiTests = [
+    { name: 'swapkit', url: 'https:
+    { name: 'thorchain', url: 'https:
+  ];
+
+  await Promise.allSettled(
+    apiTests.map(async ({ name, url }) => {
+      try {
+        const response = await fetch(url);
+        diagnostics.apiStatus[name] = response.ok;
+      } catch {
+        diagnostics.apiStatus[name] = false;
+      }
+    })
+  );
+
+  return diagnostics;
+}
+```
+
+### Transaction State Debugging
+
+Debug transaction states and failures:
+
+```typescript
+// @noErrorValidation
+interface TransactionDebugInfo {
+  txHash?: string;
+  status: "pending" | "confirmed" | "failed" | "unknown";
+  gasUsed?: string;
+  gasPrice?: string;
+  blockNumber?: string;
+  confirmations?: number;
+  error?: string;
+}
+
+async function debugTransaction(
+  txHash: string,
+  chain: Chain
+): Promise<TransactionDebugInfo> {
+  try {
+    const toolbox = await swapKit.getToolbox(chain);
+
+    if ("provider" in toolbox && toolbox.provider) {
+      const receipt = await toolbox.provider.getTransactionReceipt(txHash);
+
+      if (receipt) {
+        return {
+          txHash,
+          status: receipt.status === 1 ? "confirmed" : "failed",
+          gasUsed: receipt.gasUsed?.toString(),
+          blockNumber: receipt.blockNumber?.toString(),
+          confirmations: receipt.confirmations,
+        };
+      }
+    }
+
+    const tx = await toolbox.provider?.getTransaction(txHash);
+
+    if (tx) {
+      return {
+        txHash,
+        status: "pending",
+        gasPrice: tx.gasPrice?.toString(),
+      };
+    }
+
+    return {
+      txHash,
+      status: "unknown",
+      error: "Transaction not found",
+    };
+  } catch (error) {
+    return {
+      txHash,
+      status: "unknown",
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+```
+
+## Error Monitoring
+
+### Real-time Error Tracking
+
+Set up comprehensive error monitoring:
+
+```typescript
+// @noErrorValidation
+interface ErrorMetrics {
+  errorRate: number;
+  commonErrors: Array<{
+    code: string;
+    count: number;
+    percentage: number;
+  }>;
+  chainSpecificErrors: Record<string, number>;
+}
+
+class ErrorMonitor {
+  private errors: Array<{
+    timestamp: number;
+    code: string;
+    chain?: string;
+  }> = [];
+
+  logError(error: SwapKitError, chain?: string) {
+    const errorCode = error.message.split(":")[0];
+
+    this.errors.push({
+      timestamp: Date.now(),
+      code: errorCode,
+      chain,
+    });
+
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    this.errors = this.errors.filter((e) => e.timestamp > oneHourAgo);
+
+    this.checkErrorRate();
+  }
+
+  getMetrics(): ErrorMetrics {
+    const totalErrors = this.errors.length;
+    const totalOperations = this.getTotalOperations();
+
+    const errorRate = totalOperations > 0 ? totalErrors / totalOperations : 0;
+
+    const errorCounts = this.errors.reduce((acc, error) => {
+      acc[error.code] = (acc[error.code] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const commonErrors = Object.entries(errorCounts)
+      .map(([code, count]) => ({
+        code,
+        count,
+        percentage: (count / totalErrors) * 100,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const chainSpecificErrors = this.errors.reduce((acc, error) => {
+      if (error.chain) {
+        acc[error.chain] = (acc[error.chain] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      errorRate,
+      commonErrors,
+      chainSpecificErrors,
+    };
+  }
+
+  private checkErrorRate() {
+    const metrics = this.getMetrics();
+
+    if (metrics.errorRate > 0.1) {
+      console.warn("High error rate detected:", metrics.errorRate);
+
+      this.sendAlert("HIGH_ERROR_RATE", metrics);
+    }
+  }
+
+  private sendAlert(type: string, data: any) {
+    console.warn(`Alert: ${type}`, data);
+  }
+
+  private getTotalOperations(): number {
+    return 100;
+  }
+}
+
+const errorMonitor = new ErrorMonitor();
+
+try {
+  await swapKit.swap({ route });
+} catch (error) {
+  if (error instanceof SwapKitError) {
+    errorMonitor.logError(error, route.sellAsset.split(".")[0]);
+  }
+  throw error;
+}
+```
+
+## Best Practices
+
+### Error Handling Checklist
+
+- **Always check for SwapKitError**: Use `instanceof SwapKitError` checks
+- **Provide user-friendly messages**: Transform technical errors into readable messages
+- **Implement retry logic**: For transient network and API errors
+- **Log errors appropriately**: Include context but never log sensitive data
+- **Use circuit breakers**: Prevent cascading failures in critical paths
+- **Validate inputs early**: Catch errors before expensive operations
+- **Provide fallback options**: Offer alternative paths when possible
+- **Monitor error rates**: Track and alert on unusual error patterns
+
+### Error Message Guidelines
+
+```typescript
+// @noErrorValidation
+
+const errorMessages = {
+  wallet_evm_extensions_not_found: {
+    title: "Wallet Not Found",
+    message: "Please install MetaMask or another Web3 wallet",
+    action: "Install Wallet",
+    severity: "warning",
+  },
+
+  core_transaction_insufficient_funds_error: {
+    title: "Insufficient Balance",
+    message: "You don't have enough funds for this transaction",
+    action: "Add Funds",
+    severity: "error",
+  },
+
+  api_v2_server_error: {
+    title: "Service Temporarily Unavailable",
+    message:
+      "Our servers are experiencing issues. Please try again in a moment",
+    action: "Retry",
+    severity: "warning",
+  },
+};
+
+function getUserFriendlyError(error: SwapKitError) {
+  const errorKey = error.message.split(":")[0];
+  return (
+    errorMessages[errorKey] || {
+      title: "Unexpected Error",
+      message: "Something went wrong. Please try again",
+      action: "Retry",
+      severity: "error",
+    }
+  );
+}
+```
+
+### Development vs Production
+
+```typescript
+// @noErrorValidation
+const isDevelopment = process.env.NODE_ENV === "development";
+
+function handleError(error: Error, context?: any) {
+  if (isDevelopment) {
+    console.error("Full error details:", {
+      error,
+      context,
+      stack: error.stack,
+    });
+  } else {
+    console.error("Error occurred:", error.message);
+
+    errorTrackingService.captureException(error, { extra: context });
+  }
+}
+```
+
+## Next Steps
+
+- Review [Security Best Practices](/guides/security) for safe error handling
+- Implement [Testing Strategies](/guides/testing) to catch errors early
+- Optimize [Performance](/guides/performance) to reduce error-prone operations
+- Check [Production Best Practices](/guides/production-best-practices) for deployment

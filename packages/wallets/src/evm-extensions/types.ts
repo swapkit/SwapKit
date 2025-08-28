@@ -12,9 +12,4 @@ export interface EIP6963ProviderDetail {
   provider: Eip1193Provider;
 }
 
-export type EIP6963AnnounceProviderEvent = {
-  detail: {
-    info: EIP6963ProviderInfo;
-    provider: Eip1193Provider;
-  };
-};
+export type EIP6963AnnounceProviderEvent = { detail: { info: EIP6963ProviderInfo; provider: Eip1193Provider } };

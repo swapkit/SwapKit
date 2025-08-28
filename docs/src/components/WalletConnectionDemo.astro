@@ -1,0 +1,559 @@
+---
+const props = {
+  chains: ["Ethereum", "Bitcoin", "Thorchain"],
+  title: "Wallet Connection Demo",
+  walletTypes: ["MetaMask", "Keystore", "WalletConnect"],
+  ...Astro.props,
+};
+---
+
+<div class="wallet-demo">
+  <div class="demo-header">
+    <h3 class="demo-title">{props.title}</h3>
+    <p class="demo-description">
+      Try connecting different wallet types to see how SwapKit handles multi-chain connections
+    </p>
+  </div>
+  
+  <div class="demo-content">
+    <div class="demo-controls">
+      <div class="control-group">
+        <label class="control-label">Select Chains:</label>
+        <div class="chain-selector">
+          {props.chains.map(chain => (
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                class="chain-checkbox" 
+                value={chain}
+                checked={chain === "Ethereum"}
+              />
+              <span class="checkbox-text">{chain}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <label class="control-label">Select Wallet:</label>
+        <select class="wallet-selector">
+          {props.walletTypes.map(wallet => (
+            <option value={wallet.toLowerCase()}>{wallet}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div class="demo-actions">
+        <button class="connect-btn primary-btn" id="connectWallet">
+          <span class="btn-icon">🔗</span>
+          Connect Wallet
+        </button>
+        <button class="disconnect-btn secondary-btn" id="disconnectWallet" disabled>
+          <span class="btn-icon">✂️</span>
+          Disconnect
+        </button>
+      </div>
+    </div>
+    
+    <div class="demo-output">
+      <div class="output-header">
+        <span class="output-title">Connection Status</span>
+        <span class="status-indicator" id="statusIndicator">Disconnected</span>
+      </div>
+      
+      <div class="output-content" id="outputContent">
+        <div class="placeholder-text">
+          Select chains and a wallet type, then click "Connect Wallet" to see the connection process.
+        </div>
+      </div>
+      
+      <div class="code-example" id="codeExample" style="display: none;">
+        <div class="code-header">
+          <span class="code-title">Generated Code:</span>
+          <button class="copy-code-btn" id="copyCodeBtn">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre class="code-block"><code id="generatedCode"></code></pre>
+      </div>
+    </div>
+  </div>
+  
+  <div class="demo-note">
+    <strong>Note:</strong> This is a simulation for demonstration purposes. 
+    In a real application, you'd handle actual wallet connections and user interactions.
+    <br>
+    <a href="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs" target="_blank" rel="noopener noreferrer">
+      Try it live in StackBlitz →
+    </a>
+  </div>
+</div>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  const connectBtn = document.getElementById('connectWallet');
+  const disconnectBtn = document.getElementById('disconnectWallet');
+  const statusIndicator = document.getElementById('statusIndicator');
+  const outputContent = document.getElementById('outputContent');
+  const codeExample = document.getElementById('codeExample');
+  const generatedCode = document.getElementById('generatedCode');
+  const copyCodeBtn = document.getElementById('copyCodeBtn');
+  const chainCheckboxes = document.querySelectorAll('.chain-checkbox');
+  const walletSelector = document.querySelector('.wallet-selector');
+  
+  if (!connectBtn || !disconnectBtn || !statusIndicator || !outputContent || !codeExample || !generatedCode || !copyCodeBtn || !walletSelector) {
+    return;
+  }
+  
+  let isConnected = false;
+  
+  function getSelectedChains() {
+    return Array.from(chainCheckboxes)
+      .filter(function(cb) { return cb.checked; })
+      .map(function(cb) { return cb.value; });
+  }
+  
+  function generateCode() {
+    const selectedChains = getSelectedChains();
+    const selectedWallet = walletSelector.value;
+    
+    if (selectedChains.length === 0) return '';
+    
+    const chainImports = selectedChains.map(chain => `Chain.${chain}`).join(', ');
+    
+    let code = `import { createSwapKit, Chain, WalletOption } from '@swapkit/sdk';\n\n`;
+    code += `const swapKit = createSwapKit();\n\n`;
+    
+    if (selectedWallet === 'metamask') {
+      code += `await swapKit.connectEVMWallet([${chainImports}], WalletOption.METAMASK);\n`;
+    } else if (selectedWallet === 'keystore') {
+      code += `await swapKit.connectKeystore(\n  [${chainImports}],\n  'your twelve word mnemonic phrase here'\n);\n`;
+    } else if (selectedWallet === 'walletconnect') {
+      code += `await swapKit.connectWalletConnect([${chainImports}]);\n`;
+    }
+    
+    code += `\n`;
+    selectedChains.forEach(chain => {
+      code += `const ${chain.toLowerCase()}Address = swapKit.getAddress(Chain.${chain});\n`;
+    });
+    
+    return code;
+  }
+  
+  function updateOutput() {
+    const selectedChains = getSelectedChains();
+    const selectedWallet = walletSelector.value;
+    
+    if (!isConnected) {
+      outputContent.innerHTML = '<div class="placeholder-text">Select chains and wallet type, then connect to see results.</div>';
+      codeExample.style.display = 'none';
+      return;
+    }
+    
+    let output = '<div class="connection-info">';
+    output += `<div class="wallet-info"><strong>Connected Wallet:</strong> ${selectedWallet.charAt(0).toUpperCase() + selectedWallet.slice(1)}</div>`;
+    output += '<div class="addresses-info"><strong>Addresses:</strong></div>';
+    output += '<div class="addresses-list">';
+    
+    selectedChains.forEach(chain => {
+      const demoAddress = chain === 'Ethereum' ? '0x742d35Cc...f6E321' :
+                         chain === 'Bitcoin' ? 'bc1qxy2k...jfhx0wlh' :
+                         chain === 'Thorchain' ? 'thor1abc...xyz123' : 'demo-address';
+      output += `<div class="address-item"><span class="chain-name">${chain}:</span> <code>${demoAddress}</code></div>`;
+    });
+    
+    output += '</div></div>';
+    outputContent.innerHTML = output;
+    
+    const code = generateCode();
+    generatedCode.textContent = code;
+    codeExample.style.display = 'block';
+  }
+  
+  connectBtn.addEventListener('click', function() {
+    const selectedChains = getSelectedChains();
+    if (selectedChains.length === 0) {
+      alert('Please select at least one chain');
+      return;
+    }
+    
+    connectBtn.disabled = true;
+    connectBtn.innerHTML = '<span class="btn-icon">⏳</span> Connecting...';
+    statusIndicator.textContent = 'Connecting...';
+    statusIndicator.className = 'status-indicator connecting';
+    
+    setTimeout(() => {
+      isConnected = true;
+      connectBtn.disabled = false;
+      connectBtn.innerHTML = '<span class="btn-icon">🔗</span> Connect Wallet';
+      disconnectBtn.disabled = false;
+      statusIndicator.textContent = 'Connected';
+      statusIndicator.className = 'status-indicator connected';
+      updateOutput();
+    }, 2000);
+  });
+  
+  disconnectBtn.addEventListener('click', function() {
+    isConnected = false;
+    disconnectBtn.disabled = true;
+    statusIndicator.textContent = 'Disconnected';
+    statusIndicator.className = 'status-indicator disconnected';
+    updateOutput();
+  });
+  
+  chainCheckboxes.forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      if (isConnected) updateOutput();
+    });
+  });
+  
+  walletSelector.addEventListener('change', () => {
+    if (isConnected) updateOutput();
+  });
+  
+  copyCodeBtn.addEventListener('click', async function() {
+    try {
+      await navigator.clipboard.writeText(generatedCode.textContent || '');
+      copyCodeBtn.innerHTML = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20,6 9,17 4,12"/></svg>Copied!';
+      setTimeout(function() {
+        copyCodeBtn.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy code: ', err);
+    }
+  });
+});
+</script>
+
+<style>
+.wallet-demo {
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+.demo-header {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-sidebar);
+  border-bottom: 1px solid var(--sl-color-hairline);
+  text-align: center;
+}
+
+.demo-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--sl-color-text);
+}
+
+.demo-description {
+  margin: 0;
+  color: var(--sl-color-text-accent);
+  font-size: 0.9rem;
+}
+
+.demo-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 400px;
+}
+
+.demo-controls {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-sidebar);
+  border-right: 1px solid var(--sl-color-hairline);
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-label {
+  display: block;
+  font-weight: 600;
+  color: var(--sl-color-text);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.chain-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-text);
+  cursor: pointer;
+}
+
+.chain-checkbox {
+  margin: 0;
+}
+
+.wallet-selector {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  color: var(--sl-color-text);
+  font-size: 0.875rem;
+}
+
+.demo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.primary-btn, .secondary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.primary-btn {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-white);
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: var(--sl-color-accent-high);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background: var(--sl-color-bg-nav);
+  color: var(--sl-color-text);
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: var(--sl-color-bg-accent);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.demo-output {
+  padding: 1.5rem;
+  background: var(--sl-color-bg-nav);
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.output-title {
+  font-weight: 600;
+  color: var(--sl-color-text);
+  font-size: 0.9rem;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-indicator.disconnected {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+}
+
+.status-indicator.connecting {
+  background: rgba(251, 191, 36, 0.1);
+  color: rgb(251, 191, 36);
+}
+
+.status-indicator.connected {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+}
+
+.output-content {
+  margin-bottom: 1rem;
+}
+
+.placeholder-text {
+  color: var(--sl-color-text-accent);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.connection-info {
+  background: var(--sl-color-bg-sidebar);
+  padding: 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.wallet-info {
+  margin-bottom: 1rem;
+  color: var(--sl-color-text);
+}
+
+.addresses-info {
+  margin-bottom: 0.5rem;
+  color: var(--sl-color-text);
+}
+
+.addresses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.address-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.chain-name {
+  font-weight: 600;
+  color: var(--sl-color-text-accent);
+  min-width: 80px;
+}
+
+.address-item code {
+  background: var(--sl-color-bg-nav);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--sl-color-text-accent);
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.code-example {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background: var(--sl-color-bg-sidebar);
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-bg-nav);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.code-title {
+  font-weight: 600;
+  color: var(--sl-color-text);
+  font-size: 0.875rem;
+}
+
+.copy-code-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.25rem;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.copy-code-btn:hover {
+  background: var(--sl-color-bg-accent);
+  color: var(--sl-color-text);
+}
+
+.copy-icon, .check-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke-width: 2;
+}
+
+.code-block {
+  padding: 1rem;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  background: var(--sl-color-bg-sidebar);
+  color: var(--sl-color-text);
+}
+
+.code-block code {
+  background: none;
+  padding: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.demo-note {
+  padding: 1rem 1.5rem;
+  background: var(--sl-color-accent-low);
+  border-top: 1px solid var(--sl-color-hairline);
+  font-size: 0.875rem;
+  color: var(--sl-color-text);
+}
+
+.demo-note a {
+  color: var(--sl-color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.demo-note a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .demo-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .demo-controls {
+    border-right: none;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+  
+  .demo-actions {
+    flex-direction: row;
+  }
+}
+</style>

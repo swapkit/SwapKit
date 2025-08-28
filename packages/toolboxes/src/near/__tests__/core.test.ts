@@ -1,20 +1,16 @@
 import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
-import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
+import { AssetValue, Chain, getRPCUrl } from "@swapkit/helpers";
 import { providers } from "near-api-js";
 import { getFullAccessPublicKey } from "../helpers/core";
 import { getNearToolbox } from "../toolbox";
 
 const accountId = "ea03292d08136cca439513a33c76af083e5204eceb4ce720320fff84071a447f";
 
-const context: {
-  provider: providers.JsonRpcProvider;
-  toolbox: Awaited<ReturnType<typeof getNearToolbox>>;
-} = {} as any;
+const context: { provider: providers.JsonRpcProvider; toolbox: Awaited<ReturnType<typeof getNearToolbox>> } = {} as any;
 
-beforeAll(() => {
-  context.provider = new providers.JsonRpcProvider({
-    url: SKConfig.get("rpcUrls")[Chain.Near],
-  });
+beforeAll(async () => {
+  const rpcUrl = await getRPCUrl(Chain.Near);
+  context.provider = new providers.JsonRpcProvider({ url: rpcUrl });
 });
 
 beforeEach(async () => {
@@ -26,13 +22,13 @@ describe("NEAR createTransaction", () => {
     const toolbox = context.toolbox;
 
     const transaction = await toolbox.createTransaction({
-      recipient: accountId, // Self transfer
       assetValue: AssetValue.from({
         chain: Chain.Near,
         value: "0.001", // Small amount
       }),
-      sender: accountId,
       feeRate: 300000000000000, // 300 TGas
+      recipient: accountId, // Self transfer
+      sender: accountId,
     });
 
     expect(transaction).toBeDefined();
@@ -62,12 +58,12 @@ describe("NEAR createTransaction", () => {
     const provider = context.provider;
 
     const contractTransaction = await toolbox.createContractFunctionCall({
-      sender: accountId,
-      contractId: "wrap.testnet", // Known testnet contract
-      methodName: "storage_deposit",
       args: { account_id: accountId },
-      gas: "300000000000000", // 300 TGas
       attachedDeposit: "1250000000000000000000", // 0.00125 NEAR for storage
+      contractId: "wrap.testnet", // Known testnet contract
+      gas: "300000000000000", // 300 TGas
+      methodName: "storage_deposit",
+      sender: accountId,
     });
 
     expect(contractTransaction).toBeDefined();

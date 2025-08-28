@@ -6,51 +6,22 @@ export const kyberRouter = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "clientData",
-        type: "bytes",
-      },
-    ],
+    inputs: [{ indexed: false, internalType: "bytes", name: "clientData", type: "bytes" }],
     name: "ClientData",
     type: "event",
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "reason",
-        type: "string",
-      },
-    ],
+    inputs: [{ indexed: false, internalType: "string", name: "reason", type: "string" }],
     name: "Error",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "pair",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "output",
-        type: "address",
-      },
+      { indexed: false, internalType: "address", name: "pair", type: "address" },
+      { indexed: false, internalType: "uint256", name: "amountOut", type: "uint256" },
+      { indexed: false, internalType: "address", name: "output", type: "address" },
     ],
     name: "Exchange",
     type: "event",
@@ -58,36 +29,11 @@ export const kyberRouter = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "totalAmount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "totalFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "address[]",
-        name: "recipients",
-        type: "address[]",
-      },
-      {
-        indexed: false,
-        internalType: "uint256[]",
-        name: "amounts",
-        type: "uint256[]",
-      },
+      { indexed: false, internalType: "address", name: "token", type: "address" },
+      { indexed: false, internalType: "uint256", name: "totalAmount", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "totalFee", type: "uint256" },
+      { indexed: false, internalType: "address[]", name: "recipients", type: "address[]" },
+      { indexed: false, internalType: "uint256[]", name: "amounts", type: "uint256[]" },
       { indexed: false, internalType: "bool", name: "isBps", type: "bool" },
     ],
     name: "Fee",
@@ -96,18 +42,8 @@ export const kyberRouter = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
+      { indexed: true, internalType: "address", name: "newOwner", type: "address" },
     ],
     name: "OwnershipTransferred",
     type: "event",
@@ -115,42 +51,12 @@ export const kyberRouter = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "contract IERC20",
-        name: "srcToken",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "contract IERC20",
-        name: "dstToken",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "dstReceiver",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "spentAmount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "returnAmount",
-        type: "uint256",
-      },
+      { indexed: false, internalType: "address", name: "sender", type: "address" },
+      { indexed: false, internalType: "contract IERC20", name: "srcToken", type: "address" },
+      { indexed: false, internalType: "contract IERC20", name: "dstToken", type: "address" },
+      { indexed: false, internalType: "address", name: "dstReceiver", type: "address" },
+      { indexed: false, internalType: "uint256", name: "spentAmount", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "returnAmount", type: "uint256" },
     ],
     name: "Swapped",
     type: "event",
@@ -176,13 +82,7 @@ export const kyberRouter = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
     inputs: [
       { internalType: "address", name: "token", type: "address" },
@@ -202,43 +102,15 @@ export const kyberRouter = [
           { internalType: "bytes", name: "targetData", type: "bytes" },
           {
             components: [
-              {
-                internalType: "contract IERC20",
-                name: "srcToken",
-                type: "address",
-              },
-              {
-                internalType: "contract IERC20",
-                name: "dstToken",
-                type: "address",
-              },
-              {
-                internalType: "address[]",
-                name: "srcReceivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "srcAmounts",
-                type: "uint256[]",
-              },
-              {
-                internalType: "address[]",
-                name: "feeReceivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "feeAmounts",
-                type: "uint256[]",
-              },
+              { internalType: "contract IERC20", name: "srcToken", type: "address" },
+              { internalType: "contract IERC20", name: "dstToken", type: "address" },
+              { internalType: "address[]", name: "srcReceivers", type: "address[]" },
+              { internalType: "uint256[]", name: "srcAmounts", type: "uint256[]" },
+              { internalType: "address[]", name: "feeReceivers", type: "address[]" },
+              { internalType: "uint256[]", name: "feeAmounts", type: "uint256[]" },
               { internalType: "address", name: "dstReceiver", type: "address" },
               { internalType: "uint256", name: "amount", type: "uint256" },
-              {
-                internalType: "uint256",
-                name: "minReturnAmount",
-                type: "uint256",
-              },
+              { internalType: "uint256", name: "minReturnAmount", type: "uint256" },
               { internalType: "uint256", name: "flags", type: "uint256" },
               { internalType: "bytes", name: "permit", type: "bytes" },
             ],
@@ -270,43 +142,15 @@ export const kyberRouter = [
           { internalType: "bytes", name: "targetData", type: "bytes" },
           {
             components: [
-              {
-                internalType: "contract IERC20",
-                name: "srcToken",
-                type: "address",
-              },
-              {
-                internalType: "contract IERC20",
-                name: "dstToken",
-                type: "address",
-              },
-              {
-                internalType: "address[]",
-                name: "srcReceivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "srcAmounts",
-                type: "uint256[]",
-              },
-              {
-                internalType: "address[]",
-                name: "feeReceivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "feeAmounts",
-                type: "uint256[]",
-              },
+              { internalType: "contract IERC20", name: "srcToken", type: "address" },
+              { internalType: "contract IERC20", name: "dstToken", type: "address" },
+              { internalType: "address[]", name: "srcReceivers", type: "address[]" },
+              { internalType: "uint256[]", name: "srcAmounts", type: "uint256[]" },
+              { internalType: "address[]", name: "feeReceivers", type: "address[]" },
+              { internalType: "uint256[]", name: "feeAmounts", type: "uint256[]" },
               { internalType: "address", name: "dstReceiver", type: "address" },
               { internalType: "uint256", name: "amount", type: "uint256" },
-              {
-                internalType: "uint256",
-                name: "minReturnAmount",
-                type: "uint256",
-              },
+              { internalType: "uint256", name: "minReturnAmount", type: "uint256" },
               { internalType: "uint256", name: "flags", type: "uint256" },
               { internalType: "bytes", name: "permit", type: "bytes" },
             ],
@@ -331,34 +175,14 @@ export const kyberRouter = [
   },
   {
     inputs: [
-      {
-        internalType: "contract IAggregationExecutor",
-        name: "caller",
-        type: "address",
-      },
+      { internalType: "contract IAggregationExecutor", name: "caller", type: "address" },
       {
         components: [
-          {
-            internalType: "contract IERC20",
-            name: "srcToken",
-            type: "address",
-          },
-          {
-            internalType: "contract IERC20",
-            name: "dstToken",
-            type: "address",
-          },
-          {
-            internalType: "address[]",
-            name: "srcReceivers",
-            type: "address[]",
-          },
+          { internalType: "contract IERC20", name: "srcToken", type: "address" },
+          { internalType: "contract IERC20", name: "dstToken", type: "address" },
+          { internalType: "address[]", name: "srcReceivers", type: "address[]" },
           { internalType: "uint256[]", name: "srcAmounts", type: "uint256[]" },
-          {
-            internalType: "address[]",
-            name: "feeReceivers",
-            type: "address[]",
-          },
+          { internalType: "address[]", name: "feeReceivers", type: "address[]" },
           { internalType: "uint256[]", name: "feeAmounts", type: "uint256[]" },
           { internalType: "address", name: "dstReceiver", type: "address" },
           { internalType: "uint256", name: "amount", type: "uint256" },

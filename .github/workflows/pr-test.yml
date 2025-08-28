@@ -1,12 +1,12 @@
 name: PR Test
-permissions:
-  contents: read
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - develop
   pull_request_target:
     branches:
       - develop

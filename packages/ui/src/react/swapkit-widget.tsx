@@ -1,10 +1,4 @@
-import {
-  AssetValue,
-  type Chain,
-  type SKConfigState,
-  type TokenListName,
-  type WalletOption,
-} from "@swapkit/core";
+import { AssetValue, type Chain, type SKConfigState, type TokenListName, type WalletOption } from "@swapkit/core";
 import type { PluginName } from "@swapkit/plugins";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
@@ -21,12 +15,12 @@ export function SwapKitWidget({ apiKey, availableAssets, config }: SwapKitWidget
   }, [config?.tokenLists]);
 
   const swapKitConfig: SKConfigState = useMemo(
-    () => ({ chains: config?.chains, wallets: config?.wallets, apiKeys: { swapKit: apiKey } }),
+    () => ({ apiKeys: { swapKit: apiKey }, chains: config?.chains, wallets: config?.wallets }),
     [apiKey, config],
   );
 
   useEffect(() => {
-    loadTokens();
+    void loadTokens();
   }, [loadTokens]);
 
   return (
@@ -37,21 +31,15 @@ export function SwapKitWidget({ apiKey, availableAssets, config }: SwapKitWidget
 }
 
 const initialState = {
-  isConnected: false,
   inputAsset: undefined as AssetValue | undefined,
+  isConnected: false,
   outputAsset: undefined as AssetValue | undefined,
 };
 
-function SwapKitContent({
-  availableAssets,
-  tokensLoaded,
-}: {
-  availableAssets?: AssetValue[];
-  tokensLoaded: boolean;
-}) {
+function SwapKitContent({ availableAssets, tokensLoaded }: { availableAssets?: AssetValue[]; tokensLoaded: boolean }) {
   const [{ isConnected, inputAsset, outputAsset }, dispatch] = useReducer(reducer, initialState);
   const setInputAsset = useCallback((inputAsset: AssetValue) => {
-    dispatch({ type: "setInputAsset", inputAsset });
+    dispatch({ inputAsset, type: "setInputAsset" });
   }, []);
 
   const setInputAmount = useCallback(
@@ -64,7 +52,7 @@ function SwapKitContent({
   );
 
   const setOutputAsset = useCallback((outputAsset: AssetValue) => {
-    dispatch({ type: "setOutputAsset", outputAsset });
+    dispatch({ outputAsset, type: "setOutputAsset" });
   }, []);
 
   const setOutputAmount = useCallback(
@@ -85,20 +73,20 @@ function SwapKitContent({
       <div className="swap-inputs">
         <AssetInput
           label="From"
+          onAssetChange={setInputAsset}
+          onValueChange={setInputAmount}
           predefinedAssets={availableAssets}
           selectedAsset={inputAsset}
-          onValueChange={setInputAmount}
-          onAssetChange={setInputAsset}
         />
 
         <div className="swap-direction-indicator">→</div>
 
         <AssetInput
           label="To"
+          onAssetChange={setOutputAsset}
+          onValueChange={setOutputAmount}
           predefinedAssets={availableAssets}
           selectedAsset={outputAsset}
-          onValueChange={setOutputAmount}
-          onAssetChange={setOutputAsset}
         />
       </div>
 

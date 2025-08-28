@@ -4,11 +4,11 @@ label.label input[type="file"] {
 }
 
 .label {
+  display: inline-block;
+  padding: 5px;
   cursor: pointer;
   border: 1px solid #cccccc;
   border-radius: 5px;
-  padding: 5px;
-  display: inline-block;
 }
 
 .label:invalid + span {

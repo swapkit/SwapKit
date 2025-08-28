@@ -18,10 +18,10 @@ export function uniqid() {
 
 export function getBalance<T extends Chain>(chain: T) {
   return async function getBalance(address: string, scamFilter = true) {
-    const balances = await SwapKitApi.getChainBalance({ chain, address, scamFilter });
+    const balances = await SwapKitApi.getChainBalance({ address, chain, scamFilter });
 
     return balances.map(({ identifier, value, decimal }) => {
-      return new AssetValue({ decimal: decimal || BaseDecimal[chain], value, identifier });
+      return new AssetValue({ decimal: decimal || BaseDecimal[chain], identifier, value });
     });
   };
 }

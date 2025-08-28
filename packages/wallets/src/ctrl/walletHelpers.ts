@@ -6,9 +6,9 @@ import {
   type EVMChain,
   EVMChains,
   type FeeOption,
+  providerRequest,
   SwapKitError,
   WalletOption,
-  providerRequest,
 } from "@swapkit/helpers";
 import { erc20ABI } from "@swapkit/helpers/contracts";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
@@ -87,7 +87,7 @@ async function transaction({
 
   return new Promise<string>((resolve, reject) => {
     if (client && "request" in client) {
-      // @ts-ignore
+      // @ts-expect-error
       client.request({ method, params }, (err: string, tx: string) => {
         err ? reject(err) : resolve(tx);
       });
@@ -95,24 +95,17 @@ async function transaction({
   });
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export async function getCtrlAddress(chain: Chain) {
   try {
     const eipProvider = (await getCtrlProvider(chain)) as Eip1193Provider;
     if (!eipProvider) {
-      throw new SwapKitError({
-        errorKey: "wallet_provider_not_found",
-        info: { wallet: WalletOption.CTRL, chain },
-      });
+      throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
     }
 
     if ([Chain.Cosmos, Chain.Kujira, Chain.Noble].includes(chain)) {
       const provider = await getCtrlProvider(Chain.Cosmos);
       if (!provider || "request" in provider) {
-        throw new SwapKitError({
-          errorKey: "wallet_provider_not_found",
-          info: { wallet: WalletOption.CTRL, chain },
-        });
+        throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
       }
 
       // Enabling before using the Keplr is recommended.
@@ -135,11 +128,7 @@ export async function getCtrlAddress(chain: Chain) {
       }
       const { BrowserProvider } = await import("ethers");
       const provider = new BrowserProvider(eipProvider, "any");
-      const [response] = await providerRequest({
-        provider,
-        method: "eth_requestAccounts",
-        params: [],
-      });
+      const [response] = await providerRequest({ method: "eth_requestAccounts", params: [], provider });
       return response;
     }
 
@@ -156,9 +145,7 @@ export async function getCtrlAddress(chain: Chain) {
       }
 
       if (!window.xfi.near.isSignedIn?.()) {
-        const result = await window.xfi.near.request<string[]>?.({
-          method: "connect",
-        });
+        const result = await window.xfi.near.request<string[]>?.({ method: "connect" });
         return result?.[0] || "";
       }
 
@@ -168,10 +155,7 @@ export async function getCtrlAddress(chain: Chain) {
     const accounts = await eipProvider.request({ method: "request_accounts", params: [] });
     return accounts[0];
   } catch (_error) {
-    throw new SwapKitError({
-      errorKey: "wallet_provider_not_found",
-      info: { wallet: WalletOption.CTRL, chain },
-    });
+    throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
   }
 }
 
@@ -191,60 +175,58 @@ export async function walletTransfer(
   const from = await getCtrlAddress(assetValue.chain);
   const params = [
     {
-      amount: {
-        amount: assetValue.getBaseValue("number"),
-        decimals: assetValue.decimal,
-      },
+      amount: { amount: assetValue.getBaseValue("number"), decimals: assetValue.decimal },
       asset: {
         chain: assetValue.chain,
         symbol: assetValue.symbol.toUpperCase(),
         ticker: assetValue.symbol.toUpperCase(),
       },
-      memo: memo || "",
       from,
-      recipient,
       gasLimit,
+      memo: memo || "",
+      recipient,
     },
   ];
 
-  return transaction({ method, params, chain: assetValue.chain });
+  return transaction({ chain: assetValue.chain, method, params });
 }
 
 export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
   return {
-    call: async <T>({
-      contractAddress,
-      abi,
-      funcName,
-      funcParams = [],
-      txOverrides,
-    }: CallParams): Promise<T> => {
+    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
+      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
+      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
+      const txOverrides = { from };
+
+      const functionCallParams = {
+        abi: erc20ABI,
+        contractAddress: assetAddress,
+        funcName: "approve",
+        funcParams,
+        txOverrides,
+      };
+
+      const createTx = getCreateContractTxObject({ chain, provider });
+      const { value, to, data } = await createTx(functionCallParams);
+
+      const signer = await provider.getSigner();
+      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
+      return tx.hash;
+    },
+    call: async <T>({ contractAddress, abi, funcName, funcParams = [], txOverrides }: CallParams): Promise<T> => {
       if (!contractAddress) {
         throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
       }
-      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import(
-        "@swapkit/toolboxes/evm"
-      );
+      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import("@swapkit/toolboxes/evm");
 
       const isStateChanging = isStateChangingCall({ abi, funcName });
 
       if (isStateChanging) {
-        const createTx = getCreateContractTxObject({ provider, chain });
-        const { value, from, to, data } = await createTx({
-          contractAddress,
-          abi,
-          funcName,
-          funcParams,
-          txOverrides,
-        });
+        const createTx = getCreateContractTxObject({ chain, provider });
+        const { value, from, to, data } = await createTx({ abi, contractAddress, funcName, funcParams, txOverrides });
 
         const signer = await provider.getSigner();
-        const tx = await signer.sendTransaction({
-          value: BigInt(value || 0),
-          from,
-          to,
-          data: data || "0x",
-        });
+        const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
         return tx.hash as T;
       }
       const contract = createContract(contractAddress, abi, provider);
@@ -253,31 +235,6 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
 
       return typeof result?.hash === "string" ? result?.hash : result;
     },
-    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
-      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
-      const txOverrides = { from };
-
-      const functionCallParams = {
-        contractAddress: assetAddress,
-        abi: erc20ABI,
-        funcName: "approve",
-        funcParams,
-        txOverrides,
-      };
-
-      const createTx = getCreateContractTxObject({ provider, chain });
-      const { value, to, data } = await createTx(functionCallParams);
-
-      const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({
-        value: BigInt(value || 0),
-        from,
-        to,
-        data: data || "0x",
-      });
-      return tx.hash;
-    },
     sendTransaction: async (txParams: EVMTxParams) => {
       const { from, to, data, value } = txParams;
       if (!to) {
@@ -285,12 +242,7 @@ export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
       }
 
       const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({
-        value: BigInt(value || 0),
-        from,
-        to,
-        data: data || "0x",
-      });
+      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
       return tx.hash;
     },
   };

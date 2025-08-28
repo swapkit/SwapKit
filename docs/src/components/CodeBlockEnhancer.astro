@@ -1,0 +1,257 @@
+---
+---
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  const codeBlocks = document.querySelectorAll('pre:has(code)');
+  
+  codeBlocks.forEach(function(pre) {
+    if (pre.querySelector('.copy-code-button')) return;
+    
+    if (pre.closest('.interactive-example, .swap-demo, .wallet-demo, .step-guide')) return;
+    
+    const codeElement = pre.querySelector('code');
+    if (!codeElement) return;
+    
+    const copyButton = document.createElement('button');
+    copyButton.className = 'copy-code-button';
+    copyButton.innerHTML = `
+      <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      <span class="copy-text">Copy</span>
+    `;
+    copyButton.title = 'Copy code to clipboard';
+    
+    copyButton.addEventListener('click', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const code = codeElement.textContent || codeElement.innerText;
+      
+      try {
+        await navigator.clipboard.writeText(code);
+        
+        const copyIcon = this.querySelector('.copy-icon');
+        const copyText = this.querySelector('.copy-text');
+        
+        if (!copyIcon || !copyText) return;
+        
+        const checkIcon = document.createElement('div');
+        checkIcon.innerHTML = `
+          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+        `;
+        
+        const firstChild = checkIcon.firstElementChild;
+        if (firstChild) {
+          copyIcon.style.display = 'none';
+          this.insertBefore(firstChild, copyText);
+          copyText.textContent = 'Copied!';
+          this.classList.add('copied');
+        }
+        
+        setTimeout(() => {
+          const checkIconElement = this.querySelector('.check-icon');
+          if (checkIconElement) checkIconElement.remove();
+          copyIcon.style.display = 'inline';
+          copyText.textContent = 'Copy';
+          this.classList.remove('copied');
+        }, 2000);
+        
+      } catch (err) {
+        console.error('Failed to copy code: ', err);
+        
+        const copyText = this.querySelector('.copy-text');
+        if (!copyText) return;
+        
+        const originalText = copyText.textContent;
+        copyText.textContent = 'Failed';
+        this.classList.add('error');
+        
+        setTimeout(() => {
+          copyText.textContent = originalText || 'Copy';
+          this.classList.remove('error');
+        }, 2000);
+      }
+    });
+    
+    pre.style.position = 'relative';
+    pre.appendChild(copyButton);
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+      const activeElement = document.activeElement;
+      if (!activeElement) return;
+      
+      const codeBlock = activeElement.closest('pre');
+      
+      if (codeBlock && !window.getSelection()?.toString()) {
+        e.preventDefault();
+        const copyButton = codeBlock.querySelector('.copy-code-button');
+        if (copyButton) {
+          copyButton.click();
+        }
+      }
+    }
+  });
+  
+  codeBlocks.forEach(function(pre) {
+    pre.setAttribute('tabindex', '0');
+    pre.addEventListener('focus', function() {
+      this.style.outline = '2px solid var(--sl-color-accent)';
+      this.style.outlineOffset = '2px';
+    });
+    pre.addEventListener('blur', function() {
+      this.style.outline = 'none';
+    });
+  });
+});
+</script>
+
+<style is:global>
+
+pre {
+  position: relative;
+}
+
+.copy-code-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.375rem;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(-2px);
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+pre:hover .copy-code-button,
+pre:focus .copy-code-button,
+.copy-code-button:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.copy-code-button:hover {
+  background: var(--sl-color-bg-accent);
+  color: var(--sl-color-text);
+  border-color: var(--sl-color-accent);
+  transform: translateY(-1px);
+}
+
+.copy-code-button:active {
+  transform: translateY(0);
+}
+
+.copy-code-button.copied {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.copy-code-button.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.copy-icon,
+.check-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.copy-text {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+pre:focus {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+.copy-code-button:focus {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+
+:global([data-theme="dark"]) .copy-code-button {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+@media (max-width: 768px) {
+  .copy-code-button {
+    opacity: 1;
+    transform: translateY(0);
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6875rem;
+  }
+  
+  .copy-icon,
+  .check-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+
+@media (prefers-contrast: high) {
+  .copy-code-button {
+    border-width: 2px;
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+  }
+  
+  :global([data-theme="dark"]) .copy-code-button {
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-code-button {
+    transition: opacity 0.2s ease;
+    transform: none !important;
+  }
+  
+  .copy-code-button:hover {
+    transform: none !important;
+  }
+}
+
+
+@media print {
+  .copy-code-button {
+    display: none !important;
+  }
+}
+</style>

@@ -1,0 +1,937 @@
+---
+title: OKX Wallet Browser Extension Integration
+description: Complete guide to integrating OKX Wallet with SwapKit SDK v4 for multi-chain support
+---
+
+OKX Wallet is a comprehensive multi-chain browser extension wallet that supports a wide range of blockchain networks. SwapKit SDK v4 provides extensive support for OKX Wallet across all its supported chains, making it an excellent choice for multi-chain applications.
+
+## Supported Chains
+
+SwapKit supports OKX Wallet for these chains:
+
+- **EVM Compatible**: Ethereum, Arbitrum, Aurora, Avalanche, Base, BinanceSmartChain, Gnosis, Optimism, Polygon
+- **Bitcoin**: Native Bitcoin support
+- **Cosmos Ecosystem**: Cosmos Hub
+- **Layer 1 Alternatives**: Near, Tron
+- **Testnets**: Berachain (testnet)
+
+## Installation and Setup
+
+### 1. Install OKX Wallet Extension
+
+Install OKX Wallet from official sources:
+
+- **Chrome/Chromium**: [Chrome Web Store](https:
+- **Firefox**: [Firefox Add-ons](https:
+- **Edge**: Available through Chrome Web Store
+- **Safari**: Available through App Store
+
+### 2. Set Up OKX Wallet
+
+1. Create a new wallet or import existing one using seed phrase
+2. Set up a secure password and PIN
+3. Enable the chains you want to use
+4. Configure network preferences
+
+### 3. Browser Requirements
+
+OKX Wallet works in:
+
+- **Chrome/Chromium**: Full support
+- **Firefox**: Full support
+- **Safari**: Limited support
+- **Edge**: Full support
+- **Brave**: Full support
+
+## SwapKit Integration
+
+### Basic Setup
+
+#### Granular Approach (Recommended for Frontend)
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+  wallets: { ...okxWallet },
+});
+```
+
+#### All-in-One Approach (Backend/Node.js)
+
+```ts twoslash
+import { createSwapKit, Chain } from "@swapkit/sdk";
+
+const swapKit = createSwapKit({
+  config: {
+    apiKeys: {
+      swapKit: "your-api-key",
+    },
+  },
+});
+```
+
+### Connecting OKX Wallet
+
+#### Single Chain Connection
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function connectOKXEthereum() {
+  try {
+    await swapKit.connectOkx([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    const balance = await swapKit.getBalance(Chain.Ethereum, true);
+
+    console.log("Ethereum address:", address);
+    console.log("ETH balance:", balance);
+
+    return { success: true, address, balance };
+  } catch (error) {
+    console.error("Failed to connect OKX Wallet:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Multi-Chain Connection
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function connectMultipleChains() {
+  const supportedChains = [
+    Chain.Ethereum,
+    Chain.Bitcoin,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Cosmos,
+  ];
+
+  try {
+    await swapKit.connectOkx(supportedChains);
+
+    const addresses = {};
+    for (const chain of supportedChains) {
+      addresses[chain] = swapKit.getAddress(chain);
+      console.log(`${chain} address:`, addresses[chain]);
+    }
+
+    const balances = await Promise.all(
+      supportedChains.map(async (chain) => {
+        try {
+          const balance = await swapKit.getBalance(chain, true);
+          return { chain, balance };
+        } catch (error) {
+          return { chain, balance: [], error: error.message };
+        }
+      })
+    );
+
+    return { success: true, addresses, balances };
+  } catch (error) {
+    console.error("Multi-chain connection failed:", error);
+    return { success: false, error };
+  }
+}
+```
+
+#### Chain-Specific Connections
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function connectOKXBitcoin() {
+  try {
+    await swapKit.connectOkx([Chain.Bitcoin]);
+
+    const address = swapKit.getAddress(Chain.Bitcoin);
+    console.log("OKX Bitcoin address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect OKX Bitcoin:", error);
+    return { success: false, error };
+  }
+}
+
+async function connectOKXCosmos() {
+  try {
+    await swapKit.connectOkx([Chain.Cosmos]);
+
+    const address = swapKit.getAddress(Chain.Cosmos);
+    console.log("OKX Cosmos address:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("Failed to connect OKX Cosmos:", error);
+    return { success: false, error };
+  }
+}
+```
+
+## Transaction Examples
+
+### Ethereum Transactions
+
+#### ETH Transfer
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+
+await swapKit.connectOkx([Chain.Ethereum]);
+
+async function sendEthereum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+
+  try {
+    console.log("Sending ETH via OKX Wallet...");
+    console.log("Amount:", amount.toSignificant(6), "ETH");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ ETH transfer sent:", txHash);
+    console.log("🔍 View on Etherscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ETH transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+#### ERC-20 Token Transfer
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+await swapKit.connectOkx([Chain.Ethereum]);
+
+async function sendERC20Token() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+
+  const amount = AssetValue.fromChainOrSignature(
+    "ETH.USDC-0xA0B86A33E6441E89D5E4C4EDF4C8DF4C0E6C62F6",
+    100
+  );
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ USDC transfer sent via OKX:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ USDC transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Bitcoin Transactions
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+
+await swapKit.connectOkx([Chain.Bitcoin]);
+
+async function sendBitcoin() {
+  const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
+
+  try {
+    console.log("Sending Bitcoin via OKX Wallet...");
+    console.log("Amount:", amount.toSignificant(8), "BTC");
+    console.log("To:", recipient);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Bitcoin transfer sent:", txHash);
+    console.log("🔍 View on Blockstream:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Bitcoin transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Multi-Chain Transactions
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+
+await swapKit.connectOkx([Chain.Ethereum, Chain.Polygon, Chain.Arbitrum]);
+
+async function sendOnPolygon() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("MATIC.MATIC", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ MATIC transfer sent via OKX:", txHash);
+    console.log("🔍 View on PolygonScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ MATIC transfer failed:", error);
+    throw error;
+  }
+}
+
+async function sendOnArbitrum() {
+  const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
+  const amount = AssetValue.fromChainOrSignature("ARB.ETH", 0.001);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ Arbitrum ETH transfer sent via OKX:", txHash);
+    console.log("🔍 View on Arbiscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ Arbitrum transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### Cosmos Transactions
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+
+await swapKit.connectOkx([Chain.Cosmos]);
+
+async function sendAtom() {
+  const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+  const amount = AssetValue.fromChainOrSignature("GAIA.ATOM", 1);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+      memo: "OKX Cosmos transaction",
+    });
+
+    console.log("✅ ATOM transfer sent via OKX:", txHash);
+    console.log("🔍 View on Mintscan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ ATOM transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+### TRON Transactions
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapKit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+
+await swapKit.connectOkx([Chain.Tron]);
+
+async function sendTron() {
+  const recipient = "TLPwm9iGkMiTUERrQ8KXWCFzPn5Q3wz5jc";
+  const amount = AssetValue.fromChainOrSignature("TRON.TRX", 10);
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ TRX transfer sent via OKX:", txHash);
+    console.log("🔍 View on TronScan:", `https:
+
+    return txHash;
+  } catch (error) {
+    console.error("❌ TRX transfer failed:", error);
+    throw error;
+  }
+}
+```
+
+## Chain-Specific Features
+
+### EVM Chain Management
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function manageEVMChains() {
+  const evmChains = [
+    Chain.Ethereum,
+    Chain.Polygon,
+    Chain.Arbitrum,
+    Chain.BinanceSmartChain,
+    Chain.Avalanche,
+    Chain.Optimism,
+    Chain.Base,
+  ];
+
+  try {
+    await swapKit.connectOkx(evmChains);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("EVM address (same on all chains):", address);
+
+    const balances = {};
+    for (const chain of evmChains) {
+      try {
+        const balance = await swapKit.getBalance(chain, true);
+        balances[chain] = balance;
+      } catch (error) {
+        console.log(`Could not fetch balance for ${chain}:`, error.message);
+      }
+    }
+
+    return { success: true, address, balances };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+```
+
+### Bitcoin Address Types
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function getBitcoinAddressInfo() {
+  await swapKit.connectOkx([Chain.Bitcoin]);
+
+  const address = swapKit.getAddress(Chain.Bitcoin);
+  console.log("Bitcoin address:", address);
+
+  let addressType = "Unknown";
+  if (address.startsWith("1")) {
+    addressType = "Legacy (P2PKH)";
+  } else if (address.startsWith("3")) {
+    addressType = "SegWit (P2SH-P2WPKH)";
+  } else if (address.startsWith("bc1q")) {
+    addressType = "Native SegWit (P2WPKH)";
+  } else if (address.startsWith("bc1p")) {
+    addressType = "Taproot (P2TR)";
+  }
+
+  console.log("Address type:", addressType);
+
+  return { address, addressType };
+}
+```
+
+### Near Protocol Integration
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function nearOperations() {
+  try {
+    await swapKit.connectOkx([Chain.Near]);
+
+    const address = swapKit.getAddress(Chain.Near);
+    console.log("Near address:", address);
+
+    const recipient = "example.near";
+    const amount = AssetValue.fromChainOrSignature("NEAR.NEAR", 1);
+
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient,
+    });
+
+    console.log("✅ NEAR transfer sent:", txHash);
+    return txHash;
+  } catch (error) {
+    console.error("❌ NEAR operation failed:", error);
+    throw error;
+  }
+}
+```
+
+## Common Troubleshooting
+
+### Connection Issues
+
+```ts twoslash
+
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+const swapKit = SwapKit({
+  wallets: { ...okxWallet },
+});
+
+async function diagnosticConnection() {
+  try {
+
+    if (typeof window.okxwallet === 'undefined') {
+      console.error("❌ OKX Wallet extension not found");
+      console.log("🔧 Install OKX Wallet from https:
+      return { success: false, error: "OKX Wallet not installed" };
+    }
+
+    console.log("🔍 OKX Wallet detected, attempting connection...");
+
+    await swapKit.connectOkx([Chain.Ethereum]);
+
+    const address = swapKit.getAddress(Chain.Ethereum);
+    console.log("✅ Successfully connected:", address);
+
+    return { success: true, address };
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+
+    if (error.message.includes("User rejected")) {
+      console.log("🔧 User rejected connection request");
+      console.log("Please approve the connection in OKX Wallet");
+    }
+
+    if (error.message.includes("locked")) {
+      console.log("🔧 OKX Wallet is locked");
+      console.log("Please unlock your OKX Wallet");
+    }
+
+    if (error.message.includes("chain")) {
+      console.log("🔧 Chain not supported or configured");
+      console.log("Check if the chain is enabled in OKX Wallet settings");
+    }
+
+    return { success: false, error };
+  }
+}
+
+
+async function checkOKXProviders() {
+  const providers = {
+    okxwallet: !!window.okxwallet,
+    bitcoin: !!window.okxwallet?.bitcoin,
+    ethereum: !!window.okxwallet?.ethereum,
+    cosmos: !!window.okxwallet?.cosmos,
+    tron: !!window.okxwallet?.tron,
+    near: !!window.okxwallet?.near,
+  };
+
+  console.log("OKX Wallet providers:", providers);
+  return providers;
+}
+```
+
+### Transaction Failures
+
+```ts twoslash
+async function handleTransactionErrors() {
+  try {
+    const amount = AssetValue.fromChainOrSignature("ETH.ETH", 0.01);
+    const txHash = await swapKit.transfer({
+      assetValue: amount,
+      recipient: "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC",
+    });
+    return txHash;
+  } catch (error) {
+    if (error.message.includes("insufficient funds")) {
+      console.error("❌ Insufficient balance for transaction + gas fees");
+
+      const balance = await swapKit.getBalance(Chain.Ethereum, true);
+      console.log("Current balance:", balance);
+      console.log("🔧 Add more ETH to your OKX Wallet");
+    }
+
+    if (error.message.includes("User denied")) {
+      console.error("❌ Transaction rejected in OKX Wallet");
+      console.log("🔧 Please approve the transaction in OKX Wallet popup");
+    }
+
+    if (error.message.includes("gas")) {
+      console.error("❌ Gas estimation failed or gas limit too low");
+      console.log("🔧 Check network congestion or increase gas limit");
+    }
+
+    if (error.message.includes("network")) {
+      console.error("❌ Wrong network selected");
+      console.log("🔧 Switch to the correct network in OKX Wallet");
+    }
+
+    if (error.message.includes("nonce")) {
+      console.error("❌ Nonce issues");
+      console.log("🔧 Try resetting transaction history in OKX Wallet");
+    }
+
+    throw error;
+  }
+}
+```
+
+### Network-Specific Issues
+
+```ts twoslash
+async function handleNetworkIssues(chain: Chain) {
+  try {
+    await swapKit.connectOkx([chain]);
+  } catch (error) {
+    switch (chain) {
+      case Chain.Bitcoin:
+        if (error.message.includes("bitcoin")) {
+          console.error("❌ Bitcoin connection failed");
+          console.log("🔧 Ensure Bitcoin is enabled in OKX Wallet settings");
+          console.log("🔧 Check if you have a Bitcoin address in OKX Wallet");
+        }
+        break;
+
+      case Chain.Cosmos:
+        if (error.message.includes("cosmos")) {
+          console.error("❌ Cosmos connection failed");
+          console.log("🔧 Ensure Cosmos is enabled in OKX Wallet settings");
+          console.log("🔧 Check if you have imported a Cosmos account");
+        }
+        break;
+
+      case Chain.Near:
+        if (error.message.includes("near")) {
+          console.error("❌ Near connection failed");
+          console.log("🔧 Ensure Near is supported in your OKX Wallet version");
+          console.log("🔧 Check if you have a Near account configured");
+        }
+        break;
+
+      default:
+        console.error(`❌ ${chain} connection failed`);
+        console.log("🔧 Check if the chain is supported and enabled");
+    }
+
+    throw error;
+  }
+}
+```
+
+## Security Considerations
+
+### Best Practices
+
+```ts twoslash
+import { SwapKit, okxWallet, Chain } from "@swapkit/sdk";
+
+function validateAddress(address: string, chain: Chain): boolean {
+  switch (chain) {
+    case Chain.Ethereum:
+    case Chain.Polygon:
+    case Chain.Arbitrum:
+    case Chain.BinanceSmartChain:
+    case Chain.Avalanche:
+    case Chain.Optimism:
+    case Chain.Base:
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+
+    case Chain.Bitcoin:
+      return /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/.test(address);
+
+    case Chain.Cosmos:
+      return /^cosmos[0-9a-z]{39}$/.test(address);
+
+    case Chain.Tron:
+      return /^T[a-zA-Z0-9]{33}$/.test(address);
+
+    case Chain.Near:
+      return (
+        /^[a-z0-9_.-]+\.(near|testnet)$/.test(address) ||
+        /^[a-f0-9]{64}$/.test(address)
+      );
+
+    default:
+      return false;
+  }
+}
+
+async function secureTransfer(chain: Chain, recipient: string, amount: number) {
+  if (!validateAddress(recipient, chain)) {
+    throw new Error(`Invalid ${chain} address format`);
+  }
+
+  if (amount <= 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  const swapKit = SwapKit({ wallets: { ...okxWallet } });
+  await swapKit.connectOkx([chain]);
+
+  let assetValue: AssetValue;
+  switch (chain) {
+    case Chain.Ethereum:
+      assetValue = AssetValue.fromChainOrSignature("ETH.ETH", amount);
+      break;
+    case Chain.Bitcoin:
+      assetValue = AssetValue.fromChainOrSignature("BTC.BTC", amount);
+      break;
+    case Chain.Cosmos:
+      assetValue = AssetValue.fromChainOrSignature("GAIA.ATOM", amount);
+      break;
+
+    default:
+      throw new Error("Unsupported chain");
+  }
+
+  console.log("📋 Transaction Details:");
+  console.log("Chain:", chain);
+  console.log("Amount:", assetValue.toSignificant(6));
+  console.log("Recipient:", recipient);
+  console.log("⚠️ Please verify these details in OKX Wallet before confirming");
+
+  try {
+    const txHash = await swapKit.transfer({
+      assetValue,
+      recipient,
+    });
+
+    return txHash;
+  } catch (error) {
+    console.error(`${chain} transaction failed:`, error.message);
+    throw new Error("Transaction failed. Please try again.");
+  }
+}
+```
+
+### Secure Configuration
+
+```ts twoslash
+
+
+const secureSwapKit = SwapKit({
+  config: {
+
+    rpcUrls: {
+      [Chain.Ethereum]: "https:
+      [Chain.Bitcoin]: "https:
+      [Chain.Cosmos]: "https:
+      [Chain.Tron]: "https:
+    },
+    apiKeys: {
+      swapKit: process.env.SWAPKIT_API_KEY,
+    },
+  },
+  wallets: { ...okxWallet },
+});
+```
+
+## React Integration
+
+```tsx twoslash
+
+import React, { useState, useEffect } from 'react';
+import { SwapKit, okxWallet, Chain, AssetValue } from "@swapkit/sdk";
+
+interface OKXWalletProps {
+  onConnect: (addresses: Partial<Record<Chain, string>>) => void;
+  onError: (error: Error) => void;
+}
+
+export function OKXWallet({ onConnect, onError }: OKXWalletProps) {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [addresses, setAddresses] = useState<Partial<Record<Chain, string>>>({});
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([Chain.Ethereum]);
+
+  const swapKit = SwapKit({ wallets: { ...okxWallet } });
+
+
+  const isOKXInstalled = typeof window !== 'undefined' &&
+    typeof window.okxwallet !== 'undefined';
+
+  const connectOKX = async () => {
+    if (!isOKXInstalled) {
+      onError(new Error("OKX Wallet not installed"));
+      return;
+    }
+
+    setIsConnecting(true);
+
+    try {
+      await swapKit.connectOkx(selectedChains);
+
+      const connectedAddresses: Partial<Record<Chain, string>> = {};
+      for (const chain of selectedChains) {
+        connectedAddresses[chain] = swapKit.getAddress(chain);
+      }
+
+      setAddresses(connectedAddresses);
+      setIsConnected(true);
+      onConnect(connectedAddresses);
+    } catch (error) {
+      onError(error as Error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    swapKit.disconnectAll();
+    setIsConnected(false);
+    setAddresses({});
+  };
+
+  const toggleChain = (chain: Chain) => {
+    if (isConnected) return;
+
+    setSelectedChains(prev =>
+      prev.includes(chain)
+        ? prev.filter(c => c !== chain)
+        : [...prev, chain]
+    );
+  };
+
+  const supportedChains = [
+    { chain: Chain.Ethereum, name: "Ethereum" },
+    { chain: Chain.Bitcoin, name: "Bitcoin" },
+    { chain: Chain.Polygon, name: "Polygon" },
+    { chain: Chain.Arbitrum, name: "Arbitrum" },
+    { chain: Chain.BinanceSmartChain, name: "BSC" },
+    { chain: Chain.Cosmos, name: "Cosmos" },
+    { chain: Chain.Tron, name: "Tron" },
+    { chain: Chain.Near, name: "Near" },
+  ];
+
+  if (!isOKXInstalled) {
+    return (
+      <div>
+        <h3>OKX Wallet</h3>
+        <p>OKX Wallet extension not detected</p>
+        <a
+          href="https:
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Install OKX Wallet
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>OKX Wallet</h3>
+
+      {!isConnected ? (
+        <div>
+          <h4>Select Chains:</h4>
+          {supportedChains.map(({ chain, name }) => (
+            <label key={chain}>
+              <input
+                type="checkbox"
+                checked={selectedChains.includes(chain)}
+                onChange={() => toggleChain(chain)}
+                disabled={isConnecting}
+              />
+              {name}
+            </label>
+          ))}
+
+          <button
+            onClick={connectOKX}
+            disabled={isConnecting || selectedChains.length === 0}
+          >
+            {isConnecting ? "Connecting..." : "Connect OKX Wallet"}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h4>Connected Addresses:</h4>
+          {Object.entries(addresses).map(([chain, address]) => (
+            <div key={chain}>
+              <strong>{chain}:</strong> {address}
+            </div>
+          ))}
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This comprehensive guide covers all aspects of OKX Wallet integration with SwapKit SDK v4, including support for multiple chains, security best practices, and troubleshooting for common issues across different blockchain networks.

@@ -5,20 +5,11 @@ import type {
   StateEntityFungiblesPageRequest,
   StateEntityFungiblesPageResponse,
 } from "@radixdlt/babylon-gateway-api-sdk";
-import {
-  AssetValue,
-  Chain,
-  SKConfig,
-  type SKConfigIntegrations,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { AssetValue, Chain, SKConfig, type SKConfigIntegrations, SwapKitError } from "@swapkit/helpers";
 
 export type RadixWallet = Awaited<ReturnType<typeof RadixToolbox>>;
 
-type RadixGetBalanceParams = {
-  address: string;
-  networkApi: GatewayApiClient;
-};
+type RadixGetBalanceParams = { address: string; networkApi: GatewayApiClient };
 // Could not find anything sync in SDK, ask Radix team
 export function radixValidateAddress(address: string) {
   return address.startsWith("account_rdx1") && address.length === 66;
@@ -27,10 +18,7 @@ export function radixValidateAddress(address: string) {
 function getBalance({ networkApi }: { networkApi: GatewayApiClient }) {
   return async function getBalance(address: string) {
     const fungibleResources = await fetchFungibleResources({ address, networkApi });
-    const fungibleBalances = convertResourcesToBalances({
-      resources: fungibleResources,
-      networkApi,
-    });
+    const fungibleBalances = convertResourcesToBalances({ networkApi, resources: fungibleResources });
     return fungibleBalances;
   };
 }
@@ -46,11 +34,9 @@ async function fetchFungibleResources({
   while (hasNextPage) {
     const stateEntityFungiblesPageRequest: StateEntityFungiblesPageRequest = {
       address: address,
-      limit_per_page: 100,
+      at_ledger_state: { state_version: stateVersion },
       cursor: nextCursor,
-      at_ledger_state: {
-        state_version: stateVersion,
-      },
+      limit_per_page: 100,
     };
 
     const stateEntityFungiblesPageResponse: StateEntityFungiblesPageResponse =
@@ -68,7 +54,6 @@ async function fetchFungibleResources({
   return fungibleResources;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 async function convertResourcesToBalances({
   resources,
   networkApi,
@@ -95,14 +80,10 @@ async function convertResourcesToBalances({
     for (const result of response) {
       if (result.details !== undefined) {
         const metaDataSymbol = result.metadata?.items.find((item) => item.key === "symbol");
-        const symbol =
-          metaDataSymbol?.value.typed.type === "String" ? metaDataSymbol.value.typed.value : "?";
+        const symbol = metaDataSymbol?.value.typed.type === "String" ? metaDataSymbol.value.typed.value : "?";
 
         if (result.details.type === "FungibleResource") {
-          divisibilities.set(result.address, {
-            decimals: result.details.divisibility,
-            symbol,
-          });
+          divisibilities.set(result.address, { decimals: result.details.divisibility, symbol });
         }
       }
     }
@@ -126,21 +107,16 @@ async function convertResourcesToBalances({
   return balances;
 }
 
-async function currentStateVersion(networkApi: GatewayApiClient) {
+function currentStateVersion(networkApi: GatewayApiClient) {
   return networkApi.status.getCurrent().then((status) => status.ledger_state.state_version);
 }
 
-export const RadixToolbox = async ({
-  dappConfig,
-}: { dappConfig?: SKConfigIntegrations["radix"] } = {}) => {
+export const RadixToolbox = async ({ dappConfig }: { dappConfig?: SKConfigIntegrations["radix"] } = {}) => {
   const { RadixDappToolkit } = await import("@radixdlt/radix-dapp-toolkit");
   const { GatewayApiClient } = await import("@radixdlt/babylon-gateway-api-sdk");
   const config = dappConfig || SKConfig.get("integrations").radix;
 
-  const radixToolkit = RadixDappToolkit({
-    ...config,
-    networkId: config.network?.networkId || 1,
-  });
+  const radixToolkit = RadixDappToolkit({ ...config, networkId: config.network?.networkId || 1 });
 
   const networkApi = GatewayApiClient.initialize(radixToolkit.gatewayApi.clientConfig);
 
@@ -148,9 +124,9 @@ export const RadixToolbox = async ({
     getAddress: () => "",
     getBalance: getBalance({ networkApi }),
     networkApi,
-    validateAddress: radixValidateAddress,
     signAndBroadcast: (() => {
       throw new SwapKitError("toolbox_radix_method_not_supported", { method: "signAndBroadcast" });
     }) as (params: any) => Promise<string>,
+    validateAddress: radixValidateAddress,
   };
 };

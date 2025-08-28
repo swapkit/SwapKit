@@ -1,11 +1,6 @@
 import { SwapKitError } from "@swapkit/helpers";
 import { opcodes, script } from "bitcoinjs-lib";
-import type {
-  TargetOutput,
-  UTXOCalculateTxSizeParams,
-  UTXOInputWithScriptType,
-  UTXOType,
-} from "../types";
+import type { TargetOutput, UTXOCalculateTxSizeParams, UTXOInputWithScriptType, UTXOType } from "../types";
 
 /**
  * Minimum transaction fee
@@ -113,15 +108,10 @@ export const calculateTxSize = ({ inputs, outputs, feeRate }: UTXOCalculateTxSiz
       ? getScriptTypeForAddress(inputs[0].address)
       : UTXOScriptType.P2PKH;
   const inputSize = inputs
-    .filter(
-      (utxo) =>
-        utxo.value >=
-        InputSizes["type" in utxo ? utxo.type : UTXOScriptType.P2PKH] * Math.ceil(feeRate),
-    )
+    .filter((utxo) => utxo.value >= InputSizes["type" in utxo ? utxo.type : UTXOScriptType.P2PKH] * Math.ceil(feeRate))
     .reduce((total, utxo) => total + getInputSize(utxo), 0);
 
-  const outputSize =
-    outputs?.reduce((total, output) => total + getOutputSize(output), 0) || OutputSizes[newTxType];
+  const outputSize = outputs?.reduce((total, output) => total + getOutputSize(output), 0) || OutputSizes[newTxType];
 
   return TX_OVERHEAD + inputSize + outputSize;
 };

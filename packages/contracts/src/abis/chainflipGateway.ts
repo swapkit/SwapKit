@@ -10,9 +10,7 @@ export const chainflipGateway = [
   },
   {
     anonymous: false,
-    inputs: [
-      { indexed: false, internalType: "bool", name: "communityGuardDisabled", type: "bool" },
-    ],
+    inputs: [{ indexed: false, internalType: "bool", name: "communityGuardDisabled", type: "bool" }],
     name: "CommunityGuardDisabled",
     type: "event",
   },
@@ -110,20 +108,8 @@ export const chainflipGateway = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "disableCommunityGuard",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "enableCommunityGuard",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  { inputs: [], name: "disableCommunityGuard", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "enableCommunityGuard", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
     inputs: [{ internalType: "bytes32", name: "nodeID", type: "bytes32" }],
     name: "executeRedemption",
@@ -220,13 +206,7 @@ export const chainflipGateway = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "govUpdateFlipIssuer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  { inputs: [], name: "govUpdateFlipIssuer", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [], name: "govWithdraw", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
     inputs: [

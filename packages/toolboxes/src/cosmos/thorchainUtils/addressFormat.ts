@@ -3,9 +3,7 @@ import { SwapKitError } from "@swapkit/helpers";
 import { fromByteArray, toByteArray } from "base64-js";
 
 export function bech32ToBase64(address: string) {
-  return base64.encode(
-    Uint8Array.from(bech32.fromWords(bech32.decode(address as `${string}1${string}`).words)),
-  );
+  return base64.encode(Uint8Array.from(bech32.fromWords(bech32.decode(address as `${string}1${string}`).words)));
 }
 
 export function base64ToBech32(address: string, prefix = "thor") {
@@ -18,9 +16,7 @@ export function toBase64(data: Uint8Array) {
 
 export function fromBase64(base64String: string) {
   if (!base64String.match(/^[a-zA-Z0-9+/]*={0,2}$/)) {
-    throw new SwapKitError("toolbox_cosmos_invalid_params", {
-      error: "Invalid base64 string format",
-    });
+    throw new SwapKitError("toolbox_cosmos_invalid_params", { error: "Invalid base64 string format" });
   }
   return toByteArray(base64String);
 }

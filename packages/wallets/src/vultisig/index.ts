@@ -1,12 +1,12 @@
 import {
   Chain,
   type EVMChain,
+  filterSupportedChains,
   type GenericTransferParams,
   SwapKitError,
   type UTXOChain,
   UTXOChains,
   WalletOption,
-  filterSupportedChains,
 } from "@swapkit/helpers";
 
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
@@ -19,8 +19,40 @@ import {
 } from "./walletHelpers";
 
 export const vultisigWallet = createWallet({
+  connect: ({ addChain, walletType, supportedChains }) =>
+    async function connectVultisig(chains: Chain[]) {
+      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
+
+      const promises = filteredChains
+        .filter((chain) => chain !== Chain.Cosmos && chain !== Chain.Kujira)
+        .map(async (chain) => {
+          const address = await getVultisigAddress(chain);
+          const walletMethods = await getWalletMethods(chain);
+
+          addChain({ ...walletMethods, address, chain, walletType });
+        });
+
+      const cosmosIncluded = filteredChains.includes(Chain.Cosmos);
+      const kujiraIncluded = filteredChains.includes(Chain.Kujira);
+
+      // Race condition single cosmos provider exposed.
+      if (cosmosIncluded) {
+        const addressCosmos = await getVultisigAddress(Chain.Cosmos);
+        const walletMethodsCosmos = await getWalletMethods(Chain.Cosmos);
+        addChain({ ...walletMethodsCosmos, address: addressCosmos, chain: Chain.Cosmos, walletType });
+      }
+      if (kujiraIncluded) {
+        const addressKujira = await getVultisigAddress(Chain.Kujira);
+        const walletMethodsKujira = await getWalletMethods(Chain.Kujira);
+        addChain({ ...walletMethodsKujira, address: addressKujira, chain: Chain.Kujira, walletType });
+      }
+      //--//
+
+      await Promise.all(promises);
+
+      return true;
+    },
   name: "connectVultisig",
-  walletType: WalletOption.VULTISIG,
   supportedChains: [
     Chain.Arbitrum,
     Chain.Avalanche,
@@ -43,49 +75,7 @@ export const vultisigWallet = createWallet({
     Chain.THORChain,
     Chain.Zcash,
   ],
-  connect: ({ addChain, walletType, supportedChains }) =>
-    async function connectVultisig(chains: Chain[]) {
-      const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
-
-      const promises = filteredChains
-        .filter((chain) => chain !== Chain.Cosmos && chain !== Chain.Kujira)
-        .map(async (chain) => {
-          const address = await getVultisigAddress(chain);
-          const walletMethods = await getWalletMethods(chain);
-
-          addChain({ ...walletMethods, address, chain, walletType });
-        });
-
-      const cosmosIncluded = filteredChains.includes(Chain.Cosmos);
-      const kujiraIncluded = filteredChains.includes(Chain.Kujira);
-
-      // Race condition single cosmos provider exposed.
-      if (cosmosIncluded) {
-        const addressCosmos = await getVultisigAddress(Chain.Cosmos);
-        const walletMethodsCosmos = await getWalletMethods(Chain.Cosmos);
-        addChain({
-          ...walletMethodsCosmos,
-          address: addressCosmos,
-          chain: Chain.Cosmos,
-          walletType,
-        });
-      }
-      if (kujiraIncluded) {
-        const addressKujira = await getVultisigAddress(Chain.Kujira);
-        const walletMethodsKujira = await getWalletMethods(Chain.Kujira);
-        addChain({
-          ...walletMethodsKujira,
-          address: addressKujira,
-          chain: Chain.Kujira,
-          walletType,
-        });
-      }
-      //--//
-
-      await Promise.all(promises);
-
-      return true;
-    },
+  walletType: WalletOption.VULTISIG,
 });
 
 export const VULTISIG_SUPPORTED_CHAINS = getWalletSupportedChains(vultisigWallet);
@@ -102,17 +92,13 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
     })
 
     .with(Chain.Maya, Chain.THORChain, async () => {
-      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import(
-        "@swapkit/toolboxes/cosmos"
-      );
+      const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import("@swapkit/toolboxes/cosmos");
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
       const toolbox = await getCosmosToolbox(chain as Chain.Cosmos | Chain.Kujira);
       return {
         ...toolbox,
-        deposit: (tx: GenericTransferParams) =>
-          walletTransfer({ ...tx, recipient: "" }, "deposit_transaction"),
-        transfer: (tx: GenericTransferParams) =>
-          walletTransfer({ ...tx, gasLimit }, "send_transaction"),
+        deposit: (tx: GenericTransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit_transaction"),
+        transfer: (tx: GenericTransferParams) => walletTransfer({ ...tx, gasLimit }, "send_transaction"),
       };
     })
 
@@ -120,14 +106,7 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const provider = await getVultisigProvider(chain as Chain.Cosmos | Chain.Kujira);
       const toolbox = await getCosmosToolbox(chain as Chain.Cosmos | Chain.Kujira);
-      return prepareNetworkSwitchCosmos({
-        provider,
-        chain,
-        toolbox: {
-          ...toolbox,
-          transfer: walletTransfer,
-        },
-      });
+      return prepareNetworkSwitchCosmos({ chain, provider, toolbox: { ...toolbox, transfer: walletTransfer } });
     })
 
     .with(...UTXOChains, async () => {
@@ -167,18 +146,11 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
         } catch (_error) {
           throw new SwapKitError({
             errorKey: "wallet_failed_to_add_or_switch_network",
-            info: { wallet: WalletOption.VULTISIG, chain },
+            info: { chain, wallet: WalletOption.VULTISIG },
           });
         }
 
-        return prepareNetworkSwitch({
-          provider,
-          chain,
-          toolbox: {
-            ...toolbox,
-            ...vultisigMethods,
-          },
-        });
+        return prepareNetworkSwitch({ chain, provider, toolbox: { ...toolbox, ...vultisigMethods } });
       },
     )
 
