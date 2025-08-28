@@ -32,7 +32,7 @@ export const StagenetTHORConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
-  chain: "THOR",
+  chain: "THOR_STAGENET",
   chainId: "thorchain-stagenet-v2",
   explorerUrl: "https://runescan.io",
   name: "THORChain",
@@ -58,7 +58,7 @@ export const StagenetMAYAConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
-  chain: "MAYA",
+  chain: "MAYA_STAGENET",
   chainId: "mayachain-stagenet-v1",
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
@@ -109,10 +109,5 @@ export const CosmosChainPrefixes: Record<CosmosChain, string> = {
   [NOBLEConfig.chain]: "noble",
 };
 
-export const TCLikeChains = [
-  THORConfig.chain,
-  MAYAConfig.chain,
-  StagenetTHORConfig.chain,
-  StagenetMAYAConfig.chain,
-] as const;
+export const TCLikeChains = [THORConfig.chain, MAYAConfig.chain] as const;
 export type TCLikeChain = (typeof TCLikeChains)[number];

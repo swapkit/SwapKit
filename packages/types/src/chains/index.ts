@@ -23,39 +23,39 @@ export type ChainConfig = AllChainConfigs[number];
 
 export const AllChains = mapChains(AllChainConfigs);
 export type AllChains = typeof AllChains;
-export const StagenetChainConfigs = [...StagenetCosmosChainConfigs].sort((a, b) => a.chain.localeCompare(b.chain));
-export type StagenetChainConfigs = typeof StagenetChainConfigs;
-export const StagenetChains = mapChains(StagenetChainConfigs);
+
+export const AllStagenetChainConfigs = [...StagenetCosmosChainConfigs];
+export type AllStagenetChainConfigs = typeof AllStagenetChainConfigs;
+export type StagenetChainConfigs = AllStagenetChainConfigs[number];
+export const StagenetChains = mapChains(AllStagenetChainConfigs);
 export type StagenetChains = typeof StagenetChains;
 
 const chainAndNameToChain = AllChainConfigs.flatMap(({ chain, name }) => [
-  [chain, chain] as const,
+  //   [chain, chain] as const,
   [name, chain] as const,
 ]);
 export const Chain = Object.fromEntries(chainAndNameToChain) as {
-  readonly [K in ChainConfig["chain"] | ChainConfig["name"]]: Extract<ChainConfig, { chain: K } | { name: K }>["chain"];
+  readonly [K in ChainConfig["name"]]: Extract<ChainConfig, { chain: K } | { name: K }>["chain"];
 };
-export type Chain = keyof typeof Chain;
+export type Chain = (typeof Chain)[ChainConfig["name"]];
 
 const chainAndNameToChainId = AllChainConfigs.flatMap(({ chainId, chain, name }) => [
   [chain, chainId] as const,
   [name, chainId] as const,
 ]);
 export const ChainId = Object.fromEntries(chainAndNameToChainId) as {
-  readonly [K in ChainConfig["chain"] | ChainConfig["name"]]: Extract<
+  readonly [K in ChainConfig["name"] | ChainConfig["chain"]]: Extract<
     ChainConfig,
     { chain: K } | { name: K }
   >["chainId"];
 };
-export type ChainId = keyof typeof ChainId;
+export type ChainId = (typeof ChainId)[ChainConfig["name"]];
 
-const stagenetChainsToStagenetChain = StagenetChainConfigs.flatMap(({ name, chain }) => [
-  [name, `${chain}_STAGENET`] as const,
-]);
+const stagenetChainsToStagenetChain = AllStagenetChainConfigs.flatMap(({ name, chain }) => [[name, chain] as const]);
 export const StagenetChain = Object.fromEntries(stagenetChainsToStagenetChain) as {
-  readonly [K in StagenetChainConfigs[number]["name"]]: `${StagenetChainConfigs[number]["chain"]}_STAGENET`;
+  readonly [K in StagenetChainConfigs["name"]]: Extract<StagenetChainConfigs, { chain: K } | { name: K }>["chain"];
 };
-export type StagenetChain = keyof typeof StagenetChain;
+export type StagenetChain = (typeof StagenetChain)[StagenetChainConfigs["name"]];
 
 type ChainConfigMap = {
   [K in ChainConfig["chain"]]: Extract<ChainConfig, { chain: K }>;
@@ -65,7 +65,7 @@ const chainConfigMap = new Map<ChainConfig["chain"], ChainConfig>(
   AllChainConfigs.map((config) => [config.chain, config]),
 );
 
-export function getChainConfig<T extends ChainConfig["chain"]>(chain: T): ChainConfigMap[T] {
+export function getChainConfig<T extends Chain>(chain: T): ChainConfigMap[T] {
   const chainConfig = chainConfigMap.get(chain);
 
   return (chainConfig || {}) as ChainConfigMap[T];
