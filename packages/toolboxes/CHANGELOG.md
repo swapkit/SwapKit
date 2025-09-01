@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.5
+
+### Patch Changes
+
+- [#1463](https://github.com/swapkit/SwapKit/pull/1463) [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7) Thanks [@towanTG](https://github.com/towanTG)! - Improves handling of EIP1193 tx data formatting
+
+- Updated dependencies [[`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7)]:
+  - @swapkit/helpers@4.0.5
+
 ## 4.0.4
 
 ### Patch Changes

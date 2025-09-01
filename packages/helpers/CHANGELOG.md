@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.5
+
+### Patch Changes
+
+- [#1463](https://github.com/swapkit/SwapKit/pull/1463) [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7) Thanks [@towanTG](https://github.com/towanTG)! - Removes microguard endpoint and improves midgard TNS handling
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.5
+
 ## 4.0.4
 
 ### Patch Changes
