@@ -1,5 +1,5 @@
 "use client";
-import { type AssetValue, FeeOption, type QuoteResponseRoute } from "@swapkit/sdk";
+import { type AssetValue, FeeOption, getExplorerTxUrl, type QuoteResponseRoute } from "@swapkit/sdk";
 import { useCallback } from "react";
 
 import type { SwapKitClient } from "../swapKitClient";
@@ -26,7 +26,7 @@ export default function Swap({
         ...(isChainflipBoost ? { maxBoostFeeBps: 10 } : {}),
       });
 
-      window.open(skClient.getExplorerTxUrl({ chain: inputChain, txHash }), "_blank");
+      window.open(getExplorerTxUrl({ chain: inputChain, txHash }), "_blank");
     },
     [inputAsset, outputAsset?.chain, skClient],
   );

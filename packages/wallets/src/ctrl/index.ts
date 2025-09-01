@@ -9,7 +9,7 @@ import {
 import type { NearCreateTransactionParams } from "@swapkit/toolboxes/near";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
-import { getCtrlAddress, getCtrlMethods, getCtrlProvider, walletTransfer } from "./walletHelpers";
+import { getCtrlAddress, getCtrlProvider, walletTransfer } from "./walletHelpers";
 
 export const ctrlWallet = createWallet({
   connect: ({ addChain, walletType, supportedChains }) =>
@@ -136,7 +136,6 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const provider = new BrowserProvider(ethereumWindowProvider, "any");
       const signer = await provider.getSigner();
       const toolbox = await getEvmToolbox(chain, { provider, signer });
-      const ctrlMethods = getCtrlMethods(provider, chain);
 
       try {
         if (chain !== Chain.Ethereum) {
@@ -150,7 +149,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
         });
       }
 
-      return prepareNetworkSwitch({ chain, provider, toolbox: { ...toolbox, ...ctrlMethods } });
+      return prepareNetworkSwitch({ chain, provider, toolbox });
     }
 
     case Chain.Near: {
