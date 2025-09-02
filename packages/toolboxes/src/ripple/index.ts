@@ -34,9 +34,8 @@ export function rippleValidateAddress(address: string) {
 }
 
 type RippleToolboxParams =
-  | { phrase: string }
-  | { signer: ChainSigner<Transaction, { tx_blob: string; hash: string }> }
-  | {};
+  | { phrase?: string }
+  | { signer?: ChainSigner<Transaction, { tx_blob: string; hash: string }> };
 
 export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
   const signer =

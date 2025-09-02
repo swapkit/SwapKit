@@ -29,7 +29,7 @@ export const XRPLedger = async (derivationPath?: DerivationPathArray) => {
 
   const { address, publicKey } = await xrpInstance.getAddress(path);
 
-  async function sign(transaction: Payment | Transaction) {
+  async function signTransaction(transaction: Payment | Transaction) {
     const { hashes } = await import("@swapkit/toolboxes/ripple");
     const cleanedTxWithPubKey = cleanTransactionObject(transaction);
     const transactionJSON = {
@@ -46,5 +46,5 @@ export const XRPLedger = async (derivationPath?: DerivationPathArray) => {
     return { hash, tx_blob };
   }
 
-  return { address, sign };
+  return { getAddress: () => address, signTransaction };
 };

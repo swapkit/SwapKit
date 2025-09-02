@@ -55,7 +55,7 @@ export const getLedgerAddress = async <
     }
 
     case Chain.Ripple: {
-      return (ledgerClient as Awaited<ReturnType<typeof XRPLedger>>).address;
+      return (ledgerClient as Awaited<ReturnType<typeof XRPLedger>>).getAddress();
     }
 
     case Chain.Tron: {
