@@ -1,5 +1,15 @@
 # @swapkit/server
 
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06)]:
+  - @swapkit/toolboxes@4.0.8
+  - @swapkit/helpers@4.0.8
+  - @swapkit/tokens@4.0.8
+  - @swapkit/wallet-keystore@4.0.8
+
 ## 4.0.7
 
 ### Patch Changes

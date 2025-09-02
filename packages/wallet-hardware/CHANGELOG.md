@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.7
+
+### Patch Changes
+
+- [#1469](https://github.com/swapkit/SwapKit/pull/1469) [`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06) Thanks [@towanTG](https://github.com/towanTG)! - Fixes ledger xrp signer and improves xrp toolbox params types
+
+- Updated dependencies [[`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06)]:
+  - @swapkit/toolboxes@4.0.8
+  - @swapkit/helpers@4.0.8
+
 ## 4.1.6
 
 ### Patch Changes
