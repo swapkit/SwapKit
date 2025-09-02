@@ -1,4 +1,4 @@
-import type Xrp from "@ledgerhq/hw-app-xrp";
+import Xrp from "@ledgerhq/hw-app-xrp";
 import type Transport from "@ledgerhq/hw-transport";
 import { Chain, type DerivationPathArray, derivationPathToString, NetworkDerivationPath } from "@swapkit/helpers";
 import type { Transaction } from "@swapkit/toolboxes/ripple";
@@ -18,21 +18,16 @@ function cleanTransactionObject(obj: Record<string, any>) {
   return cleaned;
 }
 
-async function establishConnection(transport: Transport) {
-  const { default: Xrp } = await import("@ledgerhq/hw-app-xrp");
+function establishConnection(transport: Transport) {
   return new Xrp(transport);
-}
-
-function fetchAddressAndPublicKey({ instance, derivationPath }: { instance: Xrp; derivationPath: string }) {
-  return instance.getAddress(derivationPath);
 }
 
 export const XRPLedger = async (derivationPath?: DerivationPathArray) => {
   const path = derivationPathToString(derivationPath || NetworkDerivationPath[Chain.Ripple]);
   const transport = await getLedgerTransport();
-  const xrpInstance = await establishConnection(transport);
+  const xrpInstance = establishConnection(transport);
 
-  const { address, publicKey } = await fetchAddressAndPublicKey({ derivationPath: path, instance: xrpInstance });
+  const { address, publicKey } = await xrpInstance.getAddress(path);
 
   async function sign(transaction: Payment | Transaction) {
     const { hashes } = await import("@swapkit/toolboxes/ripple");
