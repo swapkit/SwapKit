@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 4.0.10
+
+### Patch Changes
+
+- [#1471](https://github.com/swapkit/SwapKit/pull/1471) [`27a3f83`](https://github.com/swapkit/SwapKit/commit/27a3f8387d518d2eeb10262495ae7c3663318d77) Thanks [@towanTG](https://github.com/towanTG)! - Minor internal type updates, thorchain rpc url update and code maintenance
+
+- Updated dependencies [[`27a3f83`](https://github.com/swapkit/SwapKit/commit/27a3f8387d518d2eeb10262495ae7c3663318d77)]:
+  - @swapkit/toolboxes@4.0.9
+  - @swapkit/helpers@4.0.9
+
 ## 4.0.9
 
 ### Patch Changes
