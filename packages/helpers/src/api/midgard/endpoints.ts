@@ -228,43 +228,49 @@ function getBalance(baseUrl: string) {
 
 function getNameDetails(baseUrl: string) {
   return async function getNamesByAddress(name: string) {
-    try {
-      return await RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`);
-    } catch (error: any) {
-      // Return empty array when no names found for owner (404)
-      if (error?.info?.status === 404) {
+    const errorHandler = (error: any) => {
+      // Handle specific error cases
+      if (error?.cause?.status === 404) {
         return undefined;
       }
       throw error;
-    }
+    };
+    return await RequestClient.get<THORNameDetails>(`${baseUrl}/lookup/${name}`, {
+      onError: errorHandler,
+      retry: { maxRetries: 1 },
+    });
   };
 }
 
 function getNamesByAddress(baseUrl: string) {
   return async function getNamesByAddress(address: string) {
-    try {
-      return await RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`);
-    } catch (error: any) {
-      // Return empty array when no names found for owner (404)
-      if (error?.info?.status === 404) {
+    const errorHandler = (error: any) => {
+      // Handle specific error cases
+      if (error?.cause?.status === 404) {
         return [];
       }
       throw error;
-    }
+    };
+    return await RequestClient.get<string[]>(`${baseUrl}/rlookup/${address}`, {
+      onError: errorHandler,
+      retry: { maxRetries: 1 },
+    });
   };
 }
 
 function getNamesByOwner(baseUrl: string) {
   return async function getNamesByOwner(address: string) {
-    try {
-      return await RequestClient.get<string[]>(`${baseUrl}/owner/${address}`);
-    } catch (error: any) {
-      // Return empty array when no names found for owner (404)
-      if (error?.info?.status === 404) {
+    const errorHandler = (error: any) => {
+      // Handle specific error cases
+      if (error?.cause?.status === 404) {
         return [];
       }
       throw error;
-    }
+    };
+    return await RequestClient.get<string[]>(`${baseUrl}/owner/${address}`, {
+      onError: errorHandler,
+      retry: { maxRetries: 1 },
+    });
   };
 }
 

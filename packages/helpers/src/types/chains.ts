@@ -279,7 +279,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
 };
 
 export const NODE_URLS: Record<Chain.THORChain | Chain.Maya | StagenetChain.THORChain | StagenetChain.Maya, string> = {
-  [Chain.THORChain]: "https://thornode.thorswap.net",
+  [Chain.THORChain]: "https://thornode.ninerealms.com",
   [Chain.Maya]: "https://mayanode.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
   [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",

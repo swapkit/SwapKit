@@ -10,10 +10,8 @@ import {
   SwapKitError,
   WalletOption,
 } from "@swapkit/helpers";
-import { erc20ABI } from "@swapkit/helpers/contracts";
-import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
-import type { BrowserProvider, Eip1193Provider } from "ethers";
+import type { Eip1193Provider } from "ethers";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -189,61 +187,4 @@ export async function walletTransfer(
   ];
 
   return transaction({ chain: assetValue.chain, method, params });
-}
-
-export function getCtrlMethods(provider: BrowserProvider, chain: EVMChain) {
-  return {
-    approve: async ({ assetAddress, spenderAddress, amount, from }: ApproveParams) => {
-      const { MAX_APPROVAL, getCreateContractTxObject } = await import("@swapkit/toolboxes/evm");
-      const funcParams = [spenderAddress, BigInt(amount || MAX_APPROVAL)];
-      const txOverrides = { from };
-
-      const functionCallParams = {
-        abi: erc20ABI,
-        contractAddress: assetAddress,
-        funcName: "approve",
-        funcParams,
-        txOverrides,
-      };
-
-      const createTx = getCreateContractTxObject({ chain, provider });
-      const { value, to, data } = await createTx(functionCallParams);
-
-      const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
-      return tx.hash;
-    },
-    call: async <T>({ contractAddress, abi, funcName, funcParams = [], txOverrides }: CallParams): Promise<T> => {
-      if (!contractAddress) {
-        throw new SwapKitError("wallet_ctrl_contract_address_not_provided");
-      }
-      const { createContract, getCreateContractTxObject, isStateChangingCall } = await import("@swapkit/toolboxes/evm");
-
-      const isStateChanging = isStateChangingCall({ abi, funcName });
-
-      if (isStateChanging) {
-        const createTx = getCreateContractTxObject({ chain, provider });
-        const { value, from, to, data } = await createTx({ abi, contractAddress, funcName, funcParams, txOverrides });
-
-        const signer = await provider.getSigner();
-        const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
-        return tx.hash as T;
-      }
-      const contract = createContract(contractAddress, abi, provider);
-
-      const result = await contract[funcName]?.(...funcParams);
-
-      return typeof result?.hash === "string" ? result?.hash : result;
-    },
-    sendTransaction: async (txParams: EVMTxParams) => {
-      const { from, to, data, value } = txParams;
-      if (!to) {
-        throw new SwapKitError("wallet_ctrl_send_transaction_no_address");
-      }
-
-      const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({ data: data || "0x", from, to, value: BigInt(value || 0) });
-      return tx.hash;
-    },
-  };
 }

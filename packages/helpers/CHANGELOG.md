@@ -1,5 +1,37 @@
 # @swapkit/helpers
 
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.8
+
+## 4.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.7
+
+## 4.0.6
+
+### Patch Changes
+
+- [#1465](https://github.com/swapkit/SwapKit/pull/1465) [`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec) Thanks [@towanTG](https://github.com/towanTG)! - Retires thorswap thornode and replaces it with 9Realms
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.6
+
+## 4.0.5
+
+### Patch Changes
+
+- [#1463](https://github.com/swapkit/SwapKit/pull/1463) [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7) Thanks [@towanTG](https://github.com/towanTG)! - Removes microguard endpoint and improves midgard TNS handling
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.5
+
 ## 4.0.4
 
 ### Patch Changes

@@ -1,5 +1,37 @@
 # @swapkit/core
 
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06)]:
+  - @swapkit/toolboxes@4.0.8
+  - @swapkit/helpers@4.0.8
+
+## 4.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.7
+  - @swapkit/toolboxes@4.0.7
+
+## 4.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec)]:
+  - @swapkit/helpers@4.0.6
+  - @swapkit/toolboxes@4.0.6
+
+## 4.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7), [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7)]:
+  - @swapkit/toolboxes@4.0.5
+  - @swapkit/helpers@4.0.5
+
 ## 4.0.4
 
 ### Patch Changes

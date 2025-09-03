@@ -1,5 +1,45 @@
 # @swapkit/sdk
 
+## 4.0.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallets@4.1.7
+  - @swapkit/core@4.0.8
+  - @swapkit/plugins@4.0.9
+  - @swapkit/server@4.0.8
+
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallets@4.1.6
+  - @swapkit/server@4.0.7
+  - @swapkit/core@4.0.7
+  - @swapkit/plugins@4.0.8
+
+## 4.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.6
+  - @swapkit/plugins@4.0.7
+  - @swapkit/server@4.0.6
+  - @swapkit/wallets@4.1.5
+
+## 4.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7)]:
+  - @swapkit/wallets@4.1.4
+  - @swapkit/core@4.0.5
+  - @swapkit/plugins@4.0.6
+  - @swapkit/server@4.0.5
+
 ## 4.0.5
 
 ### Patch Changes
