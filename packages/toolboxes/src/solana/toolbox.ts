@@ -328,7 +328,7 @@ function transfer(getConnection: () => Promise<Connection>, signer?: SolanaSigne
       sender,
     });
 
-    if ("connect" in signer) {
+    if ("signTransaction" in signer) {
       const signedTransaction = await signer.signTransaction(transaction);
       return broadcastTransaction(getConnection)(signedTransaction);
     }

@@ -1,18 +1,16 @@
 import type { Wallet } from "@passkeys/core";
 import {
-  type AssetValue,
   Chain,
   EVMChains,
   filterSupportedChains,
-  type GenericTransferParams,
   prepareNetworkSwitch,
   SwapKitError,
   switchEVMWalletNetwork,
   WalletOption,
 } from "@swapkit/helpers";
+import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { Psbt } from "bitcoinjs-lib";
-// BrowserProvider imported dynamically when needed
 import {
   AddressPurpose,
   BitcoinNetworkType,
@@ -124,7 +122,9 @@ async function getWalletMethods({ wallet, chain }: { wallet: Wallet; chain: Chai
 
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
-      const provider = await wallet.getProvider("solana");
+      const provider = (await wallet.getProvider("solana")) as any as SolanaProvider;
+
+      provider?.publicKey;
 
       if (!provider) {
         throw new SwapKitError("wallet_exodus_not_found");
@@ -132,42 +132,14 @@ async function getWalletMethods({ wallet, chain }: { wallet: Wallet; chain: Chai
 
       const providerConnection = await provider.connect();
       const address: string = providerConnection.publicKey.toString();
-      const toolbox = await getSolanaToolbox();
 
-      const transfer = async ({
-        recipient,
-        assetValue,
-        isProgramDerivedAddress,
-      }: GenericTransferParams & { assetValue: AssetValue; isProgramDerivedAddress?: boolean }) => {
-        // const { PublicKey } = await import("@solana/web3.js"); // TODO: Use for advanced transactions
-        const validateAddress = await toolbox.getAddressValidator();
-
-        if (!(isProgramDerivedAddress || validateAddress(recipient))) {
-          throw new SwapKitError("core_transaction_invalid_recipient_address");
-        }
-
-        // const fromPubkey = new PublicKey(address); // TODO: Use for advanced transactions
-        const connection = await toolbox.getConnection();
-
-        const transaction = await toolbox.createTransaction({
-          assetValue,
-          isProgramDerivedAddress,
-          recipient,
-          sender: address,
-        });
-
-        const signedTransaction = await provider.signTransaction(transaction);
-        const serialized = signedTransaction.serialize();
-        const txHash = await connection.sendRawTransaction(serialized);
-
-        return txHash;
-      };
+      const toolbox = await getSolanaToolbox({ signer: provider });
 
       const disconnect = async () => {
         await provider.disconnect();
       };
 
-      return { ...toolbox, address, disconnect, transfer };
+      return { ...toolbox, address, disconnect };
     }
 
     default:

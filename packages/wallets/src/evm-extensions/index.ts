@@ -26,7 +26,8 @@ const getWalletForType = (
     | WalletOption.OKX_MOBILE
     | WalletOption.METAMASK
     | WalletOption.TRUSTWALLET_WEB
-    | WalletOption.COINBASE_WEB,
+    | WalletOption.COINBASE_WEB
+    | WalletOption.EIP6963,
 ) => {
   switch (walletType) {
     case WalletOption.COINBASE_WEB:
@@ -84,44 +85,26 @@ export const evmWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          if (walletType === WalletOption.EIP6963) {
-            if (!eip1193Provider) throw new SwapKitError("wallet_evm_extensions_no_provider");
+          if (walletType === WalletOption.EIP6963 && !eip1193Provider)
+            throw new SwapKitError("wallet_evm_extensions_no_provider");
 
-            await eip1193Provider.request({ method: "eth_requestAccounts" });
+          const windowProvider = eip1193Provider || getWalletForType(walletType);
+          const browserProvider = new BrowserProvider(windowProvider, "any");
 
-            const provider = new BrowserProvider(eip1193Provider, "any");
-            await provider.send("eth_requestAccounts", []);
-            const signer = await provider.getSigner();
-            const address = await signer.getAddress();
-
-            const walletMethods = await getWeb3WalletMethods({
-              address,
-              chain,
-              provider,
-              walletProvider: eip1193Provider,
-            });
-
-            addChain({ ...walletMethods, address, chain, walletType });
-            return;
-          }
-          const walletProvider = getWalletForType(walletType);
-
-          await walletProvider.request({ method: "eth_requestAccounts" });
-
-          const web3provider = new BrowserProvider(walletProvider, "any");
-          const signer = await web3provider.getSigner();
+          await browserProvider.send("eth_requestAccounts", []);
+          const signer = await browserProvider.getSigner();
           const address = await signer.getAddress();
 
           const walletMethods = await getWeb3WalletMethods({
             address,
             chain,
-            provider: web3provider,
-            walletProvider: getWalletForType(walletType),
+            provider: browserProvider,
+            walletProvider: windowProvider,
           });
 
-          const disconnect = () => web3provider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
-
+          const disconnect = () => browserProvider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
           addChain({ ...walletMethods, address, chain, disconnect, walletType });
+          return;
         }),
       );
 
