@@ -49,7 +49,10 @@
     "xchain",
     "xpub"
   ],
-  "editor.codeActionsOnSave": { "source.organizeImports.biome": "explicit" },
+  "editor.codeActionsOnSave": {
+    "source.action.useSortedKeys.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
   "search.exclude": {
