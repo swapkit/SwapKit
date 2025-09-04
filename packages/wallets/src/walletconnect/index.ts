@@ -1,7 +1,6 @@
 import type { StdSignDoc } from "@cosmjs/amino";
 import {
   Chain,
-  ChainId,
   filterSupportedChains,
   type GenericTransferParams,
   getRPCUrl,
@@ -9,7 +8,7 @@ import {
   SwapKitError,
   WalletOption,
 } from "@swapkit/helpers";
-import type { createThorchainToolbox, ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
+import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 import type { NearSigner } from "@swapkit/toolboxes/near";
 import type { TronSignedTransaction, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
@@ -140,27 +139,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
         getDefaultChainFee,
         parseAminoMessageForDirectSigning,
       } = await import("@swapkit/toolboxes/cosmos");
-      const toolbox = await getCosmosToolbox(Chain.THORChain);
-
-      async function getAccount(accountAddress: string) {
-        const cosmosToolbox = toolbox;
-        const account = await (cosmosToolbox as Awaited<ReturnType<typeof createThorchainToolbox>>).getAccount(
-          accountAddress,
-        );
-
-        if (chain !== Chain.THORChain) {
-          return account;
-        }
-
-        const [{ address, algo, pubkey }] = (await walletconnect?.client.request({
-          chainId: THORCHAIN_MAINNET_ID,
-          request: { method: DEFAULT_COSMOS_METHODS.COSMOS_GET_ACCOUNTS, params: {} },
-          // @ts-expect-error
-          topic: session.topic,
-        })) as [{ address: string; algo: string; pubkey: string }];
-
-        return { ...account, address, pubkey: { type: algo, value: pubkey } };
-      }
+      const toolbox = await getCosmosToolbox(chain);
 
       const fee = getDefaultChainFee(chain);
 
@@ -183,11 +162,16 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
         const { accountNumber, sequence = 0 } = account;
 
-        const msgs = [buildAminoMsg({ assetValue, memo, sender: address, ...rest })];
+        const msgs = [buildAminoMsg({ ...rest, assetValue, memo, sender: address })];
 
-        const chainId = ChainId.THORChain;
-
-        const signDoc = makeSignDoc(msgs, fee, chainId, memo, accountNumber?.toString(), sequence?.toString() || "0");
+        const signDoc = makeSignDoc(
+          msgs,
+          fee,
+          assetValue.chainId,
+          memo,
+          accountNumber?.toString(),
+          sequence?.toString() || "0",
+        );
 
         const signature: any = await signRequest(signDoc);
 
@@ -224,7 +208,6 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
       return {
         ...toolbox,
         deposit: (params: ThorchainDepositParams) => thorchainTransfer(params),
-        getAccount,
         transfer: (params: GenericTransferParams) => thorchainTransfer(params),
       };
     }
@@ -322,7 +305,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
 
 async function getWalletconnect(
   chains: Chain[],
-  walletConnectProjectId?: string,
+  walletConnectProjectId: string,
   walletconnectOptions?: SignClientTypes.Options,
 ) {
   let modal: WalletConnectModal | undefined;
@@ -330,9 +313,6 @@ async function getWalletconnect(
   let session: SessionTypes.Struct | undefined;
   let accounts: string[] | undefined;
   try {
-    if (!walletConnectProjectId) {
-      throw new SwapKitError("wallet_walletconnect_project_id_not_specified");
-    }
     const requiredNamespaces = getRequiredNamespaces(chains.map(chainToChainId));
 
     const { SignClient } = await import("@walletconnect/sign-client");

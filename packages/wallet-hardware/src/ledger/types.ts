@@ -12,13 +12,14 @@ import type {
 } from "./clients/evm";
 import type { THORChainLedger } from "./clients/thorchain";
 import type { TronLedger } from "./clients/tron";
-import type { BitcoinCashLedger, BitcoinLedger, DogecoinLedger, LitecoinLedger } from "./clients/utxo";
+import type { BitcoinCashLedger, BitcoinLedger, DogecoinLedger, LitecoinLedger, ZcashLedger } from "./clients/utxo";
 
 export type UTXOLedgerClients =
   | ReturnType<typeof BitcoinLedger>
   | ReturnType<typeof BitcoinCashLedger>
   | ReturnType<typeof DogecoinLedger>
-  | ReturnType<typeof LitecoinLedger>;
+  | ReturnType<typeof LitecoinLedger>
+  | ReturnType<typeof ZcashLedger>;
 export type CosmosLedgerClients = CosmosLedger | THORChainLedger;
 export type EVMLedgerClients =
   | ReturnType<typeof ArbitrumLedger>

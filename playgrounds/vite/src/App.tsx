@@ -1,7 +1,7 @@
-import { type AssetValue, Chain, type FullWallet, SKConfig } from "@swapkit/core";
-import { WalletWidget } from "@swapkit/wallets/exodus";
+import { WalletWidget } from "@passkeys/react";
+import { type AssetValue, Chain, SKConfig } from "@swapkit/core";
+import type { FullWallet } from "@swapkit/sdk";
 import { useCallback, useMemo, useState } from "react";
-
 import Liquidity from "./Liquidity";
 import Multisig from "./Multisig";
 import NearNames from "./NearNames";

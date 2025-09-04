@@ -82,10 +82,9 @@ const transfer = async (
   { recipient, assetValue, sender }: SubstrateTransferParams,
 ) => {
   const transfer = createTransaction(api, { assetValue, recipient });
+  if (!transfer) throw new SwapKitError("toolbox_substrate_transfer_error");
 
   const isKeyring = isKeyringPair(signer);
-
-  if (!transfer) return;
 
   const address = isKeyring ? (signer as IKeyringPair).address : sender;
   if (!address) throw new SwapKitError("core_transaction_invalid_sender_address");
@@ -97,7 +96,7 @@ const transfer = async (
     signer: isKeyring ? undefined : signer,
   });
 
-  return tx?.toString();
+  return tx.toString();
 };
 
 const estimateTransactionFee = async (
