@@ -1,5 +1,16 @@
 # @swapkit/tokens
 
+## 4.0.10
+
+### Patch Changes
+
+- [#1473](https://github.com/swapkit/SwapKit/pull/1473) [`28d10f5`](https://github.com/swapkit/SwapKit/commit/28d10f523cfa240bef200cc52dc52b7cc7f2496f) Thanks [@towanTG](https://github.com/towanTG)! - Updates Near tokenlist
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.10
+  - @swapkit/toolboxes@4.0.10
+  - @swapkit/wallets@4.1.9
+
 ## 4.0.9
 
 ### Patch Changes
