@@ -392,6 +392,10 @@ const errorCodes = {
   plugin_near_registration_failed: 41004,
   plugin_near_transfer_failed: 41005,
   /**
+   * SwapKit Plugin
+   */
+  plugin_swapkit_invalid_tx_data: 59801,
+  /**
    * SwapKit API
    */
   api_v2_invalid_response: 60001,

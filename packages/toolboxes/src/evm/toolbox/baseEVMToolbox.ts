@@ -59,17 +59,26 @@ function getSignTransaction({ signer }: { signer?: Signer }) {
 }
 
 function getSignAndBroadcastTransaction({
+  chain,
   provider,
   signer,
 }: {
+  chain: EVMChain;
   provider: Provider | BrowserProvider;
   signer?: Signer;
 }) {
-  return async function signAndBroadcastTransaction(tx: TransactionRequest): Promise<string> {
+  return async function signAndBroadcastTransaction({ from, to, data, value }: TransactionRequest): Promise<string> {
     if (!signer) throw new SwapKitError("toolbox_evm_no_signer");
 
+    const tx = { data, from, to, value };
+
+    const gasLimit = await provider.estimateGas(tx);
+    const gasPrices = getEstimateGasPrices({ chain, provider })();
+
+    const transaction = { ...tx, ...gasPrices, gasLimit };
+
     // Sign the transaction
-    const signedTx = await signer.signTransaction(tx);
+    const signedTx = await signer.signTransaction(transaction);
 
     // Broadcast the signed transaction
     const response = await provider.broadcastTransaction(signedTx);
@@ -111,7 +120,7 @@ export function BaseEVMToolbox<
     },
     isApproved: getIsApproved({ chain, provider }),
     sendTransaction: getSendTransaction({ chain, isEIP1559Compatible, provider, signer }),
-    signAndBroadcastTransaction: getSignAndBroadcastTransaction({ provider, signer }),
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction({ chain, provider, signer }),
     signMessage: signer?.signMessage,
     signTransaction: getSignTransaction({ signer }),
     transfer: getTransfer({ chain, isEIP1559Compatible, provider, signer }),

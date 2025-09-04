@@ -116,6 +116,7 @@ export const createTronToolbox = async (
   transfer: (params: TronTransferParams) => Promise<string>;
   estimateTransactionFee: (params: TronTransferParams & { sender?: string }) => Promise<AssetValue>;
   createTransaction: (params: TronCreateTransactionParams) => Promise<TronTransaction>;
+  signAndBroadcastTransaction: (transaction: TronTransaction) => Promise<string>;
   signTransaction: (transaction: TronTransaction) => Promise<TronSignedTransaction>;
   broadcastTransaction: (signedTransaction: TronSignedTransaction) => Promise<string>;
   approve: (params: TronApproveParams) => Promise<string>;
@@ -516,6 +517,11 @@ export const createTronToolbox = async (
     return txid;
   };
 
+  const signAndBroadcastTransaction = async (transaction: TronTransaction) => {
+    const signedTx = await signTransaction(transaction);
+    return await broadcastTransaction(signedTx);
+  };
+
   /**
    * Check the current allowance for a spender on a token
    */
@@ -600,6 +606,7 @@ export const createTronToolbox = async (
     getApprovedAmount,
     getBalance,
     isApproved,
+    signAndBroadcastTransaction,
     signTransaction,
     transfer,
     tronWeb,

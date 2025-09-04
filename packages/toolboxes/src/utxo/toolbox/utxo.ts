@@ -1,6 +1,4 @@
 import secp256k1 from "@bitcoinerlab/secp256k1";
-// @ts-expect-error
-import { ECPair, HDNode } from "@psf/bitcoincashjs-lib";
 import { HDKey } from "@scure/bip32";
 import { mnemonicToSeedSync } from "@scure/bip39";
 import {
@@ -8,7 +6,7 @@ import {
   applyFeeMultiplier,
   Chain,
   type ChainSigner,
-  DerivationPath,
+  //   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
   FeeOption,
@@ -147,7 +145,7 @@ async function createSignerWithKeys({
   phrase: string;
   derivationPath: string;
 }) {
-  const keyPair = (await getCreateKeysForPath(chain as Chain.Bitcoin))({ derivationPath, phrase });
+  const keyPair = (await getCreateKeysForPath(chain))({ derivationPath, phrase });
 
   async function signTransaction(psbt: Psbt) {
     await psbt.signAllInputs(keyPair);
@@ -332,7 +330,7 @@ function estimateTransactionFee(chain: UTXOChain) {
 }
 
 type CreateKeysForPathReturnType = {
-  [Chain.BitcoinCash]: BchECPair;
+  [Chain.BitcoinCash]: ECPairInterface;
   [Chain.Bitcoin]: ECPairInterface;
   [Chain.Dash]: ECPairInterface;
   [Chain.Dogecoin]: ECPairInterface;
@@ -346,30 +344,32 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
   const getNetwork = await getUtxoNetwork();
 
   switch (chain) {
-    case Chain.BitcoinCash: {
-      return function createKeysForPath({
-        phrase,
-        derivationPath = `${DerivationPath.BCH}/0`,
-        wif,
-      }: {
-        wif?: string;
-        phrase?: string;
-        derivationPath?: string;
-      }) {
-        const network = getNetwork(chain);
+    // case Chain.BitcoinCash: {
+    //   return function createKeysForPath({
+    //     phrase,
+    //     derivationPath = `${DerivationPath.BCH}/0`,
+    //     wif,
+    //   }: {
+    //     wif?: string;
+    //     phrase?: string;
+    //     derivationPath?: string;
+    //   }) {
+    //     const network = getNetwork(chain);
 
-        if (wif) {
-          return ECPair.fromWIF(wif, network) as BchECPair;
-        }
-        if (!phrase) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "No phrase provided" });
+    //     if (wif) {
+    //       return ECPair.fromWIF(wif, network) as BchECPair;
+    //     }
+    //     if (!phrase) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "No phrase provided" });
 
-        const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
-        const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
+    //     const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
+    //     const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
 
-        return keyPair as BchECPair;
-      } as (params: { wif?: string; phrase?: string; derivationPath?: string }) => CreateKeysForPathReturnType[T];
-    }
+    //     return keyPair as BchECPair;
+    //   } as (params: { wif?: string; phrase?: string; derivationPath?: string }) => CreateKeysForPathReturnType[T];
+    // }
+
     case Chain.Bitcoin:
+    case Chain.BitcoinCash:
     case Chain.Dogecoin:
     case Chain.Litecoin:
     case Chain.Zcash:

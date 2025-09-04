@@ -1,7 +1,6 @@
-import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
+import type { UtxoPsbt, ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
 import { Chain, type ChainSigner, type DerivationPathArray, SwapKitError, type UTXOChain } from "@swapkit/helpers";
 import type { Psbt } from "bitcoinjs-lib";
-import type { TransactionBuilderType, TransactionType, UTXOType } from "../types";
 import { createBCHToolbox } from "./bitcoinCash";
 import { createUTXOToolbox } from "./utxo";
 import { createZcashToolbox } from "./zcash";
@@ -26,7 +25,7 @@ export type UTXOWallets = {
 };
 
 export type UtxoToolboxParams = {
-  [Chain.BitcoinCash]: { signer: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType> };
+  [Chain.BitcoinCash]: { signer: ChainSigner<UtxoPsbt, UtxoPsbt> };
   [Chain.Bitcoin]: { signer: ChainSigner<Psbt, Psbt> };
   [Chain.Dogecoin]: { signer: ChainSigner<Psbt, Psbt> };
   [Chain.Litecoin]: { signer: ChainSigner<Psbt, Psbt> };

@@ -1,18 +1,31 @@
-import { AssetValue, Chain, type CryptoChain, type ProviderName, SwapKitError, WalletOption } from "@swapkit/helpers";
-import { type QuoteResponseRoute, SwapKitApi } from "@swapkit/helpers/api";
+import { bitgo, networks } from "@bitgo/utxo-lib";
+import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
+import { Transaction } from "@near-js/transactions";
+import { VersionedTransaction } from "@solana/web3.js";
+import {
+  AssetValue,
+  Chain,
+  type CosmosChain,
+  CosmosChains,
+  type CryptoChain,
+  type EVMChain,
+  EVMChains,
+  ProviderName,
+  SwapKitError,
+} from "@swapkit/helpers";
+import {
+  CosmosTransactionSchema,
+  EVMTransactionSchema,
+  NEARTransactionSchema,
+  type QuoteResponseRoute,
+  SwapKitApi,
+  TronTransactionSchema,
+} from "@swapkit/helpers/api";
 import { Psbt } from "bitcoinjs-lib";
-import type { TransactionRequest } from "ethers";
+import { match } from "ts-pattern";
 import type { SwapKitPluginParams } from "../types";
 import { createPlugin } from "../utils";
 import type { SwapKitQuoteParams, SwapKitSwapParams } from "./types";
-
-// Wallets that don't support signing and need special handling
-const WALLETS_WITHOUT_SIGNING = [WalletOption.CTRL, WalletOption.VULTISIG, WalletOption.KEEPKEY_BEX];
-
-// Check if wallet supports signAndBroadcastTransaction
-function walletSupportsSignAndBroadcast(walletType: WalletOption | string): boolean {
-  return !WALLETS_WITHOUT_SIGNING.includes(walletType as WalletOption);
-}
 
 export const SwapKitPlugin = createPlugin({
   methods: (params: SwapKitPluginParams) => {
@@ -54,200 +67,110 @@ export const SwapKitPlugin = createPlugin({
      * Execute a swap using the SwapKit API route
      */
     async function swap(swapParams: SwapKitSwapParams): Promise<string> {
-      const { route } = swapParams;
-
-      // Extract transaction data from the route
-      // TODO: Update when SwapKit API provides transaction data
-      const transactionData = (route as QuoteResponseRoute).tx;
+      const {
+        route: { tx, ...route },
+      } = swapParams;
 
       // Determine the source chain from the sell asset
       const sellAsset = AssetValue.from({ asset: route.sellAsset });
-      const chain = sellAsset.chain as CryptoChain;
-
-      // Get the wallet for the source chain
-      const wallet = getWallet(chain);
-      if (!wallet) {
-        throw new SwapKitError("core_wallet_connection_not_found", { chain });
-      }
-
-      // Check if wallet supports signAndBroadcastTransaction
-      const walletType = wallet.walletType || "";
-      const supportsSignAndBroadcast = walletSupportsSignAndBroadcast(walletType);
+      const chain = sellAsset.chain;
 
       try {
-        // Handle different chain types
-        switch (chain) {
-          case Chain.Bitcoin:
-          case Chain.BitcoinCash:
-          case Chain.Dogecoin:
-          case Chain.Litecoin:
-          case Chain.Zcash: {
-            // UTXO chains - use PSBT
-            const anyWallet = getWallet(chain);
-
-            // Try signing first if wallet is expected to support it
-            if (supportsSignAndBroadcast && transactionData) {
-              try {
-                // Parse PSBT from hex or base64
-                const psbt = Psbt.fromBase64(transactionData as string);
-                return await anyWallet.signMessage(psbt);
-              } catch (signError) {
-                // If signing fails, try transfer fallback
-                if (transactionData.transferParams) {
-                  return await anyWallet.transfer(transactionData.transferParams);
-                }
-                throw signError;
-              }
+        return await match(chain as CryptoChain)
+          .returnType<Promise<string>>()
+          .with(Chain.BitcoinCash, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
+            }
+            return await getWallet(chain as Chain.BitcoinCash).signAndBroadcastTransaction(
+              bitgo.UtxoPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.bitcoincash }),
+            );
+          })
+          .with(Chain.Zcash, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
+            }
+            return await getWallet(chain as Chain.Zcash).signAndBroadcastTransaction(
+              bitgo.ZcashPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.zcash }) as ZcashPsbt,
+            );
+          })
+          .with(Chain.Bitcoin, Chain.Dogecoin, Chain.Litecoin, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
+            }
+            const psbt = Psbt.fromBase64(tx);
+            return await getWallet(
+              chain as Chain.Bitcoin | Chain.Dogecoin | Chain.Litecoin,
+            ).signAndBroadcastTransaction(psbt);
+          })
+          .with(...EVMChains, async () => {
+            const transaction = EVMTransactionSchema.safeParse(tx);
+            if (!transaction.success) {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            // Direct to transfer for wallets known not to support signing
-            if (transactionData.transferParams) {
-              return await anyWallet.transfer(transactionData.transferParams);
+            return await getWallet(chain as EVMChain).signAndBroadcastTransaction(transaction.data);
+          })
+          .with(Chain.Solana, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
+            }
+            const transaction = VersionedTransaction.deserialize(Buffer.from(tx, "base64"));
+            return await getWallet(chain as Chain.Solana).signAndBroadcastTransaction(transaction);
+          })
+          .with(...CosmosChains, async () => {
+            const transaction = CosmosTransactionSchema.safeParse(tx);
+            if (!transaction.success) {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            throw new SwapKitError("core_swap_invalid_params", { error: "Unable to execute UTXO transaction" });
-          }
-
-          case Chain.Ethereum:
-          case Chain.Avalanche:
-          case Chain.BinanceSmartChain:
-          case Chain.Polygon:
-          case Chain.Arbitrum:
-          case Chain.Optimism:
-          case Chain.Base: {
-            // EVM chains
-            const anyWallet = wallet as any;
-
-            // Try signing first if wallet is expected to support it
-            if (supportsSignAndBroadcast && transactionData.to) {
-              try {
-                // Create ethers TransactionRequest
-                const txRequest: TransactionRequest = {
-                  data: transactionData.data,
-                  gasLimit: transactionData.gas ? BigInt(transactionData.gas) : undefined,
-                  gasPrice: transactionData.gasPrice ? BigInt(transactionData.gasPrice) : undefined,
-                  to: transactionData.to,
-                  value: transactionData.value ? BigInt(transactionData.value) : undefined,
-                };
-                return await anyWallet.signAndBroadcastTransaction(txRequest);
-              } catch (signError) {
-                // If signing fails, try transfer fallback
-                if (transactionData.transferParams) {
-                  return await anyWallet.transfer(transactionData.transferParams);
-                }
-                throw signError;
-              }
+            return await getWallet(chain as CosmosChain).transfer(transaction.data);
+          })
+          .with(Chain.Near, async () => {
+            const transaction = NEARTransactionSchema.safeParse(tx);
+            if (!transaction.success) {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            // Direct to transfer for wallets known not to support signing
-            if (transactionData.transferParams) {
-              return await anyWallet.transfer(transactionData.transferParams);
+            return await getWallet(chain as Chain.Near).signAndBroadcastTransaction(
+              Transaction.decode(Buffer.from(transaction.data.serialized, "base64")),
+            );
+          })
+          .with(Chain.Radix, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            throw new SwapKitError("core_swap_invalid_params", { error: "Unable to execute EVM transaction" });
-          }
-
-          case Chain.Solana: {
-            // Solana
-            const anyWallet = wallet as any;
-
-            // Try signing first if wallet is expected to support it
-            if (supportsSignAndBroadcast && transactionData.transaction) {
-              try {
-                // Parse Solana transaction from base64
-                const { Transaction, VersionedTransaction } = await import("@solana/web3.js");
-
-                // Try to parse as VersionedTransaction first
-                try {
-                  const buffer = Buffer.from(transactionData.transaction, "base64");
-                  const tx = VersionedTransaction.deserialize(buffer);
-                  return await anyWallet.signAndBroadcastTransaction(tx);
-                } catch {
-                  // Fall back to legacy Transaction
-                  const tx = Transaction.from(Buffer.from(transactionData.transaction, "base64"));
-                  return await anyWallet.signAndBroadcastTransaction(tx);
-                }
-              } catch (signError) {
-                // If signing fails, try transfer fallback
-                if (transactionData.transferParams) {
-                  return await anyWallet.transfer(transactionData.transferParams);
-                }
-                throw signError;
-              }
+            return await getWallet(chain as Chain.Radix).signAndBroadcast({ manifest: tx });
+          })
+          .with(Chain.Ripple, async () => {
+            if (typeof tx !== "string") {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            // Direct to transfer for wallets known not to support signing
-            if (transactionData.transferParams) {
-              return await anyWallet.transfer(transactionData.transferParams);
+            return await getWallet(chain as Chain.Ripple).signAndBroadcastTransaction(JSON.parse(tx));
+          })
+          .with(Chain.Tron, async () => {
+            const transaction = TronTransactionSchema.safeParse(tx);
+            if (!transaction.success) {
+              throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
 
-            throw new SwapKitError("core_swap_invalid_params", { error: "Unable to execute Solana transaction" });
-          }
-
-          case Chain.THORChain:
-          case Chain.Maya:
-          case Chain.Cosmos:
-          case Chain.Kujira:
-          case Chain.Noble: {
-            // Cosmos-based chains - typically use transfer with memo
-            const anyWallet = wallet as any;
-            if (transactionData.transferParams) {
-              return await anyWallet.transfer(transactionData.transferParams);
-            }
-            throw new SwapKitError("core_swap_invalid_params", { error: "Unable to execute Cosmos transaction" });
-          }
-
-          case Chain.Near: {
-            // Near - uses transfer
-            const anyWallet = wallet as any;
-            if (transactionData.transferParams) {
-              return await anyWallet.transfer(transactionData.transferParams);
-            }
-            throw new SwapKitError("core_swap_invalid_params", { error: "Unable to execute Near transaction" });
-          }
-
-          default:
-            throw new SwapKitError("core_swap_invalid_params", { error: `Chain ${chain} is not supported for swaps` });
-        }
+            return await getWallet(chain as Chain.Tron).signAndBroadcastTransaction(transaction.data);
+          })
+          .otherwise(() => {
+            throw new SwapKitError("plugin_swapkit_invalid_tx_data", {
+              error: `Chain ${chain} is not supported for swaps`,
+            });
+          });
       } catch (error) {
         if (error instanceof SwapKitError) throw error;
         throw new SwapKitError("core_swap_invalid_params", { error });
       }
     }
 
-    /**
-     * Override signAndBroadcastTransaction for wallets that don't support it
-     */
-    function overrideSignAndBroadcastForWallet(wallet: any, chain: CryptoChain) {
-      const walletType = wallet.walletType || "";
-
-      if (!walletSupportsSignAndBroadcast(walletType)) {
-        // Override signAndBroadcastTransaction to use transfer as fallback
-        wallet.signAndBroadcastTransaction = async (tx: any) => {
-          // Extract transfer params from the transaction
-          // This would need to be customized based on the transaction type
-          console.warn(`Wallet ${walletType} doesn't support signing, falling back to transfer`);
-
-          // The SwapKit API should provide transferParams for these wallets
-          if (tx.transferParams) {
-            return await wallet.transfer(tx.transferParams);
-          }
-
-          throw new SwapKitError("core_swap_invalid_params", {
-            error: `Wallet ${walletType} doesn't support transaction signing for ${chain}`,
-          });
-        };
-      }
-
-      return wallet;
-    }
-
-    return { overrideSignAndBroadcastForWallet, quote, swap, walletSupportsSignAndBroadcast };
+    return { quote, swap };
   },
   name: "swapkit",
-  properties: {
-    supportedSwapkitProviders: [
-      // Add SwapKit provider names when they become available
-    ] as ProviderName[],
-  },
+  properties: { supportedSwapkitProviders: Object.values(ProviderName) },
 });
