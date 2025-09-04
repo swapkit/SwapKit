@@ -46,6 +46,8 @@ export interface NearToolbox {
   estimateTransactionFee: (params: NearTransferParams | NearGasEstimateParams) => Promise<AssetValue>;
   broadcastTransaction: (signedTransaction: SignedTransaction) => Promise<string>;
   signTransaction: (transaction: Transaction) => Promise<SignedTransaction>;
+  signAndBroadcastTransaction: (transaction: Transaction) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
   getBalance: (address: string) => Promise<AssetValue[]>;
   validateAddress: (address: string) => boolean;
   getSignerFromPhrase: (params: GetSignerFromPhraseParams) => Promise<NearSigner>;

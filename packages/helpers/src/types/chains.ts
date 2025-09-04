@@ -318,7 +318,7 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Ripple]: ["wss://s1.ripple.com/", "wss://s2.ripple.com/"],
   [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
-  [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://solana-mainnet.rpc.extrnode.com"],
+  [Chain.Solana]: [],
   [Chain.Tron]: ["https://api.tronstack.io", "https://api.tron.network"],
   [Chain.Zcash]: [],
 };

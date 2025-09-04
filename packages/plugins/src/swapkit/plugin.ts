@@ -1,5 +1,5 @@
 import { AssetValue, Chain, type CryptoChain, type ProviderName, SwapKitError, WalletOption } from "@swapkit/helpers";
-import { type QuoteResponseRoute, type RouteLeg, SwapKitApi } from "@swapkit/helpers/api";
+import { type QuoteResponseRoute, SwapKitApi } from "@swapkit/helpers/api";
 import { Psbt } from "bitcoinjs-lib";
 import type { TransactionRequest } from "ethers";
 import type { SwapKitPluginParams } from "../types";

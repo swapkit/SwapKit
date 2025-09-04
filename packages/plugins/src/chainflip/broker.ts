@@ -1,4 +1,6 @@
+import type { SubmittableExtrinsic } from "@polkadot/api/types";
 import { decodeAddress } from "@polkadot/keyring";
+import type { Callback, ISubmittableResult } from "@polkadot/types/types";
 import { isHex, u8aToHex } from "@polkadot/util";
 import { AssetValue, Chain, SwapKitError, wrapWithThrow } from "@swapkit/helpers";
 import type { getEvmToolbox } from "@swapkit/toolboxes/evm";
@@ -6,7 +8,17 @@ import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
 import type { WithdrawFeeResponse } from "./types";
 
-type ChainflipToolbox = Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Chainflip>>>;
+type ChainflipToolbox = Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Chainflip>>> & {
+  signAndBroadcastTransaction: ({
+    tx,
+    callback,
+    address,
+  }: {
+    tx: SubmittableExtrinsic<"promise">;
+    callback?: Callback<ISubmittableResult>;
+    address?: string;
+  }) => Promise<string>;
+};
 
 export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["ARB.ETH", "ArbEth"],
@@ -28,7 +40,7 @@ const registerAsBroker = (toolbox: ChainflipToolbox) => () => {
     throw new SwapKitError("chainflip_broker_register");
   }
 
-  return toolbox.signAndBroadcast({ address: toolbox.getAddress(), tx: extrinsic });
+  return toolbox.signAndBroadcastTransaction({ address: toolbox.getAddress(), tx: extrinsic });
 };
 
 const withdrawFee =
@@ -49,7 +61,7 @@ const withdrawFee =
         throw new SwapKitError("chainflip_broker_withdraw");
       }
 
-      toolbox.signAndBroadcast({
+      toolbox.signAndBroadcastTransaction({
         callback: (result) => {
           if (!result.status?.isFinalized) {
             return;

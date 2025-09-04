@@ -14,11 +14,7 @@ export type SwapKitQuoteParams = {
   affiliateBasisPoints?: number;
 };
 
-export type SwapKitSwapParams = {
-  route: QuoteResponseRoute;
-  recipient?: string;
-  feeOptionKey?: FeeOption;
-};
+export type SwapKitSwapParams = { route: QuoteResponseRoute; recipient?: string; feeOptionKey?: FeeOption };
 
 export type SwapKitTransactionParams = {
   // Transaction data from SwapKit API
@@ -38,14 +34,7 @@ export type SwapKitTransactionParams = {
   msg?: any;
 
   // Fallback transfer params
-  transferParams?: GenericTransferParams & {
-    assetValue: AssetValue;
-    memo?: string;
-  };
+  transferParams?: GenericTransferParams & { assetValue: AssetValue; memo?: string };
 };
 
-export type WalletCapabilities = {
-  supportsSignAndBroadcast: boolean;
-  walletType: string;
-  chain: Chain;
-};
+export type WalletCapabilities = { supportsSignAndBroadcast: boolean; walletType: string; chain: Chain };

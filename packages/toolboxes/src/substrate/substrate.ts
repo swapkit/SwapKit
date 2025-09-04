@@ -190,37 +190,8 @@ export const BaseSubstrateToolbox = ({
   gasAsset: AssetValue;
   signer?: IKeyringPair | Signer;
   chain?: SubstrateChain;
-}) => ({
-  api,
-  broadcast,
-  convertAddress,
-  createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
-  createTransaction: (params: GenericCreateTransactionParams) => createTransaction(api, params),
-  decodeAddress,
-  encodeAddress,
-  estimateTransactionFee: (params: SubstrateTransferParams) => {
-    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
-    return estimateTransactionFee(api, signer, gasAsset, params);
-  },
-  gasAsset,
-  getAddress: (keyring?: IKeyringPair | Signer) => {
-    const keyringPair = keyring || signer;
-    if (!keyringPair) throw new SwapKitError("core_wallet_not_keypair_wallet");
-
-    return isKeyringPair(keyringPair) ? keyringPair.address : undefined;
-  },
-  getBalance: createBalanceGetter(chain || Chain.Polkadot, api),
-  network,
-  sign: (tx: SubmittableExtrinsic<"promise">) => {
-    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
-    if (isKeyringPair(signer)) return sign(signer, tx);
-
-    throw new SwapKitError(
-      "core_wallet_not_keypair_wallet",
-      "Signer does not have keyring pair capabilities required for signing.",
-    );
-  },
-  signAndBroadcast: ({
+}) => {
+  function signAndBroadcastTransaction({
     tx,
     callback,
     address,
@@ -228,7 +199,7 @@ export const BaseSubstrateToolbox = ({
     tx: SubmittableExtrinsic<"promise">;
     callback?: Callback<ISubmittableResult>;
     address?: string;
-  }) => {
+  }) {
     if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
     if (isKeyringPair(signer)) return signAndBroadcastKeyring(signer, tx, callback);
 
@@ -240,13 +211,46 @@ export const BaseSubstrateToolbox = ({
       "core_wallet_not_keypair_wallet",
       "Signer does not have keyring pair capabilities required for signing.",
     );
-  },
-  transfer: (params: SubstrateTransferParams) => {
-    if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
-    return transfer(api, signer, params);
-  },
-  validateAddress: (address: string) => validateAddress(address, network.prefix),
-});
+  }
+
+  return {
+    api,
+    broadcast,
+    convertAddress,
+    createKeyring: (phrase: string) => createKeyring(phrase, network.prefix),
+    createTransaction: (params: GenericCreateTransactionParams) => createTransaction(api, params),
+    decodeAddress,
+    encodeAddress,
+    estimateTransactionFee: (params: SubstrateTransferParams) => {
+      if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+      return estimateTransactionFee(api, signer, gasAsset, params);
+    },
+    gasAsset,
+    getAddress: (keyring?: IKeyringPair | Signer) => {
+      const keyringPair = keyring || signer;
+      if (!keyringPair) throw new SwapKitError("core_wallet_not_keypair_wallet");
+
+      return isKeyringPair(keyringPair) ? keyringPair.address : undefined;
+    },
+    getBalance: createBalanceGetter(chain || Chain.Polkadot, api),
+    network,
+    sign,
+    /**
+     * @deprecated @V4 Use signAndBroadcastTransaction instead - will be removed in next major
+     */
+    signAndBroadcast: signAndBroadcastTransaction,
+    signAndBroadcastTransaction,
+    signTransaction: (tx: SubmittableExtrinsic<"promise">) => {
+      if (!signer || !isKeyringPair(signer)) throw new SwapKitError("toolbox_substrate_no_signer");
+      return sign(signer, tx);
+    },
+    transfer: (params: SubstrateTransferParams) => {
+      if (!signer) throw new SwapKitError("core_wallet_not_keypair_wallet");
+      return transfer(api, signer, params);
+    },
+    validateAddress: (address: string) => validateAddress(address, network.prefix),
+  };
+};
 
 export const substrateValidateAddress = ({
   address,

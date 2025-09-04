@@ -1,4 +1,4 @@
-/** biome-ignore-all assist/source/useSortedKeys: its sorted by type */
+// biome-ignore assist/source/useSortedKeys: keys are sorted by topic
 const errorCodes = {
   /**
    * Core
@@ -338,6 +338,7 @@ const errorCodes = {
    */
   toolbox_substrate_not_supported: 50501,
   toolbox_substrate_transfer_error: 50502,
+  toolbox_substrate_no_signer: 50503,
   /**
    * Toolboxes - Radix
    */
@@ -350,6 +351,7 @@ const errorCodes = {
   toolbox_ripple_signer_not_found: 50703,
   toolbox_ripple_asset_not_supported: 50704,
   toolbox_ripple_broadcast_error: 50705,
+  toolbox_ripple_no_signer: 50706,
   /**
    * Toolboxes - Tron
    */

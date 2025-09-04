@@ -225,6 +225,38 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     return result.transaction.hash;
   }
 
+  async function signAndBroadcastTransaction(transaction: Transaction): Promise<string> {
+    if (!signer) {
+      throw new SwapKitError("toolbox_near_no_signer");
+    }
+
+    try {
+      // Sign the transaction
+      const signedTransaction = await signTransaction(transaction);
+
+      // Broadcast the signed transaction
+      return await broadcastTransaction(signedTransaction);
+    } catch (error) {
+      throw new SwapKitError("toolbox_near_transfer_failed", { error });
+    }
+  }
+
+  async function signMessage(message: string): Promise<string> {
+    if (!signer?.sign) {
+      throw new SwapKitError("toolbox_near_no_signer");
+    }
+
+    try {
+      // Sign the message using the key pair
+      const signature = await signer.sign(message);
+
+      // Return the signature as a base64 string
+      return Buffer.from(signature).toString("base64");
+    } catch (error) {
+      throw new SwapKitError("toolbox_near_transfer_failed", { error });
+    }
+  }
+
   async function estimateTransactionFee(params: NearTransferParams | NearGasEstimateParams) {
     if ("assetValue" in params) {
       const baseTransferCost = "115123062500"; // gas units for transfer
@@ -444,6 +476,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     getSignerFromPrivateKey: getNearSignerFromPrivateKey,
     nep141,
     provider,
+    signAndBroadcastTransaction,
+    signMessage,
     signTransaction,
     transfer,
     validateAddress: await getValidateNearAddress(),

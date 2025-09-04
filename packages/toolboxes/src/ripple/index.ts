@@ -35,7 +35,7 @@ export function rippleValidateAddress(address: string) {
 
 type RippleToolboxParams =
   | { phrase?: string }
-  | { signer?: ChainSigner<Transaction, { tx_blob: string; hash: string }> };
+  | { signer?: ChainSigner<Transaction, { tx_blob: string; hash: string }> & { wallet?: Wallet } };
 
 export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
   const signer =
@@ -145,6 +145,22 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple } });
   };
 
+  const signAndBroadcastTransaction = async (tx: Transaction): Promise<string> => {
+    if (!signer) {
+      throw new SwapKitError({ errorKey: "toolbox_ripple_signer_not_found" });
+    }
+
+    try {
+      // Sign the transaction
+      const signedTx = await signTransaction(tx);
+
+      // Broadcast the signed transaction
+      return await broadcastTransaction(signedTx.tx_blob);
+    } catch (error) {
+      throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple, error } });
+    }
+  };
+
   const transfer = async (params: GenericTransferParams) => {
     if (!signer) {
       throw new SwapKitError({ errorKey: "toolbox_ripple_signer_not_found" });
@@ -166,6 +182,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     // Core methods
     getAddress,
     getBalance,
+    signAndBroadcastTransaction,
     // Signer related
     signer, // Expose the signer instance if created/provided
     signTransaction,
