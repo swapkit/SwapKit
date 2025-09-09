@@ -84,11 +84,11 @@ export class AssetValue extends BigIntArithmetics {
   toUrl() {
     if (this.isSynthetic) {
       // Example: THOR.AVAX/AVAX -> THOR.AVAX.AVAX
-      return `${this.chain}.${this.symbol.replace("/", ".")}`;
+      return `${this.chain}.${this.symbol.replace(/\//g, ".")}`;
     }
     if (this.isTradeAsset) {
       // Example: MAYA.CACAO~CACAO -> MAYA.CACAO..CACAO
-      return `${this.chain}.${this.symbol.replace("~", "..")}`;
+      return `${this.chain}.${this.symbol.replace(/~/g, "..")}`;
     }
 
     // Encode dots in the symbol to avoid ambiguity, primarily for NEAR
@@ -123,11 +123,11 @@ export class AssetValue extends BigIntArithmetics {
 
     // Check for trade asset encoding '..'
     if (rest.includes("..")) {
-      asset = `${chain}.${rest.replace("..", "~")}`;
+      asset = `${chain}.${rest.replace(/\.\./g, "~")}`;
     }
     // Check for THORChain synth encoding (e.g., THOR.AVAX.AVAX)
     else if ([Chain.THORChain, Chain.Maya].includes(chain as Chain) && rest.includes(".")) {
-      asset = `${chain}.${rest.replace(".", "/")}`;
+      asset = `${chain}.${rest.replace(/\./g, "/")}`;
     }
     // Default case: decode our '__' for NEAR and others
     else {
