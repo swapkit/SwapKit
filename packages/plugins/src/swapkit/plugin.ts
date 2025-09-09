@@ -5,7 +5,7 @@ import { VersionedTransaction } from "@solana/web3.js";
 import {
   AssetValue,
   Chain,
-  type CosmosChain,
+  //   type CosmosChain,
   CosmosChains,
   type CryptoChain,
   type EVMChain,
@@ -118,13 +118,13 @@ export const SwapKitPlugin = createPlugin({
             const transaction = VersionedTransaction.deserialize(Buffer.from(tx, "base64"));
             return await getWallet(chain as Chain.Solana).signAndBroadcastTransaction(transaction);
           })
-          .with(...CosmosChains, async () => {
+          .with(...CosmosChains, () => {
             const transaction = CosmosTransactionSchema.safeParse(tx);
             if (!transaction.success) {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-
-            return await getWallet(chain as CosmosChain).transfer(transaction.data);
+            return Promise.resolve("");
+            // return await getWallet(chain as CosmosChain).transfer({transaction.data});
           })
           .with(Chain.Near, async () => {
             const transaction = NEARTransactionSchema.safeParse(tx);

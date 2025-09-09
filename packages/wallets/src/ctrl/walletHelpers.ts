@@ -1,6 +1,6 @@
 import type { Keplr } from "@keplr-wallet/types";
 import {
-  type AssetValue,
+  AssetValue,
   Chain,
   ChainToChainId,
   type EVMChain,
@@ -10,6 +10,13 @@ import {
   SwapKitError,
   WalletOption,
 } from "@swapkit/helpers";
+import type {
+  APICosmosEncodedObject,
+  CosmosSendMsg,
+  CosmosTransaction,
+  ThorchainDepositMsg,
+} from "@swapkit/helpers/api";
+import { base64ToBech32, MAYA_GAS_VALUE, THORCHAIN_GAS_VALUE } from "@swapkit/toolboxes/cosmos";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { Eip1193Provider } from "ethers";
 
@@ -187,4 +194,62 @@ export async function walletTransfer(
   ];
 
   return transaction({ chain: assetValue.chain, method, params });
+}
+
+/**
+ * Convert a CosmosTransaction to CTRL's format for THORChain/Maya
+ */
+export function thorchainTransactionToCtrlParams({
+  transaction,
+  chain,
+}: {
+  transaction: CosmosTransaction;
+  chain: Chain.THORChain | Chain.Maya;
+}) {
+  // Extract the first message (CTRL only handles single transfers)
+  const msg = transaction.msgs[0] as APICosmosEncodedObject;
+
+  if (!msg) {
+    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "msgs" });
+  }
+
+  if (msg.typeUrl === "/types.MsgSend") {
+    const typedMessage = msg as any as CosmosSendMsg;
+    if (!typedMessage.value.toAddress) {
+      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "toAddress" });
+    }
+
+    const recipient = base64ToBech32(typedMessage.value.toAddress, chain.toLowerCase());
+    const amount = typedMessage.value.amount[0];
+    if (!amount) {
+      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "amount" });
+    }
+    const denom = amount.denom;
+    const identifier = `${chain}.${denom.toUpperCase()}`;
+    const assetValue = AssetValue.from({ amount: BigInt(amount.amount), asset: identifier });
+    const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
+
+    return {
+      assetValue,
+      gasLimit,
+      ...(transaction.memo && { memo: transaction.memo }),
+      recipient,
+      type: "transfer" as const,
+    };
+  }
+
+  const typedMessage = msg as any as ThorchainDepositMsg;
+
+  const coin = typedMessage.value.coins[0];
+  if (!coin) {
+    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "coins" });
+  }
+
+  const asset = coin.asset;
+
+  const identifier = `${asset.chain}.${asset.symbol.toUpperCase()}`;
+
+  const assetValue = AssetValue.from({ amount: BigInt(coin.amount), asset: identifier });
+
+  return { assetValue, ...(transaction.memo && { memo: transaction.memo }), recipient: "", type: "deposit" as const };
 }

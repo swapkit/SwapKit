@@ -31,6 +31,12 @@ export type MultisigTx = {
 
 export type CosmosSigner = DirectSecp256k1HdWallet | OfflineDirectSigner | OfflineAminoSigner;
 
+export type CosmosSignedTransaction = {
+  txBytes: Uint8Array;
+  txHash: string;
+  bodyBytes?: Uint8Array; // For THORChain multisig support
+};
+
 export type CosmosToolboxParams<T = CosmosChain> = { chain: T } & (
   | { signer?: CosmosSigner }
   | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }

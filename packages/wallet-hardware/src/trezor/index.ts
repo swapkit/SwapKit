@@ -1,4 +1,4 @@
-import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
+import type { UtxoPsbt, ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
 import {
   Chain,
   type DerivationPathArray,
@@ -8,11 +8,12 @@ import {
   type GenericTransferParams,
   SKConfig,
   SwapKitError,
+  type UTXOChain,
   WalletOption,
 } from "@swapkit/helpers";
-import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
+import { stripPrefix } from "@swapkit/toolboxes/utxo";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
-import type { Psbt } from "bitcoinjs-lib";
+import { type Psbt, Transaction } from "bitcoinjs-lib";
 
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {
@@ -200,92 +201,118 @@ async function getTrezorWallet<T extends Chain>({
 
       const address = await getAddress();
 
-      const signTransaction = async (psbt: Psbt, inputs: UTXOType[], memo = "") => {
-        const TrezorConnect = (await import("@trezor/connect-web")).default;
+      function psbtToTrezorParams(psbt: Psbt | UtxoPsbt) {
+        if (!scriptType) {
+          throw new SwapKitError({ errorKey: "wallet_trezor_derivation_path_not_supported", info: { derivationPath } });
+        }
         const address_n = derivationPath.map((pathElement, index) =>
           index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
         );
-        const toolbox = await getUtxoToolbox(chain as Chain.BitcoinCash);
+        // 1. Map Inputs (logic remains the same)
+        const inputs = psbt.data.inputs.map((input, index) => {
+          const txInput = psbt.txInputs[index];
+          let utxoValue: number;
 
-        const result = await TrezorConnect.signTransaction({
-          coin,
-          inputs: inputs.map(({ hash, index, value }) => ({
-            // Hardens the first 3 elements of the derivation path - required by trezor
-            address_n,
-            // object needs amount but does not use it for signing
-            amount: value,
-            prev_hash: hash,
-            prev_index: index,
-            script_type: scriptType.input,
-          })),
-          outputs: psbt.txOutputs.map((output) => {
+          // ---- THIS IS THE CRITICAL LOGIC ----
+          if (input.witnessUtxo) {
+            // Use this path for SegWit inputs (BTC, LTC)
+            utxoValue = Number(input.witnessUtxo.value);
+          } else if (input.nonWitnessUtxo) {
+            const prevTx = Transaction.fromBuffer(input.nonWitnessUtxo);
+            utxoValue = prevTx.outs[txInput?.index || 0]?.value || 0;
+          } else {
+            // This is an invalid PSBT for signing; it's missing the necessary UTXO info.
+            throw new Error(`PSBT input ${index} is missing both witnessUtxo and nonWitnessUtxo.`);
+          }
+          // ------------------------------------
+
+          const bip32Derivation = input.bip32Derivation?.[0];
+          if (!bip32Derivation) {
+            throw new Error(`PSBT input ${index} is missing derivation path required by KeepKey.`);
+          }
+
+          // ... logic to determine scriptType from the UTXO's script ...
+          const txid = Buffer.from(psbt.txInputs[index]?.hash || "")
+            .reverse()
+            .toString("hex");
+
+          return { address_n, amount: utxoValue, prev_hash: txid, prev_index: index, script_type: scriptType.input };
+        });
+
+        // 2. MAP OUTPUTS & SEPARATE THE MEMO (OP_RETURN)
+        const memo = psbt.txOutputs
+          .find((output) => output.script && output.script[0] === 0x6a)
+          ?.script.slice(1)
+          .toString("utf8");
+
+        const outputs = psbt.txOutputs
+          .map((output) => {
             // OP_RETURN
-            if (!output.address) {
-              return { amount: "0", op_return_data: Buffer.from(memo).toString("hex"), script_type: "PAYTOOPRETURN" };
+            if (!output.address && memo) {
+              return {
+                amount: "0",
+                op_return_data: Buffer.from(memo).toString("hex"),
+                script_type: "PAYTOOPRETURN" as const,
+              };
             }
 
+            if (!output.address) return null;
+
             const outputAddress =
-              chain === Chain.BitcoinCash ? toolbox.stripPrefix(toCashAddress(output.address)) : output.address;
+              chain === Chain.BitcoinCash ? stripPrefix(toCashAddress(output.address)) : output.address;
 
             const isChangeAddress = outputAddress === address;
 
             return isChangeAddress
               ? { address_n, amount: output.value, script_type: scriptType.output }
-              : { address: outputAddress, amount: output.value, script_type: "PAYTOADDRESS" };
-          }),
-        });
+              : { address: outputAddress, amount: output.value, script_type: "PAYTOADDRESS" as const };
+          })
+          .filter((output) => output !== null);
+
+        // 3. Return the final object for KeepKey
+        return { inputs, outputs };
+      }
+
+      const signTransaction = async <T extends Psbt | UtxoPsbt>(psbt: T) => {
+        const TrezorConnect = (await import("@trezor/connect-web")).default;
+
+        const { inputs, outputs } = psbtToTrezorParams(psbt);
+
+        // @ts-expect-error
+        const result = await TrezorConnect.signTransaction({ coin, inputs, outputs });
 
         if (result.success) {
-          return result.payload.serializedTx;
+          const signatures = result.payload.signatures;
+
+          psbt.data.inputs.forEach((input, index) => {
+            if (!input.bip32Derivation || !input.bip32Derivation[0]) {
+              return;
+            }
+
+            const signatureHex = signatures[index];
+            if (!signatureHex) {
+              throw new Error(`Trezor did not return a signature for input ${index}`);
+            }
+
+            const pubkey = input.bip32Derivation[0].pubkey;
+
+            psbt.updateInput(index, { partialSig: [{ pubkey, signature: Buffer.from(signatureHex, "hex") }] });
+          });
+
+          return psbt;
         }
 
+        // Handle the error case
         throw new SwapKitError({
           errorKey: "wallet_trezor_failed_to_sign_transaction",
           info: { chain, error: (result.payload as { error: string; code?: string }).error },
         });
       };
 
-      const transfer = async ({
-        recipient,
-        feeOptionKey,
-        feeRate: paramFeeRate,
-        memo,
-        ...rest
-      }: GenericTransferParams) => {
-        if (!(address && recipient)) {
-          throw new SwapKitError({
-            errorKey: "wallet_missing_params",
-            info: { address, memo, recipient, wallet: WalletOption.TREZOR },
-          });
-        }
+      const signer = { getAddress: async () => address, signTransaction: signTransaction };
+      const toolbox = await getUtxoToolbox<Exclude<UTXOChain, Chain.Zcash>>(chain, { signer });
 
-        const toolbox = await getUtxoToolbox(chain);
-
-        const feeRate = paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
-
-        const createTxMethod =
-          chain === Chain.BitcoinCash
-            ? (toolbox as UTXOToolboxes["BCH"]).buildTx
-            : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
-
-        const { psbt, inputs } = await createTxMethod({
-          ...rest,
-          feeRate,
-          fetchTxHex: true,
-          memo,
-          recipient,
-          sender: address,
-        });
-
-        const txHex = await signTransaction(psbt, inputs, memo);
-        const tx = await toolbox.broadcastTx(txHex);
-
-        return tx;
-      };
-
-      const toolbox = await getUtxoToolbox(chain);
-
-      return { ...toolbox, address, signTransaction, transfer };
+      return { ...toolbox, address };
     }
 
     default:

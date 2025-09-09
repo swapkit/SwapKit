@@ -454,7 +454,36 @@ export const EVMTransactionDetailsSchema = object({
 
 export type EVMTransactionDetails = z.infer<typeof EVMTransactionDetailsSchema>;
 
-const EncodeObjectSchema = object({ typeUrl: string(), value: unknown() });
+const ThorchainDepositMsgSchema = object({
+  typeUrl: string("/types.MsgDeposit"),
+  value: object({
+    coins: array(
+      object({
+        amount: string(),
+        asset: object({ chain: string(), symbol: string(), synth: boolean(), ticker: string() }),
+      }),
+    ),
+    memo: string(),
+    signer: string(),
+  }),
+});
+
+export type ThorchainDepositMsg = z.infer<typeof ThorchainDepositMsgSchema>;
+
+const CosmosSendMsgSchema = object({
+  typeUrl: string("/types.MsgSend"),
+  value: object({
+    amount: array(object({ amount: string(), denom: string() })),
+    fromAddress: string(),
+    toAddress: string(),
+  }),
+});
+
+export type CosmosSendMsg = z.infer<typeof CosmosSendMsgSchema>;
+
+const EncodeObjectSchema = object({ typeUrl: string(), value: CosmosSendMsgSchema.or(ThorchainDepositMsgSchema) });
+
+export type APICosmosEncodedObject = z.infer<typeof EncodeObjectSchema>;
 
 const FeeSchema = object({ amount: array(object({ amount: string(), denom: string() })), gas: string() });
 

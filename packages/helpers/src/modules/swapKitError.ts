@@ -108,6 +108,8 @@ const errorCodes = {
   wallet_ctrl_send_transaction_no_address: 20302,
   wallet_ctrl_contract_address_not_provided: 20303,
   wallet_ctrl_asset_not_defined: 20304,
+  wallet_ctrl_sign_transaction_not_supported: 20305,
+  wallet_ctrl_transaction_missing_data: 20306,
   /**
    * Wallets - WalletConnect
    */

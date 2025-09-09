@@ -19,12 +19,13 @@ export async function createDefaultAminoTypes(chain: Chain.THORChain | Chain.May
   const imported = await import("@cosmjs/stargate");
   const AminoTypes = imported.AminoTypes ?? imported.default?.AminoTypes;
   const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : "mayachain";
+  const addressPrefix = chain === Chain.THORChain ? "thor" : "maya";
 
   return new AminoTypes({
     "/types.MsgDeposit": {
       aminoType: `${aminoTypePrefix}/MsgDeposit`,
       fromAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: bech32ToBase64(signer) }),
-      toAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: base64ToBech32(signer) }),
+      toAmino: ({ signer, ...rest }: any) => ({ ...rest, signer: base64ToBech32(signer, addressPrefix) }),
     },
     "/types.MsgSend": {
       aminoType: `${aminoTypePrefix}/MsgSend`,
@@ -35,8 +36,8 @@ export async function createDefaultAminoTypes(chain: Chain.THORChain | Chain.May
       }),
       toAmino: ({ fromAddress, toAddress, ...rest }: any) => ({
         ...rest,
-        from_address: base64ToBech32(fromAddress),
-        to_address: base64ToBech32(toAddress),
+        from_address: base64ToBech32(fromAddress, addressPrefix),
+        to_address: base64ToBech32(toAddress, addressPrefix),
       }),
     },
   });

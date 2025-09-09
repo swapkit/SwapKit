@@ -6,10 +6,10 @@ import {
   SwapKitError,
   WalletOption,
 } from "@swapkit/helpers";
+import type { CosmosTransaction } from "@swapkit/helpers/api";
 import type { NearCreateTransactionParams } from "@swapkit/toolboxes/near";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
-
-import { getCtrlAddress, getCtrlProvider, walletTransfer } from "./walletHelpers";
+import { getCtrlAddress, getCtrlProvider, thorchainTransactionToCtrlParams, walletTransfer } from "./walletHelpers";
 
 export const ctrlWallet = createWallet({
   connect: ({ addChain, walletType, supportedChains }) =>
@@ -78,9 +78,41 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
       const toolbox = await getCosmosToolbox(chain);
 
+      /**
+       * Convert CosmosTransaction to CTRL's proprietary format and broadcast
+       */
+      const signAndBroadcastTransaction = async (transaction: CosmosTransaction): Promise<string> => {
+        const provider = await getCtrlProvider(chain);
+
+        if (!provider || !("request" in provider)) {
+          throw new SwapKitError("wallet_ctrl_not_found");
+        }
+
+        // Convert CosmosTransaction to CTRL's format
+        const { type, ...tx } = thorchainTransactionToCtrlParams({ chain, transaction });
+
+        return walletTransfer(tx, type);
+      };
+
+      /**
+       * Sign transaction without broadcasting
+       * Note: CTRL doesn't expose a signing-only API for THORChain/Maya
+       * This would require the transaction to be broadcast
+       */
+      const signTransaction = (_transaction: any) => {
+        throw new SwapKitError("wallet_ctrl_sign_transaction_not_supported", {
+          chain,
+          info: "CTRL wallet does not support signing without broadcasting for THORChain/Maya",
+          method: "signTransaction",
+          wallet: WalletOption.CTRL,
+        });
+      };
+
       return {
         ...toolbox,
         deposit: (tx: GenericTransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit"),
+        signAndBroadcastTransaction,
+        signTransaction,
         transfer: (tx: GenericTransferParams) => walletTransfer({ ...tx, gasLimit }, "transfer"),
       };
     }
