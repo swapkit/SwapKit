@@ -364,35 +364,20 @@ function getAssetInfo(identifier: string) {
   return getNormalAssetInfo(identifier);
 }
 
-function parseWithLastSeparator(symbol: string) {
-  const lastDashIndex = symbol.lastIndexOf("-");
-  if (lastDashIndex === -1) {
-    return { address: undefined, ticker: symbol };
-  }
-  const ticker = symbol.slice(0, lastDashIndex);
-  const address = symbol.slice(lastDashIndex + 1);
-  return { address, ticker };
-}
+function parseSymbolWithSeparator(symbol: string, useFirst = false) {
+  const dashIndex = useFirst ? symbol.indexOf("-") : symbol.lastIndexOf("-");
 
-function parseWithFirstSeparator(symbol: string) {
-  const firstDashIndex = symbol.indexOf("-");
-  if (firstDashIndex === -1) {
+  if (dashIndex === -1) {
     return { address: undefined, ticker: symbol };
   }
-  const ticker = symbol.slice(0, firstDashIndex);
-  const address = symbol.slice(firstDashIndex + 1);
+
+  const ticker = symbol.slice(0, dashIndex);
+  const address = symbol.slice(dashIndex + 1);
   return { address, ticker };
 }
 
 function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
-  const parsed = match(chain)
-    .with(Chain.Near, () => parseWithFirstSeparator(symbol))
-    .with(Chain.Ethereum, Chain.Avalanche, Chain.Arbitrum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Optimism, () =>
-      parseWithLastSeparator(symbol),
-    )
-    .otherwise(() => parseWithLastSeparator(symbol));
-
-  const { ticker, address } = parsed;
+  const { ticker, address } = parseSymbolWithSeparator(symbol, chain === Chain.Near);
 
   // Apply case-sensitivity rules after parsing
   const finalAddress = address && !CASE_SENSITIVE_CHAINS.includes(chain) ? address.toLowerCase() : address;
