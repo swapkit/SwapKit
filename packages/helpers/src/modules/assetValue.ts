@@ -81,18 +81,16 @@ export class AssetValue extends BigIntArithmetics {
       ? this.symbol
       : `${this.chain}.${this.symbol}`;
   }
+
   toUrl() {
     if (this.isSynthetic) {
-      // Example: THOR.AVAX/AVAX -> THOR.AVAX.AVAX
       return `${this.chain}.${this.symbol.replace(/\//g, ".")}`;
     }
+
     if (this.isTradeAsset) {
-      // Example: MAYA.CACAO~CACAO -> MAYA.CACAO..CACAO
       return `${this.chain}.${this.symbol.replace(/~/g, "..")}`;
     }
 
-    // Encode dots in the symbol to avoid ambiguity, primarily for NEAR
-    // Example: NEAR.wrap.near -> NEAR.wrap__near
     const encodedSymbol = this.symbol.replace(/\./g, "__");
     return `${this.chain}.${encodedSymbol}`;
   }
@@ -117,22 +115,19 @@ export class AssetValue extends BigIntArithmetics {
       throw new SwapKitError({ errorKey: "helpers_invalid_asset_url", info: { urlAsset } });
     }
 
-    const chain = urlAsset.substring(0, firstDotIndex);
-    const rest = urlAsset.substring(firstDotIndex + 1);
-    let asset: string;
+    const chain = urlAsset.slice(0, firstDotIndex);
+    const rest = urlAsset.slice(firstDotIndex + 1);
 
-    // Check for trade asset encoding '..'
-    if (rest.includes("..")) {
-      asset = `${chain}.${rest.replace(/\.\./g, "~")}`;
-    }
-    // Check for THORChain synth encoding (e.g., THOR.AVAX.AVAX)
-    else if ([Chain.THORChain, Chain.Maya].includes(chain as Chain) && rest.includes(".")) {
-      asset = `${chain}.${rest.replace(/\./g, "/")}`;
-    }
-    // Default case: decode our '__' for NEAR and others
-    else {
-      asset = `${chain}.${rest.replace(/__/g, ".")}`;
-    }
+    const asset = match({ chain: chain as Chain, rest })
+      .when(
+        ({ rest }) => rest.includes(".."),
+        ({ chain, rest }) => `${chain}.${rest.replace(/\.\./g, "~")}`,
+      )
+      .when(
+        ({ chain, rest }) => [Chain.THORChain, Chain.Maya].includes(chain) && rest.includes("."),
+        ({ chain, rest }) => `${chain}.${rest.replace(/\./g, "/")}`,
+      )
+      .otherwise(({ chain, rest }) => `${chain}.${rest.replace(/__/g, ".")}`);
 
     return AssetValue.from({ asset, value });
   }
@@ -173,15 +168,13 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       identifier: unsafeIdentifier,
     };
 
-    const isSynthOrTrade = isSynthetic || isTradeAsset;
-
     const adjustedValue = fromBaseDecimal
       ? safeValue(BigInt(parsedValue), fromBaseDecimal)
       : safeValue(parsedValue, decimal);
 
     const assetValue = asyncTokenLookup
       ? createAssetValue(identifier, fromBaseDecimal ? adjustedValue : parsedValue)
-      : isSynthOrTrade
+      : isSynthetic || isTradeAsset
         ? createSyntheticAssetValue(identifier, adjustedValue)
         : new AssetValue({ decimal, identifier, tax, value: adjustedValue });
 
@@ -310,47 +303,31 @@ function getAssetString(assetOrChain: AssetIdentifier) {
   return isNativeChain ? chain : assetOrChain.asset;
 }
 
-function getAssetInfo(identifier: string) {
-  const shortIdentifier = identifier.slice(0, 14);
-  const isSynthetic = shortIdentifier.includes("/");
-  const isTradeAsset = shortIdentifier.includes("~");
-  const isSynthOrTrade = isSynthetic || isTradeAsset;
+function getSyntheticOrTradeAssetInfo(identifier: string, isSynthetic: boolean, isTradeAsset: boolean) {
+  const splitIdentifier = identifier.split(".");
+  const identifierChain = splitIdentifier[0]?.toUpperCase() as Chain;
+  const isThorOrMaya = [Chain.THORChain, Chain.Maya].includes(identifierChain);
+  const assetSeparator = isTradeAsset ? "~" : "/";
 
-  // Logic for Synthetic and Trade Assets
-  if (isSynthOrTrade) {
-    const splitIdentifier = identifier.split(".");
-    const identifierChain = splitIdentifier[0]?.toUpperCase() as Chain;
-    const isThorOrMaya = [Chain.THORChain, Chain.Maya].includes(identifierChain);
-    const assetSeparator = isTradeAsset ? "~" : "/";
+  const [synthChain, synthSymbol = ""] = isThorOrMaya
+    ? splitIdentifier.slice(1).join(".").split(assetSeparator)
+    : identifier.split(assetSeparator);
 
-    const [synthChain, synthSymbol = ""] = isThorOrMaya
-      ? splitIdentifier.slice(1).join(".").split(assetSeparator)
-      : identifier.split(assetSeparator);
-
-    if (!(synthChain && synthSymbol)) {
-      throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
-    }
-
-    // Get the ticker from the base symbol (e.g., "AVAX" from "AVAX/AVAX")
-    const { ticker, address } = getAssetBaseInfo({ chain: synthChain as Chain, symbol: synthSymbol });
-    const finalSymbol = `${synthChain}${assetSeparator}${synthSymbol}`;
-
-    return {
-      address,
-      chain: identifierChain,
-      isGasAsset: false,
-      isSynthetic,
-      isSynthOrTrade,
-      isTradeAsset,
-      symbol: finalSymbol,
-      ticker, // This is now correct (e.g., "AVAX")
-    };
+  if (!(synthChain && synthSymbol)) {
+    throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
-  // Logic for all other assets (including NEAR)
+  // Get the ticker from the base symbol (e.g., "AVAX" from "AVAX/AVAX")
+  const { ticker, address } = getAssetBaseInfo({ chain: synthChain as Chain, symbol: synthSymbol });
+  const finalSymbol = `${synthChain}${assetSeparator}${synthSymbol}`;
+
+  return { address, chain: identifierChain, isGasAsset: false, isSynthetic, isTradeAsset, symbol: finalSymbol, ticker };
+}
+
+function getNormalAssetInfo(identifier: string) {
   const firstDotIndex = identifier.indexOf(".");
-  const chain = (firstDotIndex === -1 ? identifier : identifier.substring(0, firstDotIndex)).toUpperCase() as Chain;
-  const assetSymbol = firstDotIndex === -1 ? identifier : identifier.substring(firstDotIndex + 1);
+  const chain = (firstDotIndex === -1 ? identifier : identifier.slice(0, firstDotIndex)).toUpperCase() as Chain;
+  const assetSymbol = firstDotIndex === -1 ? identifier : identifier.slice(firstDotIndex + 1);
 
   const { address, ticker } = getAssetBaseInfo({ chain, symbol: assetSymbol });
 
@@ -368,68 +345,52 @@ function getAssetInfo(identifier: string) {
     address: formattedAddress,
     chain,
     isGasAsset: isGasAsset({ chain, symbol: assetSymbol }),
-    isSynthetic,
-    isSynthOrTrade,
-    isTradeAsset,
+    isSynthetic: false,
+    isTradeAsset: false,
     symbol: finalSymbol,
     ticker,
   };
 }
 
-/**
- * Ticker is everything before the last hyphen. Address is after.
- * This is the standard for EVM chains and most others.
- * Example: "PENDLE-LPT-0x123..." -> { ticker: "PENDLE-LPT", address: "0x123..." }
- */
+function getAssetInfo(identifier: string) {
+  const shortIdentifier = identifier.slice(0, 14);
+  const isSynthetic = shortIdentifier.includes("/");
+  const isTradeAsset = shortIdentifier.includes("~");
+
+  if (isSynthetic || isTradeAsset) {
+    return getSyntheticOrTradeAssetInfo(identifier, isSynthetic, isTradeAsset);
+  }
+
+  return getNormalAssetInfo(identifier);
+}
+
 function parseWithLastSeparator(symbol: string) {
   const lastDashIndex = symbol.lastIndexOf("-");
   if (lastDashIndex === -1) {
     return { address: undefined, ticker: symbol };
   }
-  const ticker = symbol.substring(0, lastDashIndex);
-  const address = symbol.substring(lastDashIndex + 1);
+  const ticker = symbol.slice(0, lastDashIndex);
+  const address = symbol.slice(lastDashIndex + 1);
   return { address, ticker };
 }
 
-/**
- * Ticker is everything before the first hyphen. Address is after.
- * This is specific to NEAR's convention.
- * Example: "PURGE-purge.near" -> { ticker: "PURGE", address: "purge.near" }
- */
 function parseWithFirstSeparator(symbol: string) {
   const firstDashIndex = symbol.indexOf("-");
   if (firstDashIndex === -1) {
     return { address: undefined, ticker: symbol };
   }
-  const ticker = symbol.substring(0, firstDashIndex);
-  const address = symbol.substring(firstDashIndex + 1);
+  const ticker = symbol.slice(0, firstDashIndex);
+  const address = symbol.slice(firstDashIndex + 1);
   return { address, ticker };
 }
 
 function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
-  let parsed: { ticker: string; address: string | undefined };
-
-  // Select the correct parsing strategy based on the chain
-  switch (chain) {
-    case Chain.Near:
-      parsed = parseWithFirstSeparator(symbol);
-      break;
-
-    // EVM chains and most others use the "last separator" convention.
-    case Chain.Ethereum:
-    case Chain.Avalanche:
-    case Chain.Arbitrum:
-    case Chain.BinanceSmartChain:
-    case Chain.Polygon:
-    case Chain.Optimism:
-      parsed = parseWithLastSeparator(symbol);
-      break;
-
-    // Use the most common convention as a fallback for any unlisted chains.
-    default:
-      parsed = parseWithLastSeparator(symbol);
-      break;
-  }
+  const parsed = match(chain)
+    .with(Chain.Near, () => parseWithFirstSeparator(symbol))
+    .with(Chain.Ethereum, Chain.Avalanche, Chain.Arbitrum, Chain.BinanceSmartChain, Chain.Polygon, Chain.Optimism, () =>
+      parseWithLastSeparator(symbol),
+    )
+    .otherwise(() => parseWithLastSeparator(symbol));
 
   const { ticker, address } = parsed;
 
