@@ -1,5 +1,15 @@
 # @swapkit/sdk
 
+## 4.0.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.11
+  - @swapkit/plugins@4.0.12
+  - @swapkit/server@4.0.11
+  - @swapkit/wallets@4.1.10
+
 ## 4.0.11
 
 ### Patch Changes

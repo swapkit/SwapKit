@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.11
+
+### Patch Changes
+
+- [#1475](https://github.com/swapkit/SwapKit/pull/1475) [`229c06d`](https://github.com/swapkit/SwapKit/commit/229c06dde2fe6a65542aecffddbd38e64fd139d0) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for complex near name contract addresses
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.11
+
 ## 4.0.10
 
 ### Patch Changes
