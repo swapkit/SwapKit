@@ -20,47 +20,31 @@ export function waitForTronLink(timeout = 3000): Promise<TronLinkWindow> {
       }
     };
 
-    // Check if already available
     if (window.tronLink) {
       resolve(window.tronLink);
       return;
     }
 
-    // Listen for the initialization event
     window.addEventListener("tronlink#initialized", handleProvider, { once: true });
 
-    // Fallback timeout
     const timeoutId = setTimeout(handleProvider, timeout);
   });
 }
 
-/**
- * Helper function to check if TronLink wallet is locked
- * Returns true if wallet is locked, false if unlocked
- */
 export async function isTronLinkLocked(): Promise<boolean> {
   try {
-    const tronLink = await waitForTronLink(1000); // Shorter timeout for lock check
+    const tronLink = await waitForTronLink(1000);
 
-    // Check multiple indicators for locked state:
-    // 1. No default address is the most reliable indicator
     const hasDefaultAddress = Boolean(tronLink.tronWeb?.defaultAddress?.base58);
 
-    // 2. ready property explicitly false (not undefined)
-    // Note: In some versions, ready might be undefined when unlocked, so only check for explicit false
-    const isReadyFalse = tronLink.ready === false;
+    const isReady = tronLink.ready !== false;
 
-    // 3. tronWeb object completeness check
     const hasTronWeb = Boolean(
       tronLink.tronWeb && typeof tronLink.tronWeb.trx === "object" && typeof tronLink.tronWeb.trx.sign === "function",
     );
 
-    // Wallet is locked if:
-    // - No default address AND (ready is false OR tronWeb is incomplete)
-    // - This avoids false positives when the wallet is just initializing
-    return !hasDefaultAddress && (isReadyFalse || !hasTronWeb);
+    return !hasDefaultAddress && (!isReady || !hasTronWeb);
   } catch {
-    // If we can't even get TronLink, it's not available (not necessarily locked)
     return false;
   }
 }
