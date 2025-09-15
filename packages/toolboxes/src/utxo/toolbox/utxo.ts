@@ -36,7 +36,7 @@ import type { BchECPair, TargetOutput, UTXOBuildTxParams, UTXOTransferParams, UT
 import type { UtxoToolboxParams } from "./index";
 import { bchValidateAddress, validateZcashAddress } from "./validators";
 
-export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin];
+export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin, Chain.Zcash, Chain.BitcoinCash];
 
 export function addInputsAndOutputs({
   inputs,

@@ -6,6 +6,8 @@ import type { Psbt } from "bitcoinjs-lib";
 
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
+const nonSegwitLedgerChains = ["bitcoin-cash", "dash", "dogecoin", "zcash"];
+
 type Params = {
   psbt: Psbt;
   inputUtxos: UTXOType[];
@@ -21,7 +23,7 @@ const signUTXOTransaction = (
   const inputs = inputUtxos.map((item) => {
     const splitTx = btcApp.splitTransaction(
       item.txHex || "",
-      psbt.data.inputs.some((input) => input.witnessUtxo) && chain !== "zcash",
+      !nonSegwitLedgerChains.includes(chain),
       chain === "zcash",
     );
 
