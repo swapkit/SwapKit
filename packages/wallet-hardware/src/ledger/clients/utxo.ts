@@ -2,19 +2,30 @@ import type BitcoinApp from "@ledgerhq/hw-app-btc";
 import type { CreateTransactionArg } from "@ledgerhq/hw-app-btc/lib-es/createTransaction";
 import { type DerivationPathArray, derivationPathToString, getWalletFormatFor, SwapKitError } from "@swapkit/helpers";
 import type { UTXOType } from "@swapkit/toolboxes/utxo";
-import { type Psbt, Transaction } from "bitcoinjs-lib";
+import type { Psbt } from "bitcoinjs-lib";
 
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
-type Params = { psbt: Psbt; inputUtxos: UTXOType[]; btcApp: any; derivationPath: string };
+const nonSegwitLedgerChains = ["bitcoin-cash", "dash", "dogecoin", "zcash"];
+
+type Params = {
+  psbt: Psbt;
+  inputUtxos: UTXOType[];
+  btcApp: BitcoinApp;
+  derivationPath: string;
+  chain: "bitcoin-cash" | "bitcoin" | "litecoin" | "dogecoin" | "dash" | "zcash";
+};
 
 const signUTXOTransaction = (
-  { psbt, inputUtxos, btcApp, derivationPath }: Params,
+  { psbt, inputUtxos, btcApp, derivationPath, chain }: Params,
   options?: Partial<CreateTransactionArg>,
 ) => {
   const inputs = inputUtxos.map((item) => {
-    const utxoTx = Transaction.fromHex(item.txHex || "");
-    const splitTx = btcApp.splitTransaction(utxoTx.toHex(), utxoTx.hasWitnesses());
+    const splitTx = btcApp.splitTransaction(
+      item.txHex || "",
+      !nonSegwitLedgerChains.includes(chain),
+      chain === "zcash",
+    );
 
     return [splitTx, item.index, undefined as string | null | undefined, undefined as number | null | undefined] as any;
   });
@@ -103,7 +114,7 @@ const BaseLedgerUTXO = ({
       signTransaction: async (psbt: Psbt, inputUtxos: UTXOType[]) => {
         await createTransportWebUSB();
 
-        return signUTXOTransaction({ btcApp, derivationPath, inputUtxos, psbt }, additionalSignParams);
+        return signUTXOTransaction({ btcApp, chain, derivationPath, inputUtxos, psbt }, additionalSignParams);
       },
     };
   };
@@ -128,6 +139,16 @@ export const DashLedger = BaseLedgerUTXO({
 });
 
 export const ZcashLedger = BaseLedgerUTXO({
-  additionalSignParams: { additionals: ["zcash", "sapling"], segwit: false, useTrustedInputForSegwit: false },
+  additionalSignParams: {
+    additionals: ["zcash", "sapling"],
+    expiryHeight: (() => {
+      const buf = Buffer.allocUnsafe(4);
+      buf.writeUInt32LE(0);
+      return buf;
+    })(),
+    lockTime: 0,
+    segwit: false,
+    useTrustedInputForSegwit: false,
+  },
   chain: "zcash",
 });
