@@ -41,6 +41,8 @@ const errorCodes = {
   core_swap_contract_not_supported: 10206,
   core_swap_transaction_error: 10207,
   core_swap_quote_mode_not_supported: 10208,
+  core_swap_transfer_failed: 10209,
+  core_wallet_incompatible: 10210,
   /**
    * Core - Transaction
    */

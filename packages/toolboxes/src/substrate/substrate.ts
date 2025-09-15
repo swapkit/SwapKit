@@ -240,6 +240,7 @@ export const BaseSubstrateToolbox = ({
      */
     signAndBroadcast: signAndBroadcastTransaction,
     signAndBroadcastTransaction,
+    signer,
     signTransaction: (tx: SubmittableExtrinsic<"promise">) => {
       if (!signer || !isKeyringPair(signer)) throw new SwapKitError("toolbox_substrate_no_signer");
       return sign(signer, tx);

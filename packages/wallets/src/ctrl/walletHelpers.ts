@@ -210,19 +210,19 @@ export function thorchainTransactionToCtrlParams({
   const msg = transaction.msgs[0] as APICosmosEncodedObject;
 
   if (!msg) {
-    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "msgs" });
+    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { key: "msgs", transaction });
   }
 
   if (msg.typeUrl === "/types.MsgSend") {
     const typedMessage = msg as any as CosmosSendMsg;
     if (!typedMessage.value.toAddress) {
-      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "toAddress" });
+      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { key: "toAddress", transaction });
     }
 
     const recipient = base64ToBech32(typedMessage.value.toAddress, chain.toLowerCase());
     const amount = typedMessage.value.amount[0];
     if (!amount) {
-      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "amount" });
+      throw new SwapKitError("wallet_ctrl_transaction_missing_data", { key: "amount", transaction });
     }
     const denom = amount.denom;
     const identifier = `${chain}.${denom.toUpperCase()}`;
@@ -242,7 +242,7 @@ export function thorchainTransactionToCtrlParams({
 
   const coin = typedMessage.value.coins[0];
   if (!coin) {
-    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { transaction, key: "coins" });
+    throw new SwapKitError("wallet_ctrl_transaction_missing_data", { key: "coins", transaction });
   }
 
   const asset = coin.asset;

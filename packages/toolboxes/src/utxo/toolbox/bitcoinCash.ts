@@ -93,6 +93,7 @@ export async function createBCHToolbox<T extends Chain.BitcoinCash>(
     getBalance: handleGetBalance,
     getFeeRates,
     signAndBroadcastTransaction,
+    signer,
     signTransaction,
     stripPrefix,
     stripToCashAddress,

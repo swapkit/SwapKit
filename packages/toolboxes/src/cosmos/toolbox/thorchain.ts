@@ -244,6 +244,7 @@ export async function createThorchainToolbox({
       derivationPath: derivationPathToString(derivationPath),
       prefix: chainPrefix,
     }),
+    signer,
     signMultisigTx: signMultisigTx(chain),
     signWithPrivateKey,
     transfer,

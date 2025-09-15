@@ -258,8 +258,7 @@ export async function createZcashToolbox(
     createTransaction,
     getPrivateKeyFromMnemonic,
     signAndBroadcastTransaction: getSignAndBroadcastTransaction(signer),
-
-    // New unified signing methods for Zcash
+    signer,
     signTransaction: getSignTransaction(signer),
     transfer,
     validateAddress: validateZcashAddress,

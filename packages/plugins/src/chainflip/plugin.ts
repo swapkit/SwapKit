@@ -43,7 +43,6 @@ export const ChainflipPlugin = createPlugin({
         assetValue: sellAsset,
         isProgramDerivedAddress: true,
         recipient: depositAddress,
-        sender: wallet.address,
       });
 
       return tx;

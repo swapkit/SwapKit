@@ -127,6 +127,10 @@ export const RadixToolbox = async ({ dappConfig }: { dappConfig?: SKConfigIntegr
     signAndBroadcast: (() => {
       throw new SwapKitError("toolbox_radix_method_not_supported", { method: "signAndBroadcast" });
     }) as (params: any) => Promise<string>,
+    signer: undefined,
+    transfer: (() => {
+      throw new SwapKitError("toolbox_radix_method_not_supported", { method: "transfer" });
+    }) as (params: any) => Promise<string>,
     validateAddress: radixValidateAddress,
   };
 };

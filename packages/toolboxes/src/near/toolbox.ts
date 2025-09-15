@@ -477,6 +477,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     nep141,
     provider,
     signAndBroadcastTransaction,
+    signer,
     signMessage,
     signTransaction,
     transfer,

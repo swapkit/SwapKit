@@ -103,7 +103,7 @@ export const evmWallet = createWallet({
           });
 
           const disconnect = () => browserProvider.send("wallet_revokePermissions", [{ eth_accounts: {} }]);
-          addChain({ ...walletMethods, address, chain, walletType, disconnect });
+          addChain({ ...walletMethods, address, chain, disconnect, walletType });
           return;
         }),
       );

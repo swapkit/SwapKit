@@ -134,6 +134,7 @@ export async function getSolanaToolbox(
       const signedTx = await signTransaction(getConnection, signer)(transaction);
       return broadcastTransaction(getConnection)(signedTx);
     },
+    signer,
     signTransaction: signTransaction(getConnection, signer),
     transfer: transfer(getConnection, signer),
   };

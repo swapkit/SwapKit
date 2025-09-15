@@ -242,6 +242,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       return keys.toWIF();
     },
     signAndBroadcastTransaction: getSignAndBroadcastTransaction({ chain, signer: signer as ChainSigner<Psbt, Psbt> }),
+    signer,
     signTransaction: getSignTransaction({ chain, signer: signer as ChainSigner<Psbt, Psbt> }),
     transfer: transfer(signer as UtxoToolboxParams["BTC"]["signer"]),
     validateAddress: (address: string) => validateAddress({ address, chain }),

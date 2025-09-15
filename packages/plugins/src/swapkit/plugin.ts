@@ -5,6 +5,7 @@ import { VersionedTransaction } from "@solana/web3.js";
 import {
   AssetValue,
   Chain,
+  type CosmosChain,
   //   type CosmosChain,
   CosmosChains,
   type CryptoChain,
@@ -15,17 +16,23 @@ import {
 } from "@swapkit/helpers";
 import {
   CosmosTransactionSchema,
+  type EVMTransaction,
   EVMTransactionSchema,
   NEARTransactionSchema,
   type QuoteResponseRoute,
   SwapKitApi,
   TronTransactionSchema,
 } from "@swapkit/helpers/api";
+import type { FullWallet } from "@swapkit/toolboxes";
 import { Psbt } from "bitcoinjs-lib";
 import { match } from "ts-pattern";
 import type { SwapKitPluginParams } from "../types";
 import { createPlugin } from "../utils";
 import type { SwapKitQuoteParams, SwapKitSwapParams } from "./types";
+
+export function walletHasWorkingSigner(wallet: FullWallet[CryptoChain]): boolean {
+  return !!wallet?.signer;
+}
 
 export const SwapKitPlugin = createPlugin({
   methods: (params: SwapKitPluginParams) => {
@@ -72,91 +79,182 @@ export const SwapKitPlugin = createPlugin({
       } = swapParams;
 
       // Determine the source chain from the sell asset
-      const sellAsset = AssetValue.from({ asset: route.sellAsset });
+      const sellAsset = await AssetValue.from({ asset: route.sellAsset, asyncTokenLookup: true });
       const chain = sellAsset.chain;
 
       try {
+        if (!walletHasWorkingSigner(getWallet(chain as CryptoChain))) {
+          match(chain as CryptoChain)
+            .returnType<Promise<string>>()
+            .with(...EVMChains, async () => {
+              const wallet = await getWallet(chain as EVMChain);
+              if (!wallet) {
+                throw new SwapKitError("core_wallet_connection_not_found", { chain });
+              }
+              const { from, to, data, value } = tx as EVMTransaction;
+              return await wallet.sendTransaction({ data, from, to, value: BigInt(value || "0") });
+            })
+            .with(Chain.Radix, async () => {
+              const wallet = await getWallet(chain as Chain.Radix);
+              if (!wallet) {
+                throw new SwapKitError("core_wallet_connection_not_found", { chain });
+              }
+              return wallet.signAndBroadcast({ manifest: tx as string });
+            })
+            .otherwise(async () => {
+              const { targetAddress, sellAmount, memo } = route;
+
+              if (!targetAddress) {
+                throw new SwapKitError("core_swap_invalid_params", { missing: ["targetAddress"] });
+              }
+
+              const assetValue = await AssetValue.from({
+                asset: route.sellAsset,
+                asyncTokenLookup: true,
+                value: sellAmount,
+              });
+
+              const wallet = await getWallet(chain as CryptoChain);
+
+              if (!wallet) {
+                throw new SwapKitError("core_wallet_connection_not_found", { chain });
+              }
+
+              const txHash = await wallet.transfer({
+                assetValue,
+                isProgramDerivedAddress: true,
+                memo,
+                recipient: targetAddress,
+              });
+
+              return txHash as string;
+            });
+        }
+
+        // Try to use signer-based transaction execution first
         return await match(chain as CryptoChain)
           .returnType<Promise<string>>()
           .with(Chain.BitcoinCash, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-            return await getWallet(chain as Chain.BitcoinCash).signAndBroadcastTransaction(
-              bitgo.UtxoPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.bitcoincash }),
-            );
+            const wallet = await getWallet(chain as Chain.BitcoinCash);
+
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(
+                bitgo.UtxoPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.bitcoincash }),
+              );
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Zcash, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-            return await getWallet(chain as Chain.Zcash).signAndBroadcastTransaction(
-              bitgo.ZcashPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.zcash }) as ZcashPsbt,
-            );
+            const wallet = await getWallet(chain as Chain.Zcash);
+
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(
+                bitgo.ZcashPsbt.fromBuffer(Buffer.from(tx, "base64"), { network: networks.zcash }) as ZcashPsbt,
+              );
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Bitcoin, Chain.Dogecoin, Chain.Litecoin, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-            const psbt = Psbt.fromBase64(tx);
-            return await getWallet(
-              chain as Chain.Bitcoin | Chain.Dogecoin | Chain.Litecoin,
-            ).signAndBroadcastTransaction(psbt);
+            const wallet = await getWallet(chain as Chain.Bitcoin | Chain.Dogecoin | Chain.Litecoin | Chain.Dash);
+
+            if (walletHasWorkingSigner(wallet)) {
+              const psbt = Psbt.fromBase64(tx);
+              return wallet.signAndBroadcastTransaction(psbt);
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(...EVMChains, async () => {
             const transaction = EVMTransactionSchema.safeParse(tx);
             if (!transaction.success) {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
+            const wallet = await getWallet(chain as EVMChain);
 
-            return await getWallet(chain as EVMChain).signAndBroadcastTransaction(transaction.data);
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(transaction.data);
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Solana, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-            const transaction = VersionedTransaction.deserialize(Buffer.from(tx, "base64"));
-            return await getWallet(chain as Chain.Solana).signAndBroadcastTransaction(transaction);
+            const wallet = await getWallet(chain as Chain.Solana);
+
+            if (walletHasWorkingSigner(wallet)) {
+              const transaction = VersionedTransaction.deserialize(Buffer.from(tx, "base64"));
+              return wallet.signAndBroadcastTransaction(transaction);
+            }
+            throw new Error("No signer available in wallet");
           })
-          .with(...CosmosChains, () => {
+          .with(...CosmosChains, async () => {
             const transaction = CosmosTransactionSchema.safeParse(tx);
             if (!transaction.success) {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
-            return Promise.resolve("");
-            // return await getWallet(chain as CosmosChain).transfer({transaction.data});
+            const wallet = await getWallet(chain as CosmosChain);
+
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(transaction.data);
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Near, async () => {
             const transaction = NEARTransactionSchema.safeParse(tx);
             if (!transaction.success) {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
+            const wallet = await getWallet(chain as Chain.Near);
 
-            return await getWallet(chain as Chain.Near).signAndBroadcastTransaction(
-              Transaction.decode(Buffer.from(transaction.data.serialized, "base64")),
-            );
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(
+                Transaction.decode(Buffer.from(transaction.data.serialized, "base64")),
+              );
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Radix, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
+            const wallet = await getWallet(chain as Chain.Radix);
 
-            return await getWallet(chain as Chain.Radix).signAndBroadcast({ manifest: tx });
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcast({ manifest: tx });
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Ripple, async () => {
             if (typeof tx !== "string") {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
+            const wallet = await getWallet(chain as Chain.Ripple);
 
-            return await getWallet(chain as Chain.Ripple).signAndBroadcastTransaction(JSON.parse(tx));
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(JSON.parse(tx));
+            }
+            throw new Error("No signer available in wallet");
           })
           .with(Chain.Tron, async () => {
             const transaction = TronTransactionSchema.safeParse(tx);
             if (!transaction.success) {
               throw new SwapKitError("plugin_swapkit_invalid_tx_data", { chain, tx });
             }
+            const wallet = await getWallet(chain as Chain.Tron);
 
-            return await getWallet(chain as Chain.Tron).signAndBroadcastTransaction(transaction.data);
+            if (walletHasWorkingSigner(wallet)) {
+              return wallet.signAndBroadcastTransaction(transaction.data);
+            }
+            throw new Error("No signer available in wallet");
           })
           .otherwise(() => {
             throw new SwapKitError("plugin_swapkit_invalid_tx_data", {

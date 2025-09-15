@@ -121,6 +121,7 @@ export function BaseEVMToolbox<
     isApproved: getIsApproved({ chain, provider }),
     sendTransaction: getSendTransaction({ chain, isEIP1559Compatible, provider, signer }),
     signAndBroadcastTransaction: getSignAndBroadcastTransaction({ chain, provider, signer }),
+    signer,
     signMessage: signer?.signMessage,
     signTransaction: getSignTransaction({ signer }),
     transfer: getTransfer({ chain, isEIP1559Compatible, provider, signer }),

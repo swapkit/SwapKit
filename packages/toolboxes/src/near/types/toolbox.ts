@@ -47,6 +47,7 @@ export interface NearToolbox {
   broadcastTransaction: (signedTransaction: SignedTransaction) => Promise<string>;
   signTransaction: (transaction: Transaction) => Promise<SignedTransaction>;
   signAndBroadcastTransaction: (transaction: Transaction) => Promise<string>;
+  signer: NearSigner | undefined;
   signMessage: (message: string) => Promise<string>;
   getBalance: (address: string) => Promise<AssetValue[]>;
   validateAddress: (address: string) => boolean;

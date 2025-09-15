@@ -21,11 +21,8 @@ const RIPPLE_ERROR_CODES = { ACCOUNT_NOT_FOUND: 19 } as const;
 function createSigner(phrase: string): ChainSigner<Transaction, { tx_blob: string; hash: string }> {
   const wallet = Wallet.fromMnemonic(phrase);
   return {
-    // publicKey: wallet.publicKey,
-    // Address is sync, but interface requires async
     getAddress: () => Promise.resolve(wallet.address),
-    // Signing is sync, but interface requires async
-    signTransaction: (tx: Transaction) => Promise.resolve(wallet.sign(tx as Transaction)), // Cast needed as Wallet.sign expects Transaction
+    signTransaction: (tx: Transaction) => Promise.resolve(wallet.sign(tx as Transaction)),
   };
 }
 
@@ -151,10 +148,8 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     }
 
     try {
-      // Sign the transaction
       const signedTx = await signTransaction(tx);
 
-      // Broadcast the signed transaction
       return await broadcastTransaction(signedTx.tx_blob);
     } catch (error) {
       throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple, error } });
@@ -175,16 +170,14 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
 
   return {
     broadcastTransaction,
-    createSigner, // Expose the helper
+    createSigner,
     createTransaction,
     disconnect,
     estimateTransactionFee,
-    // Core methods
     getAddress,
     getBalance,
     signAndBroadcastTransaction,
-    // Signer related
-    signer, // Expose the signer instance if created/provided
+    signer,
     signTransaction,
     transfer,
     validateAddress: rippleValidateAddress,

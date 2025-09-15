@@ -56,11 +56,7 @@
     "xumm": "1.8.0"
   },
   "exports": {
-    ".": {
-      "default": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    },
+    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
     "./bitget": {
       "default": "./dist/src/bitget/index.js",
       "require": "./dist/src/bitget/index.cjs",
@@ -172,16 +168,11 @@
       "types": "./dist/types/xaman/index.d.ts"
     }
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/swapkit/SwapKit.git"
-  },
+  "repository": { "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",

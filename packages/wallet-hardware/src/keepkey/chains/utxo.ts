@@ -5,7 +5,6 @@ import {
   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
-  SKConfig,
   SwapKitError,
   type UTXOChain,
 } from "@swapkit/helpers";

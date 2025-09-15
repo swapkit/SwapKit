@@ -256,6 +256,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
     signAndBroadcastTransaction,
+    signer,
     signTransaction,
     transfer,
     validateAddress: getCosmosValidateAddress(chainPrefix),
