@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.11
+
+### Patch Changes
+
+- [#1478](https://github.com/swapkit/SwapKit/pull/1478) [`85e0cea`](https://github.com/swapkit/SwapKit/commit/85e0ceafdec00c4be7dd6cfefacce360437a4e51) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Ledger Zcash implementation
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.12
+  - @swapkit/toolboxes@4.0.12
+
 ## 4.1.10
 
 ### Patch Changes
