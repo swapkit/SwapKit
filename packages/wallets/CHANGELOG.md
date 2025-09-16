@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.1.14
+
+### Patch Changes
+
+- [#1484](https://github.com/swapkit/SwapKit/pull/1484) [`062b0a4`](https://github.com/swapkit/SwapKit/commit/062b0a4e7dc9113d3ce1d473eae402492d15334b) Thanks [@towanTG](https://github.com/towanTG)! - Fixes getToolbox await promise
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.15
+  - @swapkit/toolboxes@4.0.15
+  - @swapkit/wallet-core@4.0.15
+  - @swapkit/wallet-hardware@4.1.14
+  - @swapkit/wallet-keystore@4.0.15
+
 ## 4.1.13
 
 ### Patch Changes
