@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.1.12
+
+### Patch Changes
+
+- [#1480](https://github.com/swapkit/SwapKit/pull/1480) [`c048f39`](https://github.com/swapkit/SwapKit/commit/c048f39a74b21182d2093e97883c1dc8971293f3) Thanks [@towanTG](https://github.com/towanTG)! - Improves ctrl and tronlink wallet integrations
+
+- Updated dependencies [[`c048f39`](https://github.com/swapkit/SwapKit/commit/c048f39a74b21182d2093e97883c1dc8971293f3)]:
+  - @swapkit/helpers@4.0.13
+  - @swapkit/toolboxes@4.0.13
+  - @swapkit/wallet-core@4.0.13
+  - @swapkit/wallet-hardware@4.1.12
+  - @swapkit/wallet-keystore@4.0.13
+
 ## 4.1.11
 
 ### Patch Changes

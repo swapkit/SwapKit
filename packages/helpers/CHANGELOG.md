@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.13
+
+### Patch Changes
+
+- [#1480](https://github.com/swapkit/SwapKit/pull/1480) [`c048f39`](https://github.com/swapkit/SwapKit/commit/c048f39a74b21182d2093e97883c1dc8971293f3) Thanks [@towanTG](https://github.com/towanTG)! - Improves ctrl and tronlink wallet integrations
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.13
+
 ## 4.0.12
 
 ### Patch Changes
