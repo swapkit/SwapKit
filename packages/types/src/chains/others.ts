@@ -1,4 +1,5 @@
-import { createChain, mapChains } from "./_createChain";
+import { createChain } from "./_createChain";
+import { Chain, ChainId } from "./_enums";
 
 const type = "others";
 
@@ -6,8 +7,8 @@ const NEAR = createChain({
   baseDecimal: 24,
   blockExplorerUrl: "https://nearblocks.io",
   blockTime: 1,
-  chain: "NEAR",
-  chainId: "near",
+  chain: Chain.Near,
+  chainId: ChainId.NEAR,
   explorerUrl: "https://nearblocks.io",
   name: "Near",
   nativeCurrency: "NEAR",
@@ -19,8 +20,8 @@ const XRD = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://dashboard.radixdlt.com",
   blockTime: 5,
-  chain: "XRD",
-  chainId: "radix-mainnet",
+  chain: Chain.Radix,
+  chainId: ChainId.XRD,
   explorerUrl: "https://dashboard.radixdlt.com",
   name: "Radix",
   nativeCurrency: "XRD",
@@ -32,8 +33,8 @@ const XRP = createChain({
   baseDecimal: 6,
   blockExplorerUrl: "https://livenet.xrpl.org/",
   blockTime: 5,
-  chain: "XRP",
-  chainId: "ripple",
+  chain: Chain.Ripple,
+  chainId: ChainId.XRP,
   explorerUrl: "https://livenet.xrpl.org/",
   name: "Ripple",
   nativeCurrency: "XRP",
@@ -45,8 +46,8 @@ const SOL = createChain({
   baseDecimal: 9,
   blockExplorerUrl: "https://solscan.io",
   blockTime: 0.4,
-  chain: "SOL",
-  chainId: "solana",
+  chain: Chain.Solana,
+  chainId: ChainId.SOL,
   explorerUrl: "https://solscan.io",
   name: "Solana",
   nativeCurrency: "SOL",
@@ -58,8 +59,8 @@ const TRON = createChain({
   baseDecimal: 6,
   blockExplorerUrl: "https://tronscan.org",
   blockTime: 3,
-  chain: "TRON",
-  chainId: "728126428",
+  chain: Chain.Tron,
+  chainId: ChainId.TRON,
   chainIdHex: "0x2b6653dc",
   explorerUrl: "https://tronscan.org",
   name: "Tron",
@@ -72,8 +73,8 @@ const FIAT = createChain({
   baseDecimal: 2,
   blockExplorerUrl: "",
   blockTime: 60,
-  chain: "FIAT",
-  chainId: "fiat",
+  chain: Chain.Fiat,
+  chainId: ChainId.FIAT,
   explorerUrl: "",
   name: "Fiat",
   nativeCurrency: "USD",
@@ -82,5 +83,5 @@ const FIAT = createChain({
 });
 
 export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TRON, FIAT] as const;
-export const OtherChains = mapChains(OtherChainConfigs);
+export const OtherChains = OtherChainConfigs.map((config) => config.chain);
 export type OtherChain = (typeof OtherChains)[number];

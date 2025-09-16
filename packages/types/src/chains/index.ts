@@ -1,10 +1,11 @@
-import { mapChains } from "./_createChain";
-import { CosmosChainConfigs, StagenetCosmosChainConfigs } from "./cosmos";
+import { Chain, ChainId, StagenetChain } from "./_enums";
+import { CosmosChainConfigs } from "./cosmos";
 import { EVMChainConfigs } from "./evm";
 import { OtherChainConfigs } from "./others";
 import { SubstrateChainConfigs } from "./substrate";
 import { UTXOChainConfigs } from "./utxo";
 
+export * from "./_enums";
 export * from "./cosmos";
 export * from "./evm";
 export * from "./others";
@@ -21,41 +22,8 @@ export const AllChainConfigs = [
 export type AllChainConfigs = typeof AllChainConfigs;
 export type ChainConfig = AllChainConfigs[number];
 
-export const AllChains = mapChains(AllChainConfigs);
-export type AllChains = typeof AllChains;
-
-export const AllStagenetChainConfigs = [...StagenetCosmosChainConfigs];
-export type AllStagenetChainConfigs = typeof AllStagenetChainConfigs;
-export type StagenetChainConfigs = AllStagenetChainConfigs[number];
-export const StagenetChains = mapChains(AllStagenetChainConfigs);
-export type StagenetChains = typeof StagenetChains;
-
-const chainAndNameToChain = AllChainConfigs.flatMap(({ chain, name }) => [
-  //   [chain, chain] as const,
-  [name, chain] as const,
-]);
-export const Chain = Object.fromEntries(chainAndNameToChain) as {
-  readonly [K in ChainConfig["name"]]: Extract<ChainConfig, { chain: K } | { name: K }>["chain"];
-};
-export type Chain = (typeof Chain)[ChainConfig["name"]];
-
-const chainAndNameToChainId = AllChainConfigs.flatMap(({ chainId, chain, name }) => [
-  [chain, chainId] as const,
-  [name, chainId] as const,
-]);
-export const ChainId = Object.fromEntries(chainAndNameToChainId) as {
-  readonly [K in ChainConfig["name"] | ChainConfig["chain"]]: Extract<
-    ChainConfig,
-    { chain: K } | { name: K }
-  >["chainId"];
-};
-export type ChainId = (typeof ChainId)[ChainConfig["name"]];
-
-const stagenetChainsToStagenetChain = AllStagenetChainConfigs.flatMap(({ name, chain }) => [[name, chain] as const]);
-export const StagenetChain = Object.fromEntries(stagenetChainsToStagenetChain) as {
-  readonly [K in StagenetChainConfigs["name"]]: Extract<StagenetChainConfigs, { chain: K } | { name: K }>["chain"];
-};
-export type StagenetChain = (typeof StagenetChain)[StagenetChainConfigs["name"]];
+export const AllChains = Object.values(Chain);
+export const StagenetChains = [StagenetChain.THORChain, StagenetChain.Maya] as const;
 
 type ChainConfigMap = {
   [K in ChainConfig["chain"]]: Extract<ChainConfig, { chain: K }>;
@@ -72,11 +40,11 @@ export function getChainConfig<T extends Chain>(chain: T): ChainConfigMap[T] {
 }
 
 /**
- * @deprecated use ChainId instead
+ * @deprecated use getChainConfig instead
  * @example
  * ```diff
  * -const chainId = ChainToChainId[Chain.Ethereum];
- * +const chainId = ChainId[Chain.Ethereum];
+ * +const { chainId } = getChainConfig(Chain.Ethereum);
  * ```
  */
 export const ChainToChainId = ChainId;

@@ -1,11 +1,12 @@
-import { createChain, mapChains } from "./_createChain";
+import { createChain } from "./_createChain";
+import { Chain, ChainId } from "./_enums";
 
 const BTC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/bitcoin",
   blockTime: 600,
-  chain: "BTC",
-  chainId: "bitcoin",
+  chain: Chain.Bitcoin,
+  chainId: ChainId.BTC,
   explorerUrl: "https://blockchair.com/bitcoin",
   name: "Bitcoin",
   nativeCurrency: "BTC",
@@ -17,8 +18,8 @@ const BCH = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.blockchair.com/bitcoin-cash",
   blockTime: 600,
-  chain: "BCH",
-  chainId: "bitcoincash",
+  chain: Chain.BitcoinCash,
+  chainId: ChainId.BCH,
   explorerUrl: "https://www.blockchair.com/bitcoin-cash",
   name: "BitcoinCash",
   nativeCurrency: "BCH",
@@ -30,8 +31,8 @@ const LTC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/litecoin",
   blockTime: 150,
-  chain: "LTC",
-  chainId: "litecoin",
+  chain: Chain.Litecoin,
+  chainId: ChainId.LTC,
   explorerUrl: "https://blockchair.com/litecoin",
   name: "Litecoin",
   nativeCurrency: "LTC",
@@ -43,8 +44,8 @@ const DOGE = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/dogecoin",
   blockTime: 600,
-  chain: "DOGE",
-  chainId: "dogecoin",
+  chain: Chain.Dogecoin,
+  chainId: ChainId.DOGE,
   explorerUrl: "https://blockchair.com/dogecoin",
   name: "Dogecoin",
   nativeCurrency: "DOGE",
@@ -56,8 +57,8 @@ const DASH = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/dash",
   blockTime: 150,
-  chain: "DASH",
-  chainId: "dash",
+  chain: Chain.Dash,
+  chainId: ChainId.DASH,
   explorerUrl: "https://blockchair.com/dash",
   name: "Dash",
   nativeCurrency: "DASH",
@@ -69,8 +70,8 @@ const ZEC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/zcash",
   blockTime: 150,
-  chain: "ZEC",
-  chainId: "zcash",
+  chain: Chain.Zcash,
+  chainId: ChainId.ZEC,
   explorerUrl: "https://blockchair.com/zcash",
   name: "Zcash",
   nativeCurrency: "ZEC",
@@ -79,5 +80,12 @@ const ZEC = createChain({
 });
 
 export const UTXOChainConfigs = [BTC, BCH, LTC, DOGE, DASH, ZEC] as const;
-export const UTXOChains = mapChains(UTXOChainConfigs);
+export const UTXOChains = [
+  Chain.Bitcoin,
+  Chain.BitcoinCash,
+  Chain.Dash,
+  Chain.Dogecoin,
+  Chain.Litecoin,
+  Chain.Zcash,
+] as const;
 export type UTXOChain = (typeof UTXOChains)[number];

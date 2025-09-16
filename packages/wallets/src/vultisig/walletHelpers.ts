@@ -6,6 +6,7 @@ import {
   type EVMChain,
   EVMChains,
   type FeeOption,
+  getChainConfig,
   type NetworkParams,
   providerRequest,
   SwapKitError,
@@ -241,7 +242,7 @@ export async function switchCosmosWalletNetwork(
   networkParams?: NetworkParams,
 ) {
   try {
-    await provider.request({ method: "wallet_switch_chain", params: [{ chainId: ChainId[chain] }] });
+    await provider.request({ method: "wallet_switch_chain", params: [{ chainId: getChainConfig(chain).chainId }] });
   } catch (error) {
     if (!networkParams) {
       throw new SwapKitError("helpers_failed_to_switch_network", {

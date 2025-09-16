@@ -1,4 +1,5 @@
-import { createChain, mapChains } from "./_createChain";
+import { createChain } from "./_createChain";
+import { Chain, ChainId } from "./_enums";
 
 const type = "substrate";
 
@@ -6,8 +7,8 @@ const DOT = createChain({
   baseDecimal: 10,
   blockExplorerUrl: "https://polkadot.subscan.io",
   blockTime: 6,
-  chain: "DOT",
-  chainId: "polkadot",
+  chain: Chain.Polkadot,
+  chainId: ChainId.DOT,
   explorerUrl: "https://polkadot.subscan.io",
   name: "Polkadot",
   nativeCurrency: "DOT",
@@ -19,8 +20,8 @@ const FLIP = createChain({
   baseDecimal: 18,
   blockExplorerUrl: "https://explorer.polkascan.io/polkadot",
   blockTime: 5,
-  chain: "FLIP",
-  chainId: "chainflip",
+  chain: Chain.Chainflip,
+  chainId: ChainId.FLIP,
   explorerUrl: "https://explorer.polkascan.io/polkadot",
   name: "Chainflip",
   nativeCurrency: "FLIP",
@@ -29,5 +30,5 @@ const FLIP = createChain({
 });
 
 export const SubstrateChainConfigs = [DOT, FLIP] as const;
-export const SubstrateChains = mapChains(SubstrateChainConfigs);
+export const SubstrateChains = SubstrateChainConfigs.map((config) => config.chain);
 export type SubstrateChain = (typeof SubstrateChains)[number];

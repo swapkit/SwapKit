@@ -1,5 +1,5 @@
 import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
-import { Chain, ChainId, type EVMChain, EVMChains, getChainConfig } from "@swapkit/types";
+import { Chain, type ChainId, type EVMChain, EVMChains, getChainConfig } from "@swapkit/types";
 import { getAddress } from "ethers";
 import { match } from "ts-pattern";
 import {
@@ -74,7 +74,7 @@ export class AssetValue extends BigIntArithmetics {
     this.isSynthetic = assetInfo.isSynthetic;
     this.isTradeAsset = assetInfo.isTradeAsset;
     this.isGasAsset = assetInfo.isGasAsset;
-    this.chainId = ChainId[assetInfo.chain];
+    this.chainId = getChainConfig(assetInfo.chain).chainId;
   }
 
   toString({ includeSynthProtocol }: { includeSynthProtocol?: boolean } = {}) {
@@ -188,10 +188,12 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
 
     for (const { tokens } of Object.values(lists)) {
       for (const { identifier, chain, ...rest } of tokens) {
+        const chainConfig = getChainConfig(chain as Chain);
+
         const tokenKey = (
-          CASE_SENSITIVE_CHAINS.includes(chain as Chain) ? identifier : identifier.toUpperCase()
+          CASE_SENSITIVE_CHAINS.includes(chainConfig.chain) ? identifier : identifier.toUpperCase()
         ) as TokenNames;
-        const tokenDecimal = "decimals" in rest ? rest.decimals : getChainConfig(chain).baseDecimal;
+        const tokenDecimal = "decimals" in rest ? rest.decimals : chainConfig.baseDecimal;
 
         staticTokensMap.set(tokenKey, { decimal: tokenDecimal, identifier });
       }
