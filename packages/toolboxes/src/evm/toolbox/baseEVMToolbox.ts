@@ -128,8 +128,18 @@ export function getEIP1193SendTransaction(provider: Provider | BrowserProvider) 
       throw new SwapKitError("toolbox_evm_provider_not_eip1193_compatible");
     }
 
+    // Remove gas-related parameters to let the wallet estimate them
+    // EIP-1193 providers (MetaMask, etc.) will estimate these automatically
+    const {
+      gasLimit: _gasLimit,
+      gasPrice: _gasPrice,
+      maxFeePerGas: _maxFeePerGas,
+      maxPriorityFeePerGas: _maxPriorityFeePerGas,
+      ...cleanParams
+    } = params as any;
+
     return (provider as BrowserProvider).send("eth_sendTransaction", [
-      { value: toHexString(BigInt(value || 0)), ...params } as any,
+      { ...cleanParams, value: toHexString(BigInt(value || 0)) } as any,
     ]);
   };
 }

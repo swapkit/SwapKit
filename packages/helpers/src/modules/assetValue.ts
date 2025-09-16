@@ -18,7 +18,7 @@ import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics"
 import { SwapKitError } from "./swapKitError";
 import type { SwapKitValueType } from "./swapKitNumber";
 
-const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron];
+const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near];
 const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
 const staticTokensMap = new Map<
@@ -84,11 +84,16 @@ export class AssetValue extends BigIntArithmetics {
   }
 
   toUrl() {
-    return this.isSynthetic
-      ? `${this.chain}.${this.symbol.replace("/", ".")}`
-      : this.isTradeAsset
-        ? `${this.chain}.${this.symbol.replace("~", "..")}`
-        : this.toString();
+    if (this.isSynthetic) {
+      return `${this.chain}.${this.symbol.replace(/\//g, ".")}`;
+    }
+
+    if (this.isTradeAsset) {
+      return `${this.chain}.${this.symbol.replace(/~/g, "..")}`;
+    }
+
+    const encodedSymbol = this.symbol.replace(/\./g, "__");
+    return `${this.chain}.${encodedSymbol}`;
   }
 
   getIconUrl() {
@@ -104,16 +109,26 @@ export class AssetValue extends BigIntArithmetics {
     return this.eqAsset(assetValue) && this.eqValue(assetValue);
   }
 
-  // THOR.RUNE
-  // THOR.ETH.ETH
-  // ETH.THOR-0x1234567890
   static fromUrl(urlAsset: string, value: NumberPrimitives = 0) {
-    const [chain, ticker, symbol] = urlAsset.split(".");
-    if (!(chain && ticker)) {
+    const firstDotIndex = urlAsset.indexOf(".");
+
+    if (firstDotIndex === -1) {
       throw new SwapKitError({ errorKey: "helpers_invalid_asset_url", info: { urlAsset } });
     }
 
-    const asset = chain === Chain.THORChain && symbol ? `${chain}.${ticker}/${symbol}` : urlAsset;
+    const chain = urlAsset.slice(0, firstDotIndex);
+    const rest = urlAsset.slice(firstDotIndex + 1);
+
+    const asset = match({ chain: chain as Chain, rest })
+      .when(
+        ({ rest }) => rest.includes(".."),
+        ({ chain, rest }) => `${chain}.${rest.replace(/\.\./g, "~")}`,
+      )
+      .when(
+        ({ chain, rest }) => TC_CHAINS.includes(chain) && rest.includes("."),
+        ({ chain, rest }) => `${chain}.${rest.replace(/\./g, "/")}`,
+      )
+      .otherwise(({ chain, rest }) => `${chain}.${rest.replace(/__/g, ".")}`);
 
     return AssetValue.from({ asset, value });
   }
@@ -154,15 +169,13 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       identifier: unsafeIdentifier,
     };
 
-    const isSynthOrTrade = isSynthetic || isTradeAsset;
-
     const adjustedValue = fromBaseDecimal
       ? safeValue(BigInt(parsedValue), fromBaseDecimal)
       : safeValue(parsedValue, decimal);
 
     const assetValue = asyncTokenLookup
       ? createAssetValue(identifier, fromBaseDecimal ? adjustedValue : parsedValue)
-      : isSynthOrTrade
+      : isSynthetic || isTradeAsset
         ? createSyntheticAssetValue(identifier, adjustedValue)
         : new AssetValue({ decimal, identifier, tax, value: adjustedValue });
 
@@ -291,30 +304,32 @@ function getAssetString(assetOrChain: AssetIdentifier) {
   return isNativeChain ? chain : assetOrChain.asset;
 }
 
-function getAssetInfo(identifier: string) {
-  const shortIdentifier = identifier.slice(0, 14);
+function getSyntheticOrTradeAssetInfo(identifier: string, isSynthetic: boolean, isTradeAsset: boolean) {
   const splitIdentifier = identifier.split(".");
   const identifierChain = splitIdentifier[0]?.toUpperCase() as Chain;
   const isThorOrMaya = TC_CHAINS.includes(identifierChain);
 
-  const isSynthetic = shortIdentifier.includes("/");
-  const isTradeAsset = shortIdentifier.includes("~");
-  const isSynthOrTrade = isSynthetic || isTradeAsset;
   const assetSeparator = isTradeAsset ? "~" : "/";
 
   const [synthChain, synthSymbol = ""] = isThorOrMaya
-    ? splitIdentifier.slice(1).join().split(assetSeparator)
+    ? splitIdentifier.slice(1).join(".").split(assetSeparator)
     : identifier.split(assetSeparator);
 
-  if (isSynthOrTrade && !(synthChain && synthSymbol)) {
+  if (!(synthChain && synthSymbol)) {
     throw new SwapKitError({ errorKey: "helpers_invalid_asset_identifier", info: { identifier } });
   }
 
-  const [chain, ...rest] = (
-    identifier.includes(".") && !isSynthOrTrade ? identifier : `${identifierChain}.${synthSymbol}`
-  ).split(".") as [Chain, string];
+  // Get the ticker from the base symbol (e.g., "AVAX" from "AVAX/AVAX")
+  const { ticker, address } = getAssetBaseInfo({ chain: synthChain as Chain, symbol: synthSymbol });
+  const finalSymbol = `${synthChain}${assetSeparator}${synthSymbol}`;
 
-  const assetSymbol = isSynthOrTrade ? synthSymbol : rest.join(".");
+  return { address, chain: identifierChain, isGasAsset: false, isSynthetic, isTradeAsset, symbol: finalSymbol, ticker };
+}
+
+function getNormalAssetInfo(identifier: string) {
+  const firstDotIndex = identifier.indexOf(".");
+  const chain = (firstDotIndex === -1 ? identifier : identifier.slice(0, firstDotIndex)).toUpperCase() as Chain;
+  const assetSymbol = firstDotIndex === -1 ? identifier : identifier.slice(firstDotIndex + 1);
 
   const { address, ticker } = getAssetBaseInfo({ chain, symbol: assetSymbol });
 
@@ -326,28 +341,48 @@ function getAssetInfo(identifier: string) {
     formattedAddress = address;
   }
 
-  const symbol =
-    (isSynthOrTrade ? `${synthChain}${assetSeparator}` : "") +
-    (formattedAddress ? `${ticker}-${formattedAddress ?? ""}` : assetSymbol);
+  const finalSymbol = formattedAddress ? `${ticker}-${formattedAddress}` : assetSymbol;
 
   return {
     address: formattedAddress,
     chain,
     isGasAsset: isGasAsset({ chain, symbol: assetSymbol }),
-    isSynthetic,
-    isSynthOrTrade,
-    isTradeAsset,
-    symbol,
+    isSynthetic: false,
+    isTradeAsset: false,
+    symbol: finalSymbol,
     ticker,
   };
 }
 
-function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
-  const splitSymbol = symbol.split("-");
-  const unformattedAddress = splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1];
+function getAssetInfo(identifier: string) {
+  const shortIdentifier = identifier.slice(0, 14);
+  const isSynthetic = shortIdentifier.includes("/");
+  const isTradeAsset = shortIdentifier.includes("~");
 
-  const address = CASE_SENSITIVE_CHAINS.includes(chain) ? unformattedAddress : unformattedAddress?.toLowerCase();
-  const ticker = (splitSymbol.length === 1 ? splitSymbol[0] : splitSymbol.slice(0, -1).join("-")) as string;
+  if (isSynthetic || isTradeAsset) {
+    return getSyntheticOrTradeAssetInfo(identifier, isSynthetic, isTradeAsset);
+  }
 
+  return getNormalAssetInfo(identifier);
+}
+
+function parseSymbolWithSeparator(symbol: string, useFirst = false) {
+  const dashIndex = useFirst ? symbol.indexOf("-") : symbol.lastIndexOf("-");
+
+  if (dashIndex === -1) {
+    return { address: undefined, ticker: symbol };
+  }
+
+  const ticker = symbol.slice(0, dashIndex);
+  const address = symbol.slice(dashIndex + 1);
   return { address, ticker };
+}
+
+function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
+  const { ticker, address } = parseSymbolWithSeparator(symbol, chain === Chain.Near);
+
+  // Apply case-sensitivity rules after parsing
+  const finalAddress = address && !CASE_SENSITIVE_CHAINS.includes(chain) ? address.toLowerCase() : address;
+
+  return { address: finalAddress, ticker };
 }

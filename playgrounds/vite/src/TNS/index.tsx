@@ -1,4 +1,4 @@
-import { AssetValue, Chain, SwapKitApi, type THORNameDetails } from "@swapkit/sdk";
+import { AssetValue, Chain, getExplorerTxUrl, SwapKitApi, type THORNameDetails } from "@swapkit/sdk";
 import { useCallback, useState } from "react";
 import type { SwapKitClient } from "../swapKitClient";
 
@@ -9,7 +9,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
   const [tnsDetail, setTnsDetail] = useState<THORNameDetails>();
 
   const checkTns = useCallback(async () => {
-    const tnsDetail = await SwapKitApi.microgard.getTHORNameDetails(tnsSearch);
+    const tnsDetail = await SwapKitApi.thorchainMidgard.getNameDetails(tnsSearch);
     setTnsDetail(tnsDetail);
   }, [tnsSearch]);
 
@@ -25,7 +25,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
         name,
       });
 
-      window.open(`${skClient.getExplorerTxUrl({ chain: Chain.THORChain, txHash })}`, "_blank");
+      window.open(`${getExplorerTxUrl({ chain: Chain.THORChain, txHash })}`, "_blank");
     } catch (e) {
       console.error(e);
       alert(e);

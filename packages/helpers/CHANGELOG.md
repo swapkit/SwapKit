@@ -1,5 +1,85 @@
 # @swapkit/helpers
 
+## 4.0.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.14
+
+## 4.0.13
+
+### Patch Changes
+
+- [#1480](https://github.com/swapkit/SwapKit/pull/1480) [`c048f39`](https://github.com/swapkit/SwapKit/commit/c048f39a74b21182d2093e97883c1dc8971293f3) Thanks [@towanTG](https://github.com/towanTG)! - Improves ctrl and tronlink wallet integrations
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.13
+
+## 4.0.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.12
+
+## 4.0.11
+
+### Patch Changes
+
+- [#1475](https://github.com/swapkit/SwapKit/pull/1475) [`229c06d`](https://github.com/swapkit/SwapKit/commit/229c06dde2fe6a65542aecffddbd38e64fd139d0) Thanks [@towanTG](https://github.com/towanTG)! - Adds support for complex near name contract addresses
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.11
+
+## 4.0.10
+
+### Patch Changes
+
+- Updated dependencies [[`28d10f5`](https://github.com/swapkit/SwapKit/commit/28d10f523cfa240bef200cc52dc52b7cc7f2496f)]:
+  - @swapkit/tokens@4.0.10
+
+## 4.0.9
+
+### Patch Changes
+
+- [#1471](https://github.com/swapkit/SwapKit/pull/1471) [`27a3f83`](https://github.com/swapkit/SwapKit/commit/27a3f8387d518d2eeb10262495ae7c3663318d77) Thanks [@towanTG](https://github.com/towanTG)! - Minor internal type updates, thorchain rpc url update and code maintenance
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.9
+
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.8
+
+## 4.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.7
+
+## 4.0.6
+
+### Patch Changes
+
+- [#1465](https://github.com/swapkit/SwapKit/pull/1465) [`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec) Thanks [@towanTG](https://github.com/towanTG)! - Retires thorswap thornode and replaces it with 9Realms
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.6
+
+## 4.0.5
+
+### Patch Changes
+
+- [#1463](https://github.com/swapkit/SwapKit/pull/1463) [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7) Thanks [@towanTG](https://github.com/towanTG)! - Removes microguard endpoint and improves midgard TNS handling
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.5
+
 ## 4.0.4
 
 ### Patch Changes

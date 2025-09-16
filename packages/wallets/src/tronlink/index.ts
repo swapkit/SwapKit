@@ -15,26 +15,21 @@ export const tronlinkWallet = createWallet({
 
       const walletMethods = await getWalletForChain(Chain.Tron, expectedNetwork);
 
-      // Store original address for comparison in event listeners
       const currentAddress = walletMethods.address;
 
-      // Setup event listeners for account/network changes
       const cleanup = setupEventListeners(
         (newAddress) => {
           if (newAddress !== currentAddress) {
-            // Handle account change - reload to refresh connection
             window.location.reload();
           }
         },
         (newNetwork) => {
-          // Handle network change - reload to refresh connection
           if (!newNetwork.includes(expectedNetwork)) {
             window.location.reload();
           }
         },
       );
 
-      // Create disconnect function that cleans up event listeners
       const disconnect = () => {
         cleanup();
       };

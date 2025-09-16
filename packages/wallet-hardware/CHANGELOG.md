@@ -1,5 +1,93 @@
 # @swapkit/wallet-hardware
 
+## 4.1.13
+
+### Patch Changes
+
+- [#1482](https://github.com/swapkit/SwapKit/pull/1482) [`1cf81a9`](https://github.com/swapkit/SwapKit/commit/1cf81a9b020d311e8f37eca1287247989879b7f5) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Trezor Zcash integration
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.14
+  - @swapkit/toolboxes@4.0.14
+
+## 4.1.12
+
+### Patch Changes
+
+- Updated dependencies [[`c048f39`](https://github.com/swapkit/SwapKit/commit/c048f39a74b21182d2093e97883c1dc8971293f3)]:
+  - @swapkit/helpers@4.0.13
+  - @swapkit/toolboxes@4.0.13
+
+## 4.1.11
+
+### Patch Changes
+
+- [#1478](https://github.com/swapkit/SwapKit/pull/1478) [`85e0cea`](https://github.com/swapkit/SwapKit/commit/85e0ceafdec00c4be7dd6cfefacce360437a4e51) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Ledger Zcash implementation
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.12
+  - @swapkit/toolboxes@4.0.12
+
+## 4.1.10
+
+### Patch Changes
+
+- Updated dependencies [[`229c06d`](https://github.com/swapkit/SwapKit/commit/229c06dde2fe6a65542aecffddbd38e64fd139d0)]:
+  - @swapkit/helpers@4.0.11
+  - @swapkit/toolboxes@4.0.11
+
+## 4.1.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.10
+  - @swapkit/toolboxes@4.0.10
+
+## 4.1.8
+
+### Patch Changes
+
+- Updated dependencies [[`27a3f83`](https://github.com/swapkit/SwapKit/commit/27a3f8387d518d2eeb10262495ae7c3663318d77)]:
+  - @swapkit/toolboxes@4.0.9
+  - @swapkit/helpers@4.0.9
+
+## 4.1.7
+
+### Patch Changes
+
+- [#1469](https://github.com/swapkit/SwapKit/pull/1469) [`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06) Thanks [@towanTG](https://github.com/towanTG)! - Fixes ledger xrp signer and improves xrp toolbox params types
+
+- Updated dependencies [[`b6b826a`](https://github.com/swapkit/SwapKit/commit/b6b826aa586f0e7cc88533f25fa91627dc954b06)]:
+  - @swapkit/toolboxes@4.0.8
+  - @swapkit/helpers@4.0.8
+
+## 4.1.6
+
+### Patch Changes
+
+- [#1467](https://github.com/swapkit/SwapKit/pull/1467) [`0133105`](https://github.com/swapkit/SwapKit/commit/0133105763a55671d17a688b526b78a151fb1f18) Thanks [@towanTG](https://github.com/towanTG)! - Changes ledger xrp imports to sync
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.7
+  - @swapkit/toolboxes@4.0.7
+
+## 4.1.5
+
+### Patch Changes
+
+- Updated dependencies [[`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec)]:
+  - @swapkit/helpers@4.0.6
+  - @swapkit/toolboxes@4.0.6
+
+## 4.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7), [`5d334e6`](https://github.com/swapkit/SwapKit/commit/5d334e69299e3aca21329ff71287498fed4d41a7)]:
+  - @swapkit/toolboxes@4.0.5
+  - @swapkit/helpers@4.0.5
+
 ## 4.1.3
 
 ### Patch Changes

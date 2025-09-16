@@ -274,7 +274,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
     case Chain.Ripple: {
       const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
       const signer = await getLedgerClient({ chain, derivationPath });
-      const address = signer.address;
+      const address = signer.getAddress();
       const toolbox = await getRippleToolbox({ signer });
 
       return { ...toolbox, address };

@@ -36,7 +36,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.Ripple]: "wss://xrpl.ws/",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
-  [Chain.THORChain]: "https://rpc.thorswap.net",
+  [Chain.THORChain]: "https://rpc.ninerealms.com",
   [Chain.Tron]: "https://tron-rpc.publicnode.com",
   [Chain.Zcash]:
     "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
@@ -45,7 +45,7 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
 };
 
 export const NODE_URLS = {
-  [Chain.THORChain]: "https://thornode.thorswap.net",
+  [Chain.THORChain]: "https://thornode.ninerealms.com",
   [Chain.Maya]: "https://mayanode.mayachain.info",
   [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
   [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",

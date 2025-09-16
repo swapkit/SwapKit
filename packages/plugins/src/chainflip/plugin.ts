@@ -1,4 +1,4 @@
-import { AssetValue, type CryptoChain, ProviderName, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, type Chain, type CryptoChain, ProviderName, SwapKitError } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { createPlugin } from "../utils";
 import type { RequestSwapDepositAddressParams } from "./types";
@@ -27,7 +27,7 @@ export const ChainflipPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
 
-      const wallet = getWallet(sellAsset.chain as CryptoChain);
+      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
 
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
@@ -39,8 +39,6 @@ export const ChainflipPlugin = createPlugin({
         maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
       });
 
-      // @ts-expect-error TODO: right now it's inferred from toolboxes
-      // we need to simplify this to one object params
       const tx = await wallet.transfer({
         assetValue: sellAsset,
         isProgramDerivedAddress: true,
@@ -48,7 +46,7 @@ export const ChainflipPlugin = createPlugin({
         sender: wallet.address,
       });
 
-      return tx as string;
+      return tx;
     },
   }),
   name: "chainflip",
