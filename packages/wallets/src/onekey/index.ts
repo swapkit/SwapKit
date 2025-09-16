@@ -89,7 +89,7 @@ async function getWalletMethodsForExtension(chain: Chain) {
 
       const signer = window.$onekey.sol;
       const address = await signer.getAddress();
-      const toolbox = getSolanaToolbox({ signer });
+      const toolbox = await getSolanaToolbox({ signer });
 
       return { ...toolbox, address };
     }

@@ -34,7 +34,7 @@ async function connectCosmosChains(chains: Chain[], addChain: any, keplrProvider
       if (!accounts?.[0]?.address) throw new SwapKitError("wallet_cosmostation_no_accounts");
 
       const [{ address }] = accounts;
-      const toolbox = getCosmosToolbox(chain as any, { signer });
+      const toolbox = await getCosmosToolbox(chain as any, { signer });
 
       addChain({ ...toolbox, address, chain, walletType: WalletOption.COSMOSTATION });
     }),

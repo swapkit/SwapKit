@@ -59,7 +59,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import("@swapkit/toolboxes/cosmos");
 
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
-      const toolbox = getCosmosToolbox(chain);
+      const toolbox = await getCosmosToolbox(chain);
 
       return {
         ...toolbox,
@@ -75,7 +75,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       // @ts-expect-error assumed available connection
       const signer = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(ChainIdToChain[chain]);
       if (!signer) throw new SwapKitError("wallet_keepkey_signer_not_found");
-      const toolbox = getCosmosToolbox(chain, { signer });
+      const toolbox = await getCosmosToolbox(chain, { signer });
 
       const accounts = await signer.getAccounts();
       if (!accounts?.[0]?.address) throw new SwapKitError("wallet_keepkey_no_accounts");
