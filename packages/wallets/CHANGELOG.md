@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.1.13
+
+### Patch Changes
+
+- [#1482](https://github.com/swapkit/SwapKit/pull/1482) [`1cf81a9`](https://github.com/swapkit/SwapKit/commit/1cf81a9b020d311e8f37eca1287247989879b7f5) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Trezor Zcash integration
+
+- Updated dependencies [[`1cf81a9`](https://github.com/swapkit/SwapKit/commit/1cf81a9b020d311e8f37eca1287247989879b7f5)]:
+  - @swapkit/wallet-hardware@4.1.13
+  - @swapkit/helpers@4.0.14
+  - @swapkit/toolboxes@4.0.14
+  - @swapkit/wallet-core@4.0.14
+  - @swapkit/wallet-keystore@4.0.14
+
 ## 4.1.12
 
 ### Patch Changes
