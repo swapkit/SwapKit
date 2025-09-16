@@ -437,7 +437,7 @@ async function cosmosBalances() {
 import { getSolanaToolbox } from "@swapkit/sdk";
 
 function initSolanaToolbox() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
   return solanaToolbox;
 }
 ```
@@ -448,7 +448,7 @@ function initSolanaToolbox() {
 import { getSolanaToolbox } from "@swapkit/sdk";
 
 async function solanaKeysAndAddresses() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
 
   const keypair = await solanaToolbox.createKeysForPath({
     phrase: "your twelve word mnemonic phrase here",
@@ -467,7 +467,7 @@ async function solanaKeysAndAddresses() {
 import { AssetValue, Chain, getSolanaToolbox } from "@swapkit/sdk";
 
 async function solanaTransfer() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
 
   const keypair = await solanaToolbox.createKeysForPath({
     phrase: "your twelve word mnemonic phrase here",
