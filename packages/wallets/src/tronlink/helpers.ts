@@ -1,6 +1,6 @@
 import { Chain, SwapKitError, WalletOption } from "@swapkit/helpers";
-import { createTronToolbox, type TronSigner, type TronTransaction } from "@swapkit/toolboxes/tron";
-import type { TronLinkError, TronLinkWindow } from "./types.js";
+import { createTronToolbox, type TronTransaction } from "@swapkit/toolboxes/tron";
+import type { TronLinkWindow } from "./types.js";
 import { TronLinkResponseCode } from "./types.js";
 
 export function waitForTronLink(timeout = 3000): Promise<TronLinkWindow> {
@@ -31,7 +31,7 @@ export function waitForTronLink(timeout = 3000): Promise<TronLinkWindow> {
   });
 }
 
-export async function isTronLinkLocked(): Promise<boolean> {
+export async function isTronLinkLocked() {
   try {
     const tronLink = await waitForTronLink(1000);
 
@@ -49,59 +49,18 @@ export async function isTronLinkLocked(): Promise<boolean> {
   }
 }
 
-/**
- * Helper function to handle TronLink error responses
- */
-function handleTronLinkError(error: TronLinkError | Error): never {
-  const tronError = error as TronLinkError;
+async function requestTronLinkAccounts(tronLink: TronLinkWindow) {
+  const response = await tronLink.request({ method: "tron_requestAccounts" });
 
-  // Check if the error code indicates locked wallet
-  if (tronError.code === TronLinkResponseCode.LOCKED || tronError.code === 4000) {
-    throw new SwapKitError("wallet_locked", {
-      message: "TronLink is locked. Please unlock it to continue.",
-      wallet: WalletOption.TRONLINK,
+  if (response === "") {
+    throw new SwapKitError("wallet_tronlink_locked", { message: "TronLink is locked. Please unlock it to continue." });
+  }
+
+  if (response.code !== TronLinkResponseCode.SUCCESS) {
+    throw new SwapKitError("wallet_tronlink_request_accounts_failed", {
+      code: response.code,
+      message: `TronLink requestAccounts failed: ${response.message}`,
     });
-  }
-
-  // Handle rejection
-  if (tronError.code === TronLinkResponseCode.REJECTED || tronError.code === 4001) {
-    throw new SwapKitError("wallet_connection_rejected_by_user");
-  }
-
-  // Handle unauthorized
-  if (tronError.code === TronLinkResponseCode.UNAUTHORIZED || tronError.code === 4100) {
-    throw new SwapKitError("wallet_connection_rejected_by_user", {
-      message: "Unauthorized: Please authorize the connection in TronLink",
-    });
-  }
-
-  // Generic connection error
-  throw new SwapKitError("wallet_provider_not_found", {
-    message: tronError.message || "Failed to connect to TronLink",
-    wallet: WalletOption.TRONLINK,
-  });
-}
-
-/**
- * Helper function to request TronLink accounts
- */
-async function requestTronLinkAccounts(tronLink: TronLinkWindow): Promise<void> {
-  try {
-    const response = await tronLink.request({ method: "tron_requestAccounts" });
-
-    // Check response code for locked state
-    if (response.code === TronLinkResponseCode.LOCKED) {
-      throw new SwapKitError("wallet_locked", {
-        message: "TronLink is locked. Please unlock it to continue.",
-        wallet: WalletOption.TRONLINK,
-      });
-    }
-
-    if (response.code !== TronLinkResponseCode.SUCCESS) {
-      throw new Error(`TronLink error: ${response.message}`);
-    }
-  } catch (error: unknown) {
-    handleTronLinkError(error as TronLinkError);
   }
 }
 
@@ -111,80 +70,60 @@ export async function getWalletForChain(chain: Chain, expectedNetwork?: string) 
   }
 
   const tronLink = await waitForTronLink();
-
-  // Check if wallet is potentially locked
   const isLocked = await isTronLinkLocked();
 
-  // Always request accounts - this will trigger unlock prompt if needed
-  !isLocked && (await requestTronLinkAccounts(tronLink));
+  isLocked && (await requestTronLinkAccounts(tronLink));
 
-  // After successful account request, verify connection
   const address = tronLink.tronWeb?.defaultAddress?.base58;
 
-  if (!address) {
-    // If still no address after successful request, wallet might be locked
-    if (isLocked) {
-      throw new SwapKitError("wallet_locked", {
-        message: "TronLink is locked. Please unlock it to continue.",
-        wallet: WalletOption.TRONLINK,
-      });
-    }
-
-    throw new SwapKitError("wallet_provider_not_found", {
-      message: "No account found in TronLink",
-      wallet: WalletOption.TRONLINK,
-    });
-  }
-
-  // Verify network if required
   if (expectedNetwork) {
     verifyNetwork(expectedNetwork);
   }
 
-  // Create signer object
-  const signer: TronSigner = {
+  const signer = {
     getAddress: async () => address,
     signTransaction: async (transaction: TronTransaction) => {
       return await tronLink.tronWeb.trx.sign(transaction);
     },
   };
 
-  // Create toolbox with signer
   const toolbox = await createTronToolbox({ signer });
 
-  // Return wallet methods
   return { ...toolbox, address };
 }
 
 export function setupEventListeners(
   onAccountChange?: (address: string) => void,
   onNetworkChange?: (network: string) => void,
-): () => void {
+) {
   const messageHandler = (event: MessageEvent) => {
-    if (event.data?.message?.action === "setAccount") {
-      const newAddress = event.data.message.data.address;
-      if (onAccountChange) {
-        onAccountChange(newAddress);
-      } else {
-        // Default behavior: reload the page
-        window.location.reload();
-      }
-    }
+    const eventDataAction = event.data?.message?.action;
 
-    if (event.data?.message?.action === "setNode") {
-      const node = event.data.message.data.node;
-      if (onNetworkChange) {
-        onNetworkChange(node.fullNode);
-      } else {
-        // Default behavior: reload the page on network change
+    switch (eventDataAction) {
+      case "setAccount": {
+        const newAddress = event.data.message.data.address;
+        if (onAccountChange) {
+          onAccountChange(newAddress);
+          return;
+        }
         window.location.reload();
+        return;
       }
+      case "setNode": {
+        const node = event.data.message.data.node;
+        if (onNetworkChange) {
+          onNetworkChange(node.fullNode);
+        }
+        window.location.reload();
+        return;
+      }
+      default:
+        return;
     }
   };
 
   window.addEventListener("message", messageHandler);
 
-  // Return cleanup function
   return () => window.removeEventListener("message", messageHandler);
 }
 

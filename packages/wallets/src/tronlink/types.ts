@@ -9,7 +9,7 @@ declare global {
 
 export interface TronLinkWindow {
   ready: boolean;
-  request: (args: { method: string; params?: unknown }) => Promise<TronLinkResponse>;
+  request: (args: { method: string; params?: unknown }) => Promise<TronLinkResponse | "">;
   tronWeb: {
     defaultAddress: { base58: string; hex: string };
     fullNode?: { host: string };
@@ -41,9 +41,4 @@ export interface TronLinkResponse {
 export interface TronLinkEvents {
   setAccount: { address: string };
   setNode: { node: { chain: string; fullNode: string } };
-}
-
-export interface TronLinkError extends Error {
-  code: number;
-  data?: unknown;
 }
