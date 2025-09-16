@@ -70,7 +70,6 @@ const errorCodes = {
   wallet_missing_params: 20004,
   wallet_provider_not_found: 20005,
   wallet_failed_to_add_or_switch_network: 20006,
-  wallet_locked: 20007,
   /**
    * Wallets - Ledger
    */
@@ -239,7 +238,6 @@ const errorCodes = {
   wallet_near_extensions_no_provider: 22002,
   wallet_near_extensions_not_found: 22003,
   wallet_near_method_not_supported: 22003,
-
   /**
    * Wallets - Vultisig
    */
@@ -257,6 +255,11 @@ const errorCodes = {
   wallet_xaman_connection_failed: 23004,
   wallet_xaman_transaction_failed: 23005,
   wallet_xaman_monitoring_failed: 23006,
+  /**
+   * Wallets - TronLink
+   */
+  wallet_tronlink_request_accounts_failed: 24001,
+  wallet_tronlink_locked: 24002,
 
   /**
    * Chainflip
