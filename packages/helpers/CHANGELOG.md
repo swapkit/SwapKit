@@ -1,5 +1,12 @@
 # @swapkit/helpers
 
+## 4.0.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.16
+
 ## 4.0.15
 
 ### Patch Changes

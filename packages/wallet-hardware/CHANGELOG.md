@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.15
+
+### Patch Changes
+
+- [#1486](https://github.com/swapkit/SwapKit/pull/1486) [`99aa35e`](https://github.com/swapkit/SwapKit/commit/99aa35e985b7f04738ce12199ac9106c2ad8707c) Thanks [@towanTG](https://github.com/towanTG)! - Fixes zcash trezor memo bug and corrects zcash version in toolbox
+
+- Updated dependencies [[`99aa35e`](https://github.com/swapkit/SwapKit/commit/99aa35e985b7f04738ce12199ac9106c2ad8707c)]:
+  - @swapkit/toolboxes@4.0.16
+  - @swapkit/helpers@4.0.16
+
 ## 4.1.14
 
 ### Patch Changes
