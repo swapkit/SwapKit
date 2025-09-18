@@ -27,14 +27,21 @@ export const StagenetChains = [StagenetChain.THORChain, StagenetChain.Maya] as c
 
 type ChainConfigMap = {
   [K in ChainConfig["chain"]]: Extract<ChainConfig, { chain: K }>;
+} & {
+  [K in ChainConfig["chainId"]]: Extract<ChainConfig, { chainId: K }>;
 };
 
-const chainConfigMap = new Map<ChainConfig["chain"], ChainConfig>(
-  AllChainConfigs.map((config) => [config.chain, config]),
+const chainConfigs = AllChainConfigs.reduce(
+  (acc, config) => {
+    acc[config.chain] = config;
+    acc[config.chainId] = config;
+    return acc;
+  },
+  {} as Record<ChainConfig["chain"] | ChainConfig["chainId"], ChainConfig>,
 );
 
-export function getChainConfig<T extends Chain>(chain: T): ChainConfigMap[T] {
-  const chainConfig = chainConfigMap.get(chain);
+export function getChainConfig<T extends keyof ChainConfigMap>(chainOrChainId: T): ChainConfigMap[T] {
+  const chainConfig = chainConfigs[chainOrChainId];
 
   return (chainConfig || {}) as ChainConfigMap[T];
 }
