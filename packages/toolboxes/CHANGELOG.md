@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.17
+
+### Patch Changes
+
+- [#1488](https://github.com/swapkit/SwapKit/pull/1488) [`98afc83`](https://github.com/swapkit/SwapKit/commit/98afc83feacf172b495e460d4e7e3f331e3dd953) Thanks [@towanTG](https://github.com/towanTG)! - Undo some zcash version related changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.17
+
 ## 4.0.16
 
 ### Patch Changes
