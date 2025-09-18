@@ -495,6 +495,10 @@ export const createTronToolbox = async (
         sender,
       );
 
+      if (memo) {
+        return tronWeb.transactionBuilder.addUpdateData(result.transaction, memo, "utf8");
+      }
+
       return result.transaction;
     } catch (error) {
       // If both methods fail, throw a descriptive error

@@ -76,7 +76,6 @@ async function getTrezorWallet<T extends Chain>({
 
       const address = await getAddress();
 
-      // Create a signer that works with ZcashPsbt
       const signer = {
         getAddress: async () => address,
         signTransaction: async (zcashPsbt: ZcashPsbt) => {
@@ -86,7 +85,7 @@ async function getTrezorWallet<T extends Chain>({
             index < 3 ? ((pathElement as number) | 0x80000000) >>> 0 : (pathElement as number),
           );
 
-          const version = 4;
+          const version = 5;
           const versionGroupId = 0x892f2085;
           const branchId = 0xc8e71055;
 
@@ -99,20 +98,13 @@ async function getTrezorWallet<T extends Chain>({
           }));
 
           const outputs = zcashPsbt.txOutputs.map((output) => {
-            const maybeRecipient = zcashAddress.fromOutputScript(output.script, networks.zcash); // Validate address
-            // OP_RETURN
             if (output.value === 0n && output.script.length > 0 && output.script[0] === 0x6a) {
               return { amount: "0", op_return_data: output.script.toString("hex"), script_type: "PAYTOOPRETURN" };
             }
 
-            const isChangeAddress = maybeRecipient === address;
+            const maybeRecipient = zcashAddress.fromOutputScript(output.script, networks.zcash);
 
-            console.log({ inputs, output, maybeRecipient, isChangeAddress });
-            console.log(
-              isChangeAddress
-                ? { address_n, amount: output.value.toString(), script_type: "PAYTOADDRESS" }
-                : { address: maybeRecipient, amount: output.value.toString(), script_type: "PAYTOADDRESS" },
-            );
+            const isChangeAddress = maybeRecipient === address;
 
             return isChangeAddress
               ? { address_n, amount: output.value.toString(), script_type: "PAYTOADDRESS" }
@@ -221,7 +213,6 @@ async function getTrezorWallet<T extends Chain>({
             script_type: scriptType.input,
           })),
           outputs: psbt.txOutputs.map((output) => {
-            // OP_RETURN
             if (!output.address) {
               return { amount: "0", op_return_data: Buffer.from(memo).toString("hex"), script_type: "PAYTOOPRETURN" };
             }

@@ -143,14 +143,14 @@ async function createTransaction(buildTxParams: UTXOBuildTxParams) {
     throw new SwapKitError("toolbox_utxo_insufficient_balance", { assetValue, sender });
   }
 
-  const psbt = bitgo.createPsbtForNetwork({ network: getZcashNetwork() }, { version: 455 }) as ZcashPsbt;
+  const psbt = bitgo.createPsbtForNetwork({ network: getZcashNetwork() }, { version: 500 }) as ZcashPsbt;
 
-  psbt.setVersion(4, true);
+  const NU6 = 0xc8e71055;
+  //   const NU5 = 0xc2d6d0b4;
+  //   const branchId = tipHeight >= 2726400 ? NU6 : tipHeight >= 1687104 ? NU5 : NU5;
+  const branchId = NU6;
 
   const CONSENSUS_BRANCH_ID_KEY = Buffer.concat([Buffer.of(0xfc), Buffer.of(0x05), Buffer.from("BITGO"), Buffer.of(0)]);
-
-  // NU6 branch id (decimal 3370586197 = 0xC8E71055)
-  const branchId = 0xc8e71055;
 
   // PSBT value must be 4-byte little-endian
   const value = Buffer.allocUnsafe(4);
