@@ -1,6 +1,7 @@
 import { AssetValue, BaseDecimal, Chain, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
+import { getBalance } from "../utils";
 import {
   getFullAccessPublicKey,
   getNearSignerFromPhrase,
@@ -346,50 +347,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     return createNEP141Token({ account, contractId });
   }
 
-  async function getBalance(address: string) {
-    try {
-      const account = await getAccount(address);
-
-      let nativeBalance: AssetValue;
-      try {
-        const value = await account.getBalance();
-
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value });
-      } catch {
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: "0" });
-      }
-
-      //   // Then, fetch token balances from API
-      //   let tokenBalances: AssetValue[] = [];
-      //   try {
-      //     const apiBalances = await SwapKitApi.getChainBalance({
-      //       chain: Chain.Near,
-      //       address,
-      //       scamFilter,
-      //     });
-
-      //     tokenBalances = apiBalances
-      //       .filter(({ identifier }) => identifier !== Chain.Near) // Filter out native NEAR
-      //       .map(({ identifier, value, decimal }) => {
-      //         return new AssetValue({
-      //           decimal: decimal || BaseDecimal[Chain.Near],
-      //           value,
-      //           identifier,
-      //         });
-      //       });
-      //   } catch (error) {
-      //     // If API fails, just return on-chain balance
-      //     console.warn("Failed to fetch token balances from API:", error);
-      //   }
-
-      // Merge native balance with token balances
-      //   return [nativeBalance, ...tokenBalances];
-      return [nativeBalance];
-    } catch (error) {
-      throw new SwapKitError("toolbox_near_balance_failed", { error });
-    }
-  }
-
   async function estimateGas(params: NearGasEstimateParams, account?: Account) {
     const gasInTGas = await match(params)
       .when(isSimpleTransfer, () => GAS_COSTS.SIMPLE_TRANSFER)
@@ -437,7 +394,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     estimateTransactionFee,
     executeBatchTransaction,
     getAddress,
-    getBalance,
+    getBalance: getBalance(Chain.Near),
     getGasPrice,
     getPublicKey: async () => (signer ? (await signer.getPublicKey()).toString() : ""),
     getSignerFromPhrase: (params: GetSignerFromPhraseParams) => getNearSignerFromPhrase(params),
