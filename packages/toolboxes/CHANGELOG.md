@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.18
+
+### Patch Changes
+
+- [#1490](https://github.com/swapkit/SwapKit/pull/1490) [`69ca725`](https://github.com/swapkit/SwapKit/commit/69ca725828d4adf996d627e494c560a71fdefc4b) Thanks [@towanTG](https://github.com/towanTG)! - Uses SwapKit Api for Near balance fetching
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.18
+
 ## 4.0.17
 
 ### Patch Changes
