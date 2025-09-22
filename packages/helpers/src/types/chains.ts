@@ -173,7 +173,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Chainflip]: 5,
   [Chain.Cosmos]: 2,
   [Chain.Dash]: 150,
-  [Chain.Dogecoin]: 600,
+  [Chain.Dogecoin]: 60,
   [Chain.Ethereum]: 12.5,
   [Chain.Fiat]: 60,
   [Chain.Gnosis]: 5.2,
@@ -190,7 +190,7 @@ export const BlockTimes: Record<Partial<Chain>, number> = {
   [Chain.Solana]: 0.4,
   [Chain.THORChain]: 6,
   [Chain.Tron]: 3,
-  [Chain.Zcash]: 150,
+  [Chain.Zcash]: 75,
 };
 
 export type SubstrateChain = Chain.Polkadot | Chain.Chainflip;
