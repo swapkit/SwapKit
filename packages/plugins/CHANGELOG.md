@@ -1,5 +1,11 @@
 # @swapkit/plugins
 
+## 4.0.20
+
+### Patch Changes
+
+- [#1492](https://github.com/swapkit/SwapKit/pull/1492) [`1981f09`](https://github.com/swapkit/SwapKit/commit/1981f09ad7be6d70a22d6f18637c3717e3392a4e) Thanks [@towanTG](https://github.com/towanTG)! - Updates params for deposit channel creation to support dex aggregation for chainflip
+
 ## 4.0.19
 
 ### Patch Changes
