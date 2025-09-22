@@ -26,6 +26,7 @@ export type SKConfigIntegrations = {
   };
 };
 
+// biome-ignore assist/source/useSortedKeys: Config
 const initialState = {
   apiKeys: { blockchair: "", keepKey: "", swapKit: "", walletConnectProjectId: "", xaman: "" },
   // TODO: figure out how to type apis without using toolbox directly
@@ -39,8 +40,6 @@ const initialState = {
     isDev: false,
     isStagenet: false,
   },
-  explorerUrls: EXPLORER_URLS,
-  fallbackRpcUrls: FALLBACK_URLS,
 
   feeMultipliers: undefined as FeeMultiplierConfig | undefined,
 
@@ -52,11 +51,14 @@ const initialState = {
       network: { dashboardBase: "https://dashboard.radixdlt.com", networkId: 1, networkName: "mainnet" },
     },
   } as SKConfigIntegrations,
-  nodeUrls: NODE_URLS,
 
   requestOptions: { retry: { backoffMultiplier: 2, baseDelay: 300, maxDelay: 5000, maxRetries: 3 }, timeoutMs: 30000 },
-  rpcUrls: RPC_URLS,
   wallets: Object.values(WalletOption),
+
+  explorerUrls: EXPLORER_URLS,
+  fallbackRpcUrls: FALLBACK_URLS,
+  nodeUrls: NODE_URLS,
+  rpcUrls: RPC_URLS,
 };
 type SKState = typeof initialState;
 

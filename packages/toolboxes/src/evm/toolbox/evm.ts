@@ -1,5 +1,4 @@
 import { Chain, type EVMChain, FeeOption, getRPCUrl } from "@swapkit/helpers";
-import { HDNodeWallet } from "ethers";
 import { match, P } from "ts-pattern";
 
 import { getEvmApi } from "../api";
@@ -40,6 +39,7 @@ export const MATICToolbox = createEvmToolbox(Chain.Polygon);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
   return async function createEvmToolbox({ provider: providerParam, ...toolboxSignerParams }: EVMToolboxParams) {
+    const { HDNodeWallet } = await import("ethers");
     const rpcUrl = await getRPCUrl(chain);
 
     const provider = providerParam || (await getProvider(chain, rpcUrl));

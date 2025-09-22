@@ -35,7 +35,9 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [Chain.Radix]: "https://radix-mainnet.rpc.grove.city/v1/326002fc/core",
   [Chain.Ripple]: "wss://xrpl.ws/",
   [Chain.Solana]: "https://solana-rpc.publicnode.com",
+  [Chain.Sui]: "https://fullnode.mainnet.sui.io:443",
   [Chain.THORChain]: "https://rpc.ninerealms.com",
+  [Chain.Ton]: "https://toncenter.com/api/v2/jsonRPC",
   [Chain.Tron]: "https://tron-rpc.publicnode.com",
   [Chain.Zcash]:
     "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
@@ -43,6 +45,9 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = {
   [StagenetChain.THORChain]: "https://stagenet-rpc.ninerealms.com",
 };
 
+/**
+ * @deprecated
+ */
 export const NODE_URLS = {
   [Chain.THORChain]: "https://thornode.ninerealms.com",
   [Chain.Maya]: "https://mayanode.mayachain.info",
@@ -87,6 +92,8 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.THORChain]: ["https://thornode.ninerealms.com", NODE_URLS[Chain.THORChain]],
   [StagenetChain.THORChain]: [],
   [Chain.Solana]: ["https://api.mainnet-beta.solana.com", "https://solana-mainnet.rpc.extrnode.com"],
+  [Chain.Sui]: ["https://fullnode.mainnet.sui.io:443"],
+  [Chain.Ton]: ["https://toncenter.com/api/v2/jsonRPC"],
   [Chain.Tron]: ["https://api.tronstack.io", "https://api.tron.network"],
   [Chain.Zcash]: [],
 };
@@ -126,6 +133,8 @@ export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Ripple]: "https://livenet.xrpl.org/",
   [Chain.THORChain]: "https://runescan.io",
   [Chain.Solana]: "https://solscan.io",
+  [Chain.Sui]: "https://suiscan.xyz",
+  [Chain.Ton]: "https://tonscan.org",
   [Chain.Tron]: "https://tronscan.org",
   [Chain.Zcash]: "https://blockchair.com/zcash",
 };

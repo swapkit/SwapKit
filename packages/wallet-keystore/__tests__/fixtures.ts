@@ -1,5 +1,5 @@
 import { Chain } from "@swapkit/helpers";
-import type { KEYSTORE_SUPPORTED_CHAINS } from "../src/keystore";
+import type { KEYSTORE_SUPPORTED_CHAINS } from "../src";
 
 export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[number], string> = {
   // [Chain.Radix]: "16kQVedQo7yYoFSp2MnQ78zP39xWnFGePnZps2APEyt9K9KZ",
@@ -27,6 +27,8 @@ export const testKeystoreAddresses: Record<(typeof KEYSTORE_SUPPORTED_CHAINS)[nu
   [Chain.Polygon]: "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
   [Chain.Ripple]: "rhDQXdwWR2RstC7sLjLMbjCeWT3PuSAZVu",
   [Chain.Solana]: "4UHWuPwyV3XCcnwrpEdWAEW3WLUP1RDMaK3ANNsRUjfM",
+  [Chain.Sui]: "0x57b861db681d8e47b586e6e9a92f6ed210dbbb440670b8122420848cf0e844fb",
+  [Chain.Ton]: "EQCC1GV4iL5EkQqICYshf3AF7ESbceCYhVK-go1SkOMOBTNE",
   [Chain.THORChain]: "thor1hm0sdz9v2h5jwjuu0ssp8x98upvlc6py2uq4vz",
   [Chain.Tron]: "THr473cZqHwBLEmTWUUR1WTotxijWWbRGD",
   [Chain.Zcash]: "t1Mh7QW9g1gK94CSRxniD49aLAJ67s6UerX",

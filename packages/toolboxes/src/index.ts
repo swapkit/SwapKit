@@ -18,6 +18,8 @@ import type { RadixToolbox } from "./radix";
 import type { getRippleToolbox } from "./ripple";
 import type { getSolanaToolbox, SolanaCreateTransactionParams } from "./solana";
 import type { getSubstrateToolbox } from "./substrate";
+import type { getSuiToolbox, SuiCreateTransactionParams } from "./sui";
+import type { getTONToolbox } from "./ton";
 import type { createTronToolbox } from "./tron";
 import type { getUtxoToolbox } from "./utxo";
 
@@ -33,10 +35,14 @@ export async function getAddressValidator() {
   const { getValidateNearAddress } = await import("./near");
   const { rippleValidateAddress } = await import("./ripple");
   const { radixValidateAddress } = await import("./radix");
+  const { getTONAddressValidator } = await import("./ton");
   const { getTronAddressValidator } = await import("./tron");
+  const { getSuiAddressValidator } = await import("./sui");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
+  const suiValidateAddress = await getSuiAddressValidator();
   const utxoValidateAddress = await getUTXOAddressValidator();
+  const tonValidateAddress = await getTONAddressValidator();
   const tronValidateAddress = await getTronAddressValidator();
   const nearValidateAddress = await getValidateNearAddress();
 
@@ -54,6 +60,8 @@ export async function getAddressValidator() {
       .with(Chain.Near, () => nearValidateAddress(address))
       .with(Chain.Ripple, () => rippleValidateAddress(address))
       .with(Chain.Solana, () => solanaValidateAddress(address))
+      .with(Chain.Sui, () => suiValidateAddress(address))
+      .with(Chain.Ton, () => tonValidateAddress(address))
       .with(Chain.Tron, () => tronValidateAddress(address))
       .otherwise(() => false);
 
@@ -105,6 +113,16 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
           return toolbox.estimateTransactionFee(params) as Promise<AssetValue>;
         },
       )
+      .with(Chain.Sui, async () => {
+        const { getSuiToolbox } = await import("./sui");
+        const suiToolbox = await getSuiToolbox();
+        return suiToolbox.estimateTransactionFee(params as SuiCreateTransactionParams);
+      })
+      .with(Chain.Ton, async () => {
+        const { getTONToolbox } = await import("./ton");
+        const tonToolbox = await getTONToolbox();
+        return tonToolbox.estimateTransactionFee();
+      })
       .with(Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Noble, Chain.Cosmos, async () => {
         const { estimateTransactionFee } = await import("./cosmos");
         return estimateTransactionFee(params);
@@ -126,6 +144,8 @@ type Toolboxes = {
   [Chain.Near]: Awaited<ReturnType<typeof getNearToolbox>>;
   [Chain.Ripple]: Awaited<ReturnType<typeof getRippleToolbox>>;
   [Chain.Solana]: Awaited<ReturnType<typeof getSolanaToolbox>>;
+  [Chain.Sui]: Awaited<ReturnType<typeof getSuiToolbox>>;
+  [Chain.Ton]: Awaited<ReturnType<typeof getTONToolbox>>;
   [Chain.Tron]: Awaited<ReturnType<typeof createTronToolbox>>;
 };
 
@@ -140,6 +160,8 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
   [Chain.Near]: Parameters<typeof getNearToolbox>[0];
   [Chain.Ripple]: Parameters<typeof getRippleToolbox>[0];
   [Chain.Solana]: Parameters<typeof getSolanaToolbox>[0];
+  [Chain.Sui]: Parameters<typeof getSuiToolbox>[0];
+  [Chain.Ton]: Parameters<typeof getTONToolbox>[0];
   [Chain.Tron]: Parameters<typeof createTronToolbox>[0];
 };
 
@@ -154,6 +176,8 @@ type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams }
   [Chain.Ripple]: GenericCreateTransactionParams;
   [Chain.Near]: GenericCreateTransactionParams;
   [Chain.Solana]: SolanaCreateTransactionParams;
+  [Chain.Sui]: SuiCreateTransactionParams;
+  [Chain.Ton]: GenericCreateTransactionParams;
   [Chain.Tron]: GenericCreateTransactionParams;
 };
 
@@ -218,15 +242,25 @@ export async function getToolbox<T extends keyof Toolboxes>(
       const solanaToolbox = await getSolanaToolbox(params as Parameters<typeof getSolanaToolbox>[0]);
       return solanaToolbox as Toolboxes[T];
     })
+    .with(Chain.Sui, async () => {
+      const { getSuiToolbox } = await import("./sui");
+      const suiToolbox = await getSuiToolbox(params as Parameters<typeof getSuiToolbox>[0]);
+      return suiToolbox as Toolboxes[T];
+    })
     .with(Chain.Tron, async () => {
       const { createTronToolbox } = await import("./tron");
-      const tronToolbox = await createTronToolbox(params);
+      const tronToolbox = await createTronToolbox(params as Parameters<typeof createTronToolbox>[0]);
       return tronToolbox as Toolboxes[T];
     })
     .with(Chain.Near, async () => {
       const { getNearToolbox } = await import("./near");
       const nearToolbox = await getNearToolbox(params as Parameters<typeof getNearToolbox>[0]);
       return nearToolbox as Toolboxes[T];
+    })
+    .with(Chain.Ton, async () => {
+      const { getTONToolbox } = await import("./ton");
+      const tonToolbox = await getTONToolbox(params as Parameters<typeof getTONToolbox>[0]);
+      return tonToolbox as Toolboxes[T];
     })
     .otherwise(() => {
       throw new SwapKitError("toolbox_not_supported", { chain });

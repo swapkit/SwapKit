@@ -26,6 +26,8 @@ export enum Chain {
   Ripple = "XRP",
   THORChain = "THOR",
   Solana = "SOL",
+  Sui = "SUI",
+  Ton = "TON",
   Tron = "TRON",
   Zcash = "ZEC",
 }
@@ -63,6 +65,8 @@ export enum ChainId {
   XRP = "ripple",
   THOR = "thorchain-1",
   SOL = "solana",
+  SUI = "sui",
+  TON = "ton",
   TRON = "728126428",
   ZEC = "zcash",
 

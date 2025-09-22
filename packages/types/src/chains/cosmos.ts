@@ -25,7 +25,7 @@ export const THORConfig = createChain({
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
-  rpcUrl: "https://rpc.thorswap.net",
+  rpcUrl: "https://rpc.ninerealms.com",
   type,
 });
 
@@ -38,7 +38,7 @@ export const StagenetTHORConfig = createChain({
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
-  rpcUrl: "https://rpc.thorswap.net",
+  rpcUrl: "https://stagenet-rpc.ninerealms.com",
   type,
 });
 

@@ -55,6 +55,19 @@ const SOL = createChain({
   type,
 });
 
+const TON = createChain({
+  baseDecimal: 9,
+  blockExplorerUrl: "https://tonscan.org",
+  blockTime: 5,
+  chain: Chain.Ton,
+  chainId: ChainId.TON,
+  explorerUrl: "https://tonscan.org",
+  name: "Ton",
+  nativeCurrency: "TON",
+  rpcUrl: "https://toncenter.com/api/v2/jsonRPC",
+  type,
+});
+
 const TRON = createChain({
   baseDecimal: 6,
   blockExplorerUrl: "https://tronscan.org",
@@ -66,6 +79,19 @@ const TRON = createChain({
   name: "Tron",
   nativeCurrency: "TRX",
   rpcUrl: "https://tron-rpc.publicnode.com",
+  type,
+});
+
+const SUI = createChain({
+  baseDecimal: 9,
+  blockExplorerUrl: "https://suiscan.io",
+  blockTime: 5,
+  chain: Chain.Sui,
+  chainId: ChainId.SUI,
+  explorerUrl: "https://suiscan.io",
+  name: "Sui",
+  nativeCurrency: "SUI",
+  rpcUrl: "https://fullnode.mainnet.sui.io:443",
   type,
 });
 
@@ -82,6 +108,6 @@ const FIAT = createChain({
   type,
 });
 
-export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TRON, FIAT] as const;
+export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TON, TRON, SUI, FIAT] as const;
 export const OtherChains = OtherChainConfigs.map((config) => config.chain);
 export type OtherChain = (typeof OtherChains)[number];

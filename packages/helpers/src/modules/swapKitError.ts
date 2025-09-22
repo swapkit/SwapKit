@@ -30,6 +30,7 @@ const errorCodes = {
   core_wallet_not_keypair_wallet: 10112,
   core_wallet_sign_message_not_supported: 10113,
   core_wallet_connection_failed: 10114,
+  core_wallet_create_not_supported: 10115,
   /**
    * Core - Swap
    */
@@ -380,6 +381,17 @@ const errorCodes = {
   toolbox_near_missing_contract_address: 90610,
   toolbox_near_no_account: 90611,
   toolbox_near_invalid_gas_params: 90612,
+  /**
+   * Toolboxes - SUI
+   */
+  toolbox_sui_address_required: 90701,
+  toolbox_sui_keypair_required: 90702,
+  toolbox_sui_balance_error: 90703,
+  toolbox_sui_transaction_creation_error: 90704,
+  toolbox_sui_signing_error: 90705,
+  toolbox_sui_broadcast_error: 90706,
+  toolbox_sui_no_signer: 90707,
+  toolbox_sui_no_sender: 90708,
   /**
    * Toolboxes - General
    */

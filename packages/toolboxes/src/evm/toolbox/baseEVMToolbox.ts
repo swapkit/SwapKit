@@ -208,7 +208,6 @@ export function getEstimateGasPrices({
     return async function estimateGasPrices() {
       try {
         const { gasPrice } = await provider.getFeeData();
-
         if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
 
         return { [FeeOption.Average]: { gasPrice }, [FeeOption.Fast]: { gasPrice }, [FeeOption.Fastest]: { gasPrice } };

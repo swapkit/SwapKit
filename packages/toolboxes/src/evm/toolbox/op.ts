@@ -22,11 +22,11 @@ function connectGasPriceOracle<P extends Provider>(provider: P) {
 }
 
 function getL1GasPriceFetcher<P extends Provider>(provider: P) {
-  return function getL1GasPrice() {
+  return async function getL1GasPrice() {
     const gasPriceOracle = connectGasPriceOracle(provider);
 
     if (gasPriceOracle && "l1BaseFee" in gasPriceOracle) {
-      return gasPriceOracle?.l1BaseFee() as unknown as bigint;
+      return (await gasPriceOracle?.l1BaseFee()) as unknown as bigint;
     }
 
     return undefined;
@@ -101,7 +101,7 @@ function getNetworkParams() {
 async function estimateGasPrices(provider: Provider) {
   try {
     const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
-    const l1GasPrice = getL1GasPriceFetcher(provider)();
+    const l1GasPrice = await getL1GasPriceFetcher(provider)();
     const price = gasPrice as bigint;
 
     if (!(maxFeePerGas && maxPriorityFeePerGas)) {
