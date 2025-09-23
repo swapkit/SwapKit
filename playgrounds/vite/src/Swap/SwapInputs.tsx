@@ -40,7 +40,6 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
 
     try {
       const { routes } = await SwapKitApi.getSwapQuote({
-        affiliate: "t",
         affiliateFee: 0,
         buyAsset: outputAsset.toString(),
         destinationAddress,
