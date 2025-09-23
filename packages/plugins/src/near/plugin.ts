@@ -171,8 +171,6 @@ export const NearPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, value: sellAmount });
 
-      debugger;
-
       const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
 
       if (!wallet) {
