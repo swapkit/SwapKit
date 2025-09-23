@@ -69,49 +69,129 @@ export enum ChainId {
   // Stagenet chains
   THOR_STAGENET = "thorchain-stagenet-v2",
   MAYA_STAGENET = "mayachain-stagenet-v1",
-}
 
-// export enum ChainId {
-//   Arbitrum = "42161",
-//   ArbitrumHex = "0xa4b1",
-//   Aurora = "1313161554",
-//   AuroraHex = "0x4e454152",
-//   Avalanche = "43114",
-//   AvalancheHex = "0xa86a",
-//   Base = "8453",
-//   BaseHex = "0x2105",
-//   Berachain = "80094",
-//   BerachainHex = "0x138de",
-//   BinanceSmartChain = "56",
-//   BinanceSmartChainHex = "0x38",
-//   Bitcoin = "bitcoin",
-//   BitcoinCash = "bitcoincash",
-//   Chainflip = "chainflip",
-//   Cosmos = "cosmoshub-4",
-//   Dash = "dash",
-//   Dogecoin = "dogecoin",
-//   Ethereum = "1",
-//   EthereumHex = "0x1",
-//   Fiat = "fiat",
-//   Gnosis = "100",
-//   GnosisHex = "0x64",
-//   Kujira = "kaiyo-1",
-//   Litecoin = "litecoin",
-//   Maya = "mayachain-mainnet-v1",
-//   MayaStagenet = "mayachain-stagenet-v1",
-//   Near = "near",
-//   Noble = "noble-1",
-//   Optimism = "10",
-//   OptimismHex = "0xa",
-//   Polkadot = "polkadot",
-//   Polygon = "137",
-//   PolygonHex = "0x89",
-//   Radix = "radix-mainnet",
-//   Ripple = "ripple",
-//   THORChain = "thorchain-1",
-//   THORChainStagenet = "thorchain-stagenet-v2",
-//   Solana = "solana",
-//   Tron = "728126428",
-//   TronHex = "0x2b6653dc",
-//   Zcash = "zcash",
-// }
+  /**
+   * @deprecated use ChainId.ARB
+   */
+  Arbitrum = "42161",
+  /**
+   * @deprecated use ChainId.AURORA
+   */
+  Aurora = "1313161554",
+  /**
+   * @deprecated use ChainId.AVAX
+   */
+  Avalanche = "43114",
+  /**
+   * @deprecated use ChainId.BASE
+   */
+  Base = "8453",
+  /**
+   * @deprecated use ChainId.BERA
+   */
+  Berachain = "80094",
+  /**
+   * @deprecated use ChainId.BSC
+   */
+  BinanceSmartChain = "56",
+  /**
+   * @deprecated use ChainId.BTC
+   */
+  Bitcoin = "bitcoin",
+  /**
+   * @deprecated use ChainId.BCH
+   */
+  BitcoinCash = "bitcoincash",
+  /**
+   * @deprecated use ChainId.FLIP
+   */
+  Chainflip = "chainflip",
+  /**
+   * @deprecated use ChainId.COSMOS
+   */
+  Cosmos = "cosmoshub-4",
+  /**
+   * @deprecated use ChainId.DASH
+   */
+  Dash = "dash",
+  /**
+   * @deprecated use ChainId.DOGE
+   */
+  Dogecoin = "dogecoin",
+  /**
+   * @deprecated use ChainId.ETH
+   */
+  Ethereum = "1",
+  /**
+   * @deprecated use ChainId.FIAT
+   */
+  Fiat = "fiat",
+  /**
+   * @deprecated use ChainId.GNO
+   */
+  Gnosis = "100",
+  /**
+   * @deprecated use ChainId.KUJI
+   */
+  Kujira = "kaiyo-1",
+  /**
+   * @deprecated use ChainId.LTC
+   */
+  Litecoin = "litecoin",
+  /**
+   * @deprecated use ChainId.MAYA
+   */
+  Maya = "mayachain-mainnet-v1",
+  /**
+   * @deprecated use ChainId.MAYA_STAGENET
+   */
+  MayaStagenet = "mayachain-stagenet-v1",
+  /**
+   * @deprecated use ChainId.NEAR
+   */
+  Near = "near",
+  /**
+   * @deprecated use ChainId.NOBLE
+   */
+  Noble = "noble-1",
+  /**
+   * @deprecated use ChainId.OP
+   */
+  Optimism = "10",
+  /**
+   * @deprecated use ChainId.DOT
+   */
+  Polkadot = "polkadot",
+  /**
+   * @deprecated use ChainId.POL
+   */
+  Polygon = "137",
+  /**
+   * @deprecated use ChainId.XRD
+   */
+  Radix = "radix-mainnet",
+  /**
+   * @deprecated use ChainId.XRP
+   */
+  Ripple = "ripple",
+  /**
+   * @deprecated use ChainId.THOR
+   */
+  THORChain = "thorchain-1",
+  /**
+   * @deprecated use ChainId.THOR_STAGENET
+   */
+  THORChainStagenet = "thorchain-stagenet-v2",
+  /**
+   * @deprecated use ChainId.SOL
+   */
+  Solana = "solana",
+  /**
+   * @deprecated use ChainId.TRON
+   */
+  Tron = "728126428",
+  /**
+   * @deprecated use ChainId.ZEC
+   */
+  Zcash = "zcash",
+}
