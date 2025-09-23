@@ -89,11 +89,10 @@ export async function createKeystoreWallet<T extends Chain[]>({
 
   return wallets.reduce(
     (acc, wallet) => {
-      // @ts-expect-error
-      acc[wallet.chain as keyof FullWallet] = wallet as FullWallet[keyof FullWallet];
+      acc[wallet.chain as T[number]] = wallet as FullWallet[T[number]];
       return acc;
     },
-    {} as { [key in keyof FullWallet]: FullWallet[key] },
+    {} as { [key in T[number]]: FullWallet[key] },
   );
 }
 

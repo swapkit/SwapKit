@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "0.9.4",
     "@astrojs/react": "4.3.0",
     "@astrojs/starlight": "0.35.2",
     "@shikijs/twoslash": "3.11.0",

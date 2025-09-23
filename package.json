@@ -11,7 +11,6 @@
   },
   "name": "swapkit-monorepo",
   "packageManager": "bun@^1.2.18",
-  "patchedDependencies": { "starlight-openapi@0.18.0": "patches/starlight-openapi@0.18.0.patch" },
   "private": true,
   "scripts": {
     "bootstrap": "bun clean --force; bun build:ci",
