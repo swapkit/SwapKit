@@ -1,4 +1,4 @@
-import { createSwapKit } from "@swapkit/sdk";
+import { AssetValue, createSwapKit } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
 
@@ -17,7 +17,7 @@ export const getSwapKitClient = ({
     config: {
       apiKeys: {
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-        swapKit: process.env.TEST_API_KEY,
+        swapKit: "3a86e7e1-54fd-4766-8cf5-d16ae00dde1b",
         walletConnectProjectId: walletConnectProjectId || "",
         xaman: process.env.XAMAN_API_KEY || "",
       },
@@ -30,10 +30,13 @@ export const getSwapKitClient = ({
           url: "http://localhost:1646",
         },
       },
+      envs: { isDev: true },
     },
   });
 
   return skClient;
 };
+
+await AssetValue.loadStaticAssets();
 
 export type SwapKitClient = ReturnType<typeof getSwapKitClient>;

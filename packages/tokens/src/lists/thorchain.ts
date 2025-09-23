@@ -1,10 +1,10 @@
 export const list = {
   chainId: "thorchain-1",
-  count: 79,
+  count: 78,
   keywords: [],
   name: "THORCHAIN",
   provider: "THORCHAIN",
-  timestamp: "2025-07-30T16:02:14.612Z",
+  timestamp: "2025-09-23T11:44:34.830Z",
   tokens: [
     {
       chain: "AVAX",
@@ -44,16 +44,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/avax.usdt-0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png",
       ticker: "USDT",
-    },
-    {
-      address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
-      chain: "BASE",
-      chainId: "8453",
-      decimals: 8,
-      identifier: "BASE.cbBTC-0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/base.cbbtc-0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf.png",
-      ticker: "cbBTC",
     },
     {
       chain: "BASE",
@@ -248,16 +238,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lusd-0x5f98805a4e8be255a32880fdec7f6728c6568ba0.png",
       ticker: "LUSD",
-    },
-    {
-      address: "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SNX-0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.snx-0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png",
-      ticker: "SNX",
     },
     {
       address: "0x108a850856Db3f85d0269a2693D896B394C80325",
@@ -725,6 +705,14 @@ export const list = {
       identifier: "THOR.TCY",
       logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/thor.tcy.png",
       ticker: "TCY",
+    },
+    {
+      chain: "THOR",
+      chainId: "thorchain-1",
+      decimals: 8,
+      identifier: "THOR.THOR/NAMI",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/thor.nami.png",
+      ticker: "NAMI",
     },
     {
       chain: "THOR",

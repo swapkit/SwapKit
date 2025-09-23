@@ -25,14 +25,13 @@ export async function getNearSignerFromPhrase(params: {
   const { parseSeedPhrase } = await import("near-seed-phrase");
   const { KeyPair } = await import("near-api-js");
 
-  // Handle derivation path logic here
-  // NEAR uses a 3-level derivation path: m/44'/397'/index'
   const index = params.index || 0;
   const derivationPath = params.derivationPath
     ? derivationPathToString(params.derivationPath.slice(0, 3) as [number, number, number])
     : `m/44'/397'/${index}'`;
 
   const { secretKey } = parseSeedPhrase(params.phrase, derivationPath);
+  console.log(secretKey);
   const keyPair = KeyPair.fromString(secretKey as any);
 
   return createNearSignerFromKeyPair(keyPair);
@@ -53,8 +52,6 @@ class SKKeyPairSigner extends KeyPairSigner {
   }
 
   getAddress(): Promise<string> {
-    // For implicit accounts, derive account ID from public key
-    // NEAR implicit accounts use hex representation of the public key
     const publicKey = this.#keyPair.getPublicKey();
     const hexAddress = Buffer.from(publicKey.data).toString("hex");
     return Promise.resolve(hexAddress);
@@ -68,7 +65,6 @@ function createNearSignerFromKeyPair(keyPair: KeyPair): NearSigner {
 }
 
 export async function getFullAccessPublicKey(provider: Provider, accountId: string) {
-  // Get the first full access key for the account
   const response = await provider.query({
     account_id: accountId,
     finality: "final",

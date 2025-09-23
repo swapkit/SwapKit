@@ -5,20 +5,11 @@ import type { NEP141Token } from "../helpers/nep141";
 import type { NearCreateTransactionParams, NearFunctionCallParams, NearSigner, NearTransferParams } from "../types";
 import type { NearContractInterface, NearGasEstimateParams } from "../types/contract";
 
-// Type for serialized transaction data
-export interface SerializedTransaction {
-  serialized: string;
-  publicKey: string;
-  details: { signerId: string; receiverId?: string; methodName?: string; nonce: number; blockHash: string };
-}
-
-// Type for batch transaction
 export interface BatchTransaction {
   receiverId: string;
   actions: Action[];
 }
 
-// Type for contract function call parameters
 export interface ContractFunctionCallParams {
   sender: string;
   contractId: string;
@@ -28,21 +19,22 @@ export interface ContractFunctionCallParams {
   attachedDeposit: string;
 }
 
-// Type for getSignerFromPhrase params
+export type CreateActionParams = Pick<ContractFunctionCallParams, "methodName" | "args" | "gas" | "attachedDeposit">;
+
 export interface GetSignerFromPhraseParams {
   phrase: string;
   derivationPath?: DerivationPathArray;
   index?: number;
 }
 
-// Main toolbox return type
 export interface NearToolbox {
   getAddress: () => Promise<string>;
   getPublicKey: () => Promise<string>;
   provider: providers.JsonRpcProvider;
   transfer: (params: NearTransferParams) => Promise<string>;
-  createTransaction: (params: NearCreateTransactionParams) => Promise<SerializedTransaction>;
-  createContractFunctionCall: (params: ContractFunctionCallParams) => Promise<SerializedTransaction>;
+  createAction: (params: CreateActionParams) => Promise<Action>;
+  createTransaction: (params: NearCreateTransactionParams) => Promise<Transaction>;
+  createContractFunctionCall: (params: ContractFunctionCallParams) => Promise<Transaction>;
   estimateTransactionFee: (params: NearTransferParams | NearGasEstimateParams) => Promise<AssetValue>;
   broadcastTransaction: (signedTransaction: SignedTransaction) => Promise<string>;
   signTransaction: (transaction: Transaction) => Promise<SignedTransaction>;
@@ -57,4 +49,5 @@ export interface NearToolbox {
   nep141: (contractId: string) => Promise<NEP141Token>;
   getGasPrice: () => Promise<string>;
   estimateGas: (params: NearGasEstimateParams, account?: Account) => Promise<AssetValue>;
+  serializeTransaction: (params: Transaction) => Promise<string>;
 }

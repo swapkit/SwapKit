@@ -1,12 +1,32 @@
 export const list = {
   chainId: "56",
-  count: 645,
+  count: 744,
   keywords: ["pancakeswap", "extended"],
   logoURI: "https://pancakeswap.finance/logo.png",
   name: "PANCAKESWAP",
   provider: "PANCAKESWAP",
-  timestamp: "2025-07-30T14:12:03.820Z",
+  timestamp: "2025-09-22T17:14:38.801Z",
   tokens: [
+    {
+      address: "0x19Ed254efa5E061D28d84650891a3db2A9940C16",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.$SUP-0X19ED254EFA5E061D28D84650891A3DB2A9940C16",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.$sup-0x19ed254efa5e061d28d84650891a3db2a9940c16.png",
+      ticker: "$SUP",
+    },
+    {
+      address: "0x4B948d64dE1F71fCd12fB586f4c776421a35b3eE",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.0G-0X4B948D64DE1F71FCD12FB586F4C776421A35B3EE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.0g-0x4b948d64de1f71fcd12fb586f4c776421a35b3ee.png",
+      ticker: "0G",
+    },
     {
       address: "0x63eC886286f30AD392749b9e8f24f67F5b8Ac394",
       chain: "BSC",
@@ -18,6 +38,16 @@ export const list = {
       ticker: "4EVER",
     },
     {
+      address: "0xf41C0B4F4cf972979877586635BB234FF4894444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.67-0XF41C0B4F4CF972979877586635BB234FF4894444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.67-0xf41c0b4f4cf972979877586635bb234ff4894444.png",
+      ticker: "67",
+    },
+    {
       address: "0x6EaDc05928ACd93eFB3FA0DFbC644D96C6Aa1Df8",
       chain: "BSC",
       chainId: "56",
@@ -26,6 +56,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.8pay v2-0x6eadc05928acd93efb3fa0dfbc644d96c6aa1df8.png",
       ticker: "8PAY V2",
+    },
+    {
+      address: "0x01bf3D77cd08b19Bf3F2309972123a2cCa0F6936",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AA-0X01BF3D77CD08B19BF3F2309972123A2CCA0F6936",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aa-0x01bf3d77cd08b19bf3f2309972123a2cca0f6936.png",
+      ticker: "AA",
     },
     {
       address: "0xfb6115445Bff7b52FeB98650C87f44907E58f802",
@@ -98,6 +138,16 @@ export const list = {
       ticker: "AFT",
     },
     {
+      address: "0x97aA6203D304D3FB4b297FE6AA02cd1e0737d78A",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AFX-0X97AA6203D304D3FB4B297FE6AA02CD1E0737D78A",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.afx-0x97aa6203d304d3fb4b297fe6aa02cd1e0737d78a.png",
+      ticker: "AFX",
+    },
+    {
       address: "0x3ca729BFD4bbaD155f072752510226b37A5b7723",
       chain: "BSC",
       chainId: "56",
@@ -128,6 +178,36 @@ export const list = {
       ticker: "AI",
     },
     {
+      address: "0x48a18A4782b65a0fBed4dcA608BB28038B7bE339",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 9,
+      identifier: "BSC.AIA-0X48A18A4782B65A0FBED4DCA608BB28038B7BE339",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aia-0x48a18a4782b65a0fbed4dca608bb28038b7be339.png",
+      ticker: "AIA",
+    },
+    {
+      address: "0x96AdaA33e175F4A7f20c099730bc78dd0B45745B",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AIBOT-0X96ADAA33E175F4A7F20C099730BC78DD0B45745B",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aibot-0x96adaa33e175f4a7f20c099730bc78dd0b45745b.png",
+      ticker: "AIBOT",
+    },
+    {
+      address: "0xDe04da55B74435d7B9f2C5c62D9F1b53929b09AA",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AICELL-0XDE04DA55B74435D7B9F2C5C62D9F1B53929B09AA",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aicell-0xde04da55b74435d7b9f2c5c62d9f1b53929b09aa.png",
+      ticker: "AICELL",
+    },
+    {
       address: "0x9558a9254890B2A8B057a789F413631B9084f4a3",
       chain: "BSC",
       chainId: "56",
@@ -136,6 +216,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.ain-0x9558a9254890b2a8b057a789f413631b9084f4a3.png",
       ticker: "AIN",
+    },
+    {
+      address: "0x81a7DA4074b8e0eD51beA40f9dCbDF4d9d4832b4",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AIO-0X81A7DA4074B8E0ED51BEA40F9DCBDF4D9D4832B4",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aio-0x81a7da4074b8e0ed51bea40f9dcbdf4d9d4832b4.png",
+      ticker: "AIO",
+    },
+    {
+      address: "0xA22159fACA8BF5c57A48888a2D4Ddafc88e4DDEB",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AIO-0XA22159FACA8BF5C57A48888A2D4DDAFC88E4DDEB",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aio-0xa22159faca8bf5c57a48888a2d4ddafc88e4ddeb.png",
+      ticker: "AIO",
     },
     {
       address: "0x55ad16Bd573B3365f43A9dAeB0Cc66A73821b4a5",
@@ -166,6 +266,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aitech-0x2d060ef4d6bf7f9e5edde373ab735513c0e4f944.png",
       ticker: "AITECH",
+    },
+    {
+      address: "0x2c3a8Ee94dDD97244a93Bc48298f97d2C412F7Db",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AKE-0X2C3A8EE94DDD97244A93BC48298F97D2C412F7DB",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.ake-0x2c3a8ee94ddd97244a93bc48298f97d2c412f7db.png",
+      ticker: "AKE",
+    },
+    {
+      address: "0x6CFfFa5bFD4277a04D83307fEedFe2D18D944DD2",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.ALEO-0X6CFFFA5BFD4277A04D83307FEEDFE2D18D944DD2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aleo-0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2.png",
+      ticker: "ALEO",
     },
     {
       address: "0x834eE470Ddb53b9337f07D909B10461C3035bb38",
@@ -318,6 +438,16 @@ export const list = {
       ticker: "AOG",
     },
     {
+      address: "0xd5dF4d260D7a0145F655bcBf3B398076F21016C7",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.AOP-0XD5DF4D260D7A0145F655BCBF3B398076F21016C7",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aop-0xd5df4d260d7a0145f655bcbf3b398076f21016c7.png",
+      ticker: "AOP",
+    },
+    {
       address: "0xC762043E211571eB34f1ef377e5e8e76914962f9",
       chain: "BSC",
       chainId: "56",
@@ -356,6 +486,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.arena-0xcffd4d3b517b77be32c76da768634de6c738889b.png",
       ticker: "ARENA",
+    },
+    {
+      address: "0x5d3A12c42E5372B2CC3264AB3cdcF660a1555238",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.ARIA-0X5D3A12C42E5372B2CC3264AB3CDCF660A1555238",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aria-0x5d3a12c42e5372b2cc3264ab3cdcf660a1555238.png",
+      ticker: "ARIA",
     },
     {
       address: "0x6F769E65c14Ebd1f68817F5f1DcDb61Cfa2D6f7e",
@@ -416,6 +556,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.asrr-0xf7626c7ff7b778aaf187d508d056a9398d9545d1.png",
       ticker: "ASRR",
+    },
+    {
+      address: "0x000Ae314E2A2172a039B26378814C252734f556A",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.ASTER-0X000AE314E2A2172A039B26378814C252734F556A",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.aster-0x000ae314e2a2172a039b26378814c252734f556a.png",
+      ticker: "ASTER",
     },
     {
       address: "0x917AF46B3C3c6e1Bb7286B9F59637Fb7C65851Fb",
@@ -618,6 +768,26 @@ export const list = {
       ticker: "BANK",
     },
     {
+      address: "0xd23A186A78c0B3B805505E5f8ea4083295ef9f3a",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BARD-0XD23A186A78C0B3B805505E5F8EA4083295EF9F3A",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bard-0xd23a186a78c0b3b805505e5f8ea4083295ef9f3a.png",
+      ticker: "BARD",
+    },
+    {
+      address: "0x0F0df6cB17ee5E883eddFEf9153fC6036BDB4e37",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BAS-0X0F0DF6CB17EE5E883EDDFEF9153FC6036BDB4E37",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bas-0x0f0df6cb17ee5e883eddfef9153fc6036bdb4e37.png",
+      ticker: "BAS",
+    },
+    {
       address: "0x101d82428437127bF1608F699CD651e6Abf9766E",
       chain: "BSC",
       chainId: "56",
@@ -716,6 +886,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bdo-0x190b589cf9fb8ddeabbfeae36a813ffb2a702454.png",
       ticker: "BDO",
+    },
+    {
+      address: "0x5E9A7b0a5eA6CD086417355B81b8015E95844444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BDOG-0X5E9A7B0A5EA6CD086417355B81B8015E95844444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bdog-0x5e9a7b0a5ea6cd086417355b81b8015e95844444.png",
+      ticker: "BDOG",
     },
     {
       address: "0x1036b2379F506761f237FBa7463857924Ef21Ce3",
@@ -828,6 +1008,16 @@ export const list = {
       ticker: "BIFI",
     },
     {
+      address: "0x79f294ae9C9257C1a8070Fd8ed66Bace24bc39D2",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BIG-0X79F294AE9C9257C1A8070FD8ED66BACE24BC39D2",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.big-0x79f294ae9c9257c1a8070fd8ed66bace24bc39d2.png",
+      ticker: "BIG",
+    },
+    {
       address: "0x5fdfaFd107Fc267bD6d6B1C08fcafb8d31394ba1",
       chain: "BSC",
       chainId: "56",
@@ -856,6 +1046,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.blk-0x63870a18b6e42b01ef1ad8a2302ef50b7132054f.png",
       ticker: "BLK",
+    },
+    {
+      address: "0xfDc8Cd47848c0C67dF66F7120F4e3371181cFA5e",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 9,
+      identifier: "BSC.BLUM-0XFDC8CD47848C0C67DF66F7120F4E3371181CFA5E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.blum-0xfdc8cd47848c0c67df66f7120f4e3371181cfa5e.png",
+      ticker: "BLUM",
     },
     {
       address: "0x08ba0619b1e7A582E0BCe5BBE9843322C954C340",
@@ -978,6 +1178,16 @@ export const list = {
       ticker: "BOOP",
     },
     {
+      address: "0xbE7E12B2E128bC955A0130fFB168F031d7dD8d58",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BOOST-0XBE7E12B2E128BC955A0130FFB168F031D7DD8D58",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.boost-0xbe7e12b2e128bc955a0130ffb168f031d7dd8d58.png",
+      ticker: "BOOST",
+    },
+    {
       address: "0xffEecbf8D7267757c2dc3d13D730E97E15BfdF7F",
       chain: "BSC",
       chainId: "56",
@@ -986,6 +1196,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.boring-0xffeecbf8d7267757c2dc3d13d730e97e15bfdf7f.png",
       ticker: "BORING",
+    },
+    {
+      address: "0x59537849f2a119ec698c7Aa6C6DaAdc40C398A25",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BOT-0X59537849F2A119EC698C7AA6C6DAADC40C398A25",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bot-0x59537849f2a119ec698c7aa6c6daadc40c398a25.png",
+      ticker: "BOT",
     },
     {
       address: "0x9F5d4479b783327b61718fa13B3a0583869a80c1",
@@ -1128,6 +1348,26 @@ export const list = {
       ticker: "BSCX",
     },
     {
+      address: "0x85E92213fcA84aA99AdbAC5049D8426984D64444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BSTR-0X85E92213FCA84AA99ADBAC5049D8426984D64444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bstr-0x85e92213fca84aa99adbac5049d8426984d64444.png",
+      ticker: "BSTR",
+    },
+    {
+      address: "0x1AeCab957bAD4C6e36DD29C3d3BB470c4C29768A",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BSU-0X1AECAB957BAD4C6E36DD29C3D3BB470C4C29768A",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bsu-0x1aecab957bad4c6e36dd29c3d3bb470c4c29768a.png",
+      ticker: "BSU",
+    },
+    {
       address: "0x965F527D9159dCe6288a2219DB51fc6Eef120dD1",
       chain: "BSC",
       chainId: "56",
@@ -1165,6 +1405,16 @@ export const list = {
       identifier: "BSC.BTR-0X5A16E8CE8CA316407C6E6307095DC9540A8D62B3",
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.btr-0x5a16e8ce8ca316407c6e6307095dc9540a8d62b3.png",
+      ticker: "BTR",
+    },
+    {
+      address: "0xfed13D0c40790220fbdE712987079Eda1Ed75C51",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.BTR-0XFED13D0C40790220FBDE712987079EDA1ED75C51",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.btr-0xfed13d0c40790220fbde712987079eda1ed75c51.png",
       ticker: "BTR",
     },
     {
@@ -1378,6 +1628,16 @@ export const list = {
       ticker: "CEEK",
     },
     {
+      address: "0xDa67fbF4e6Fa4bb78F62533B7264E1B13295fDF3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.CELB-0XDA67FBF4E6FA4BB78F62533B7264E1B13295FDF3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.celb-0xda67fbf4e6fa4bb78f62533b7264e1b13295fdf3.png",
+      ticker: "CELB",
+    },
+    {
       address: "0x1613957159E9B0ac6c80e824F7Eea748a32a0AE2",
       chain: "BSC",
       chainId: "56",
@@ -1518,6 +1778,16 @@ export const list = {
       ticker: "CROSS",
     },
     {
+      address: "0x8d52F97aB2803E9c23d949D377c019770dBF1fF3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.CRSR-0X8D52F97AB2803E9C23D949D377C019770DBF1FF3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.crsr-0x8d52f97ab2803e9c23d949d377c019770dbf1ff3.png",
+      ticker: "CRSR",
+    },
+    {
       address: "0x04756126F044634C9a0f0E985e60c88a51ACC206",
       chain: "BSC",
       chainId: "56",
@@ -1578,6 +1848,16 @@ export const list = {
       ticker: "CYBER",
     },
     {
+      address: "0x5845684b49aEf79A5c0F887f50401C247dca7AC6",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.CYC-0X5845684B49AEF79A5C0F887F50401C247DCA7AC6",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.cyc-0x5845684b49aef79a5c0f887f50401c247dca7ac6.png",
+      ticker: "CYC",
+    },
+    {
       address: "0x810EE35443639348aDbbC467b33310d2AB43c168",
       chain: "BSC",
       chainId: "56",
@@ -1598,6 +1878,16 @@ export const list = {
       ticker: "DAI",
     },
     {
+      address: "0xF9Ca3fE094212FfA705742D3626a8Ab96aAbABf8",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DAM-0XF9CA3FE094212FFA705742D3626A8AB96AABABF8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dam-0xf9ca3fe094212ffa705742d3626a8ab96aababf8.png",
+      ticker: "DAM",
+    },
+    {
       address: "0x4d2d32d8652058Bf98c772953E1Df5c5c85D9F45",
       chain: "BSC",
       chainId: "56",
@@ -1616,6 +1906,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dar-0x23ce9e926048273ef83be0a3a8ba9cb6d45cd978.png",
       ticker: "DAR",
+    },
+    {
+      address: "0xB05F4747eB3d18a3fa4Aa3e5c627F02cCc70d005",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DARK-0XB05F4747EB3D18A3FA4AA3E5C627F02CCC70D005",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dark-0xb05f4747eb3d18a3fa4aa3e5c627f02ccc70d005.png",
+      ticker: "DARK",
     },
     {
       address: "0xEAc9873291dDAcA754EA5642114151f3035c67A2",
@@ -1748,6 +2048,16 @@ export const list = {
       ticker: "DG",
     },
     {
+      address: "0x9cfAE8067322394e34E6b734c4a3F72aCC4a7Fe5",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DGC-0X9CFAE8067322394E34E6B734C4A3F72ACC4A7FE5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dgc-0x9cfae8067322394e34e6b734c4a3f72acc4a7fe5.png",
+      ticker: "DGC",
+    },
+    {
       address: "0x233d91A0713155003fc4DcE0AFa871b508B3B715",
       chain: "BSC",
       chainId: "56",
@@ -1766,6 +2076,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dkt-0x7ceb519718a80dd78a8545ad8e7f401de4f2faa7.png",
       ticker: "DKT",
+    },
+    {
+      address: "0xCD806d0eB9465020994C9E977CBe34fe430172AE",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DL-0XCD806D0EB9465020994C9E977CBE34FE430172AE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dl-0xcd806d0eb9465020994c9e977cbe34fe430172ae.png",
+      ticker: "DL",
     },
     {
       address: "0x346575fC7f07E6994D76199E41D13dC1575322E1",
@@ -1828,6 +2148,16 @@ export const list = {
       ticker: "DOOD",
     },
     {
+      address: "0x23Fe903be385832fD7Bb82bf1FEE93F696278888",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DORA-0X23FE903BE385832FD7BB82BF1FEE93F696278888",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dora-0x23fe903be385832fd7bb82bf1fee93f696278888.png",
+      ticker: "DORA",
+    },
+    {
       address: "0x7083609fCE4d1d8Dc0C979AAb8c869Ea2C873402",
       chain: "BSC",
       chainId: "56",
@@ -1876,6 +2206,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dusk-0xb2bd0749dbe21f623d9baba856d3b0f0e1bfec9c.png",
       ticker: "DUSK",
+    },
+    {
+      address: "0x932Fb7f52adBC34ff81B4342b8C036b7b8Ac4444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.DUST-0X932FB7F52ADBC34FF81B4342B8C036B7B8AC4444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.dust-0x932fb7f52adbc34ff81b4342b8c036b7b8ac4444.png",
+      ticker: "DUST",
     },
     {
       address: "0x758FB037A375F17c7e195CC634D77dA4F554255B",
@@ -2208,6 +2548,16 @@ export const list = {
       ticker: "FINE",
     },
     {
+      address: "0x238D72E179A581C98DC1996417a49818c7E509dC",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.FIR-0X238D72E179A581C98DC1996417A49818C7E509DC",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.fir-0x238d72e179a581c98dc1996417a49818c7e509dc.png",
+      ticker: "FIR",
+    },
+    {
       address: "0xfb5B838b6cfEEdC2873aB27866079AC55363D37E",
       chain: "BSC",
       chainId: "56",
@@ -2226,6 +2576,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.for-0x658a109c5900bc6d2357c87549b651670e5b0539.png",
       ticker: "FOR",
+    },
+    {
+      address: "0x11cf6bF6D87CB0EB9c294fd6CBFEC91EE3a1A7D0",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.FOREST-0X11CF6BF6D87CB0EB9C294FD6CBFEC91EE3A1A7D0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.forest-0x11cf6bf6d87cb0eb9c294fd6cbfec91ee3a1a7d0.png",
+      ticker: "FOREST",
     },
     {
       address: "0x25A528af62e56512A19ce8c3cAB427807c28CC19",
@@ -2258,6 +2618,16 @@ export const list = {
       ticker: "FROG",
     },
     {
+      address: "0xA45F5EB48CeCd034751651aeeda6271Bd5df8888",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.FROGGIE -0XA45F5EB48CECD034751651AEEDA6271BD5DF8888",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.froggie -0xa45f5eb48cecd034751651aeeda6271bd5df8888.png",
+      ticker: "FROGGIE ",
+    },
+    {
       address: "0x928e55daB735aa8260AF3cEDadA18B5f70C72f1b",
       chain: "BSC",
       chainId: "56",
@@ -2276,6 +2646,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.froyo-0xe369fec23380f9f14ffd07a1dc4b7c1a9fdd81c9.png",
       ticker: "FROYO",
+    },
+    {
+      address: "0xfa35E2250E376c23955247383DC32C79082e7fcC",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.FST-0XFA35E2250E376C23955247383DC32C79082E7FCC",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.fst-0xfa35e2250e376c23955247383dc32c79082e7fcc.png",
+      ticker: "FST",
     },
     {
       address: "0xAD29AbB318791D579433D831ed122aFeAf29dcfe",
@@ -2348,6 +2728,26 @@ export const list = {
       ticker: "GAL",
     },
     {
+      address: "0x825459139C897D769339f295E962396C4F9E4A4D",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.GAME-0X825459139C897D769339F295E962396C4F9E4A4D",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.game-0x825459139c897d769339f295e962396c4f9e4a4d.png",
+      ticker: "GAME",
+    },
+    {
+      address: "0x46Ee3BFC281d59009cCD06F1dD6aBDbfCd82FFC3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.GATA-0X46EE3BFC281D59009CCD06F1DD6ABDBFCD82FFC3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.gata-0x46ee3bfc281d59009ccd06f1dd6abdbfcd82ffc3.png",
+      ticker: "GATA",
+    },
+    {
       address: "0xb4404DaB7C0eC48b428Cf37DeC7fb628bcC41B36",
       chain: "BSC",
       chainId: "56",
@@ -2356,6 +2756,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.gear-0xb4404dab7c0ec48b428cf37dec7fb628bcc41b36.png",
       ticker: "GEAR",
+    },
+    {
+      address: "0x20d6015660b3fe52e6690a889b5C51F69902cE0e",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.GIGGLE-0X20D6015660B3FE52E6690A889B5C51F69902CE0E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.giggle-0x20d6015660b3fe52e6690a889b5c51f69902ce0e.png",
+      ticker: "GIGGLE",
     },
     {
       address: "0xd8002d4bd1d50136A731c141e3206D516E6D3b3d",
@@ -2538,6 +2948,16 @@ export const list = {
       ticker: "HELMET",
     },
     {
+      address: "0x5fFD0EAdc186AF9512542d0d5e5eAFC65d5aFc5B",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.HEMI-0X5FFD0EADC186AF9512542D0D5E5EAFC65D5AFC5B",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.hemi-0x5ffd0eadc186af9512542d0d5e5eafc65d5afc5b.png",
+      ticker: "HEMI",
+    },
+    {
       address: "0xD40bEDb44C081D2935eebA6eF5a3c8A31A1bBE13",
       chain: "BSC",
       chainId: "56",
@@ -2596,6 +3016,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.hodl-0x32b407ee915432be6d3f168bc1eff2a6f8b2034c.png",
       ticker: "HODL",
+    },
+    {
+      address: "0x1a5D7E4c3A7F940B240b7357a4bFED30D17f9497",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.HOLO-0X1A5D7E4C3A7F940B240B7357A4BFED30D17F9497",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.holo-0x1a5d7e4c3a7f940b240b7357a4bfed30d17f9497.png",
+      ticker: "HOLO",
     },
     {
       address: "0x4BfAa776991E85e5f8b1255461cbbd216cFc714f",
@@ -2748,6 +3178,26 @@ export const list = {
       ticker: "IF",
     },
     {
+      address: "0x61fac5F038515572d6F42d4BcB6B581642753D50",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.IN-0X61FAC5F038515572D6F42D4BCB6B581642753D50",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.in-0x61fac5f038515572d6f42d4bcb6b581642753d50.png",
+      ticker: "IN",
+    },
+    {
+      address: "0x46Ca0782f22fd436b67059a75364A5D66c3c4444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.INITIATIVE-0X46CA0782F22FD436B67059A75364A5D66C3C4444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.initiative-0x46ca0782f22fd436b67059a75364a5d66c3c4444.png",
+      ticker: "INITIATIVE",
+    },
+    {
       address: "0xa2B726B1145A4773F68593CF171187d8EBe4d495",
       chain: "BSC",
       chainId: "56",
@@ -2848,6 +3298,26 @@ export const list = {
       ticker: "JGN",
     },
     {
+      address: "0xA524B11473b7Ce7EB1dc883A585e64471A734444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.JOBIESS-0XA524B11473B7CE7EB1DC883A585E64471A734444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.jobiess-0xa524b11473b7ce7eb1dc883a585e64471a734444.png",
+      ticker: "JOBIESS",
+    },
+    {
+      address: "0x953783617a71A888F8b04f397F2c9e1a7c37Af7e",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.JOJO-0X953783617A71A888F8B04F397F2C9E1A7C37AF7E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.jojo-0x953783617a71a888f8b04f397f2c9e1a7c37af7e.png",
+      ticker: "JOJO",
+    },
+    {
       address: "0xC40C9A843E1c6D01b7578284a9028854f6683b1B",
       chain: "BSC",
       chainId: "56",
@@ -2856,6 +3326,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.juv-0xc40c9a843e1c6d01b7578284a9028854f6683b1b.png",
       ticker: "JUV",
+    },
+    {
+      address: "0x0A73d885CdD66adF69c6D64c0609e55C527dB2BE",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.K-0X0A73D885CDD66ADF69C6D64C0609E55C527DB2BE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.k-0x0a73d885cdd66adf69c6d64c0609e55c527db2be.png",
+      ticker: "K",
     },
     {
       address: "0x4BA0057f784858a48fe351445C672FF2a3d43515",
@@ -2878,13 +3358,13 @@ export const list = {
       ticker: "KART",
     },
     {
-      address: "0x5F88AB06e8dfe89DF127B2430Bba4Af600866035",
+      address: "0x9BAFC8d4b487cEBff201721702507a3E2C67ad79",
       chain: "BSC",
       chainId: "56",
-      decimals: 6,
-      identifier: "BSC.KAVA-0X5F88AB06E8DFE89DF127B2430BBA4AF600866035",
+      decimals: 18,
+      identifier: "BSC.KAVA-0X9BAFC8D4B487CEBFF201721702507A3E2C67AD79",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.kava-0x5f88ab06e8dfe89df127b2430bba4af600866035.png",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.kava-0x9bafc8d4b487cebff201721702507a3e2c67ad79.png",
       ticker: "KAVA",
     },
     {
@@ -3218,6 +3698,16 @@ export const list = {
       ticker: "MA",
     },
     {
+      address: "0xcd1679f117E81DEfc4f0009311DDc23fC1AE4a5E",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MAIGA-0XCD1679F117E81DEFC4F0009311DDC23FC1AE4A5E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.maiga-0xcd1679f117e81defc4f0009311ddc23fc1ae4a5e.png",
+      ticker: "MAIGA",
+    },
+    {
       address: "0x3947B992DC0147D2D89dF0392213781b04B25075",
       chain: "BSC",
       chainId: "56",
@@ -3378,6 +3868,16 @@ export const list = {
       ticker: "MCB",
     },
     {
+      address: "0xF8F331DFa811132c43C308757CD802ca982b7211",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MCH-0XF8F331DFA811132C43C308757CD802CA982B7211",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mch-0xf8f331dfa811132c43c308757cd802ca982b7211.png",
+      ticker: "MCH",
+    },
+    {
       address: "0x49022089e78a8D46Ec87A3AF86a1Db6c189aFA6f",
       chain: "BSC",
       chainId: "56",
@@ -3468,6 +3968,16 @@ export const list = {
       ticker: "MHUNT",
     },
     {
+      address: "0x7CEA5B9548a4B48cF9551813Ef9e73DE916e41E0",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MIA-0X7CEA5B9548A4B48CF9551813EF9E73DE916E41E0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mia-0x7cea5b9548a4b48cf9551813ef9e73de916e41e0.png",
+      ticker: "MIA",
+    },
+    {
       address: "0x7b4Bf9fEcCfF207eF2CB7101Ceb15b8516021AcD",
       chain: "BSC",
       chainId: "56",
@@ -3486,6 +3996,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mir-0x5b6dcf557e2abe2323c48445e8cc948910d8c2c9.png",
       ticker: "MIR",
+    },
+    {
+      address: "0x8e1e6BF7E13C400269987B65Ab2b5724b016CaEF",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MITO-0X8E1E6BF7E13C400269987B65AB2B5724B016CAEF",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mito-0x8e1e6bf7e13c400269987b65ab2b5724b016caef.png",
+      ticker: "MITO",
     },
     {
       address: "0xB67754f5b4C704A24d2db68e661b2875a4dDD197",
@@ -3526,6 +4046,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mlista-0xecf2bcb2342d8157d4fb4f4bdc1edf74fbf759b3.png",
       ticker: "MLISTA",
+    },
+    {
+      address: "0x374c5FB7979d5fDBAAd2d95409e235e5CBdfD43C",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 8,
+      identifier: "BSC.MLK-0X374C5FB7979D5FDBAAD2D95409E235E5CBDFD43C",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mlk-0x374c5fb7979d5fdbaad2d95409e235e5cbdfd43c.png",
+      ticker: "MLK",
+    },
+    {
+      address: "0xa5346F91A767b89a0363A4309C8E6c5ADc0C4A59",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MM-0XA5346F91A767B89A0363A4309C8E6C5ADC0C4A59",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mm-0xa5346f91a767b89a0363a4309c8e6c5adc0c4a59.png",
+      ticker: "MM",
     },
     {
       address: "0xa04F060077D90Fe2647B61e4dA4aD1F97d6649dc",
@@ -3596,6 +4136,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mplx-0x75a5863a19af60ec0098d62ed8c34cc594fb470f.png",
       ticker: "MPLX",
+    },
+    {
+      address: "0xb142417Eb86799115fe353675FCA7eB8b59ee0Df",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MSAI-0XB142417EB86799115FE353675FCA7EB8B59EE0DF",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.msai-0xb142417eb86799115fe353675fca7eb8b59ee0df.png",
+      ticker: "MSAI",
+    },
+    {
+      address: "0xBcBa33bf0B3Cd8D626b7A3732a3ee18a0Af51Bd0",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.MTP-0XBCBA33BF0B3CD8D626B7A3732A3EE18A0AF51BD0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.mtp-0xbcba33bf0b3cd8d626b7a3732a3ee18a0af51bd0.png",
+      ticker: "MTP",
     },
     {
       address: "0xBd2949F67DcdC549c6Ebe98696449Fa79D988A9F",
@@ -3686,6 +4246,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.naiive-0xb21b24f12c6125487a33fcf96ab06a5c74114444.png",
       ticker: "NAIIVE",
+    },
+    {
+      address: "0x1b379A79c91a540b2bcd612b4d713f31De1b80cc",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.NAORIS-0X1B379A79C91A540B2BCD612B4D713F31DE1B80CC",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.naoris-0x1b379a79c91a540b2bcd612b4d713f31de1b80cc.png",
+      ticker: "NAORIS",
     },
     {
       address: "0x758d08864fB6cCE3062667225ca10b8F00496cc2",
@@ -3798,6 +4368,16 @@ export const list = {
       ticker: "NULS",
     },
     {
+      address: "0xC61eb549Acf4A05Ed6e3Fe0966f5e213b23541cE",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.NUMI-0XC61EB549ACF4A05ED6E3FE0966F5E213B23541CE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.numi-0xc61eb549acf4a05ed6e3fe0966f5e213b23541ce.png",
+      ticker: "NUMI",
+    },
+    {
       address: "0xf0E406c49C63AbF358030A299C0E00118C4C6BA5",
       chain: "BSC",
       chainId: "56",
@@ -3816,6 +4396,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.nxpc-0xf2b51cc1850fed939658317a22d73d3482767591.png",
       ticker: "NXPC",
+    },
+    {
+      address: "0x31d0E332ccEf98b583E40e0cEFBb7502c9a6b3f8",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.NYM-0X31D0E332CCEF98B583E40E0CEFBB7502C9A6B3F8",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.nym-0x31d0e332ccef98b583e40e0cefbb7502c9a6b3f8.png",
+      ticker: "NYM",
     },
     {
       address: "0xEe9801669C6138E84bD50dEB500827b776777d28",
@@ -3928,6 +4518,16 @@ export const list = {
       ticker: "OORT",
     },
     {
+      address: "0xA227Cc36938f0c9E09CE0e64dfab226cad739447",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.OPEN-0XA227CC36938F0C9E09CE0E64DFAB226CAD739447",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.open-0xa227cc36938f0c9e09ce0e64dfab226cad739447.png",
+      ticker: "OPEN",
+    },
+    {
       address: "0x333333C465a19C85f85c6CfbED7B16b0B26E3333",
       chain: "BSC",
       chainId: "56",
@@ -3976,6 +4576,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.osak-0x11cd72f7a4b699c67f225ca8abb20bc9f8db90c7.png",
       ticker: "OSAK",
+    },
+    {
+      address: "0x1F34c87ded863Fe3A3Cd76FAc8adA9608137C8c3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.OVL-0X1F34C87DED863FE3A3CD76FAC8ADA9608137C8C3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.ovl-0x1f34c87ded863fe3a3cd76fac8ada9608137c8c3.png",
+      ticker: "OVL",
     },
     {
       address: "0x259B30C916e440FB79747cD559207FfdaBBae057",
@@ -4188,6 +4798,16 @@ export const list = {
       ticker: "PLAY",
     },
     {
+      address: "0xf86089B30F30285D492B0527C37b9C2225bFCF8c",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.PLAY-0XF86089B30F30285D492B0527C37B9C2225BFCF8C",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.play-0xf86089b30f30285d492b0527c37b9c2225bfcf8c.png",
+      ticker: "PLAY",
+    },
+    {
       address: "0x1796ae0b0fa4862485106a0de9b654eFE301D0b2",
       chain: "BSC",
       chainId: "56",
@@ -4226,6 +4846,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.poolx-0xbaea9aba1454df334943951d51116ae342eab255.png",
       ticker: "POOLX",
+    },
+    {
+      address: "0xA3cfB853339b77F385B994799B015cB04b208Fe6",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.POP-0XA3CFB853339B77F385B994799B015CB04B208FE6",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.pop-0xa3cfb853339b77f385b994799b015cb04b208fe6.png",
+      ticker: "POP",
     },
     {
       address: "0xaBaE871B7E3b67aEeC6B46AE9FE1A91660AadAC5",
@@ -4348,6 +4978,26 @@ export const list = {
       ticker: "PSTAKE",
     },
     {
+      address: "0x95C9B514566fbD224Dc2037F5914eB8ab91c9201",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.PTB-0X95C9B514566FBD224DC2037F5914EB8AB91C9201",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.ptb-0x95c9b514566fbd224dc2037f5914eb8ab91c9201.png",
+      ticker: "PTB",
+    },
+    {
+      address: "0x87aa6aEb62ff128aAA96E275d7B24cd12a72ABa1",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.PUBLIC-0X87AA6AEB62FF128AAA96E275D7B24CD12A72ABA1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.public-0x87aa6aeb62ff128aaa96e275d7b24cd12a72aba1.png",
+      ticker: "PUBLIC",
+    },
+    {
       address: "0x87d00066cf131ff54B72B134a217D5401E5392b6",
       chain: "BSC",
       chainId: "56",
@@ -4386,6 +5036,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.pxeth-0x300d2c875c6fb8ce4bf5480b4d34b7c9ea8a33a4.png",
       ticker: "PXETH",
+    },
+    {
+      address: "0xc07e1300dc138601FA6B0b59f8D0FA477e690589",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.Q-0XC07E1300DC138601FA6B0B59F8D0FA477E690589",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.q-0xc07e1300dc138601fa6b0b59f8d0fa477e690589.png",
+      ticker: "Q",
     },
     {
       address: "0x17B7163cf1Dbd286E262ddc68b553D899B93f526",
@@ -4608,6 +5268,26 @@ export const list = {
       ticker: "RFOX",
     },
     {
+      address: "0x4c067DE26475E1CeFee8b8d1f6E2266b33a2372E",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.RHEA-0X4C067DE26475E1CEFEE8B8D1F6E2266B33A2372E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.rhea-0x4c067de26475e1cefee8b8d1f6e2266b33a2372e.png",
+      ticker: "RHEA",
+    },
+    {
+      address: "0xb5761f36FdFE2892f1b54Bc8EE8baBb2a1b698D3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.RICE-0XB5761F36FDFE2892F1B54BC8EE8BABB2A1B698D3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.rice-0xb5761f36fdfe2892f1b54bc8ee8babb2a1b698d3.png",
+      ticker: "RICE",
+    },
+    {
       address: "0xC0c240C870606a5Cb3150795E2D0dffF9f1F7456",
       chain: "BSC",
       chainId: "56",
@@ -4616,6 +5296,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.rion-0xc0c240c870606a5cb3150795e2d0dfff9f1f7456.png",
       ticker: "RION",
+    },
+    {
+      address: "0xdA7AD9dea9397cffdDAE2F8a052B82f1484252B3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.RIVER-0XDA7AD9DEA9397CFFDDAE2F8A052B82F1484252B3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.river-0xda7ad9dea9397cffddae2f8a052b82f1484252b3.png",
+      ticker: "RIVER",
     },
     {
       address: "0xAEDAff046601BEb063b647845Dfb21841f32d6A4",
@@ -4758,6 +5448,16 @@ export const list = {
       ticker: "SCPT",
     },
     {
+      address: "0xD896bf804c01c4C0Fa5C42bF6A4b15C465009481",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.SCUSD1-0XD896BF804C01C4C0FA5C42BF6A4B15C465009481",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.scusd1-0xd896bf804c01c4c0fa5c42bf6a4b15c465009481.png",
+      ticker: "SCUSD1",
+    },
+    {
       address: "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8",
       chain: "BSC",
       chainId: "56",
@@ -4846,6 +5546,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.sgc-0xe0a441d23cedb44822dfc8562e4d8d39c6b7f946.png",
       ticker: "SGC",
+    },
+    {
+      address: "0x38fD4EE2aDE8B4Be157DFEe3D6B8979c78A56145",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.SHARDS-0X38FD4EE2ADE8B4BE157DFEE3D6B8979C78A56145",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.shards-0x38fd4ee2ade8b4be157dfee3d6b8979c78a56145.png",
+      ticker: "SHARDS",
     },
     {
       address: "0x232FB065D9d24c34708eeDbF03724f2e95ABE768",
@@ -4938,6 +5648,16 @@ export const list = {
       ticker: "SKYAI",
     },
     {
+      address: "0xfC5a743271672E91D77F0176e5CEa581Fbd5D834",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.SLAY-0XFC5A743271672E91D77F0176E5CEA581FBD5D834",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.slay-0xfc5a743271672e91d77f0176e5cea581fbd5d834.png",
+      ticker: "SLAY",
+    },
+    {
       address: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
       chain: "BSC",
       chainId: "56",
@@ -4946,6 +5666,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.slisbnb-0xb0b84d294e0c75a6abe60171b70edeb2efd14a1b.png",
       ticker: "SLISBNB",
+    },
+    {
+      address: "0x67B8B5f36d9A2eD5c0A2f60Fb77927c04658D3Ab",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.SOCIO-0X67B8B5F36D9A2ED5C0A2F60FB77927C04658D3AB",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.socio-0x67b8b5f36d9a2ed5c0a2f60fb77927c04658d3ab.png",
+      ticker: "SOCIO",
     },
     {
       address: "0x570A5D26f7765Ecb712C0924E4De545B89fD43dF",
@@ -5098,6 +5828,26 @@ export const list = {
       ticker: "SQUAD",
     },
     {
+      address: "0x8fce7206E3043DD360F115AFa956EE31b90B787C",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.STAR-0X8FCE7206E3043DD360F115AFA956EE31B90B787C",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.star-0x8fce7206e3043dd360f115afa956ee31b90b787c.png",
+      ticker: "STAR",
+    },
+    {
+      address: "0x8dEdf84656fa932157e27C060D8613824e7979e3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.STBL-0X8DEDF84656FA932157E27C060D8613824E7979E3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.stbl-0x8dedf84656fa932157e27c060d8613824e7979e3.png",
+      ticker: "STBL",
+    },
+    {
       address: "0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3",
       chain: "BSC",
       chainId: "56",
@@ -5146,6 +5896,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.stone-0x80137510979822322193fc997d400d5a6c747bf7.png",
       ticker: "STONE",
+    },
+    {
+      address: "0x13578C16e3Dc631737e93Ed6BBeF428faA9BBAF7",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.STRP-0X13578C16E3DC631737E93ED6BBEF428FAA9BBAF7",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.strp-0x13578c16e3dc631737e93ed6bbef428faa9bbaf7.png",
+      ticker: "STRP",
     },
     {
       address: "0x4F2760B32720F013E900DC92F65480137391199b",
@@ -5318,6 +6078,16 @@ export const list = {
       ticker: "TAIKO",
     },
     {
+      address: "0xE747E54783Ba3F77a8E5251a3cBA19EBe9C0E197",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TAKE-0XE747E54783BA3F77A8E5251A3CBA19EBE9C0E197",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.take-0xe747e54783ba3f77a8e5251a3cba19ebe9c0e197.png",
+      ticker: "TAKE",
+    },
+    {
       address: "0xc19539eB93444523Ec8F1432624924d2e6226546",
       chain: "BSC",
       chainId: "56",
@@ -5346,6 +6116,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.tbtc-0x2cd1075682b0fccaadd0ca629e138e64015ba11c.png",
       ticker: "TBTC",
+    },
+    {
+      address: "0xc23dB46993F643f1Fa0494cd30F9F43505885D84",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TCOM-0XC23DB46993F643F1FA0494CD30F9F43505885D84",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.tcom-0xc23db46993f643f1fa0494cd30f9f43505885d84.png",
+      ticker: "TCOM",
     },
     {
       address: "0xe550a593d09FBC8DCD557b5C88Cea6946A8b404A",
@@ -5458,6 +6238,36 @@ export const list = {
       ticker: "TONCOIN",
     },
     {
+      address: "0x6a2608Dabe09bc1128EEC7275B92DFB939D5Db3f",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TOSHI-0X6A2608DABE09BC1128EEC7275B92DFB939D5DB3F",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.toshi-0x6a2608dabe09bc1128eec7275b92dfb939d5db3f.png",
+      ticker: "TOSHI",
+    },
+    {
+      address: "0x973253D0C12366e0fA5AFb9F9E2e9486ECA69c01",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TOWN-0X973253D0C12366E0FA5AFB9F9E2E9486ECA69C01",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.town-0x973253d0c12366e0fa5afb9f9e2e9486eca69c01.png",
+      ticker: "TOWN",
+    },
+    {
+      address: "0x00000000bcA93b25a6694ca3d2109d545988b13B",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TOWNS-0X00000000BCA93B25A6694CA3D2109D545988B13B",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.towns-0x00000000bca93b25a6694ca3d2109d545988b13b.png",
+      ticker: "TOWNS",
+    },
+    {
       address: "0xECa41281c24451168a37211F0bc2b8645AF45092",
       chain: "BSC",
       chainId: "56",
@@ -5476,6 +6286,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.trade-0x7af173f350d916358af3e218bdf2178494beb748.png",
       ticker: "TRADE",
+    },
+    {
+      address: "0x9123400446a56176Eb1B6BE9ee5CF703e409F492",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.TRADOOR-0X9123400446A56176EB1B6BE9EE5CF703E409F492",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.tradoor-0x9123400446a56176eb1b6be9ee5cf703e409f492.png",
+      ticker: "TRADOOR",
     },
     {
       address: "0xb465f3cb6Aba6eE375E12918387DE1eaC2301B05",
@@ -5588,6 +6408,26 @@ export const list = {
       ticker: "TXL",
     },
     {
+      address: "0xba5eD44733953d79717F6269357C77718C8Ba5ed",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.U-0XBA5ED44733953D79717F6269357C77718C8BA5ED",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.u-0xba5ed44733953d79717f6269357c77718c8ba5ed.png",
+      ticker: "U",
+    },
+    {
+      address: "0x40b8129B786D766267A7a118cF8C07E31CDB6Fde",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.UB-0X40B8129B786D766267A7A118CF8C07E31CDB6FDE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.ub-0x40b8129b786d766267a7a118cf8c07e31cdb6fde.png",
+      ticker: "UB",
+    },
+    {
       address: "0xBbEB90cFb6FAFa1F69AA130B7341089AbeEF5811",
       chain: "BSC",
       chainId: "56",
@@ -5616,6 +6456,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.uni-0xbf5140a22578168fd562dccf235e5d43a02ce9b1.png",
       ticker: "UNI",
+    },
+    {
+      address: "0xf324791C3A08cC8cd9A3d77ddc4681276BDF4444",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.UNIART-0XF324791C3A08CC8CD9A3D77DDC4681276BDF4444",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.uniart-0xf324791c3a08cc8cd9a3d77ddc4681276bdf4444.png",
+      ticker: "UNIART",
     },
     {
       address: "0x6B2a01A5f79dEb4c2f3c0eDa7b01DF456FbD726a",
@@ -5848,6 +6698,16 @@ export const list = {
       ticker: "VINU",
     },
     {
+      address: "0x4e107a0000DB66f0E9Fd2039288Bf811dD1f9c74",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.VLR-0X4E107A0000DB66F0E9FD2039288BF811DD1F9C74",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.vlr-0x4e107a0000db66f0e9fd2039288bf811dd1f9c74.png",
+      ticker: "VLR",
+    },
+    {
       address: "0xa4c3497b57C8b6D510F3707A1e9694fD791f45FB",
       chain: "BSC",
       chainId: "56",
@@ -5886,6 +6746,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.w-0x19683a9d2a31508847a026dfe77f53a05a084444.png",
       ticker: "W",
+    },
+    {
+      address: "0x1E3dbC0aad9671FDD31E58b2fcc6cF1Ca9947994",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.WAI-0X1E3DBC0AAD9671FDD31E58B2FCC6CF1CA9947994",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.wai-0x1e3dbc0aad9671fdd31e58b2fcc6cf1ca9947994.png",
+      ticker: "WAI",
     },
     {
       address: "0x7A9f28EB62C791422Aa23CeAE1dA9C847cBeC9b0",
@@ -5958,6 +6828,16 @@ export const list = {
       ticker: "WELL",
     },
     {
+      address: "0xdd73EA766B80417C0607A3f08E34A0C415D89D56",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.WEUSD-0XDD73EA766B80417C0607A3F08E34A0C415D89D56",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.weusd-0xdd73ea766b80417c0607a3f08e34a0c415d89d56.png",
+      ticker: "WEUSD",
+    },
+    {
       address: "0xa9c41A46a6B3531d28d5c32F6633dd2fF05dFB90",
       chain: "BSC",
       chainId: "56",
@@ -5988,6 +6868,16 @@ export const list = {
       ticker: "WIF",
     },
     {
+      address: "0x6685906b75C61c57772C335402F594f855c1B0E3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.WILD-0X6685906B75C61C57772C335402F594F855C1B0E3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.wild-0x6685906b75c61c57772c335402f594f855c1b0e3.png",
+      ticker: "WILD",
+    },
+    {
       address: "0xaeF0d72a118ce24feE3cD1d43d383897D05B4e99",
       chain: "BSC",
       chainId: "56",
@@ -5996,6 +6886,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.win-0xaef0d72a118ce24fee3cd1d43d383897d05b4e99.png",
       ticker: "WIN",
+    },
+    {
+      address: "0x194B302a4b0a79795Fb68E2ADf1B8c9eC5ff8d1F",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 9,
+      identifier: "BSC.WKEYDAO-0X194B302A4B0A79795FB68E2ADF1B8C9EC5FF8D1F",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.wkeydao-0x194b302a4b0a79795fb68e2adf1b8c9ec5ff8d1f.png",
+      ticker: "WKEYDAO",
     },
     {
       address: "0x7e396BfC8a2f84748701167c2d622F041A1D7a17",
@@ -6128,6 +7028,26 @@ export const list = {
       ticker: "WZRD",
     },
     {
+      address: "0x0510101Ec6c49D24ED911F0011E22A0D697Ee776",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.X-0X0510101EC6C49D24ED911F0011E22A0D697EE776",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.x-0x0510101ec6c49d24ed911f0011e22a0d697ee776.png",
+      ticker: "X",
+    },
+    {
+      address: "0x43fF4cF60F75fBcc91be7d5036710FFcF2A80459",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.XAI-0X43FF4CF60F75FBCC91BE7D5036710FFCF2A80459",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xai-0x43ff4cf60f75fbcc91be7d5036710ffcf2a80459.png",
+      ticker: "XAI",
+    },
+    {
       address: "0x0034719300501B06E10Ebb1D07ea5967301F0941",
       chain: "BSC",
       chainId: "56",
@@ -6178,6 +7098,16 @@ export const list = {
       ticker: "XCV",
     },
     {
+      address: "0xE32f9e8F7f7222fcd83EE0fC68bAf12118448Eaf",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.XCX-0XE32F9E8F7F7222FCD83EE0FC68BAF12118448EAF",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xcx-0xe32f9e8f7f7222fcd83ee0fc68baf12118448eaf.png",
+      ticker: "XCX",
+    },
+    {
       address: "0x5621b5A3f4a8008c4CCDd1b942B121c8B1944F1f",
       chain: "BSC",
       chainId: "56",
@@ -6198,6 +7128,16 @@ export const list = {
       ticker: "XEND",
     },
     {
+      address: "0x5BA9bfFFB868859064C33D4f995A0828b2B1d2d3",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.XLAB-0X5BA9BFFFB868859064C33D4F995A0828B2B1D2D3",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xlab-0x5ba9bfffb868859064c33d4f995a0828b2b1d2d3.png",
+      ticker: "XLAB",
+    },
+    {
       address: "0x26A5dFab467d4f58fB266648CAe769503CEC9580",
       chain: "BSC",
       chainId: "56",
@@ -6216,6 +7156,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xms-0x7859b01bbf675d67da8cd128a50d155cd881b576.png",
       ticker: "XMS",
+    },
+    {
+      address: "0xE3225e11Cab122F1a126A28997788E5230838ab9",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.XNY-0XE3225E11CAB122F1A126A28997788E5230838AB9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xny-0xe3225e11cab122f1a126a28997788e5230838ab9.png",
+      ticker: "XNY",
+    },
+    {
+      address: "0xD955c9bA56Fb1AB30e34766e252A97ccCE3D31A6",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.XPIN-0XD955C9BA56FB1AB30E34766E252A97CCCE3D31A6",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.xpin-0xd955c9ba56fb1ab30e34766e252a97ccce3d31a6.png",
+      ticker: "XPIN",
     },
     {
       address: "0x64274835D88F5c0215da8AADd9A5f2D2A2569381",
@@ -6358,6 +7318,16 @@ export const list = {
       ticker: "YNBNB",
     },
     {
+      address: "0x4772D2e014F9fC3a820C444e3313968e9a5C8121",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.YUSD-0X4772D2E014F9FC3A820C444E3313968E9A5C8121",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.yusd-0x4772d2e014f9fc3a820c444e3313968e9a5c8121.png",
+      ticker: "YUSD",
+    },
+    {
       address: "0x37a56cdcD83Dce2868f721De58cB3830C44C6303",
       chain: "BSC",
       chainId: "56",
@@ -6386,6 +7356,26 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.zee-0x44754455564474a89358b2c2265883df993b12f0.png",
       ticker: "ZEE",
+    },
+    {
+      address: "0x8C321c2E323BC26C01DF0dC62311482A1256Fdf5",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.ZENT-0X8C321C2E323BC26C01DF0DC62311482A1256FDF5",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.zent-0x8c321c2e323bc26c01df0dc62311482a1256fdf5.png",
+      ticker: "ZENT",
+    },
+    {
+      address: "0xA2bE3E48170a60119b5F0400C65F65F3158fbeEe",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 6,
+      identifier: "BSC.ZEUS-0XA2BE3E48170A60119B5F0400C65F65F3158FBEEE",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.zeus-0xa2be3e48170a60119b5f0400c65f65f3158fbeee.png",
+      ticker: "ZEUS",
     },
     {
       address: "0xb86AbCb37C3A4B64f74f59301AFF131a1BEcC787",
@@ -6458,5 +7448,5 @@ export const list = {
       ticker: "ZRO",
     },
   ],
-  version: { major: 2, minor: 16, patch: 477 },
+  version: { major: 2, minor: 16, patch: 557 },
 } as const;
