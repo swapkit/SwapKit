@@ -302,7 +302,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         methodName,
         args || {},
         estimatedGas.getBaseValue("bigint"),
-        BigInt(deposit || "0"),
+        BigInt(deposit || "1"),
       );
 
       const result = await account.signAndSendTransaction({ actions: [functionAction], receiverId: contractId });
@@ -364,10 +364,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         throw new SwapKitError("toolbox_near_invalid_gas_params");
       });
 
-    // Convert TGas to gas price in NEAR
-    const gasPrice = await getGasPrice();
-    const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12); // Convert TGas to gas units
-    const costInYoctoNear = gasInUnits * BigInt(gasPrice);
+    const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12);
+    const costInYoctoNear = gasInUnits;
 
     return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: BaseDecimal[Chain.Near], value: costInYoctoNear });
   }

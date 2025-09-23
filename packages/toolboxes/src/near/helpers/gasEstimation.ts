@@ -1,20 +1,18 @@
 import type { Account } from "near-api-js";
 import type { NearGasEstimateParams } from "../types/contract";
 
-// Gas constants (in TGas - 10^12 gas units)
 export const GAS_COSTS = {
-  ACCESS_KEY_ADDITION: "5", // 5 TGas
-  ACCESS_KEY_DELETION: "5", // 5 TGas
-  ACCOUNT_CREATION: "30", // 30 TGas
-  CONTRACT_CALL: "100", // 100 TGas base
-  CONTRACT_DEPLOYMENT: "200", // 200 TGas
-  SIMPLE_TRANSFER: "1", // 1 TGas
-  STAKE: "10", // 10 TGas
-  STORAGE_DEPOSIT: "100", // 100 TGas
-  TOKEN_TRANSFER: "100", // 100 TGas
+  ACCESS_KEY_ADDITION: "5",
+  ACCESS_KEY_DELETION: "5",
+  ACCOUNT_CREATION: "30",
+  CONTRACT_CALL: "150",
+  CONTRACT_DEPLOYMENT: "200",
+  SIMPLE_TRANSFER: "1",
+  STAKE: "10",
+  STORAGE_DEPOSIT: "150",
+  TOKEN_TRANSFER: "150",
 } as const;
 
-// Type guards for discriminated union
 export function isSimpleTransfer(params: NearGasEstimateParams): params is { recipient: string; amount: string } {
   return "recipient" in params && "amount" in params && !("contractId" in params);
 }
@@ -45,7 +43,6 @@ export function isCustomEstimator(
   return "customEstimator" in params;
 }
 
-// Helper function to estimate gas for batch actions
 export function estimateBatchGas(actions: any[]) {
   let totalGas = 0;
 
@@ -80,7 +77,6 @@ export function estimateBatchGas(actions: any[]) {
   return totalGas.toString();
 }
 
-// Helper function to get gas cost for contract methods
 export function getContractMethodGas(methodName: string) {
   if (methodName === "ft_transfer" || methodName === "ft_transfer_call") {
     return GAS_COSTS.TOKEN_TRANSFER;
@@ -91,12 +87,10 @@ export function getContractMethodGas(methodName: string) {
   return GAS_COSTS.CONTRACT_CALL;
 }
 
-// Convert TGas string to gas units
 export function tgasToGas(tgas: string): string {
   return (BigInt(tgas) * BigInt(10 ** 12)).toString();
 }
 
-// Convert gas units to TGas
 export function gasToTGas(gas: string): string {
   return (BigInt(gas) / BigInt(10 ** 12)).toString();
 }
