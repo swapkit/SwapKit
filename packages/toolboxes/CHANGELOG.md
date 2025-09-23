@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.0.20
+
+### Patch Changes
+
+- [#1496](https://github.com/swapkit/SwapKit/pull/1496) [`1977b48`](https://github.com/swapkit/SwapKit/commit/1977b483b4f806f353e97fa4ab5d1f2d846b25f2) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Near token transfer and improves near plugin
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.20
+
 ## 4.0.19
 
 ### Patch Changes
