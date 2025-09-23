@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.19
+
+### Patch Changes
+
+- [#1494](https://github.com/swapkit/SwapKit/pull/1494) [`6365b50`](https://github.com/swapkit/SwapKit/commit/6365b506e3ed6587298fa6ba71c846bdf7341391) Thanks [@towanTG](https://github.com/towanTG)! - Corrects block time for zcash and doge
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.19
+
 ## 4.0.18
 
 ### Patch Changes

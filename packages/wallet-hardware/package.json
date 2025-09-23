@@ -72,5 +72,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.1.17"
+  "version": "4.1.18"
 }
