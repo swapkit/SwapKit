@@ -6,6 +6,7 @@
     "@cosmjs/crypto": "~0.33.0",
     "@cosmjs/proto-signing": "~0.33.0",
     "@cosmjs/stargate": "~0.33.0",
+    "@meshsdk/core": "1.9.0-beta.74",
     "@mysten/bcs": "~1.8.0",
     "@mysten/sui": "~1.38.0",
     "@noble/hashes": "2.0.0-beta.1",
@@ -50,6 +51,7 @@
     "@cosmjs/crypto": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",
     "@cosmjs/stargate": "0.33.1",
+    "@meshsdk/core": "1.9.0-beta.74",
     "@mysten/bcs": "1.8.0",
     "@mysten/sui": "1.38.0",
     "@noble/hashes": "2.0.0-beta.1",
@@ -95,6 +97,11 @@
   },
   "exports": {
     ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
+    "./cardano": {
+      "default": "./dist/src/cardano/index.js",
+      "require": "./dist/src/cardano/index.cjs",
+      "types": "./dist/types/cardano/index.d.ts"
+    },
     "./cosmos": {
       "default": "./dist/src/cosmos/index.js",
       "require": "./dist/src/cosmos/index.cjs",

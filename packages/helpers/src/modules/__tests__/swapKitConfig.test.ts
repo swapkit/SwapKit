@@ -20,10 +20,10 @@ describe("swapKitConfig", () => {
     SKConfig.setApiKey("walletConnectProjectId", "123");
     expect(SKConfig.get("apiKeys")).toMatchObject({ swapKit: "123", walletConnectProjectId: "123" });
 
-    SKConfig.setExplorerUrl(Chain.Ethereum, "https://lul.xyz");
+    SKConfig.setRpcUrl(Chain.Ethereum, ["https://lul.xyz"]);
     expect(SKConfig.getState()).toMatchObject({
       apiKeys: { swapKit: "123", walletConnectProjectId: "123" },
-      explorerUrls: { [Chain.Ethereum]: "https://lul.xyz" },
+      rpcUrls: { [Chain.Ethereum]: ["https://lul.xyz"] },
     });
   });
 });

@@ -13,7 +13,8 @@ const ETHConfig = createChain({
   explorerUrl: "https://etherscan.io",
   name: "Ethereum",
   nativeCurrency: "ETH",
-  rpcUrl: "https://ethereum-rpc.publicnode.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://ethereum-rpc.publicnode.com", "https://eth.llamarpc.com", "https://cloudflare-eth.com"],
   type,
 });
 
@@ -27,7 +28,12 @@ const BSCConfig = createChain({
   explorerUrl: "https://bscscan.com",
   name: "BinanceSmartChain",
   nativeCurrency: "BNB",
-  rpcUrl: "https://bsc-dataseed.binance.org",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: [
+    "https://bsc-dataseed.binance.org",
+    "https://bsc-rpc.gateway.pokt.network",
+    "https://bsc-dataseed2.binance.org",
+  ],
   type,
 });
 
@@ -41,7 +47,12 @@ const AVAXConfig = createChain({
   explorerUrl: "https://snowtrace.io",
   name: "Avalanche",
   nativeCurrency: "AVAX",
-  rpcUrl: "https://api.avax.network/ext/bc/C/rpc",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: [
+    "https://api.avax.network/ext/bc/C/rpc",
+    "https://api.avax.network/ext/bc/C/rpc",
+    "https://avalanche-c-chain-rpc.publicnode.com",
+  ],
   type,
 });
 
@@ -55,7 +66,8 @@ const POLConfig = createChain({
   explorerUrl: "https://polygonscan.com",
   name: "Polygon",
   nativeCurrency: "POL",
-  rpcUrl: "https://polygon-rpc.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://polygon-rpc.com", "https://polygon.llamarpc.com", "https://polygon-bor-rpc.publicnode.com"],
   type,
 });
 
@@ -69,7 +81,12 @@ const ARBConfig = createChain({
   explorerUrl: "https://arbiscan.io",
   name: "Arbitrum",
   nativeCurrency: "ETH",
-  rpcUrl: "https://arb1.arbitrum.io/rpc",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: [
+    "https://arb1.arbitrum.io/rpc",
+    "https://arb-mainnet.g.alchemy.com/v2/demo",
+    "https://arbitrum.blockpi.network/v1/rpc/public",
+  ],
   type,
 });
 
@@ -83,7 +100,8 @@ const OPConfig = createChain({
   explorerUrl: "https://optimistic.etherscan.io",
   name: "Optimism",
   nativeCurrency: "ETH",
-  rpcUrl: "https://mainnet.optimism.io",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://mainnet.optimism.io", "https://optimism.llamarpc.com", "https://1rpc.io/op"],
   type,
 });
 
@@ -97,7 +115,8 @@ const BASEConfig = createChain({
   explorerUrl: "https://basescan.org",
   name: "Base",
   nativeCurrency: "ETH",
-  rpcUrl: "https://base-rpc.publicnode.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://base-rpc.publicnode.com", "https://base.blockpi.network/v1/rpc/public", "https://1rpc.io/base"],
   type,
 });
 
@@ -111,7 +130,8 @@ const GNOConfig = createChain({
   explorerUrl: "https://gnosisscan.io",
   name: "Gnosis",
   nativeCurrency: "xDAI",
-  rpcUrl: "https://gnosis-rpc.publicnode.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://gnosis-rpc.publicnode.com", "https://gnosis.drpc.org", "https://rpc.ankr.com/gnosis"],
   type,
 });
 
@@ -125,7 +145,8 @@ const AURORAConfig = createChain({
   explorerUrl: "https://explorer.mainnet.aurora.dev",
   name: "Aurora",
   nativeCurrency: "ETH",
-  rpcUrl: "https://aurora-rpc.publicnode.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://aurora-rpc.publicnode.com", "https://1rpc.io/aurora", "https://mainnet.aurora.dev"],
   type,
 });
 
@@ -139,7 +160,8 @@ const BERAConfig = createChain({
   explorerUrl: "https://berascan.com",
   name: "Berachain",
   nativeCurrency: "BERA",
-  rpcUrl: "https://berachain-rpc.publicnode.com",
+  networkDerivationPath: [44, 60, 0, 0, 0],
+  rpcUrls: ["https://berachain-rpc.publicnode.com", "https://rpc.berachain.com", "https://berachain.drpc.org"],
   type,
 });
 

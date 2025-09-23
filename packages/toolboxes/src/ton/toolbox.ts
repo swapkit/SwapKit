@@ -15,8 +15,8 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     .otherwise(() => Promise.resolve(undefined));
 
   function getClient() {
-    const { rpcUrl } = getChainConfig(Chain.Ton);
-    return new TonClient({ endpoint: rpcUrl });
+    const { rpcUrls } = getChainConfig(Chain.Ton);
+    return new TonClient({ endpoint: rpcUrls[0] });
   }
 
   function getWallet(paramSigner?: TONSigner) {

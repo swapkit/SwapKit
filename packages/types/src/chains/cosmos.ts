@@ -12,7 +12,8 @@ export const GAIAConfig = createChain({
   explorerUrl: "https://www.mintscan.io/cosmos",
   name: "Cosmos",
   nativeCurrency: "ATOM",
-  rpcUrl: "https://cosmos-rpc.publicnode.com:443",
+  networkDerivationPath: [44, 118, 0, 0, 0],
+  rpcUrls: ["https://cosmos-rpc.publicnode.com:443", "https://cosmos-rpc.publicnode.com"],
   type,
 });
 
@@ -25,7 +26,8 @@ export const THORConfig = createChain({
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
-  rpcUrl: "https://rpc.ninerealms.com",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: ["https://rpc.ninerealms.com", "https://thornode.ninerealms.com"],
   type,
 });
 
@@ -38,7 +40,8 @@ export const StagenetTHORConfig = createChain({
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
-  rpcUrl: "https://stagenet-rpc.ninerealms.com",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: ["https://stagenet-rpc.ninerealms.com", "https://stagenet-thornode.ninerealms.com"],
   type,
 });
 
@@ -51,7 +54,12 @@ export const MAYAConfig = createChain({
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
   nativeCurrency: "CACAO",
-  rpcUrl: "https://tendermint.mayachain.info",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: [
+    "https://tendermint.mayachain.info",
+    "https://maya-tendermint.publicnode.com",
+    "https://mayanode.mayachain.info",
+  ],
   type,
 });
 
@@ -64,7 +72,8 @@ export const StagenetMAYAConfig = createChain({
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
   nativeCurrency: "CACAO",
-  rpcUrl: "https://tendermint.mayachain.info",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: ["https://stagenet.mayanode.mayachain.info"],
   type,
 });
 
@@ -77,7 +86,8 @@ export const KUJIConfig = createChain({
   explorerUrl: "https://finder.kujira.network/kaiyo-1",
   name: "Kujira",
   nativeCurrency: "KUJI",
-  rpcUrl: "https://kujira-rpc.ibs.team",
+  networkDerivationPath: [44, 118, 0, 0, 0],
+  rpcUrls: ["https://kujira-rpc.ibs.team", "https://kujira-rpc.polkachu.com", "https://rpc-kujira.synergynodes.com/"],
   type,
 });
 
@@ -90,7 +100,8 @@ export const NOBLEConfig = createChain({
   explorerUrl: "https://www.mintscan.io/noble",
   name: "Noble",
   nativeCurrency: "USDC",
-  rpcUrl: "https://noble-rpc.polkachu.com",
+  networkDerivationPath: [44, 118, 0, 0, 0],
+  rpcUrls: ["https://noble-rpc.polkachu.com", "https://rpc.noble.xyz", "https://rpc.cosmos.directory/noble"],
   type,
 });
 

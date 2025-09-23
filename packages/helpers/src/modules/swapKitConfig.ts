@@ -1,6 +1,13 @@
-import { Chain } from "@swapkit/types";
+import {
+  AllChains,
+  type Chain,
+  getChainConfig,
+  StagenetChain,
+  StagenetMAYAConfig,
+  StagenetTHORConfig,
+} from "@swapkit/types";
 import { createStore } from "zustand/vanilla";
-import { EXPLORER_URLS, FALLBACK_URLS, NODE_URLS, RPC_URLS, WalletOption } from "../types";
+import { NODE_URLS, WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
 export type SKConfigIntegrations = {
@@ -26,13 +33,27 @@ export type SKConfigIntegrations = {
   };
 };
 
+const rpcUrls = AllChains.reduce(
+  (acc, chain) => {
+    if (!acc.THOR_STAGENET) {
+      acc[StagenetChain.Maya] = StagenetMAYAConfig.rpcUrls;
+      acc[StagenetChain.THORChain] = StagenetTHORConfig.rpcUrls;
+    }
+
+    acc[chain] = getChainConfig(chain).rpcUrls;
+    return acc;
+  },
+  {} as { [key in Chain | StagenetChain]: string[] },
+);
+
 // biome-ignore assist/source/useSortedKeys: Config
 const initialState = {
   apiKeys: { blockchair: "", keepKey: "", swapKit: "", walletConnectProjectId: "", xaman: "" },
   // TODO: figure out how to type apis without using toolbox directly
   // Maybe move rpc/toolbox apis to helpers?
   apis: {} as { [key in Chain]: any },
-  chains: Object.values(Chain),
+  chains: AllChains,
+  rpcUrls,
 
   envs: {
     apiUrl: "https://api.swapkit.dev",
@@ -55,10 +76,7 @@ const initialState = {
   requestOptions: { retry: { backoffMultiplier: 2, baseDelay: 300, maxDelay: 5000, maxRetries: 3 }, timeoutMs: 30000 },
   wallets: Object.values(WalletOption),
 
-  explorerUrls: EXPLORER_URLS,
-  fallbackRpcUrls: FALLBACK_URLS,
   nodeUrls: NODE_URLS,
-  rpcUrls: RPC_URLS,
 };
 type SKState = typeof initialState;
 
@@ -66,11 +84,9 @@ export type SKConfigState = {
   apiKeys?: Partial<SKState["apiKeys"]>;
   chains?: SKState["chains"];
   envs?: Partial<SKState["envs"]>;
-  explorerUrls?: Partial<SKState["explorerUrls"]>;
   integrations?: Partial<SKConfigIntegrations>;
   nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
-  fallbackRpcUrls?: Partial<SKState["fallbackRpcUrls"]>;
   wallets?: SKState["wallets"];
   feeMultipliers?: FeeMultiplierConfig;
 };
@@ -79,14 +95,9 @@ type SwapKitConfigStore = SKState & {
   setApiKey: (key: keyof SKState["apiKeys"], apiKey: string) => void;
   setConfig: (config: SKConfigState) => void;
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) => void;
-  setExplorerUrl: (chain: keyof SKState["explorerUrls"], url: string) => void;
   setNodeUrl: (chain: keyof SKState["nodeUrls"], url: string) => void;
-  setRpcUrl: (chain: keyof SKState["rpcUrls"], url: string) => void;
+  setRpcUrl: (chain: keyof SKState["rpcUrls"], url: string[]) => void;
   setRequestOptions: (options: Partial<SKState["requestOptions"]>) => void;
-  setFallbackRpcUrls: <T extends keyof SKState["fallbackRpcUrls"]>(
-    chain: T,
-    urls: SKState["fallbackRpcUrls"][T],
-  ) => void;
   setIntegrationConfig: (
     integration: keyof SKState["integrations"],
     config: SKConfigIntegrations[keyof SKConfigIntegrations],
@@ -103,7 +114,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
       apiKeys: { ...s.apiKeys, ...config.apiKeys },
       chains: s.chains.concat(config.chains || []),
       envs: { ...s.envs, ...config.envs },
-      explorerUrls: { ...s.explorerUrls, ...config.explorerUrls },
       feeMultipliers: config.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config.integrations },
       nodeUrls: { ...s.nodeUrls, ...config.nodeUrls } as typeof s.nodeUrls,
@@ -111,8 +121,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
       wallets: s.wallets.concat(config.wallets || []),
     })),
   setEnv: (key, value) => set((s) => ({ envs: { ...s.envs, [key]: value } })),
-  setExplorerUrl: (chain, url) => set((s) => ({ explorerUrls: { ...s.explorerUrls, [chain]: url } })),
-  setFallbackRpcUrls: (chain, urls) => set((s) => ({ fallbackRpcUrls: { ...s.fallbackRpcUrls, [chain]: urls } })),
   setFeeMultipliers: (multipliers) => set(() => ({ feeMultipliers: multipliers })),
   setIntegrationConfig: (integration, config) =>
     set((s) => ({ integrations: { ...s.integrations, [integration]: config } })),
@@ -136,16 +144,12 @@ export const SKConfig = {
     swapKitState.getState().setApiKey(key, apiKey),
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) =>
     swapKitState.getState().setEnv(key, value),
-  setExplorerUrl: <T extends keyof SKState["explorerUrls"]>(chain: T, url: string) =>
-    swapKitState.getState().setExplorerUrl(chain, url),
-  setFallbackRpcUrls: <T extends keyof SKState["fallbackRpcUrls"]>(chain: T, urls: SKState["fallbackRpcUrls"][T]) =>
-    swapKitState.getState().setFallbackRpcUrls(chain, urls),
   setFeeMultipliers: (multipliers: FeeMultiplierConfig) => swapKitState.getState().setFeeMultipliers(multipliers),
   setIntegrationConfig: <T extends keyof SKState["integrations"]>(integration: T, config: SKConfigIntegrations[T]) =>
     swapKitState.getState().setIntegrationConfig(integration, config),
   setNodeUrl: <T extends keyof SKState["nodeUrls"]>(chain: T, url: string) =>
     swapKitState.getState().setNodeUrl(chain, url),
   setRequestOptions: (options: SKState["requestOptions"]) => swapKitState.getState().setRequestOptions(options),
-  setRpcUrl: <T extends keyof SKState["rpcUrls"]>(chain: T, url: string) =>
-    swapKitState.getState().setRpcUrl(chain, url),
+  setRpcUrl: <T extends keyof SKState["rpcUrls"]>(chain: T, urls: string[]) =>
+    swapKitState.getState().setRpcUrl(chain, urls),
 };

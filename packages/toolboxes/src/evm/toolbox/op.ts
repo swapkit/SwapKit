@@ -87,14 +87,14 @@ function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provider: P)
 }
 
 function getNetworkParams() {
-  const { baseDecimal, chainId, blockExplorerUrl, name, rpcUrl } = getChainConfig(Chain.Optimism);
+  const { baseDecimal, chainId, blockExplorerUrl, name, rpcUrls } = getChainConfig(Chain.Optimism);
 
   return {
     blockExplorerUrls: [blockExplorerUrl],
     chainId,
     chainName: name,
     nativeCurrency: { decimals: baseDecimal, name: "Ethereum", symbol: Chain.Ethereum },
-    rpcUrls: [rpcUrl],
+    rpcUrls,
   };
 }
 

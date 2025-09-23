@@ -10,7 +10,8 @@ const BTC = createChain({
   explorerUrl: "https://blockchair.com/bitcoin",
   name: "Bitcoin",
   nativeCurrency: "BTC",
-  rpcUrl: "https://bitcoin-rpc.publicnode.com",
+  networkDerivationPath: [84, 0, 0, 0, 0] as [number, number, number, number, number?],
+  rpcUrls: ["https://bitcoin-rpc.publicnode.com", "https://bitcoin.publicnode.com"],
   type: "utxo",
 });
 
@@ -23,7 +24,12 @@ const BCH = createChain({
   explorerUrl: "https://www.blockchair.com/bitcoin-cash",
   name: "BitcoinCash",
   nativeCurrency: "BCH",
-  rpcUrl: "https://node-router.thorswap.net/bitcoin-cash",
+  networkDerivationPath: [44, 145, 0, 0, 0],
+  rpcUrls: [
+    "https://node-router.thorswap.net/bitcoin-cash",
+    "https://bch-dataseed.binance.org",
+    "https://bch.getblock.io/mainnet",
+  ],
   type: "utxo",
 });
 
@@ -36,7 +42,12 @@ const LTC = createChain({
   explorerUrl: "https://blockchair.com/litecoin",
   name: "Litecoin",
   nativeCurrency: "LTC",
-  rpcUrl: "https://node-router.thorswap.net/litecoin",
+  networkDerivationPath: [84, 2, 0, 0, 0],
+  rpcUrls: [
+    "https://node-router.thorswap.net/litecoin",
+    "https://ltc.getblock.io/mainnet",
+    "https://litecoin.publicnode.com",
+  ],
   type: "utxo",
 });
 
@@ -49,7 +60,12 @@ const DOGE = createChain({
   explorerUrl: "https://blockchair.com/dogecoin",
   name: "Dogecoin",
   nativeCurrency: "DOGE",
-  rpcUrl: "https://node-router.thorswap.net/dogecoin",
+  networkDerivationPath: [44, 3, 0, 0, 0],
+  rpcUrls: [
+    "https://node-router.thorswap.net/dogecoin",
+    "https://doge.getblock.io/mainnet",
+    "https://dogecoin.publicnode.com",
+  ],
   type: "utxo",
 });
 
@@ -62,7 +78,8 @@ const DASH = createChain({
   explorerUrl: "https://blockchair.com/dash",
   name: "Dash",
   nativeCurrency: "DASH",
-  rpcUrl: "https://dash-rpc.publicnode.com",
+  networkDerivationPath: [44, 5, 0, 0, 0],
+  rpcUrls: ["https://dash-rpc.publicnode.com", "https://dash.getblock.io/mainnet"],
   type: "utxo",
 });
 
@@ -75,7 +92,10 @@ const ZEC = createChain({
   explorerUrl: "https://blockchair.com/zcash",
   name: "Zcash",
   nativeCurrency: "ZEC",
-  rpcUrl: "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
+  networkDerivationPath: [44, 133, 0, 0, 0],
+  rpcUrls: [
+    "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
+  ],
   type: "utxo",
 });
 

@@ -48,7 +48,7 @@ export function derivationPathToString([network, chainId, account, change, index
 export function getDerivationPathFor({ chain, index, addressIndex = 0, type }: Params) {
   if (EVMChains.includes(chain as EVMChain)) {
     if (type && ["legacy", "account"].includes(type)) {
-      return [44, 60, 0, index] as DerivationPathArray;
+      return [44, 60, 0, index];
     }
 
     if (type === "ledgerLive") {
@@ -59,7 +59,7 @@ export function getDerivationPathFor({ chain, index, addressIndex = 0, type }: P
   }
 
   if (chain === Chain.Solana) {
-    if (type === "account") return [44, 501, 0, index] as DerivationPathArray;
+    if (type === "account") return [44, 501, 0, index];
     return updateDerivationPath(NetworkDerivationPath[chain], { index });
   }
 
@@ -67,11 +67,11 @@ export function getDerivationPathFor({ chain, index, addressIndex = 0, type }: P
 
   switch (type) {
     case "nativeSegwitMiddleAccount":
-      return [84, chainId, index, 0, addressIndex] as DerivationPathArray;
+      return [84, chainId, index, 0, addressIndex];
     case "segwit":
-      return [49, chainId, 0, 0, index] as DerivationPathArray;
+      return [49, chainId, 0, 0, index];
     case "legacy":
-      return [44, chainId, 0, 0, index] as DerivationPathArray;
+      return [44, chainId, 0, 0, index];
     default:
       return updateDerivationPath(NetworkDerivationPath[chain], { index });
   }

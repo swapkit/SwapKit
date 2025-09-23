@@ -11,6 +11,7 @@ import {
   type UTXOChain,
   UTXOChains,
 } from "@swapkit/helpers";
+import type { getCardanoToolbox } from "./cardano";
 import type { getCosmosToolbox } from "./cosmos";
 import type { ETHToolbox, EVMCreateTransactionParams, getEvmToolbox } from "./evm";
 import type { getNearToolbox } from "./near";
@@ -38,6 +39,7 @@ export async function getAddressValidator() {
   const { getTONAddressValidator } = await import("./ton");
   const { getTronAddressValidator } = await import("./tron");
   const { getSuiAddressValidator } = await import("./sui");
+  const { getCardanoAddressValidator } = await import("./cardano");
 
   const solanaValidateAddress = await getSolanaAddressValidator();
   const suiValidateAddress = await getSuiAddressValidator();
@@ -45,6 +47,7 @@ export async function getAddressValidator() {
   const tonValidateAddress = await getTONAddressValidator();
   const tronValidateAddress = await getTronAddressValidator();
   const nearValidateAddress = await getValidateNearAddress();
+  const cardanoValidateAddress = await getCardanoAddressValidator();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     const isValid = match(chain)
@@ -63,6 +66,7 @@ export async function getAddressValidator() {
       .with(Chain.Sui, () => suiValidateAddress(address))
       .with(Chain.Ton, () => tonValidateAddress(address))
       .with(Chain.Tron, () => tronValidateAddress(address))
+      .with(Chain.Cardano, () => cardanoValidateAddress(address))
       .otherwise(() => false);
 
     return isValid;
@@ -108,6 +112,7 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
         Chain.Ripple,
         Chain.Tron,
         Chain.Near,
+        Chain.Cardano,
         async (chain) => {
           const toolbox = await getToolbox(chain);
           return toolbox.estimateTransactionFee(params) as Promise<AssetValue>;
@@ -147,6 +152,7 @@ type Toolboxes = {
   [Chain.Sui]: Awaited<ReturnType<typeof getSuiToolbox>>;
   [Chain.Ton]: Awaited<ReturnType<typeof getTONToolbox>>;
   [Chain.Tron]: Awaited<ReturnType<typeof createTronToolbox>>;
+  [Chain.Cardano]: Awaited<ReturnType<typeof getCardanoToolbox>>;
 };
 
 type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } & {
@@ -163,6 +169,7 @@ type ToolboxParams = { [key in EVMChain]: Parameters<typeof getEvmToolbox>[1] } 
   [Chain.Sui]: Parameters<typeof getSuiToolbox>[0];
   [Chain.Ton]: Parameters<typeof getTONToolbox>[0];
   [Chain.Tron]: Parameters<typeof createTronToolbox>[0];
+  [Chain.Cardano]: Parameters<typeof getCardanoToolbox>[0];
 };
 
 type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams } & {
@@ -179,6 +186,7 @@ type CreateTransactionParams = { [key in EVMChain]: EVMCreateTransactionParams }
   [Chain.Sui]: SuiCreateTransactionParams;
   [Chain.Ton]: GenericCreateTransactionParams;
   [Chain.Tron]: GenericCreateTransactionParams;
+  [Chain.Cardano]: GenericCreateTransactionParams;
 };
 
 export async function getToolbox<T extends keyof Toolboxes>(
@@ -256,6 +264,11 @@ export async function getToolbox<T extends keyof Toolboxes>(
       const { getNearToolbox } = await import("./near");
       const nearToolbox = await getNearToolbox(params as Parameters<typeof getNearToolbox>[0]);
       return nearToolbox as Toolboxes[T];
+    })
+    .with(Chain.Cardano, async () => {
+      const { getCardanoToolbox } = await import("./cardano");
+      const cardanoToolbox = await getCardanoToolbox(params as Parameters<typeof getCardanoToolbox>[0]);
+      return cardanoToolbox as Toolboxes[T];
     })
     .with(Chain.Ton, async () => {
       const { getTONToolbox } = await import("./ton");

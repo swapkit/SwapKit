@@ -49,23 +49,19 @@ const rpcCacheTTL = 1000 * 60 * 2; // 2 minutes
 
 export async function getRPCUrl(chain: Chain | StagenetChain) {
   const { isStagenet } = SKConfig.get("envs");
-  const rpcUrls = SKConfig.get("rpcUrls");
-  const fallbackUrls = SKConfig.get("fallbackRpcUrls");
+  const [rpcUrl = "", ...fallbackUrls] = SKConfig.get("rpcUrls")[chain];
 
-  if (isStagenet) {
-    return rpcUrls[chain];
-  }
+  if (isStagenet) return rpcUrl;
 
   const cached = rpcCache.get(chain);
   if (cached && Date.now() - cached.timestamp < rpcCacheTTL) {
     return cached.url;
   }
 
-  const primaryUrl = rpcUrls[chain];
-  const primaryIsWorking = await testRPCConnection(chain, primaryUrl);
+  const primaryIsWorking = await testRPCConnection(chain, rpcUrl);
 
   if (!primaryIsWorking) {
-    for (const fallbackUrl of fallbackUrls[chain]) {
+    for (const fallbackUrl of fallbackUrls) {
       const fallbackIsWorking = await testRPCConnection(chain, fallbackUrl);
 
       if (fallbackIsWorking) {
@@ -75,8 +71,8 @@ export async function getRPCUrl(chain: Chain | StagenetChain) {
     }
   }
 
-  rpcCache.set(chain, { timestamp: Date.now(), url: primaryUrl });
-  return primaryUrl;
+  rpcCache.set(chain, { timestamp: Date.now(), url: rpcUrl });
+  return rpcUrl;
 }
 
 /**

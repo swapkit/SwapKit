@@ -1,5 +1,5 @@
 import { type BaseWallet, Chain } from "@swapkit/helpers";
-
+import type { CardanoWallet } from "./cardano";
 import type { CosmosWallets, ThorchainWallets } from "./cosmos";
 import type { EVMToolboxes } from "./evm";
 import type { NearWallet } from "./near";
@@ -20,6 +20,7 @@ type OtherWallets = {
   [Chain.Sui]: SuiWallet;
   [Chain.Tron]: TronWallet;
   [Chain.Near]: NearWallet;
+  [Chain.Cardano]: CardanoWallet;
 };
 
 export type FullWallet = BaseWallet<

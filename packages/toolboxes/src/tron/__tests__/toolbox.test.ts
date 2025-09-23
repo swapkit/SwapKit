@@ -12,7 +12,7 @@ const context: {
 
 beforeAll(async () => {
   // Set up TRON mainnet configuration
-  SKConfig.set({ rpcUrls: { [Chain.Tron]: "https://api.trongrid.io" } });
+  SKConfig.set({ rpcUrls: { [Chain.Tron]: ["https://api.trongrid.io"] } });
 
   // Get the address validator
   context.validateAddress = await getTronAddressValidator();
