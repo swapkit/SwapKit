@@ -15,7 +15,6 @@ export const ChainflipPlugin = createPlugin({
           buyAsset: buyAssetString,
           sellAsset: sellAssetString,
           sellAmount,
-          destinationAddress: recipient,
           meta: { chainflip },
         },
         maxBoostFeeBps = 0,
@@ -35,7 +34,6 @@ export const ChainflipPlugin = createPlugin({
 
       const { depositAddress } = await SwapKitApi.getChainflipDepositChannel({
         ...chainflip,
-        destinationAddress: recipient || chainflip.destinationAddress,
         maxBoostFeeBps: maxBoostFeeBps || chainflip.maxBoostFeeBps,
       });
 

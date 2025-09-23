@@ -1,5 +1,72 @@
 # @swapkit/browser
 
+## 4.0.22
+
+### Patch Changes
+
+- Updated dependencies [[`1977b48`](https://github.com/swapkit/SwapKit/commit/1977b483b4f806f353e97fa4ab5d1f2d846b25f2)]:
+  - @swapkit/plugins@4.0.22
+  - @swapkit/core@4.0.20
+  - @swapkit/helpers@4.0.20
+  - @swapkit/wallets@4.1.19
+
+## 4.0.21
+
+### Patch Changes
+
+- Updated dependencies [[`6365b50`](https://github.com/swapkit/SwapKit/commit/6365b506e3ed6587298fa6ba71c846bdf7341391)]:
+  - @swapkit/helpers@4.0.19
+  - @swapkit/core@4.0.19
+  - @swapkit/plugins@4.0.21
+  - @swapkit/wallets@4.1.18
+
+## 4.0.20
+
+### Patch Changes
+
+- Updated dependencies [[`1981f09`](https://github.com/swapkit/SwapKit/commit/1981f09ad7be6d70a22d6f18637c3717e3392a4e)]:
+  - @swapkit/plugins@4.0.20
+
+## 4.0.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.18
+  - @swapkit/helpers@4.0.18
+  - @swapkit/plugins@4.0.19
+  - @swapkit/wallets@4.1.17
+
+## 4.0.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/core@4.0.17
+  - @swapkit/helpers@4.0.17
+  - @swapkit/plugins@4.0.18
+  - @swapkit/wallets@4.1.16
+
+## 4.0.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallets@4.1.15
+  - @swapkit/core@4.0.16
+  - @swapkit/helpers@4.0.16
+  - @swapkit/plugins@4.0.17
+
+## 4.0.16
+
+### Patch Changes
+
+- Updated dependencies [[`062b0a4`](https://github.com/swapkit/SwapKit/commit/062b0a4e7dc9113d3ce1d473eae402492d15334b)]:
+  - @swapkit/wallets@4.1.14
+  - @swapkit/helpers@4.0.15
+  - @swapkit/core@4.0.15
+  - @swapkit/plugins@4.0.16
+
 ## 4.0.15
 
 ### Patch Changes

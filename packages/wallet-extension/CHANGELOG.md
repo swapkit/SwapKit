@@ -1,5 +1,53 @@
 # @swapkit/wallet-extension
 
+## 4.0.20
+
+### Patch Changes
+
+- Updated dependencies [[`1977b48`](https://github.com/swapkit/SwapKit/commit/1977b483b4f806f353e97fa4ab5d1f2d846b25f2)]:
+  - @swapkit/toolboxes@4.0.20
+  - @swapkit/helpers@4.0.20
+
+## 4.0.19
+
+### Patch Changes
+
+- Updated dependencies [[`6365b50`](https://github.com/swapkit/SwapKit/commit/6365b506e3ed6587298fa6ba71c846bdf7341391)]:
+  - @swapkit/helpers@4.0.19
+  - @swapkit/toolboxes@4.0.19
+
+## 4.0.18
+
+### Patch Changes
+
+- Updated dependencies [[`69ca725`](https://github.com/swapkit/SwapKit/commit/69ca725828d4adf996d627e494c560a71fdefc4b)]:
+  - @swapkit/toolboxes@4.0.18
+  - @swapkit/helpers@4.0.18
+
+## 4.0.17
+
+### Patch Changes
+
+- Updated dependencies [[`98afc83`](https://github.com/swapkit/SwapKit/commit/98afc83feacf172b495e460d4e7e3f331e3dd953)]:
+  - @swapkit/toolboxes@4.0.17
+  - @swapkit/helpers@4.0.17
+
+## 4.0.16
+
+### Patch Changes
+
+- Updated dependencies [[`99aa35e`](https://github.com/swapkit/SwapKit/commit/99aa35e985b7f04738ce12199ac9106c2ad8707c)]:
+  - @swapkit/toolboxes@4.0.16
+  - @swapkit/helpers@4.0.16
+
+## 4.0.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.15
+  - @swapkit/toolboxes@4.0.15
+
 ## 4.0.14
 
 ### Patch Changes

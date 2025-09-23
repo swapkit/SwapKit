@@ -35,7 +35,7 @@ export const keplrWallet = createWallet({
           if (!accounts?.[0]?.address) throw new SwapKitError("wallet_keplr_no_accounts");
 
           const [{ address }] = accounts;
-          const toolbox = getCosmosToolbox(chain, { signer });
+          const toolbox = await getCosmosToolbox(chain, { signer });
 
           addChain({ ...toolbox, address, chain, walletType });
         }),

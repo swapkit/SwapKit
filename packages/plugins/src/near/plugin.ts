@@ -169,7 +169,7 @@ export const NearPlugin = createPlugin({
         throw new SwapKitError("core_swap_invalid_params", { missing: ["inboundAddress"] });
       }
 
-      const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
+      const sellAsset = await AssetValue.from({ asset: sellAssetString, value: sellAmount });
 
       const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, typeof Chain.Radix>);
 

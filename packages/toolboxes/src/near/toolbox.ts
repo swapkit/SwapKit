@@ -1,6 +1,7 @@
 import { AssetValue, Chain, getChainConfig, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { Account, Contract } from "near-api-js";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
+import { getBalance } from "../utils";
 import {
   getFullAccessPublicKey,
   getNearSignerFromPhrase,
@@ -298,7 +299,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         methodName,
         args || {},
         estimatedGas.getBaseValue("bigint"),
-        BigInt(deposit || "0"),
+        BigInt(deposit || "1"),
       );
 
       const result = await account.signAndSendTransaction({ actions: [functionAction], receiverId: contractId });
@@ -343,51 +344,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     return createNEP141Token({ account, contractId });
   }
 
-  async function getBalance(address: string) {
-    const { baseDecimal } = getChainConfig(Chain.Near);
-    try {
-      const account = await getAccount(address);
-
-      let nativeBalance: AssetValue;
-      try {
-        const value = await account.getBalance();
-
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value });
-      } catch {
-        nativeBalance = AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value: "0" });
-      }
-
-      //   // Then, fetch token balances from API
-      //   let tokenBalances: AssetValue[] = [];
-      //   try {
-      //     const apiBalances = await SwapKitApi.getChainBalance({
-      //       chain: Chain.Near,
-      //       address,
-      //       scamFilter,
-      //     });
-
-      //     tokenBalances = apiBalances
-      //       .filter(({ identifier }) => identifier !== Chain.Near) // Filter out native NEAR
-      //       .map(({ identifier, value, decimal }) => {
-      //         return new AssetValue({
-      //           decimal: decimal || BaseDecimal[Chain.Near],
-      //           value,
-      //           identifier,
-      //         });
-      //       });
-      //   } catch (error) {
-      //     // If API fails, just return on-chain balance
-      //     console.warn("Failed to fetch token balances from API:", error);
-      //   }
-
-      // Merge native balance with token balances
-      //   return [nativeBalance, ...tokenBalances];
-      return [nativeBalance];
-    } catch (error) {
-      throw new SwapKitError("toolbox_near_balance_failed", { error });
-    }
-  }
-
   async function estimateGas(params: NearGasEstimateParams, account?: Account) {
     const { baseDecimal } = getChainConfig(Chain.Near);
 
@@ -407,10 +363,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         throw new SwapKitError("toolbox_near_invalid_gas_params");
       });
 
-    // Convert TGas to gas price in NEAR
-    const gasPrice = await getGasPrice();
-    const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12); // Convert TGas to gas units
-    const costInYoctoNear = gasInUnits * BigInt(gasPrice);
+    const gasInUnits = BigInt(gasInTGas) * BigInt(10 ** 12);
+    const costInYoctoNear = gasInUnits;
 
     return AssetValue.from({ chain: Chain.Near, fromBaseDecimal: baseDecimal, value: costInYoctoNear });
   }
@@ -437,7 +391,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     estimateTransactionFee,
     executeBatchTransaction,
     getAddress,
-    getBalance,
+    getBalance: getBalance(Chain.Near),
     getGasPrice,
     getPublicKey: async () => (signer ? (await signer.getPublicKey()).toString() : ""),
     getSignerFromPhrase: (params: GetSignerFromPhraseParams) => getNearSignerFromPhrase(params),

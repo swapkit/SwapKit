@@ -363,9 +363,9 @@ async function zcashOperations() {
 import { Chain, getCosmosToolbox } from "@swapkit/sdk";
 
 function initCosmosToolbox() {
-  const cosmosToolbox = getCosmosToolbox(Chain.Cosmos);
+  const cosmosToolbox = await getCosmosToolbox(Chain.Cosmos);
 
-  const thorchainToolbox = getCosmosToolbox(Chain.THORChain);
+  const thorchainToolbox = await getCosmosToolbox(Chain.THORChain);
 
   return { cosmosToolbox, thorchainToolbox };
 }
@@ -383,7 +383,7 @@ import {
 } from "@swapkit/sdk";
 
 async function createThorchainWallet() {
-  const toolbox = getCosmosToolbox(Chain.THORChain);
+  const toolbox = await getCosmosToolbox(Chain.THORChain);
   const phrase = "your twelve word mnemonic phrase here";
   const signer = await toolbox.getSigner(phrase);
   const address = await toolbox.getAddressFromMnemonic(phrase);
@@ -418,7 +418,7 @@ const signedMessage = await wallet.signMessage("Hello, world!");
 import { Chain, getCosmosToolbox } from "@swapkit/sdk";
 
 async function cosmosBalances() {
-  const cosmosToolbox = getCosmosToolbox(Chain.Cosmos);
+  const cosmosToolbox = await getCosmosToolbox(Chain.Cosmos);
 
   const address = "cosmos1abcd1234abcd1234abcd1234abcd1234abcd12";
   const balances = await cosmosToolbox.getBalance(address);
@@ -437,7 +437,7 @@ async function cosmosBalances() {
 import { getSolanaToolbox } from "@swapkit/sdk";
 
 function initSolanaToolbox() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
   return solanaToolbox;
 }
 ```
@@ -448,7 +448,7 @@ function initSolanaToolbox() {
 import { getSolanaToolbox } from "@swapkit/sdk";
 
 async function solanaKeysAndAddresses() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
 
   const keypair = await solanaToolbox.createKeysForPath({
     phrase: "your twelve word mnemonic phrase here",
@@ -467,7 +467,7 @@ async function solanaKeysAndAddresses() {
 import { AssetValue, Chain, getSolanaToolbox } from "@swapkit/sdk";
 
 async function solanaTransfer() {
-  const solanaToolbox = getSolanaToolbox();
+  const solanaToolbox = await getSolanaToolbox();
 
   const keypair = await solanaToolbox.createKeysForPath({
     phrase: "your twelve word mnemonic phrase here",

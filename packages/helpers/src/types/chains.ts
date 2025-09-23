@@ -1,5 +1,4 @@
 import { Chain, StagenetChain } from "@swapkit/types";
-
 /**
  * @deprecated use getChainConfig instead
  * @example

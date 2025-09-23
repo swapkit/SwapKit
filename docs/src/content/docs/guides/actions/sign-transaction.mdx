@@ -281,7 +281,7 @@ For complete control over the signing process, you can use toolbox-specific meth
 import { Chain, getCosmosToolbox } from "@swapkit/sdk";
 
 async function cosmosWallet() {
-  const cosmosToolbox = getCosmosToolbox(Chain.THORChain);
+  const cosmosToolbox = await getCosmosToolbox(Chain.THORChain);
 
   const phrase = "your twelve word mnemonic phrase here";
   const signer = await cosmosToolbox.getSigner(phrase);
