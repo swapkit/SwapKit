@@ -28,7 +28,6 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   DOGE: [44, 3, 0, 0, 0],
   DOT: [0, 0, 0, 0, 0],
   ETH: [44, 60, 0, 0, 0],
-  FIAT: [0, 0, 0, 0, 0],
   FLIP: [0, 0, 0, 0, 0],
   GAIA: [44, 118, 0, 0, 0],
   GNO: [44, 60, 0, 0, 0],

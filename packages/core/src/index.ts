@@ -6,7 +6,6 @@ import {
   type ChainWallet,
   type ConditionalAssetValueReturn,
   CosmosChains,
-  type CryptoChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
@@ -185,14 +184,11 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(
-    chain: T,
-    scamFilter = true,
-  ): Promise<ReturnType<typeof getWallet> & { balance: AssetValue[] }> {
-    if (chain === Chain.Fiat || !getWallet(chain)) {
+  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
+    if (!getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as CryptoChain);
+    const wallet = getWallet(chain);
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
@@ -217,10 +213,10 @@ export function SwapKit<
 
   function transfer({ assetValue, ...params }: GenericTransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
-    if ([Chain.Fiat, Chain.Radix].includes(chain as typeof Chain.Fiat) || !getWallet(chain)) {
+    if ([Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Fiat | typeof Chain.Radix | typeof Chain.Near>);
+    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Radix | typeof Chain.Near>);
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });

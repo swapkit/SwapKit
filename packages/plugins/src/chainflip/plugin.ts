@@ -1,4 +1,4 @@
-import { AssetValue, type Chain, type CryptoChain, ProviderName, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, type Chain, ProviderName, SwapKitError } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 import { createPlugin } from "../utils";
 import type { RequestSwapDepositAddressParams } from "./types";
@@ -26,7 +26,7 @@ export const ChainflipPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
 
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
+      const wallet = getWallet(sellAsset.chain as Exclude<Chain, Chain.Radix>);
 
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");

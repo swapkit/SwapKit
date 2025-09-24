@@ -69,19 +69,6 @@ const TRON = createChain({
   type,
 });
 
-const FIAT = createChain({
-  baseDecimal: 2,
-  blockExplorerUrl: "",
-  blockTime: 60,
-  chain: Chain.Fiat,
-  chainId: ChainId.FIAT,
-  explorerUrl: "",
-  name: "Fiat",
-  nativeCurrency: "USD",
-  rpcUrl: "",
-  type,
-});
-
-export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TRON, FIAT] as const;
+export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TRON] as const;
 export const OtherChains = OtherChainConfigs.map((config) => config.chain);
 export type OtherChain = (typeof OtherChains)[number];

@@ -71,7 +71,10 @@ export enum LedgerErrorCode {
   TC_NotFound = 65535,
 }
 
-export type CryptoChain = Exclude<Chain, typeof Chain.Fiat>;
+/**
+ * @deprecated CryptoChain has been deprecated - use Chain instead
+ */
+export type CryptoChain = Chain;
 
 export type ChainWallet<T extends Chain> = {
   chain: T;

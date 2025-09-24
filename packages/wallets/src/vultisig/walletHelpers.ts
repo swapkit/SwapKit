@@ -104,43 +104,39 @@ async function transaction({
 
 export async function getVultisigAddress(chain: Chain) {
   try {
-    const eipProvider = (await getVultisigProvider(chain)) as unknown as Eip1193Provider;
-    if (!eipProvider) {
+    const windowProvider = (await getVultisigProvider(chain)) as Eip1193Provider;
+    if (!windowProvider) {
       throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
     }
 
     if ([Chain.Cosmos, Chain.Kujira].includes(chain as typeof Chain.Cosmos)) {
       const chainId = ChainId[chain];
 
-      await eipProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
+      await windowProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 
-      let account = await eipProvider.request({ method: "get_accounts" });
+      let account = await windowProvider.request({ method: "get_accounts" });
       if (!account) {
-        const connectedAcount = await eipProvider.request({ method: "request_accounts" });
+        const connectedAcount = await windowProvider.request({ method: "request_accounts" });
         account = connectedAcount[0].address;
       }
       return account;
     }
 
     if (EVMChains.includes(chain as EVMChain)) {
-      if ("request" in eipProvider && typeof eipProvider.request === "function") {
-        const accounts = await eipProvider.request({ method: "eth_requestAccounts" });
-        return accounts[0];
-      }
       const { BrowserProvider } = await import("ethers");
-      const provider = new BrowserProvider(eipProvider, "any");
+      const provider = new BrowserProvider(windowProvider, "any");
       const [response] = await providerRequest({ method: "eth_requestAccounts", params: [], provider });
       return response;
     }
 
     if (chain === Chain.Solana) {
-      const provider = await getVultisigProvider(Chain.Solana);
+      const solanaProvider = await getVultisigProvider(Chain.Solana);
 
-      const accounts = await provider.connect();
+      const accounts = await solanaProvider.connect();
       return accounts.publicKey.toString();
     }
 
-    const accounts = await eipProvider.request({ method: "request_accounts", params: [] });
+    const accounts = await windowProvider.request({ method: "request_accounts", params: [] });
     return accounts[0];
   } catch (_error) {
     throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
