@@ -147,7 +147,7 @@ export function SwapKit<
    * @Public
    */
   function getWallet<T extends ConnectedChains>(chain: T) {
-    return connectedWallets[chain] || {};
+    return connectedWallets[chain];
   }
 
   function getAllWallets() {
