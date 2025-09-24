@@ -67,7 +67,7 @@ export const ChainToChainId = ChainId;
 export const ChainIdToChain = Object.fromEntries(
   AllChainConfigs.flatMap(({ chainId, chain }) => [[chainId, chain] as const]),
 ) as {
-  readonly [K in ChainConfig["chainId"]]: Extract<ChainConfig, { chainId: K }>["chain"];
+  readonly [K in ChainId]: Extract<ChainConfig, { chainId: K }>["chain"];
 };
 
 /**
@@ -81,5 +81,19 @@ export const ChainIdToChain = Object.fromEntries(
 export const BaseDecimal = Object.fromEntries(
   AllChainConfigs.flatMap(({ baseDecimal, chain }) => [[chain, baseDecimal] as const]),
 ) as {
-  readonly [K in ChainConfig["chain"]]: Extract<ChainConfig, { chain: K }>["baseDecimal"];
+  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["baseDecimal"];
+};
+
+/**
+ * @deprecated use getChainConfig instead
+ * @example
+ * ```diff
+ * -const blockTime = BlockTimes[Chain.Ethereum];
+ * +const { blockTime } = getChainConfig(Chain.Ethereum);
+ * ```
+ */
+export const BlockTimes = Object.fromEntries(
+  AllChainConfigs.flatMap(({ blockTime, chain }) => [[chain, blockTime] as const]),
+) as {
+  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["blockTime"];
 };
