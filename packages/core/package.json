@@ -20,5 +20,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.20"
+  "version": "4.0.21"
 }
