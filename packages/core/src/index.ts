@@ -147,7 +147,7 @@ export function SwapKit<
    * @Public
    */
   function getWallet<T extends ConnectedChains>(chain: T) {
-    return connectedWallets[chain] || {};
+    return connectedWallets[chain];
   }
 
   function getAllWallets() {
@@ -184,14 +184,11 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(
-    chain: T,
-    scamFilter = true,
-  ): Promise<ReturnType<typeof getWallet> & { balance: AssetValue[] }> {
-    if (chain === Chain.Fiat || !getWallet(chain)) {
+  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
+    if (!getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat>);
+    const wallet = getWallet(chain);
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
@@ -216,10 +213,10 @@ export function SwapKit<
 
   function transfer({ assetValue, ...params }: GenericTransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
-    if ([Chain.Fiat, Chain.Radix].includes(chain) || !getWallet(chain)) {
+    if ([Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, Chain.Fiat | Chain.Radix | Chain.Near>);
+    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Radix | typeof Chain.Near>);
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });

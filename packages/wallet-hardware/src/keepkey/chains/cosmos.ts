@@ -30,7 +30,7 @@ export async function cosmosWalletMethods({
   const toolbox = await getCosmosToolbox(Chain.Cosmos);
 
   if (DEFAULT_COSMOS_FEE_MAINNET.amount[0]) {
-    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await getFeeRateFromSwapKit(ChainId.Cosmos, 500));
+    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await getFeeRateFromSwapKit(ChainId.GAIA, 500));
   }
 
   // TODO support other cosmos assets
@@ -41,7 +41,7 @@ export async function cosmosWalletMethods({
     const keepKeySignedTx = await sdk.cosmos.cosmosSignAmino({
       signDoc: {
         account_number: accountInfo?.accountNumber.toString() ?? "",
-        chain_id: ChainId.Cosmos,
+        chain_id: ChainId.GAIA,
         fee: DEFAULT_COSMOS_FEE_MAINNET,
         memo: memo || "",
         msgs: [

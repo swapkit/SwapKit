@@ -1,14 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { Chain, ChainToExplorerUrl, CosmosChains, EVMChains, UTXOChains } from "@swapkit/helpers";
+import { Chain, CosmosChains, EVMChains, getChainConfig, UTXOChains } from "@swapkit/helpers";
 import { getExplorerAddressUrl, getExplorerTxUrl } from "../explorerUrls";
 
 describe("Explorer URLs", () => {
   describe("CosmosChains", () => {
     for (const chain of CosmosChains) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
-        expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(`${ChainToExplorerUrl[chain]}/tx/123456789`);
+        expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
+          `${getChainConfig(chain).blockExplorerUrl}/tx/123456789`,
+        );
 
-        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(`${ChainToExplorerUrl[chain]}/address/asdfg`);
+        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
+          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+        );
       });
     }
   });
@@ -16,9 +20,13 @@ describe("Explorer URLs", () => {
   describe("EVMChains & SubstrateChains", () => {
     for (const chain of [...EVMChains, Chain.Polkadot]) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
-        expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(`${ChainToExplorerUrl[chain]}/tx/0x123456789`);
+        expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
+          `${getChainConfig(chain).blockExplorerUrl}/tx/0x123456789`,
+        );
 
-        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(`${ChainToExplorerUrl[chain]}/address/asdfg`);
+        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
+          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+        );
       });
     }
 
@@ -31,10 +39,12 @@ describe("Explorer URLs", () => {
     for (const chain of UTXOChains.filter((c) => c !== Chain.Dash)) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
         expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
-          `${ChainToExplorerUrl[chain]}/transaction/0x123456789`,
+          `${getChainConfig(chain).blockExplorerUrl}/transaction/0x123456789`,
         );
 
-        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(`${ChainToExplorerUrl[chain]}/address/asdfg`);
+        expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
+          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+        );
       });
     }
   });

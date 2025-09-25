@@ -167,14 +167,13 @@ const baseAssetAddress: Record<EVMChain, string> = {
   [Chain.Polygon]: ContractAddress.MATIC,
 };
 
+const ethGasChains = [Chain.Arbitrum, Chain.Aurora, Chain.Base, Chain.Optimism] as string[];
+
 export function getTokenAddress({ chain, symbol, ticker }: Asset, baseAssetChain: EVMChain) {
   try {
     const isBSCBNB = chain === Chain.BinanceSmartChain && symbol === "BNB" && ticker === "BNB";
     const isBaseAsset = chain === baseAssetChain && symbol === baseAssetChain && ticker === baseAssetChain;
-    const isEVMAsset =
-      [Chain.Arbitrum, Chain.Aurora, Chain.Base, Chain.Optimism].includes(chain) &&
-      symbol === "ETH" &&
-      ticker === "ETH";
+    const isEVMAsset = ethGasChains.includes(chain) && symbol === "ETH" && ticker === "ETH";
 
     if (isBaseAsset || isBSCBNB || isEVMAsset) {
       return baseAssetAddress[baseAssetChain];
@@ -300,7 +299,7 @@ function getCall({ provider, isEIP1559Compatible, signer, chain }: ToolboxWrapPa
       if (!from) throw new SwapKitError("toolbox_evm_no_signer_address");
 
       const connectedContract = contract.connect(signer);
-      const estimateGasPrices = getEstimateGasPrices({ chain: chain as Chain.Ethereum, isEIP1559Compatible, provider });
+      const estimateGasPrices = getEstimateGasPrices({ chain, isEIP1559Compatible, provider });
       const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = (await estimateGasPrices())[feeOption];
 
       const gasLimit = await contract.getFunction(funcName).estimateGas(...funcParams, txOverrides);

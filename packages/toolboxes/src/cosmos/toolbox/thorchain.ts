@@ -1,18 +1,19 @@
 import type { Pubkey, Secp256k1HdWallet } from "@cosmjs/amino";
 import { base64 } from "@scure/base";
 import {
-  BaseDecimal,
   Chain,
   CosmosChainPrefixes,
   derivationPathToString,
   FeeOption,
   type GenericTransferParams,
+  getChainConfig,
   getRPCUrl,
   NetworkDerivationPath,
   RequestClient,
   SKConfig,
   SwapKitError,
   SwapKitNumber,
+  type TCLikeChain,
   updateDerivationPath,
 } from "@swapkit/helpers";
 
@@ -51,7 +52,7 @@ function exportSignature(signature: Uint8Array) {
   return base64.encode(signature);
 }
 
-function signMultisigTx(chain: Chain.THORChain | Chain.Maya) {
+function signMultisigTx(chain: TCLikeChain) {
   return async function signMultisigTx({ wallet, tx }: { wallet: Secp256k1HdWallet; tx: string | MultisigTx }) {
     const { msgs, accountNumber, sequence, chainId, fee, memo } = typeof tx === "string" ? JSON.parse(tx) : tx;
 
@@ -131,10 +132,7 @@ async function signWithPrivateKey({ privateKey, message }: { privateKey: Uint8Ar
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
 
-export async function createThorchainToolbox({
-  chain,
-  ...toolboxParams
-}: CosmosToolboxParams<Chain.THORChain | Chain.Maya>) {
+export async function createThorchainToolbox({ chain, ...toolboxParams }: CosmosToolboxParams<TCLikeChain>) {
   const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = await getRPCUrl(chain);
   const { isStagenet } = SKConfig.get("envs");
@@ -173,7 +171,7 @@ export async function createThorchainToolbox({
 
       fee = new SwapKitNumber(nativeFee);
     } catch {
-      fee = new SwapKitNumber({ decimal: BaseDecimal[chain], value: isThorchain ? 0.02 : 1 });
+      fee = new SwapKitNumber({ decimal: getChainConfig(chain).baseDecimal, value: isThorchain ? 0.02 : 1 });
     }
 
     return { [FeeOption.Average]: fee, [FeeOption.Fast]: fee, [FeeOption.Fastest]: fee };

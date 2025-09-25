@@ -1,5 +1,5 @@
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
-import { AssetValue, Chain, ChainToChainId, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, Chain, getChainConfig, SwapKitError, type TCLikeChain } from "@swapkit/helpers";
 
 import { createStargateClient, getDefaultChainFee, getDenomWithChain, getMsgSendDenom } from "../util";
 
@@ -23,7 +23,7 @@ export const transferMsgAmino = ({
   recipient?: string;
   assetValue: AssetValue;
 }) => {
-  const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
+  const chain = assetValue.chain as typeof Chain.THORChain | typeof Chain.Maya;
   return {
     type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgSend` as const,
     value: {
@@ -43,7 +43,7 @@ export const depositMsgAmino = ({
   assetValue: AssetValue;
   memo?: string;
 }) => {
-  const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
+  const chain = assetValue.chain as TCLikeChain;
   return {
     type: `${chain === Chain.Maya ? "mayachain" : "thorchain"}/MsgDeposit` as const,
     value: {
@@ -73,7 +73,7 @@ export const buildAminoMsg = ({
   return msg;
 };
 
-export const convertToSignable = async (msg: MsgSend | MsgDeposit, chain: Chain.THORChain | Chain.Maya) => {
+export const convertToSignable = async (msg: MsgSend | MsgDeposit, chain: TCLikeChain) => {
   const aminoTypes = await createDefaultAminoTypes(chain);
 
   return aminoTypes.fromAmino(msg);
@@ -115,7 +115,8 @@ export const buildTransferTx =
     accountNumber,
   }: ThorchainCreateTransactionParams) => {
     const account = await getAccount({ rpcUrl, sender });
-    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
+    const chain = assetValue.chain as TCLikeChain;
+    const { chainId } = getChainConfig(chain);
 
     const transferMsg = transferMsgAmino({ assetValue, recipient, sender });
 
@@ -125,8 +126,8 @@ export const buildTransferTx =
 
     const transaction = {
       accountNumber: accountNumber || account.accountNumber,
-      chainId: ChainToChainId[chain],
-      fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
+      chainId,
+      fee: getDefaultChainFee(chain),
       memo,
       msgs: [msg],
       sequence: sequence || account.sequence,
@@ -147,7 +148,8 @@ export const buildDepositTx =
     accountNumber,
   }: ThorchainCreateTransactionParams) => {
     const account = await getAccount({ rpcUrl, sender });
-    const chain = assetValue.chain as Chain.THORChain | Chain.Maya;
+    const chain = assetValue.chain as TCLikeChain;
+    const { chainId } = getChainConfig(chain);
 
     const depositMsg = depositMsgAmino({ assetValue, memo, sender });
 
@@ -160,8 +162,8 @@ export const buildDepositTx =
 
     const transaction = {
       accountNumber: accountNumber || account.accountNumber,
-      chainId: ChainToChainId[chain],
-      fee: getDefaultChainFee(assetValue.chain as Chain.THORChain | Chain.Maya),
+      chainId,
+      fee: getDefaultChainFee(chain),
       memo,
       msgs: [msg],
       sequence: sequence || account.sequence,
@@ -196,7 +198,7 @@ export async function buildEncodedTxBody({
 }: {
   msgs: DirectMsgDepositForBroadcast[] | DirectMsgSendForBroadcast[];
   memo: string;
-  chain: Chain.THORChain | Chain.Maya;
+  chain: TCLikeChain;
 }) {
   const registry = await createDefaultRegistry();
   const aminoTypes = await createDefaultAminoTypes(chain);

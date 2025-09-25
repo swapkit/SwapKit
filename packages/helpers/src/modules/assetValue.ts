@@ -1,7 +1,7 @@
 import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
+import { Chain, type ChainId, type EVMChain, EVMChains, getChainConfig } from "@swapkit/types";
 import { getAddress } from "ethers";
 import { match } from "ts-pattern";
-import { BaseDecimal, Chain, type ChainId, ChainToChainId, type EVMChain, EVMChains } from "../types/chains";
 import {
   assetFromString,
   type CommonAssetString,
@@ -18,7 +18,8 @@ import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics"
 import { SwapKitError } from "./swapKitError";
 import type { SwapKitValueType } from "./swapKitNumber";
 
-const CASE_SENSITIVE_CHAINS = [Chain.Solana, Chain.Tron, Chain.Near];
+const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near];
+const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
 const staticTokensMap = new Map<
   TokenNames | string,
@@ -73,7 +74,7 @@ export class AssetValue extends BigIntArithmetics {
     this.isSynthetic = assetInfo.isSynthetic;
     this.isTradeAsset = assetInfo.isTradeAsset;
     this.isGasAsset = assetInfo.isGasAsset;
-    this.chainId = ChainToChainId[assetInfo.chain];
+    this.chainId = getChainConfig(assetInfo.chain).chainId;
   }
 
   toString({ includeSynthProtocol }: { includeSynthProtocol?: boolean } = {}) {
@@ -124,7 +125,7 @@ export class AssetValue extends BigIntArithmetics {
         ({ chain, rest }) => `${chain}.${rest.replace(/\.\./g, "~")}`,
       )
       .when(
-        ({ chain, rest }) => [Chain.THORChain, Chain.Maya].includes(chain) && rest.includes("."),
+        ({ chain, rest }) => TC_CHAINS.includes(chain) && rest.includes("."),
         ({ chain, rest }) => `${chain}.${rest.replace(/\./g, "/")}`,
       )
       .otherwise(({ chain, rest }) => `${chain}.${rest.replace(/__/g, ".")}`);
@@ -140,12 +141,12 @@ export class AssetValue extends BigIntArithmetics {
   }: T & AssetValueFromParams): ConditionalAssetValueReturn<T> {
     const parsedValue = value instanceof BigIntArithmetics ? value.getValue("string") : value;
     const assetOrChain = getAssetString(fromAssetOrChain);
-
     const { identifier: unsafeIdentifier, decimal: commonAssetDecimal } = getCommonAssetInfo(
       assetOrChain as CommonAssetString,
     );
-
     const { chain, isSynthetic, isTradeAsset } = getAssetInfo(unsafeIdentifier);
+    const { baseDecimal } = getChainConfig(chain);
+
     const token = staticTokensMap.get(
       CASE_SENSITIVE_CHAINS.includes(chain)
         ? (unsafeIdentifier as TokenNames)
@@ -157,14 +158,14 @@ export class AssetValue extends BigIntArithmetics {
     warnOnce({
       condition: !(asyncTokenLookup || tokenDecimal),
       id: `assetValue_static_decimal_not_found_${chain}`,
-      warning: `Couldn't find static decimal for one or more tokens on ${chain} (Using default ${BaseDecimal[chain]} decimal as fallback).
+      warning: `Couldn't find static decimal for one or more tokens on ${chain} (Using default ${baseDecimal} decimal as fallback).
 This can result in incorrect calculations and mess with amount sent on transactions.
 You can load static assets by installing @swapkit/tokens package and calling AssetValue.loadStaticAssets()
 or by passing asyncTokenLookup: true to the from() function, which will make it async and return a promise.`,
     });
 
     const { decimal, identifier, tax } = token || {
-      decimal: tokenDecimal || BaseDecimal[chain],
+      decimal: tokenDecimal || baseDecimal,
       identifier: unsafeIdentifier,
     };
 
@@ -187,10 +188,12 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
 
     for (const { tokens } of Object.values(lists)) {
       for (const { identifier, chain, ...rest } of tokens) {
+        const chainConfig = getChainConfig(chain as Chain);
+
         const tokenKey = (
-          CASE_SENSITIVE_CHAINS.includes(chain as Chain) ? identifier : identifier.toUpperCase()
+          CASE_SENSITIVE_CHAINS.includes(chainConfig.chain) ? identifier : identifier.toUpperCase()
         ) as TokenNames;
-        const tokenDecimal = "decimals" in rest ? rest.decimals : BaseDecimal[chain as Chain];
+        const tokenDecimal = "decimals" in rest ? rest.decimals : chainConfig.baseDecimal;
 
         staticTokensMap.set(tokenKey, { decimal: tokenDecimal, identifier });
       }
@@ -249,7 +252,7 @@ async function createAssetValue(identifier: string, value: NumberPrimitives = 0)
 
 function createSyntheticAssetValue(identifier: string, value: NumberPrimitives = 0) {
   const chain = identifier.includes(".") ? (identifier.split(".")?.[0]?.toUpperCase() as Chain) : undefined;
-  const isMayaOrThor = chain ? [Chain.Maya, Chain.THORChain].includes(chain) : false;
+  const isMayaOrThor = chain ? TC_CHAINS.includes(chain) : false;
 
   const assetSeparator = identifier.slice(0, 14).includes("~") ? "~" : "/";
 
@@ -306,7 +309,8 @@ function getAssetString(assetOrChain: AssetIdentifier) {
 function getSyntheticOrTradeAssetInfo(identifier: string, isSynthetic: boolean, isTradeAsset: boolean) {
   const splitIdentifier = identifier.split(".");
   const identifierChain = splitIdentifier[0]?.toUpperCase() as Chain;
-  const isThorOrMaya = [Chain.THORChain, Chain.Maya].includes(identifierChain);
+  const isThorOrMaya = TC_CHAINS.includes(identifierChain);
+
   const assetSeparator = isTradeAsset ? "~" : "/";
 
   const [synthChain, synthSymbol = ""] = isThorOrMaya

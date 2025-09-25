@@ -1,4 +1,4 @@
-import type { Chain } from "./chains";
+import type { Chain } from "@swapkit/types";
 
 export enum ContractAddress {
   ARB = "0x0000000000000000000000000000000000000000",
@@ -26,11 +26,8 @@ export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
   BTC: [84, 0, 0, 0, 0],
   DASH: [44, 5, 0, 0, 0],
   DOGE: [44, 3, 0, 0, 0],
-
-  // Polkadot and related network derivation path is not number based
   DOT: [0, 0, 0, 0, 0],
   ETH: [44, 60, 0, 0, 0],
-  FIAT: [0, 0, 0, 0, 0],
   FLIP: [0, 0, 0, 0, 0],
   GAIA: [44, 118, 0, 0, 0],
   GNO: [44, 60, 0, 0, 0],

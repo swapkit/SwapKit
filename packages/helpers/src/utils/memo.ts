@@ -1,5 +1,5 @@
+import { Chain } from "@swapkit/types";
 import { match } from "ts-pattern";
-import { Chain } from "../types/chains";
 import { MemoType } from "../types/sdk";
 
 export function getMemoForLeaveAndBond({ type, address }: BondOrLeaveParams) {

@@ -1,6 +1,6 @@
+import type { Chain } from "@swapkit/types";
 import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
-import type { Chain } from "../types/chains";
 
 // Backward compatibility
 const supportedChains = ["TERRA", ...SKConfig.get("chains")];

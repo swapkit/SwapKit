@@ -1,6 +1,6 @@
 import {
   Chain,
-  ChainToChainId,
+  ChainId,
   filterSupportedChains,
   type GenericTransferParams,
   SwapKitError,
@@ -88,7 +88,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Kujira:
     case Chain.Noble: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const chainId = ChainToChainId[chain];
+      const chainId = ChainId[chain];
       const provider = await getCtrlProvider(chain);
 
       await provider?.enable(chainId);

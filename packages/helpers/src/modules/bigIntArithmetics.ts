@@ -1,4 +1,3 @@
-import { BaseDecimal } from "../types/chains";
 import type { SwapKitNumber } from "./swapKitNumber";
 
 type NumberPrimitivesType = { bigint: bigint; number: number; string: string };
@@ -143,7 +142,7 @@ export class BigIntArithmetics {
   }
 
   getBaseValue<T extends AllowedNumberTypes>(type: T, decimal?: number): NumberPrimitivesType[T] {
-    const divisor = this.decimalMultiplier / toMultiplier(decimal || this.decimal || BaseDecimal.THOR);
+    const divisor = this.decimalMultiplier / toMultiplier(decimal || this.decimal || DEFAULT_DECIMAL);
     const baseValue = divideBigIntWithRounding(this.bigIntValue, divisor);
 
     switch (type) {

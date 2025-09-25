@@ -1,4 +1,4 @@
-import { Chain } from "@swapkit/helpers";
+import { Chain, type TCLikeChain } from "@swapkit/helpers";
 import { base64ToBech32, bech32ToBase64 } from "./addressFormat";
 
 export async function createDefaultRegistry() {
@@ -15,7 +15,7 @@ export async function createDefaultRegistry() {
   ]);
 }
 
-export async function createDefaultAminoTypes(chain: Chain.THORChain | Chain.Maya) {
+export async function createDefaultAminoTypes(chain: TCLikeChain) {
   const imported = await import("@cosmjs/stargate");
   const AminoTypes = imported.AminoTypes ?? imported.default?.AminoTypes;
   const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : "mayachain";

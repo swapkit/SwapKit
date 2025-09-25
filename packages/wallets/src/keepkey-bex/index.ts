@@ -1,4 +1,4 @@
-import { AssetValue, Chain, ChainIdToChain, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
+import { AssetValue, Chain, ChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { Eip1193Provider } from "ethers";
 import {
@@ -73,7 +73,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
 
       // @ts-expect-error assumed available connection
-      const signer = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(ChainIdToChain[chain]);
+      const signer = window.keepkey?.cosmos?.getOfflineSignerOnlyAmino(ChainId[chain]);
       if (!signer) throw new SwapKitError("wallet_keepkey_signer_not_found");
       const toolbox = await getCosmosToolbox(chain, { signer });
 

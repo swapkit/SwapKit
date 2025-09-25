@@ -42,15 +42,12 @@ export async function thorchainWalletMethods({
     const { accountNumber, sequence = 0 } = account;
 
     const isTransfer = recipient && recipient !== "";
-
     const msg = buildAminoMsg({ assetValue, memo, recipient, sender });
-
-    const chainId = ChainId.THORChain;
 
     const signDoc = makeSignDoc(
       [msg],
       getDefaultChainFee(Chain.THORChain),
-      chainId,
+      ChainId.THOR,
       memo,
       accountNumber?.toString(),
       sequence,

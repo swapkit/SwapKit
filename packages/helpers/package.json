@@ -3,6 +3,7 @@
   "dependencies": {
     "@swapkit/contracts": "workspace:*",
     "@swapkit/tokens": "workspace:*",
+    "@swapkit/types": "workspace:*",
     "ethers": "^6.14.0",
     "ts-pattern": "^5.7.0",
     "zod": "^3.25.74",
@@ -46,5 +47,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.19"
+  "version": "4.0.20"
 }

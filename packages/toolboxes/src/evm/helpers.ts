@@ -1,14 +1,4 @@
-import {
-  BaseDecimal,
-  Chain,
-  ChainToExplorerUrl,
-  ChainToHexChainId,
-  type EVMChain,
-  getRPCUrl,
-  type NetworkParams,
-  SKConfig,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { Chain, type EVMChain, getChainConfig, getRPCUrl, type NetworkParams, SwapKitError } from "@swapkit/helpers";
 
 export async function getProvider(chain: EVMChain, customUrl?: string) {
   const { JsonRpcProvider } = await import("ethers");
@@ -21,25 +11,27 @@ export function toHexString(value: bigint) {
 }
 
 export function getNetworkParams<C extends EVMChain>(chain: C) {
+  const { blockExplorerUrl, chainId, rpcUrl } = getChainConfig(chain);
+
   return () =>
-    (Chain.Ethereum === chain
+    (chain === Chain.Ethereum
       ? undefined
       : {
           ...getNetworkInfo({ chain }),
-          blockExplorerUrls: [ChainToExplorerUrl[chain]],
-          chainId: ChainToHexChainId[chain],
-          rpcUrls: [SKConfig.get("rpcUrls")[chain]],
-        }) as C extends Chain.Ethereum ? undefined : NetworkParams;
+          blockExplorerUrls: [blockExplorerUrl],
+          chainId,
+          rpcUrls: [rpcUrl],
+        }) as C extends typeof Chain.Ethereum ? undefined : NetworkParams;
 }
 
 export function getIsEIP1559Compatible<C extends EVMChain>(chain: C) {
-  const notCompatible = [Chain.Arbitrum, Chain.BinanceSmartChain];
+  const notCompatible = [Chain.Arbitrum, Chain.BinanceSmartChain] as EVMChain[];
 
   return !notCompatible.includes(chain);
 }
 
 function getNetworkInfo<C extends EVMChain>({ chain }: { chain: C }) {
-  const decimals = BaseDecimal[chain];
+  const { baseDecimal: decimals } = getChainConfig(chain);
 
   switch (chain) {
     case Chain.Arbitrum:

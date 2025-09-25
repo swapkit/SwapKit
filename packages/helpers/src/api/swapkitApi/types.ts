@@ -1,4 +1,5 @@
-import { Chain, ChainId, ErrorCode, FeeTypeEnum, ProviderName, WarningCodeEnum } from "@swapkit/helpers";
+import { ErrorCode, FeeTypeEnum, ProviderName, WarningCodeEnum } from "@swapkit/helpers";
+import { Chain, ChainId } from "@swapkit/types";
 import { array, boolean, coerce, number, object, optional, string, union, unknown, type ZodType, z } from "zod/v4";
 
 export enum PriorityLabel {

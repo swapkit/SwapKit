@@ -100,14 +100,14 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
     case Chain.Litecoin:
     case Chain.Zcash: {
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
-      const toolbox = await getUtxoToolbox(chain as Chain.Bitcoin);
+      const toolbox = await getUtxoToolbox(chain as typeof Chain.Bitcoin);
 
       const signer = await getLedgerClient({ chain, derivationPath });
       const address = await getLedgerAddress({ chain, ledgerClient: signer });
 
       const transfer = async (params: UTXOBuildTxParams) => {
         const feeRate = params.feeRate || (await toolbox.getFeeRates())[FeeOption.Average];
-        const memo = [Chain.Bitcoin].includes(chain) ? params.memo : reduceMemo(params.memo);
+        const memo = [Chain.Bitcoin].includes(chain as typeof Chain.Bitcoin) ? params.memo : reduceMemo(params.memo);
 
         const { psbt, inputs } = await toolbox.createTransaction({
           ...params,
@@ -221,7 +221,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
         // get tx signing msg
         const rawSendTx = stringifyKeysInOrder({
           account_number: accountNumber?.toString(),
-          chain_id: ChainId.THORChain,
+          chain_id: ChainId.THOR,
           fee,
           memo,
           msgs: orderedMessages,

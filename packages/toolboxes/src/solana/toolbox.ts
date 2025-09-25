@@ -8,12 +8,12 @@ import type {
 } from "@solana/web3.js";
 import {
   AssetValue,
-  BaseDecimal,
   Chain,
   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
   type GenericCreateTransactionParams,
+  getChainConfig,
   getRPCUrl,
   NetworkDerivationPath,
   SwapKitError,
@@ -54,9 +54,8 @@ async function getSolanaBalance(address: string) {
   // Get SOL balance
   const solBalance = await connection.getBalance(publicKey);
   if (solBalance > 0) {
-    balances.push(
-      AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: BaseDecimal[Chain.Solana], value: solBalance }),
-    );
+    const { baseDecimal } = getChainConfig(Chain.Solana);
+    balances.push(AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: baseDecimal, value: solBalance }));
   }
 
   // Get token balances
@@ -160,11 +159,9 @@ function estimateTransactionFee(getConnection: () => Promise<Connection>) {
       throw new SwapKitError("toolbox_solana_fee_estimation_failed", "Could not estimate Solana fee.");
     }
 
-    return AssetValue.from({
-      chain: Chain.Solana,
-      fromBaseDecimal: BaseDecimal[Chain.Solana],
-      value: feeInLamports.value,
-    });
+    const { baseDecimal } = getChainConfig(Chain.Solana);
+
+    return AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: baseDecimal, value: feeInLamports.value });
   };
 }
 

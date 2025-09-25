@@ -52,7 +52,7 @@ function createSignerWithKeys(keys: BchECPair) {
   return { getAddress, signTransaction };
 }
 
-export async function createBCHToolbox<T extends Chain.BitcoinCash>(
+export async function createBCHToolbox<T extends typeof Chain.BitcoinCash>(
   toolboxParams: UtxoToolboxParams[T] | { phrase?: string; derivationPath?: DerivationPathArray; index?: number },
 ) {
   const phrase = "phrase" in toolboxParams ? toolboxParams.phrase : undefined;

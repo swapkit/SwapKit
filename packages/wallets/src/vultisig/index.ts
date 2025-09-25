@@ -1,9 +1,12 @@
 import {
   Chain,
+  type CosmosChain,
   type EVMChain,
   filterSupportedChains,
   type GenericTransferParams,
+  type SubstrateChain,
   SwapKitError,
+  type TCLikeChain,
   type UTXOChain,
   UTXOChains,
   WalletOption,
@@ -94,7 +97,7 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
     .with(Chain.Maya, Chain.THORChain, async () => {
       const { getCosmosToolbox, THORCHAIN_GAS_VALUE, MAYA_GAS_VALUE } = await import("@swapkit/toolboxes/cosmos");
       const gasLimit = chain === Chain.Maya ? MAYA_GAS_VALUE : THORCHAIN_GAS_VALUE;
-      const toolbox = await getCosmosToolbox(chain as Chain.Cosmos | Chain.Kujira);
+      const toolbox = await getCosmosToolbox(chain as Exclude<CosmosChain, TCLikeChain>);
       return {
         ...toolbox,
         deposit: (tx: GenericTransferParams) => walletTransfer({ ...tx, recipient: "" }, "deposit_transaction"),
@@ -104,8 +107,8 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
 
     .with(Chain.Cosmos, Chain.Kujira, async () => {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-      const provider = await getVultisigProvider(chain as Chain.Cosmos | Chain.Kujira);
-      const toolbox = await getCosmosToolbox(chain as Chain.Cosmos | Chain.Kujira);
+      const provider = await getVultisigProvider(chain as Exclude<CosmosChain, TCLikeChain>);
+      const toolbox = await getCosmosToolbox(chain as Exclude<CosmosChain, TCLikeChain>);
       return prepareNetworkSwitchCosmos({ chain, provider, toolbox: { ...toolbox, transfer: walletTransfer } });
     })
 
@@ -162,7 +165,7 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
 
     .with(Chain.Polkadot, async () => {
       const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
-      const toolbox = await getSubstrateToolbox(chain as Chain.Polkadot);
+      const toolbox = await getSubstrateToolbox(chain as SubstrateChain);
       return { ...toolbox, transfer: walletTransfer };
     })
 

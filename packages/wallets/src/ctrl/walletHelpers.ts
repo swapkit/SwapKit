@@ -2,12 +2,14 @@ import type { Keplr } from "@keplr-wallet/types";
 import {
   type AssetValue,
   Chain,
-  ChainToChainId,
+  ChainId,
+  type CosmosChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
   providerRequest,
   SwapKitError,
+  type TCLikeChain,
   WalletOption,
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
@@ -35,9 +37,9 @@ export type WalletTxParams = {
 export async function getCtrlProvider<T extends Chain>(
   chain: T,
 ): Promise<
-  T extends Chain.Solana
+  T extends typeof Chain.Solana
     ? SolanaProvider
-    : T extends Chain.Cosmos | Chain.Kujira | Chain.Noble
+    : T extends Exclude<CosmosChain, TCLikeChain>
       ? Keplr
       : T extends EVMChain
         ? Eip1193Provider
@@ -100,7 +102,7 @@ export async function getCtrlAddress(chain: Chain) {
       throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
     }
 
-    if ([Chain.Cosmos, Chain.Kujira, Chain.Noble].includes(chain)) {
+    if ([Chain.Cosmos, Chain.Kujira, Chain.Noble].includes(chain as Exclude<CosmosChain, TCLikeChain>)) {
       const provider = await getCtrlProvider(Chain.Cosmos);
       if (!provider || "request" in provider) {
         throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
@@ -109,7 +111,7 @@ export async function getCtrlAddress(chain: Chain) {
       // Enabling before using the Keplr is recommended.
       // This method will ask the user whether to allow access if they haven't visited this website.
       // Also, it will request that the user unlock the wallet if the wallet is locked.
-      const chainId = ChainToChainId[chain];
+      const chainId = ChainId[chain];
       await provider.enable(chainId);
 
       const offlineSigner = provider.getOfflineSigner(chainId);

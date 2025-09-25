@@ -1,7 +1,7 @@
+import type { Chain, getChainConfig } from "@swapkit/types";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
-import type { Chain, ChainId } from "./chains";
 import type { FeeOption } from "./sdk";
 
 declare global {
@@ -26,7 +26,7 @@ export type EthereumWindowProvider = BrowserProvider & {
 };
 
 export type NetworkParams = {
-  chainId: ChainId;
+  chainId: ReturnType<typeof getChainConfig>["chainId"];
   chainName: string;
   nativeCurrency: { name: string; symbol: string; decimals: number };
   rpcUrls: string[];
@@ -71,7 +71,10 @@ export enum LedgerErrorCode {
   TC_NotFound = 65535,
 }
 
-export type CryptoChain = Exclude<Chain, Chain.Fiat>;
+/**
+ * @deprecated CryptoChain has been deprecated - use Chain instead
+ */
+export type CryptoChain = Chain;
 
 export type ChainWallet<T extends Chain> = {
   chain: T;

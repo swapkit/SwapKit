@@ -1,4 +1,4 @@
-import { AssetValue, BaseDecimal, type Chain } from "@swapkit/helpers";
+import { AssetValue, type Chain, getChainConfig } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 
 const pid = typeof process !== "undefined" && process.pid ? process.pid.toString(36) : "";
@@ -19,9 +19,9 @@ export function uniqid() {
 export function getBalance<T extends Chain>(chain: T) {
   return async function getBalance(address: string, scamFilter = true) {
     const balances = await SwapKitApi.getChainBalance({ address, chain, scamFilter });
-
+    const { baseDecimal } = getChainConfig(chain);
     return balances.map(({ identifier, value, decimal }) => {
-      return new AssetValue({ decimal: decimal || BaseDecimal[chain], identifier, value });
+      return new AssetValue({ decimal: decimal || baseDecimal, identifier, value });
     });
   };
 }

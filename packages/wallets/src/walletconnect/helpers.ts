@@ -1,4 +1,4 @@
-import { Chain, type EVMChain, SKConfig } from "@swapkit/helpers";
+import { Chain, type CosmosChain, type EVMChain, SKConfig } from "@swapkit/helpers";
 
 import {
   ARBITRUM_ONE_MAINNET_ID,
@@ -20,7 +20,7 @@ import {
 } from "./constants";
 
 export const getAddressByChain = (
-  chain: EVMChain | Chain.THORChain | Chain.Maya | Chain.Kujira | Chain.Cosmos | Chain.Near | Chain.Tron,
+  chain: EVMChain | Exclude<CosmosChain, typeof Chain.Noble> | typeof Chain.Near | typeof Chain.Tron,
   accounts: string[],
 ) => {
   const account = accounts.find((account) => account.startsWith(chainToChainId(chain))) || "";

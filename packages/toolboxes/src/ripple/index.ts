@@ -1,9 +1,9 @@
 import {
   AssetValue,
-  BaseDecimal,
   Chain,
   type ChainSigner,
   type GenericTransferParams,
+  getChainConfig,
   getRPCUrl,
   SwapKitError,
   SwapKitNumber,
@@ -62,13 +62,14 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
 
   const getBalance = async (address?: string) => {
     const addr = address || (await getAddress());
+    const { baseDecimal } = getChainConfig(Chain.Ripple);
 
     try {
       const accountInfo = await client.request({ account: addr, command: "account_info" });
 
       const balance = accountInfo.result.account_data.Balance;
 
-      return [AssetValue.from({ chain: Chain.Ripple, fromBaseDecimal: BaseDecimal[Chain.Ripple], value: balance })];
+      return [AssetValue.from({ chain: Chain.Ripple, fromBaseDecimal: baseDecimal, value: balance })];
     } catch (error) {
       // empty account
       if ((error as any).data.error_code === RIPPLE_ERROR_CODES.ACCOUNT_NOT_FOUND) {
@@ -82,9 +83,12 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     const feeResponse = await client.request({ command: "fee" });
     const feeDrops = feeResponse.result.drops.open_ledger_fee; // Fee in drops
 
+    const { baseDecimal } = getChainConfig(Chain.Ripple);
+
     return AssetValue.from({
       chain: Chain.Ripple,
-      value: SwapKitNumber.fromBigInt(BigInt(feeDrops), BaseDecimal[Chain.Ripple]),
+      fromBaseDecimal: baseDecimal,
+      value: SwapKitNumber.fromBigInt(BigInt(feeDrops), baseDecimal),
     });
   };
 

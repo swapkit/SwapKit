@@ -1,22 +1,17 @@
+import { Chain, CosmosChains, EVMChains, type StagenetChain, StagenetChains, UTXOChains } from "@swapkit/types";
 import { match } from "ts-pattern";
 import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
-import { Chain, CosmosChains, EVMChains, StagenetChain, UTXOChains } from "../types/chains";
 import { warnOnce } from "./others";
 
 function getRpcBody(chain: Chain | StagenetChain) {
   return match(chain)
     .with(...EVMChains, () => ({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber", params: [] }))
     .with(...UTXOChains, () => ({ id: "test", jsonrpc: "1.0", method: "getblockchaininfo", params: [] }))
-    .with(...CosmosChains, StagenetChain.Maya, StagenetChain.THORChain, () => ({
-      id: 1,
-      jsonrpc: "2.0",
-      method: "status",
-      params: {},
-    }))
+    .with(...CosmosChains, ...StagenetChains, () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }))
     .with(Chain.Polkadot, Chain.Chainflip, () => ({ id: 1, jsonrpc: "2.0", method: "system_health", params: [] }))
     .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
-    .with(Chain.Tron, Chain.Radix, Chain.Fiat, () => "")
+    .with(Chain.Tron, Chain.Radix, () => "")
     .with(Chain.Near, () => ({ id: "dontcare", jsonrpc: "2.0", method: "status", params: [] }))
     .with(Chain.Ripple, () => ({ id: 1, jsonrpc: "2.0", method: "ping", params: [{}] }))
     .otherwise(() => {

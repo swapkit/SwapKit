@@ -1,12 +1,9 @@
 import {
   applyFeeMultiplierToBigInt,
-  BaseDecimal,
   Chain,
-  ChainId,
-  ChainToExplorerUrl,
   FeeOption,
+  getChainConfig,
   getRPCUrl,
-  SKConfig,
   SwapKitError,
 } from "@swapkit/helpers";
 import type { Authorization, BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
@@ -89,13 +86,17 @@ function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provider: P)
   };
 }
 
-const getNetworkParams = () => ({
-  blockExplorerUrls: [ChainToExplorerUrl[Chain.Optimism]],
-  chainId: ChainId.OptimismHex,
-  chainName: "Optimism",
-  nativeCurrency: { decimals: BaseDecimal.ETH, name: "Ethereum", symbol: Chain.Ethereum },
-  rpcUrls: [SKConfig.get("rpcUrls")[Chain.Optimism]],
-});
+function getNetworkParams() {
+  const { baseDecimal, chainId, blockExplorerUrl, name, rpcUrl } = getChainConfig(Chain.Optimism);
+
+  return {
+    blockExplorerUrls: [blockExplorerUrl],
+    chainId,
+    chainName: name,
+    nativeCurrency: { decimals: baseDecimal, name: "Ethereum", symbol: Chain.Ethereum },
+    rpcUrls: [rpcUrl],
+  };
+}
 
 async function estimateGasPrices(provider: Provider) {
   try {

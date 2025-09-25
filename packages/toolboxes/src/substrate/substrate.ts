@@ -248,13 +248,7 @@ export const BaseSubstrateToolbox = ({
   validateAddress: (address: string) => validateAddress(address, network.prefix),
 });
 
-export const substrateValidateAddress = ({
-  address,
-  chain,
-}: {
-  address: string;
-  chain: Chain.Polkadot | Chain.Chainflip;
-}) => {
+export const substrateValidateAddress = ({ address, chain }: { address: string; chain: SubstrateChain }) => {
   const { prefix } = chain === Chain.Polkadot ? SubstrateNetwork.DOT : SubstrateNetwork.FLIP;
 
   return validateAddress(address, prefix) || validateAddress(address, SubstrateNetwork.GENERIC.prefix);

@@ -1,9 +1,9 @@
 import {
   type Chain,
-  ChainToHexChainId,
   type EVMChain,
   EVMChains,
   filterSupportedChains,
+  getChainConfig,
   prepareNetworkSwitch,
   SwapKitError,
   switchEVMWalletNetwork,
@@ -55,9 +55,10 @@ export const getWeb3WalletMethods = async ({
 
   const signer = await provider.getSigner();
   const toolbox = await getEvmToolbox(chain, { provider, signer });
+  const { chainIdHex } = getChainConfig(chain);
 
   const currentNetwork = await provider.getNetwork();
-  if (currentNetwork.chainId.toString() !== ChainToHexChainId[chain]) {
+  if (currentNetwork.chainId.toString() !== chainIdHex) {
     try {
       const networkParams = toolbox.getNetworkParams();
       await switchEVMWalletNetwork(provider, chain, networkParams);

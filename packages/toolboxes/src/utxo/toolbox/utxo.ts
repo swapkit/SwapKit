@@ -36,7 +36,7 @@ import type { BchECPair, TargetOutput, UTXOBuildTxParams, UTXOTransferParams, UT
 import type { UtxoToolboxParams } from "./index";
 import { bchValidateAddress, validateZcashAddress } from "./validators";
 
-export const nonSegwitChains = [Chain.Dash, Chain.Dogecoin, Chain.Zcash, Chain.BitcoinCash];
+export const nonSegwitChains: UTXOChain[] = [Chain.Dash, Chain.Dogecoin, Chain.Zcash, Chain.BitcoinCash];
 
 export function addInputsAndOutputs({
   inputs,
@@ -147,15 +147,15 @@ async function createSignerWithKeys({
   phrase: string;
   derivationPath: string;
 }) {
-  const keyPair = (await getCreateKeysForPath(chain as Chain.Bitcoin))({ derivationPath, phrase });
+  const keyPair = (await getCreateKeysForPath(chain as typeof Chain.Bitcoin))({ derivationPath, phrase });
 
   async function signTransaction(psbt: Psbt) {
     await psbt.signAllInputs(keyPair);
     return psbt;
   }
 
-  async function getAddress() {
-    const addressGetter = await addressFromKeysGetter(chain);
+  function getAddress() {
+    const addressGetter = addressFromKeysGetter(chain);
     return addressGetter(keyPair);
   }
 
@@ -187,7 +187,6 @@ export async function createUTXOToolbox<T extends UTXOChain>({
   }
 
   //   const { signer } = params || {};
-  const getAddressFromKeys = await addressFromKeysGetter(chain);
   const validateAddress = await getUTXOAddressValidator();
   const createKeysForPath = await getCreateKeysForPath(chain);
 
@@ -200,7 +199,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
     estimateMaxSendableAmount: estimateMaxSendableAmount(chain),
     estimateTransactionFee: estimateTransactionFee(chain),
     getAddress,
-    getAddressFromKeys,
+    getAddressFromKeys: addressFromKeysGetter(chain),
 
     getBalance: getBalance(chain),
     getFeeRates: () => getFeeRates(chain),
@@ -368,8 +367,8 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
   }
 }
 
-export async function addressFromKeysGetter(chain: UTXOChain) {
-  const getNetwork = await getUtxoNetwork();
+export function addressFromKeysGetter(chain: UTXOChain) {
+  const getNetwork = getUtxoNetwork();
 
   return function getAddressFromKeys(keys: ECPairInterface | BchECPair) {
     if (!keys) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Keys must be provided" });

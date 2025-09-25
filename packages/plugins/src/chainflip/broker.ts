@@ -6,7 +6,7 @@ import type { getSubstrateToolbox } from "@swapkit/toolboxes/substrate";
 
 import type { WithdrawFeeResponse } from "./types";
 
-type ChainflipToolbox = Awaited<ReturnType<typeof getSubstrateToolbox<Chain.Chainflip>>>;
+type ChainflipToolbox = Awaited<ReturnType<typeof getSubstrateToolbox<typeof Chain.Chainflip>>>;
 
 export const assetIdentifierToChainflipTicker = new Map<string, string>([
   ["ARB.ETH", "ArbEth"],

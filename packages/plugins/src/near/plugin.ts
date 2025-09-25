@@ -1,4 +1,4 @@
-import { AssetValue, Chain, type CryptoChain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
+import { AssetValue, Chain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
 import { createPlugin } from "../utils";
@@ -173,6 +173,8 @@ export const NearPlugin = createPlugin({
 
       const sellAssetChain = sellAsset.chain;
 
+      const wallet = getWallet(sellAsset.chain as Exclude<Chain, typeof Chain.Radix>);
+
       if (sellAssetChain === Chain.Near && !sellAsset.isGasAsset) {
         const wallet = getWallet(sellAsset.chain as Chain.Near);
         if (!wallet) {
@@ -196,7 +198,6 @@ export const NearPlugin = createPlugin({
         return wallet.broadcastTransaction(signedTransaction);
       }
 
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, Chain.Radix>);
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }

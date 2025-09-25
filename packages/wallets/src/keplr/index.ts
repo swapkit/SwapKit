@@ -1,8 +1,8 @@
-import { Chain, ChainId, ChainToChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
+import { Chain, ChainId, filterSupportedChains, SwapKitError, WalletOption } from "@swapkit/helpers";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import { chainRegistry } from "./chainRegistry";
 
-const keplrSupportedChainIds = [ChainId.Cosmos, ChainId.Kujira, ChainId.Noble, ChainId.THORChain] as const;
+const keplrSupportedChainIds = [ChainId.GAIA, ChainId.KUJI, ChainId.NOBLE, ChainId.THOR] as const;
 
 export const keplrWallet = createWallet({
   connect: ({ addChain, supportedChains }) =>
@@ -16,7 +16,7 @@ export const keplrWallet = createWallet({
 
       await Promise.all(
         filteredChains.map(async (chain) => {
-          const chainId = ChainToChainId[chain] as (typeof keplrSupportedChainIds)[number];
+          const chainId = ChainId[chain] as (typeof keplrSupportedChainIds)[number];
 
           if (!keplrSupportedChainIds.includes(chainId)) {
             const chainConfig = chainRegistry.get(chainId);

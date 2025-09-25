@@ -1,4 +1,5 @@
-import { AssetValue, BaseDecimal, Chain, RequestClient, SwapKitNumber } from "@swapkit/helpers";
+import { AssetValue, RequestClient, SwapKitNumber } from "@swapkit/helpers";
+import { Chain, getChainConfig, type TCLikeChain } from "@swapkit/types";
 import type {
   Action,
   ActionQuery,
@@ -175,11 +176,11 @@ function getActions(baseUrl: string) {
   };
 }
 
-function getLiquidityPositionRaw<Chain extends Chain.THORChain | Chain.Maya>(baseUrl: string) {
+function getLiquidityPositionRaw<Chain extends TCLikeChain>(baseUrl: string) {
   return function getLiquidityPosition(
     address: string,
-  ): Promise<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain> {
-    return RequestClient.get<Chain extends Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain>(
+  ): Promise<Chain extends typeof Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain> {
+    return RequestClient.get<Chain extends typeof Chain.THORChain ? MemberDetailsThorchain : MemberDetailsMayachain>(
       `${baseUrl}/v2/member/${address}`,
     );
   };
@@ -275,7 +276,7 @@ function getNamesByOwner(baseUrl: string) {
 }
 
 function getPoolAsset({ asset, value }: { asset: string; value: string }) {
-  return AssetValue.from({ asset, fromBaseDecimal: BaseDecimal.THOR, value });
+  return AssetValue.from({ asset, fromBaseDecimal: getChainConfig(Chain.THORChain).baseDecimal, value });
 }
 
 function getLiquidityPosition<IsThorchain extends boolean = true>({
@@ -283,7 +284,7 @@ function getLiquidityPosition<IsThorchain extends boolean = true>({
   isThorchain,
 }: {
   liquidityPositionGetter: ReturnType<
-    typeof getLiquidityPositionRaw<IsThorchain extends true ? Chain.THORChain : Chain.Maya>
+    typeof getLiquidityPositionRaw<IsThorchain extends true ? typeof Chain.THORChain : typeof Chain.Maya>
   >;
   isThorchain: IsThorchain;
 }) {
@@ -307,7 +308,7 @@ function getLiquidityPosition<IsThorchain extends boolean = true>({
   };
 }
 
-function getMidgardMethodsForProtocol<T extends Chain.THORChain | Chain.Maya>(chain: T) {
+function getMidgardMethodsForProtocol<T extends TCLikeChain>(chain: T) {
   const isThorchain = chain === Chain.THORChain;
   const midgardBaseUrl = getMidgardBaseUrl(isThorchain);
   const nameServiceBaseUrl = getNameServiceBaseUrl(isThorchain);

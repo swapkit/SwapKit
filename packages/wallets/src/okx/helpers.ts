@@ -22,7 +22,7 @@ const cosmosTransfer =
     const { createSigningStargateClient } = await import("@swapkit/toolboxes/cosmos");
 
     const { keplr: wallet } = window.okxwallet;
-    const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.Cosmos);
+    const offlineSigner = wallet?.getOfflineSignerOnlyAmino(ChainId.GAIA);
 
     const rpcUrl = await getRPCUrl(Chain.Cosmos);
     const cosmJS = await createSigningStargateClient(rpcUrl, offlineSigner);
@@ -118,8 +118,8 @@ export async function getWalletMethods(chain: Chain) {
       }
       const { keplr: wallet } = window.okxwallet;
 
-      await wallet.enable(ChainId.Cosmos);
-      const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.Cosmos);
+      await wallet.enable(ChainId.GAIA);
+      const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.GAIA);
       const accounts = await offlineSigner.getAccounts();
 
       // Add defensive check for accounts array

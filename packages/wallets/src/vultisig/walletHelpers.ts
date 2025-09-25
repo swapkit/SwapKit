@@ -1,10 +1,12 @@
 import {
   type AssetValue,
   Chain,
-  ChainToChainId,
+  ChainId,
+  type CosmosChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
+  getChainConfig,
   type NetworkParams,
   providerRequest,
   SwapKitError,
@@ -38,13 +40,13 @@ export type WalletTxParams = {
   gasLimit?: string | bigint;
 };
 
-type VultisigProviderType<T> = T extends Chain.Solana
+type VultisigProviderType<T> = T extends typeof Chain.Solana
   ? SolanaProvider
-  : T extends Chain.Cosmos | Chain.Kujira
+  : T extends Exclude<CosmosChain, typeof Chain.Noble>
     ? VultisigCosmosProvider
     : T extends EVMChain
       ? Eip1193Provider
-      : T extends Chain.Maya | Chain.THORChain | Chain.Ripple | Chain.Polkadot | UTXOChain
+      : T extends typeof Chain.Maya | typeof Chain.THORChain | typeof Chain.Ripple | typeof Chain.Polkadot | UTXOChain
         ? Eip1193Provider
         : undefined;
 
@@ -102,44 +104,39 @@ async function transaction({
 
 export async function getVultisigAddress(chain: Chain) {
   try {
-    const eipProvider = (await getVultisigProvider(chain)) as Eip1193Provider;
-    if (!eipProvider) {
+    const windowProvider = (await getVultisigProvider(chain)) as Eip1193Provider;
+    if (!windowProvider) {
       throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
     }
 
-    if ([Chain.Cosmos, Chain.Kujira].includes(chain)) {
-      const provider = await getVultisigProvider(Chain.Cosmos);
-      const chainId = ChainToChainId[chain];
+    if ([Chain.Cosmos, Chain.Kujira].includes(chain as typeof Chain.Cosmos)) {
+      const chainId = ChainId[chain];
 
-      await provider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
+      await windowProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 
-      let account = await provider.request({ method: "get_accounts" });
+      let account = await windowProvider.request({ method: "get_accounts" });
       if (!account) {
-        const connectedAcount = await provider.request({ method: "request_accounts" });
+        const connectedAcount = await windowProvider.request({ method: "request_accounts" });
         account = connectedAcount[0].address;
       }
       return account;
     }
 
     if (EVMChains.includes(chain as EVMChain)) {
-      if ("request" in eipProvider && typeof eipProvider.request === "function") {
-        const accounts = await eipProvider.request({ method: "eth_requestAccounts" });
-        return accounts[0];
-      }
       const { BrowserProvider } = await import("ethers");
-      const provider = new BrowserProvider(eipProvider, "any");
+      const provider = new BrowserProvider(windowProvider, "any");
       const [response] = await providerRequest({ method: "eth_requestAccounts", params: [], provider });
       return response;
     }
 
     if (chain === Chain.Solana) {
-      const provider = await getVultisigProvider(Chain.Solana);
+      const solanaProvider = await getVultisigProvider(Chain.Solana);
 
-      const accounts = await provider.connect();
+      const accounts = await solanaProvider.connect();
       return accounts.publicKey.toString();
     }
 
-    const accounts = await eipProvider.request({ method: "request_accounts", params: [] });
+    const accounts = await windowProvider.request({ method: "request_accounts", params: [] });
     return accounts[0];
   } catch (_error) {
     throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.VULTISIG } });
@@ -237,11 +234,11 @@ export function getVultisigMethods(provider: BrowserProvider, chain: EVMChain) {
 
 export async function switchCosmosWalletNetwork(
   provider: VultisigCosmosProvider,
-  chain: Chain.Cosmos | Chain.Kujira,
+  chain: Exclude<CosmosChain, typeof Chain.Noble>,
   networkParams?: NetworkParams,
 ) {
   try {
-    await provider.request({ method: "wallet_switch_chain", params: [{ chainId: ChainToChainId[chain] }] });
+    await provider.request({ method: "wallet_switch_chain", params: [{ chainId: getChainConfig(chain).chainId }] });
   } catch (error) {
     if (!networkParams) {
       throw new SwapKitError("helpers_failed_to_switch_network", {
@@ -255,7 +252,7 @@ export async function switchCosmosWalletNetwork(
 export function wrapMethodWithNetworkSwitch<T extends (...args: any[]) => any>(
   func: T,
   provider: VultisigCosmosProvider,
-  chain: Chain.Cosmos | Chain.Kujira,
+  chain: Exclude<CosmosChain, typeof Chain.Noble>,
 ) {
   return (async (...args: any[]) => {
     try {
