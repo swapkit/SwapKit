@@ -110,7 +110,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   async function createTransaction(params: NearCreateTransactionParams) {
-    const { recipient, assetValue, memo, feeRate: gas, attachedDeposit, sender: signerId } = params;
+    const { recipient, assetValue, memo, attachedDeposit, sender: signerId, functionCall } = params;
     const validateNearAddress = await getValidateNearAddress();
 
     if (!validateNearAddress(recipient)) {
@@ -121,6 +121,10 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       throw new SwapKitError("toolbox_near_invalid_address", { signerId: signerId });
     }
 
+    if (functionCall) {
+      return createContractFunctionCall({ ...functionCall, sender: signerId });
+    }
+
     if (!assetValue.isGasAsset) {
       const contractId = assetValue.address;
       if (!contractId) {
@@ -129,9 +133,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
       return createContractFunctionCall({
         args: { amount: assetValue.getBaseValue("string"), memo: memo || null, receiver_id: recipient },
-        attachedDeposit: "1",
+        attachedDeposit: attachedDeposit || "1",
         contractId,
-        gas: gas.toString() || "100000000000000",
+        gas: "250000000000000",
         methodName: "ft_transfer",
         sender: signerId,
       });
@@ -145,7 +149,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const txActions = [transactions.transfer(baseAmount)];
 
     if (memo && attachedDeposit) {
-      txActions.push(transactions.functionCall("memo", { memo }, BigInt(gas), BigInt(attachedDeposit)));
+      txActions.push(transactions.functionCall("memo", { memo }, BigInt("250000000000000"), BigInt(attachedDeposit)));
     }
 
     const block = await provider.block({ finality: "final" });
@@ -215,7 +219,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   }
 
   async function broadcastTransaction(signedTransaction: SignedTransaction) {
-    console.log(signedTransaction);
     const result = await provider.sendTransaction(signedTransaction);
     return result.transaction.hash;
   }

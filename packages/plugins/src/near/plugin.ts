@@ -172,7 +172,6 @@ export const NearPlugin = createPlugin({
       const sellAsset = await AssetValue.from({ asset: sellAssetString, value: sellAmount });
 
       const sellAssetChain = sellAsset.chain;
-      const isNativeNear = sellAsset.type;
 
       if (sellAssetChain === Chain.Near && !sellAsset.isGasAsset) {
         const wallet = getWallet(sellAsset.chain as Chain.Near);

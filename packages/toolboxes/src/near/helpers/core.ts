@@ -31,7 +31,6 @@ export async function getNearSignerFromPhrase(params: {
     : `m/44'/397'/${index}'`;
 
   const { secretKey } = parseSeedPhrase(params.phrase, derivationPath);
-  console.log(secretKey);
   const keyPair = KeyPair.fromString(secretKey as any);
 
   return createNearSignerFromKeyPair(keyPair);

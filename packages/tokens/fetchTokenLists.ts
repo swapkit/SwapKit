@@ -1,10 +1,7 @@
 import { Chain, ChainIdToChain, ProviderName, SKConfig } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 
-SKConfig.set({
-  apiKeys: { swapKit: "3a86e7e1-54fd-4766-8cf5-d16ae00dde1b" || process.env.SWAPKIT_API_KEY || "" },
-  envs: { isDev: true },
-});
+SKConfig.set({ apiKeys: { swapKit: process.env.SWAPKIT_API_KEY || "" }, envs: { isDev: true } });
 
 const providers = (await SwapKitApi.getTokenListProviders()).filter(
   (provider) =>

@@ -17,7 +17,7 @@ export const getSwapKitClient = ({
     config: {
       apiKeys: {
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-        swapKit: "3a86e7e1-54fd-4766-8cf5-d16ae00dde1b",
+        swapKit: process.env.TEST_API_KEY,
         walletConnectProjectId: walletConnectProjectId || "",
         xaman: process.env.XAMAN_API_KEY || "",
       },
@@ -30,7 +30,6 @@ export const getSwapKitClient = ({
           url: "http://localhost:1646",
         },
       },
-      envs: { isDev: true },
     },
   });
 

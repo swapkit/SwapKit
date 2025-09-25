@@ -21,11 +21,7 @@ export function getBalance<T extends Chain>(chain: T) {
     const balances = await SwapKitApi.getChainBalance({ address, chain, scamFilter });
 
     return balances.map(({ identifier, value, decimal }) => {
-      return new AssetValue({
-        decimal: decimal || BaseDecimal[chain],
-        identifier: identifier.replace("USDt", "USDT"),
-        value,
-      });
+      return new AssetValue({ decimal: decimal || BaseDecimal[chain], identifier, value });
     });
   };
 }
