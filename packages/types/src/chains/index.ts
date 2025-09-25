@@ -46,7 +46,24 @@ export function getChainConfig<T extends keyof ChainConfigMap>(chainOrChainId: T
   return (chainConfig || {}) as ChainConfigMap[T];
 }
 
+const { chainIdToChain, chainToBaseDecimal, chainToBlockTime } = AllChains.reduce(
+  (acc, chain) => {
+    const { chainId, baseDecimal, blockTime } = getChainConfig(chain);
+
+    acc.chainIdToChain[chainId] = chain;
+    acc.chainToBaseDecimal[chain] = baseDecimal;
+    acc.chainToBlockTime[chain] = blockTime;
+    return acc;
+  },
+  {} as {
+    chainIdToChain: Record<ChainId, Chain>;
+    chainToBaseDecimal: Record<Chain, number>;
+    chainToBlockTime: Record<Chain, number>;
+  },
+);
+
 /**
+ *
  * @deprecated use getChainConfig instead
  * @example
  * ```diff
@@ -64,11 +81,7 @@ export const ChainToChainId = ChainId;
  * +const { chain } = getChainConfig(ChainId.Ethereum);
  * ```
  */
-export const ChainIdToChain = Object.fromEntries(
-  AllChainConfigs.flatMap(({ chainId, chain }) => [[chainId, chain] as const]),
-) as {
-  readonly [K in ChainId]: Extract<ChainConfig, { chainId: K }>["chain"];
-};
+export const ChainIdToChain = chainIdToChain;
 
 /**
  * @deprecated use getChainConfig instead
@@ -78,11 +91,7 @@ export const ChainIdToChain = Object.fromEntries(
  * +const { baseDecimal } = getChainConfig(Chain.Ethereum);
  * ```
  */
-export const BaseDecimal = Object.fromEntries(
-  AllChainConfigs.flatMap(({ baseDecimal, chain }) => [[chain, baseDecimal] as const]),
-) as {
-  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["baseDecimal"];
-};
+export const BaseDecimal = chainToBaseDecimal;
 
 /**
  * @deprecated use getChainConfig instead
@@ -92,8 +101,4 @@ export const BaseDecimal = Object.fromEntries(
  * +const { blockTime } = getChainConfig(Chain.Ethereum);
  * ```
  */
-export const BlockTimes = Object.fromEntries(
-  AllChainConfigs.flatMap(({ blockTime, chain }) => [[chain, blockTime] as const]),
-) as {
-  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["blockTime"];
-};
+export const BlockTimes = chainToBlockTime;
