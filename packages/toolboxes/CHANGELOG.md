@@ -1,5 +1,12 @@
 # @swapkit/toolboxes
 
+## 4.0.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.22
+
 ## 4.0.21
 
 ### Patch Changes

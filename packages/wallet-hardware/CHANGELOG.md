@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.21
+
+### Patch Changes
+
+- [#1503](https://github.com/swapkit/SwapKit/pull/1503) [`8f0890c`](https://github.com/swapkit/SwapKit/commit/8f0890c9131515b91fe15b9aa7e54a8590d1f23b) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Trezor Zcash memo encoding
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.22
+  - @swapkit/toolboxes@4.0.22
+
 ## 4.1.20
 
 ### Patch Changes

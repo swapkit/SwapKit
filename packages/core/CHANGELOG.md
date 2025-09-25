@@ -1,5 +1,13 @@
 # @swapkit/core
 
+## 4.0.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.0.22
+  - @swapkit/toolboxes@4.0.22
+
 ## 4.0.22
 
 ### Patch Changes
