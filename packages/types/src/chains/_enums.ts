@@ -12,7 +12,6 @@ export enum Chain {
   Dash = "DASH",
   Dogecoin = "DOGE",
   Ethereum = "ETH",
-  Fiat = "FIAT",
   Gnosis = "GNO",
   Kujira = "KUJI",
   Litecoin = "LTC",
@@ -129,7 +128,7 @@ export enum ChainId {
    */
   Ethereum = "1",
   /**
-   * @deprecated use ChainId.FIAT
+   * @deprecated
    */
   Fiat = "fiat",
   /**

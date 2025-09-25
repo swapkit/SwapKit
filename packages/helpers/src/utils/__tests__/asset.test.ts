@@ -52,9 +52,7 @@ describe("getDecimal", () => {
   /**
    * Test out native
    */
-  const filteredChains = AllChains.filter(
-    (c) => ![Chain.Ethereum, Chain.Avalanche].includes(c as typeof Chain.Ethereum),
-  );
+  const filteredChains = AllChains.filter((c) => ![Chain.Ethereum, Chain.Avalanche].includes(c));
 
   for (const chain of filteredChains) {
     describe(chain, () => {

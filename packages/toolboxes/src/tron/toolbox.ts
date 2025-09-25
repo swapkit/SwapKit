@@ -1,5 +1,6 @@
 import {
   AssetValue,
+  BaseDecimal,
   Chain,
   derivationPathToString,
   getRPCUrl,
@@ -332,10 +333,8 @@ export const createTronToolbox = async (
     const isNative = assetValue.isGasAsset;
 
     if (isNative) {
-      // Native TRX Transfer (amount in SUN - base units)
       const transaction = await tronWeb.transactionBuilder.sendTrx(recipient, assetValue.getBaseValue("number"), from);
 
-      // Add memo if provided
       if (memo) {
         const transactionWithMemo = await tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8");
         const signedTx = await signer.signTransaction(transactionWithMemo);
@@ -348,7 +347,6 @@ export const createTronToolbox = async (
       return txid;
     }
 
-    // TRC20 Token Transfer - always use createTransaction + sign pattern
     const transaction = await createTransaction({ assetValue, memo, recipient, sender: from });
 
     const signedTx = await signer.signTransaction(transaction);
@@ -370,48 +368,35 @@ export const createTronToolbox = async (
     const isNative = assetValue.isGasAsset;
 
     try {
-      // Get sender address
       const senderAddress = sender ? sender : signer ? await getAddress() : undefined;
       if (!senderAddress) {
-        // If no signer, return conservative estimate
         return isNative
           ? AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 0, value: 0.1 })
           : AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 0, value: 15 });
       }
 
-      // Get chain parameters for current resource prices
       const chainParams = await getChainParameters();
 
-      // Check if recipient account exists (new accounts require activation fee)
       const recipientExists = await accountExists(recipient);
       const activationFee = recipientExists ? 0 : chainParams.createAccountFee;
 
-      // Get account resources
       const resources = await getAccountResources(senderAddress);
 
       if (isNative) {
-        // Calculate bandwidth needed for TRX transfer
         const bandwidthNeeded = TRX_TRANSFER_BANDWIDTH;
         const availableBandwidth = resources.bandwidth.free + (resources.bandwidth.total - resources.bandwidth.used);
 
         let bandwidthFee = 0;
         if (bandwidthNeeded > availableBandwidth) {
-          // Need to burn TRX for bandwidth
           const bandwidthToBuy = bandwidthNeeded - availableBandwidth;
           bandwidthFee = bandwidthToBuy * chainParams.bandwidthFee;
         }
 
-        // Total fee in SUN
         const totalFeeSun = activationFee + bandwidthFee;
 
-        return AssetValue.from({
-          chain: Chain.Tron,
-          fromBaseDecimal: 6, // SUN to TRX
-          value: totalFeeSun,
-        });
+        return AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: BaseDecimal.TRON, value: totalFeeSun });
       }
 
-      // TRC20 Transfer - needs both bandwidth and energy
       const bandwidthNeeded = TRC20_TRANSFER_BANDWIDTH;
       const energyNeeded = TRC20_TRANSFER_ENERGY;
 
@@ -430,16 +415,10 @@ export const createTronToolbox = async (
         energyFee = energyToBuy * chainParams.energyFee;
       }
 
-      // Total fee in SUN
       const totalFeeSun = activationFee + bandwidthFee + energyFee;
 
-      return AssetValue.from({
-        chain: Chain.Tron,
-        fromBaseDecimal: 6, // SUN to TRX
-        value: totalFeeSun,
-      });
+      return AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: BaseDecimal.TRON, value: totalFeeSun });
     } catch (error) {
-      // Fallback to conservative estimates if calculation fails
       warnOnce({
         condition: true,
         id: "tron_toolbox_fee_estimation_failed",
@@ -451,7 +430,7 @@ export const createTronToolbox = async (
   };
 
   const createTransaction = async (params: TronCreateTransactionParams) => {
-    const { recipient, assetValue, memo, sender } = params;
+    const { recipient, assetValue, memo, sender, expiration } = params;
     const isNative = assetValue.isGasAsset;
 
     if (isNative) {
@@ -465,19 +444,19 @@ export const createTronToolbox = async (
         return tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8");
       }
 
+      if (expiration) {
+        tronWeb.transactionBuilder.extendExpiration(transaction, expiration);
+      }
+
       return transaction;
     }
 
-    tronWeb.setAddress(sender); // Set address for contract calls
-    // For TRC20, we would need to build the transaction manually
-    // This is a simplified version - in practice, you'd build the contract call transaction
+    tronWeb.setAddress(sender);
     const contractAddress = assetValue.address;
     if (!contractAddress) {
       throw new SwapKitError("toolbox_tron_invalid_token_identifier", { identifier: assetValue.toString() });
     }
 
-    // Build TRC20 transfer transaction
-    // First, try using triggerSmartContract (might work despite the known bug)
     try {
       const functionSelector = "transfer(address,uint256)";
       const parameter = [
@@ -499,9 +478,12 @@ export const createTronToolbox = async (
         return tronWeb.transactionBuilder.addUpdateData(result.transaction, memo, "utf8");
       }
 
+      if (expiration) {
+        tronWeb.transactionBuilder.extendExpiration(result.transaction, expiration);
+      }
+
       return result.transaction;
     } catch (error) {
-      // If both methods fail, throw a descriptive error
       throw new SwapKitError("toolbox_tron_transaction_creation_failed", {
         message:
           "Failed to create TRC20 transaction. This might be due to TronWeb 6.0.3 bug. Use the transfer method directly instead.",
@@ -520,9 +502,6 @@ export const createTronToolbox = async (
     return txid;
   };
 
-  /**
-   * Check the current allowance for a spender on a token
-   */
   const getApprovedAmount = async ({ assetAddress, spenderAddress, from }: TronApprovedParams) => {
     try {
       const contract = tronWeb.contract(trc20ABI, assetAddress);
@@ -539,14 +518,10 @@ export const createTronToolbox = async (
     }
   };
 
-  /**
-   * Check if a spender is approved for a specific amount
-   */
   const isApproved = async ({ assetAddress, spenderAddress, from, amount }: TronIsApprovedParams) => {
     const allowance = await getApprovedAmount({ assetAddress, from, spenderAddress });
 
     if (!amount) {
-      // If no amount specified, check if there's any approval
       return allowance > 0n;
     }
 
@@ -554,16 +529,12 @@ export const createTronToolbox = async (
     return allowance >= amountBigInt;
   };
 
-  /**
-   * Approve a spender to transfer tokens
-   */
   const approve = async ({ assetAddress, spenderAddress, amount, from }: TronApproveParams) => {
     if (!signer) throw new SwapKitError("toolbox_tron_no_signer");
 
     const fromAddress = from || (await getAddress());
     const approvalAmount = amount !== undefined ? BigInt(amount).toString() : MAX_APPROVAL;
 
-    // Build approve transaction using triggerSmartContract
     const functionSelector = "approve(address,uint256)";
     const parameter = [
       { type: "address", value: spenderAddress },

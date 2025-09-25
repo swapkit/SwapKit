@@ -1,4 +1,4 @@
-import type { CryptoChain } from "@swapkit/helpers";
+import type { Chain } from "@swapkit/helpers";
 import type { FullWallet } from "@swapkit/toolboxes";
 import type { ChainflipPlugin } from "./chainflip";
 import type { EVMPlugin } from "./evm";
@@ -19,4 +19,4 @@ export type SKPlugins = typeof ChainflipPlugin &
 
 export type PluginName = keyof SKPlugins;
 
-export type SwapKitPluginParams = { getWallet: <T extends CryptoChain>(chain: T) => FullWallet[T] };
+export type SwapKitPluginParams = { getWallet: <T extends Chain>(chain: T) => FullWallet[T] };

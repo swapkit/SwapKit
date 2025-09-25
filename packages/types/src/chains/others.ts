@@ -129,20 +129,6 @@ const ADA = createChain({
   type,
 });
 
-const FIAT = createChain({
-  baseDecimal: 2,
-  blockExplorerUrl: "",
-  blockTime: 60,
-  chain: Chain.Fiat,
-  chainId: ChainId.FIAT,
-  explorerUrl: "",
-  name: "Fiat",
-  nativeCurrency: "USD",
-  networkDerivationPath: [0, 0, 0, 0, 0],
-  rpcUrls: [""],
-  type,
-});
-
-export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TON, TRON, SUI, ADA, FIAT] as const;
+export const OtherChainConfigs = [NEAR, XRD, XRP, SOL, TON, TRON, SUI, ADA] as const;
 export const OtherChains = OtherChainConfigs.map((config) => config.chain);
 export type OtherChain = (typeof OtherChains)[number];

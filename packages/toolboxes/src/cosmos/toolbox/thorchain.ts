@@ -133,8 +133,8 @@ async function signWithPrivateKey({ privateKey, message }: { privateKey: Uint8Ar
 }
 
 export async function createThorchainToolbox({ chain, ...toolboxParams }: CosmosToolboxParams<TCLikeChain>) {
-  const nodeUrl = SKConfig.get("nodeUrls")[chain];
   const rpcUrl = await getRPCUrl(chain);
+  const { nodeUrl } = getChainConfig(chain);
   const { isStagenet } = SKConfig.get("envs");
   const isThorchain = chain === Chain.THORChain;
   const chainPrefix = `${isStagenet ? "s" : ""}${CosmosChainPrefixes[chain]}`;

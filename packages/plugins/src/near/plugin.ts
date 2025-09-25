@@ -1,4 +1,4 @@
-import { AssetValue, Chain, type CryptoChain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
+import { AssetValue, Chain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { NearWallet } from "@swapkit/toolboxes/near";
 import { createPlugin } from "../utils";
@@ -171,9 +171,9 @@ export const NearPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, value: sellAmount });
 
-      const wallet = getWallet(sellAsset.chain as Exclude<CryptoChain, typeof Chain.Radix>);
+      const wallet = getWallet(sellAsset.chain as Exclude<Chain, typeof Chain.Radix>);
 
-      if (!wallet) {
+      if (!wallet || !("transfer" in wallet)) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
 

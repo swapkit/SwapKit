@@ -1,6 +1,8 @@
 import { createChain } from "./_createChain";
 import { Chain, ChainId } from "./_enums";
 
+const type = "utxo";
+
 const BTC = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://blockchair.com/bitcoin",
@@ -12,7 +14,7 @@ const BTC = createChain({
   nativeCurrency: "BTC",
   networkDerivationPath: [84, 0, 0, 0, 0] as [number, number, number, number, number?],
   rpcUrls: ["https://bitcoin-rpc.publicnode.com", "https://bitcoin.publicnode.com"],
-  type: "utxo",
+  type,
 });
 
 const BCH = createChain({
@@ -30,7 +32,7 @@ const BCH = createChain({
     "https://bch-dataseed.binance.org",
     "https://bch.getblock.io/mainnet",
   ],
-  type: "utxo",
+  type,
 });
 
 const LTC = createChain({
@@ -48,7 +50,7 @@ const LTC = createChain({
     "https://ltc.getblock.io/mainnet",
     "https://litecoin.publicnode.com",
   ],
-  type: "utxo",
+  type,
 });
 
 const DOGE = createChain({
@@ -66,7 +68,7 @@ const DOGE = createChain({
     "https://doge.getblock.io/mainnet",
     "https://dogecoin.publicnode.com",
   ],
-  type: "utxo",
+  type,
 });
 
 const DASH = createChain({
@@ -80,7 +82,7 @@ const DASH = createChain({
   nativeCurrency: "DASH",
   networkDerivationPath: [44, 5, 0, 0, 0],
   rpcUrls: ["https://dash-rpc.publicnode.com", "https://dash.getblock.io/mainnet"],
-  type: "utxo",
+  type,
 });
 
 const ZEC = createChain({
@@ -96,7 +98,7 @@ const ZEC = createChain({
   rpcUrls: [
     "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
   ],
-  type: "utxo",
+  type,
 });
 
 export const UTXOChainConfigs = [BTC, BCH, LTC, DOGE, DASH, ZEC] as const;

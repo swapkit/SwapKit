@@ -6,7 +6,6 @@ import {
   type ChainWallet,
   type ConditionalAssetValueReturn,
   CosmosChains,
-  type CryptoChain,
   type EVMChain,
   EVMChains,
   type FeeOption,
@@ -84,7 +83,8 @@ export function SwapKit<
   function addChain<T extends Chain>(connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] }) {
     const currentWallet = getWallet(connectWallet.chain);
 
-    const balance = connectWallet.balance || currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
+    const balance = connectWallet?.balance ||
+      currentWallet?.balance || [AssetValue.from({ chain: connectWallet.chain })];
 
     const wallet = { ...currentWallet, ...connectWallet, balance } as FullWallet[T];
 
@@ -148,7 +148,7 @@ export function SwapKit<
    * @Public
    */
   function getWallet<T extends ConnectedChains>(chain: T) {
-    return connectedWallets[chain] || {};
+    return connectedWallets[chain];
   }
 
   function getAllWallets() {
@@ -185,14 +185,11 @@ export function SwapKit<
     ) as ConditionalAssetValueReturn<R>;
   }
 
-  async function getWalletWithBalance<T extends Chain>(
-    chain: T,
-    scamFilter = true,
-  ): Promise<ReturnType<typeof getWallet> & { balance: AssetValue[] }> {
-    if (chain === Chain.Fiat || !getWallet(chain)) {
+  async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
+    const wallet = getWallet(chain);
+    if (!wallet) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as CryptoChain);
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
@@ -217,10 +214,10 @@ export function SwapKit<
 
   function transfer({ assetValue, ...params }: GenericTransferParams | EVMTransferParams) {
     const chain = assetValue.chain;
-    if ([Chain.Fiat, Chain.Radix].includes(chain as typeof Chain.Fiat) || !getWallet(chain)) {
+    if ([Chain.Radix].includes(chain) || !getWallet(chain)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Fiat | typeof Chain.Radix | typeof Chain.Near>);
+    const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Radix | typeof Chain.Near>);
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });

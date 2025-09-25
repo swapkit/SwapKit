@@ -22,18 +22,14 @@ describe("NEAR createTransaction", () => {
     const toolbox = context.toolbox;
 
     const transaction = await toolbox.createTransaction({
-      assetValue: AssetValue.from({
-        chain: Chain.Near,
-        value: "0.001", // Small amount
-      }),
-      feeRate: 300000000000000, // 300 TGas
+      assetValue: AssetValue.from({ chain: Chain.Near, value: "0.001" }),
+      feeRate: 300000000000000,
       recipient: accountId, // Self transfer
       sender: accountId,
     });
 
     expect(transaction).toBeDefined();
     expect(transaction.publicKey).toBeDefined();
-    expect(transaction.serialized).toBeDefined();
   }, 30000);
 
   test("should throw error for invalid account", async () => {
@@ -59,9 +55,9 @@ describe("NEAR createTransaction", () => {
 
     const contractTransaction = await toolbox.createContractFunctionCall({
       args: { account_id: accountId },
-      attachedDeposit: "1250000000000000000000", // 0.00125 NEAR for storage
-      contractId: "wrap.testnet", // Known testnet contract
-      gas: "300000000000000", // 300 TGas
+      attachedDeposit: "1250000000000000000000",
+      contractId: "wrap.testnet",
+      gas: "300000000000000",
       methodName: "storage_deposit",
       sender: accountId,
     });
@@ -69,8 +65,7 @@ describe("NEAR createTransaction", () => {
     expect(contractTransaction).toBeDefined();
     expect(contractTransaction.publicKey).toBeDefined();
 
-    // Verify the public key can be retrieved directly
     const { publicKey } = await getFullAccessPublicKey(provider, accountId);
-    expect(publicKey.toString()).toBe(contractTransaction.publicKey);
+    expect(publicKey.toString()).toBe(contractTransaction.publicKey.toString());
   }, 30000);
 });

@@ -3,7 +3,6 @@ import {
   type ApproveReturnType,
   AssetValue,
   Chain,
-  type CryptoChain,
   type ErrorKeys,
   type EVMChain,
   EVMChains,
@@ -150,7 +149,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
       const abis = pluginType === "thorchain" ? TCSpecificAbi : MayaSpecificAbi;
       const { chain, symbol, ticker } = assetValue;
 
-      const wallet = getWallet(chain as CryptoChain);
+      const wallet = getWallet(chain);
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
@@ -267,7 +266,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
       name: string;
       ownerAddress: string;
     }) {
-      const payout = payoutAddress || getWallet(assetValue.chain as CryptoChain)?.address;
+      const payout = payoutAddress || getWallet(assetValue.chain)?.address;
 
       if (!payout) {
         throw new SwapKitError("thorchain_preferred_asset_payout_required");
@@ -300,7 +299,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
         throw new SwapKitError("core_transaction_create_liquidity_invalid_params");
       }
 
-      const assetAddress = getWallet(assetValue.chain as CryptoChain).address;
+      const assetAddress = getWallet(assetValue.chain).address;
       const baseAssetAddress = getWallet(pluginChain).address;
 
       const baseAssetTx = await wrapWithThrow(() => {
@@ -347,7 +346,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
       const baseAssetWalletAddress = getWallet(pluginChain).address;
 
       const baseAddress = includeBaseAddress ? baseAssetAddr || baseAssetWalletAddress : "";
-      const assetAddress = isSym || mode === "asset" ? assetAddr || getWallet(chain as CryptoChain).address : "";
+      const assetAddress = isSym || mode === "asset" ? assetAddr || getWallet(chain).address : "";
 
       if (!(baseTransfer || assetTransfer)) {
         throw new SwapKitError("core_transaction_add_liquidity_invalid_params");

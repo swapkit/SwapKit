@@ -3,7 +3,6 @@ import { Chain, type EVMChain, EVMChains, getChainConfig, UTXOChains } from "@sw
 import { match } from "ts-pattern";
 import type { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
-import type { RadixCoreStateResourceDTO } from "../types/radix";
 import { getRPCUrl } from "./chains";
 
 export type CommonAssetString = (typeof CommonAssetStrings)[number] | Chain;
@@ -55,12 +54,19 @@ async function getRadixAssetDecimal(symbol: string) {
     const resourceAddress = symbol.split("-")[1]?.toLowerCase();
     const rpcUrl = await getRPCUrl(Chain.Radix);
 
-    const { manager } = await RequestClient.post<RadixCoreStateResourceDTO>(`${rpcUrl}/state/resource`, {
+    const { manager } = await RequestClient.post<{
+      at_ledger_state?: any;
+      manager: {
+        resource_type: string;
+        divisibility: { substate_type: string; is_locked: boolean; value: { divisibility: number } };
+      };
+      owner_role?: any;
+    }>(`${rpcUrl}/state/resource`, {
       body: JSON.stringify({ network: "mainnet", resource_address: resourceAddress }),
       headers: { Accept: "*/*", "Content-Type": "application/json" },
     });
 
-    return manager.divisibility.value.divisibility;
+    return manager?.divisibility?.value?.divisibility;
   } catch (error) {
     console.error(`Failed to fetch Radix asset decimal for ${symbol}:`, error);
     return baseDecimal;

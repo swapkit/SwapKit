@@ -27,6 +27,7 @@ export const THORConfig = createChain({
   name: "THORChain",
   nativeCurrency: "RUNE",
   networkDerivationPath: [44, 931, 0, 0, 0],
+  nodeUrl: "https://thornode.ninerealms.com",
   rpcUrls: ["https://rpc.ninerealms.com", "https://thornode.ninerealms.com"],
   type,
 });
@@ -41,6 +42,7 @@ export const StagenetTHORConfig = createChain({
   name: "THORChain",
   nativeCurrency: "RUNE",
   networkDerivationPath: [44, 931, 0, 0, 0],
+  nodeUrl: "https://stagenet-thornode.ninerealms.com",
   rpcUrls: ["https://stagenet-rpc.ninerealms.com", "https://stagenet-thornode.ninerealms.com"],
   type,
 });
@@ -55,6 +57,7 @@ export const MAYAConfig = createChain({
   name: "Maya",
   nativeCurrency: "CACAO",
   networkDerivationPath: [44, 931, 0, 0, 0],
+  nodeUrl: "https://mayanode.mayachain.info",
   rpcUrls: [
     "https://tendermint.mayachain.info",
     "https://maya-tendermint.publicnode.com",
@@ -73,6 +76,7 @@ export const StagenetMAYAConfig = createChain({
   name: "Maya",
   nativeCurrency: "CACAO",
   networkDerivationPath: [44, 931, 0, 0, 0],
+  nodeUrl: "https://stagenet.mayanode.mayachain.info",
   rpcUrls: ["https://stagenet.mayanode.mayachain.info"],
   type,
 });

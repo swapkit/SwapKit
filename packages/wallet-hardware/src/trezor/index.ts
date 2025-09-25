@@ -124,7 +124,6 @@ async function getTrezorWallet<T extends Chain>({
           });
 
           if (result.success) {
-            console.log("returning", result.payload.serializedTx);
             return result.payload.serializedTx;
           }
 

@@ -1,4 +1,4 @@
-import { createSwapKit } from "@swapkit/sdk";
+import { AssetValue, createSwapKit } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
 
@@ -35,5 +35,7 @@ export const getSwapKitClient = ({
 
   return skClient;
 };
+
+await AssetValue.loadStaticAssets();
 
 export type SwapKitClient = ReturnType<typeof getSwapKitClient>;

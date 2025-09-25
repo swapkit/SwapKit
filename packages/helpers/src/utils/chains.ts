@@ -13,7 +13,7 @@ function getRpcBody(chain: Chain | StagenetChain) {
     .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
     .with(Chain.Sui, () => ({ id: 1, jsonrpc: "2.0", method: "sui_getSystemState", params: [] }))
     .with(Chain.Ton, () => ({ id: 1, jsonrpc: "2.0", method: "getAddressInformation", params: { address: "" } }))
-    .with(Chain.Tron, Chain.Radix, Chain.Fiat, () => "")
+    .with(Chain.Tron, Chain.Radix, () => "")
     .with(Chain.Near, () => ({ id: "dontcare", jsonrpc: "2.0", method: "status", params: [] }))
     .with(Chain.Ripple, () => ({ id: 1, jsonrpc: "2.0", method: "ping", params: [{}] }))
     .otherwise(() => {

@@ -7,7 +7,8 @@ import {
   StagenetTHORConfig,
 } from "@swapkit/types";
 import { createStore } from "zustand/vanilla";
-import { NODE_URLS, WalletOption } from "../types";
+
+import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
 export type SKConfigIntegrations = {
@@ -75,8 +76,6 @@ const initialState = {
 
   requestOptions: { retry: { backoffMultiplier: 2, baseDelay: 300, maxDelay: 5000, maxRetries: 3 }, timeoutMs: 30000 },
   wallets: Object.values(WalletOption),
-
-  nodeUrls: NODE_URLS,
 };
 type SKState = typeof initialState;
 
@@ -85,7 +84,6 @@ export type SKConfigState = {
   chains?: SKState["chains"];
   envs?: Partial<SKState["envs"]>;
   integrations?: Partial<SKConfigIntegrations>;
-  nodeUrls?: Partial<SKState["nodeUrls"]>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
   wallets?: SKState["wallets"];
   feeMultipliers?: FeeMultiplierConfig;
@@ -95,7 +93,6 @@ type SwapKitConfigStore = SKState & {
   setApiKey: (key: keyof SKState["apiKeys"], apiKey: string) => void;
   setConfig: (config: SKConfigState) => void;
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) => void;
-  setNodeUrl: (chain: keyof SKState["nodeUrls"], url: string) => void;
   setRpcUrl: (chain: keyof SKState["rpcUrls"], url: string[]) => void;
   setRequestOptions: (options: Partial<SKState["requestOptions"]>) => void;
   setIntegrationConfig: (
@@ -116,7 +113,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
       envs: { ...s.envs, ...config.envs },
       feeMultipliers: config.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config.integrations },
-      nodeUrls: { ...s.nodeUrls, ...config.nodeUrls } as typeof s.nodeUrls,
       rpcUrls: { ...s.rpcUrls, ...config.rpcUrls },
       wallets: s.wallets.concat(config.wallets || []),
     })),
@@ -124,7 +120,6 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
   setFeeMultipliers: (multipliers) => set(() => ({ feeMultipliers: multipliers })),
   setIntegrationConfig: (integration, config) =>
     set((s) => ({ integrations: { ...s.integrations, [integration]: config } })),
-  setNodeUrl: (chain, url) => set((s) => ({ nodeUrls: { ...s.nodeUrls, [chain]: url } as typeof s.nodeUrls })),
   setRequestOptions: (options) =>
     set((s) => ({
       requestOptions: {
@@ -147,8 +142,6 @@ export const SKConfig = {
   setFeeMultipliers: (multipliers: FeeMultiplierConfig) => swapKitState.getState().setFeeMultipliers(multipliers),
   setIntegrationConfig: <T extends keyof SKState["integrations"]>(integration: T, config: SKConfigIntegrations[T]) =>
     swapKitState.getState().setIntegrationConfig(integration, config),
-  setNodeUrl: <T extends keyof SKState["nodeUrls"]>(chain: T, url: string) =>
-    swapKitState.getState().setNodeUrl(chain, url),
   setRequestOptions: (options: SKState["requestOptions"]) => swapKitState.getState().setRequestOptions(options),
   setRpcUrl: <T extends keyof SKState["rpcUrls"]>(chain: T, urls: string[]) =>
     swapKitState.getState().setRpcUrl(chain, urls),

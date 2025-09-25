@@ -1,5 +1,21 @@
 # @swapkit/core
 
+## 4.0.22
+
+### Patch Changes
+
+- [#1501](https://github.com/swapkit/SwapKit/pull/1501) [`968346a`](https://github.com/swapkit/SwapKit/commit/968346ae59b3a46eb2f07f1b6f3d16c435c5be25) Thanks [@towanTG](https://github.com/towanTG)! - Fixes empty wallet handling
+
+## 4.0.21
+
+### Patch Changes
+
+- [#1452](https://github.com/swapkit/SwapKit/pull/1452) [`d18b78d`](https://github.com/swapkit/SwapKit/commit/d18b78d91f05a840829539e94bd2877e26078f3f) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Migrate to @swapkit/types
+
+- Updated dependencies [[`d18b78d`](https://github.com/swapkit/SwapKit/commit/d18b78d91f05a840829539e94bd2877e26078f3f)]:
+  - @swapkit/toolboxes@4.0.21
+  - @swapkit/helpers@4.0.21
+
 ## 4.0.20
 
 ### Patch Changes
