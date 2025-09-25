@@ -6,12 +6,10 @@ import type {
 } from "@swapkit/helpers";
 import type { Contract, Types } from "tronweb";
 
-// Re-export TronWeb types for convenience
 export type TronTransaction = Types.Transaction;
 export type TronContract = Contract;
 export type TronSignedTransaction = Types.SignedTransaction;
 
-// Signer interface compatible with TronWeb and wallet implementations
 export interface TronSigner {
   getAddress(): Promise<string>;
   signTransaction(transaction: TronTransaction): Promise<TronSignedTransaction>;
@@ -22,20 +20,17 @@ export type TronToolboxOptions =
   | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }
   | {};
 
-export interface TronTransferParams extends GenericTransferParams {
-  // No additional fields needed - all inherited from GenericTransferParams
-}
+export interface TronTransferParams extends GenericTransferParams {}
 
 export interface TronCreateTransactionParams extends Omit<GenericCreateTransactionParams, "feeRate"> {
-  // No additional fields needed - all inherited from GenericCreateTransactionParams
+  expiration?: number;
 }
 
-// Same as EVM types for consistency
 export type TronApproveParams = {
   assetAddress: string;
   spenderAddress: string;
   feeOptionKey?: FeeOption;
-  amount?: bigint | string | number; // BigNumberish equivalent for Tron
+  amount?: bigint | string | number;
   from?: string;
   gasLimitFallback?: bigint | string | number;
   nonce?: number;
@@ -45,17 +40,14 @@ export type TronApprovedParams = { assetAddress: string; spenderAddress: string;
 
 export type TronIsApprovedParams = TronApprovedParams & { amount?: bigint | string | number };
 
-// TronGrid API Types
-export type TronGridTRC20Balance = Array<{
-  [contractAddress: string]: string; // Balance as string
-}>;
+export type TronGridTRC20Balance = Array<{ [contractAddress: string]: string }>;
 
 export interface TronGridAccountResponse {
   data: Array<{
     address: string;
-    balance: number; // TRX balance in SUN
+    balance: number;
     create_time: number;
-    latest_opration_time: number; // Note: typo in API response
+    latest_opration_time: number;
     free_net_usage: number;
     net_window_size: number;
     net_window_optimized: boolean;

@@ -1,10 +1,10 @@
 export const list = {
   chainId: "mayachain-mainnet-v1",
-  count: 53,
+  count: 50,
   keywords: [],
   name: "MAYACHAIN",
   provider: "MAYACHAIN",
-  timestamp: "2025-07-30T16:01:28.884Z",
+  timestamp: "2025-09-23T11:43:38.791Z",
   tokens: [
     {
       chain: "ARB",
@@ -33,16 +33,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.leo-0x93864d81175095dd93360ffa2a529b8642f76a6e.png",
       ticker: "LEO",
-    },
-    {
-      address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.LINK-0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.link-0xf97f4df75117a78c1a5a0dbb814af92458539fb4.png",
-      ticker: "LINK",
     },
     {
       address: "0x25d887Ce7a35172C62FeBFD67a1856F20FaEbB00",
@@ -95,6 +85,16 @@ export const list = {
       ticker: "WBTC",
     },
     {
+      address: "0x5979D7b546E38E414F7E9822514be443A4800529",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.wstETH-0x5979D7b546E38E414F7E9822514be443A4800529",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.wsteth-0x5979d7b546e38e414f7e9822514be443a4800529.png",
+      ticker: "wstETH",
+    },
+    {
       address: "0x9F41b34f42058a7b74672055a5fae22c4b113Fd1",
       chain: "ARB",
       chainId: "42161",
@@ -127,6 +127,16 @@ export const list = {
       identifier: "ETH.ETH",
       logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
       ticker: "ETH",
+    },
+    {
+      address: "0x054c9D4C6F4EA4E14391addD1812106c97D05690",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 18,
+      identifier: "ETH.LLD-0x054c9D4C6F4EA4E14391addD1812106c97D05690",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.lld-0x054c9d4c6f4ea4e14391addd1812106c97d05690.png",
+      ticker: "LLD",
     },
     {
       address: "0x53312F85Bba24C8cb99CFFc13BF82420157230d3",
@@ -215,26 +225,6 @@ export const list = {
       ticker: "GLD",
     },
     {
-      address: "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.ARB/GMX-0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gmx-0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a.png",
-      ticker: "GMX",
-    },
-    {
-      address: "0x18c11fd286c5ec11c3b683caa813b77f5163a122",
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.ARB/GNS-0x18c11FD286C5EC11c3b683Caa813B77f5163A122",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.gns-0x18c11fd286c5ec11c3b683caa813b77f5163a122.png",
-      ticker: "GNS",
-    },
-    {
       address: "0x93864d81175095dd93360ffa2a529b8642f76a6e",
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
@@ -265,16 +255,6 @@ export const list = {
       ticker: "PEPE",
     },
     {
-      address: "0xd4d42f0b6def4ce0383636770ef773390d85c61a",
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.ARB/SUSHI-0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.sushi-0xd4d42f0b6def4ce0383636770ef773390d85c61a.png",
-      ticker: "SUSHI",
-    },
-    {
       address: "0x429fed88f10285e61b12bdf00848315fbdfcc341",
       chain: "MAYA",
       chainId: "mayachain-mainnet-v1",
@@ -283,16 +263,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.tgt-0x429fed88f10285e61b12bdf00848315fbdfcc341.png",
       ticker: "TGT",
-    },
-    {
-      address: "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
-      chain: "MAYA",
-      chainId: "mayachain-mainnet-v1",
-      decimals: 8,
-      identifier: "MAYA.ARB/UNI-0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.uni-0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0.png",
-      ticker: "UNI",
     },
     {
       address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",

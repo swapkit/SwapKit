@@ -14,7 +14,6 @@ interface NearGeneralSigner
   extends Signer,
     Omit<ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>, "signTransaction"> {}
 
-// Extend both ChainSigner and NEAR's Signer class, omitting signTransaction
 export type NearSigner = NearKeyPairSigner | NearGeneralSigner;
 
 export type NearToolboxParams =
@@ -40,10 +39,8 @@ export interface NearFunctionCallParams {
 }
 
 export interface NearCreateTransactionParams extends GenericCreateTransactionParams {
-  // NEAR-specific options
   attachedDeposit?: string;
-  // Function call parameters
-  functionCall?: { methodName: string; args: object; attachedDeposit: string };
+  functionCall?: { methodName: string; args: object; attachedDeposit: string; gas: string; contractId: string };
 }
 
 export * from "./toolbox";
