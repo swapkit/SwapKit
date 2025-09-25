@@ -83,7 +83,8 @@ export function SwapKit<
   function addChain<T extends Chain>(connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] }) {
     const currentWallet = getWallet(connectWallet.chain);
 
-    const balance = connectWallet.balance || currentWallet.balance || [AssetValue.from({ chain: connectWallet.chain })];
+    const balance = connectWallet?.balance ||
+      currentWallet?.balance || [AssetValue.from({ chain: connectWallet.chain })];
 
     const wallet = { ...currentWallet, ...connectWallet, balance } as FullWallet[T];
 
@@ -185,10 +186,10 @@ export function SwapKit<
   }
 
   async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
-    if (!getWallet(chain)) {
+    const wallet = getWallet(chain);
+    if (!wallet) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-    const wallet = getWallet(chain);
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
