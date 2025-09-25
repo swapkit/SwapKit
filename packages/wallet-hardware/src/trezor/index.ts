@@ -12,7 +12,7 @@ import {
 } from "@swapkit/helpers";
 import type { UTXOToolboxes, UTXOType } from "@swapkit/toolboxes/utxo";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
-import type { Psbt } from "bitcoinjs-lib";
+import { type Psbt, script } from "bitcoinjs-lib";
 
 function getScriptType(derivationPath: DerivationPathArray) {
   switch (derivationPath[0]) {
@@ -86,7 +86,7 @@ async function getTrezorWallet<T extends Chain>({
           );
 
           const version = 5;
-          const versionGroupId = 0x892f2085;
+          const versionGroupId = 0x26a7270a;
           const branchId = 0xc8e71055;
 
           const inputs = zcashPsbt.txInputs.map((input, idx) => ({
@@ -98,8 +98,17 @@ async function getTrezorWallet<T extends Chain>({
           }));
 
           const outputs = zcashPsbt.txOutputs.map((output) => {
-            if (output.value === 0n && output.script.length > 0 && output.script[0] === 0x6a) {
-              return { amount: "0", op_return_data: output.script.toString("hex"), script_type: "PAYTOOPRETURN" };
+            if (
+              output.value === 0n &&
+              output.script.length > 0 &&
+              output.script[0] === 0x6a &&
+              script.decompile(output.script)
+            ) {
+              return {
+                amount: "0",
+                op_return_data: (script.decompile(output.script) as any)[1].toString("hex"),
+                script_type: "PAYTOOPRETURN",
+              };
             }
 
             const maybeRecipient = zcashAddress.fromOutputScript(output.script, networks.zcash);
