@@ -83,7 +83,7 @@ export function SwapKit<
   function addChain<T extends Chain>(connectWallet: Omit<ChainWallet<T>, "balance"> & { balance?: AssetValue[] }) {
     const currentWallet = getWallet(connectWallet.chain);
 
-    const balance = connectWallet?.balance ||
+    const balance = connectWallet.balance ||
       currentWallet?.balance || [AssetValue.from({ chain: connectWallet.chain })];
 
     const wallet = { ...currentWallet, ...connectWallet, balance } as FullWallet[T];
@@ -129,6 +129,9 @@ export function SwapKit<
     }
 
     const wallet = getWallet(chain);
+
+    if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+
     const walletAction = type === "checkOnly" ? wallet.isApproved : wallet.approve;
     if (!walletAction) throw new SwapKitError("core_wallet_connection_not_found");
 
@@ -147,8 +150,9 @@ export function SwapKit<
   /**
    * @Public
    */
-  function getWallet<T extends ConnectedChains>(chain: T) {
-    return connectedWallets[chain];
+  function getWallet<T extends ConnectedChains>(chain: T): FullWallet[T] | undefined {
+    const wallet = connectedWallets[chain];
+    return wallet;
   }
 
   function getAllWallets() {
@@ -187,9 +191,8 @@ export function SwapKit<
 
   async function getWalletWithBalance<T extends Chain>(chain: T, scamFilter = true) {
     const wallet = getWallet(chain);
-    if (!wallet) {
-      throw new SwapKitError("core_wallet_connection_not_found");
-    }
+    if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+
     const defaultBalance = [AssetValue.from({ chain })];
     wallet.balance = defaultBalance;
 
@@ -218,6 +221,7 @@ export function SwapKit<
       throw new SwapKitError("core_wallet_connection_not_found");
     }
     const wallet = getWallet(chain as Exclude<Chain, typeof Chain.Radix | typeof Chain.Near>);
+    if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
     // we need to simplify this to one object params
     return wallet.transfer({ ...params, assetValue });
@@ -270,15 +274,15 @@ export function SwapKit<
     const { assetValue } = params;
     const { chain } = assetValue;
 
-    if (!getWallet(chain as Chain)) throw new SwapKitError("core_wallet_connection_not_found");
-
     const baseValue = AssetValue.from({ chain });
     const { match } = await import("ts-pattern");
 
     return match(chain as Chain)
       .returnType<Promise<AssetValue | undefined> | AssetValue | undefined>()
       .with(...EVMChains, (chain) => {
-        const { address, ...wallet } = getWallet(chain);
+        const _wallet = getWallet(chain);
+        if (!_wallet) throw new SwapKitError("core_wallet_connection_not_found");
+        const { address, ...wallet } = _wallet;
 
         const tx = match(type as ActionType)
           .with("transfer", () => wallet.createTransferTx(params as EVMCreateTransactionParams))
@@ -315,8 +319,14 @@ export function SwapKit<
         return wallet.estimateTransactionFee({ ...tx, chain, feeOption: feeOptionKey });
       })
       .with(...UTXOChains, (chain) => {
-        const { address, ...wallet } = getWallet(chain);
-        return wallet.estimateTransactionFee({ ...params, feeOptionKey, recipient: address, sender: address });
+        const wallet = getWallet(chain);
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+        return wallet.estimateTransactionFee({
+          ...params,
+          feeOptionKey,
+          recipient: wallet.address,
+          sender: wallet.address,
+        });
       })
       .with(...CosmosChains, async () => {
         const { estimateTransactionFee } = await import("@swapkit/toolboxes/cosmos");
@@ -324,13 +334,15 @@ export function SwapKit<
       })
       .with(Chain.Polkadot, (chain) => {
         const wallet = getWallet(chain);
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
         return wallet.estimateTransactionFee({ ...params, recipient: wallet.address });
       })
       .with(Chain.Tron, (chain) => {
-        const { address, ...wallet } = getWallet(chain);
-        return wallet.estimateTransactionFee({ ...params, recipient: address, sender: address });
+        const wallet = getWallet(chain);
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+        return wallet.estimateTransactionFee({ ...params, recipient: wallet.address, sender: wallet.address });
       })
-      .with(Chain.Ripple, (chain) => getWallet(chain).estimateTransactionFee())
+      .with(Chain.Ripple, (chain) => getWallet(chain)?.estimateTransactionFee())
       .otherwise(async () => baseValue);
   }
 

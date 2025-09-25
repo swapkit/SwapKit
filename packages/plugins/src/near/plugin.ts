@@ -17,20 +17,15 @@ export const NearPlugin = createPlugin({
 
         const accountId = `${normalizedName}.near`;
         const wallet = getWallet(Chain.Near);
-
-        if (!wallet) {
-          throw new SwapKitError("plugin_near_no_connection");
-        }
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
         try {
-          // Get account info
           const accountInfo = await wallet.provider.query({
             account_id: accountId,
             finality: "final",
             request_type: "view_account",
           });
 
-          // Optionally get the account's public keys
           const keysInfo = await wallet.provider.query({
             account_id: accountId,
             finality: "final",
@@ -58,9 +53,6 @@ export const NearPlugin = createPlugin({
       },
 
       async lookupNames(accountId: string) {
-        // NEAR doesn't have a central registry to look up all names owned by an account
-        // This would require indexing or an external service
-        // For now, we can only check if a specific account exists
         const wallet = getWallet(Chain.Near);
 
         if (!wallet) {
@@ -68,15 +60,12 @@ export const NearPlugin = createPlugin({
         }
 
         try {
-          // Check if the account exists
           await wallet.provider.query({ account_id: accountId, finality: "final", request_type: "view_account" });
 
-          // If the account ID ends with .near, it's a NEAR name
           if (accountId.endsWith(".near")) {
             return [accountId];
           }
 
-          // Otherwise, we can't determine what names they own without an indexer
           return [];
         } catch {
           return [];
@@ -119,16 +108,13 @@ export const NearPlugin = createPlugin({
         }
 
         try {
-          // Ask RPC whether the account exists
           await wallet.provider.query({ account_id: accountId, finality: "final", request_type: "view_account" });
-          // If no error is thrown, the account exists
-          return accountId; // Account is taken, return the account ID as "owner"
+          return accountId;
         } catch (err: any) {
-          // UNKNOWN_ACCOUNT means it hasn't been created yet → available
           if (/UNKNOWN_ACCOUNT|does not exist while viewing/.test(err.message)) {
             return null;
           }
-          // Re-throw any unexpected errors
+
           throw err;
         }
       },
@@ -173,13 +159,9 @@ export const NearPlugin = createPlugin({
 
       const sellAssetChain = sellAsset.chain;
 
-      const wallet = getWallet(sellAsset.chain as Exclude<Chain, typeof Chain.Radix>);
-
-      if (sellAssetChain === Chain.Near && !sellAsset.isGasAsset) {
+      if (sellAssetChain === Chain.Near && !sellAsset.isGasAsset && sellAsset.address) {
         const wallet = getWallet(sellAsset.chain as Chain.Near);
-        if (!wallet) {
-          throw new SwapKitError("core_wallet_connection_not_found");
-        }
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
         const unsignedTransaction = await wallet.createContractFunctionCall({
           args: {
@@ -188,7 +170,7 @@ export const NearPlugin = createPlugin({
             receiver_id: "intents.near",
           },
           attachedDeposit: "1",
-          contractId: sellAsset.address as string,
+          contractId: sellAsset.address,
           gas: "250000000000000",
           methodName: "ft_transfer_call",
           sender: wallet.address,
@@ -198,9 +180,9 @@ export const NearPlugin = createPlugin({
         return wallet.broadcastTransaction(signedTransaction);
       }
 
-      if (!wallet) {
-        throw new SwapKitError("core_wallet_connection_not_found");
-      }
+      const wallet = getWallet(sellAsset.chain as Exclude<Chain, typeof Chain.Radix>);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+
       const tx = await wallet.transfer({
         assetValue: sellAsset,
         isProgramDerivedAddress: true,

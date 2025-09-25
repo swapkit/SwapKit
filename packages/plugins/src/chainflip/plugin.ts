@@ -27,10 +27,7 @@ export const ChainflipPlugin = createPlugin({
       const sellAsset = await AssetValue.from({ asset: sellAssetString, asyncTokenLookup: true, value: sellAmount });
 
       const wallet = getWallet(sellAsset.chain as Exclude<Chain, Chain.Radix>);
-
-      if (!wallet) {
-        throw new SwapKitError("core_wallet_connection_not_found");
-      }
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
       const { depositAddress } = await SwapKitApi.getChainflipDepositChannel({
         ...chainflip,

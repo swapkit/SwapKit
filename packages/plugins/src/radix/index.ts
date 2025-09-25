@@ -12,6 +12,7 @@ export const RadixPlugin = createPlugin({
       }
 
       const wallet = getWallet(assetValue.chain);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
       try {
         return wallet.signAndBroadcast({ manifest: tx as string });
       } catch (error) {

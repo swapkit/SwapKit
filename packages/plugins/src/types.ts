@@ -19,4 +19,4 @@ export type SKPlugins = typeof ChainflipPlugin &
 
 export type PluginName = keyof SKPlugins;
 
-export type SwapKitPluginParams = { getWallet: <T extends Chain>(chain: T) => FullWallet[T] };
+export type SwapKitPluginParams = { getWallet: <T extends Chain>(chain: T) => FullWallet[T] | undefined };

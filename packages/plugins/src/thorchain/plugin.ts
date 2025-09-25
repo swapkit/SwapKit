@@ -166,6 +166,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
 
         if (!abi) {
           const wallet = getWallet(chain as TCLikeChain);
+          if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
           const shouldDeposit = pluginChain === chain && recipient === "";
           // @Towan: Is that the same action? :)
           return shouldDeposit ? wallet.deposit(params) : wallet.transfer(params);
@@ -173,6 +174,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
 
         const { getChecksumAddressFromAsset } = await import("@swapkit/toolboxes/evm");
         const wallet = getWallet(chain as EVMChain);
+        if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
         return wallet.call<string>({
           abi,
@@ -266,7 +268,7 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
       name: string;
       ownerAddress: string;
     }) {
-      const payout = payoutAddress || getWallet(assetValue.chain)?.address;
+      const payout = payoutAddress || getWallet(assetValue.chain)?.address || "";
 
       if (!payout) {
         throw new SwapKitError("thorchain_preferred_asset_payout_required");
@@ -299,8 +301,11 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
         throw new SwapKitError("core_transaction_create_liquidity_invalid_params");
       }
 
-      const assetAddress = getWallet(assetValue.chain).address;
-      const baseAssetAddress = getWallet(pluginChain).address;
+      const wallet = getWallet(assetValue.chain);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+
+      const assetAddress = wallet.address;
+      const baseAssetAddress = wallet.address;
 
       const baseAssetTx = await wrapWithThrow(() => {
         return depositToPool({
@@ -338,15 +343,18 @@ function createTCBasedPlugin<T extends TCLikeChain>(pluginChain: T) {
       isPendingSymmAsset,
       mode = "sym",
     }: AddLiquidityParams) {
+      const wallet = getWallet(assetValue.chain);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
+
       const { chain, symbol } = assetValue;
       const isSym = mode === "sym";
       const baseTransfer = baseAssetValue?.gt(0) && (isSym || mode === "baseAsset");
       const assetTransfer = assetValue?.gt(0) && (isSym || mode === "asset");
       const includeBaseAddress = isPendingSymmAsset || baseTransfer;
-      const baseAssetWalletAddress = getWallet(pluginChain).address;
+      const baseAssetWalletAddress = wallet.address;
 
       const baseAddress = includeBaseAddress ? baseAssetAddr || baseAssetWalletAddress : "";
-      const assetAddress = isSym || mode === "asset" ? assetAddr || getWallet(chain).address : "";
+      const assetAddress = isSym || mode === "asset" ? assetAddr || wallet.address : "";
 
       if (!(baseTransfer || assetTransfer)) {
         throw new SwapKitError("core_transaction_add_liquidity_invalid_params");

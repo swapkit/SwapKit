@@ -14,7 +14,6 @@ export default function NearNames({ skClient }: Props) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [ownedNames, setOwnedNames] = useState<string[]>([]);
   const [nameCost, setNameCost] = useState<string>("");
-  // Fetch NEAR wallet data on mount
   useEffect(() => {
     const nearWallet = skClient.getWallet(Chain.Near);
 
@@ -22,7 +21,6 @@ export default function NearNames({ skClient }: Props) {
       setNearAddress(nearWallet.address);
       setShowModal(true);
 
-      // Fetch owned names using plugin
       const fetchOwnedNames = async () => {
         try {
           if (skClient.near?.nearNames) {
@@ -36,7 +34,7 @@ export default function NearNames({ skClient }: Props) {
 
       fetchOwnedNames();
     }
-  }, [skClient]); // Only run once when component mounts with a NEAR wallet
+  }, [skClient]);
 
   const validateName = useCallback((name: string): string | null => {
     const normalized = name.toLowerCase().replace(/\.near$/, "");
@@ -111,7 +109,6 @@ export default function NearNames({ skClient }: Props) {
           setNameInput("");
           setIsAvailable(null);
 
-          // Refresh owned names
           const names = await skClient.near.nearNames.lookupNames(nearAddress);
           setOwnedNames(names);
         }

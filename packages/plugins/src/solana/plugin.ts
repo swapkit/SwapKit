@@ -14,6 +14,7 @@ export const SolanaPlugin = createPlugin({
       if (!(chain === Chain.Solana && tx)) throw new SwapKitError("core_swap_invalid_params");
 
       const wallet = getWallet(chain);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
       const transaction = VersionedTransaction.deserialize(Buffer.from(tx as string, "base64"));
 
       const signedTransaction = await wallet.signTransaction(transaction);

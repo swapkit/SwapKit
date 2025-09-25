@@ -24,6 +24,7 @@ function approve<T extends ApproveMode>({ approveMode, getWallet }: { approveMod
     }
 
     const wallet = getWallet(evmChain);
+    if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
     const walletAction = approveMode === "checkOnly" ? wallet.isApproved : wallet.approve;
 
     if (!(assetValue.address && wallet.address)) {
@@ -47,6 +48,7 @@ export const EVMPlugin = createPlugin({
       const assetValue = await AssetValue.from({ asset: sellAsset, asyncTokenLookup: true });
       const evmChain = assetValue.chain as EVMChain;
       const wallet = getWallet(evmChain);
+      if (!wallet) throw new SwapKitError("core_wallet_connection_not_found");
 
       if (!(EVMChains.includes(evmChain) && tx)) {
         throw new SwapKitError("core_swap_invalid_params");
