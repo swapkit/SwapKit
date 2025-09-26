@@ -61,7 +61,7 @@ export async function switchEVMWalletNetwork(provider: BrowserProvider, chain: C
   try {
     await providerRequest({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: chainConfig.chainId }],
+      params: [{ chainId: chainConfig.chainIdHex }],
       provider,
     });
   } catch (error) {
