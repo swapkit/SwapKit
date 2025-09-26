@@ -35,6 +35,7 @@ const initialState = {
 
   envs: {
     apiUrl: "https://api.swapkit.dev",
+    apiVersion: "",
     devApiUrl: "https://dev-api.swapkit.dev",
     isDev: false,
     isStagenet: false,

@@ -31,10 +31,12 @@ import {
   type TrackingRequest,
 } from "./types";
 
-const SKRequestClient = RequestClient.extend({
+export const SKRequestClient = RequestClient.extend({
   dynamicHeader: () => {
     const { swapKit } = SKConfig.get("apiKeys");
-    return swapKit ? { "x-api-key": swapKit } : {};
+    const { apiVersion } = SKConfig.get("envs");
+
+    return swapKit ? { "x-api-key": swapKit, "x-version": apiVersion } : {};
   },
 });
 
