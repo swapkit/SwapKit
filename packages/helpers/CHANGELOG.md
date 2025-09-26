@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.0.23
+
+### Patch Changes
+
+- [#1506](https://github.com/swapkit/SwapKit/pull/1506) [`67c3786`](https://github.com/swapkit/SwapKit/commit/67c3786b4d6a0ceebfd6f8de014f770933c79903) Thanks [@towanTG](https://github.com/towanTG)! - Fixes chainId used for evm wallet network switch - was using non hex version
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.23
+
 ## 4.0.22
 
 ### Patch Changes
