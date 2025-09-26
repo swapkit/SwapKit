@@ -23,8 +23,7 @@ describe("NEAR createTransaction", () => {
 
     const transaction = await toolbox.createTransaction({
       assetValue: AssetValue.from({ chain: Chain.Near, value: "0.001" }),
-      feeRate: 300000000000000,
-      recipient: accountId, // Self transfer
+      recipient: accountId,
       sender: accountId,
     });
 

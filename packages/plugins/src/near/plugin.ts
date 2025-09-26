@@ -201,6 +201,7 @@ export const NearPlugin = createPlugin({
       if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
+
       const tx = await wallet.transfer({
         assetValue: sellAsset,
         isProgramDerivedAddress: true,
