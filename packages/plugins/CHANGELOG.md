@@ -1,5 +1,15 @@
 # @swapkit/plugins
 
+## 4.0.26
+
+### Patch Changes
+
+- [#1508](https://github.com/swapkit/SwapKit/pull/1508) [`c9fea0f`](https://github.com/swapkit/SwapKit/commit/c9fea0f45d8eaeb2e9ed857eaefe4691e15454e6) Thanks [@towanTG](https://github.com/towanTG)! - Reworks near toolbox transfer
+
+- Updated dependencies [[`c9fea0f`](https://github.com/swapkit/SwapKit/commit/c9fea0f45d8eaeb2e9ed857eaefe4691e15454e6)]:
+  - @swapkit/toolboxes@4.0.24
+  - @swapkit/helpers@4.0.24
+
 ## 4.0.25
 
 ### Patch Changes
