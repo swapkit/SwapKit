@@ -1,5 +1,15 @@
 # @swapkit/helpers
 
+## 4.0.25
+
+### Patch Changes
+
+- [`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021) Thanks [@towanTG](https://github.com/towanTG)! - Adds Harbor chain (Cosmos) - do not use in production
+
+- Updated dependencies [[`795af52`](https://github.com/swapkit/SwapKit/commit/795af52318c68d13086ffa55169ccfe07f268bed)]:
+  - @swapkit/types@0.1.2
+  - @swapkit/tokens@4.0.25
+
 ## 4.0.24
 
 ### Patch Changes

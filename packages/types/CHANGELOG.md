@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1510](https://github.com/swapkit/SwapKit/pull/1510) [`795af52`](https://github.com/swapkit/SwapKit/commit/795af52318c68d13086ffa55169ccfe07f268bed) Thanks [@towanTG](https://github.com/towanTG)! - Adds Harbor chain basics - Do not use it in production yet
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.1.24
+
+### Patch Changes
+
+- [`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021) Thanks [@towanTG](https://github.com/towanTG)! - Adds Harbor chain (Cosmos) - do not use in production
+
+- Updated dependencies [[`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021)]:
+  - @swapkit/toolboxes@4.0.25
+  - @swapkit/helpers@4.0.25
+  - @swapkit/wallet-hardware@4.1.24
+  - @swapkit/wallet-keystore@4.0.25
+  - @swapkit/wallet-core@4.0.25
+
 ## 4.1.23
 
 ### Patch Changes

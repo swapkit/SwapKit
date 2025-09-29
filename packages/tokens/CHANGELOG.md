@@ -1,5 +1,14 @@
 # @swapkit/tokens
 
+## 4.0.25
+
+### Patch Changes
+
+- Updated dependencies [[`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021)]:
+  - @swapkit/toolboxes@4.0.25
+  - @swapkit/helpers@4.0.25
+  - @swapkit/wallets@4.1.24
+
 ## 4.0.24
 
 ### Patch Changes
