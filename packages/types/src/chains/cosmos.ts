@@ -55,6 +55,32 @@ export const MAYAConfig = createChain({
   type,
 });
 
+export const HARBORConfig = createChain({
+  baseDecimal: 8,
+  blockExplorerUrl: "",
+  blockTime: 6,
+  chain: Chain.Harbor,
+  chainId: ChainId.HARBOR,
+  explorerUrl: "",
+  name: "Harbor",
+  nativeCurrency: "HRB",
+  rpcUrl: "https://xnode.harbor-dev.xyz/xnode",
+  type,
+});
+
+export const StagenetHARBORConfig = createChain({
+  baseDecimal: 8,
+  blockExplorerUrl: "",
+  blockTime: 6,
+  chain: Chain.Harbor,
+  chainId: ChainId.HARBOR_STAGENET,
+  explorerUrl: "",
+  name: "Harbor",
+  nativeCurrency: "HRB",
+  rpcUrl: "https://xnode.harbor-dev.xyz/xnode",
+  type,
+});
+
 export const StagenetMAYAConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.mayascan.org",

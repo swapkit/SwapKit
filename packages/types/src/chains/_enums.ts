@@ -12,6 +12,7 @@ export enum Chain {
   Dogecoin = "DOGE",
   Ethereum = "ETH",
   Gnosis = "GNO",
+  Harbor = "HARBOR",
   Kujira = "KUJI",
   Litecoin = "LTC",
   Maya = "MAYA",
@@ -30,6 +31,7 @@ export enum Chain {
 }
 
 export enum StagenetChain {
+  Harbor = "MAYA_HARBOR",
   THORChain = "THOR_STAGENET",
   Maya = "MAYA_STAGENET",
 }
@@ -49,6 +51,7 @@ export enum ChainId {
   DOGE = "dogecoin",
   ETH = "1",
   GNO = "100",
+  HARBOR = "harbor-1",
   KUJI = "kaiyo-1",
   LTC = "litecoin",
   MAYA = "mayachain-mainnet-v1",
@@ -67,6 +70,7 @@ export enum ChainId {
   // Stagenet chains
   THOR_STAGENET = "thorchain-stagenet-v2",
   MAYA_STAGENET = "mayachain-stagenet-v1",
+  HARBOR_STAGENET = "harbor-stagenet-v1",
 
   /**
    * @deprecated use ChainId.ARB
