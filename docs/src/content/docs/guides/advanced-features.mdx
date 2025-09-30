@@ -364,7 +364,7 @@ class TokenRegistry {
 
     AssetValue.setStaticAssets(new Map([[token.identifier, {
       identifier: token.identifier,
-      chain: token.chain as any,
+      chain: token.chain,
       decimal: token.decimals
     }]]));
   }

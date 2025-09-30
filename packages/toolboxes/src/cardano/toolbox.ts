@@ -61,6 +61,7 @@ export async function getCardanoToolbox(
     | { signer?: CardanoSigner }
     | { phrase?: string; index?: number; derivationPath?: DerivationPathArray },
 ) {
+  const validateAddress = await getCardanoAddressValidator();
   const signer = await match(toolboxParams)
     .with({ phrase: P.string }, async ({ phrase }) => {
       const { MeshWallet } = await import("@meshsdk/core");
@@ -107,23 +108,17 @@ export async function getCardanoToolbox(
     if (!signer || !("getChangeAddress" in signer)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
-
     const { Transaction } = await import("@meshsdk/core");
 
-    const tx = new Transaction({ initiator: signer as any });
+    const [, policyId] = assetValue.symbol.split("-");
+    if (!assetValue.isGasAsset && !policyId) throw new SwapKitError("core_wallet_connection_not_found");
 
-    if (assetValue.isGasAsset) {
-      tx.sendLovelace({ address: recipient }, assetValue.getBaseValue("string"));
-    } else {
-      const [, policyId] = assetValue.symbol.split("-");
-      if (!policyId) throw new SwapKitError("core_wallet_connection_not_found");
+    const tx = new Transaction({ initiator: signer });
+    tx.sendAssets({ address: recipient }, [
+      { quantity: assetValue.getBaseValue("string"), unit: assetValue.isGasAsset ? "lovelace" : assetValue.symbol },
+    ]);
 
-      tx.sendAssets({ address: recipient }, [{ quantity: assetValue.getBaseValue("string"), unit: policyId }]);
-    }
-
-    if (memo) {
-      tx.setMetadata(0, memo);
-    }
+    if (memo) tx.setMetadata(0, memo);
 
     const unsignedTx = await tx.build();
     return { tx, unsignedTx };
@@ -134,8 +129,8 @@ export async function getCardanoToolbox(
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const { tx } = await createTransaction(txParams);
-    const signedTx = await signer.signTx(tx as any);
+    const { unsignedTx } = await createTransaction(txParams);
+    const signedTx = await signer.signTx(unsignedTx);
     return signedTx;
   }
 
@@ -158,8 +153,6 @@ export async function getCardanoToolbox(
 
     return txHash;
   }
-
-  const validateAddress = await getCardanoAddressValidator();
 
   return {
     createTransaction,
