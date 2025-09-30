@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.25
+
+### Patch Changes
+
+- [#1512](https://github.com/swapkit/SwapKit/pull/1512) [`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97) Thanks [@towanTG](https://github.com/towanTG)! - Changes deprectation warning to info text of future deprecation
+
+- Updated dependencies [[`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97)]:
+  - @swapkit/helpers@4.0.26
+  - @swapkit/toolboxes@4.0.26
+
 ## 4.1.24
 
 ### Patch Changes
