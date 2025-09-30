@@ -1,5 +1,5 @@
 import { AssetValue, Chain, getChainConfig, SwapKitError, SwapKitNumber } from "@swapkit/helpers";
-import type { Cell } from "@ton/ton";
+import type { Cell, OpenedContract, TonClient, WalletContractV4 } from "@ton/ton";
 import { match, P } from "ts-pattern";
 
 import type { TONSigner, TONToolboxParams, TONTransferParams } from "./types";
@@ -8,6 +8,8 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
   const { mnemonicToWalletKey } = await import("@ton/crypto");
   const { Address, TonClient, WalletContractV4 } = await import("@ton/ton");
   const validateAddress = await getTONAddressValidator();
+  let client: TonClient;
+  let wallet: OpenedContract<WalletContractV4>;
 
   const signer = await match(toolboxParams)
     .with({ phrase: P.string }, async ({ phrase }) => mnemonicToWalletKey(phrase.split(" ")))
@@ -16,20 +18,31 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
 
   function getClient() {
     const { rpcUrls } = getChainConfig(Chain.Ton);
-    return new TonClient({ endpoint: rpcUrls[0] });
+    const [endpoint] = rpcUrls;
+
+    if (!client || client.parameters.endpoint !== endpoint) {
+      client = new TonClient({ endpoint });
+    }
+
+    return client;
   }
 
   function getWallet(paramSigner?: TONSigner) {
-    const client = getClient();
-    const walletSigner = paramSigner || signer;
+    if (!wallet || paramSigner) {
+      const client = getClient();
+      const walletSigner = paramSigner || signer;
 
-    if (!walletSigner) {
-      throw new SwapKitError("core_wallet_connection_not_found");
+      if (!walletSigner) {
+        throw new SwapKitError("core_wallet_connection_not_found");
+      }
+
+      const walletContract = WalletContractV4.create({ publicKey: walletSigner.publicKey, workchain: 0 });
+      const contract = client.open(walletContract);
+
+      wallet = contract;
     }
-    const walletContract = WalletContractV4.create({ publicKey: walletSigner.publicKey, workchain: 0 });
-    const contract = client.open(walletContract);
 
-    return contract;
+    return wallet;
   }
 
   async function getBalance(address: string) {
@@ -73,7 +86,7 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     const transfer = await createTransaction({ assetValue, memo, recipient });
     await wallet.send(transfer);
 
-    return transfer.hash().toString("hex");
+    return transfer.hash().toString();
   }
 
   async function sendTransaction(transferCell: Cell) {

@@ -4,11 +4,10 @@ import type { CardanoProvider } from "./index";
 
 type CardanoSigner = CardanoProvider | { address: string };
 
-const BLOCKFROST_FREE_KEY = "mainnetbHElf9FQRYlYxGSXtF3fH7iIdZb1Kq4Z";
-
+// TODO: this should done on BE side
 async function getProvider() {
   const { BlockfrostProvider } = await import("@meshsdk/core");
-  const apiKey = process.env.BLOCKFROST_API_KEY || BLOCKFROST_FREE_KEY;
+  const apiKey = "mainnet3YT7XK6NidLPlkHxxyBB5V0WzXUOTIJS"; // TODO: TEST API KEY
   return new BlockfrostProvider(apiKey);
 }
 
