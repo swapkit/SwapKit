@@ -58,6 +58,10 @@ const { chainIdToChain, chainToBaseDecimal, chainToBlockTime, explorerUrls, rpcU
     return acc;
   },
   {
+    chainIdToChain: {},
+    chainToBaseDecimal: {},
+    chainToBlockTime: {},
+    explorerUrls: {},
     rpcUrls: {
       [StagenetChain.Maya]: StagenetMAYAConfig.rpcUrls[0],
       [StagenetChain.THORChain]: StagenetTHORConfig.rpcUrls[0],

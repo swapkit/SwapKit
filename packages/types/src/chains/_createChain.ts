@@ -7,7 +7,6 @@ export function createChain<
   const Type extends "utxo" | "evm" | "cosmos" | "substrate" | "others",
   const Params extends {
     baseDecimal: number;
-    blockExplorerUrl?: string;
     blockTime: number;
     chain: Chain;
     chainId: ChainId;

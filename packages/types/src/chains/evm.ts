@@ -6,7 +6,6 @@ const networkDerivationPath = [44, 60, 0, 0, 0] as [number, number, number, numb
 
 const ETHConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://etherscan.io",
   blockTime: 12.5,
   chain: Chain.Ethereum,
   chainId: ChainId.Ethereum,
@@ -21,7 +20,6 @@ const ETHConfig = createChain({
 
 const BSCConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://bscscan.com",
   blockTime: 3,
   chain: Chain.BinanceSmartChain,
   chainId: ChainId.BinanceSmartChain,
@@ -40,7 +38,6 @@ const BSCConfig = createChain({
 
 const AVAXConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://snowtrace.io",
   blockTime: 3,
   chain: Chain.Avalanche,
   chainId: ChainId.Avalanche,
@@ -59,7 +56,6 @@ const AVAXConfig = createChain({
 
 const POLConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://polygonscan.com",
   blockTime: 2.1,
   chain: Chain.Polygon,
   chainId: ChainId.Polygon,
@@ -74,7 +70,6 @@ const POLConfig = createChain({
 
 const ARBConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://arbiscan.io",
   blockTime: 0.3,
   chain: Chain.Arbitrum,
   chainId: ChainId.Arbitrum,
@@ -93,7 +88,6 @@ const ARBConfig = createChain({
 
 const OPConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://optimistic.etherscan.io",
   blockTime: 2,
   chain: Chain.Optimism,
   chainId: ChainId.Optimism,
@@ -108,7 +102,6 @@ const OPConfig = createChain({
 
 const BASEConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://basescan.org",
   blockTime: 2,
   chain: Chain.Base,
   chainId: ChainId.Base,
@@ -123,7 +116,6 @@ const BASEConfig = createChain({
 
 const GNOConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://gnosisscan.io",
   blockTime: 5.2,
   chain: Chain.Gnosis,
   chainId: ChainId.Gnosis,
@@ -138,7 +130,6 @@ const GNOConfig = createChain({
 
 const AURORAConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://explorer.mainnet.aurora.dev",
   blockTime: 1,
   chain: Chain.Aurora,
   chainId: ChainId.Aurora,
@@ -153,7 +144,6 @@ const AURORAConfig = createChain({
 
 const BERAConfig = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://berascan.com",
   blockTime: 2,
   chain: Chain.Berachain,
   chainId: ChainId.Berachain,

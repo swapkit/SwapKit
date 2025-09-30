@@ -133,6 +133,7 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
 export const SKConfig = {
   get: <T extends keyof SKState>(key: T) => swapKitState.getState()[key],
   getState: swapKitState.getState,
+  reinitialize: () => swapKitState.setState(initialState),
   set: <T extends SKConfigState>(config: T) => swapKitState.getState().setConfig(config),
 
   setApiKey: <T extends keyof SKState["apiKeys"]>(key: T, apiKey: string) =>

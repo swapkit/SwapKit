@@ -87,12 +87,16 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
     }
   }
 
-  async function createTransaction({ recipient, assetValue, gasBudget }: SuiCreateTransactionParams) {
+  async function createTransaction({ recipient, assetValue, gasBudget, sender }: SuiCreateTransactionParams) {
     const { Transaction } = await import("@mysten/sui/transactions");
 
     try {
       const tx = new Transaction();
-      const amount = assetValue.getValue("string");
+      const amount = assetValue.getBaseValue("string");
+
+      if (sender) {
+        tx.setSender(sender);
+      }
 
       if (assetValue.isGasAsset || assetValue.symbol === "SUI") {
         const [suiCoin] = tx.splitCoins(tx.gas, [amount]);

@@ -11,14 +11,14 @@ export function toHexString(value: bigint) {
 }
 
 export function getNetworkParams<C extends EVMChain>(chain: C) {
-  const { blockExplorerUrl, chainId, rpcUrls } = getChainConfig(chain);
+  const { explorerUrl, chainId, rpcUrls } = getChainConfig(chain);
 
   return () =>
     (chain === Chain.Ethereum
       ? undefined
       : {
           ...getNetworkInfo({ chain }),
-          blockExplorerUrls: [blockExplorerUrl],
+          blockExplorerUrls: [explorerUrl],
           chainId,
           rpcUrls,
         }) as C extends typeof Chain.Ethereum ? undefined : NetworkParams;

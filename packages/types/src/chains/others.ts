@@ -5,7 +5,6 @@ const type = "others";
 
 const NEAR = createChain({
   baseDecimal: 24,
-  blockExplorerUrl: "https://nearblocks.io",
   blockTime: 1,
   chain: Chain.Near,
   chainId: ChainId.Near,
@@ -24,7 +23,6 @@ const NEAR = createChain({
 
 const XRD = createChain({
   baseDecimal: 18,
-  blockExplorerUrl: "https://dashboard.radixdlt.com",
   blockTime: 5,
   chain: Chain.Radix,
   chainId: ChainId.Radix,
@@ -42,7 +40,6 @@ const XRD = createChain({
 
 const XRP = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://livenet.xrpl.org/",
   blockTime: 5,
   chain: Chain.Ripple,
   chainId: ChainId.Ripple,
@@ -56,7 +53,6 @@ const XRP = createChain({
 
 const SOL = createChain({
   baseDecimal: 9,
-  blockExplorerUrl: "https://solscan.io",
   blockTime: 0.4,
   chain: Chain.Solana,
   chainId: ChainId.Solana,
@@ -74,7 +70,6 @@ const SOL = createChain({
 
 const TON = createChain({
   baseDecimal: 9,
-  blockExplorerUrl: "https://tonscan.org",
   blockTime: 5,
   chain: Chain.Ton,
   chainId: ChainId.TON,
@@ -88,7 +83,6 @@ const TON = createChain({
 
 const TRON = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://tronscan.org",
   blockTime: 3,
   chain: Chain.Tron,
   chainId: ChainId.Tron,
@@ -103,7 +97,6 @@ const TRON = createChain({
 
 const SUI = createChain({
   baseDecimal: 9,
-  blockExplorerUrl: "https://suiscan.io",
   blockTime: 5,
   chain: Chain.Sui,
   chainId: ChainId.SUI,
@@ -117,7 +110,6 @@ const SUI = createChain({
 
 const ADA = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://cexplorer.io",
   blockTime: 600,
   chain: Chain.Cardano,
   chainId: ChainId.ADA,

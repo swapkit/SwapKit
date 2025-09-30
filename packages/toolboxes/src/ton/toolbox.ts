@@ -44,7 +44,7 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     }
   }
 
-  async function transfer({ assetValue, recipient, memo }: TONTransferParams) {
+  async function createTransaction({ assetValue, recipient, memo }: TONTransferParams) {
     const wallet = getWallet();
     if (!wallet || !signer) {
       throw new SwapKitError("core_wallet_connection_not_found");
@@ -55,13 +55,25 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     const amount = toNano(assetValue.getValue("string"));
     const messageBody = memo ? comment(memo) : undefined;
 
-    await wallet.sendTransfer({
+    const transfer = wallet.createTransfer({
       messages: [internal({ body: messageBody, to: recipient, value: amount })],
       secretKey: signer.secretKey,
       seqno,
     });
 
-    return `transfer_${Date.now()}`;
+    return transfer;
+  }
+
+  async function transfer({ assetValue, recipient, memo }: TONTransferParams) {
+    const wallet = getWallet();
+    if (!wallet || !signer) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    const transfer = await createTransaction({ assetValue, memo, recipient });
+    await wallet.send(transfer);
+
+    return transfer.hash().toString("hex");
   }
 
   async function sendTransaction(transferCell: Cell) {
@@ -87,14 +99,23 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     return Promise.resolve(AssetValue.from({ chain: Chain.Ton, value: "0.0001" }));
   }
 
-  return { estimateTransactionFee, getAddress, getBalance, sendTransaction, transfer, validateAddress };
+  return {
+    createTransaction,
+    estimateTransactionFee,
+    getAddress,
+    getBalance,
+    sendTransaction,
+    transfer,
+    validateAddress,
+  };
 }
 
 export async function getTONAddressValidator() {
   const { Address } = await import("@ton/ton");
   return function validateAddress(address: string) {
     try {
-      return Address.isAddress(address);
+      Address.parse(address);
+      return true;
     } catch {
       return false;
     }

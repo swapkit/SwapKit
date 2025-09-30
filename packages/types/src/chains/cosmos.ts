@@ -5,7 +5,6 @@ const type = "cosmos";
 
 export const GAIAConfig = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://www.mintscan.io/cosmos",
   blockTime: 2,
   chain: Chain.Cosmos,
   chainId: ChainId.Cosmos,
@@ -19,7 +18,6 @@ export const GAIAConfig = createChain({
 
 export const THORConfig = createChain({
   baseDecimal: 8,
-  blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
   chain: Chain.THORChain,
   chainId: ChainId.THORChain,
@@ -34,7 +32,6 @@ export const THORConfig = createChain({
 
 export const StagenetTHORConfig = createChain({
   baseDecimal: 8,
-  blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
   chain: Chain.THORChain,
   chainId: ChainId.THORChainStagenet,
@@ -49,7 +46,6 @@ export const StagenetTHORConfig = createChain({
 
 export const MAYAConfig = createChain({
   baseDecimal: 8,
-  blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
   chain: Chain.Maya,
   chainId: ChainId.Maya,
@@ -94,7 +90,6 @@ export const StagenetHARBORConfig = createChain({
 
 export const StagenetMAYAConfig = createChain({
   baseDecimal: 8,
-  blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
   chain: Chain.Maya,
   chainId: ChainId.MayaStagenet,
@@ -109,7 +104,6 @@ export const StagenetMAYAConfig = createChain({
 
 export const KUJIConfig = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://finder.kujira.network/kaiyo-1",
   blockTime: 2.2,
   chain: Chain.Kujira,
   chainId: ChainId.Kujira,
@@ -123,7 +117,6 @@ export const KUJIConfig = createChain({
 
 export const NOBLEConfig = createChain({
   baseDecimal: 6,
-  blockExplorerUrl: "https://www.mintscan.io/noble",
   blockTime: 1.3,
   chain: Chain.Noble,
   chainId: ChainId.Noble,

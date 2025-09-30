@@ -1,24 +1,23 @@
-import { AssetValue, Chain, type DerivationPathArray, getChainConfig, getRPCUrl, SwapKitError } from "@swapkit/helpers";
+import { AssetValue, Chain, type DerivationPathArray, getChainConfig, SwapKitError } from "@swapkit/helpers";
 import { match, P } from "ts-pattern";
 import type { CardanoProvider } from "./index";
 
 type CardanoSigner = CardanoProvider | { address: string };
 
+const BLOCKFROST_FREE_KEY = "mainnetbHElf9FQRYlYxGSXtF3fH7iIdZb1Kq4Z";
+
+async function getProvider() {
+  const { BlockfrostProvider } = await import("@meshsdk/core");
+  const apiKey = process.env.BLOCKFROST_API_KEY || BLOCKFROST_FREE_KEY;
+  return new BlockfrostProvider(apiKey);
+}
+
 async function getCardanoBalance(address: string) {
   try {
-    const { BlockfrostProvider, MeshWallet } = await import("@meshsdk/core");
-    const rpcUrl = await getRPCUrl(Chain.Cardano);
-    // Extract API key from URL if present, otherwise use a default or throw error
-    const apiKey = rpcUrl.includes("blockfrost.io") ? process.env.BLOCKFROST_API_KEY || "" : "";
+    const { MeshWallet } = await import("@meshsdk/core");
+    const provider = await getProvider();
 
-    const provider = new BlockfrostProvider(apiKey);
-
-    // Create a read-only wallet to get balance
-    const wallet = new MeshWallet({
-      fetcher: provider,
-      key: { address, type: "address" },
-      networkId: 1, // mainnet
-    });
+    const wallet = new MeshWallet({ fetcher: provider, key: { address, type: "address" }, networkId: 1 });
 
     await wallet.init();
     const balance = await wallet.getBalance();
@@ -30,16 +29,12 @@ async function getCardanoBalance(address: string) {
         const { baseDecimal } = getChainConfig(Chain.Cardano);
         balances.push(AssetValue.from({ chain: Chain.Cardano, fromBaseDecimal: baseDecimal, value: asset.quantity }));
       } else {
-        // Handle native tokens
-        // For now, we'll create a basic asset representation
-        // This would need more sophisticated parsing for policyId and assetName
         balances.push(AssetValue.from({ asset: `${Chain.Cardano}.${asset.unit}`, value: asset.quantity }));
       }
     }
 
     return balances;
   } catch (error) {
-    console.error("Error fetching Cardano balance:", error);
     return [];
   }
 }
@@ -49,7 +44,6 @@ export async function getCardanoAddressValidator() {
 
   return (address: string) => {
     try {
-      // Use MeshJS to validate address
       resolvePaymentKeyHash(address);
       return true;
     } catch (_) {
@@ -65,16 +59,13 @@ export async function getCardanoToolbox(
 ) {
   const signer = await match(toolboxParams)
     .with({ phrase: P.string }, async ({ phrase }) => {
-      const { MeshWallet, BlockfrostProvider } = await import("@meshsdk/core");
-      const rpcUrl = await getRPCUrl(Chain.Cardano);
-      const apiKey = rpcUrl.includes("blockfrost.io") ? process.env.BLOCKFROST_API_KEY || "" : "";
-
-      const provider = new BlockfrostProvider(apiKey);
+      const { MeshWallet } = await import("@meshsdk/core");
+      const provider = await getProvider();
 
       const wallet = new MeshWallet({
         fetcher: provider,
         key: { type: "mnemonic", words: phrase.split(" ") },
-        networkId: 1, // mainnet
+        networkId: 1,
         submitter: provider,
       });
 
@@ -83,6 +74,7 @@ export async function getCardanoToolbox(
     })
     .with({ signer: P.any }, ({ signer }) => signer)
     .otherwise(() => undefined);
+
   const signerAddress = signer && "getChangeAddress" in signer ? await signer.getChangeAddress() : "";
 
   function getAddress() {
@@ -95,14 +87,83 @@ export async function getCardanoToolbox(
     return getCardanoBalance(address);
   }
 
+  function estimateTransactionFee() {
+    return Promise.resolve(AssetValue.from({ chain: Chain.Cardano, value: "0.17" }));
+  }
+
+  async function createTransaction({
+    recipient,
+    assetValue,
+    memo,
+  }: {
+    recipient: string;
+    assetValue: AssetValue;
+    memo?: string;
+  }) {
+    if (!signer || !("getChangeAddress" in signer)) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    const { Transaction } = await import("@meshsdk/core");
+
+    const tx = new Transaction({ initiator: signer as any });
+
+    if (assetValue.isGasAsset) {
+      tx.sendLovelace({ address: recipient }, assetValue.getBaseValue("string"));
+    } else {
+      const [, policyId] = assetValue.symbol.split("-");
+      if (!policyId) throw new SwapKitError("core_wallet_connection_not_found");
+
+      tx.sendAssets({ address: recipient }, [{ quantity: assetValue.getBaseValue("string"), unit: policyId }]);
+    }
+
+    if (memo) {
+      tx.setMetadata(0, memo);
+    }
+
+    const unsignedTx = await tx.build();
+    return { tx, unsignedTx };
+  }
+
+  async function signTransaction(txParams: Parameters<typeof createTransaction>[0]) {
+    if (!signer || !("getChangeAddress" in signer)) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    const { tx } = await createTransaction(txParams);
+    const signedTx = await signer.signTx(tx as any);
+    return signedTx;
+  }
+
+  async function transfer({
+    recipient,
+    assetValue,
+    memo,
+  }: {
+    recipient: string;
+    assetValue: AssetValue;
+    memo?: string;
+  }) {
+    if (!signer || !("getChangeAddress" in signer)) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    const signedTx = await signTransaction({ assetValue, memo, recipient });
+    const provider = await getProvider();
+    const txHash = await provider.submitTx(signedTx);
+
+    return txHash;
+  }
+
+  const validateAddress = await getCardanoAddressValidator();
+
   return {
-    // broadcastTransaction: broadcastTransaction(signer),
-    // signTransaction: signTransaction(signer),
-    // transfer: transfer(signer),
-    // createTransaction: createTransaction(signer),
-    estimateTransactionFee: () => Promise.resolve(AssetValue.from({ chain: Chain.Cardano, value: "0.0001" })),
+    createTransaction,
+    estimateTransactionFee,
     getAddress,
     getBalance,
-    transfer: () => Promise.resolve(`transfer_${Date.now()}`),
+    signTransaction,
+    transfer,
+    validateAddress,
   };
 }
