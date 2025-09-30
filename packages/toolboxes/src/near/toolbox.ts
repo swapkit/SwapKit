@@ -73,40 +73,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       throw new SwapKitError("toolbox_near_no_signer");
     }
 
-    const { recipient, assetValue } = params;
+    const transaction = await createTransaction({ ...params, sender: await getAddress() });
 
-    const nearValidateAddress = await getValidateNearAddress();
-
-    if (!nearValidateAddress(recipient)) {
-      throw new SwapKitError("toolbox_near_invalid_address");
-    }
-
-    const account = await getAccount();
-
-    if (assetValue.isGasAsset === false) {
-      const contractId = assetValue.address;
-      if (!contractId) {
-        throw new SwapKitError("toolbox_near_missing_contract_address");
-      }
-
-      const amount = assetValue.getBaseValue("string");
-
-      return callFunction({
-        args: { amount, memo: params.memo, receiver_id: recipient },
-        contractId,
-        methodName: "ft_transfer",
-      });
-    }
-
-    try {
-      const transferAmount = assetValue.getBaseValue("string");
-
-      const result = await account.transfer({ amount: transferAmount, receiverId: recipient });
-
-      return result.transaction_outcome.id;
-    } catch (error) {
-      throw new SwapKitError("toolbox_near_transfer_failed", { error });
-    }
+    return broadcastTransaction(await signTransaction(transaction));
   }
 
   async function createTransaction(params: NearCreateTransactionParams) {

@@ -12,7 +12,7 @@ export type CosmosToolboxes = {
   THOR: ReturnType<typeof createThorchainToolbox>;
 };
 
-export const getCosmosToolbox = <T extends CosmosChain>(
+export const getCosmosToolbox = <T extends Exclude<CosmosChain, Chain.Harbor>>(
   chain: T,
   params?: Omit<CosmosToolboxParams, "chain">,
 ): CosmosToolboxes[T] => {

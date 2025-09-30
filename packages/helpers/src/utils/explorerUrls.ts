@@ -2,17 +2,18 @@ import { Chain, getChainConfig } from "@swapkit/types";
 import { match } from "ts-pattern";
 
 export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Chain }) {
-  const { blockExplorerUrl } = getChainConfig(chain);
+  const { explorerUrl } = getChainConfig(chain);
 
-  const explorerUrl = match(chain)
+  return match(chain)
     .with(
       Chain.Maya,
       Chain.Kujira,
       Chain.Noble,
       Chain.Cosmos,
       Chain.THORChain,
+      Chain.Harbor,
       Chain.Solana,
-      () => `${blockExplorerUrl}/tx/${txHash.startsWith("0x") ? txHash.slice(2) : txHash}`,
+      () => `${explorerUrl}/tx/${txHash.startsWith("0x") ? txHash.slice(2) : txHash}`,
     )
     .with(
       Chain.Arbitrum,
@@ -26,7 +27,7 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
       Chain.Optimism,
       Chain.Polkadot,
       Chain.Polygon,
-      () => `${blockExplorerUrl}/tx/${txHash.startsWith("0x") ? txHash : `0x${txHash}`}`,
+      () => `${explorerUrl}/tx/${txHash.startsWith("0x") ? txHash : `0x${txHash}`}`,
     )
     .with(
       Chain.Litecoin,
@@ -35,23 +36,19 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
       Chain.Dogecoin,
       Chain.Zcash,
       Chain.Radix,
-      () => `${blockExplorerUrl}/transaction/${txHash.toLowerCase()}`,
+      () => `${explorerUrl}/transaction/${txHash.toLowerCase()}`,
     )
-    .with(Chain.Near, () => `${blockExplorerUrl}/txns/${txHash}`)
-    .with(Chain.Ripple, () => `${blockExplorerUrl}/transactions/${txHash}`)
-    .with(Chain.Tron, () => `${blockExplorerUrl}/#/transaction/${txHash}`)
+    .with(Chain.Near, () => `${explorerUrl}/txns/${txHash}`)
+    .with(Chain.Ripple, () => `${explorerUrl}/transactions/${txHash}`)
+    .with(Chain.Tron, () => `${explorerUrl}/#/transaction/${txHash}`)
     .otherwise(() => "");
-
-  return explorerUrl;
 }
 
 export function getExplorerAddressUrl({ chain, address }: { address: string; chain: Chain }) {
-  const { blockExplorerUrl } = getChainConfig(chain);
+  const { explorerUrl } = getChainConfig(chain);
 
-  const explorerUrl = match(chain)
-    .with(Chain.Solana, Chain.Radix, () => `${blockExplorerUrl}/account/${address}`)
-    .with(Chain.Tron, () => `${blockExplorerUrl}/#/address/${address}`)
-    .otherwise(() => `${blockExplorerUrl}/address/${address}`);
-
-  return explorerUrl;
+  return match(chain)
+    .with(Chain.Solana, Chain.Radix, () => `${explorerUrl}/account/${address}`)
+    .with(Chain.Tron, () => `${explorerUrl}/#/address/${address}`)
+    .otherwise(() => `${explorerUrl}/address/${address}`);
 }

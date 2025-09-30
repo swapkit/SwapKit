@@ -1,12 +1,12 @@
 import {
   Chain,
-  ChainId,
   type DerivationPathArray,
   FeeOption,
   filterSupportedChains,
   type GenericTransferParams,
   getRPCUrl,
   SwapKitError,
+  THORConfig,
   WalletOption,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
@@ -221,7 +221,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
         // get tx signing msg
         const rawSendTx = stringifyKeysInOrder({
           account_number: accountNumber?.toString(),
-          chain_id: ChainId.THOR,
+          chain_id: THORConfig.chainId,
           fee,
           memo,
           msgs: orderedMessages,

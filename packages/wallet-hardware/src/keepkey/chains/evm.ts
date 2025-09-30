@@ -1,7 +1,7 @@
 import type { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import {
   type Chain,
-  ChainId,
+  ChainToChainId,
   type DerivationPathArray,
   derivationPathToString,
   NetworkDerivationPath,
@@ -81,7 +81,7 @@ export class KeepKeySigner extends AbstractSigner {
 
     const input = {
       addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
-      chainId: toHexString(BigInt(ChainId[this.chain])),
+      chainId: toHexString(BigInt(ChainToChainId[this.chain])),
       data,
       from: this.address,
       gas: toHexString(BigInt(gasLimit)),

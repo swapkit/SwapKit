@@ -2,13 +2,13 @@ import type { KeepKeySdk, TypesThorchainSignDocDeposit, TypesThorchainSignDocTra
 import {
   type AssetValue,
   Chain,
-  ChainId,
   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
   type GenericTransferParams,
   getRPCUrl,
   SwapKitError,
+  THORConfig,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
 
@@ -47,7 +47,7 @@ export async function thorchainWalletMethods({
     const signDoc = makeSignDoc(
       [msg],
       getDefaultChainFee(Chain.THORChain),
-      ChainId.THOR,
+      THORConfig.chainId,
       memo,
       accountNumber?.toString(),
       sequence,

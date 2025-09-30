@@ -2,10 +2,10 @@ import type { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import type { GenericTransferParams } from "@swapkit/helpers";
 import {
   Chain,
-  ChainId,
   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
+  GAIAConfig,
   getRPCUrl,
 } from "@swapkit/helpers";
 
@@ -30,7 +30,7 @@ export async function cosmosWalletMethods({
   const toolbox = await getCosmosToolbox(Chain.Cosmos);
 
   if (DEFAULT_COSMOS_FEE_MAINNET.amount[0]) {
-    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await getFeeRateFromSwapKit(ChainId.GAIA, 500));
+    DEFAULT_COSMOS_FEE_MAINNET.amount[0].amount = String(await getFeeRateFromSwapKit(GAIAConfig.chainId, 500));
   }
 
   // TODO support other cosmos assets
@@ -41,7 +41,7 @@ export async function cosmosWalletMethods({
     const keepKeySignedTx = await sdk.cosmos.cosmosSignAmino({
       signDoc: {
         account_number: accountInfo?.accountNumber.toString() ?? "",
-        chain_id: ChainId.GAIA,
+        chain_id: GAIAConfig.chainId,
         fee: DEFAULT_COSMOS_FEE_MAINNET,
         memo: memo || "",
         msgs: [

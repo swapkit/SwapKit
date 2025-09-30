@@ -1,4 +1,4 @@
-import { Chain, ChainId, StagenetChain } from "./_enums";
+import { Chain, type ChainId, StagenetChain } from "./_enums";
 import { CosmosChainConfigs, StagenetMAYAConfig, StagenetTHORConfig } from "./cosmos";
 import { EVMChainConfigs } from "./evm";
 import { OtherChainConfigs } from "./others";
@@ -96,23 +96,30 @@ export const RPC_URLS: Record<Chain | StagenetChain, string> = rpcUrls;
  * @example
  * ```diff
  * -const explorerUrl = EXPLORER_URLS[Chain.Ethereum];
- * +const { blockExplorerUrl } = getChainConfig(Chain.Ethereum);
+ * +const { explorerUrl } = getChainConfig(Chain.Ethereum);
  */
 export const EXPLORER_URLS: Record<Chain, string> = explorerUrls;
 
 /**
  *
  * @deprecated use getChainConfig instead
+ * Note: ChainToChainId will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const chainId = ChainToChainId[Chain.Ethereum];
  * +const { chainId } = getChainConfig(Chain.Ethereum);
  * ```
  */
-export const ChainToChainId = ChainId;
+export const ChainToChainId = Object.fromEntries(
+  AllChainConfigs.flatMap(({ chain, chainId }) => [[chain, chainId] as const]),
+) as {
+  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["chainId"];
+};
 
 /**
- * @deprecated use getChainConfig instead
+ * Note: ChainIdToChain will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const chain = ChainIdToChain[ChainId.Ethereum];
@@ -122,7 +129,8 @@ export const ChainToChainId = ChainId;
 export const ChainIdToChain = chainIdToChain;
 
 /**
- * @deprecated use getChainConfig instead
+ * Note: BaseDecimal will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const baseDecimal = BaseDecimal[Chain.Ethereum];
@@ -132,7 +140,8 @@ export const ChainIdToChain = chainIdToChain;
 export const BaseDecimal = chainToBaseDecimal;
 
 /**
- * @deprecated use getChainConfig instead
+ * Note: BlockTimes will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const blockTime = BlockTimes[Chain.Ethereum];

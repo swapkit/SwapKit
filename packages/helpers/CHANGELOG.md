@@ -1,5 +1,48 @@
 # @swapkit/helpers
 
+## 4.0.26
+
+### Patch Changes
+
+- [#1512](https://github.com/swapkit/SwapKit/pull/1512) [`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97) Thanks [@towanTG](https://github.com/towanTG)! - Changes deprectation warning to info text of future deprecation
+
+- Updated dependencies [[`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97)]:
+  - @swapkit/types@0.1.3
+  - @swapkit/tokens@4.0.26
+
+## 4.0.25
+
+### Patch Changes
+
+- [`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021) Thanks [@towanTG](https://github.com/towanTG)! - Adds Harbor chain (Cosmos) - do not use in production
+
+- Updated dependencies [[`795af52`](https://github.com/swapkit/SwapKit/commit/795af52318c68d13086ffa55169ccfe07f268bed)]:
+  - @swapkit/types@0.1.2
+  - @swapkit/tokens@4.0.25
+
+## 4.0.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.24
+
+## 4.0.23
+
+### Patch Changes
+
+- [#1506](https://github.com/swapkit/SwapKit/pull/1506) [`67c3786`](https://github.com/swapkit/SwapKit/commit/67c3786b4d6a0ceebfd6f8de014f770933c79903) Thanks [@towanTG](https://github.com/towanTG)! - Fixes chainId used for evm wallet network switch - was using non hex version
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.23
+
+## 4.0.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.22
+
 ## 4.0.21
 
 ### Patch Changes

@@ -2,7 +2,7 @@ import type { Keplr } from "@keplr-wallet/types";
 import {
   type AssetValue,
   Chain,
-  ChainId,
+  ChainToChainId,
   type CosmosChain,
   type EVMChain,
   EVMChains,
@@ -111,7 +111,7 @@ export async function getCtrlAddress(chain: Chain) {
       // Enabling before using the Keplr is recommended.
       // This method will ask the user whether to allow access if they haven't visited this website.
       // Also, it will request that the user unlock the wallet if the wallet is locked.
-      const chainId = ChainId[chain];
+      const chainId = ChainToChainId[chain];
       await provider.enable(chainId);
 
       const offlineSigner = provider.getOfflineSigner(chainId);

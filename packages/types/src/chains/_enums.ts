@@ -13,6 +13,7 @@ export enum Chain {
   Dogecoin = "DOGE",
   Ethereum = "ETH",
   Gnosis = "GNO",
+  Harbor = "HARBOR",
   Kujira = "KUJI",
   Litecoin = "LTC",
   Maya = "MAYA",
@@ -33,10 +34,18 @@ export enum Chain {
 }
 
 export enum StagenetChain {
+  Harbor = "MAYA_HARBOR",
   THORChain = "THOR_STAGENET",
   Maya = "MAYA_STAGENET",
 }
 
+/**
+ * ChainId enum - chain identifiers for different networks
+ *
+ * Note: Full-name properties (e.g., Arbitrum, Avalanche) will be discontinued in future versions.
+ * Please use the short-handle properties (e.g., ARB, AVAX) instead.
+ * The network configuration will be migrated to a more streamlined approach with one object per chain.
+ */
 export enum ChainId {
   ARB = "42161",
   AURORA = "1313161554",
@@ -75,128 +84,42 @@ export enum ChainId {
   THOR_STAGENET = "thorchain-stagenet-v2",
   MAYA_STAGENET = "mayachain-stagenet-v1",
 
-  /**
-   * @deprecated use ChainId.ARB
-   */
+  // Full-name properties - will be discontinued in future versions
+  // Please use the short-handle properties above (e.g., ARB instead of Arbitrum)
   Arbitrum = "42161",
-  /**
-   * @deprecated use ChainId.AURORA
-   */
   Aurora = "1313161554",
-  /**
-   * @deprecated use ChainId.AVAX
-   */
   Avalanche = "43114",
-  /**
-   * @deprecated use ChainId.BASE
-   */
   Base = "8453",
-  /**
-   * @deprecated use ChainId.BERA
-   */
   Berachain = "80094",
-  /**
-   * @deprecated use ChainId.BSC
-   */
   BinanceSmartChain = "56",
-  /**
-   * @deprecated use ChainId.BTC
-   */
   Bitcoin = "bitcoin",
-  /**
-   * @deprecated use ChainId.BCH
-   */
   BitcoinCash = "bitcoincash",
-  /**
-   * @deprecated use ChainId.FLIP
-   */
   Chainflip = "chainflip",
-  /**
-   * @deprecated use ChainId.COSMOS
-   */
   Cosmos = "cosmoshub-4",
-  /**
-   * @deprecated use ChainId.DASH
-   */
   Dash = "dash",
-  /**
-   * @deprecated use ChainId.DOGE
-   */
   Dogecoin = "dogecoin",
-  /**
-   * @deprecated use ChainId.ETH
-   */
   Ethereum = "1",
   /**
    * @deprecated
    */
   Fiat = "fiat",
-  /**
-   * @deprecated use ChainId.GNO
-   */
   Gnosis = "100",
-  /**
-   * @deprecated use ChainId.KUJI
-   */
+  Harbor = "harbor-1",
+  HarborStagenet = "harbor-stagenet-1",
   Kujira = "kaiyo-1",
-  /**
-   * @deprecated use ChainId.LTC
-   */
   Litecoin = "litecoin",
-  /**
-   * @deprecated use ChainId.MAYA
-   */
   Maya = "mayachain-mainnet-v1",
-  /**
-   * @deprecated use ChainId.MAYA_STAGENET
-   */
   MayaStagenet = "mayachain-stagenet-v1",
-  /**
-   * @deprecated use ChainId.NEAR
-   */
   Near = "near",
-  /**
-   * @deprecated use ChainId.NOBLE
-   */
   Noble = "noble-1",
-  /**
-   * @deprecated use ChainId.OP
-   */
   Optimism = "10",
-  /**
-   * @deprecated use ChainId.DOT
-   */
   Polkadot = "polkadot",
-  /**
-   * @deprecated use ChainId.POL
-   */
   Polygon = "137",
-  /**
-   * @deprecated use ChainId.XRD
-   */
   Radix = "radix-mainnet",
-  /**
-   * @deprecated use ChainId.XRP
-   */
   Ripple = "ripple",
-  /**
-   * @deprecated use ChainId.THOR
-   */
   THORChain = "thorchain-1",
-  /**
-   * @deprecated use ChainId.THOR_STAGENET
-   */
   THORChainStagenet = "thorchain-stagenet-v2",
-  /**
-   * @deprecated use ChainId.SOL
-   */
   Solana = "solana",
-  /**
-   * @deprecated use ChainId.TRON
-   */
   Tron = "728126428",
-  /**
-   * @deprecated use ChainId.ZEC
-   */
   Zcash = "zcash",
 }

@@ -2,12 +2,12 @@ import type { KeepKeySdk } from "@keepkey/keepkey-sdk";
 import {
   type AssetValue,
   Chain,
-  ChainId,
   DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
   type GenericTransferParams,
   getRPCUrl,
+  MAYAConfig,
   SwapKitError,
 } from "@swapkit/helpers";
 import type { ThorchainDepositParams } from "@swapkit/toolboxes/cosmos";
@@ -62,7 +62,7 @@ export async function mayachainWalletMethods({
     const signDoc = makeSignDoc(
       [msg],
       { amount: [], gas: "500000000" },
-      ChainId.MAYA,
+      MAYAConfig.chainId,
       memo,
       accountNumber?.toString(),
       sequence,

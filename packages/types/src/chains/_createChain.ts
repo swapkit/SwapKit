@@ -7,14 +7,14 @@ export function createChain<
   const Type extends "utxo" | "evm" | "cosmos" | "substrate" | "others",
   const Params extends {
     baseDecimal: number;
-    blockExplorerUrl: string;
+    blockExplorerUrl?: string;
     blockTime: number;
     chain: Chain;
     chainId: ChainId;
-    networkDerivationPath: [number, number, number, number, number?];
     explorerUrl: string;
     name: Name;
     nativeCurrency: string;
+    networkDerivationPath: [number, number, number, number, number?];
     rpcUrls: string[];
     type: Type;
   } & ({ chainIdHex: string } | { chainIdHex?: never }),

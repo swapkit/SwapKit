@@ -1,5 +1,64 @@
 # @swapkit/wallets
 
+## 4.1.25
+
+### Patch Changes
+
+- [#1512](https://github.com/swapkit/SwapKit/pull/1512) [`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97) Thanks [@towanTG](https://github.com/towanTG)! - Changes deprectation warning to info text of future deprecation
+
+- Updated dependencies [[`83f2caf`](https://github.com/swapkit/SwapKit/commit/83f2caf27e3a652e45a034ea0540b718767efe97)]:
+  - @swapkit/wallet-hardware@4.1.25
+  - @swapkit/helpers@4.0.26
+  - @swapkit/toolboxes@4.0.26
+  - @swapkit/wallet-core@4.0.26
+  - @swapkit/wallet-keystore@4.0.26
+
+## 4.1.24
+
+### Patch Changes
+
+- [`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021) Thanks [@towanTG](https://github.com/towanTG)! - Adds Harbor chain (Cosmos) - do not use in production
+
+- Updated dependencies [[`8814bad`](https://github.com/swapkit/SwapKit/commit/8814bad42e06568e759c66f71d25679bb7ac8021)]:
+  - @swapkit/toolboxes@4.0.25
+  - @swapkit/helpers@4.0.25
+  - @swapkit/wallet-hardware@4.1.24
+  - @swapkit/wallet-keystore@4.0.25
+  - @swapkit/wallet-core@4.0.25
+
+## 4.1.23
+
+### Patch Changes
+
+- Updated dependencies [[`c9fea0f`](https://github.com/swapkit/SwapKit/commit/c9fea0f45d8eaeb2e9ed857eaefe4691e15454e6)]:
+  - @swapkit/toolboxes@4.0.24
+  - @swapkit/helpers@4.0.24
+  - @swapkit/wallet-hardware@4.1.23
+  - @swapkit/wallet-keystore@4.0.24
+  - @swapkit/wallet-core@4.0.24
+
+## 4.1.22
+
+### Patch Changes
+
+- Updated dependencies [[`67c3786`](https://github.com/swapkit/SwapKit/commit/67c3786b4d6a0ceebfd6f8de014f770933c79903)]:
+  - @swapkit/helpers@4.0.23
+  - @swapkit/toolboxes@4.0.23
+  - @swapkit/wallet-core@4.0.23
+  - @swapkit/wallet-hardware@4.1.22
+  - @swapkit/wallet-keystore@4.0.23
+
+## 4.1.21
+
+### Patch Changes
+
+- Updated dependencies [[`8f0890c`](https://github.com/swapkit/SwapKit/commit/8f0890c9131515b91fe15b9aa7e54a8590d1f23b)]:
+  - @swapkit/wallet-hardware@4.1.21
+  - @swapkit/helpers@4.0.22
+  - @swapkit/toolboxes@4.0.22
+  - @swapkit/wallet-core@4.0.22
+  - @swapkit/wallet-keystore@4.0.22
+
 ## 4.1.20
 
 ### Patch Changes

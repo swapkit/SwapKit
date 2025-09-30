@@ -78,6 +78,7 @@ const SafeDefaultFeeValues = {
   [Chain.Noble]: 1000,
   [Chain.THORChain]: 5000000,
   [Chain.Maya]: 5000000,
+  [Chain.Harbor]: 5000000,
 };
 
 export function verifySignature(getAccount: (address: string) => Promise<Account | null>) {
@@ -266,9 +267,14 @@ function feeToStdFee(fee: SwapKitNumber, denom: string): StdFee {
 
 function getMinTransactionFee(chain: Chain) {
   return (
-    { [Chain.Cosmos]: 0.007, [Chain.Kujira]: 0.02, [Chain.Noble]: 0.01, [Chain.THORChain]: 0.02, [Chain.Maya]: 0.02 }[
-      chain as CosmosChain
-    ] || 0
+    {
+      [Chain.Cosmos]: 0.007,
+      [Chain.Kujira]: 0.02,
+      [Chain.Noble]: 0.01,
+      [Chain.THORChain]: 0.02,
+      [Chain.Maya]: 0.02,
+      [Chain.Harbor]: 0.02,
+    }[chain as CosmosChain] || 0
   );
 }
 

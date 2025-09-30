@@ -222,7 +222,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
     .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, async () => {
       const { getCosmosToolbox } = await import("./cosmos");
       const cosmosToolbox = await getCosmosToolbox(
-        chain as CosmosChain,
+        chain as Exclude<CosmosChain, Chain.Harbor>,
         params as Parameters<typeof getCosmosToolbox>[1],
       );
       return cosmosToolbox as Toolboxes[T];

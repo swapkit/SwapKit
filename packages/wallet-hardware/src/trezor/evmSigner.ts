@@ -1,6 +1,6 @@
 import {
   type Chain,
-  ChainId,
+  ChainToChainId,
   type DerivationPathArray,
   derivationPathToString,
   SwapKitError,
@@ -119,7 +119,7 @@ export async function getEVMSigner({ chain, derivationPath, provider }: TrezorEV
       );
 
       const formattedTx = {
-        chainId: Number.parseInt(ChainId[this.chain], 10),
+        chainId: Number.parseInt(ChainToChainId[this.chain], 10),
         data: data?.toString() || "0x",
         gasLimit: toHexString(BigInt(gasLimit?.toString() || 0)),
         nonce: hexifiedNonce,

@@ -8,7 +8,7 @@ export const GAIAConfig = createChain({
   blockExplorerUrl: "https://www.mintscan.io/cosmos",
   blockTime: 2,
   chain: Chain.Cosmos,
-  chainId: ChainId.GAIA,
+  chainId: ChainId.Cosmos,
   explorerUrl: "https://www.mintscan.io/cosmos",
   name: "Cosmos",
   nativeCurrency: "ATOM",
@@ -22,7 +22,7 @@ export const THORConfig = createChain({
   blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
   chain: Chain.THORChain,
-  chainId: ChainId.THOR,
+  chainId: ChainId.THORChain,
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
@@ -37,7 +37,7 @@ export const StagenetTHORConfig = createChain({
   blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
   chain: Chain.THORChain,
-  chainId: ChainId.THOR_STAGENET,
+  chainId: ChainId.THORChainStagenet,
   explorerUrl: "https://runescan.io",
   name: "THORChain",
   nativeCurrency: "RUNE",
@@ -52,7 +52,7 @@ export const MAYAConfig = createChain({
   blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
   chain: Chain.Maya,
-  chainId: ChainId.MAYA,
+  chainId: ChainId.Maya,
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
   nativeCurrency: "CACAO",
@@ -66,12 +66,38 @@ export const MAYAConfig = createChain({
   type,
 });
 
+export const HARBORConfig = createChain({
+  baseDecimal: 8,
+  blockTime: 6,
+  chain: Chain.Harbor,
+  chainId: ChainId.Harbor,
+  explorerUrl: "",
+  name: "Harbor",
+  nativeCurrency: "HRB",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: ["https://xnode.harbor-dev.xyz/xnode"],
+  type,
+});
+
+export const StagenetHARBORConfig = createChain({
+  baseDecimal: 8,
+  blockTime: 6,
+  chain: Chain.Harbor,
+  chainId: ChainId.HarborStagenet,
+  explorerUrl: "",
+  name: "Harbor",
+  nativeCurrency: "HRB",
+  networkDerivationPath: [44, 931, 0, 0, 0],
+  rpcUrls: ["https://xnode.harbor-dev.xyz/xnode"],
+  type,
+});
+
 export const StagenetMAYAConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
   chain: Chain.Maya,
-  chainId: ChainId.MAYA_STAGENET,
+  chainId: ChainId.MayaStagenet,
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
   nativeCurrency: "CACAO",
@@ -86,7 +112,7 @@ export const KUJIConfig = createChain({
   blockExplorerUrl: "https://finder.kujira.network/kaiyo-1",
   blockTime: 2.2,
   chain: Chain.Kujira,
-  chainId: ChainId.KUJI,
+  chainId: ChainId.Kujira,
   explorerUrl: "https://finder.kujira.network/kaiyo-1",
   name: "Kujira",
   nativeCurrency: "KUJI",
@@ -100,7 +126,7 @@ export const NOBLEConfig = createChain({
   blockExplorerUrl: "https://www.mintscan.io/noble",
   blockTime: 1.3,
   chain: Chain.Noble,
-  chainId: ChainId.NOBLE,
+  chainId: ChainId.Noble,
   explorerUrl: "https://www.mintscan.io/noble",
   name: "Noble",
   nativeCurrency: "USDC",
@@ -109,12 +135,19 @@ export const NOBLEConfig = createChain({
   type,
 });
 
-export const CosmosChainConfigs = [GAIAConfig, THORConfig, MAYAConfig, KUJIConfig, NOBLEConfig] as const;
-export const CosmosChains = [Chain.Cosmos, Chain.Kujira, Chain.Maya, Chain.Noble, Chain.THORChain] as const;
+export const CosmosChainConfigs = [GAIAConfig, THORConfig, MAYAConfig, KUJIConfig, NOBLEConfig, HARBORConfig] as const;
+export const CosmosChains = [
+  Chain.Cosmos,
+  Chain.Kujira,
+  Chain.Maya,
+  Chain.Noble,
+  Chain.THORChain,
+  Chain.Harbor,
+] as const;
 export type CosmosChain = (typeof CosmosChains)[number];
 
 export const StagenetCosmosChainConfigs = [StagenetTHORConfig, StagenetMAYAConfig] as const;
-export const StagenetCosmosChains = [StagenetChain.Maya, StagenetChain.THORChain] as const;
+export const StagenetCosmosChains = [StagenetChain.Maya, StagenetChain.THORChain, StagenetChain.Harbor] as const;
 export type StagenetCosmosChain = (typeof StagenetCosmosChains)[number];
 
 export const CosmosChainPrefixes: Record<CosmosChain, string> = {
@@ -123,6 +156,7 @@ export const CosmosChainPrefixes: Record<CosmosChain, string> = {
   [MAYAConfig.chain]: "maya",
   [KUJIConfig.chain]: "kujira",
   [NOBLEConfig.chain]: "noble",
+  [HARBORConfig.chain]: "harbor",
 };
 
 export const TCLikeChains = [THORConfig.chain, MAYAConfig.chain] as const;

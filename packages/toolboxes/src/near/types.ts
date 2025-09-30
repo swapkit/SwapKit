@@ -38,7 +38,7 @@ export interface NearFunctionCallParams {
   gas?: bigint | string | number;
 }
 
-export interface NearCreateTransactionParams extends GenericCreateTransactionParams {
+export interface NearCreateTransactionParams extends Omit<GenericCreateTransactionParams, "feeRate"> {
   attachedDeposit?: string;
   functionCall?: { methodName: string; args: object; attachedDeposit: string; gas: string; contractId: string };
 }
