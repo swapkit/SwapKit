@@ -95,107 +95,191 @@ export default function Multisig({
   }, [bodyBytes, signatures, threshold, toolbox, transaction]);
 
   return (
-    <div>
-      <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
-        <div>
-          <h4>Multisig</h4>
-          <div>Your current pubkey: {nonMultisigPubKey}</div>
-          <div>
-            <span>Threshold:</span>
-            <input onChange={(e) => setThreshold(+e.target.value)} step="1" type="number" value={threshold} />
-          </div>
-          <div>
-            <span>Public keys:</span>
-            <div>
-              {Object.values(pubkeys).map((pubkey, index) => (
-                <div key={pubkey}>
-                  <input
-                    onChange={(e) => handlePubkeyChange(index, e.target.value)}
-                    placeholder="Base 64 pubkey"
-                    value={pubkey}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <button onClick={handleLoadMultisig} type="button">
-            Load multisig wallet
-          </button>
-          {address && <div>Multisig address: {address}</div>}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ backgroundColor: "#1a1a1a", borderRadius: 4, color: "#999", fontSize: 11, padding: 8 }}>
+          Your current pubkey: <span style={{ color: "#fff", fontFamily: "monospace" }}>{nonMultisigPubKey}</span>
         </div>
-
+        <div>
+          <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Threshold:</label>
+          <input
+            onChange={(e) => setThreshold(+e.target.value)}
+            step="1"
+            style={{ fontSize: 13, width: "100%" }}
+            type="number"
+            value={threshold}
+          />
+        </div>
+        <div>
+          <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Public keys:</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {Object.values(pubkeys).map((pubkey, index) => (
+              <input
+                key={index}
+                onChange={(e) => handlePubkeyChange(index, e.target.value)}
+                placeholder="Base 64 pubkey"
+                style={{ fontFamily: "monospace", fontSize: 11, width: "100%" }}
+                value={pubkey}
+              />
+            ))}
+          </div>
+        </div>
+        <button
+          onClick={handleLoadMultisig}
+          style={{
+            backgroundColor: "#2563eb",
+            borderColor: "#2563eb",
+            color: "#fff",
+            fontSize: 12,
+            padding: "10px 16px",
+          }}
+          type="button">
+          Load multisig wallet
+        </button>
         {address && (
-          <div>
-            <h4>Transaction:</h4>
-            <div>
-              <div>
-                <span>Input Asset: </span>
-                {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <span>Input Amount:</span>
-                <input
-                  onChange={(e) => handleInputChange(e.target.value)}
-                  placeholder="0.0"
-                  value={inputAssetValue?.toSignificant(6)}
-                />
-              </div>
-
-              <div>
-                <span>Recipient:</span>
-                <input onChange={(e) => setRecipient(e.target.value)} placeholder="address" value={recipient} />
-              </div>
-              <div>
-                <span>Memo:</span>
-                <input onChange={(e) => setMemo(e.target.value)} placeholder="memo" value={memo} />
-              </div>
-
-              <button disabled={!inputAsset} onClick={handleCreateTransaction} type="button">
-                Create transaction
-              </button>
-
-              {transaction && <div>Transaction created successfully</div>}
-            </div>
-
-            {transaction && (
-              <div>
-                <h4>Signatures</h4>
-                <button onClick={handleSignTransaction} type="button">
-                  Sign Transaction
-                </button>
-                <div>
-                  {Object.keys(signatures).length === 0 ? (
-                    <div>There are currently no signatures</div>
-                  ) : (
-                    Object.entries(signatures).map(([pubkey, signature]) => (
-                      <div key={pubkey}>
-                        {pubkey} --&gt; {signature}{" "}
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {Object.entries(signatures).length >= threshold && (
-                  <button disabled={isBroadcasting} onClick={handleBroadcastTransaction} type="button">
-                    Broadcast
-                  </button>
-                )}
-
-                {isBroadcasting && <div>Broadcasting...</div>}
-
-                {transactionHash && (
-                  <div>
-                    Hooray! The transaction was sent successfully. Here is your transaction hash {transactionHash}
-                  </div>
-                )}
-              </div>
-            )}
+          <div style={{ backgroundColor: "#1a1a1a", borderRadius: 4, color: "#16a34a", fontSize: 11, padding: 8 }}>
+            Multisig address: <span style={{ fontFamily: "monospace" }}>{address}</span>
           </div>
         )}
       </div>
+
+      {address && (
+        <div
+          style={{
+            borderTop: "1px solid #222",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            marginTop: 8,
+            paddingTop: 16,
+          }}>
+          <div style={{ color: "#999", fontSize: 12, fontWeight: 600 }}>TRANSACTION</div>
+          <div style={{ color: "#999", fontSize: 12 }}>
+            <span style={{ fontWeight: 600 }}>Input Asset:</span> {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Input Amount:</label>
+              <input
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder="0.0"
+                style={{ fontSize: 13, width: "100%" }}
+                value={inputAssetValue?.toSignificant(6)}
+              />
+            </div>
+
+            <div>
+              <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Recipient:</label>
+              <input
+                onChange={(e) => setRecipient(e.target.value)}
+                placeholder="address"
+                style={{ fontSize: 13, width: "100%" }}
+                value={recipient}
+              />
+            </div>
+            <div>
+              <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Memo:</label>
+              <input
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="memo"
+                style={{ fontSize: 13, width: "100%" }}
+                value={memo}
+              />
+            </div>
+
+            <button
+              disabled={!inputAsset}
+              onClick={handleCreateTransaction}
+              style={{
+                backgroundColor: "#2563eb",
+                borderColor: "#2563eb",
+                color: "#fff",
+                fontSize: 12,
+                padding: "10px 16px",
+              }}
+              type="button">
+              Create transaction
+            </button>
+
+            {transaction && (
+              <div style={{ backgroundColor: "#1a1a1a", borderRadius: 4, color: "#16a34a", fontSize: 11, padding: 8 }}>
+                Transaction created successfully
+              </div>
+            )}
+          </div>
+
+          {transaction && (
+            <div
+              style={{
+                borderTop: "1px solid #222",
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                marginTop: 8,
+                paddingTop: 16,
+              }}>
+              <div style={{ color: "#999", fontSize: 12, fontWeight: 600 }}>SIGNATURES</div>
+              <button
+                onClick={handleSignTransaction}
+                style={{
+                  backgroundColor: "#2563eb",
+                  borderColor: "#2563eb",
+                  color: "#fff",
+                  fontSize: 12,
+                  padding: "10px 16px",
+                }}
+                type="button">
+                Sign Transaction
+              </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {Object.keys(signatures).length === 0 ? (
+                  <div style={{ color: "#666", fontSize: 11 }}>There are currently no signatures</div>
+                ) : (
+                  Object.entries(signatures).map(([pubkey, signature]) => (
+                    <div
+                      key={pubkey}
+                      style={{
+                        backgroundColor: "#1a1a1a",
+                        borderRadius: 4,
+                        color: "#999",
+                        fontFamily: "monospace",
+                        fontSize: 10,
+                        padding: 8,
+                        wordBreak: "break-all",
+                      }}>
+                      {pubkey} → {signature}
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {Object.entries(signatures).length >= threshold && (
+                <button
+                  disabled={isBroadcasting}
+                  onClick={handleBroadcastTransaction}
+                  style={{
+                    backgroundColor: "#16a34a",
+                    borderColor: "#16a34a",
+                    color: "#fff",
+                    fontSize: 12,
+                    padding: "10px 16px",
+                  }}
+                  type="button">
+                  {isBroadcasting ? "Broadcasting..." : "Broadcast"}
+                </button>
+              )}
+
+              {transactionHash && (
+                <div
+                  style={{ backgroundColor: "#1a1a1a", borderRadius: 4, color: "#16a34a", fontSize: 11, padding: 8 }}>
+                  Transaction sent! Hash: <span style={{ fontFamily: "monospace" }}>{transactionHash}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

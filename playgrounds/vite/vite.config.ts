@@ -60,6 +60,8 @@ export default defineConfig({
       https: "https-browserify",
       os: "os-browserify/browser",
       path: "path-browserify",
+      react: resolve("../../node_modules/react"),
+      "react-dom": resolve("../../node_modules/react-dom"),
       stream: "stream-browserify",
     },
   },

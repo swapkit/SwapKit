@@ -32,9 +32,8 @@ export default function Swap({
   );
 
   return (
-    <>
-      <h4>Swap</h4>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <SwapInputs handleSwap={handleSwap} inputAsset={inputAsset} outputAsset={outputAsset} skClient={skClient} />
-    </>
+    </div>
   );
 }
