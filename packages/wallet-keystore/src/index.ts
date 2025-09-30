@@ -54,7 +54,7 @@ export const keystoreWallet = createWallet({
   supportedChains: [
     ...EVMChains,
     ...UTXOChains,
-    ...CosmosChains,
+    ...CosmosChains.filter((chain) => chain !== Chain.Harbor),
     Chain.Polkadot,
     Chain.Chainflip,
     Chain.Ripple,
