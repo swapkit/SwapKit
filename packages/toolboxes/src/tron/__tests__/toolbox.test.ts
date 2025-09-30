@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
 import { createTronToolbox, getTronAddressValidator } from "../toolbox";
 
@@ -20,6 +20,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   context.toolbox = await createTronToolbox({ phrase: TEST_PHRASE });
+});
+
+afterAll(() => {
+  SKConfig.reinitialize();
 });
 
 describe("TRON Address Validation", () => {

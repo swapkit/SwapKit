@@ -1,6 +1,14 @@
-import { describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Chain } from "@swapkit/types";
 import { SKConfig } from "../swapKitConfig";
+
+beforeAll(() => {
+  SKConfig.reinitialize();
+});
+
+afterAll(() => {
+  SKConfig.reinitialize();
+});
 
 describe("swapKitConfig", () => {
   test("properly sets api keys", () => {

@@ -34,7 +34,7 @@ async function getCardanoBalance(address: string) {
     }
 
     return balances;
-  } catch (error) {
+  } catch {
     return [];
   }
 }

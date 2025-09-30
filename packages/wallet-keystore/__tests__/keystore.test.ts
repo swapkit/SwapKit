@@ -1,10 +1,14 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { SKConfig } from "@swapkit/helpers";
 import { createKeystoreWallet, KEYSTORE_SUPPORTED_CHAINS } from "../src";
 import { testKeystoreWalletData } from "./fixtures";
 
-beforeEach(() => {
+beforeAll(() => {
   SKConfig.set({ apiKeys: { swapKit: process.env.TEST_API_KEY }, envs: { isDev: true } });
+});
+
+afterAll(() => {
+  SKConfig.reinitialize();
 });
 
 describe("keystore - Reading address", () => {
