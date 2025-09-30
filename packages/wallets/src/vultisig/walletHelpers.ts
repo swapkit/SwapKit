@@ -1,7 +1,7 @@
 import {
   type AssetValue,
   Chain,
-  ChainId,
+  ChainToChainId,
   type CosmosChain,
   type EVMChain,
   EVMChains,
@@ -110,7 +110,7 @@ export async function getVultisigAddress(chain: Chain) {
     }
 
     if ([Chain.Cosmos, Chain.Kujira].includes(chain as typeof Chain.Cosmos)) {
-      const chainId = ChainId[chain];
+      const chainId = ChainToChainId[chain];
 
       await windowProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 

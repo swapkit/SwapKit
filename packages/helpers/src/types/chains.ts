@@ -1,7 +1,8 @@
 import { Chain, getChainConfig, StagenetChain } from "@swapkit/types";
 
 /**
- * @deprecated use getChainConfig instead
+ * Note: RPC_URLS will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const rpcUrl = RPC_URLS[Chain.Ethereum];
@@ -57,7 +58,8 @@ export const NODE_URLS = {
 };
 
 /**
- * @deprecated Removed in favor of supporting multiple RPC URLs
+ * Note: FALLBACK_URLS has been removed in favor of supporting multiple RPC URLs.
+ * This export will be discontinued in future versions.
  */
 export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
   [Chain.Arbitrum]: ["https://arb-mainnet.g.alchemy.com/v2/demo", "https://arbitrum.blockpi.network/v1/rpc/public"],
@@ -99,11 +101,13 @@ export const FALLBACK_URLS: Record<Chain | StagenetChain, string[]> = {
 };
 
 /**
- * @deprecated use getChainConfig instead
+ * Note: EXPLORER_URLS will be discontinued in future versions.
+ * Please use getChainConfig instead.
  * @example
  * ```diff
  * -const explorerUrl = EXPLORER_URLS[Chain.Ethereum];
  * +const { blockExplorerUrl } = getChainConfig(Chain.Ethereum);
+ * ```
  */
 export const EXPLORER_URLS: Record<Chain, string> = {
   [Chain.Arbitrum]: "https://arbiscan.io",

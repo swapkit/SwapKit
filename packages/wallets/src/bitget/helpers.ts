@@ -1,7 +1,7 @@
 import {
   Chain,
-  ChainId,
   type EVMChain,
+  GAIAConfig,
   prepareNetworkSwitch,
   SwapKitError,
   switchEVMWalletNetwork,
@@ -68,8 +68,8 @@ export async function getWalletMethods(chain: Chain) {
       }
       const { keplr: wallet } = bitget;
 
-      await wallet.enable(ChainId.GAIA);
-      const offlineSigner = wallet.getOfflineSignerOnlyAmino(ChainId.GAIA);
+      await wallet.enable(GAIAConfig.chainId);
+      const offlineSigner = wallet.getOfflineSignerOnlyAmino(GAIAConfig.chainId);
       const accounts = await offlineSigner.getAccounts();
       if (!accounts?.[0]) throw new SwapKitError("wallet_bitkeep_no_accounts", { chain: Chain.Cosmos });
 

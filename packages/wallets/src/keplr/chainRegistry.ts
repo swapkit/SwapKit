@@ -3,7 +3,7 @@ import { ChainId } from "@swapkit/helpers";
 
 export const chainRegistry = new Map<ChainId, ChainInfo>([
   [
-    ChainId.KUJI,
+    ChainId.Kujira,
     {
       bech32Config: {
         bech32PrefixAccAddr: "kujira",
@@ -149,7 +149,7 @@ export const chainRegistry = new Map<ChainId, ChainInfo>([
     },
   ],
   [
-    ChainId.NOBLE,
+    ChainId.Noble,
     {
       bech32Config: {
         bech32PrefixAccAddr: "noble",
@@ -196,7 +196,7 @@ export const chainRegistry = new Map<ChainId, ChainInfo>([
     },
   ],
   [
-    ChainId.THOR,
+    ChainId.THORChain,
     {
       bech32Config: {
         bech32PrefixAccAddr: "thor",
