@@ -12,24 +12,30 @@ beforeAll(async () => {
 });
 
 describe("TON Toolbox", () => {
-  test("should create toolbox through main factory", async () => {
-    const toolbox = await getTONToolbox();
+  test("should validate valid TON addresses", () => {
+    const validAddresses = [KNOWN_TON_ADDRESS, "EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG"];
 
-    expect(typeof toolbox.validateAddress).toBe("function");
-    expect(typeof toolbox.getBalance).toBe("function");
-    expect(typeof toolbox.transfer).toBe("function");
-    expect(typeof toolbox.estimateTransactionFee).toBe("function");
-    expect(typeof toolbox.sendTransaction).toBe("function");
+    for (const address of validAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(true);
+    }
   });
 
-  test("should create toolbox with phrase", async () => {
-    const toolbox = await getTONToolbox({ phrase: TEST_PHRASE });
-    expect(() => toolbox.getAddress()).not.toThrow();
+  test("should reject invalid TON addresses", () => {
+    const invalidAddresses = [
+      "",
+      "invalid",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    ];
+
+    for (const address of invalidAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(false);
+    }
   });
 
   test("should generate valid TON address from phrase", () => {
     const address = context.toolbox.getAddress();
-    expect(typeof address).toBe("string");
     expect(context.toolbox.validateAddress(address)).toBe(true);
   });
 
@@ -46,12 +52,12 @@ describe("TON Toolbox", () => {
   });
 
   test("should create transaction without broadcasting", async () => {
-    const transfer = await context.toolbox.createTransaction({
+    const transferCell = await context.toolbox.createTransaction({
       assetValue: AssetValue.from({ chain: Chain.Ton, value: "0.001" }),
       recipient: KNOWN_TON_ADDRESS,
     });
 
-    expect(transfer).toBeDefined();
-    expect(typeof transfer.hash).toBe("function");
+    const hash = transferCell.hash().toString("hex");
+    expect(hash.length).toBeGreaterThan(0);
   });
 });

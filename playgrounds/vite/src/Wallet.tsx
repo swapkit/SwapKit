@@ -1,15 +1,20 @@
-import { type Chain, type FullWallet, SwapKitApi } from "@swapkit/sdk";
+import { type Chain, type FullWallet, getExplorerAddressUrl, SwapKitApi } from "@swapkit/sdk";
 
 type Props = { walletData: FullWallet[Chain]; setAsset: (asset: any) => void; disconnect: () => void };
 
 export const Wallet = ({ walletData, setAsset, disconnect }: Props) => {
   if (!walletData) return null;
 
+  const explorerUrl = getExplorerAddressUrl({ address: walletData.address, chain: walletData.chain });
+
   return (
     <div style={{ paddingBottom: "8px" }}>
       <div>
         <span>
-          {walletData?.chain} address: {walletData?.address}
+          {walletData?.chain} address:{" "}
+          <a href={explorerUrl} rel="noopener noreferrer" target="_blank">
+            {walletData?.address}
+          </a>
         </span>
       </div>
 

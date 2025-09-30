@@ -11,23 +11,32 @@ beforeAll(async () => {
 });
 
 describe("Cardano Toolbox", () => {
-  test("should create toolbox through main factory", async () => {
-    const toolbox = await getCardanoToolbox();
+  test("should validate valid Cardano addresses", () => {
+    const validAddresses = [
+      "addr_test1qz2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3n0d3vllmyqwsx5wktcd8cc3sq835lu7drv2xwl2wywfgs68faae",
+    ];
 
-    expect(typeof toolbox.getAddress).toBe("function");
-    expect(typeof toolbox.getBalance).toBe("function");
-    expect(typeof toolbox.transfer).toBe("function");
-    expect(typeof toolbox.estimateTransactionFee).toBe("function");
+    for (const address of validAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(true);
+    }
   });
 
-  test("should create toolbox with phrase", async () => {
-    const toolbox = await getCardanoToolbox({ phrase: TEST_PHRASE });
-    expect(() => toolbox.getAddress()).not.toThrow();
+  test("should reject invalid Cardano addresses", () => {
+    const invalidAddresses = [
+      "",
+      "invalid",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    ];
+
+    for (const address of invalidAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(false);
+    }
   });
 
   test("should generate valid Cardano address from phrase", () => {
     const address = context.toolbox.getAddress();
-    expect(typeof address).toBe("string");
     expect(address.startsWith("addr")).toBe(true);
   });
 

@@ -2,9 +2,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:tes
 import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
 import { createTronToolbox, getTronAddressValidator } from "../toolbox";
 
-// Test mnemonic for consistent testing
-const TEST_PHRASE = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
-
 const context: {
   toolbox: Awaited<ReturnType<typeof createTronToolbox>>;
   validateAddress: (address: string) => boolean;
@@ -19,7 +16,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  context.toolbox = await createTronToolbox({ phrase: TEST_PHRASE });
+  context.toolbox = await createTronToolbox({ phrase: process.env.TEST_PHRASE });
 });
 
 afterAll(() => {

@@ -12,25 +12,30 @@ beforeAll(async () => {
 });
 
 describe("Sui Toolbox", () => {
-  test("should create toolbox through main factory", async () => {
-    const toolbox = await getSuiToolbox();
+  test("should validate valid Sui addresses", () => {
+    const validAddresses = [KNOWN_SUI_ADDRESS, "0x02a212de6a9dfa3a69e22387acfbafbb1a9e591bd9d636e7895dcfc8de05f331"];
 
-    expect(typeof toolbox.validateAddress).toBe("function");
-    expect(typeof toolbox.getBalance).toBe("function");
-    expect(typeof toolbox.transfer).toBe("function");
-    expect(typeof toolbox.estimateTransactionFee).toBe("function");
-    expect(typeof toolbox.createTransaction).toBe("function");
-    expect(typeof toolbox.signTransaction).toBe("function");
+    for (const address of validAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(true);
+    }
   });
 
-  test("should create toolbox with phrase", async () => {
-    const toolbox = await getSuiToolbox({ phrase: TEST_PHRASE });
-    expect(() => toolbox.getAddress()).not.toThrow();
+  test("should reject invalid Sui addresses", () => {
+    const invalidAddresses = [
+      "",
+      "invalid",
+      "0xG2a212de6a9dfa3a69e22387acfbafbb1a9e591bd9d636e7895dcfc8de05f331",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    ];
+
+    for (const address of invalidAddresses) {
+      expect(context.toolbox.validateAddress(address)).toBe(false);
+    }
   });
 
   test("should generate valid Sui address from phrase", () => {
     const address = context.toolbox.getAddress();
-    expect(typeof address).toBe("string");
     expect(address?.startsWith("0x")).toBe(true);
     if (address) {
       expect(context.toolbox.validateAddress(address)).toBe(true);
@@ -53,14 +58,12 @@ describe("Sui Toolbox", () => {
     const address = context.toolbox.getAddress();
     if (!address) throw new Error("No address generated");
 
-    const { tx, txBytes } = await context.toolbox.createTransaction({
+    const { txBytes } = await context.toolbox.createTransaction({
       assetValue: AssetValue.from({ chain: Chain.Sui, value: "0.001" }),
       recipient: KNOWN_SUI_ADDRESS,
       sender: address,
     });
 
-    expect(tx).toBeDefined();
-    expect(txBytes).toBeDefined();
     expect(txBytes.length).toBeGreaterThan(0);
   });
 
@@ -74,7 +77,6 @@ describe("Sui Toolbox", () => {
       sender: address,
     });
 
-    expect(signedTx.signature).toBeDefined();
-    expect(signedTx.bytes).toBeDefined();
+    expect(signedTx.bytes.length).toBeGreaterThan(0);
   });
 });

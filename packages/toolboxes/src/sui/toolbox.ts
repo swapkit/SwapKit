@@ -31,7 +31,7 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
   }
 
   function getAddress() {
-    return signer?.toSuiAddress();
+    return signer?.toSuiAddress() || "";
   }
 
   async function getBalance(targetAddress?: string) {
@@ -140,7 +140,8 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
 
     const { txBytes } = await createTransaction({ assetValue, gasBudget, recipient, sender });
     const suiClient = await getSuiClient();
-    return suiClient.signAndExecuteTransaction({ signer, transaction: txBytes });
+    const result = await suiClient.signAndExecuteTransaction({ signer, transaction: txBytes });
+    return result.digest;
   }
 
   return {

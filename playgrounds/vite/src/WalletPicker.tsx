@@ -33,6 +33,7 @@ const AllChainsSupported = [
   Chain.BinanceSmartChain,
   Chain.Bitcoin,
   Chain.BitcoinCash,
+  Chain.Cardano,
   Chain.Cosmos,
   Chain.Dash,
   Chain.Dogecoin,
@@ -46,6 +47,8 @@ const AllChainsSupported = [
   Chain.Ripple,
   Chain.THORChain,
   Chain.Solana,
+  Chain.Sui,
+  Chain.Ton,
 ] as Chain[];
 
 export const availableChainsByWallet = {
@@ -73,7 +76,16 @@ export const availableChainsByWallet = {
   [WalletOption.PHANTOM]: PHANTOM_SUPPORTED_CHAINS,
   [WalletOption.POLKADOT_JS]: [Chain.Polkadot],
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
-  [WalletOption.KEYSTORE]: [...AllChainsSupported, Chain.Polkadot, Chain.Ripple, Chain.Tron, Chain.Near],
+  [WalletOption.KEYSTORE]: [
+    ...AllChainsSupported,
+    Chain.Polkadot,
+    Chain.Ripple,
+    Chain.Tron,
+    Chain.Near,
+    Chain.Cardano,
+    Chain.Sui,
+    Chain.Ton,
+  ],
   [WalletOption.CTRL]: AllChainsSupported,
   [WalletOption.VULTISIG]: VULTISIG_SUPPORTED_CHAINS,
   [WalletOption.KEEPKEY]: [
