@@ -7,11 +7,11 @@ describe("Explorer URLs", () => {
     for (const chain of CosmosChains) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
         expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/tx/123456789`,
+          `${getChainConfig(chain).explorerUrl}/tx/123456789`,
         );
 
         expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+          `${getChainConfig(chain).explorerUrl}/address/asdfg`,
         );
       });
     }
@@ -21,11 +21,11 @@ describe("Explorer URLs", () => {
     for (const chain of [...EVMChains, Chain.Polkadot]) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
         expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/tx/0x123456789`,
+          `${getChainConfig(chain).explorerUrl}/tx/0x123456789`,
         );
 
         expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+          `${getChainConfig(chain).explorerUrl}/address/asdfg`,
         );
       });
     }
@@ -39,11 +39,11 @@ describe("Explorer URLs", () => {
     for (const chain of UTXOChains.filter((c) => c !== Chain.Dash)) {
       test(`getExplorerTxUrl returns correct URL for ${chain}`, () => {
         expect(getExplorerTxUrl({ chain, txHash: "0x123456789" })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/transaction/0x123456789`,
+          `${getChainConfig(chain).explorerUrl}/transaction/0x123456789`,
         );
 
         expect(getExplorerAddressUrl({ address: "asdfg", chain })).toBe(
-          `${getChainConfig(chain).blockExplorerUrl}/address/asdfg`,
+          `${getChainConfig(chain).explorerUrl}/address/asdfg`,
         );
       });
     }

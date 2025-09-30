@@ -12,7 +12,7 @@ export function createChain<
   const Params extends {
     baseDecimal: number;
     blockTime: number;
-    blockExplorerUrl: string;
+    blockExplorerUrl?: string;
     chain: Chain;
     chainId: ChainId;
     explorerUrl: string;
