@@ -90,7 +90,7 @@ export function evmValidateAddress({ address }: { address: string }) {
   try {
     getAddress(address);
     return true;
-  } catch (_error) {
+  } catch {
     return false;
   }
 }
@@ -180,7 +180,7 @@ export function getTokenAddress({ chain, symbol, ticker }: Asset, baseAssetChain
 
     // strip 0X only - 0x is still valid
     return getAddress(symbol.slice(ticker.length + 1).replace(/^0X/, ""));
-  } catch (_error) {
+  } catch {
     return null;
   }
 }
@@ -553,7 +553,7 @@ function getSendTransaction({ provider, signer, isEIP1559Compatible = true, chai
       try {
         const response = await signer.sendTransaction(txObject);
         return response.hash;
-      } catch (_error) {
+      } catch {
         const txHex = await signer.signTransaction({ ...txObject, from: address });
         const response = await provider.broadcastTransaction(txHex);
         return response.hash;

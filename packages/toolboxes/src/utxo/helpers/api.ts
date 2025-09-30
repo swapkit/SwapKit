@@ -110,7 +110,7 @@ async function getSuggestedTxFee(chain: Chain) {
     const suggestedFee = feePerKb / 1000;
 
     return Math.max(suggestedFee, getDefaultTxFeeByChain(chain));
-  } catch (_error) {
+  } catch {
     return getDefaultTxFeeByChain(chain);
   }
 }
@@ -136,7 +136,7 @@ async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ add
     );
 
     return response[address];
-  } catch (_error) {
+  } catch {
     return { address: { balance: 0, transaction_count: 0 }, utxo: [] };
   }
 }

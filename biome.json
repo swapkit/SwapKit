@@ -95,5 +95,6 @@
         "useAwait": "error"
       }
     }
-  }
+  },
+  "overrides": [{ "includes": ["playgrounds/**"], "linter": { "rules": { "a11y": "off" } } }]
 }

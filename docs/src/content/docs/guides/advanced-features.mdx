@@ -418,7 +418,7 @@ class TransactionTracker {
           clearInterval(interval);
           this.onFailed(txHash, status);
         }
-      } catch (error) {}
+      } catch {}
     }, 10000);
   }
 

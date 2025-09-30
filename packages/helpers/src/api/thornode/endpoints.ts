@@ -67,8 +67,7 @@ export async function getTHORNodeTNSDetails({
   try {
     const result = await RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(type)}/${name}`);
     return result;
-  } catch (_error) {
-    // If we get an error, the name doesn't exist and is available for registration
+  } catch {
     return { affiliate_collector_rune: "", aliases: [], expire_block_height: 0, name, owner: "", preferred_asset: "" };
   }
 }

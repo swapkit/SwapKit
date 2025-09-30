@@ -130,7 +130,7 @@ async function getWalletMethods(chain: (typeof KEEPKEY_BEX_SUPPORTED_CHAINS)[num
           const networkParams = toolbox.getNetworkParams();
           await switchEVMWalletNetwork(provider, chain, networkParams);
         }
-      } catch (_error) {
+      } catch {
         throw new SwapKitError({
           errorKey: "wallet_failed_to_add_or_switch_network",
           info: { chain, wallet: WalletOption.KEEPKEY },

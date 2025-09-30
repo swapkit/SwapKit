@@ -154,7 +154,7 @@ export async function getCtrlAddress(chain: Chain) {
 
     const accounts = await eipProvider.request({ method: "request_accounts", params: [] });
     return accounts[0];
-  } catch (_error) {
+  } catch {
     throw new SwapKitError({ errorKey: "wallet_provider_not_found", info: { chain, wallet: WalletOption.CTRL } });
   }
 }

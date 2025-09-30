@@ -88,7 +88,7 @@ export async function getSolanaAddressValidator() {
     try {
       const pubkey = new PublicKey(address);
       return PublicKey.isOnCurve(pubkey.toBytes());
-    } catch (_) {
+    } catch {
       return false;
     }
   };
@@ -246,7 +246,7 @@ async function createSolanaTokenTransaction({
   try {
     await getAccount(connection, recipientSPLAddress);
     recipientAccountExists = true;
-  } catch (_) {
+  } catch {
     // Recipient's associated token account doesn't exist
   }
 

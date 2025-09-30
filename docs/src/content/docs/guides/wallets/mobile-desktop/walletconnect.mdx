@@ -710,7 +710,9 @@ async function handleSessionIssues() {
       try {
         swapKit.disconnectAll();
         console.log("✅ Old sessions cleared");
-      } catch (_) {}
+      } catch {
+        console.error("❌ Failed to clear old sessions");
+      }
 
       console.log("🔄 Attempting to reconnect...");
       await swapKit.connectWalletconnect([Chain.Ethereum]);

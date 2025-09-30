@@ -338,7 +338,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     try {
       const result = await provider.gasPrice(null);
       return result.gas_price || "100000000";
-    } catch (_error) {
+    } catch {
       // Fallback to default
       return "100000000";
     }

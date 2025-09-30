@@ -113,7 +113,7 @@ async function getWalletMethods({ wallet, chain }: { wallet: Wallet; chain: Chai
           const networkParams = toolbox.getNetworkParams();
           await switchEVMWalletNetwork(browserProvider, chain, networkParams);
         }
-      } catch (_error) {
+      } catch {
         throw new SwapKitError("wallet_exodus_failed_to_switch_network", { chain });
       }
 

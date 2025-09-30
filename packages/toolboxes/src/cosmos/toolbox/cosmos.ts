@@ -40,7 +40,7 @@ export async function fetchFeeRateFromSwapKit(chainId: ChainId, safeDefault: num
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch {
     return safeDefault;
   }
 }
@@ -173,7 +173,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     getAddress,
     getBalance: async (address: string, _potentialScamFilter?: boolean) => {
       const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
-      return await Promise.all(
+      const balances = await Promise.all(
         denomBalances
           .filter(({ denom }) => denom && !denom.includes("IBC/"))
           .map(({ denom, amount }) => {
@@ -185,6 +185,12 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
             return getAssetFromDenom(fullDenom, amount);
           }),
       );
+
+      if (balances.length === 0) {
+        return [AssetValue.from({ chain })];
+      }
+
+      return balances;
     },
     getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
@@ -214,7 +220,7 @@ export async function getFeeRateFromSwapKit(chainId: ChainId, safeDefault: numbe
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch {
     return safeDefault;
   }
 }
@@ -287,7 +293,7 @@ function getCosmosValidateAddress(prefix: string) {
       const normalized = bech32.encode(prefix, words);
 
       return normalized === address.toLocaleLowerCase();
-    } catch (_error) {
+    } catch {
       return false;
     }
   };

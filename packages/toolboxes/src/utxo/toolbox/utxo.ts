@@ -132,7 +132,7 @@ export async function getUTXOAddressValidator() {
       initEccLib(secp256k1);
       btcLibAddress.toOutputScript(address, getNetwork(chain));
       return true;
-    } catch (_error) {
+    } catch {
       return false;
     }
   };

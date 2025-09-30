@@ -33,9 +33,14 @@ async function getCardanoBalance(address: string) {
       }
     }
 
+    if (balances.length === 0) {
+      return [AssetValue.from({ chain: Chain.Cardano })];
+    }
+
     return balances;
-  } catch {
-    return [];
+  } catch (error) {
+    console.error("Cardano balance fetch error:", error);
+    return [AssetValue.from({ chain: Chain.Cardano })];
   }
 }
 
@@ -46,7 +51,7 @@ export async function getCardanoAddressValidator() {
     try {
       resolvePaymentKeyHash(address);
       return true;
-    } catch (_) {
+    } catch {
       return false;
     }
   };

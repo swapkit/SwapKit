@@ -145,7 +145,7 @@ async function checkKeepkeyAvailability(spec = "http://localhost:1646/spec/swagg
   try {
     const response = await fetch(spec);
     return response.status === 200;
-  } catch (_error) {
+  } catch {
     return false;
   }
 }

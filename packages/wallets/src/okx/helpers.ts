@@ -54,7 +54,7 @@ async function getWeb3WalletMethods({
     if (chain !== Chain.Ethereum && "getNetworkParams" in toolbox) {
       await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
-  } catch (_error) {
+  } catch {
     throw new SwapKitError("wallet_okx_failed_to_switch_network", { chain });
   }
 

@@ -339,7 +339,7 @@ function getNormalAssetInfo(identifier: string) {
   try {
     formattedAddress =
       address && EVMChains.includes(chain as EVMChain) && getAddress(address) ? getAddress(address) : address;
-  } catch (_error) {
+  } catch {
     formattedAddress = address;
   }
 

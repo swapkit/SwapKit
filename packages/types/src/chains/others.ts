@@ -77,7 +77,11 @@ const TON = createChain({
   name: "Ton",
   nativeCurrency: "TON",
   networkDerivationPath: [44, 607, 0, 0, 0],
-  rpcUrls: ["https://toncenter.com/api/v2/jsonRPC"],
+  rpcUrls: [
+    "https://ton.api.onfinality.io/public",
+    "https://ton.drpc.org/rest/",
+    "https://toncenter.com/api/v2/jsonRPC",
+  ],
   type,
 });
 
@@ -100,7 +104,7 @@ const SUI = createChain({
   blockTime: 5,
   chain: Chain.Sui,
   chainId: ChainId.SUI,
-  explorerUrl: "https://suiscan.io",
+  explorerUrl: "https://suiscan.xyz",
   name: "Sui",
   nativeCurrency: "SUI",
   networkDerivationPath: [44, 784, 0, 0, 0],
@@ -117,7 +121,7 @@ const ADA = createChain({
   name: "Cardano",
   nativeCurrency: "ADA",
   networkDerivationPath: [1852, 1815, 0, 0, 0],
-  rpcUrls: ["https://cardano-mainnet.blockfrost.io/api/v0"],
+  rpcUrls: ["https://api.koios.rest/api/v1", "https://cardano-mainnet.blockfrost.io/api/v0"],
   type,
 });
 
