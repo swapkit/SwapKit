@@ -13,7 +13,7 @@ import TNS from "./TNS";
 import { Wallet } from "./Wallet";
 import { WalletPicker } from "./WalletPicker";
 
-const apiKeys = ["walletConnectProjectId", "blockfrost"] as const;
+const apiKeys = ["walletConnectProjectId"] as const;
 
 type WalletDataType = FullWallet[Chain] | FullWallet[Chain][] | null;
 
@@ -22,13 +22,12 @@ const App = () => {
   const [feature, setFeature] = useState<"swap" | "send" | "liquidity" | "tns" | "multisig">("swap");
   const [wallet, setWallet] = useState<WalletDataType>(null);
   const [phrase, setPhrase] = useState("");
-  const [stagenet, setStagenet] = useState(false);
+  const [stagenet, setStagenet] = useState(SKConfig.get("envs").isStagenet);
   const [loadingBalances, setLoadingBalances] = useState<Set<Chain>>(new Set());
   const [showWidget, setShowWidget] = useState(false);
+  const [isDev, setIsDev] = useState(SKConfig.get("envs").isDev);
 
   const [keys, setKeys] = useState({
-    blockfrost: (import.meta.env.VITE_BLOCKFROST_API_KEY || "") as string,
-    brokerEndpoint: "https://dev-api.swapkit.dev/chainflip/broker",
     swapKit: (import.meta.env.VITE_TEST_API_KEY || "") as string,
     walletConnectProjectId: (import.meta.env.WALLETCONNECT_PROJECT_ID || "") as string,
   });
@@ -47,20 +46,34 @@ const App = () => {
     });
   }, []);
 
+  const toggleBroker = useCallback(() => {
+    setIsDev((v) => {
+      const next = !v;
+      SKConfig.setEnv("isDev", next);
+      return next;
+    });
+  }, []);
+
   const setAsset = useCallback(
     (asset: AssetValue) => {
       if (!inputAsset) {
         setSwapAssets({ inputAsset: asset });
+        return;
       }
 
       if (outputAsset) {
         setSwapAssets({ inputAsset: asset, outputAsset: undefined });
-      } else {
-        setSwapAssets({ inputAsset, outputAsset: asset });
+        return;
       }
+
+      setSwapAssets({ inputAsset, outputAsset: asset });
     },
     [inputAsset, outputAsset],
   );
+
+  const clearAssets = useCallback(() => {
+    setSwapAssets({});
+  }, []);
 
   const disconnectChain = (chain: Chain) => {
     if (!skClient) return;
@@ -174,6 +187,39 @@ const App = () => {
             </button>
           </div>
 
+          <div style={{ display: "flex", gap: 4 }}>
+            <button
+              onClick={() => {
+                if (!isDev) toggleBroker();
+              }}
+              style={{
+                backgroundColor: isDev ? "#2563eb" : "#1a1a1a",
+                borderColor: isDev ? "#2563eb" : "#333",
+                color: isDev ? "#fff" : "#e0e0e0",
+                flex: 1,
+                fontSize: 11,
+                padding: "8px 12px",
+              }}
+              type="button">
+              Dev API
+            </button>
+            <button
+              onClick={() => {
+                if (isDev) toggleBroker();
+              }}
+              style={{
+                backgroundColor: !isDev ? "#2563eb" : "#1a1a1a",
+                borderColor: !isDev ? "#2563eb" : "#333",
+                color: !isDev ? "#fff" : "#e0e0e0",
+                flex: 1,
+                fontSize: 11,
+                padding: "8px 12px",
+              }}
+              type="button">
+              Prod API
+            </button>
+          </div>
+
           {apiKeys.map((key) => (
             <div key={key}>
               <label style={{ color: "#666", display: "block", fontSize: 10, marginBottom: 4 }}>{key}</label>
@@ -235,8 +281,7 @@ const App = () => {
                   {keys.walletConnectProjectId ? `${keys.walletConnectProjectId.slice(0, 8)}...` : "not set"}
                 </div>
                 <div>
-                  <span style={{ color: "#888" }}>Broker:</span>{" "}
-                  {keys.brokerEndpoint.includes("dev-api") ? "dev" : "prod"}
+                  <span style={{ color: "#888" }}>Broker:</span> {SKConfig.get("envs").isDev ? "dev" : "prod"}
                 </div>
                 <div>
                   <span style={{ color: "#888" }}>SwapKit API:</span>{" "}
@@ -244,6 +289,56 @@ const App = () => {
                 </div>
               </div>
             </div>
+          )}
+        </div>
+
+        <div style={{ borderTop: "1px solid #222", marginTop: "auto", paddingTop: 12 }}>
+          <div style={{ color: "#666", fontSize: 10, fontWeight: 600, marginBottom: 8 }}>ASSET SELECTION</div>
+          {inputAsset || outputAsset ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {inputAsset && (
+                <div
+                  style={{
+                    backgroundColor: "#1a1a1a",
+                    border: "1px solid #333",
+                    borderRadius: 4,
+                    color: "#e0e0e0",
+                    fontSize: 10,
+                    padding: "6px 8px",
+                  }}>
+                  <span style={{ color: "#888" }}>From:</span> {inputAsset.ticker}
+                </div>
+              )}
+              {outputAsset && (
+                <div
+                  style={{
+                    backgroundColor: "#1a1a1a",
+                    border: "1px solid #333",
+                    borderRadius: 4,
+                    color: "#e0e0e0",
+                    fontSize: 10,
+                    padding: "6px 8px",
+                  }}>
+                  <span style={{ color: "#888" }}>To:</span> {outputAsset.ticker}
+                </div>
+              )}
+              <button
+                onClick={clearAssets}
+                style={{
+                  backgroundColor: "#dc2626",
+                  borderColor: "#dc2626",
+                  color: "#fff",
+                  fontSize: 10,
+                  marginTop: 2,
+                  padding: "6px 10px",
+                  width: "100%",
+                }}
+                type="button">
+                Clear Selection
+              </button>
+            </div>
+          ) : (
+            <div style={{ color: "#555", fontSize: 9 }}>Click assets from wallets to select</div>
           )}
         </div>
       </div>

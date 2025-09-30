@@ -1,25 +1,21 @@
 import { AssetValue, createSwapKit } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
-let currentConfig: { walletConnectProjectId?: string; brokerEndpoint?: string; swapKit?: string; blockfrost?: string } =
-  {};
+let currentConfig: { walletConnectProjectId?: string; brokerEndpoint?: string; swapKit?: string } = {};
 
 export const getSwapKitClient = ({
   walletConnectProjectId,
   brokerEndpoint,
   swapKit,
-  blockfrost,
 }: {
   walletConnectProjectId?: string;
   brokerEndpoint?: string;
   swapKit?: string;
-  blockfrost?: string;
 } = {}) => {
   const configChanged =
     currentConfig.walletConnectProjectId !== walletConnectProjectId ||
     currentConfig.brokerEndpoint !== brokerEndpoint ||
-    currentConfig.swapKit !== swapKit ||
-    currentConfig.blockfrost !== blockfrost;
+    currentConfig.swapKit !== swapKit;
 
   if (skClient && !configChanged) {
     return skClient;
@@ -30,17 +26,17 @@ export const getSwapKitClient = ({
     skClient = undefined;
   }
 
-  currentConfig = { blockfrost, brokerEndpoint, swapKit, walletConnectProjectId };
+  currentConfig = { brokerEndpoint, swapKit, walletConnectProjectId };
 
   skClient = createSwapKit({
     config: {
       apiKeys: {
-        blockfrost: blockfrost || "",
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
         swapKit: swapKit || process.env.TEST_API_KEY || "",
         walletConnectProjectId: walletConnectProjectId || "",
         xaman: process.env.XAMAN_API_KEY || "",
       },
+      envs: { isDev: true },
       integrations: {
         chainflip: { brokerUrl: brokerEndpoint || "" },
         keepKey: {
