@@ -3,6 +3,7 @@ import { match } from "ts-pattern";
 
 export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Chain }) {
   const { blockExplorerUrl } = getChainConfig(chain);
+  console.log(blockExplorerUrl);
 
   const explorerUrl = match(chain)
     .with(
@@ -11,6 +12,7 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
       Chain.Noble,
       Chain.Cosmos,
       Chain.THORChain,
+      Chain.Harbor,
       Chain.Solana,
       () => `${blockExplorerUrl}/tx/${txHash.startsWith("0x") ? txHash.slice(2) : txHash}`,
     )
