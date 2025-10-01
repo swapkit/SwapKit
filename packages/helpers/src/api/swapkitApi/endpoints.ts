@@ -28,6 +28,7 @@ import {
   type TokenListProvidersResponse,
   type TokensResponseV2,
   type TrackerResponse,
+  TrackerResponseSchema,
   type TrackingRequest,
 } from "./types";
 
@@ -38,8 +39,21 @@ const SKRequestClient = RequestClient.extend({
   },
 });
 
-export function getTrackerDetails(json: TrackingRequest) {
-  return SKRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
+export async function getTrackerDetails(json: TrackingRequest) {
+  const response = await SKRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
+
+  try {
+    const parsedResponse = TrackerResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+    }
+
+    return parsedResponse.data;
+  } catch (_error) {
+    // throw new SwapKitError("api_v2_invalid_response", error);
+    return response;
+  }
 }
 
 export async function getSwapQuote(json: QuoteRequest) {

@@ -1,4 +1,4 @@
-import type { Chain, ChainId } from "./_enums";
+import type { Chain, ChainId, StagenetChain } from "./_enums";
 
 type ChainIdHexType<T> = T extends { chainIdHex: infer U } ? (U extends string ? U : undefined) : undefined;
 
@@ -13,7 +13,7 @@ export function createChain<
     baseDecimal: number;
     blockTime: number;
     blockExplorerUrl?: string;
-    chain: Chain;
+    chain: Chain | StagenetChain;
     chainId: ChainId;
     explorerUrl: string;
     name: Name;

@@ -380,6 +380,7 @@ const errorCodes = {
   toolbox_near_missing_contract_address: 90610,
   toolbox_near_no_account: 90611,
   toolbox_near_invalid_gas_params: 90612,
+  toolbox_near_no_public_key_found: 90613,
   /**
    * Toolboxes - General
    */

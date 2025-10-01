@@ -33,7 +33,7 @@ export const StagenetTHORConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://runescan.io",
   blockTime: 6,
-  chain: Chain.THORChain,
+  chain: StagenetChain.THORChain,
   chainId: ChainId.THORChainStagenet,
   explorerUrl: "https://runescan.io",
   name: "THORChain",
@@ -72,7 +72,7 @@ export const StagenetHARBORConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "",
   blockTime: 6,
-  chain: Chain.Harbor,
+  chain: StagenetChain.Harbor,
   chainId: ChainId.HarborStagenet,
   explorerUrl: "",
   name: "Harbor",
@@ -85,7 +85,7 @@ export const StagenetMAYAConfig = createChain({
   baseDecimal: 8,
   blockExplorerUrl: "https://www.mayascan.org",
   blockTime: 6,
-  chain: Chain.Maya,
+  chain: StagenetChain.Maya,
   chainId: ChainId.MayaStagenet,
   explorerUrl: "https://www.mayascan.org",
   name: "Maya",
@@ -131,7 +131,7 @@ export const CosmosChains = [
 ] as const;
 export type CosmosChain = (typeof CosmosChains)[number];
 
-export const StagenetCosmosChainConfigs = [StagenetTHORConfig, StagenetMAYAConfig] as const;
+export const StagenetCosmosChainConfigs = [StagenetTHORConfig, StagenetMAYAConfig, StagenetHARBORConfig] as const;
 export const StagenetCosmosChains = [StagenetChain.Maya, StagenetChain.THORChain, StagenetChain.Harbor] as const;
 export type StagenetCosmosChain = (typeof StagenetCosmosChains)[number];
 

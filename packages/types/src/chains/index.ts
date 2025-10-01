@@ -1,5 +1,5 @@
 import { Chain, type ChainId, StagenetChain } from "./_enums";
-import { CosmosChainConfigs } from "./cosmos";
+import { CosmosChainConfigs, StagenetCosmosChainConfigs } from "./cosmos";
 import { EVMChainConfigs } from "./evm";
 import { OtherChainConfigs } from "./others";
 import { SubstrateChainConfigs } from "./substrate";
@@ -16,6 +16,7 @@ export const AllChainConfigs = [
   ...UTXOChainConfigs,
   ...EVMChainConfigs,
   ...CosmosChainConfigs,
+  ...StagenetCosmosChainConfigs,
   ...SubstrateChainConfigs,
   ...OtherChainConfigs,
 ].sort((a, b) => a.chain.localeCompare(b.chain));
@@ -58,7 +59,7 @@ export function getChainConfig<T extends keyof ChainConfigMap>(chainOrChainId: T
 export const ChainToChainId = Object.fromEntries(
   AllChainConfigs.flatMap(({ chain, chainId }) => [[chain, chainId] as const]),
 ) as {
-  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["chainId"];
+  readonly [K in Chain | StagenetChain]: Extract<ChainConfig, { chain: K }>["chainId"];
 };
 
 /**
