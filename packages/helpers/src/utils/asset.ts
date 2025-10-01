@@ -41,7 +41,7 @@ async function getContractDecimals({ chain, to }: { chain: EVMChain; to: string 
 
     return Number.parseInt(BigInt(result || baseDecimal).toString(), 10);
   } catch (error) {
-    console.error(`Failed to fetch contract decimals for ${to} on ${chain}:`, error);
+    console.warn(`Failed to fetch contract decimals for ${to} on ${chain}:`, error);
     return baseDecimal;
   }
 }
@@ -62,7 +62,7 @@ async function getRadixAssetDecimal(symbol: string) {
 
     return manager.divisibility.value.divisibility;
   } catch (error) {
-    console.error(`Failed to fetch Radix asset decimal for ${symbol}:`, error);
+    console.warn(`Failed to fetch Radix asset decimal for ${symbol}:`, error);
     return baseDecimal;
   }
 }
@@ -166,7 +166,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
           return { decimals, symbol };
         } catch (error) {
-          console.error(`Failed to fetch token info for ${address} on ${chain}:`, error);
+          console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
           return { decimals: baseDecimal, symbol: "UNKNOWN" };
         }
       },
@@ -184,7 +184,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           }
         }
       } catch (error) {
-        console.error(`Failed to fetch Solana token info for ${address}:`, error);
+        console.warn(`Failed to fetch Solana token info for ${address}:`, error);
       }
       return { decimals: baseDecimal, symbol: "UNKNOWN" };
     })
@@ -224,7 +224,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           symbol: symbolResult || "UNKNOWN",
         };
       } catch (error) {
-        console.error(`Failed to fetch Tron token info for ${address}:`, error);
+        console.warn(`Failed to fetch Tron token info for ${address}:`, error);
         return { decimals: baseDecimal, symbol: "UNKNOWN" };
       }
     })
@@ -248,7 +248,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
         return { decimals: result?.decimals || baseDecimal, symbol: result?.symbol || "UNKNOWN" };
       } catch (error) {
-        console.error(`Failed to fetch Near token info for ${address}:`, error);
+        console.warn(`Failed to fetch Near token info for ${address}:`, error);
         return { decimals: baseDecimal, symbol: "UNKNOWN" };
       }
     })
