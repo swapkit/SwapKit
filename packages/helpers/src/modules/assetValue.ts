@@ -33,18 +33,17 @@ const CACHE_TTL = 3600000;
 
 function getCachedTokenInfo(key: string) {
   const cached = asyncTokenCache.get(key);
-  if (!cached) return null;
 
-  if (Date.now() - cached.timestamp > CACHE_TTL) {
+  if (cached?.timestamp && Date.now() - cached.timestamp > CACHE_TTL) {
     asyncTokenCache.delete(key);
-    return null;
+    return undefined;
   }
 
   return cached;
 }
 
 function setCachedTokenInfo(key: string, info: { symbol: string; decimals: number }) {
-  if (asyncTokenCache.size > 200) {
+  if (asyncTokenCache.size > 1000) {
     const firstKey = asyncTokenCache.keys().next().value;
     if (firstKey) asyncTokenCache.delete(firstKey);
   }
@@ -171,41 +170,25 @@ export class AssetValue extends BigIntArithmetics {
     const parsedValue = value instanceof BigIntArithmetics ? value.getValue("string") : value;
     const assetOrChain = getAssetString(fromAssetOrChain);
 
-    const isChainAddress = assetOrChain.includes(":");
+    const isChainAddressCombo = assetOrChain.includes(":");
 
-    if (isChainAddress) {
+    if (asyncTokenLookup && isChainAddressCombo) {
       const [chain, address] = assetOrChain.split(":");
-
-      if (asyncTokenLookup) {
-        return (async () => {
-          const tokenData = await fetchTokenData({ address, chain: chain as Chain });
-          return createAssetValue({
-            decimal: tokenData.decimals,
-            identifier: tokenData.identifier,
-            value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue,
-          });
-        })() as ConditionalAssetValueReturn<T>;
-      }
-
-      const { baseDecimal } = getChainConfig(chain as Chain);
-      const fallbackIdentifier = `${chain}.UNKNOWN-${address}`;
-
-      warnOnce({
-        condition: true,
-        id: `assetValue_unknown_token_${chain}_${address}`,
-        warning: `Token not found in static maps for ${chain}:${address}. Using baseDecimal (${baseDecimal}) as fallback.
-Consider using asyncTokenLookup: true to fetch token metadata from chain.`,
-      });
-
-      return createAssetValue({
-        decimal: baseDecimal,
-        identifier: fallbackIdentifier,
-        value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : safeValue(parsedValue, baseDecimal),
-      }) as ConditionalAssetValueReturn<T>;
+      return (async () => {
+        const tokenData = await fetchTokenData({ address, chain: chain as Chain });
+        return createAssetValue({
+          decimal: tokenData.decimals,
+          identifier: tokenData.identifier,
+          value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue,
+        });
+      })() as ConditionalAssetValueReturn<T>;
     }
 
+    const fallbackIdentifier = isChainAddressCombo ? assetOrChain.split(":").join(".UNKNOWN-") : assetOrChain;
+    console.log(fallbackIdentifier);
+
     const { identifier: unsafeIdentifier, decimal: commonAssetDecimal } = getCommonAssetInfo(
-      assetOrChain as CommonAssetString,
+      fallbackIdentifier as CommonAssetString,
     );
     const { chain, isSynthetic, isTradeAsset, address } = getAssetInfo(unsafeIdentifier);
     const { baseDecimal } = getChainConfig(chain);
@@ -550,7 +533,6 @@ function parseSymbolWithSeparator(symbol: string, useFirst = false) {
 function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
   const { ticker, address } = parseSymbolWithSeparator(symbol, chain === Chain.Near);
 
-  // Apply case-sensitivity rules after parsing
   const finalAddress = address && !CASE_SENSITIVE_CHAINS.includes(chain) ? address.toLowerCase() : address;
 
   return { address: finalAddress, ticker };

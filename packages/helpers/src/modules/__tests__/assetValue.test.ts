@@ -1425,7 +1425,7 @@ describe("asyncTokenLookup", () => {
       expect(assetValue.getValue("string")).toBe("1");
     });
 
-    test("synchronous call without asyncTokenLookup uses fallback decimals", async () => {
+    test("synchronous call without asyncTokenLookup", async () => {
       await AssetValue.loadStaticAssets();
 
       const assetValue = AssetValue.from({
@@ -1436,6 +1436,13 @@ describe("asyncTokenLookup", () => {
 
       expect(assetValue.decimal).toBe(6);
       expect(assetValue.getValue("string")).toBe("100");
+      expect(assetValue.symbol).toBe("USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
+
+      const assetValueWrongAddress = AssetValue.from({ address: "0xVERYWRONG", chain: Chain.Ethereum, value: 100 });
+
+      expect(assetValueWrongAddress.decimal).toBe(18);
+      expect(assetValueWrongAddress.getValue("string")).toBe("100");
+      expect(assetValueWrongAddress.toString()).toBe("ETH.UNKNOWN-0xverywrong");
     });
 
     test("handles Radix with symbol lookup", async () => {
