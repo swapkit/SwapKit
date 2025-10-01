@@ -1209,7 +1209,6 @@ describe("getMinAmountByChain", () => {
 describe("asyncTokenLookup", () => {
   describe("EVM chains with asyncTokenLookup", () => {
     test("fetches Ethereum USDC token info with chain and address only", async () => {
-      // Only providing chain and address, should fetch symbol and decimals from chain
       const assetValue = await AssetValue.from({
         address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         asyncTokenLookup: true,
@@ -1223,7 +1222,6 @@ describe("asyncTokenLookup", () => {
     });
 
     test("fetches Ethereum WETH token info with asset string and asyncTokenLookup", async () => {
-      // Providing symbol and address, should verify and use on-chain decimals
       const assetValue = await AssetValue.from({
         asset: "ETH.WETH-0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
         asyncTokenLookup: true,
@@ -1375,26 +1373,30 @@ describe("asyncTokenLookup", () => {
 
   describe("Edge cases and caching", () => {
     test("caches token info for subsequent calls", async () => {
-      // First call - should fetch from chain
+      const start1 = performance.now();
       const firstCall = await AssetValue.from({
         address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         asyncTokenLookup: true,
         chain: Chain.Ethereum,
         value: 100,
       });
+      const duration1 = performance.now() - start1;
 
-      // Second call - should use cached value
+      const start2 = performance.now();
       const secondCall = await AssetValue.from({
         address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         asyncTokenLookup: true,
         chain: Chain.Ethereum,
         value: 200,
       });
+      const duration2 = performance.now() - start2;
 
       expect(firstCall.decimal).toBe(6);
       expect(secondCall.decimal).toBe(6);
       expect(firstCall.getValue("string")).toBe("100");
       expect(secondCall.getValue("string")).toBe("200");
+
+      expect(duration2).toBeLessThan(duration1 / 10);
     });
 
     test("handles invalid token address gracefully", async () => {
@@ -1405,7 +1407,6 @@ describe("asyncTokenLookup", () => {
         value: 10,
       });
 
-      // Should fallback to base decimals
       expect(assetValue.decimal).toBe(18);
       expect(assetValue.getValue("string")).toBe("10");
     });
@@ -1416,7 +1417,7 @@ describe("asyncTokenLookup", () => {
         asyncTokenLookup: true,
         chain: Chain.Ethereum,
         fromBaseDecimal: 6,
-        value: 1000000, // 1 USDC in base units
+        value: 1000000,
       });
 
       expect(assetValue.decimal).toBe(6);
@@ -1425,7 +1426,7 @@ describe("asyncTokenLookup", () => {
     });
 
     test("synchronous call without asyncTokenLookup uses fallback decimals", async () => {
-      await AssetValue.loadStaticAssets(); // Ensure static assets are loaded
+      await AssetValue.loadStaticAssets();
 
       const assetValue = AssetValue.from({
         address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -1433,8 +1434,6 @@ describe("asyncTokenLookup", () => {
         value: 100,
       });
 
-      // Should find USDC in the static token list with correct decimals (6)
-      // The chainAddressIdentifierMap will have this mapping after loadStaticAssets
       expect(assetValue.decimal).toBe(6);
       expect(assetValue.getValue("string")).toBe("100");
     });
@@ -1455,16 +1454,14 @@ describe("asyncTokenLookup", () => {
 
   describe("Mixed symbol and address scenarios", () => {
     test("uses on-chain data when both symbol and address provided", async () => {
-      // When both are provided, on-chain data should take precedence
       const assetValue = await AssetValue.from({
-        asset: "ETH.WRONG-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // Wrong symbol, correct address
+        asset: "ETH.WRONG-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         asyncTokenLookup: true,
         value: 100,
       });
 
-      // Should get USDC from chain, not WRONG
       expect(assetValue.decimal).toBe(6);
-      expect(assetValue.symbol).toContain("USDC"); // On-chain symbol
+      expect(assetValue.symbol).toContain("USDC");
       expect(assetValue.address).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
     });
   });
