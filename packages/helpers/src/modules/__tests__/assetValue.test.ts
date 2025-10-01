@@ -1368,7 +1368,7 @@ describe("asyncTokenLookup", () => {
       });
 
       expect(assetValue.decimal).toBe(6);
-      expect(assetValue.symbol).toContain("USDt");
+      expect(assetValue.toString()).toBe("NEAR.USDT-usdt.tether-token.near");
       expect(assetValue.getValue("string")).toBe("2500");
     });
   });

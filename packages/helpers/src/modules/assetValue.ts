@@ -178,7 +178,7 @@ export class AssetValue extends BigIntArithmetics {
 
       if (asyncTokenLookup) {
         return (async () => {
-          const tokenData = await fetchTokenData({ chain: chain as Chain, address });
+          const tokenData = await fetchTokenData({ address, chain: chain as Chain });
           return createAssetValue({
             decimal: tokenData.decimals,
             identifier: tokenData.identifier,
@@ -219,7 +219,7 @@ Consider using asyncTokenLookup: true to fetch token metadata from chain.`,
     if (!token && asyncTokenLookup && !isSynthetic && !isTradeAsset) {
       return (async () => {
         const { ticker } = assetFromString(unsafeIdentifier);
-        const tokenData = await fetchTokenData({ chain, address, ticker });
+        const tokenData = await fetchTokenData({ address, chain, ticker });
         return createAssetValue({
           decimal: tokenData.decimals,
           identifier: tokenData.identifier,
@@ -335,10 +335,6 @@ export function getMinAmountByChain(chain: Chain) {
     .otherwise(() => asset.set(0.00000001));
 }
 
-/**
- * Performs async token lookup from on-chain sources
- * Returns token metadata (ticker, decimals) and proper identifier
- */
 async function fetchTokenData({
   chain,
   address,
@@ -350,28 +346,24 @@ async function fetchTokenData({
 }): Promise<{ symbol: string; decimals: number; identifier: string }> {
   const isCaseSensitiveChain = CASE_SENSITIVE_CHAINS.includes(chain);
 
-  // Use chain:address format for cache key (consistent with chainAddressIdentifierMap)
   const cacheKey = isCaseSensitiveChain
     ? `${chain}:${address || ticker}`
     : `${chain}:${address || ticker}`.toUpperCase();
 
-  // Check cache first
   const cached = getCachedTokenInfo(cacheKey);
   if (cached) {
     const properIdentifier =
       address && cached.symbol ? `${chain}.${cached.symbol}-${address}` : `${chain}.${cached.symbol}`;
-    return { symbol: cached.symbol, decimals: cached.decimals, identifier: properIdentifier };
+    return { decimals: cached.decimals, identifier: properIdentifier, symbol: cached.symbol };
   }
 
-  // Fetch from chain (address is required for on-chain lookup)
   if (!address) {
     const { baseDecimal } = getChainConfig(chain);
-    return { symbol: ticker || "UNKNOWN", decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}` };
+    return { decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}`, symbol: ticker || "UNKNOWN" };
   }
 
   const tokenInfo = await getTokenInfoFromChain({ address, chain });
 
-  // If on-chain lookup failed but user provided ticker, use it with warning
   if (tokenInfo.symbol === "UNKNOWN" && ticker) {
     warnOnce({
       condition: true,
@@ -379,34 +371,24 @@ async function fetchTokenData({
       warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
     });
 
-    return {
-      symbol: ticker,
-      decimals: tokenInfo.decimals,
-      identifier: `${chain}.${ticker}-${address}`,
-    };
+    return { decimals: tokenInfo.decimals, identifier: `${chain}.${ticker}-${address}`, symbol: ticker };
   }
 
-  // Cache the result
   if (tokenInfo.symbol || tokenInfo.decimals !== getChainConfig(chain).baseDecimal) {
     setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, symbol: tokenInfo.symbol || ticker || "UNKNOWN" });
   }
 
-  // Build proper identifier with fetched ticker
   const properIdentifier = tokenInfo.symbol
     ? `${chain}.${tokenInfo.symbol}-${address}`
     : `${chain}.${ticker || "UNKNOWN"}-${address}`;
 
   return {
-    symbol: tokenInfo.symbol || ticker || "UNKNOWN",
     decimals: tokenInfo.decimals,
     identifier: properIdentifier,
+    symbol: tokenInfo.symbol || ticker || "UNKNOWN",
   };
 }
 
-/**
- * Creates an AssetValue instance with the provided data
- * Assumes all token data has already been resolved
- */
 function createAssetValue({
   identifier,
   decimal,
@@ -478,9 +460,7 @@ function getAssetString(assetOrChain: AssetIdentifier) {
         ? `${chain}:${address}`
         : `${chain}:${address.toUpperCase()}`;
       const identifier = chainAddressIdentifierMap.get(lookupKey);
-      // If we have the identifier in the map, return it
       if (identifier) return identifier;
-      // Otherwise, return chain:address format for later async lookup
       return lookupKey;
     }
 
