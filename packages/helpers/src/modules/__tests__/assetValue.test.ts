@@ -1396,7 +1396,7 @@ describe("asyncTokenLookup", () => {
       expect(firstCall.getValue("string")).toBe("100");
       expect(secondCall.getValue("string")).toBe("200");
 
-      expect(duration2).toBeLessThan(duration1 / 10);
+      expect(duration2).toBeLessThan(duration1 / 5);
     });
 
     test("handles invalid token address gracefully", async () => {

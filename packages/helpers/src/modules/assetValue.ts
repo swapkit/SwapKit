@@ -337,12 +337,9 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
 
   const tokenInfo = await getTokenInfoFromChain({ address, chain });
 
-  const properIdentifier =
-    tokenInfo.ticker !== "UNKNOWN"
-      ? `${chain}.${tokenInfo.ticker}-${address}`
-      : `${chain}.${ticker || "UNKNOWN"}-${address}`;
+  const identifier = `${chain}.${tokenInfo.ticker || ticker || "UNKNOWN"}-${address}`;
 
-  if (tokenInfo.ticker === "UNKNOWN" && ticker) {
+  if (!tokenInfo.ticker && ticker) {
     warnOnce({
       condition: true,
       id: `async_token_lookup_failed_${chain}_${address}`,
@@ -351,10 +348,9 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
   }
 
   // only cache if we got a proper ticker back
-  tokenInfo.ticker !== "UNKNOWN" &&
-    setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier: properIdentifier });
+  tokenInfo.ticker && setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier });
 
-  return { decimals: tokenInfo.decimals, identifier: properIdentifier };
+  return { decimals: tokenInfo.decimals, identifier };
 }
 
 function createAssetValue({

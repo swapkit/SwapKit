@@ -145,7 +145,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           const { isAddress, getAddress } = await import("ethers");
 
           if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
-            return { decimals: baseDecimal, ticker: "UNKNOWN" };
+            return { decimals: baseDecimal, ticker: undefined };
           }
 
           const rpcUrl = await getRPCUrl(chain as EVMChain);
@@ -167,12 +167,12 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           return { decimals, ticker };
         } catch (error) {
           console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
-          return { decimals: baseDecimal, ticker: "UNKNOWN" };
+          return { decimals: baseDecimal, ticker: undefined };
         }
       },
     )
     .with(Chain.Solana, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
+      if (!address) return { decimals: baseDecimal, ticker: undefined };
 
       try {
         const response = await fetch(`https://lite-api.jup.ag/tokens/v2/search?query=${address}`);
@@ -180,16 +180,16 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           const data = await response.json();
           const token = Array.isArray(data) ? data[0] : data;
           if (token) {
-            return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || "UNKNOWN" };
+            return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || undefined };
           }
         }
       } catch (error) {
         console.warn(`Failed to fetch Solana token info for ${address}:`, error);
       }
-      return { decimals: baseDecimal, ticker: "UNKNOWN" };
+      return { decimals: baseDecimal, ticker: undefined };
     })
     .with(Chain.Tron, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
+      if (!address) return { decimals: baseDecimal, ticker: undefined };
 
       try {
         const { TronWeb } = await import("tronweb");
@@ -221,11 +221,11 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
         return {
           decimals: typeof decimalsResult === "number" ? decimalsResult : Number(decimalsResult || baseDecimal),
-          ticker: symbolResult || "UNKNOWN",
+          ticker: symbolResult || undefined,
         };
       } catch (error) {
         console.warn(`Failed to fetch Tron token info for ${address}:`, error);
-        return { decimals: baseDecimal, ticker: "UNKNOWN" };
+        return { decimals: baseDecimal, ticker: undefined };
       }
     })
     .with(Chain.Near, async () => {
@@ -246,13 +246,13 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
         const result = JSON.parse(Buffer.from((metadata as any).result).toString());
 
-        return { decimals: result?.decimals || baseDecimal, ticker: result?.symbol || "UNKNOWN" };
+        return { decimals: result?.decimals || baseDecimal, ticker: result?.symbol };
       } catch (error) {
         console.warn(`Failed to fetch Near token info for ${address}:`, error);
-        return { decimals: baseDecimal, ticker: "UNKNOWN" };
+        return { decimals: baseDecimal, ticker: undefined };
       }
     })
-    .otherwise(async () => ({ decimals: baseDecimal, ticker: "UNKNOWN" }));
+    .otherwise(async () => ({ decimals: baseDecimal, ticker: undefined }));
 }
 
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
