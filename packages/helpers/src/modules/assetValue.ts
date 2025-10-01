@@ -318,15 +318,7 @@ export function getMinAmountByChain(chain: Chain) {
     .otherwise(() => asset.set(0.00000001));
 }
 
-async function fetchTokenData({
-  chain,
-  address,
-  ticker,
-}: {
-  chain: Chain;
-  address?: string;
-  ticker?: string;
-}): Promise<{ symbol: string; decimals: number; identifier: string }> {
+async function fetchTokenData({ chain, address, ticker }: { chain: Chain; address?: string; ticker?: string }) {
   const isCaseSensitiveChain = CASE_SENSITIVE_CHAINS.includes(chain);
 
   const cacheKey = isCaseSensitiveChain
@@ -337,12 +329,12 @@ async function fetchTokenData({
   if (cached) {
     const properIdentifier =
       address && cached.symbol ? `${chain}.${cached.symbol}-${address}` : `${chain}.${cached.symbol}`;
-    return { decimals: cached.decimals, identifier: properIdentifier, symbol: cached.symbol };
+    return { decimals: cached.decimals, identifier: properIdentifier };
   }
 
   if (!address) {
     const { baseDecimal } = getChainConfig(chain);
-    return { decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}`, symbol: ticker || "UNKNOWN" };
+    return { decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}` };
   }
 
   const tokenInfo = await getTokenInfoFromChain({ address, chain });
@@ -354,7 +346,7 @@ async function fetchTokenData({
       warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
     });
 
-    return { decimals: tokenInfo.decimals, identifier: `${chain}.${ticker}-${address}`, symbol: ticker };
+    return { decimals: tokenInfo.decimals, identifier: `${chain}.${ticker}-${address}` };
   }
 
   if (tokenInfo.symbol || tokenInfo.decimals !== getChainConfig(chain).baseDecimal) {
@@ -365,11 +357,7 @@ async function fetchTokenData({
     ? `${chain}.${tokenInfo.symbol}-${address}`
     : `${chain}.${ticker || "UNKNOWN"}-${address}`;
 
-  return {
-    decimals: tokenInfo.decimals,
-    identifier: properIdentifier,
-    symbol: tokenInfo.symbol || ticker || "UNKNOWN",
-  };
+  return { decimals: tokenInfo.decimals, identifier: properIdentifier };
 }
 
 function createAssetValue({
