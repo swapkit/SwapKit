@@ -350,7 +350,9 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
     });
   }
 
-  setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier: properIdentifier });
+  // only cache if we got a proper ticker back
+  tokenInfo.ticker !== "UNKNOWN" &&
+    setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier: properIdentifier });
 
   return { decimals: tokenInfo.decimals, identifier: properIdentifier };
 }

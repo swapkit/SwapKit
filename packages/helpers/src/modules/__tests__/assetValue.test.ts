@@ -505,17 +505,17 @@ describe("AssetValue", () => {
 
   describe("fromString", () => {
     test("creates AssetValue from string", async () => {
-      const fakeAvaxAssetString = "AVAX.ASDF-12345";
+      const fakeAvaxAssetString = "AVAX.ASDF-1234";
       const fakeAvaxAsset = await AssetValue.from({ asset: fakeAvaxAssetString, asyncTokenLookup: true });
 
       expect(fakeAvaxAsset).toEqual(
         expect.objectContaining({
-          address: "12345",
+          address: "1234",
           chain: Chain.Avalanche,
           decimal: 18,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "ASDF-12345",
+          symbol: "ASDF-1234",
           ticker: "ASDF",
         }),
       );
@@ -560,7 +560,7 @@ describe("AssetValue", () => {
 
   describe("fromStringWithBase", () => {
     test("creates AssetValue from string with base", async () => {
-      const fakeAvaxAssetString = "AVAX.ASDF-123456";
+      const fakeAvaxAssetString = "AVAX.ASDF-1234";
       const fakeAvaxAsset = await AssetValue.from({
         asset: fakeAvaxAssetString,
         asyncTokenLookup: true,
@@ -570,12 +570,12 @@ describe("AssetValue", () => {
 
       expect(fakeAvaxAsset).toEqual(
         expect.objectContaining({
-          address: "123456",
+          address: "1234",
           chain: Chain.Avalanche,
           decimal: 18,
           isGasAsset: false,
           isSynthetic: false,
-          symbol: "ASDF-123456",
+          symbol: "ASDF-1234",
           ticker: "ASDF",
         }),
       );
