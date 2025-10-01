@@ -89,6 +89,183 @@ export function getDecimal({ chain, symbol }: { chain: Chain; symbol: string }) 
     .otherwise(() => baseDecimal);
 }
 
+export function getTokenInfoFromChain({ chain, address }: { chain: Chain; address: string }) {
+  const { baseDecimal } = getChainConfig(chain);
+
+  return match(chain)
+    .when(
+      (c) => EVMChains.includes(c as EVMChain),
+      async () => {
+        try {
+          const { isAddress, getAddress } = await import("ethers");
+
+          //we need to replace 0X with 0x because ethers is very pedantic
+          if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
+            console.warn(`Invalid Ethereum address: ${address}`);
+            return { decimals: baseDecimal, symbol: "UNKNOWN" };
+          }
+
+          const rpcUrl = await getRPCUrl(chain as EVMChain);
+
+          const symbolMethodHex = "0x95d89b41";
+          const decimalsMethodHex = "0x313ce567";
+
+          const [symbolResult, decimalsResult] = await Promise.all([
+            RequestClient.post<{ result: string }>(rpcUrl, {
+              body: JSON.stringify({
+                id: 1,
+                jsonrpc: "2.0",
+                method: "eth_call",
+                params: [{ data: symbolMethodHex, to: address.toLowerCase() }, "latest"],
+              }),
+              headers: { accept: "*/*", "cache-control": "no-cache", "content-type": "application/json" },
+            }).catch((error: Error) => {
+              console.warn(`Could not fetch symbol for ${address} on ${chain}: ${error.message}`);
+              return { result: "" };
+            }),
+            RequestClient.post<{ result: string }>(rpcUrl, {
+              body: JSON.stringify({
+                id: 2,
+                jsonrpc: "2.0",
+                method: "eth_call",
+                params: [{ data: decimalsMethodHex, to: address.toLowerCase() }, "latest"],
+              }),
+              headers: { accept: "*/*", "cache-control": "no-cache", "content-type": "application/json" },
+            }).catch((error: Error) => {
+              console.warn(`Could not fetch decimals for ${address} on ${chain}: ${error.message}`);
+              return { result: "" };
+            }),
+          ]);
+
+          let symbol = "UNKNOWN";
+          if (symbolResult.result && symbolResult.result !== "0x") {
+            try {
+              const hexString = symbolResult.result.slice(2); // Remove 0x prefix
+
+              // ERC-20 contracts may return strings as bytes32 (64 chars) or dynamic string (>64 chars)
+              if (hexString.length > 64) {
+                // Case 1: Dynamic string (standard ABI encoding)
+                const lengthInBytes = Number.parseInt(hexString.slice(64, 128), 16);
+                if (lengthInBytes > 0) {
+                  const symbolHex = hexString.slice(128, 128 + lengthInBytes * 2);
+                  symbol = Buffer.from(symbolHex, "hex").toString("utf8");
+                }
+              } else if (hexString.length > 0) {
+                // Case 2: Short string packed as bytes32 (common for some ERC-20 tokens)
+                symbol = Buffer.from(hexString, "hex").toString("utf8").replace(/\0/g, "");
+              }
+            } catch (error) {
+              console.warn(`Failed to decode symbol for ${address}: ${error}`);
+            }
+          }
+
+          let decimals: number = baseDecimal;
+          if (decimalsResult.result && decimalsResult.result !== "0x") {
+            try {
+              decimals = Number.parseInt(BigInt(decimalsResult.result).toString(), 10);
+            } catch (error) {
+              console.warn(`Failed to decode decimals for ${address}: ${error}`);
+            }
+          }
+
+          return { decimals, symbol };
+        } catch (error) {
+          console.error(`Failed to fetch token info for ${address} on ${chain}:`, error);
+          return { decimals: baseDecimal, symbol: "UNKNOWN" };
+        }
+      },
+    )
+    .with(Chain.Solana, async () => {
+      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+
+      try {
+        // Use Jupiter Token API V2
+        const response = await fetch(`https://lite-api.jup.ag/tokens/v2/search?query=${address}`);
+        if (response.ok) {
+          const data = await response.json();
+          // V2 returns an array of results
+          const token = Array.isArray(data) ? data[0] : data;
+          if (token) {
+            return {
+              decimals: token.decimals ?? baseDecimal,
+              symbol: token.symbol || "UNKNOWN"
+            };
+          }
+        }
+
+        // Log the specific failure reason
+        console.error(
+          `Solana token lookup failed for ${address}: API responded with status ${response.status} ${response.statusText}`,
+        );
+        const errorBody = await response.text();
+        console.error(`API response body: ${errorBody}`);
+      } catch (error) {
+        console.error(`Failed to fetch Solana token info for ${address}:`, error);
+      }
+      return { decimals: baseDecimal, symbol: "UNKNOWN" };
+    })
+    .with(Chain.Tron, async () => {
+      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+
+      try {
+        const { TronWeb } = await import("tronweb");
+        const rpcUrl = await getRPCUrl(Chain.Tron);
+        const tronWeb = new TronWeb({
+          fullHost: rpcUrl,
+          // Set a default address for read-only calls (required by TronWeb)
+          privateKey: "0000000000000000000000000000000000000000000000000000000000000001",
+        });
+
+        // Use TronWeb library - it handles all the API quirks correctly
+        const contract = await tronWeb.contract().at(address);
+
+        const [symbolResult, decimalsResult] = await Promise.all([
+          contract.symbol().call().catch((error: Error) => {
+            console.warn(`Could not fetch symbol for ${address} on Tron:`, error);
+            return undefined;
+          }),
+          contract.decimals().call().catch((error: Error) => {
+            console.warn(`Could not fetch decimals for ${address} on Tron:`, error);
+            return baseDecimal;
+          }),
+        ]);
+
+        return {
+          decimals: typeof decimalsResult === "number" ? decimalsResult : Number(decimalsResult || baseDecimal),
+          symbol: symbolResult || "UNKNOWN",
+        };
+      } catch (error) {
+        console.error(`Failed to fetch Tron token info for ${address}:`, error);
+        return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      }
+    })
+    .with(Chain.Near, async () => {
+      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+
+      try {
+        const { providers } = await import("near-api-js");
+        const rpcUrl = await getRPCUrl(Chain.Near);
+        const provider = new providers.JsonRpcProvider({ url: rpcUrl });
+
+        const metadata = await provider.query({
+          account_id: address,
+          args_base64: Buffer.from("{}").toString("base64"),
+          finality: "final",
+          method_name: "ft_metadata",
+          request_type: "call_function",
+        });
+
+        const result = JSON.parse(Buffer.from((metadata as any).result).toString());
+
+        return { decimals: result?.decimals || baseDecimal, symbol: result?.symbol || "UNKNOWN" };
+      } catch (error) {
+        console.error(`Failed to fetch Near token info for ${address}:`, error);
+        return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      }
+    })
+    .otherwise(async () => ({ decimals: baseDecimal, symbol: "UNKNOWN" }));
+}
+
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {
   return match(chain)
     .with(...ethGasChains, () => symbol === "ETH")
