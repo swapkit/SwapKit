@@ -145,7 +145,7 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           const { isAddress, getAddress } = await import("ethers");
 
           if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
-            return { decimals: baseDecimal, symbol: "UNKNOWN" };
+            return { decimals: baseDecimal, ticker: "UNKNOWN" };
           }
 
           const rpcUrl = await getRPCUrl(chain as EVMChain);
@@ -161,18 +161,18 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
             }),
           ]);
 
-          const symbol = decodeABIString(symbolResult.result);
+          const ticker = decodeABIString(symbolResult.result);
           const decimals = decodeABIUint8(decimalsResult.result, baseDecimal);
 
-          return { decimals, symbol };
+          return { decimals, ticker };
         } catch (error) {
           console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
-          return { decimals: baseDecimal, symbol: "UNKNOWN" };
+          return { decimals: baseDecimal, ticker: "UNKNOWN" };
         }
       },
     )
     .with(Chain.Solana, async () => {
-      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
 
       try {
         const response = await fetch(`https://lite-api.jup.ag/tokens/v2/search?query=${address}`);
@@ -180,16 +180,16 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
           const data = await response.json();
           const token = Array.isArray(data) ? data[0] : data;
           if (token) {
-            return { decimals: token.decimals ?? baseDecimal, symbol: token.symbol || "UNKNOWN" };
+            return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || "UNKNOWN" };
           }
         }
       } catch (error) {
         console.warn(`Failed to fetch Solana token info for ${address}:`, error);
       }
-      return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      return { decimals: baseDecimal, ticker: "UNKNOWN" };
     })
     .with(Chain.Tron, async () => {
-      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
 
       try {
         const { TronWeb } = await import("tronweb");
@@ -221,15 +221,15 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
         return {
           decimals: typeof decimalsResult === "number" ? decimalsResult : Number(decimalsResult || baseDecimal),
-          symbol: symbolResult || "UNKNOWN",
+          ticker: symbolResult || "UNKNOWN",
         };
       } catch (error) {
         console.warn(`Failed to fetch Tron token info for ${address}:`, error);
-        return { decimals: baseDecimal, symbol: "UNKNOWN" };
+        return { decimals: baseDecimal, ticker: "UNKNOWN" };
       }
     })
     .with(Chain.Near, async () => {
-      if (!address) return { decimals: baseDecimal, symbol: "UNKNOWN" };
+      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
 
       try {
         const { providers } = await import("near-api-js");
@@ -246,13 +246,13 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
 
         const result = JSON.parse(Buffer.from((metadata as any).result).toString());
 
-        return { decimals: result?.decimals || baseDecimal, symbol: result?.symbol || "UNKNOWN" };
+        return { decimals: result?.decimals || baseDecimal, ticker: result?.symbol || "UNKNOWN" };
       } catch (error) {
         console.warn(`Failed to fetch Near token info for ${address}:`, error);
-        return { decimals: baseDecimal, symbol: "UNKNOWN" };
+        return { decimals: baseDecimal, ticker: "UNKNOWN" };
       }
     })
-    .otherwise(async () => ({ decimals: baseDecimal, symbol: "UNKNOWN" }));
+    .otherwise(async () => ({ decimals: baseDecimal, ticker: "UNKNOWN" }));
 }
 
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {

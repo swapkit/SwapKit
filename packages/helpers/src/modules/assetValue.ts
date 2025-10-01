@@ -28,7 +28,7 @@ const staticTokensMap = new Map<
 
 const chainAddressIdentifierMap = new Map<string, string>();
 
-const asyncTokenCache = new Map<string, { symbol: string; decimals: number; timestamp: number }>();
+const asyncTokenCache = new Map<string, { identifier: string; decimals: number; timestamp: number }>();
 const CACHE_TTL = 3600000;
 
 function getCachedTokenInfo(key: string) {
@@ -42,7 +42,7 @@ function getCachedTokenInfo(key: string) {
   return cached;
 }
 
-function setCachedTokenInfo(key: string, info: { symbol: string; decimals: number }) {
+function setCachedTokenInfo(key: string, info: { identifier: string; decimals: number }) {
   if (asyncTokenCache.size > 1000) {
     const firstKey = asyncTokenCache.keys().next().value;
     if (firstKey) asyncTokenCache.delete(firstKey);
@@ -91,6 +91,7 @@ export class AssetValue extends BigIntArithmetics {
   )) {
     super(typeof value === "object" ? value : { decimal, value });
 
+    console.log(identifier);
     const assetInfo = getAssetInfo(identifier || `${chain}.${symbol}`);
 
     this.type = getAssetType(assetInfo);
@@ -185,11 +186,11 @@ export class AssetValue extends BigIntArithmetics {
     }
 
     const fallbackIdentifier = isChainAddressCombo ? assetOrChain.split(":").join(".UNKNOWN-") : assetOrChain;
-    console.log(fallbackIdentifier);
 
     const { identifier: unsafeIdentifier, decimal: commonAssetDecimal } = getCommonAssetInfo(
       fallbackIdentifier as CommonAssetString,
     );
+    console.log(unsafeIdentifier);
     const { chain, isSynthetic, isTradeAsset, address } = getAssetInfo(unsafeIdentifier);
     const { baseDecimal } = getChainConfig(chain);
 
@@ -327,9 +328,7 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
 
   const cached = getCachedTokenInfo(cacheKey);
   if (cached) {
-    const properIdentifier =
-      address && cached.symbol ? `${chain}.${cached.symbol}-${address}` : `${chain}.${cached.symbol}`;
-    return { decimals: cached.decimals, identifier: properIdentifier };
+    return cached;
   }
 
   if (!address) {
@@ -339,23 +338,20 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
 
   const tokenInfo = await getTokenInfoFromChain({ address, chain });
 
-  if (tokenInfo.symbol === "UNKNOWN" && ticker) {
+  const properIdentifier =
+    tokenInfo.ticker !== "UNKNOWN"
+      ? `${chain}.${tokenInfo.ticker}-${address}`
+      : `${chain}.${ticker || "UNKNOWN"}-${address}`;
+
+  if (tokenInfo.ticker === "UNKNOWN" && ticker) {
     warnOnce({
       condition: true,
       id: `async_token_lookup_failed_${chain}_${address}`,
       warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
     });
-
-    return { decimals: tokenInfo.decimals, identifier: `${chain}.${ticker}-${address}` };
   }
 
-  if (tokenInfo.symbol || tokenInfo.decimals !== getChainConfig(chain).baseDecimal) {
-    setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, symbol: tokenInfo.symbol || ticker || "UNKNOWN" });
-  }
-
-  const properIdentifier = tokenInfo.symbol
-    ? `${chain}.${tokenInfo.symbol}-${address}`
-    : `${chain}.${ticker || "UNKNOWN"}-${address}`;
+  setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier: properIdentifier });
 
   return { decimals: tokenInfo.decimals, identifier: properIdentifier };
 }
@@ -472,6 +468,8 @@ function getNormalAssetInfo(identifier: string) {
   const assetSymbol = firstDotIndex === -1 ? identifier : identifier.slice(firstDotIndex + 1);
 
   const { address, ticker } = getAssetBaseInfo({ chain, symbol: assetSymbol });
+
+  console.log("address:", address, ticker);
 
   let formattedAddress: string | undefined;
   try {
