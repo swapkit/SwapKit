@@ -91,7 +91,6 @@ export class AssetValue extends BigIntArithmetics {
   )) {
     super(typeof value === "object" ? value : { decimal, value });
 
-    console.log(identifier);
     const assetInfo = getAssetInfo(identifier || `${chain}.${symbol}`);
 
     this.type = getAssetType(assetInfo);
@@ -190,7 +189,7 @@ export class AssetValue extends BigIntArithmetics {
     const { identifier: unsafeIdentifier, decimal: commonAssetDecimal } = getCommonAssetInfo(
       fallbackIdentifier as CommonAssetString,
     );
-    console.log(unsafeIdentifier);
+
     const { chain, isSynthetic, isTradeAsset, address } = getAssetInfo(unsafeIdentifier);
     const { baseDecimal } = getChainConfig(chain);
 
@@ -468,8 +467,6 @@ function getNormalAssetInfo(identifier: string) {
   const assetSymbol = firstDotIndex === -1 ? identifier : identifier.slice(firstDotIndex + 1);
 
   const { address, ticker } = getAssetBaseInfo({ chain, symbol: assetSymbol });
-
-  console.log("address:", address, ticker);
 
   let formattedAddress: string | undefined;
   try {
