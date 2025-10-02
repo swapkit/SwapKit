@@ -138,39 +138,36 @@ export function getTokenInfoFromChain({ chain, address }: { chain: Chain; addres
   const { baseDecimal } = getChainConfig(chain);
 
   return match(chain)
-    .when(
-      (c) => EVMChains.includes(c as EVMChain),
-      async () => {
-        try {
-          const { isAddress, getAddress } = await import("ethers");
+    .with(...EVMChains, async () => {
+      try {
+        const { isAddress, getAddress } = await import("ethers");
 
-          if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
-            return { decimals: baseDecimal, ticker: undefined };
-          }
-
-          const rpcUrl = await getRPCUrl(chain as EVMChain);
-
-          const [symbolResult, decimalsResult] = await Promise.all([
-            callEVMContract(rpcUrl, address, "0x95d89b41", 1).catch((error: Error) => {
-              console.warn(`Could not fetch symbol for ${address} on ${chain}: ${error.message}`);
-              return { result: "" };
-            }),
-            callEVMContract(rpcUrl, address, "0x313ce567", 2).catch((error: Error) => {
-              console.warn(`Could not fetch decimals for ${address} on ${chain}: ${error.message}`);
-              return { result: "" };
-            }),
-          ]);
-
-          const ticker = decodeABIString(symbolResult.result);
-          const decimals = decodeABIUint8(decimalsResult.result, baseDecimal);
-
-          return { decimals, ticker };
-        } catch (error) {
-          console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
+        if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
           return { decimals: baseDecimal, ticker: undefined };
         }
-      },
-    )
+
+        const rpcUrl = await getRPCUrl(chain as EVMChain);
+
+        const [symbolResult, decimalsResult] = await Promise.all([
+          callEVMContract(rpcUrl, address, "0x95d89b41", 1).catch((error: Error) => {
+            console.warn(`Could not fetch symbol for ${address} on ${chain}: ${error.message}`);
+            return { result: "" };
+          }),
+          callEVMContract(rpcUrl, address, "0x313ce567", 2).catch((error: Error) => {
+            console.warn(`Could not fetch decimals for ${address} on ${chain}: ${error.message}`);
+            return { result: "" };
+          }),
+        ]);
+
+        const ticker = decodeABIString(symbolResult.result);
+        const decimals = decodeABIUint8(decimalsResult.result, baseDecimal);
+
+        return { decimals, ticker };
+      } catch (error) {
+        console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
+        return { decimals: baseDecimal, ticker: undefined };
+      }
+    })
     .with(Chain.Solana, async () => {
       if (!address) return { decimals: baseDecimal, ticker: undefined };
 
