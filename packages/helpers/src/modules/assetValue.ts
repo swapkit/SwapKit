@@ -5,9 +5,9 @@ import { match } from "ts-pattern";
 import {
   assetFromString,
   type CommonAssetString,
+  fetchTokenInfo,
   getAssetType,
   getCommonAssetInfo,
-  getTokenInfoFromChain,
   isGasAsset,
 } from "../utils/asset";
 import { warnOnce } from "../utils/others";
@@ -335,7 +335,7 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
     return { decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}` };
   }
 
-  const tokenInfo = await getTokenInfoFromChain({ address, chain });
+  const tokenInfo = await fetchTokenInfo({ address, chain });
 
   const identifier = `${chain}.${tokenInfo.ticker || ticker || "UNKNOWN"}-${address}`;
 
