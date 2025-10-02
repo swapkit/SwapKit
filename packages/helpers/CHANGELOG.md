@@ -1,5 +1,15 @@
 # @swapkit/helpers
 
+## 4.0.27
+
+### Patch Changes
+
+- [`080de9c`](https://github.com/swapkit/SwapKit/commit/080de9c07a893a97ff537b7599012dd71ddcd1ca) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix blocktimes and remove explorer prefix
+
+- Updated dependencies [[`080de9c`](https://github.com/swapkit/SwapKit/commit/080de9c07a893a97ff537b7599012dd71ddcd1ca)]:
+  - @swapkit/types@0.1.4
+  - @swapkit/tokens@4.0.27
+
 ## 4.0.26
 
 ### Patch Changes

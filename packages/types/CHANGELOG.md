@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.1.4
+
+### Patch Changes
+
+- [`080de9c`](https://github.com/swapkit/SwapKit/commit/080de9c07a893a97ff537b7599012dd71ddcd1ca) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix blocktimes and remove explorer prefix
+
 ## 0.1.3
 
 ### Patch Changes
