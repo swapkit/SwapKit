@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.27
+
+### Patch Changes
+
+- [#1498](https://github.com/swapkit/SwapKit/pull/1498) [`3192cc0`](https://github.com/swapkit/SwapKit/commit/3192cc00a132dfc02715829586b3cb6ed94ca15f) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Migrate to @swapkit/types
+
+- Updated dependencies [[`3192cc0`](https://github.com/swapkit/SwapKit/commit/3192cc00a132dfc02715829586b3cb6ed94ca15f), [`053ea04`](https://github.com/swapkit/SwapKit/commit/053ea04567dc10a6df3e0869262056a856ab966e), [`3192cc0`](https://github.com/swapkit/SwapKit/commit/3192cc00a132dfc02715829586b3cb6ed94ca15f), [`da3ca10`](https://github.com/swapkit/SwapKit/commit/da3ca102dabe00ea14b811ca2f55e1d94b185c09)]:
+  - @swapkit/toolboxes@4.1.0
+  - @swapkit/helpers@4.1.0
+
 ## 4.1.26
 
 ### Patch Changes
