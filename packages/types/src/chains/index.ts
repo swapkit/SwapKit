@@ -1,5 +1,5 @@
 import { Chain, type ChainId, StagenetChain } from "./_enums";
-import { CosmosChainConfigs, StagenetCosmosChainConfigs } from "./cosmos";
+import { CosmosChainConfigs } from "./cosmos";
 import { EVMChainConfigs } from "./evm";
 import { OtherChainConfigs } from "./others";
 import { SubstrateChainConfigs } from "./substrate";
@@ -16,7 +16,6 @@ export const AllChainConfigs = [
   ...UTXOChainConfigs,
   ...EVMChainConfigs,
   ...CosmosChainConfigs,
-  ...StagenetCosmosChainConfigs,
   ...SubstrateChainConfigs,
   ...OtherChainConfigs,
 ].sort((a, b) => a.chain.localeCompare(b.chain));
