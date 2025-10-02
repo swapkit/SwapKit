@@ -73,7 +73,7 @@ export async function getFullAccessPublicKey(provider: Provider, accountId: stri
   const fullAccessKey = (response as any).keys.find((key: any) => key.access_key.permission === "FullAccess");
 
   if (!fullAccessKey) {
-    throw new SwapKitError("toolbox_near_invalid_address");
+    throw new SwapKitError("toolbox_near_no_public_key_found");
   }
 
   const { utils } = await import("near-api-js");

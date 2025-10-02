@@ -20,7 +20,7 @@ const ETHConfig = createChain({
 
 const BSCConfig = createChain({
   baseDecimal: 18,
-  blockTime: 3,
+  blockTime: 1,
   chain: Chain.BinanceSmartChain,
   chainId: ChainId.BinanceSmartChain,
   chainIdHex: "0x38",
@@ -38,7 +38,7 @@ const BSCConfig = createChain({
 
 const AVAXConfig = createChain({
   baseDecimal: 18,
-  blockTime: 3,
+  blockTime: 2,
   chain: Chain.Avalanche,
   chainId: ChainId.Avalanche,
   chainIdHex: "0xa86a",

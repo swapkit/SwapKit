@@ -16,20 +16,38 @@ export enum RouteQuoteTxType {
 }
 
 export enum TxnType {
-  native_send = "native_send",
-  token_transfer = "token_transfer",
-  native_contract_call = "native_contract_call",
-  token_contract_call = "token_contract_call",
   approve = "approve",
-  deposit = "deposit",
-  thorname_action = "thorname_action",
-  lp_action = "lp_action",
-  swap = "swap",
-  streaming_swap = "streaming_swap",
-  stake = "stake",
   claim = "claim",
+  deposit = "deposit",
+  donate = "donate",
   lending = "lending",
+  lp_action = "lp_action",
+  native_contract_call = "native_contract_call",
+  native_send = "native_send",
+  stake = "stake",
+  streaming_swap = "streaming_swap",
+  swap = "swap",
+  thorname_action = "thorname_action",
+  token_contract_call = "token_contract_call",
+  token_transfer = "token_transfer",
   unknown = "unknown",
+  unstake = "unstake",
+}
+
+export enum ProviderAction {
+  swap = "swap",
+  aggregation = "aggregation",
+  addLiquidity = "addLiquidity",
+  withdrawLiquidity = "withdrawLiquidity",
+  addSavers = "addSavers",
+  withdrawSavers = "withdrawSavers",
+  borrow = "borrow",
+  repay = "repay",
+  name = "name",
+  donate = "donate",
+  claim = "claim",
+  stake = "stake",
+  unstake = "unstake",
 }
 
 export enum TxnStatus {
@@ -38,6 +56,8 @@ export enum TxnStatus {
   pending = "pending",
   swapping = "swapping",
   completed = "completed",
+  refunded = "refunded",
+  failed = "failed",
 }
 
 export enum TrackingStatus {
@@ -285,21 +305,42 @@ export type NearSwapResponse = z.infer<typeof NearSwapResponseSchema>;
 export type DepositChannelResponse = z.infer<typeof DepositChannelResponseSchema>;
 
 const TxnPayloadSchema = object({
-  evmCalldata: optional(string()),
-  logs: optional(unknown()),
-  memo: optional(string()),
-  spender: optional(string()), // used in evm approve transactions
+  evmCalldata: z.optional(z.string()),
+  intentHash: z.optional(z.string()),
+  logs: z.optional(z.unknown()),
+  manifest: z.optional(z.unknown()),
+  memo: z.optional(z.string()),
+  spender: z.optional(z.string()),
+  thorname: z.optional(z.string()),
 });
 
 export type TxnPayload = z.infer<typeof TxnPayloadSchema>;
 
-// props that are most important while the transaction is live
-const TxnTransientSchema = object({
-  currentLegIndex: optional(number()),
-  estimatedFinalisedAt: number(),
-  estimatedTimeToComplete: number(),
-  providerDetails: optional(unknown()), // see ProviderTransientDetails
-  updatedAt: number(),
+const TransactionEstimatesSchema = object({
+  currentStage: string(),
+  inboundConfirmation: number(),
+  inboundObservation: number(),
+  outboundDelay: number(),
+  outboundObservation: number(),
+  streamingSwap: number(),
+});
+
+export type TransactionEstimates = z.infer<typeof TransactionEstimatesSchema>;
+
+const TransactionStreamingDetailsSchema = object({
+  count: optional(number()),
+  interval: optional(number()),
+  quantity: optional(number()),
+  subSwapsMap: optional(array(number())),
+});
+
+export type TransactionStreamingDetails = z.infer<typeof TransactionStreamingDetailsSchema>;
+
+const TxnTransientSchema = z.object({
+  currentLegIndex: z.optional(z.number()),
+  estimatedTimeToComplete: z.number(),
+  estimates: z.optional(TransactionEstimatesSchema),
+  providerDetails: z.optional(z.object({ streamingDetails: z.optional(TransactionStreamingDetailsSchema) })),
 });
 
 export type TxnTransient = z.infer<typeof TxnTransientSchema>;
@@ -314,8 +355,11 @@ const TransactionFeesSchema = object({
 
 export type TransactionFees = z.infer<typeof TransactionFeesSchema>;
 
+const TxnMetaAffiliateFeesSchema = object({ affiliate: string(), bps: string(), isReferrer: boolean() });
+
 const TxnMetaSchema = object({
   affiliate: optional(string()),
+  affiliateFees: optional(array(TxnMetaAffiliateFeesSchema)),
   broadcastedAt: optional(number()),
   explorerUrl: optional(string()),
   fees: optional(TransactionFeesSchema),
@@ -328,6 +372,7 @@ const TxnMetaSchema = object({
     }),
   ),
   provider: optional(z.enum(ProviderName)),
+  providerAction: z.optional(z.enum(ProviderAction)),
   quoteId: optional(string()),
   wallet: optional(string()),
 });
@@ -339,11 +384,9 @@ const TransactionLegDTOSchema = z.object({
   chainId: z.enum(ChainId),
   finalAddress: z.optional(z.string()),
   finalAsset: z.optional(AssetValueSchema),
-
   finalisedAt: z.number(),
   fromAddress: z.string(),
   fromAmount: z.string(),
-
   fromAsset: z.string(),
   hash: z.string(),
   meta: z.optional(TxnMetaSchema),
@@ -353,7 +396,6 @@ const TransactionLegDTOSchema = z.object({
   toAmount: z.string(),
   toAsset: z.string(),
   trackingStatus: z.optional(z.enum(TrackingStatus)),
-
   transient: z.optional(TxnTransientSchema),
   type: z.enum(TxnType),
 });
