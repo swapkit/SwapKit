@@ -75,9 +75,6 @@ const { chainIdToChain, chainToBaseDecimal, chainToBlockTime, explorerUrls, rpcU
   },
 );
 
-/**
- * @deprecated
- */
 export const NODE_URLS = {
   [Chain.THORChain]: "https://thornode.ninerealms.com",
   [Chain.Maya]: "https://mayanode.mayachain.info",
@@ -86,7 +83,6 @@ export const NODE_URLS = {
 };
 
 /**
- * @deprecated use getChainConfig instead
  * @example
  * ```diff
  * -const rpcUrl = RPC_URLS[Chain.Ethereum];
@@ -96,7 +92,6 @@ export const NODE_URLS = {
 export const RPC_URLS: Record<Chain | StagenetChain, string> = rpcUrls;
 
 /**
- * @deprecated use getChainConfig instead
  * @example
  * ```diff
  * -const explorerUrl = EXPLORER_URLS[Chain.Ethereum];
@@ -106,8 +101,7 @@ export const EXPLORER_URLS: Record<Chain, string> = explorerUrls;
 
 /**
  *
- * @deprecated use getChainConfig instead
- * Note: ChainToChainId will be discontinued in future versions.
+ * Note: ChainIdToChain will be discontinued in future versions.
  * Please use getChainConfig instead.
  * @example
  * ```diff
