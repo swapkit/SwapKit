@@ -47,45 +47,6 @@ export enum StagenetChain {
  * The network configuration will be migrated to a more streamlined approach with one object per chain.
  */
 export enum ChainId {
-  ARB = "42161",
-  AURORA = "1313161554",
-  AVAX = "43114",
-  BASE = "8453",
-  BERA = "80094",
-  BSC = "56",
-  ADA = "cardano",
-  BTC = "bitcoin",
-  BCH = "bitcoincash",
-  FLIP = "chainflip",
-  GAIA = "cosmoshub-4",
-  DASH = "dash",
-  DOGE = "dogecoin",
-  ETH = "1",
-  FIAT = "fiat",
-  GNO = "100",
-  KUJI = "kaiyo-1",
-  LTC = "litecoin",
-  MAYA = "mayachain-mainnet-v1",
-  NEAR = "near",
-  NOBLE = "noble-1",
-  OP = "10",
-  DOT = "polkadot",
-  POL = "137",
-  XRD = "radix-mainnet",
-  XRP = "ripple",
-  THOR = "thorchain-1",
-  SOL = "solana",
-  SUI = "sui",
-  TON = "ton",
-  TRON = "728126428",
-  ZEC = "zcash",
-
-  // Stagenet chains
-  THOR_STAGENET = "thorchain-stagenet-v2",
-  MAYA_STAGENET = "mayachain-stagenet-v1",
-
-  // Full-name properties - will be discontinued in future versions
-  // Please use the short-handle properties above (e.g., ARB instead of Arbitrum)
   Arbitrum = "42161",
   Aurora = "1313161554",
   Avalanche = "43114",
@@ -94,15 +55,12 @@ export enum ChainId {
   BinanceSmartChain = "56",
   Bitcoin = "bitcoin",
   BitcoinCash = "bitcoincash",
+  Cardano = "cardano",
   Chainflip = "chainflip",
   Cosmos = "cosmoshub-4",
   Dash = "dash",
   Dogecoin = "dogecoin",
   Ethereum = "1",
-  /**
-   * @deprecated
-   */
-  Fiat = "fiat",
   Gnosis = "100",
   Harbor = "harbor-1",
   HarborStagenet = "harbor-stagenet-1",
@@ -120,6 +78,8 @@ export enum ChainId {
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
+  Sui = "sui",
+  Ton = "ton",
   Tron = "728126428",
   Zcash = "zcash",
 }
