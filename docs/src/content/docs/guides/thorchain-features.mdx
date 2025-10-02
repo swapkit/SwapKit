@@ -1,9 +1,3 @@
----
-title: THORChain Features
-description: Advanced THORChain features - liquidity, THORNames, and node operations
----
-
-import { Code, Tabs, TabItem } from "@astrojs/starlight/components";
 
 THORChain provides advanced DeFi features beyond simple swaps. SwapKit includes full support for these features through the THORChain [plugin](/guides/create-plugin).
 
@@ -235,7 +229,7 @@ for (const [chain, chainId] of Object.entries(chainMap)) {
 ```typescript
 // @noErrorValidation
 const thornameDetails = await SwapKitApi.thorchainMidgard.getTHORNameDetails(
-  "thorswap"
+  "myname"
 );
 
 console.log("Owner:", thornameDetails.owner);

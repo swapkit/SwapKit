@@ -25,11 +25,7 @@ const BCH = createChain({
   name: "BitcoinCash",
   nativeCurrency: "BCH",
   networkDerivationPath: [44, 145, 0, 0, 0],
-  rpcUrls: [
-    "https://node-router.thorswap.net/bitcoin-cash",
-    "https://bch-dataseed.binance.org",
-    "https://bch.getblock.io/mainnet",
-  ],
+  rpcUrls: ["https://bch-dataseed.binance.org", "https://bch.getblock.io/mainnet"],
   type,
 });
 
@@ -42,11 +38,7 @@ const LTC = createChain({
   name: "Litecoin",
   nativeCurrency: "LTC",
   networkDerivationPath: [84, 2, 0, 0, 0],
-  rpcUrls: [
-    "https://node-router.thorswap.net/litecoin",
-    "https://ltc.getblock.io/mainnet",
-    "https://litecoin.publicnode.com",
-  ],
+  rpcUrls: ["https://ltc.getblock.io/mainnet", "https://litecoin.publicnode.com"],
   type,
 });
 
@@ -59,11 +51,7 @@ const DOGE = createChain({
   name: "Dogecoin",
   nativeCurrency: "DOGE",
   networkDerivationPath: [44, 3, 0, 0, 0],
-  rpcUrls: [
-    "https://node-router.thorswap.net/dogecoin",
-    "https://doge.getblock.io/mainnet",
-    "https://dogecoin.publicnode.com",
-  ],
+  rpcUrls: ["https://doge.getblock.io/mainnet", "https://dogecoin.publicnode.com"],
   type,
 });
 
@@ -89,9 +77,7 @@ const ZEC = createChain({
   name: "Zcash",
   nativeCurrency: "ZEC",
   networkDerivationPath: [44, 133, 0, 0, 0],
-  rpcUrls: [
-    "https://api.tatum.io/v3/blockchain/node/zcash-mainnet/t-6894a2ae7fc90cccfd3ce71b-2fce88aa7f4a41a5b1e93874",
-  ],
+  rpcUrls: [],
   type,
 });
 

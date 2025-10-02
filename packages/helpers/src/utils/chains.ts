@@ -51,6 +51,15 @@ export async function getRPCUrl(chain: Chain | StagenetChain) {
   const { isStagenet } = SKConfig.get("envs");
   const [rpcUrl = "", ...fallbackUrls] = SKConfig.get("rpcUrls")[chain];
 
+  if (!rpcUrl) {
+    warnOnce({
+      condition: true,
+      id: "helpers_chain_no_public_or_set_rpc_url",
+      warning: `No public or set RPC URL found for chain. Please ensure you configured rpcUrls for ${chain}.`,
+    });
+    throw new SwapKitError("helpers_chain_no_public_or_set_rpc_url", { chain });
+  }
+
   if (isStagenet) return rpcUrl;
 
   const cached = rpcCache.get(chain);

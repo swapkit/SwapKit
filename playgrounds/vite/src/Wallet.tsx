@@ -1,4 +1,4 @@
-import { type Chain, type FullWallet, getExplorerAddressUrl, SwapKitApi } from "@swapkit/sdk";
+import { type Chain, type FullWallet, getExplorerAddressUrl } from "@swapkit/sdk";
 
 type Props = {
   walletData: FullWallet[Chain];
@@ -86,26 +86,6 @@ export const Wallet = ({ walletData, setAsset, disconnect, isLoadingBalance }: P
               title={`${b.toSignificant(6)} ${b.ticker}`}
               type="button">
               <div style={{ alignItems: "center", display: "flex", gap: 6 }}>
-                <div style={{ flexShrink: 0, height: 18, position: "relative", width: 18 }}>
-                  <img
-                    alt=""
-                    src={SwapKitApi.getLogoForAsset(b.toString())}
-                    style={{ borderRadius: "50%", height: 18, width: 18 }}
-                  />
-                  <img
-                    alt=""
-                    src={SwapKitApi.getChainLogoForAsset(b.toString())}
-                    style={{
-                      border: "1px solid #0f0f0f",
-                      borderRadius: "50%",
-                      bottom: -2,
-                      height: 9,
-                      position: "absolute",
-                      right: -2,
-                      width: 9,
-                    }}
-                  />
-                </div>
                 <span style={{ color: "#e0e0e0", fontSize: 10 }}>{b.ticker}</span>
               </div>
               <span style={{ color: "#999", fontSize: 10 }}>{b.toSignificant(4)}</span>

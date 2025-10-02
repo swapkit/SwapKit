@@ -173,7 +173,7 @@
 
 ### Patch Changes
 
-- [#1465](https://github.com/swapkit/SwapKit/pull/1465) [`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec) Thanks [@towanTG](https://github.com/towanTG)! - Retires thorswap thornode and replaces it with 9Realms
+- [#1465](https://github.com/swapkit/SwapKit/pull/1465) [`c4605c6`](https://github.com/swapkit/SwapKit/commit/c4605c667d3737691d348dde8c8d9d677b79f2ec) Thanks [@towanTG](https://github.com/towanTG)! - Retires thornode and replaces it with 9Realms
 
 - Updated dependencies []:
   - @swapkit/tokens@4.0.6

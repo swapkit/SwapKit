@@ -424,6 +424,7 @@ const errorCodes = {
   helpers_chain_not_supported: 70009,
   helpers_invalid_params: 70010,
   helpers_invalid_response: 70011,
+  helpers_chain_no_public_or_set_rpc_url: 70012,
   /**
    * Anything else
    */

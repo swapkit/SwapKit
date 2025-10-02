@@ -16,7 +16,6 @@ import {
   getChainConfig,
   getRPCUrl,
   NetworkDerivationPath,
-  SKConfig,
   SwapKitError,
   SwapKitNumber,
   type TCLikeChain,
@@ -225,35 +224,8 @@ export async function getFeeRateFromSwapKit(chainId: ChainId, safeDefault: numbe
   }
 }
 
-/**
- * @deprecated use getFeeRateFromSwapKit instead
- */
-export const getFeeRateFromThorswap = getFeeRateFromSwapKit;
-
-export function cosmosValidateAddress({
-  address,
-  chain,
-  prefix: chainPrefix,
-}: { address: string } & ({ prefix: string; chain?: undefined } | { chain: CosmosChain; prefix?: undefined })) {
-  const prefix = chainPrefix || getPrefix(chain);
-
-  if (!(prefix && address)) {
-    throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
-  }
-
-  return getCosmosValidateAddress(prefix)(address);
-}
-
 export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: AssetValue }) {
   return AssetValue.from({ chain, value: getMinTransactionFee(chain) });
-}
-
-function getPrefix<C extends CosmosChain>(chain?: C) {
-  const { isStagenet } = SKConfig.get("envs");
-  const useStagenetPrefix = chain ? [Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) && isStagenet : false;
-  const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
-
-  return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
 }
 
 async function getFees(chain: Chain, safeDefault: number) {
@@ -284,7 +256,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function getCosmosValidateAddress(prefix: string) {
+export function getCosmosValidateAddress(prefix: string) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 

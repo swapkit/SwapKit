@@ -14,7 +14,7 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
   const signer = await match(toolboxParams)
     .with({ phrase: P.string }, async ({ phrase }) => mnemonicToWalletKey(phrase.split(" ")))
     .with({ signer: P.any }, ({ signer }) => signer as TONSigner)
-    .otherwise(() => Promise.resolve(undefined));
+    .otherwise(() => undefined);
 
   function getClient() {
     const { rpcUrls } = getChainConfig(Chain.Ton);

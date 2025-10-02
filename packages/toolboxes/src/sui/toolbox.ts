@@ -66,7 +66,7 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
   }
 
   async function estimateTransactionFee(params?: SuiCreateTransactionParams) {
-    const defaultFee = AssetValue.from({ chain: Chain.Sui, value: "0.001" });
+    const defaultFee = AssetValue.from({ chain: Chain.Sui, value: "0.01" });
 
     if (!params) return defaultFee;
 
@@ -79,7 +79,7 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
 
       if (status.status !== "success") return defaultFee;
 
-      const totalGas = Number(gasUsed.computationCost) + Number(gasUsed.storageCost);
+      const totalGas = Number(gasUsed.computationCost) + Number(gasUsed.storageCost) - Number(gasUsed.storageRebate);
 
       return AssetValue.from({ chain: Chain.Sui, value: totalGas.toString() });
     } catch {
@@ -90,16 +90,18 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
   async function createTransaction({ recipient, assetValue, gasBudget, sender }: SuiCreateTransactionParams) {
     const { Transaction } = await import("@mysten/sui/transactions");
 
+    const senderAddress = sender || getAddress();
+
+    if (!senderAddress) {
+      throw new SwapKitError("toolbox_sui_no_sender");
+    }
+
     try {
       const tx = new Transaction();
-      const amount = assetValue.getBaseValue("string");
-
-      if (sender) {
-        tx.setSender(sender);
-      }
+      tx.setSender(senderAddress);
 
       if (assetValue.isGasAsset || assetValue.symbol === "SUI") {
-        const [suiCoin] = tx.splitCoins(tx.gas, [amount]);
+        const [suiCoin] = tx.splitCoins(tx.gas, [assetValue.getBaseValue("string")]);
         tx.transferObjects([suiCoin], recipient);
       } else {
         throw new SwapKitError("toolbox_sui_custom_token_transfer_not_implemented" as any);
@@ -118,9 +120,15 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
     }
   }
 
-  async function signTransaction(params: SuiCreateTransactionParams | Awaited<ReturnType<typeof createTransaction>>) {
+  async function signTransaction(
+    params: Uint8Array<ArrayBuffer> | SuiCreateTransactionParams | Awaited<ReturnType<typeof createTransaction>>,
+  ) {
     if (!signer) {
       throw new SwapKitError("toolbox_sui_no_signer");
+    }
+
+    if (params instanceof Uint8Array) {
+      return signer.signTransaction(params);
     }
 
     const { txBytes } = "tx" in params ? params : await createTransaction(params);
@@ -140,8 +148,9 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
 
     const { txBytes } = await createTransaction({ assetValue, gasBudget, recipient, sender });
     const suiClient = await getSuiClient();
-    const result = await suiClient.signAndExecuteTransaction({ signer, transaction: txBytes });
-    return result.digest;
+    const { digest: txHash } = await suiClient.signAndExecuteTransaction({ signer, transaction: txBytes });
+
+    return txHash;
   }
 
   return {

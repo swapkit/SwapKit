@@ -331,6 +331,9 @@ export function SwapKit<
         return wallet.estimateTransactionFee({ ...params, recipient: address, sender: address });
       })
       .with(Chain.Ripple, (chain) => getWallet(chain).estimateTransactionFee())
+      .with(Chain.Ton, (chain) => getWallet(chain).estimateTransactionFee())
+      .with(Chain.Cardano, (chain) => getWallet(chain).estimateTransactionFee())
+      .with(Chain.Sui, (chain) => getWallet(chain).estimateTransactionFee())
       .otherwise(async () => baseValue);
   }
 

@@ -28,34 +28,35 @@ export * from "./types";
 
 export async function getAddressValidator() {
   const { match } = await import("ts-pattern");
-  const { cosmosValidateAddress } = await import("./cosmos");
   const { evmValidateAddress } = await import("./evm");
-  const { substrateValidateAddress } = await import("./substrate");
-  const { getUTXOAddressValidator } = await import("./utxo");
+  const { getCardanoAddressValidator } = await import("./cardano");
+  const { getCosmosValidateAddress } = await import("./cosmos");
   const { getSolanaAddressValidator } = await import("./solana");
-  const { getValidateNearAddress } = await import("./near");
-  const { rippleValidateAddress } = await import("./ripple");
-  const { radixValidateAddress } = await import("./radix");
+  const { getSuiAddressValidator } = await import("./sui");
   const { getTONAddressValidator } = await import("./ton");
   const { getTronAddressValidator } = await import("./tron");
-  const { getSuiAddressValidator } = await import("./sui");
-  const { getCardanoAddressValidator } = await import("./cardano");
+  const { getUTXOAddressValidator } = await import("./utxo");
+  const { getValidateNearAddress } = await import("./near");
+  const { radixValidateAddress } = await import("./radix");
+  const { rippleValidateAddress } = await import("./ripple");
+  const { substrateValidateAddress } = await import("./substrate");
 
+  const cardanoValidateAddress = await getCardanoAddressValidator();
+  const nearValidateAddress = await getValidateNearAddress();
   const solanaValidateAddress = await getSolanaAddressValidator();
   const suiValidateAddress = await getSuiAddressValidator();
-  const utxoValidateAddress = await getUTXOAddressValidator();
   const tonValidateAddress = await getTONAddressValidator();
   const tronValidateAddress = await getTronAddressValidator();
-  const nearValidateAddress = await getValidateNearAddress();
-  const cardanoValidateAddress = await getCardanoAddressValidator();
+  const utxoValidateAddress = await getUTXOAddressValidator();
 
   return function validateAddress({ address, chain }: { address: string; chain: Chain }) {
     const isValid = match(chain)
       .with(...EVMChains, () => evmValidateAddress({ address }))
       .with(...UTXOChains, () => utxoValidateAddress({ address, chain: chain as UTXOChain }))
-      .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, () =>
-        cosmosValidateAddress({ address, chain: chain as CosmosChain }),
-      )
+      .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, (chain) => {
+        const cosmosValidateAddress = getCosmosValidateAddress(chain);
+        return cosmosValidateAddress(address);
+      })
       .with(Chain.Chainflip, Chain.Polkadot, () =>
         substrateValidateAddress({ address, chain: chain as SubstrateChain }),
       )

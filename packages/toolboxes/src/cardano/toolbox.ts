@@ -11,6 +11,8 @@ async function getProvider() {
   return new BlockfrostProvider(apiKey);
 }
 
+const ADA_ID = "lovelace";
+
 async function getCardanoBalance(address: string) {
   try {
     const { MeshWallet } = await import("@meshsdk/core");
@@ -24,7 +26,7 @@ async function getCardanoBalance(address: string) {
     const balances: AssetValue[] = [];
 
     for (const asset of balance) {
-      if (asset.unit === "lovelace") {
+      if (asset.unit === ADA_ID) {
         const { baseDecimal } = getChainConfig(Chain.Cardano);
         balances.push(AssetValue.from({ chain: Chain.Cardano, fromBaseDecimal: baseDecimal, value: asset.quantity }));
       } else {
@@ -44,11 +46,11 @@ async function getCardanoBalance(address: string) {
 }
 
 export async function getCardanoAddressValidator() {
-  const { resolvePaymentKeyHash } = await import("@meshsdk/core");
+  const { deserializeAddress } = await import("@meshsdk/core");
 
   return (address: string) => {
     try {
-      resolvePaymentKeyHash(address);
+      deserializeAddress(address);
       return true;
     } catch {
       return false;
@@ -93,7 +95,7 @@ export async function getCardanoToolbox(
   }
 
   function estimateTransactionFee() {
-    return Promise.resolve(AssetValue.from({ chain: Chain.Cardano, value: "0.17" }));
+    return Promise.resolve(AssetValue.from({ chain: Chain.Cardano, value: "0.01" }));
   }
 
   async function createTransaction({
@@ -124,14 +126,12 @@ export async function getCardanoToolbox(
     return { tx, unsignedTx };
   }
 
-  async function signTransaction(txParams: Parameters<typeof createTransaction>[0]) {
+  function signTransaction(txParams: string) {
     if (!signer || !("getChangeAddress" in signer)) {
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const { unsignedTx } = await createTransaction(txParams);
-    const signedTx = await signer.signTx(unsignedTx);
-    return signedTx;
+    return signer.signTx(txParams);
   }
 
   async function transfer({
@@ -147,7 +147,8 @@ export async function getCardanoToolbox(
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const signedTx = await signTransaction({ assetValue, memo, recipient });
+    const { unsignedTx } = await createTransaction({ assetValue, memo, recipient });
+    const signedTx = await signTransaction(unsignedTx);
     const provider = await getProvider();
     const txHash = await provider.submitTx(signedTx);
 
