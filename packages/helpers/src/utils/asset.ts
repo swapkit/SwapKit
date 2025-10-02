@@ -22,71 +22,246 @@ export const CommonAssetStrings = [
 
 const ethGasChains = [Chain.Arbitrum, Chain.Aurora, Chain.Base, Chain.Ethereum, Chain.Optimism] as const;
 
-async function getContractDecimals({ chain, to }: { chain: EVMChain; to: string }) {
-  const getDecimalMethodHex = "0x313ce567";
-  const { baseDecimal } = getChainConfig(chain);
-
-  try {
-    const rpcUrl = await getRPCUrl(chain);
-
-    const { result } = await RequestClient.post<{ result: string }>(rpcUrl, {
-      body: JSON.stringify({
-        id: 44,
-        jsonrpc: "2.0",
-        method: "eth_call",
-        params: [{ data: getDecimalMethodHex, to: to.toLowerCase() }, "latest"],
-      }),
-      headers: { accept: "*/*", "cache-control": "no-cache", "content-type": "application/json" },
-    });
-
-    return Number.parseInt(BigInt(result || baseDecimal).toString(), 10);
-  } catch (error) {
-    console.error(`Failed to fetch contract decimals for ${to} on ${chain}:`, error);
-    return baseDecimal;
-  }
-}
-
-async function getRadixAssetDecimal(symbol: string) {
+async function getRadixAssetDecimals(address: string) {
   const { baseDecimal } = getChainConfig(Chain.Radix);
 
-  if (symbol === Chain.Radix) return baseDecimal;
-
   try {
-    const resourceAddress = symbol.split("-")[1]?.toLowerCase();
     const rpcUrl = await getRPCUrl(Chain.Radix);
 
     const { manager } = await RequestClient.post<RadixCoreStateResourceDTO>(`${rpcUrl}/state/resource`, {
-      body: JSON.stringify({ network: "mainnet", resource_address: resourceAddress }),
+      body: JSON.stringify({ network: "mainnet", resource_address: address }),
       headers: { Accept: "*/*", "Content-Type": "application/json" },
     });
 
     return manager.divisibility.value.divisibility;
   } catch (error) {
-    console.error(`Failed to fetch Radix asset decimal for ${symbol}:`, error);
+    console.warn(`Failed to fetch Radix asset decimals for ${address}:`, error);
     return baseDecimal;
   }
 }
 
-async function getEVMAssetDecimal({ chain, symbol }: { chain: EVMChain; symbol: string }) {
-  const { baseDecimal } = getChainConfig(chain);
+async function getRadixAssetTicker(address: string) {
+  try {
+    const rpcUrl = await getRPCUrl(Chain.Radix);
 
-  if (EVMChains.includes(symbol as EVMChain)) return baseDecimal;
+    const response = await RequestClient.post<{
+      items: Array<{
+        address: string;
+        explicit_metadata?: { items: Array<{ key: string; value: { typed: { value: string; type: string } } }> };
+      }>;
+    }>(`${rpcUrl}/state/entity/details`, {
+      body: JSON.stringify({ addresses: [address], opt_ins: { explicit_metadata: ["symbol"] } }),
+      headers: { Accept: "*/*", "Content-Type": "application/json" },
+    });
 
-  const splitSymbol = symbol.split("-");
-  const address = splitSymbol.length === 1 ? undefined : splitSymbol[splitSymbol.length - 1]?.toLowerCase();
-
-  const decimal = await (address?.startsWith("0x") ? getContractDecimals({ chain, to: address }) : baseDecimal);
-
-  return decimal;
+    const symbolMetadata = response.items[0]?.explicit_metadata?.items.find((item) => item.key === "symbol");
+    return symbolMetadata?.value.typed.value || undefined;
+  } catch (error) {
+    console.warn(`Failed to fetch Radix asset symbol for ${address}:`, error);
+    return undefined;
+  }
 }
 
-export function getDecimal({ chain, symbol }: { chain: Chain; symbol: string }) {
+async function callEVMContract({
+  chain,
+  address,
+  methodHex,
+  id,
+}: {
+  chain: EVMChain;
+  address: string;
+  methodHex: string;
+  id: number;
+}) {
+  const rpcUrl = await getRPCUrl(chain);
+  return RequestClient.post<{ result: string }>(rpcUrl, {
+    body: JSON.stringify({
+      id,
+      jsonrpc: "2.0",
+      method: "eth_call",
+      params: [{ data: methodHex, to: address.toLowerCase() }, "latest"],
+    }),
+    headers: { accept: "*/*", "cache-control": "no-cache", "content-type": "application/json" },
+  });
+}
+
+async function decodeABIString(hexResult: string) {
+  if (!hexResult || hexResult === "0x") return "UNKNOWN";
+
+  try {
+    const { AbiCoder } = await import("ethers");
+    const abiCoder = AbiCoder.defaultAbiCoder();
+    const decoded = abiCoder.decode(["string"], hexResult);
+    return decoded[0].trim();
+  } catch (error) {
+    console.warn(`Failed to decode ABI string from ${hexResult}: ${error}`);
+    return "UNKNOWN";
+  }
+}
+
+function decodeABIUint8(hexResult: string, fallback: number) {
+  if (!hexResult || hexResult === "0x") return fallback;
+
+  try {
+    return Number(hexResult);
+  } catch (error) {
+    console.warn(`Failed to decode ABI uint8 from ${hexResult}: ${error}`);
+    return fallback;
+  }
+}
+
+async function getEVMAssetDecimals({ chain, address }: { chain: EVMChain; address: string }) {
+  const { baseDecimal } = getChainConfig(chain);
+
+  const formattedAddress = address.toLowerCase();
+
+  if (address === "" || !formattedAddress.startsWith("0x")) return baseDecimal;
+
+  const decimalResponse = await callEVMContract({ address, chain, id: 2, methodHex: "0x313ce567" }).catch(
+    (error: Error) => {
+      console.warn(`Could not fetch decimals for ${address} on ${chain}: ${error.message}`);
+      return { result: "" };
+    },
+  );
+
+  const decimals = decodeABIUint8(decimalResponse.result, baseDecimal);
+  return decimals;
+}
+
+async function getEVMAssetTicker({ chain, address }: { chain: EVMChain; address: string }) {
+  const formattedAddress = address.toLowerCase();
+
+  if (formattedAddress === "" || !formattedAddress.startsWith("0x")) return undefined;
+
+  const tickerResponse = await callEVMContract({ address, chain, id: 1, methodHex: "0x95d89b41" }).catch(
+    (error: Error) => {
+      console.warn(`Could not fetch symbol for ${address} on ${chain}: ${error.message}`);
+      return { result: "" };
+    },
+  );
+
+  const ticker = await decodeABIString(tickerResponse.result);
+
+  return ticker;
+}
+
+export function fetchTokenInfo({ chain, address }: { chain: Chain; address: string }) {
   const { baseDecimal } = getChainConfig(chain);
 
   return match(chain)
-    .with(...EVMChains, (chain) => getEVMAssetDecimal({ chain, symbol }))
-    .with(Chain.Radix, () => getRadixAssetDecimal(symbol))
-    .otherwise(() => baseDecimal);
+    .with(...EVMChains, async () => {
+      try {
+        const { isAddress, getAddress } = await import("ethers");
+
+        if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
+          return { decimals: baseDecimal, ticker: undefined };
+        }
+
+        const [ticker, decimals] = await Promise.all([
+          getEVMAssetTicker({ address, chain: chain as EVMChain }),
+          getEVMAssetDecimals({ address, chain: chain as EVMChain }),
+        ]);
+
+        return { decimals, ticker };
+      } catch (error) {
+        console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
+        return { decimals: baseDecimal, ticker: undefined };
+      }
+    })
+    .with(Chain.Solana, async () => {
+      if (!address) return { decimals: baseDecimal, ticker: undefined };
+
+      try {
+        const response = await fetch(`https://lite-api.jup.ag/tokens/v2/search?query=${address}`);
+        if (response.ok) {
+          const data = await response.json();
+          const token = Array.isArray(data) ? data[0] : data;
+          if (token) {
+            return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || undefined };
+          }
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch Solana token info for ${address}:`, error);
+      }
+      return { decimals: baseDecimal, ticker: undefined };
+    })
+    .with(Chain.Tron, async () => {
+      if (!address) return { decimals: baseDecimal, ticker: undefined };
+
+      try {
+        const { TronWeb } = await import("tronweb");
+        const rpcUrl = await getRPCUrl(Chain.Tron);
+        const tronWeb = new TronWeb({
+          fullHost: rpcUrl,
+          // Set a default address for read-only calls (required by TronWeb)
+          privateKey: "0000000000000000000000000000000000000000000000000000000000000001",
+        });
+
+        const contract = await tronWeb.contract().at(address);
+
+        const [symbolResult, decimalsResult] = await Promise.all([
+          contract
+            .symbol()
+            .call()
+            .catch((error: Error) => {
+              console.warn(`Could not fetch symbol for ${address} on Tron:`, error);
+              return undefined;
+            }),
+          contract
+            .decimals()
+            .call()
+            .catch((error: Error) => {
+              console.warn(`Could not fetch decimals for ${address} on Tron:`, error);
+              return baseDecimal;
+            }),
+        ]);
+
+        return {
+          decimals: typeof decimalsResult === "number" ? decimalsResult : Number(decimalsResult || baseDecimal),
+          ticker: symbolResult || undefined,
+        };
+      } catch (error) {
+        console.warn(`Failed to fetch Tron token info for ${address}:`, error);
+        return { decimals: baseDecimal, ticker: undefined };
+      }
+    })
+    .with(Chain.Near, async () => {
+      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
+
+      try {
+        const { providers } = await import("near-api-js");
+        const rpcUrl = await getRPCUrl(Chain.Near);
+        const provider = new providers.JsonRpcProvider({ url: rpcUrl });
+
+        const metadata = await provider.query({
+          account_id: address,
+          args_base64: Buffer.from("{}").toString("base64"),
+          finality: "final",
+          method_name: "ft_metadata",
+          request_type: "call_function",
+        });
+
+        const result = JSON.parse(Buffer.from((metadata as any).result).toString());
+
+        return { decimals: result?.decimals || baseDecimal, ticker: result?.symbol };
+      } catch (error) {
+        console.warn(`Failed to fetch Near token info for ${address}:`, error);
+        return { decimals: baseDecimal, ticker: undefined };
+      }
+    })
+    .with(Chain.Radix, async () => {
+      if (!address) return { decimals: baseDecimal, ticker: undefined };
+
+      try {
+        const [ticker, decimals] = await Promise.all([getRadixAssetTicker(address), getRadixAssetDecimals(address)]);
+
+        return { decimals, ticker };
+      } catch (error) {
+        console.warn(`Failed to fetch Radix token info for ${address}:`, error);
+        return { decimals: baseDecimal, ticker: undefined };
+      }
+    })
+    .otherwise(async () => ({ decimals: baseDecimal, ticker: undefined }));
 }
 
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {

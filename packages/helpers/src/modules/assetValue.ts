@@ -5,9 +5,9 @@ import { match } from "ts-pattern";
 import {
   assetFromString,
   type CommonAssetString,
+  fetchTokenInfo,
   getAssetType,
   getCommonAssetInfo,
-  getDecimal,
   isGasAsset,
 } from "../utils/asset";
 import { warnOnce } from "../utils/others";
@@ -26,11 +26,39 @@ const staticTokensMap = new Map<
   { tax?: TokenTax; decimal: number; identifier: string; logoURI?: string }
 >();
 
+const chainAddressIdentifierMap = new Map<string, string>();
+
+const asyncTokenCache = new Map<string, { identifier: string; decimals: number; timestamp: number }>();
+const CACHE_TTL = 3600000;
+
+function getCachedTokenInfo(key: string) {
+  const cached = asyncTokenCache.get(key);
+
+  if (cached?.timestamp && Date.now() - cached.timestamp > CACHE_TTL) {
+    asyncTokenCache.delete(key);
+    return undefined;
+  }
+
+  return cached;
+}
+
+function setCachedTokenInfo(key: string, info: { identifier: string; decimals: number }) {
+  if (asyncTokenCache.size > 1000) {
+    const firstKey = asyncTokenCache.keys().next().value;
+    if (firstKey) asyncTokenCache.delete(firstKey);
+  }
+
+  asyncTokenCache.set(key, { ...info, timestamp: Date.now() });
+}
+
 type ConditionalAssetValueReturn<T extends { asyncTokenLookup?: boolean }> = T["asyncTokenLookup"] extends true
   ? Promise<AssetValue>
   : AssetValue;
 
-type AssetIdentifier = { asset: CommonAssetString | TokenNames } | { asset: string } | { chain: Chain };
+type AssetIdentifier =
+  | { asset: CommonAssetString | TokenNames }
+  | { asset: string }
+  | { chain: Chain; address?: string };
 
 type AssetValueFromParams = AssetIdentifier & {
   value?: NumberPrimitives | SwapKitValueType;
@@ -141,10 +169,28 @@ export class AssetValue extends BigIntArithmetics {
   }: T & AssetValueFromParams): ConditionalAssetValueReturn<T> {
     const parsedValue = value instanceof BigIntArithmetics ? value.getValue("string") : value;
     const assetOrChain = getAssetString(fromAssetOrChain);
+
+    const isChainAddressCombo = assetOrChain.includes(":");
+
+    if (asyncTokenLookup && isChainAddressCombo) {
+      const [chain, address] = assetOrChain.split(":");
+      return (async () => {
+        const tokenData = await fetchTokenData({ address, chain: chain as Chain });
+        return createAssetValue({
+          decimal: tokenData.decimals,
+          identifier: tokenData.identifier,
+          value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue,
+        });
+      })() as ConditionalAssetValueReturn<T>;
+    }
+
+    const fallbackIdentifier = isChainAddressCombo ? assetOrChain.split(":").join(".UNKNOWN-") : assetOrChain;
+
     const { identifier: unsafeIdentifier, decimal: commonAssetDecimal } = getCommonAssetInfo(
-      assetOrChain as CommonAssetString,
+      fallbackIdentifier as CommonAssetString,
     );
-    const { chain, isSynthetic, isTradeAsset } = getAssetInfo(unsafeIdentifier);
+
+    const { chain, isSynthetic, isTradeAsset, address } = getAssetInfo(unsafeIdentifier);
     const { baseDecimal } = getChainConfig(chain);
 
     const token = staticTokensMap.get(
@@ -153,10 +199,22 @@ export class AssetValue extends BigIntArithmetics {
         : (unsafeIdentifier.toUpperCase() as TokenNames),
     );
 
+    if (!token && asyncTokenLookup && !isSynthetic && !isTradeAsset) {
+      return (async () => {
+        const { ticker } = assetFromString(unsafeIdentifier);
+        const tokenData = await fetchTokenData({ address, chain, ticker });
+        return createAssetValue({
+          decimal: tokenData.decimals,
+          identifier: tokenData.identifier,
+          value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue,
+        });
+      })() as ConditionalAssetValueReturn<T>;
+    }
+
     const tokenDecimal = token?.decimal || commonAssetDecimal;
 
     warnOnce({
-      condition: !(asyncTokenLookup || tokenDecimal),
+      condition: !tokenDecimal && !asyncTokenLookup,
       id: `assetValue_static_decimal_not_found_${chain}`,
       warning: `Couldn't find static decimal for one or more tokens on ${chain} (Using default ${baseDecimal} decimal as fallback).
 This can result in incorrect calculations and mess with amount sent on transactions.
@@ -173,11 +231,10 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       ? safeValue(BigInt(parsedValue), fromBaseDecimal)
       : safeValue(parsedValue, decimal);
 
-    const assetValue = asyncTokenLookup
-      ? createAssetValue(identifier, fromBaseDecimal ? adjustedValue : parsedValue)
-      : isSynthetic || isTradeAsset
+    const assetValue =
+      isSynthetic || isTradeAsset
         ? createSyntheticAssetValue(identifier, adjustedValue)
-        : new AssetValue({ decimal, identifier, tax, value: adjustedValue });
+        : createAssetValue({ decimal, identifier, tax, value: adjustedValue });
 
     return assetValue as ConditionalAssetValueReturn<T>;
   }
@@ -195,7 +252,22 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
         ) as TokenNames;
         const tokenDecimal = "decimals" in rest ? rest.decimals : chainConfig.baseDecimal;
 
-        staticTokensMap.set(tokenKey, { decimal: tokenDecimal, identifier });
+        const tokenInfo = {
+          decimal: tokenDecimal,
+          identifier,
+          logoURI: "logoURI" in rest ? (rest.logoURI as string) : undefined,
+          tax: "tax" in rest ? (rest.tax as TokenTax) : undefined,
+        };
+
+        staticTokensMap.set(tokenKey, tokenInfo);
+
+        // Also populate chain:address map for quick lookups
+        if ("address" in rest && rest.address) {
+          const lookupKey = CASE_SENSITIVE_CHAINS.includes(chainConfig.chain)
+            ? `${chainConfig.chain}:${rest.address}`
+            : `${chainConfig.chain}:${rest.address.toUpperCase()}`;
+          chainAddressIdentifierMap.set(lookupKey, identifier);
+        }
       }
     }
 
@@ -205,16 +277,30 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
   static setStaticAssets(
     tokenMap: Map<
       string,
-      { tax?: TokenTax; identifier: string; chain: Chain } & ({ decimal: number } | { decimals: number })
+      { tax?: TokenTax; identifier: string; chain: Chain; address?: string } & (
+        | { decimal: number }
+        | { decimals: number }
+      )
     >,
   ) {
     staticTokensMap.clear();
+    chainAddressIdentifierMap.clear();
+
     for (const [key, value] of tokenMap.entries()) {
       const tokenKey = (
         CASE_SENSITIVE_CHAINS.includes(value.chain) ? value.identifier : value.identifier.toUpperCase()
       ) as TokenNames;
       const tokenDecimal = "decimals" in value ? value.decimals : value.decimal;
-      staticTokensMap.set(key, { ...value, decimal: tokenDecimal, identifier: tokenKey });
+      const tokenInfo = { ...value, decimal: tokenDecimal, identifier: tokenKey };
+
+      staticTokensMap.set(key, tokenInfo);
+
+      if (value.address) {
+        const lookupKey = CASE_SENSITIVE_CHAINS.includes(value.chain)
+          ? `${value.chain}:${value.address}`
+          : `${value.chain}:${value.address.toUpperCase()}`;
+        chainAddressIdentifierMap.set(lookupKey, value.identifier);
+      }
     }
     return true;
   }
@@ -232,22 +318,52 @@ export function getMinAmountByChain(chain: Chain) {
     .otherwise(() => asset.set(0.00000001));
 }
 
-async function createAssetValue(identifier: string, value: NumberPrimitives = 0) {
-  validateIdentifier(identifier);
+async function fetchTokenData({ chain, address, ticker }: { chain: Chain; address?: string; ticker?: string }) {
+  const isCaseSensitiveChain = CASE_SENSITIVE_CHAINS.includes(chain);
 
-  const isCaseSensitiveChain = identifier.includes("SOL.");
+  const cacheKey = isCaseSensitiveChain
+    ? `${chain}:${address || ticker}`
+    : `${chain}:${address || ticker}`.toUpperCase();
 
-  const modifiedIdentifier = isCaseSensitiveChain
-    ? (identifier as TokenNames)
-    : (identifier.toUpperCase() as TokenNames);
-
-  const staticToken = staticTokensMap.get(modifiedIdentifier);
-  const decimal = staticToken?.decimal || (await getDecimal(getAssetInfo(identifier)));
-  if (!staticToken) {
-    staticTokensMap.set(modifiedIdentifier, { decimal, identifier });
+  const cached = getCachedTokenInfo(cacheKey);
+  if (cached) {
+    return cached;
   }
 
-  return new AssetValue({ decimal, identifier, value: safeValue(value, decimal) });
+  if (!address) {
+    const { baseDecimal } = getChainConfig(chain);
+    return { decimals: baseDecimal, identifier: `${chain}.${ticker || "UNKNOWN"}` };
+  }
+
+  const tokenInfo = await fetchTokenInfo({ address, chain });
+
+  const identifier = `${chain}.${tokenInfo.ticker || ticker || "UNKNOWN"}-${address}`;
+
+  warnOnce({
+    condition: !!(!tokenInfo.ticker && ticker),
+    id: `async_token_lookup_failed_${chain}_${address}`,
+    warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
+  });
+
+  // only cache if we got a proper ticker back
+  tokenInfo.ticker && setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier });
+
+  return { decimals: tokenInfo.decimals, identifier };
+}
+
+function createAssetValue({
+  identifier,
+  decimal,
+  value,
+  tax,
+}: {
+  identifier: string;
+  decimal: number;
+  value: NumberPrimitives;
+  tax?: TokenTax;
+}) {
+  validateIdentifier(identifier);
+  return new AssetValue({ decimal, identifier, tax, value: safeValue(value, decimal) });
 }
 
 function createSyntheticAssetValue(identifier: string, value: NumberPrimitives = 0) {
@@ -298,7 +414,20 @@ function validateAssetChain(assetOrChain: AssetIdentifier) {
 function getAssetString(assetOrChain: AssetIdentifier) {
   validateAssetChain(assetOrChain);
 
-  if ("chain" in assetOrChain) return assetOrChain.chain;
+  if ("chain" in assetOrChain) {
+    const { chain, address } = assetOrChain;
+
+    if (address) {
+      const lookupKey = CASE_SENSITIVE_CHAINS.includes(chain as Chain)
+        ? `${chain}:${address}`
+        : `${chain}:${address.toUpperCase()}`;
+      const identifier = chainAddressIdentifierMap.get(lookupKey);
+      if (identifier) return identifier;
+      return lookupKey;
+    }
+
+    return chain;
+  }
 
   const { chain, symbol } = assetFromString(assetOrChain.asset);
   const isNativeChain = getAssetType({ chain, symbol }) === "Native";
@@ -383,7 +512,6 @@ function parseSymbolWithSeparator(symbol: string, useFirst = false) {
 function getAssetBaseInfo({ symbol, chain }: { symbol: string; chain: Chain }) {
   const { ticker, address } = parseSymbolWithSeparator(symbol, chain === Chain.Near);
 
-  // Apply case-sensitivity rules after parsing
   const finalAddress = address && !CASE_SENSITIVE_CHAINS.includes(chain) ? address.toLowerCase() : address;
 
   return { address: finalAddress, ticker };

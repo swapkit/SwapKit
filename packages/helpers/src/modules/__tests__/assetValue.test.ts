@@ -432,7 +432,7 @@ describe("AssetValue", () => {
   });
 
   describe("from bigint", () => {
-    test.todo("returns asset value with correct decimal", async () => {
+    test("returns asset value with correct decimal", async () => {
       const avaxUSDCAsset = await AssetValue.from({
         asset: `${Chain.Avalanche}.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e`,
         asyncTokenLookup: true,
@@ -1203,5 +1203,273 @@ describe("getMinAmountByChain", () => {
     expect(getMinAmountByChain(Chain.Avalanche).getValue("string")).toBe("0.00000001");
     expect(getMinAmountByChain(Chain.Arbitrum).getValue("string")).toBe("0.00000001");
     expect(getMinAmountByChain(Chain.Optimism).getValue("string")).toBe("0.00000001");
+  });
+});
+
+describe("asyncTokenLookup", () => {
+  describe("EVM chains with asyncTokenLookup", () => {
+    test("fetches Ethereum USDC token info with chain and address only", async () => {
+      const assetValue = await AssetValue.from({
+        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        asyncTokenLookup: true,
+        chain: Chain.Ethereum,
+        value: 1000,
+      });
+
+      expect(assetValue.decimal).toBe(6); // USDC has 6 decimals
+      expect(assetValue.symbol).toContain("USDC");
+      expect(assetValue.getValue("string")).toBe("1000");
+    });
+
+    test("fetches Ethereum WETH token info with asset string and asyncTokenLookup", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "ETH.WETH-0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        asyncTokenLookup: true,
+        value: 0.5,
+      });
+
+      expect(assetValue.decimal).toBe(18);
+      expect(assetValue.symbol).toBe("WETH-0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
+      expect(assetValue.ticker).toBe("WETH");
+      expect(assetValue.getValue("string")).toBe("0.5");
+    });
+
+    test("fetches Avalanche USDC.e with chain and address", async () => {
+      const assetValue = await AssetValue.from({
+        address: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+        asyncTokenLookup: true,
+        chain: Chain.Avalanche,
+        value: 100,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toContain("USDC");
+      expect(assetValue.getValue("string")).toBe("100");
+    });
+
+    test("fetches BSC BUSD with full asset string", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "BSC.BUSD-0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+        asyncTokenLookup: true,
+        value: 50.25,
+      });
+
+      expect(assetValue.decimal).toBe(18);
+      expect(assetValue.symbol).toBe("BUSD-0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56");
+      expect(assetValue.ticker).toBe("BUSD");
+      expect(assetValue.getValue("string")).toBe("50.25");
+    });
+
+    test("fetches Arbitrum USDC native with chain and address", async () => {
+      const assetValue = await AssetValue.from({
+        address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+        asyncTokenLookup: true,
+        chain: Chain.Arbitrum,
+        fromBaseDecimal: 6,
+        value: 1000000,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.getBaseValue("string")).toBe("1000000");
+      expect(assetValue.getValue("string")).toBe("1");
+      expect(assetValue.toString()).toBe("ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831");
+    });
+  });
+
+  describe("Solana with asyncTokenLookup", () => {
+    test("fetches Solana USDC with chain and address", async () => {
+      const assetValue = await AssetValue.from({
+        address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        asyncTokenLookup: true,
+        chain: Chain.Solana,
+        value: 250.75,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toContain("USDC");
+      expect(assetValue.getValue("string")).toBe("250.75");
+    });
+
+    test("fetches Solana token with asset string", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "SOL.USDT-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+        asyncTokenLookup: true,
+        value: 100,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toBe("USDT-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB");
+      expect(assetValue.ticker).toBe("USDT");
+    });
+  });
+
+  describe("Tron with asyncTokenLookup", () => {
+    test("fetches Tron USDT with chain and address", async () => {
+      const assetValue = await AssetValue.from({
+        address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        asyncTokenLookup: true,
+        chain: Chain.Tron,
+        value: 500,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toContain("USDT");
+      expect(assetValue.getValue("string")).toBe("500");
+    });
+
+    test("fetches Tron token with asset string", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "TRON.USDC-TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8",
+        asyncTokenLookup: true,
+        value: 1234.56,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toBe("USDC-TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8");
+      expect(assetValue.getValue("string")).toBe("1234.56");
+    });
+  });
+
+  describe("Near with asyncTokenLookup", () => {
+    test("fetches Near wNEAR with chain and address", async () => {
+      const assetValue = await AssetValue.from({
+        address: "wrap.near",
+        asyncTokenLookup: true,
+        chain: Chain.Near,
+        value: 10,
+      });
+
+      expect(assetValue.decimal).toBe(24);
+      expect(assetValue.symbol).toContain("wNEAR");
+      expect(assetValue.getValue("string")).toBe("10");
+    });
+
+    test("fetches Near USDC with asset string", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "NEAR.USDC-17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+        asyncTokenLookup: true,
+        value: 999.99,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toBe("USDC-17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1");
+      expect(assetValue.ticker).toBe("USDC");
+      expect(assetValue.getValue("string")).toBe("999.99");
+    });
+
+    test("fetches Near token with .near address format", async () => {
+      const assetValue = await AssetValue.from({
+        address: "usdt.tether-token.near",
+        asyncTokenLookup: true,
+        chain: Chain.Near,
+        value: 2500,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.toString()).toBe("NEAR.USDT-usdt.tether-token.near");
+      expect(assetValue.getValue("string")).toBe("2500");
+    });
+  });
+
+  describe("Edge cases and caching", () => {
+    test("caches token info for subsequent calls", async () => {
+      const start1 = performance.now();
+      const firstCall = await AssetValue.from({
+        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        asyncTokenLookup: true,
+        chain: Chain.Ethereum,
+        value: 100,
+      });
+      const duration1 = performance.now() - start1;
+
+      const start2 = performance.now();
+      const secondCall = await AssetValue.from({
+        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        asyncTokenLookup: true,
+        chain: Chain.Ethereum,
+        value: 200,
+      });
+      const duration2 = performance.now() - start2;
+
+      expect(firstCall.decimal).toBe(6);
+      expect(secondCall.decimal).toBe(6);
+      expect(firstCall.getValue("string")).toBe("100");
+      expect(secondCall.getValue("string")).toBe("200");
+
+      expect(duration2).toBeLessThan(duration1 / 5);
+    });
+
+    test("handles invalid token address gracefully", async () => {
+      const assetValue = await AssetValue.from({
+        address: "0xinvalidaddress",
+        asyncTokenLookup: true,
+        chain: Chain.Ethereum,
+        value: 10,
+      });
+
+      expect(assetValue.decimal).toBe(18);
+      expect(assetValue.getValue("string")).toBe("10");
+    });
+
+    test("works with fromBaseDecimal parameter", async () => {
+      const assetValue = await AssetValue.from({
+        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        asyncTokenLookup: true,
+        chain: Chain.Ethereum,
+        fromBaseDecimal: 6,
+        value: 1000000,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.getBaseValue("string")).toBe("1000000");
+      expect(assetValue.getValue("string")).toBe("1");
+    });
+
+    test("synchronous call without asyncTokenLookup", async () => {
+      await AssetValue.loadStaticAssets();
+
+      const assetValue = AssetValue.from({
+        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        chain: Chain.Ethereum,
+        value: 100,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.getValue("string")).toBe("100");
+      expect(assetValue.symbol).toBe("USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
+
+      const assetValueWrongAddress = AssetValue.from({ address: "0xVERYWRONG", chain: Chain.Ethereum, value: 100 });
+
+      expect(assetValueWrongAddress.decimal).toBe(18);
+      expect(assetValueWrongAddress.getValue("string")).toBe("100");
+      expect(assetValueWrongAddress.toString()).toBe("ETH.UNKNOWN-0xverywrong");
+    });
+
+    test("handles Radix with symbol lookup", async () => {
+      const assetValue = await AssetValue.from({
+        asyncTokenLookup: true,
+        chain: Chain.Radix,
+        symbol: "XRD",
+        value: 50,
+      });
+
+      expect(assetValue.decimal).toBe(18);
+      expect(assetValue.symbol).toBe("XRD");
+      expect(assetValue.getValue("string")).toBe("50");
+    });
+  });
+
+  describe("Mixed symbol and address scenarios", () => {
+    test("uses on-chain data when both symbol and address provided", async () => {
+      const assetValue = await AssetValue.from({
+        asset: "ETH.WRONG-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        asyncTokenLookup: true,
+        value: 100,
+      });
+
+      expect(assetValue.decimal).toBe(6);
+      expect(assetValue.symbol).toContain("USDC");
+      expect(assetValue.address).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
+    });
   });
 });

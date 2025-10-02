@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Chain, getChainConfig } from "@swapkit/types";
 
-import { assetFromString, getAssetType, getDecimal } from "../asset";
+import { assetFromString, fetchTokenInfo, getAssetType } from "../asset";
 
 // TODO: this should be handled via AssetValue
 const tickerMap: Record<string, string> = {
@@ -48,7 +48,7 @@ describe("getAssetType", () => {
   });
 });
 
-describe("getDecimal", () => {
+describe("fetchTokenInfo", () => {
   /**
    * Test out native
    */
@@ -59,9 +59,9 @@ describe("getDecimal", () => {
   for (const chain of filteredChains) {
     describe(chain, () => {
       test(`returns proper decimal for native ${chain} asset`, async () => {
-        const decimal = await getDecimal({ chain, symbol: chain });
+        const { decimals } = await fetchTokenInfo({ address: "", chain });
         const { baseDecimal } = getChainConfig(chain);
-        expect(decimal).toBe(baseDecimal);
+        expect(decimals).toBe(baseDecimal);
       });
     });
   }
@@ -69,34 +69,34 @@ describe("getDecimal", () => {
   describe("ETH", () => {
     // TODO: if too many requests, this will fail due to timeout
     test.todo("returns proper decimal for eth and it's assets", async () => {
-      const ethDecimal = await getDecimal({ chain: Chain.Ethereum, symbol: "ETH" });
+      const { decimals: ethDecimal } = await fetchTokenInfo({ address: "", chain: Chain.Ethereum });
       expect(ethDecimal).toBe(getChainConfig(Chain.Ethereum).baseDecimal);
       await Bun.sleep(500);
 
-      const usdcDecimal = await getDecimal({
+      const { decimals: usdcDecimal } = await fetchTokenInfo({
+        address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         chain: Chain.Ethereum,
-        symbol: "USDC-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       });
       expect(usdcDecimal).toBe(6);
       await Bun.sleep(500);
 
-      const wbtcDecimal = await getDecimal({
+      const { decimals: wbtcDecimal } = await fetchTokenInfo({
+        address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
         chain: Chain.Ethereum,
-        symbol: "WBTC-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
       });
       expect(wbtcDecimal).toBe(8);
       await Bun.sleep(500);
 
-      const kindDecimal = await getDecimal({
+      const { decimals: kindDecimal } = await fetchTokenInfo({
+        address: "0x4618519de4c304f3444ffa7f812dddc2971cc688",
         chain: Chain.Ethereum,
-        symbol: "KIND-0x4618519de4c304f3444ffa7f812dddc2971cc688",
       });
       expect(kindDecimal).toBe(8);
       await Bun.sleep(500);
 
-      const shitcoinDecimal = await getDecimal({
+      const { decimals: shitcoinDecimal } = await fetchTokenInfo({
+        address: "0xCa208BfD69ae6D2667f1FCbE681BAe12767c0078",
         chain: Chain.Ethereum,
-        symbol: "HOMI-0xCa208BfD69ae6D2667f1FCbE681BAe12767c0078",
       });
       expect(shitcoinDecimal).toBe(0);
       await Bun.sleep(500);
@@ -106,36 +106,36 @@ describe("getDecimal", () => {
   describe("AVAX", () => {
     // TODO: if too many requests, this will fail due to timeout
     test.todo("returns proper decimal for avax and it's assets", async () => {
-      const avaxDecimal = await getDecimal({ chain: Chain.Avalanche, symbol: "AVAX" });
+      const { decimals: avaxDecimal } = await fetchTokenInfo({ address: "", chain: Chain.Avalanche });
       expect(avaxDecimal).toBe(getChainConfig(Chain.Avalanche).baseDecimal);
 
-      const wbtceDecimal = await getDecimal({
+      const { decimals: wbtceDecimal } = await fetchTokenInfo({
+        address: "0x50b7545627a5162f82a992c33b87adc75187b218",
         chain: Chain.Avalanche,
-        symbol: "WBTC.e-0x50b7545627a5162f82a992c33b87adc75187b218",
       });
       expect(wbtceDecimal).toBe(8);
 
-      const btcbDecimal = await getDecimal({
+      const { decimals: btcbDecimal } = await fetchTokenInfo({
+        address: "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
         chain: Chain.Avalanche,
-        symbol: "BTC.b-0x152b9d0FdC40C096757F570A51E494bd4b943E50",
       });
       expect(btcbDecimal).toBe(8);
 
-      const timeDecimal = await getDecimal({
+      const { decimals: timeDecimal } = await fetchTokenInfo({
+        address: "0xb54f16fB19478766A268F172C9480f8da1a7c9C3",
         chain: Chain.Avalanche,
-        symbol: "TIME-0xb54f16fB19478766A268F172C9480f8da1a7c9C3",
       });
       expect(timeDecimal).toBe(9);
 
-      const usdtDecimal = await getDecimal({
+      const { decimals: usdtDecimal } = await fetchTokenInfo({
+        address: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
         chain: Chain.Avalanche,
-        symbol: "USDT-0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
       });
       expect(usdtDecimal).toBe(6);
 
-      const usdcDecimal = await getDecimal({
+      const { decimals: usdcDecimal } = await fetchTokenInfo({
+        address: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
         chain: Chain.Avalanche,
-        symbol: "USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
       });
       expect(usdcDecimal).toBe(6);
     });
@@ -143,13 +143,13 @@ describe("getDecimal", () => {
 
   describe("Radix", () => {
     test.todo("returns proper decimal for radix and it's assets", async () => {
-      const radixDecimal = await getDecimal({ chain: Chain.Radix, symbol: "XRD" });
+      const { decimals: radixDecimal } = await fetchTokenInfo({ address: "", chain: Chain.Radix });
       expect(radixDecimal).toBe(getChainConfig(Chain.Radix).baseDecimal);
       await Bun.sleep(500);
 
-      const xwBTCDecimal = await getDecimal({
+      const { decimals: xwBTCDecimal } = await fetchTokenInfo({
+        address: "xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
         chain: Chain.Radix,
-        symbol: "xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
       });
       expect(xwBTCDecimal).toBe(8);
       await Bun.sleep(500);
