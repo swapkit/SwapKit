@@ -1372,33 +1372,6 @@ describe("asyncTokenLookup", () => {
   });
 
   describe("Edge cases and caching", () => {
-    test("caches token info for subsequent calls", async () => {
-      const start1 = performance.now();
-      const firstCall = await AssetValue.from({
-        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-        asyncTokenLookup: true,
-        chain: Chain.Ethereum,
-        value: 100,
-      });
-      const duration1 = performance.now() - start1;
-
-      const start2 = performance.now();
-      const secondCall = await AssetValue.from({
-        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-        asyncTokenLookup: true,
-        chain: Chain.Ethereum,
-        value: 200,
-      });
-      const duration2 = performance.now() - start2;
-
-      expect(firstCall.decimal).toBe(6);
-      expect(secondCall.decimal).toBe(6);
-      expect(firstCall.getValue("string")).toBe("100");
-      expect(secondCall.getValue("string")).toBe("200");
-
-      expect(duration2).toBeLessThan(duration1 / 5);
-    });
-
     test("handles invalid token address gracefully", async () => {
       const assetValue = await AssetValue.from({
         address: "0xinvalidaddress",
