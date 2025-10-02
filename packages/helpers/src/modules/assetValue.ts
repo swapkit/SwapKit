@@ -339,13 +339,11 @@ async function fetchTokenData({ chain, address, ticker }: { chain: Chain; addres
 
   const identifier = `${chain}.${tokenInfo.ticker || ticker || "UNKNOWN"}-${address}`;
 
-  if (!tokenInfo.ticker && ticker) {
-    warnOnce({
-      condition: true,
-      id: `async_token_lookup_failed_${chain}_${address}`,
-      warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
-    });
-  }
+  warnOnce({
+    condition: !!(!tokenInfo.ticker && ticker),
+    id: `async_token_lookup_failed_${chain}_${address}`,
+    warning: `Could not fetch token metadata for ${chain}:${address} from chain. Using user-provided ticker (${ticker}) with baseDecimal (${tokenInfo.decimals}).`,
+  });
 
   // only cache if we got a proper ticker back
   tokenInfo.ticker && setCachedTokenInfo(cacheKey, { decimals: tokenInfo.decimals, identifier });
