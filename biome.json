@@ -20,7 +20,8 @@
       "!**/coverage",
       "!**/MsgCompiled.ts",
       "!**/.astro",
-      "!**/docs"
+      "!**/docs",
+      "!*.lock"
     ],
     "maxSize": 5242880
   },
@@ -95,5 +96,6 @@
         "useAwait": "error"
       }
     }
-  }
+  },
+  "vcs": { "clientKind": "git", "enabled": true, "useIgnoreFile": true }
 }

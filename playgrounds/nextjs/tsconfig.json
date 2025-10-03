@@ -6,6 +6,7 @@
     "disableSizeLimit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "lib": ["DOM", "ES2020", "ES2021", "ES2022"],
