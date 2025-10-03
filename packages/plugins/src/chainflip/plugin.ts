@@ -28,7 +28,7 @@ export const ChainflipPlugin = createPlugin({
 
       const wallet = getWallet(sellAsset.chain as Exclude<Chain, Chain.Radix>);
 
-      if (!wallet) {
+      if (!wallet || !("transfer" in wallet)) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
 

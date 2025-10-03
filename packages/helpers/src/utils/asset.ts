@@ -3,7 +3,6 @@ import { Chain, type EVMChain, EVMChains, getChainConfig, UTXOChains } from "@sw
 import { match } from "ts-pattern";
 import type { AssetValue } from "../modules/assetValue";
 import { RequestClient } from "../modules/requestClient";
-import type { RadixCoreStateResourceDTO } from "../types/radix";
 import { getRPCUrl } from "./chains";
 
 export type CommonAssetString = (typeof CommonAssetStrings)[number] | Chain;
@@ -20,6 +19,14 @@ export const CommonAssetStrings = [
   `${Chain.Radix}.XRD`,
 ] as const;
 
+type RadixResourceResponse = {
+  at_ledger_state?: any;
+  manager: {
+    resource_type: string;
+    divisibility: { substate_type: string; is_locked: boolean; value: { divisibility: number } };
+  };
+  owner_role?: any;
+};
 const ethGasChains = [Chain.Arbitrum, Chain.Aurora, Chain.Base, Chain.Ethereum, Chain.Optimism] as const;
 
 async function getRadixAssetDecimals(address: string) {
@@ -28,12 +35,12 @@ async function getRadixAssetDecimals(address: string) {
   try {
     const rpcUrl = await getRPCUrl(Chain.Radix);
 
-    const { manager } = await RequestClient.post<RadixCoreStateResourceDTO>(`${rpcUrl}/state/resource`, {
+    const { manager } = await RequestClient.post<RadixResourceResponse>(`${rpcUrl}/state/resource`, {
       body: JSON.stringify({ network: "mainnet", resource_address: address }),
       headers: { Accept: "*/*", "Content-Type": "application/json" },
     });
 
-    return manager.divisibility.value.divisibility;
+    return manager?.divisibility?.value?.divisibility;
   } catch (error) {
     console.warn(`Failed to fetch Radix asset decimals for ${address}:`, error);
     return baseDecimal;

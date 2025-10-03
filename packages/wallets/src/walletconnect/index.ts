@@ -377,7 +377,7 @@ async function getWalletconnect(
     }
 
     return { accounts, client, disconnect, session, signer };
-  } catch (_e) {
+  } catch {
     // Errors are handled by returning undefined
   } finally {
     if (modal) {

@@ -1,10 +1,14 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-import { SKConfig, SwapKit } from "@swapkit/core";
-import { KEYSTORE_SUPPORTED_CHAINS, keystoreWallet } from "../src/keystore";
+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { SKConfig } from "@swapkit/helpers";
+import { createKeystoreWallet, KEYSTORE_SUPPORTED_CHAINS } from "../src";
 import { testKeystoreWalletData } from "./fixtures";
 
-beforeEach(() => {
+beforeAll(() => {
   SKConfig.set({ apiKeys: { swapKit: process.env.TEST_API_KEY }, envs: { isDev: true } });
+});
+
+afterAll(() => {
+  SKConfig.reinitialize();
 });
 
 describe("keystore - Reading address", () => {
@@ -14,10 +18,7 @@ describe("keystore - Reading address", () => {
       if (!process.env.TEST_PHRASE) {
         return console.error("TEST_PHRASE is not set. Skipping test.");
       }
-
-      const swapKitClient = SwapKit({ wallets: keystoreWallet });
-      await swapKitClient.connectKeystore(KEYSTORE_SUPPORTED_CHAINS, process.env.TEST_PHRASE);
-      const wallet = swapKitClient.getAllWallets();
+      const wallet = await createKeystoreWallet({ chains: KEYSTORE_SUPPORTED_CHAINS, phrase: process.env.TEST_PHRASE });
 
       for (const [chain, address] of Object.entries(testKeystoreWalletData.addresses)) {
         const chainWallet = wallet[chain as keyof typeof wallet];
@@ -37,18 +38,17 @@ describe("keystore - Reading balances", () => {
         return console.error("TEST_PHRASE is not set. Skipping test.");
       }
 
-      const swapKitClient = SwapKit({ wallets: keystoreWallet });
-      await swapKitClient.connectKeystore(KEYSTORE_SUPPORTED_CHAINS, process.env.TEST_PHRASE);
+      const wallet = await createKeystoreWallet({ chains: KEYSTORE_SUPPORTED_CHAINS, phrase: process.env.TEST_PHRASE });
 
       const failedChains: [string, string][] = [];
 
       for (const chain of KEYSTORE_SUPPORTED_CHAINS) {
         try {
-          const wallet = await swapKitClient.getWalletWithBalance(chain);
-          const firstBalance = wallet?.balance?.[0];
+          const { balance } = wallet[chain];
+          const firstBalance = balance?.[0];
           if (firstBalance) {
             console.info(firstBalance.toString(), firstBalance.getValue("string"));
-            expect(wallet.balance.length).toBeGreaterThan(0);
+            expect(balance.length).toBeGreaterThan(0);
           }
         } catch (error: any) {
           failedChains.push([chain, error?.message]);

@@ -34,7 +34,7 @@ function isValidAddress(input: any) {
   try {
     decodeAddress(input);
     return true;
-  } catch (_error) {
+  } catch {
     return false;
   }
 }
@@ -62,7 +62,7 @@ function decodeAddress(address: string) {
     if (decoded) {
       return decoded;
     }
-  } catch (_error) {
+  } catch {
     // Try to decode as cashaddr if base58 decoding fails.
   }
   try {
@@ -70,7 +70,7 @@ function decodeAddress(address: string) {
     if (decoded) {
       return decoded;
     }
-  } catch (_error) {
+  } catch {
     // Try to decode as bitpay if cashaddr decoding fails.
   }
   throw new SwapKitError("toolbox_utxo_invalid_address", { address });
@@ -107,7 +107,7 @@ function decodeBase58Address(address: string) {
       default:
         return;
     }
-  } catch (_error) {
+  } catch {
     return;
   }
 }
@@ -116,7 +116,7 @@ function decodeCashAddress(address: string) {
   if (address.indexOf(":") !== -1) {
     try {
       return decodeCashAddressWithPrefix(address);
-    } catch (_error) {
+    } catch {
       // Try to decode as legacy if cashaddr decoding fails.
     }
   } else {
@@ -124,7 +124,7 @@ function decodeCashAddress(address: string) {
     for (const prefix of prefixes) {
       try {
         return decodeCashAddressWithPrefix(`${prefix}:${address}`);
-      } catch (_error) {
+      } catch {
         // Try next prefix if decoding fails.
       }
     }
@@ -143,7 +143,7 @@ function decodeCashAddressWithPrefix(address: string) {
       network: prefix === "bitcoincash" ? UtxoNetwork.Mainnet : UtxoNetwork.Testnet,
       type: type === "P2PKH" ? Type.P2PKH : Type.P2SH,
     };
-  } catch (_error) {
+  } catch {
     return;
   }
 }

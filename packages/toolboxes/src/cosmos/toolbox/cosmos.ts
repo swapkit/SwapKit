@@ -16,7 +16,6 @@ import {
   getChainConfig,
   getRPCUrl,
   NetworkDerivationPath,
-  SKConfig,
   SwapKitError,
   SwapKitNumber,
   type TCLikeChain,
@@ -40,7 +39,7 @@ export async function fetchFeeRateFromSwapKit(chainId: ChainId, safeDefault: num
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch {
     return safeDefault;
   }
 }
@@ -173,7 +172,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     getAddress,
     getBalance: async (address: string, _potentialScamFilter?: boolean) => {
       const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
-      return await Promise.all(
+      const balances = await Promise.all(
         denomBalances
           .filter(({ denom }) => denom && !denom.includes("IBC/"))
           .map(({ denom, amount }) => {
@@ -185,6 +184,12 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
             return getAssetFromDenom(fullDenom, amount);
           }),
       );
+
+      if (balances.length === 0) {
+        return [AssetValue.from({ chain })];
+      }
+
+      return balances;
     },
     getBalanceAsDenoms: cosmosBalanceDenomsGetter(rpcUrl),
     getFees: () => getFees(chain, SafeDefaultFeeValues[chain]),
@@ -214,40 +219,13 @@ export async function getFeeRateFromSwapKit(chainId: ChainId, safeDefault: numbe
     const responseGasRate = response.find((gas) => gas.chainId === chainId)?.value;
 
     return responseGasRate ? Number.parseFloat(responseGasRate) : safeDefault;
-  } catch (_e) {
+  } catch {
     return safeDefault;
   }
 }
 
-/**
- * @deprecated use getFeeRateFromSwapKit instead
- */
-export const getFeeRateFromThorswap = getFeeRateFromSwapKit;
-
-export function cosmosValidateAddress({
-  address,
-  chain,
-  prefix: chainPrefix,
-}: { address: string } & ({ prefix: string; chain?: undefined } | { chain: CosmosChain; prefix?: undefined })) {
-  const prefix = chainPrefix || getPrefix(chain);
-
-  if (!(prefix && address)) {
-    throw new SwapKitError("toolbox_cosmos_validate_address_prefix_not_found");
-  }
-
-  return getCosmosValidateAddress(prefix)(address);
-}
-
 export function estimateTransactionFee({ assetValue: { chain } }: { assetValue: AssetValue }) {
   return AssetValue.from({ chain, value: getMinTransactionFee(chain) });
-}
-
-function getPrefix<C extends CosmosChain>(chain?: C) {
-  const { isStagenet } = SKConfig.get("envs");
-  const useStagenetPrefix = chain ? [Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) && isStagenet : false;
-  const basePrefix = chain ? CosmosChainPrefixes[chain] : undefined;
-
-  return useStagenetPrefix ? `s${basePrefix}` : basePrefix;
 }
 
 async function getFees(chain: Chain, safeDefault: number) {
@@ -278,7 +256,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-function getCosmosValidateAddress(prefix: string) {
+export function getCosmosValidateAddress(prefix: string) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 
@@ -287,7 +265,7 @@ function getCosmosValidateAddress(prefix: string) {
       const normalized = bech32.encode(prefix, words);
 
       return normalized === address.toLocaleLowerCase();
-    } catch (_error) {
+    } catch {
       return false;
     }
   };

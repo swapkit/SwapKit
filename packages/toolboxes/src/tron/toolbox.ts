@@ -306,22 +306,30 @@ export const createTronToolbox = async (
         warning: `Tron API getBalance failed: ${error instanceof Error ? error.message : error}`,
       });
 
-      // Fallback: get TRX and USDT directly
-      const balances: AssetValue[] = [];
+      try {
+        const balances: AssetValue[] = [];
 
-      const trxBalanceInSun = await tronWeb.trx.getBalance(address);
-      if (trxBalanceInSun && Number(trxBalanceInSun) > 0) {
-        balances.push(AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 6, value: trxBalanceInSun }));
+        const trxBalanceInSun = await tronWeb.trx.getBalance(address);
+        if (trxBalanceInSun && Number(trxBalanceInSun) > 0) {
+          balances.push(AssetValue.from({ chain: Chain.Tron, fromBaseDecimal: 6, value: trxBalanceInSun }));
+        }
+
+        const usdtBalance = await fetchTokenBalance(address, TRON_USDT_CONTRACT);
+        if (usdtBalance) {
+          balances.push(
+            AssetValue.from({ asset: `TRON.USDT-${TRON_USDT_CONTRACT}`, fromBaseDecimal: 6, value: usdtBalance }),
+          );
+        }
+
+        if (balances.length === 0) {
+          return fallbackBalance;
+        }
+
+        return balances;
+      } catch (fallbackError) {
+        console.error("Tron balance fetch failed:", fallbackError);
+        return fallbackBalance;
       }
-
-      const usdtBalance = await fetchTokenBalance(address, TRON_USDT_CONTRACT);
-      if (usdtBalance) {
-        balances.push(
-          AssetValue.from({ asset: `TRON.USDT-${TRON_USDT_CONTRACT}`, fromBaseDecimal: 6, value: usdtBalance }),
-        );
-      }
-
-      return balances;
     }
   };
 

@@ -11,6 +11,8 @@ function getRpcBody(chain: Chain | StagenetChain) {
     .with(...CosmosChains, ...StagenetChains, () => ({ id: 1, jsonrpc: "2.0", method: "status", params: {} }))
     .with(Chain.Polkadot, Chain.Chainflip, () => ({ id: 1, jsonrpc: "2.0", method: "system_health", params: [] }))
     .with(Chain.Solana, () => ({ id: 1, jsonrpc: "2.0", method: "getHealth" }))
+    .with(Chain.Sui, () => ({ id: 1, jsonrpc: "2.0", method: "sui_getSystemState", params: [] }))
+    .with(Chain.Ton, () => ({ id: 1, jsonrpc: "2.0", method: "getAddressInformation", params: { address: "" } }))
     .with(Chain.Tron, Chain.Radix, () => "")
     .with(Chain.Near, () => ({ id: "dontcare", jsonrpc: "2.0", method: "status", params: [] }))
     .with(Chain.Ripple, () => ({ id: 1, jsonrpc: "2.0", method: "ping", params: [{}] }))
@@ -47,23 +49,28 @@ const rpcCacheTTL = 1000 * 60 * 2; // 2 minutes
 
 export async function getRPCUrl(chain: Chain | StagenetChain) {
   const { isStagenet } = SKConfig.get("envs");
-  const rpcUrls = SKConfig.get("rpcUrls");
-  const fallbackUrls = SKConfig.get("fallbackRpcUrls");
+  const [rpcUrl = "", ...fallbackUrls] = SKConfig.get("rpcUrls")[chain];
 
-  if (isStagenet) {
-    return rpcUrls[chain];
+  if (!rpcUrl) {
+    warnOnce({
+      condition: true,
+      id: "helpers_chain_no_public_or_set_rpc_url",
+      warning: `No public or set RPC URL found for chain. Please ensure you configured rpcUrls for ${chain}.`,
+    });
+    throw new SwapKitError("helpers_chain_no_public_or_set_rpc_url", { chain });
   }
+
+  if (isStagenet) return rpcUrl;
 
   const cached = rpcCache.get(chain);
   if (cached && Date.now() - cached.timestamp < rpcCacheTTL) {
     return cached.url;
   }
 
-  const primaryUrl = rpcUrls[chain];
-  const primaryIsWorking = await testRPCConnection(chain, primaryUrl);
+  const primaryIsWorking = await testRPCConnection(chain, rpcUrl);
 
   if (!primaryIsWorking) {
-    for (const fallbackUrl of fallbackUrls[chain]) {
+    for (const fallbackUrl of fallbackUrls) {
       const fallbackIsWorking = await testRPCConnection(chain, fallbackUrl);
 
       if (fallbackIsWorking) {
@@ -73,8 +80,8 @@ export async function getRPCUrl(chain: Chain | StagenetChain) {
     }
   }
 
-  rpcCache.set(chain, { timestamp: Date.now(), url: primaryUrl });
-  return primaryUrl;
+  rpcCache.set(chain, { timestamp: Date.now(), url: rpcUrl });
+  return rpcUrl;
 }
 
 /**

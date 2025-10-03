@@ -4,7 +4,6 @@ import {
   applyFeeMultiplierToBigInt,
   Chain,
   type ChainSigner,
-  ContractAddress,
   type EVMChain,
   FeeOption,
   isGasAsset,
@@ -91,7 +90,7 @@ export function evmValidateAddress({ address }: { address: string }) {
   try {
     getAddress(address);
     return true;
-  } catch (_error) {
+  } catch {
     return false;
   }
 }
@@ -154,17 +153,17 @@ export function getChecksumAddressFromAsset(asset: Asset, chain: EVMChain) {
   throw new SwapKitError("toolbox_evm_invalid_gas_asset_address");
 }
 
-const baseAssetAddress: Record<EVMChain, string> = {
-  [Chain.Arbitrum]: ContractAddress.ARB,
-  [Chain.Aurora]: ContractAddress.AURORA,
-  [Chain.Avalanche]: ContractAddress.AVAX,
-  [Chain.Base]: ContractAddress.BASE,
-  [Chain.Berachain]: ContractAddress.BERA,
-  [Chain.BinanceSmartChain]: ContractAddress.BSC,
-  [Chain.Ethereum]: ContractAddress.ETH,
-  [Chain.Gnosis]: ContractAddress.GNO,
-  [Chain.Optimism]: ContractAddress.OP,
-  [Chain.Polygon]: ContractAddress.MATIC,
+export const ContractAddress: Record<EVMChain, string> = {
+  [Chain.Arbitrum]: "0x0000000000000000000000000000000000000000",
+  [Chain.Aurora]: "0x0000000000000000000000000000000000000000",
+  [Chain.Avalanche]: "0x0000000000000000000000000000000000000000",
+  [Chain.Base]: "0x0000000000000000000000000000000000000000",
+  [Chain.Berachain]: "0x0000000000000000000000000000000000000000",
+  [Chain.BinanceSmartChain]: "0x0000000000000000000000000000000000000000",
+  [Chain.Ethereum]: "0x0000000000000000000000000000000000000000",
+  [Chain.Gnosis]: "0x0000000000000000000000000000000000000000",
+  [Chain.Optimism]: "0x4200000000000000000000000000000000000042",
+  [Chain.Polygon]: "0x0000000000000000000000000000000000001010",
 };
 
 const ethGasChains = [Chain.Arbitrum, Chain.Aurora, Chain.Base, Chain.Optimism] as string[];
@@ -176,12 +175,12 @@ export function getTokenAddress({ chain, symbol, ticker }: Asset, baseAssetChain
     const isEVMAsset = ethGasChains.includes(chain) && symbol === "ETH" && ticker === "ETH";
 
     if (isBaseAsset || isBSCBNB || isEVMAsset) {
-      return baseAssetAddress[baseAssetChain];
+      return ContractAddress[baseAssetChain];
     }
 
     // strip 0X only - 0x is still valid
     return getAddress(symbol.slice(ticker.length + 1).replace(/^0X/, ""));
-  } catch (_error) {
+  } catch {
     return null;
   }
 }
@@ -208,7 +207,6 @@ export function getEstimateGasPrices({
     return async function estimateGasPrices() {
       try {
         const { gasPrice } = await provider.getFeeData();
-
         if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
 
         return { [FeeOption.Average]: { gasPrice }, [FeeOption.Fast]: { gasPrice }, [FeeOption.Fastest]: { gasPrice } };
@@ -555,7 +553,7 @@ function getSendTransaction({ provider, signer, isEIP1559Compatible = true, chai
       try {
         const response = await signer.sendTransaction(txObject);
         return response.hash;
-      } catch (_error) {
+      } catch {
         const txHex = await signer.signTransaction({ ...txObject, from: address });
         const response = await provider.broadcastTransaction(txHex);
         return response.hash;

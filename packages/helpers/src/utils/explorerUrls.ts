@@ -36,11 +36,13 @@ export function getExplorerTxUrl({ chain, txHash }: { txHash: string; chain: Cha
       Chain.Dogecoin,
       Chain.Zcash,
       Chain.Radix,
+      Chain.Tron,
       () => `${explorerUrl}/transaction/${txHash.toLowerCase()}`,
     )
     .with(Chain.Near, () => `${explorerUrl}/txns/${txHash}`)
     .with(Chain.Ripple, () => `${explorerUrl}/transactions/${txHash}`)
-    .with(Chain.Tron, () => `${explorerUrl}/#/transaction/${txHash}`)
+    .with(Chain.Sui, () => `${explorerUrl}/txblock/${txHash}`)
+    .with(Chain.Cardano, Chain.Ton, () => `${explorerUrl}/tx/${txHash}`)
     .otherwise(() => "");
 }
 
@@ -48,7 +50,6 @@ export function getExplorerAddressUrl({ chain, address }: { address: string; cha
   const { explorerUrl } = getChainConfig(chain);
 
   return match(chain)
-    .with(Chain.Solana, Chain.Radix, () => `${explorerUrl}/account/${address}`)
-    .with(Chain.Tron, () => `${explorerUrl}/#/address/${address}`)
+    .with(Chain.Solana, Chain.Sui, Chain.Radix, () => `${explorerUrl}/account/${address}`)
     .otherwise(() => `${explorerUrl}/address/${address}`);
 }

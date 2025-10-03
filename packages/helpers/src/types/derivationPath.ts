@@ -1,48 +1,11 @@
-import type { Chain } from "@swapkit/types";
+import { AllChains, type Chain, getChainConfig } from "@swapkit/types";
 
-export enum ContractAddress {
-  ARB = "0x0000000000000000000000000000000000000000",
-  AURORA = "0x0000000000000000000000000000000000000000",
-  AVAX = "0x0000000000000000000000000000000000000000",
-  BASE = "0x0000000000000000000000000000000000000000",
-  BERA = "0x0000000000000000000000000000000000000000",
-  ETH = "0x0000000000000000000000000000000000000000",
-  BSC = "0x0000000000000000000000000000000000000000",
-  GNO = "0x0000000000000000000000000000000000000000",
-  MATIC = "0x0000000000000000000000000000000000001010",
-  OP = "0x4200000000000000000000000000000000000042",
-}
+export type DerivationPathArray = ReturnType<typeof getChainConfig>["networkDerivationPath"];
 
-export type DerivationPathArray = [number, number, number, number, number?];
-
-export const NetworkDerivationPath: Record<Chain, DerivationPathArray> = {
-  ARB: [44, 60, 0, 0, 0],
-  AURORA: [44, 60, 0, 0, 0],
-  AVAX: [44, 60, 0, 0, 0],
-  BASE: [44, 60, 0, 0, 0],
-  BCH: [44, 145, 0, 0, 0],
-  BERA: [44, 60, 0, 0, 0],
-  BSC: [44, 60, 0, 0, 0],
-  BTC: [84, 0, 0, 0, 0],
-  DASH: [44, 5, 0, 0, 0],
-  DOGE: [44, 3, 0, 0, 0],
-  DOT: [0, 0, 0, 0, 0],
-  ETH: [44, 60, 0, 0, 0],
-  FLIP: [0, 0, 0, 0, 0],
-  GAIA: [44, 118, 0, 0, 0],
-  GNO: [44, 60, 0, 0, 0],
-  HARBOR: [44, 931, 0, 0, 0],
-  KUJI: [44, 118, 0, 0, 0],
-  LTC: [84, 2, 0, 0, 0],
-  MAYA: [44, 931, 0, 0, 0],
-  NEAR: [44, 397, 0, 0, 0],
-  NOBLE: [44, 118, 0, 0, 0],
-  OP: [44, 60, 0, 0, 0],
-  POL: [44, 60, 0, 0, 0],
-  SOL: [44, 501, 0, 0, 0],
-  THOR: [44, 931, 0, 0, 0],
-  TRON: [44, 195, 0, 0, 0],
-  XRD: [0, 0, 0, 0, 0],
-  XRP: [44, 144, 0, 0, 0],
-  ZEC: [44, 133, 0, 0, 0],
-};
+export const NetworkDerivationPath = AllChains.reduce(
+  (acc, chain) => {
+    acc[chain] = getChainConfig(chain).networkDerivationPath;
+    return acc;
+  },
+  {} as Record<Chain, DerivationPathArray>,
+);

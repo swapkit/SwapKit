@@ -1,26 +1,42 @@
 import { AssetValue, createSwapKit } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
+let currentConfig: { walletConnectProjectId?: string; brokerEndpoint?: string; swapKit?: string } = {};
 
 export const getSwapKitClient = ({
   walletConnectProjectId,
   brokerEndpoint,
+  swapKit,
 }: {
   walletConnectProjectId?: string;
   brokerEndpoint?: string;
+  swapKit?: string;
 } = {}) => {
-  if (skClient) {
+  const configChanged =
+    currentConfig.walletConnectProjectId !== walletConnectProjectId ||
+    currentConfig.brokerEndpoint !== brokerEndpoint ||
+    currentConfig.swapKit !== swapKit;
+
+  if (skClient && !configChanged) {
     return skClient;
   }
+
+  if (configChanged && skClient) {
+    skClient.disconnectAll();
+    skClient = undefined;
+  }
+
+  currentConfig = { brokerEndpoint, swapKit, walletConnectProjectId };
 
   skClient = createSwapKit({
     config: {
       apiKeys: {
         keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-        swapKit: process.env.TEST_API_KEY,
+        swapKit: swapKit || process.env.TEST_API_KEY || "",
         walletConnectProjectId: walletConnectProjectId || "",
         xaman: process.env.XAMAN_API_KEY || "",
       },
+      envs: { isDev: true },
       integrations: {
         chainflip: { brokerUrl: brokerEndpoint || "" },
         keepKey: {
@@ -34,6 +50,14 @@ export const getSwapKitClient = ({
   });
 
   return skClient;
+};
+
+export const resetSwapKitClient = () => {
+  if (skClient) {
+    skClient.disconnectAll();
+  }
+  skClient = undefined;
+  currentConfig = {};
 };
 
 await AssetValue.loadStaticAssets();

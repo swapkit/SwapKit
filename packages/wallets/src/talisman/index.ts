@@ -64,7 +64,7 @@ async function getWeb3WalletMethods({
     if (chain !== Chain.Ethereum) {
       await switchEVMWalletNetwork(provider, chain, toolbox.getNetworkParams());
     }
-  } catch (_error) {
+  } catch {
     throw new SwapKitError({
       errorKey: "wallet_failed_to_add_or_switch_network",
       info: { chain, wallet: WalletOption.TALISMAN },

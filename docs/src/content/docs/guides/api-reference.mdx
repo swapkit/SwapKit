@@ -1,9 +1,3 @@
----
-title: API Reference
-description: Complete reference for SwapKit API methods and endpoints
----
-
-import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
 
 The `SwapKitApi` provides access to swap quotes, price feeds, token lists, and other essential data. All methods are available through the `@swapkit/helpers/api` import.
 
@@ -275,41 +269,6 @@ const tokens = await SwapKitApi.getStaticTokenList('UNISWAP_V2');
     name: 'USD Coin'
   }
 ]
-```
-
-### getLogoForAsset
-
-Get logo URL for any asset:
-
-```typescript
-// @noErrorValidation
-
-const logoUrl = SwapKitApi.getLogoForAsset(
-  "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-);
-
-const ethLogo = SwapKitApi.getLogoForAsset("ETH.ETH");
-```
-
-### getChainLogoForAsset
-
-Get chain logo for any asset:
-
-```typescript
-// @noErrorValidation
-
-const chainLogo = SwapKitApi.getChainLogoForAsset(
-  "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-);
-```
-
-### getProviderLogo
-
-Get logo URL for token list providers:
-
-```typescript
-// @noErrorValidation
-const providerLogo = await SwapKitApi.getProviderLogo("1inch");
 ```
 
 ## New Provider Support
@@ -625,32 +584,6 @@ const nearChannel = await SwapKitApi.createNearChannel({
     networkFee: '50000000000000000000000'
   }
 }
-```
-
-### Microgard API
-
-Access THORChain microgard services:
-
-```typescript
-// @noErrorValidation
-
-const thorname = await SwapKitApi.microgard.getTHORNameDetails("myname");
-
-const names = await SwapKitApi.microgard.getTHORNamesByOwner("thor1...");
-
-const names = await SwapKitApi.microgard.getTHORNamesByAddress("0x...");
-
-const pools = await SwapKitApi.microgard.getTHORChainPools("7d");
-
-const positions = await SwapKitApi.microgard.getLiquidityPositions([
-  "thor1...",
-  "thor2...",
-]);
-
-const address = await SwapKitApi.microgard.getTNSChainAddress({
-  chain: "ETH",
-  tns: "myname",
-});
 ```
 
 ### THORNode API

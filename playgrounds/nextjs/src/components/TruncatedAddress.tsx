@@ -20,7 +20,7 @@ export function TruncatedAddress({ address }: TruncatedAddressProps) {
       setIsCopied(true);
       toast.success("Address copied to clipboard");
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (_error) {
+    } catch {
       toast.error("Failed to copy address");
     }
   };

@@ -1,4 +1,8 @@
 
+---
+title: Advanced Features
+---
+
 This guide covers advanced SwapKit features for building sophisticated DeFi applications.
 
 ## Multi-Chain Operations
@@ -360,7 +364,7 @@ class TokenRegistry {
 
     AssetValue.setStaticAssets(new Map([[token.identifier, {
       identifier: token.identifier,
-      chain: token.chain as any,
+      chain: token.chain,
       decimal: token.decimals
     }]]));
   }
@@ -414,7 +418,7 @@ class TransactionTracker {
           clearInterval(interval);
           this.onFailed(txHash, status);
         }
-      } catch (error) {}
+      } catch {}
     }, 10000);
   }
 

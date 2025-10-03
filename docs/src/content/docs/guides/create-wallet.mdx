@@ -48,7 +48,7 @@ export const myCustomWallet = createWallet({
       }
 
       for (const chain of filteredChains) {
-        const provider = (window as any).ethereum;
+        const provider = window.ethereum;
 
         if (!provider) {
           throw new Error("Provider not found");
@@ -121,7 +121,7 @@ export const customHardwareWallet = createWallet({
     }
 
     function createHardwareProvider(deviceId: string, chain: Chain) {
-      return {} as any;
+      return {};
     }
 
     async function connectCustomHardware(
@@ -235,7 +235,7 @@ describe("MyCustomWallet", () => {
           .fn()
           .mockResolvedValue(["0x742d35Cc6634C0532925a3b844Bc454e4438f44e"]),
       },
-    } as any;
+    };
 
     swapKit = SwapKit({
       wallets: {

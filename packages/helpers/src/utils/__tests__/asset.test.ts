@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { Chain, getChainConfig } from "@swapkit/types";
+import { AllChains, Chain, getChainConfig } from "@swapkit/types";
 
 import { assetFromString, fetchTokenInfo, getAssetType } from "../asset";
 
@@ -26,7 +26,7 @@ describe("getAssetType", () => {
 
   describe("when isSynth is false", () => {
     describe("for gas assets on given chain", () => {
-      for (const chain of Object.values(Chain)) {
+      for (const chain of AllChains) {
         test(`should return "Native" for chain ${chain} asset`, () => {
           const ticker = tickerMap[chain] || chain;
           const result = getAssetType({ chain: chain as Chain, symbol: ticker });
@@ -37,7 +37,7 @@ describe("getAssetType", () => {
     });
 
     describe("for non-gas assets on given chain", () => {
-      for (const chain of Object.values(Chain)) {
+      for (const chain of AllChains) {
         test(`should return ${chain} for chain ${chain} asset`, () => {
           const result = getAssetType({ chain: chain as Chain, symbol: "USDT" });
 
@@ -52,9 +52,7 @@ describe("fetchTokenInfo", () => {
   /**
    * Test out native
    */
-  const filteredChains = Object.values(Chain).filter(
-    (c) => ![Chain.Ethereum, Chain.Avalanche].includes(c as typeof Chain.Ethereum),
-  );
+  const filteredChains = AllChains.filter((c) => ![Chain.Ethereum, Chain.Avalanche].includes(c));
 
   for (const chain of filteredChains) {
     describe(chain, () => {

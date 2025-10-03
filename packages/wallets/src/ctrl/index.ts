@@ -141,7 +141,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
           const networkParams = toolbox.getNetworkParams();
           await switchEVMWalletNetwork(provider, chain, networkParams);
         }
-      } catch (_error) {
+      } catch {
         throw new SwapKitError({
           errorKey: "wallet_failed_to_add_or_switch_network",
           info: { chain, wallet: WalletOption.CTRL },

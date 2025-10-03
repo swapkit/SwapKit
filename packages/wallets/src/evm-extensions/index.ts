@@ -62,7 +62,7 @@ export const getWeb3WalletMethods = async ({
     try {
       const networkParams = toolbox.getNetworkParams();
       await switchEVMWalletNetwork(provider, chain, networkParams);
-    } catch (_error) {
+    } catch {
       throw new SwapKitError("wallet_evm_extensions_failed_to_switch_network", { chain });
     }
   }

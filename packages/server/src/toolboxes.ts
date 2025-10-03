@@ -6,5 +6,6 @@ export * from "@swapkit/toolboxes/radix";
 export * from "@swapkit/toolboxes/ripple";
 export * from "@swapkit/toolboxes/solana";
 export * from "@swapkit/toolboxes/substrate";
+export * from "@swapkit/toolboxes/ton";
 export * from "@swapkit/toolboxes/tron";
 export * from "@swapkit/toolboxes/utxo";

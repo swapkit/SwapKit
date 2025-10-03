@@ -68,7 +68,7 @@ const validateAddress = (address: string, networkPrefix: number) => {
     encodeAddress(decodedAddress, "ss58", networkPrefix);
 
     return true;
-  } catch (_error) {
+  } catch {
     return false;
   }
 };

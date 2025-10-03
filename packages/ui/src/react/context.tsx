@@ -41,7 +41,7 @@ export function SwapKitProvider<const PluginNames extends PluginName[]>({
       const { client, connectMethod } = await getSkClient({ pluginNames, walletOption });
 
       // @ts-expect-error
-      await client[connectMethod as keyof typeof client](chains);
+      await client[connectMethod](chains);
       // @ts-expect-error
       setClient(client);
       return client;

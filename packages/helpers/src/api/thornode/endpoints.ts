@@ -1,4 +1,5 @@
-import { AssetValue, Chain, RequestClient, SKConfig, StagenetChain } from "@swapkit/helpers";
+import { AssetValue, RequestClient, SKConfig } from "@swapkit/helpers";
+import { MAYAConfig, StagenetMAYAConfig, StagenetTHORConfig, THORConfig } from "@swapkit/types";
 import type {
   InboundAddressesItem,
   LastBlockItem,
@@ -16,18 +17,16 @@ import type {
 
 function baseUrl(type?: THORNodeType) {
   const { isStagenet } = SKConfig.get("envs");
-  const nodeUrls = SKConfig.get("nodeUrls");
 
   switch (type) {
     case "mayachain": {
-      const mayaNodeUrl = nodeUrls[isStagenet ? StagenetChain.Maya : Chain.Maya];
-
-      return `${mayaNodeUrl}/mayachain`;
+      const nodeUrl = isStagenet ? StagenetMAYAConfig.nodeUrl : MAYAConfig.nodeUrl;
+      return `${nodeUrl}/mayachain`;
     }
     default: {
-      const thorNodeUrl = nodeUrls[isStagenet ? StagenetChain.THORChain : Chain.THORChain];
+      const nodeUrl = isStagenet ? StagenetTHORConfig.nodeUrl : THORConfig.nodeUrl;
 
-      return `${thorNodeUrl}/thorchain`;
+      return `${nodeUrl}/thorchain`;
     }
   }
 }
@@ -68,8 +67,7 @@ export async function getTHORNodeTNSDetails({
   try {
     const result = await RequestClient.get<THORNodeTNSDetails>(`${getNameServiceBaseUrl(type)}/${name}`);
     return result;
-  } catch (_error) {
-    // If we get an error, the name doesn't exist and is available for registration
+  } catch {
     return { affiliate_collector_rune: "", aliases: [], expire_block_height: 0, name, owner: "", preferred_asset: "" };
   }
 }

@@ -88,7 +88,7 @@ export async function getSolanaAddressValidator() {
     try {
       const pubkey = new PublicKey(address);
       return PublicKey.isOnCurve(pubkey.toBytes());
-    } catch (_) {
+    } catch {
       return false;
     }
   };
@@ -113,6 +113,12 @@ export async function getSolanaToolbox(
     return signer?.publicKey ? getAddressFromPubKey(signer.publicKey) : "";
   }
 
+  function getBalance(addressParam?: string) {
+    const address = addressParam || getAddress();
+    if (!address) throw new SwapKitError("core_wallet_connection_not_found");
+    return getSolanaBalance(address);
+  }
+
   return {
     broadcastTransaction: broadcastTransaction(getConnection),
     createKeysForPath,
@@ -122,11 +128,7 @@ export async function getSolanaToolbox(
     getAddress,
     getAddressFromPubKey,
     getAddressValidator: getSolanaAddressValidator,
-    getBalance: (addressParam?: string) => {
-      const address = addressParam || getAddress();
-      if (!address) throw new SwapKitError("core_wallet_connection_not_found");
-      return getSolanaBalance(address);
-    },
+    getBalance,
     getConnection,
     getPubkeyFromAddress,
     signTransaction: signTransaction(getConnection, signer),
@@ -187,6 +189,7 @@ function createAssetTransaction(getConnection: () => Promise<Connection>) {
         }),
       );
     }
+
     if (assetValue.address) {
       return createSolanaTokenTransaction({
         amount: assetValue.getBaseValue("number"),
@@ -243,7 +246,7 @@ async function createSolanaTokenTransaction({
   try {
     await getAccount(connection, recipientSPLAddress);
     recipientAccountExists = true;
-  } catch (_) {
+  } catch {
     // Recipient's associated token account doesn't exist
   }
 

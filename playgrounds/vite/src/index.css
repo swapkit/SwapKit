@@ -1,29 +1,132 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #e0e0e0;
+  background-color: #0a0a0a;
+}
+
+#root {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+h3,
+h4 {
+  margin: 0 0 16px 0;
+  color: #fff;
+}
+
+input,
+button,
+select,
+textarea {
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #e0e0e0;
+  outline: none;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background-color: #222;
+  border-color: #555;
+}
+
+button {
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #2a2a2a;
+}
+
+button:hover:not(:disabled) {
+  background-color: #333;
+  border-color: #444;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+select {
+  cursor: pointer;
+}
+
+select[multiple] {
+  padding: 4px;
+}
+
+select option {
+  padding: 6px 8px;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+select option:checked {
+  color: white;
+  background-color: #2563eb;
+}
+
+label.label {
+  display: inline-block;
+  padding: 8px 12px;
+  cursor: pointer;
+  background-color: #2a2a2a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+label.label:hover {
+  background-color: #333;
+  border-color: #444;
+}
+
 label.label input[type="file"] {
   position: absolute;
   top: -1000px;
 }
 
-.label {
-  display: inline-block;
-  padding: 5px;
-  cursor: pointer;
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-}
-
 .label:invalid + span {
-  color: #f00;
-}
-.label:valid + span {
-  color: #0f0;
+  color: #ef4444;
 }
 
-html,
-body,
-input,
-button,
-select,
-textarea {
-  color: #ccc;
-  background-color: #000;
+.label:valid + span {
+  color: #22c55e;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -1,5 +1,5 @@
 import { Chain, type ChainId, StagenetChain } from "./_enums";
-import { CosmosChainConfigs } from "./cosmos";
+import { CosmosChainConfigs, StagenetMAYAConfig, StagenetTHORConfig } from "./cosmos";
 import { EVMChainConfigs } from "./evm";
 import { OtherChainConfigs } from "./others";
 import { SubstrateChainConfigs } from "./substrate";
@@ -46,8 +46,62 @@ export function getChainConfig<T extends keyof ChainConfigMap>(chainOrChainId: T
   return (chainConfig || {}) as ChainConfigMap[T];
 }
 
+const { chainIdToChain, chainToBaseDecimal, chainToBlockTime, explorerUrls, rpcUrls } = AllChains.reduce(
+  (acc, chain) => {
+    const { chainId, baseDecimal, blockTime, explorerUrl, rpcUrls } = getChainConfig(chain);
+
+    acc.chainIdToChain[chainId] = chain;
+    acc.chainToBaseDecimal[chain] = baseDecimal;
+    acc.chainToBlockTime[chain] = blockTime;
+    acc.explorerUrls[chain] = explorerUrl;
+    acc.rpcUrls[chain] = rpcUrls[0] || "";
+    return acc;
+  },
+  {
+    chainIdToChain: {},
+    chainToBaseDecimal: {},
+    chainToBlockTime: {},
+    explorerUrls: {},
+    rpcUrls: {
+      [StagenetChain.Maya]: StagenetMAYAConfig.rpcUrls[0],
+      [StagenetChain.THORChain]: StagenetTHORConfig.rpcUrls[0],
+    },
+  } as {
+    chainIdToChain: Record<ChainId, Chain>;
+    chainToBaseDecimal: Record<Chain, number>;
+    chainToBlockTime: Record<Chain, number>;
+    explorerUrls: Record<Chain, string>;
+    rpcUrls: Record<Chain | StagenetChain, string>;
+  },
+);
+
+export const NODE_URLS = {
+  [Chain.THORChain]: "https://thornode.ninerealms.com",
+  [Chain.Maya]: "https://mayanode.mayachain.info",
+  [StagenetChain.THORChain]: "https://stagenet-thornode.ninerealms.com",
+  [StagenetChain.Maya]: "https://stagenet.mayanode.mayachain.info",
+};
+
 /**
- * Note: ChainToChainId will be discontinued in future versions.
+ * @example
+ * ```diff
+ * -const rpcUrl = RPC_URLS[Chain.Ethereum];
+ * +const { rpcUrls: [rpcUrl] } = getChainConfig(Chain.Ethereum);
+ * ```
+ */
+export const RPC_URLS: Record<Chain | StagenetChain, string> = rpcUrls;
+
+/**
+ * @example
+ * ```diff
+ * -const explorerUrl = EXPLORER_URLS[Chain.Ethereum];
+ * +const { explorerUrl } = getChainConfig(Chain.Ethereum);
+ */
+export const EXPLORER_URLS: Record<Chain, string> = explorerUrls;
+
+/**
+ *
+ * Note: ChainIdToChain will be discontinued in future versions.
  * Please use getChainConfig instead.
  * @example
  * ```diff
@@ -70,11 +124,7 @@ export const ChainToChainId = Object.fromEntries(
  * +const { chain } = getChainConfig(ChainId.Ethereum);
  * ```
  */
-export const ChainIdToChain = Object.fromEntries(
-  AllChainConfigs.flatMap(({ chainId, chain }) => [[chainId, chain] as const]),
-) as {
-  readonly [K in ChainId]: Extract<ChainConfig, { chainId: K }>["chain"];
-};
+export const ChainIdToChain = chainIdToChain;
 
 /**
  * Note: BaseDecimal will be discontinued in future versions.
@@ -85,11 +135,7 @@ export const ChainIdToChain = Object.fromEntries(
  * +const { baseDecimal } = getChainConfig(Chain.Ethereum);
  * ```
  */
-export const BaseDecimal = Object.fromEntries(
-  AllChainConfigs.flatMap(({ baseDecimal, chain }) => [[chain, baseDecimal] as const]),
-) as {
-  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["baseDecimal"];
-};
+export const BaseDecimal = chainToBaseDecimal;
 
 /**
  * Note: BlockTimes will be discontinued in future versions.
@@ -100,8 +146,4 @@ export const BaseDecimal = Object.fromEntries(
  * +const { blockTime } = getChainConfig(Chain.Ethereum);
  * ```
  */
-export const BlockTimes = Object.fromEntries(
-  AllChainConfigs.flatMap(({ blockTime, chain }) => [[chain, blockTime] as const]),
-) as {
-  readonly [K in Chain]: Extract<ChainConfig, { chain: K }>["blockTime"];
-};
+export const BlockTimes = chainToBlockTime;

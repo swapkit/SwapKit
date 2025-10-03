@@ -58,7 +58,7 @@ export function getFeeMultiplierAsBigInt(feeOption: FeeOption = FeeOption.Averag
  * @param feeOption - The fee option (Average, Fast, Fastest)
  * @returns The multiplied fee value as BigInt
  */
-export function applyFeeMultiplierToBigInt(value: bigint, feeOption: FeeOption = FeeOption.Average): bigint {
+export function applyFeeMultiplierToBigInt(value: bigint, feeOption: FeeOption = FeeOption.Average) {
   const { numerator, denominator } = getFeeMultiplierAsBigInt(feeOption);
   return (value * numerator) / denominator;
 }

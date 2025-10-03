@@ -76,55 +76,74 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
   };
 
   return (
-    <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
-      <div>
-        <div>
-          <span>Input Asset:</span>
-          {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ color: "#999", fontSize: 12 }}>
+          <span style={{ fontWeight: 600 }}>Input Asset:</span> {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
         </div>
-
-        <div>
-          <span>Output Asset:</span>
-          {outputAsset?.toSignificant(6)} {outputAsset?.ticker}
+        <div style={{ color: "#999", fontSize: 12 }}>
+          <span style={{ fontWeight: 600 }}>Output Asset:</span> {outputAsset?.toSignificant(6)} {outputAsset?.ticker}
         </div>
       </div>
 
-      <div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
-          <span>Input Amount:</span>
+          <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Input Amount:</label>
           <input
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.0"
+            style={{ fontSize: 13, width: "100%" }}
             value={inputAssetValue?.toSignificant(inputAssetValue.decimal)}
           />
         </div>
 
-        <button disabled={!(inputAsset && outputAsset)} onClick={fetchQuote} type="button">
+        <button
+          disabled={!(inputAsset && outputAsset)}
+          onClick={fetchQuote}
+          style={{
+            backgroundColor: "#2563eb",
+            borderColor: "#2563eb",
+            color: "#fff",
+            fontSize: 12,
+            padding: "10px 16px",
+          }}
+          type="button">
           {loading ? "Loading..." : "Get Quote"}
         </button>
       </div>
 
       {routes.length > 0 && (
-        <div>
-          <div>
-            <span>Routes:</span>
-            {routes.map((route) => (
-              <div key={route.targetAddress}>
-                {/* {route.meta?.} ({route.providers.join(",")}){" "} */}
-                {route?.providers?.includes(ProviderName.CHAINFLIP) && (
-                  <div>
-                    <label>
-                      <input
-                        checked={useChainflipBoost}
-                        onChange={(e) => setUseChainflipBoost(e.target.checked)}
-                        type="checkbox"
-                      />
-                      Use Chainflip
-                    </label>
-                  </div>
-                )}
-                <button onClick={() => swap(route, inputAssetValue)} type="button">
-                  {"SWAP =>"} Estimated Output: {route.expectedBuyAmount} {outputAsset?.ticker} ($
+        <div style={{ borderTop: "1px solid #222", display: "flex", flexDirection: "column", gap: 12, paddingTop: 16 }}>
+          <div style={{ color: "#999", fontSize: 12, fontWeight: 600 }}>AVAILABLE ROUTES</div>
+          {routes.map((route) => (
+            <div
+              key={route.targetAddress}
+              style={{
+                backgroundColor: "#1a1a1a",
+                border: "1px solid #2a2a2a",
+                borderRadius: 6,
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                padding: 12,
+              }}>
+              {route?.providers?.includes(ProviderName.CHAINFLIP) && (
+                <label style={{ alignItems: "center", color: "#999", display: "flex", fontSize: 11, gap: 6 }}>
+                  <input
+                    checked={useChainflipBoost}
+                    onChange={(e) => setUseChainflipBoost(e.target.checked)}
+                    type="checkbox"
+                  />
+                  Use Chainflip Boost
+                </label>
+              )}
+              <div style={{ color: "#ccc", fontSize: 12 }}>
+                <div style={{ marginBottom: 4 }}>
+                  Expected Output: <span style={{ color: "#fff", fontWeight: 600 }}>{route.expectedBuyAmount}</span>{" "}
+                  {outputAsset?.ticker}
+                </div>
+                <div style={{ color: "#666", fontSize: 11 }}>
+                  ~$
                   {new SwapKitNumber(route.expectedBuyAmount)
                     .mul(
                       route.meta.assets?.find(
@@ -132,12 +151,22 @@ export const SwapInputs = ({ skClient, inputAsset, outputAsset, handleSwap }: Pr
                       )?.price || 0,
                     )
                     .toFixed(4)}
-                  )
-                </button>
-                {/* {feeBestRoute && <div>{feeBestRoute.toString()}</div>} */}
+                </div>
               </div>
-            ))}
-          </div>
+              <button
+                onClick={() => swap(route, inputAssetValue)}
+                style={{
+                  backgroundColor: "#16a34a",
+                  borderColor: "#16a34a",
+                  color: "#fff",
+                  fontSize: 12,
+                  padding: "8px 14px",
+                }}
+                type="button">
+                Execute Swap
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

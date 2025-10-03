@@ -71,7 +71,7 @@ export async function getSwapQuote(json: QuoteRequest) {
     }
 
     return parsedResponse.data;
-  } catch (_error) {
+  } catch {
     // throw new SwapKitError("api_v2_invalid_response", error);
     return response;
   }

@@ -1,5 +1,4 @@
 import { resolve } from "node:path";
-import reactScan from "@react-scan/vite-plugin-react-scan";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
@@ -39,7 +38,6 @@ export default defineConfig({
       },
     }),
     react(),
-    reactScan({ autoDisplayNames: true, debug: true }),
     wasm(),
     topLevelAwait(),
   ].concat(
@@ -62,6 +60,8 @@ export default defineConfig({
       https: "https-browserify",
       os: "os-browserify/browser",
       path: "path-browserify",
+      react: resolve("../../node_modules/react"),
+      "react-dom": resolve("../../node_modules/react-dom"),
       stream: "stream-browserify",
     },
   },

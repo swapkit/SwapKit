@@ -1,5 +1,17 @@
 # @swapkit/types
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1498](https://github.com/swapkit/SwapKit/pull/1498) [`3192cc0`](https://github.com/swapkit/SwapKit/commit/3192cc00a132dfc02715829586b3cb6ed94ca15f) Thanks [@ice-chillios](https://github.com/ice-chillios)! - New Chains: ADA, SUI, TON
+
+### Patch Changes
+
+- [#1516](https://github.com/swapkit/SwapKit/pull/1516) [`053ea04`](https://github.com/swapkit/SwapKit/commit/053ea04567dc10a6df3e0869262056a856ab966e) Thanks [@towanTG](https://github.com/towanTG)! - Updates Tracker types
+
+- [#1498](https://github.com/swapkit/SwapKit/pull/1498) [`3192cc0`](https://github.com/swapkit/SwapKit/commit/3192cc00a132dfc02715829586b3cb6ed94ca15f) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Migrate to @swapkit/types
+
 ## 0.1.4
 
 ### Patch Changes

@@ -5,6 +5,7 @@ export enum Chain {
   Base = "BASE",
   Berachain = "BERA",
   BinanceSmartChain = "BSC",
+  Cardano = "ADA",
   Bitcoin = "BTC",
   BitcoinCash = "BCH",
   Cosmos = "GAIA",
@@ -26,6 +27,8 @@ export enum Chain {
   Ripple = "XRP",
   THORChain = "THOR",
   Solana = "SOL",
+  Sui = "SUI",
+  Ton = "TON",
   Tron = "TRON",
   Zcash = "ZEC",
 }
@@ -44,8 +47,6 @@ export enum StagenetChain {
  * The network configuration will be migrated to a more streamlined approach with one object per chain.
  */
 export enum ChainId {
-  // Full-name properties - will be discontinued in future versions
-  // Please use the short-handle properties above (e.g., ARB instead of Arbitrum)
   Arbitrum = "42161",
   Aurora = "1313161554",
   Avalanche = "43114",
@@ -54,6 +55,7 @@ export enum ChainId {
   BinanceSmartChain = "56",
   Bitcoin = "bitcoin",
   BitcoinCash = "bitcoincash",
+  Cardano = "cardano",
   Chainflip = "chainflip",
   Cosmos = "cosmoshub-4",
   Dash = "dash",
@@ -76,6 +78,8 @@ export enum ChainId {
   THORChain = "thorchain-1",
   THORChainStagenet = "thorchain-stagenet-v2",
   Solana = "solana",
+  Sui = "sui",
+  Ton = "ton",
   Tron = "728126428",
   Zcash = "zcash",
 }

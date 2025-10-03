@@ -1,4 +1,4 @@
-import { AssetValue, Chain, getExplorerTxUrl, SwapKitApi, type THORNameDetails } from "@swapkit/sdk";
+import { AllChains, AssetValue, Chain, getExplorerTxUrl, SwapKitApi, type THORNameDetails } from "@swapkit/sdk";
 import { useCallback, useState } from "react";
 import type { SwapKitClient } from "../swapKitClient";
 
@@ -51,7 +51,7 @@ export default function TNS({ skClient }: { skClient: SwapKitClient }) {
           <div style={{ display: "flex", flex: 1, flexDirection: "row" }}>
             <div>
               <select onChange={(e) => setSelectedChain(e.target.value as Chain)}>
-                {Object.values(Chain).map((chain) => (
+                {AllChains.map((chain) => (
                   <option key={chain} value={chain}>
                     {chain}
                   </option>

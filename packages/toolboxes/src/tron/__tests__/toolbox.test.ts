@@ -1,9 +1,6 @@
-import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { AssetValue, Chain, SKConfig } from "@swapkit/helpers";
 import { createTronToolbox, getTronAddressValidator } from "../toolbox";
-
-// Test mnemonic for consistent testing
-const TEST_PHRASE = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
 
 const context: {
   toolbox: Awaited<ReturnType<typeof createTronToolbox>>;
@@ -12,14 +9,18 @@ const context: {
 
 beforeAll(async () => {
   // Set up TRON mainnet configuration
-  SKConfig.set({ rpcUrls: { [Chain.Tron]: "https://api.trongrid.io" } });
+  SKConfig.set({ rpcUrls: { [Chain.Tron]: ["https://api.trongrid.io"] } });
 
   // Get the address validator
   context.validateAddress = await getTronAddressValidator();
 });
 
 beforeEach(async () => {
-  context.toolbox = await createTronToolbox({ phrase: TEST_PHRASE });
+  context.toolbox = await createTronToolbox({ phrase: process.env.TEST_PHRASE });
+});
+
+afterAll(() => {
+  SKConfig.reinitialize();
 });
 
 describe("TRON Address Validation", () => {

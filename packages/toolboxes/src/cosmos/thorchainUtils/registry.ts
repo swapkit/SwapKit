@@ -18,7 +18,7 @@ export async function createDefaultRegistry() {
 export async function createDefaultAminoTypes(chain: TCLikeChain) {
   const imported = await import("@cosmjs/stargate");
   const AminoTypes = imported.AminoTypes ?? imported.default?.AminoTypes;
-  const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : "mayachain";
+  const aminoTypePrefix = chain === Chain.THORChain ? "thorchain" : ("mayachain" as const);
 
   return new AminoTypes({
     "/types.MsgDeposit": {

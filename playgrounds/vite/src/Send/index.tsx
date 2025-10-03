@@ -29,38 +29,45 @@ export default function Send({ inputAsset, skClient }: { skClient?: SwapKitClien
   }, [inputAsset, inputAssetValue, skClient, recipient]);
 
   return (
-    <div>
-      <h4>Send</h4>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ color: "#999", fontSize: 12 }}>
+        <span style={{ fontWeight: 600 }}>Input Asset:</span> {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
+      </div>
 
-      <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
-          <div>
-            <span>Input Asset: </span>
-            {inputAsset?.toSignificant(6)} {inputAsset?.ticker}
-          </div>
+          <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Input Amount:</label>
+          <input
+            onChange={(e) => handleInputChange(e.target.value)}
+            placeholder="0.0"
+            style={{ fontSize: 13, width: "100%" }}
+            value={Number(inputString) ? inputAssetValue?.getValue("string") : inputString}
+          />
         </div>
 
         <div>
-          <div>
-            <span>Input Amount:</span>
-            <input
-              onChange={(e) => {
-                handleInputChange(e.target.value);
-              }}
-              placeholder=""
-              value={Number(inputString) ? inputAssetValue?.getValue("string") : inputString}
-            />
-          </div>
-
-          <div>
-            <span>Recipient:</span>
-            <input onChange={(e) => setRecipient(e.target.value)} placeholder="address" value={recipient} />
-          </div>
-
-          <button disabled={!inputAsset} onClick={handleSend} type="button">
-            Send
-          </button>
+          <label style={{ color: "#666", display: "block", fontSize: 11, marginBottom: 4 }}>Recipient:</label>
+          <input
+            onChange={(e) => setRecipient(e.target.value)}
+            placeholder="address"
+            style={{ fontSize: 13, width: "100%" }}
+            value={recipient}
+          />
         </div>
+
+        <button
+          disabled={!inputAsset}
+          onClick={handleSend}
+          style={{
+            backgroundColor: "#2563eb",
+            borderColor: "#2563eb",
+            color: "#fff",
+            fontSize: 12,
+            padding: "10px 16px",
+          }}
+          type="button">
+          Send
+        </button>
       </div>
     </div>
   );

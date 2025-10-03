@@ -1,5 +1,5 @@
 import type { TokenListName, TokenNames, TokenTax } from "@swapkit/tokens";
-import { Chain, type ChainId, type EVMChain, EVMChains, getChainConfig } from "@swapkit/types";
+import { AllChains, Chain, type ChainId, type EVMChain, EVMChains, getChainConfig } from "@swapkit/types";
 import { getAddress } from "ethers";
 import { match } from "ts-pattern";
 import {
@@ -403,7 +403,7 @@ function validateAssetChain(assetOrChain: AssetIdentifier) {
     });
 
   // TODO: move to SKConfig chains once we support it throughout sdk
-  if (!Object.values(Chain).includes(chain.toUpperCase() as Chain)) {
+  if (!AllChains.includes(chain.toUpperCase() as Chain)) {
     throw new SwapKitError({
       errorKey: "helpers_invalid_asset_identifier",
       info: { message: "Please use the AssetValue constructor for unsupported chains" },
@@ -468,7 +468,7 @@ function getNormalAssetInfo(identifier: string) {
   try {
     formattedAddress =
       address && EVMChains.includes(chain as EVMChain) && getAddress(address) ? getAddress(address) : address;
-  } catch (_error) {
+  } catch {
     formattedAddress = address;
   }
 
