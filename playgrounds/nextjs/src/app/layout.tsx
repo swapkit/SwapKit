@@ -13,9 +13,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html className="dark" lang="en" style={{ colorScheme: "dark" }}>
       <body className={inter.className}>
         <AppProviders>
-          <div className="mx-auto max-w-[800px]">
+          <div className="flex min-h-screen w-full flex-col items-center">
             <NavigationBar />
-            <div className="flex items-center justify-center">{children}</div>
+
+            <div className="mx-auto w-full max-w-screen-lg pt-[calc(var(--navbar-height)+4rem)] [&>*]:mx-auto [&>*]:max-w-xl">
+              {children}
+            </div>
           </div>
         </AppProviders>
       </body>
