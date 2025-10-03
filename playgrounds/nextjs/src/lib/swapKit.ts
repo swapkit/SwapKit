@@ -4,7 +4,7 @@ import type { AssetValue, Chain, EVMChain } from "@swapkit/helpers";
 import { NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
 import type { createSwapKit } from "@swapkit/sdk";
 import { atom, useAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 type KeystoreFile = { keystore: import("@swapkit/wallets/keystore").Keystore; file: File; chains: Chain[] } | null;
 
@@ -31,6 +31,7 @@ export const useSwapKit = () => {
             swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
             walletConnectProjectId: "",
           },
+          envs: { isDev: true },
           integrations: {
             keepKey: {
               basePath: "http://localhost:1646/spec/swagger.json",
@@ -215,22 +216,51 @@ export const useSwapKit = () => {
     [keystoreFile, swapKit, setWalletState, setBalances, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
   );
 
+  const { chains, balanceGroupedByChain } = useMemo(() => {
+    const balanceGroupedByChain = (Array.isArray(balances) ? balances : []).reduce(
+      (acc: Record<Chain, AssetValue[]>, assetValue: AssetValue) => {
+        if (!acc[assetValue.chain]) {
+          acc[assetValue.chain] = [];
+        }
+
+        if (assetValue.isGasAsset || assetValue.getValue("number") > 0) {
+          acc[assetValue.chain].push(assetValue);
+        }
+
+        return acc;
+      },
+      {} as Record<Chain, AssetValue[]>,
+    );
+
+    const chains = Object.keys(balanceGroupedByChain) as Chain[];
+
+    return { balanceGroupedByChain, chains };
+  }, [balances]);
+
+  // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
   return {
+    swapKit,
+
+    walletType,
+    balanceGroupedByChain,
     balances,
+    chains,
+    isWalletConnected,
+
     checkIfChainConnected,
     connectKeystore,
     connectWallet,
     disconnectWallet,
     getBalances,
-    isKeystoreDecrypting,
-    isKeystoreOpen,
-    isWalletConnected,
+
     // Keystore related
     keystoreFile,
+
+    isKeystoreDecrypting,
+    isKeystoreOpen,
+
     setIsKeystoreDecrypting,
     setIsKeystoreOpen,
     setKeystoreFile,
-    swapKit,
-    walletType,
   };
 };

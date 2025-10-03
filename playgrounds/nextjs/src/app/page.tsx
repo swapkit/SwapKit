@@ -4,7 +4,7 @@ import { AssetValue, type Chain } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import { ProviderName, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUp, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -26,7 +26,7 @@ export default function SwapPage() {
   const [outputAsset, setOutputAsset] = useState<string>();
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
-  const [_estimatedOutput, setEstimatedOutput] = useState<string>();
+  const [estimatedOutput, setEstimatedOutput] = useState<string>();
   const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
 
   const handleSwap = async (route: QuoteResponseRoute) => {
@@ -150,11 +150,10 @@ export default function SwapPage() {
               </div>
 
               <SwapInputWithChainSelector
-                amount={amount}
+                amount={estimatedOutput}
                 isSwapping={isSwapping}
                 label="Receive"
                 selectedAsset={outputAsset}
-                setAmount={setOutputAsset}
                 setSelectedAsset={setOutputAsset}
               />
             </div>
@@ -218,70 +217,21 @@ function SwapInputWithChainSelector({
   selectedAsset: string | undefined;
   setSelectedAsset: (asset: string | undefined) => void;
   amount: string | undefined;
-  setAmount: (amount: string) => void;
+  setAmount?: (amount: string) => void;
   isSwapping: boolean;
 }) {
-  const { balances } = useSwapKit();
-
-  const { chains, balanceGroupedByChain } = useMemo(() => {
-    const balanceGroupedByChain = (Array.isArray(balances) ? balances : []).reduce(
-      (acc: Record<Chain, AssetValue[]>, assetValue: AssetValue) => {
-        if (!acc[assetValue.chain]) {
-          acc[assetValue.chain] = [];
-        }
-
-        if (assetValue.isGasAsset || assetValue.getValue("number") > 0) {
-          acc[assetValue.chain].push(assetValue);
-        }
-
-        return acc;
-      },
-      {} as Record<Chain, AssetValue[]>,
-    );
-
-    const chains = Object.keys(balanceGroupedByChain) as Chain[];
-
-    return { balanceGroupedByChain, chains };
-  }, [balances]);
-
   return (
     <div className="-my-2">
       <span className="text-muted-foreground text-xs">{label}</span>
 
       <div className="flex justify-between">
-        <Select onValueChange={setSelectedAsset} value={selectedAsset}>
-          <SelectTrigger className="w-auto min-w-0">
-            <SelectValue placeholder="Select input asset" />
-          </SelectTrigger>
-
-          <SelectContent>
-            {chains.map((chain) => {
-              if (!balanceGroupedByChain[chain]?.length) return null;
-
-              return (
-                <SelectGroup key={chain}>
-                  <SelectLabel>{chain}</SelectLabel>
-
-                  {balanceGroupedByChain[chain]?.map((assetValue: AssetValue) => (
-                    <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                      <div className="flex w-full items-center justify-between">
-                        <span>{assetValue.symbol}</span>
-
-                        <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              );
-            })}
-          </SelectContent>
-        </Select>
+        <SwapAssetSelect selectedAsset={selectedAsset} setSelectedAsset={setSelectedAsset} />
 
         <div className="flex flex-col items-end gap-2">
           <Input
             className="-mr-4 !shadow-none !border-0 !ring-0 !ring-offset-0 bg-transparent text-end font-medium text-2xl"
-            disabled={!selectedAsset || isSwapping}
-            onChange={(e) => setAmount(e.target.value)}
+            disabled={!selectedAsset || isSwapping || !setAmount}
+            onChange={(e) => setAmount?.(e.target.value)}
             placeholder="0.00"
             type="text"
             value={amount}
@@ -291,5 +241,45 @@ function SwapInputWithChainSelector({
         </div>
       </div>
     </div>
+  );
+}
+
+function SwapAssetSelect({
+  selectedAsset,
+  setSelectedAsset,
+}: {
+  selectedAsset: string | undefined;
+  setSelectedAsset: (asset: string | undefined) => void;
+}) {
+  const { chains, balanceGroupedByChain } = useSwapKit();
+
+  return (
+    <Select onValueChange={setSelectedAsset} value={selectedAsset}>
+      <SelectTrigger className="mt-1 w-auto min-w-0">
+        <SelectValue placeholder="Select input asset" />
+      </SelectTrigger>
+
+      <SelectContent>
+        {chains.map((chain) => {
+          if (!balanceGroupedByChain[chain]?.length) return null;
+
+          return (
+            <SelectGroup key={chain}>
+              <SelectLabel>{chain}</SelectLabel>
+
+              {balanceGroupedByChain[chain]?.map((assetValue: AssetValue) => (
+                <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
+                  <div className="flex w-full items-center justify-between">
+                    <span>{assetValue.symbol}</span>
+
+                    <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          );
+        })}
+      </SelectContent>
+    </Select>
   );
 }
