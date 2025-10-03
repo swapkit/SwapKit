@@ -30,10 +30,11 @@ const nextConfig = {
           "global.Buffer": "Buffer",
           "global.crypto": "crypto",
           "global.msCrypto": "crypto",
-          "global.process": "process",
           "global.Uint8Array": JSON.stringify(Uint8Array),
         }),
       );
+
+      config.plugins.push(new webpack.NormalModuleReplacementPlugin(/^node:crypto$/, "crypto-browserify"));
 
       config.resolve.fallback = {
         ...config.resolve.fallback,
