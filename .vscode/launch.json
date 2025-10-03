@@ -1,6 +1,6 @@
 {
   "configurations": [
-    { "command": "bun --cwd ./docs dev", "name": "Docs dev", "request": "launch", "type": "node-terminal" }
+    { "command": "bun --cwd=./docs dev", "name": "Docs dev", "request": "launch", "type": "node-terminal" }
   ],
   "version": "0.2.0"
 }
