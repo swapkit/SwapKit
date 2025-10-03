@@ -8,7 +8,13 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
 
   images: {
-    remotePatterns: [{ hostname: "storage.googleapis.com", pathname: "/token-list-swapkit/**", protocol: "https" }],
+    remotePatterns: [
+      {
+        hostname: "storage.googleapis.com",
+        pathname: process.env.NODE_ENV === "development" ? "/token-list-swapkit-dev/**" : "/token-list-swapkit/**",
+        protocol: "https",
+      },
+    ],
   },
   reactStrictMode: true,
   typescript: { ignoreBuildErrors: true },
