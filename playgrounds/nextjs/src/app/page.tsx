@@ -7,7 +7,7 @@ import { ArrowDownUp, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -134,136 +134,135 @@ export default function SwapPage() {
   }, [updateEstimatedOutput]);
 
   return (
-    <Card className="w-[600px]">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Swap</span>
-          {!isWalletConnected && (
-            <span className="font-normal text-muted-foreground text-sm">Connect wallet to start swapping</span>
-          )}
-        </CardTitle>
-      </CardHeader>
+    <div className="flex flex-col gap-4">
+      <h1 className="font-medium text-2xl">Swap</h1>
 
-      <CardContent className="grid gap-6">
-        <div className="space-y-4">
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Select onValueChange={setInputAsset} value={inputAsset}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select input asset" />
-                </SelectTrigger>
-                <SelectContent>
-                  {chains.map((chain) =>
-                    balanceGroupedByChain[chain]?.length ? (
-                      <SelectGroup key={chain}>
-                        <SelectLabel>{chain}</SelectLabel>
-                        {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
-                          <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                            <div className="flex w-full items-center justify-between">
-                              <span>{assetValue.symbol}</span>
-                              <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ) : null,
-                  )}
-                </SelectContent>
-              </Select>
-              <Input
-                disabled={!inputAsset || isSwapping}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Amount"
-                type="number"
-                value={amount}
-              />
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+      <Card>
+        <CardContent className="grid gap-6">
+          <div className="space-y-4">
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Select onValueChange={setInputAsset} value={inputAsset}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select input asset" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {chains.map((chain) =>
+                      balanceGroupedByChain[chain]?.length ? (
+                        <SelectGroup key={chain}>
+                          <SelectLabel>{chain}</SelectLabel>
+                          {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
+                            <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
+                              <div className="flex w-full items-center justify-between">
+                                <span>{assetValue.symbol}</span>
+                                <span className="text-muted-foreground">
+                                  {assetValue.getValue("number").toFixed(6)}
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ) : null,
+                    )}
+                  </SelectContent>
+                </Select>
+                <Input
+                  disabled={!inputAsset || isSwapping}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Amount"
+                  type="number"
+                  value={amount}
+                />
               </div>
-              <div className="relative flex justify-center">
-                <Button
-                  className="h-8 w-8 bg-background"
-                  onClick={() => {
-                    const temp = inputAsset;
-                    setInputAsset(outputAsset);
-                    setOutputAsset(temp);
-                  }}
-                  size="icon"
-                  variant="outline">
-                  <ArrowDownUp className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            <div className="grid gap-2">
-              <Select onValueChange={setOutputAsset} value={outputAsset}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select output asset" />
-                </SelectTrigger>
-                <SelectContent>
-                  {chains.map((chain) =>
-                    balanceGroupedByChain[chain]?.length ? (
-                      <SelectGroup key={chain}>
-                        <SelectLabel>{chain}</SelectLabel>
-                        {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
-                          <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                            <div className="flex w-full items-center justify-between">
-                              <span>{assetValue.symbol}</span>
-                              <span className="text-muted-foreground">{assetValue.getValue("number").toFixed(6)}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ) : null,
-                  )}
-                </SelectContent>
-              </Select>
-              {estimatedOutput && (
-                <div className="text-right text-muted-foreground text-sm">Expected output: {estimatedOutput}</div>
-              )}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center">
+                  <Button
+                    className="h-8 w-8 bg-background"
+                    onClick={() => {
+                      const temp = inputAsset;
+                      setInputAsset(outputAsset);
+                      setOutputAsset(temp);
+                    }}
+                    size="icon"
+                    variant="outline">
+                    <ArrowDownUp className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Select onValueChange={setOutputAsset} value={outputAsset}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select output asset" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {chains.map((chain) =>
+                      balanceGroupedByChain[chain]?.length ? (
+                        <SelectGroup key={chain}>
+                          <SelectLabel>{chain}</SelectLabel>
+                          {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
+                            <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
+                              <div className="flex w-full items-center justify-between">
+                                <span>{assetValue.symbol}</span>
+                                <span className="text-muted-foreground">
+                                  {assetValue.getValue("number").toFixed(6)}
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ) : null,
+                    )}
+                  </SelectContent>
+                </Select>
+                {estimatedOutput && (
+                  <div className="text-right text-muted-foreground text-sm">Expected output: {estimatedOutput}</div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
 
-      <CardFooter>
-        <Button
-          className="w-full"
-          disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
-          onClick={async () => {
-            if (!(routes.length && inputAsset)) return;
-            try {
-              const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
-              const amountValue = assetValue.set(amount);
-              await swap(routes[0], amountValue);
-            } catch (error) {
-              console.error("Failed to prepare swap:", error);
-              toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
-            }
-          }}>
-          {isSwapping ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Swapping...
-            </>
-          ) : isWalletConnected ? (
-            inputAsset && outputAsset ? (
-              amount ? (
-                "Swap"
-              ) : (
-                "Enter Amount"
-              )
+      <Button
+        className="w-full"
+        disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
+        onClick={async () => {
+          if (!(routes.length && inputAsset)) return;
+          try {
+            const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
+            const amountValue = assetValue.set(amount);
+            await swap(routes[0], amountValue);
+          } catch (error) {
+            console.error("Failed to prepare swap:", error);
+            toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
+          }
+        }}
+        size="lg"
+        variant="primary">
+        {isSwapping ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Swapping...
+          </>
+        ) : isWalletConnected ? (
+          inputAsset && outputAsset ? (
+            amount ? (
+              "Swap"
             ) : (
-              "Select Assets"
+              "Enter Amount"
             )
           ) : (
-            "Connect Wallet to Swap"
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+            "Select Assets"
+          )
+        ) : (
+          "Connect wallet"
+        )}
+      </Button>
+    </div>
   );
 }
