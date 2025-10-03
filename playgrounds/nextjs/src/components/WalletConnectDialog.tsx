@@ -5,6 +5,7 @@ import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { ChainIcon } from "~/components/ui/chain-icon";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
@@ -321,23 +322,37 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                           <div className="mb-6" key={groupName}>
                             <h4 className="mb-2 font-semibold">{groupName}</h4>
                             <div className="grid grid-cols-2 gap-2">
-                              {groupWallets.map((wallet) => (
-                                <Button
-                                  className="h-auto justify-start py-4"
-                                  disabled={loadingWallet !== null}
-                                  key={wallet}
-                                  onClick={() => handleConnect(wallet)}
-                                  size="lg"
-                                  variant="outline">
-                                  <WalletIcon className="mr-3 h-6 w-6" wallet={wallet} />
-                                  <div className="flex flex-col items-start">
-                                    <span className="font-medium">{wallet}</span>
-                                    {loadingWallet === wallet && (
-                                      <span className="text-muted-foreground text-xs">Connecting...</span>
-                                    )}
-                                  </div>
-                                </Button>
-                              ))}
+                              {groupWallets.map((wallet) => {
+                                const handleWalletConnect = async () => {
+                                  try {
+                                    await handleConnect(wallet);
+
+                                    onOpenChange(false);
+                                  } catch (error) {
+                                    if (error instanceof Error) {
+                                      toast.error("Failed to connect wallet", { description: error.message });
+                                    }
+                                  }
+                                };
+
+                                return (
+                                  <Button
+                                    className="h-auto justify-start py-4"
+                                    disabled={loadingWallet !== null}
+                                    key={wallet}
+                                    onClick={handleWalletConnect}
+                                    size="lg"
+                                    variant="outline">
+                                    <WalletIcon className="mr-3 h-6 w-6" wallet={wallet} />
+                                    <div className="flex flex-col items-start">
+                                      <span className="font-medium">{wallet}</span>
+                                      {loadingWallet === wallet && (
+                                        <span className="text-muted-foreground text-xs">Connecting...</span>
+                                      )}
+                                    </div>
+                                  </Button>
+                                );
+                              })}
                             </div>
                           </div>
                         );
