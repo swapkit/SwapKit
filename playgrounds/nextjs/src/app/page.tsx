@@ -175,23 +175,22 @@ export default function SwapPage() {
                 />
               </div>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center">
-                  <Button
-                    className="h-8 w-8 bg-background"
-                    onClick={() => {
-                      const temp = inputAsset;
-                      setInputAsset(outputAsset);
-                      setOutputAsset(temp);
-                    }}
-                    size="icon"
-                    variant="outline">
-                    <ArrowDownUp className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="flex items-center space-x-4">
+                <span className="h-px w-full bg-border" />
+
+                <Button
+                  className="size-10 shrink-0 rounded-full"
+                  onClick={() => {
+                    const temp = inputAsset;
+                    setInputAsset(outputAsset);
+                    setOutputAsset(temp);
+                  }}
+                  size="unstyled"
+                  variant="tertiary">
+                  <ArrowDownUp className="size-6" />
+                </Button>
+
+                <span className="h-px w-full bg-border" />
               </div>
 
               <div className="grid gap-2">

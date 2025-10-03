@@ -5119,6 +5119,8 @@
 
     "@stellar/stellar-sdk/bignumber.js": ["bignumber.js@9.3.1", "", {}, "sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ=="],
 
+    "@swapkit/wallet-hardware/@ledgerhq/hw-transport": ["@ledgerhq/hw-transport@6.31.12", "", { "dependencies": { "@ledgerhq/devices": "8.6.1", "@ledgerhq/errors": "^6.26.0", "@ledgerhq/logs": "^6.13.0", "events": "^3.3.0" } }, "sha512-FO5LRIXYC8ELtaohlO8qK0b3TfHUNBZ3+CXKPHiHj2jJwrxPf4s5kcgBYrmzuf1C/1vfrMOjzyty6OgrMIbU6Q=="],
+
     "@swc/helpers/tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
     "@thaunknown/simple-websocket/ws": ["ws@8.18.3", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg=="],
@@ -6304,6 +6306,10 @@
     "@solana/sysvars/@solana/codecs/@solana/options": ["@solana/options@2.3.0", "", { "dependencies": { "@solana/codecs-core": "2.3.0", "@solana/codecs-data-structures": "2.3.0", "@solana/codecs-numbers": "2.3.0", "@solana/codecs-strings": "2.3.0", "@solana/errors": "2.3.0" }, "peerDependencies": { "typescript": ">=5.3.3" } }, "sha512-PPnnZBRCWWoZQ11exPxf//DRzN2C6AoFsDI/u2AsQfYih434/7Kp4XLpfOMT/XESi+gdBMFNNfbES5zg3wAIkw=="],
 
     "@stacks/common/@types/node/undici-types": ["undici-types@5.26.5", "", {}, "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="],
+
+    "@swapkit/wallet-hardware/@ledgerhq/hw-transport/@ledgerhq/devices": ["@ledgerhq/devices@8.6.1", "", { "dependencies": { "@ledgerhq/errors": "^6.26.0", "@ledgerhq/logs": "^6.13.0", "rxjs": "^7.8.1", "semver": "^7.3.5" } }, "sha512-PQR2fyWz7P/wMFHY9ZLz17WgFdxC/Im0RVDcWXpp24+iRQRyxhQeX2iG4mBKUzfaAW6pOIEiWt+vmJh88QP9rQ=="],
+
+    "@swapkit/wallet-hardware/@ledgerhq/hw-transport/@ledgerhq/errors": ["@ledgerhq/errors@6.26.0", "", {}, "sha512-4OlisaDBafkn7KN5emue08lCGMVREX6T+nxj47C7W30EBA/leLAEDaVvUw5/gFOWrv8Q2A9Scb8aMM3uokyt0w=="],
 
     "@trezor/connect/bs58/base-x": ["base-x@5.0.1", "", {}, "sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg=="],
 

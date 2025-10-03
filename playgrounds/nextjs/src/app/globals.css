@@ -24,6 +24,9 @@
     --secondary: 120 3% 13%;
     --secondary-foreground: var(--white) / 0.92;
 
+    --tertiary: var(--white) / 0.92;
+    --tertiary-foreground: 120 3% 13%;
+
     --muted: var(--secondary);
     --muted-foreground: var(--white) / 0.64;
 
@@ -33,7 +36,7 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 60 9.1% 97.8%;
 
-    --border: 12 6.5% 15.1%;
+    --border: var(--white) / 0.12;
     --input: 12 6.5% 15.1%;
     --ring: 24 5.7% 82.9%;
   }
