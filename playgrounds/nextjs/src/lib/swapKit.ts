@@ -1,7 +1,7 @@
 "use client";
 
-import type { AssetValue, Chain, EVMChain } from "@swapkit/helpers";
-import { NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
+import type { Chain, EVMChain } from "@swapkit/helpers";
+import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
 import type { createSwapKit } from "@swapkit/sdk";
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect, useMemo } from "react";
@@ -23,6 +23,8 @@ export const useSwapKit = () => {
   useEffect(() => {
     const loadSwapKit = async () => {
       const { createSwapKit } = await import("@swapkit/sdk");
+
+      void AssetValue.loadStaticAssets();
 
       const swapKitClient = createSwapKit({
         config: {
