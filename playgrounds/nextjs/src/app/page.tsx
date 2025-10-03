@@ -141,41 +141,56 @@ export default function SwapPage() {
         <CardContent className="grid gap-6">
           <div className="space-y-4">
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Select onValueChange={setInputAsset} value={inputAsset}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select input asset" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {chains.map((chain) =>
-                      balanceGroupedByChain[chain]?.length ? (
-                        <SelectGroup key={chain}>
-                          <SelectLabel>{chain}</SelectLabel>
-                          {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
-                            <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
-                              <div className="flex w-full items-center justify-between">
-                                <span>{assetValue.symbol}</span>
-                                <span className="text-muted-foreground">
-                                  {assetValue.getValue("number").toFixed(6)}
-                                </span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ) : null,
-                    )}
-                  </SelectContent>
-                </Select>
-                <Input
-                  disabled={!inputAsset || isSwapping}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Amount"
-                  type="number"
-                  value={amount}
-                />
+              <div className="-my-2">
+                <span className="text-muted-foreground text-xs">Pay</span>
+
+                <div className="flex justify-between">
+                  <Select onValueChange={setInputAsset} value={inputAsset}>
+                    <SelectTrigger className="w-auto min-w-0">
+                      <SelectValue placeholder="Select input asset" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {chains.map((chain) => {
+                        if (!balanceGroupedByChain[chain]?.length) return null;
+
+                        return (
+                          <SelectGroup key={chain}>
+                            <SelectLabel>{chain}</SelectLabel>
+
+                            {balanceGroupedByChain[chain].map((assetValue: AssetValue) => (
+                              <SelectItem key={assetValue.toString()} value={assetValue.toString()}>
+                                <div className="flex w-full items-center justify-between">
+                                  <span>{assetValue.symbol}</span>
+
+                                  <span className="text-muted-foreground">
+                                    {assetValue.getValue("number").toFixed(6)}
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex flex-col items-end gap-2">
+                    <Input
+                      className="-mr-4 !shadow-none !border-0 !ring-0 !ring-offset-0 bg-transparent text-end font-medium text-2xl"
+                      disabled={!inputAsset || isSwapping}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.00"
+                      type="text"
+                      value={amount}
+                    />
+
+                    <span className="text-muted-foreground text-sm">$0.00</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="-my-4 flex items-center space-x-4">
                 <span className="h-px w-full bg-border" />
 
                 <Button
