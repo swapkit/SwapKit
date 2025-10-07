@@ -14,9 +14,13 @@ export function WalletButton() {
   return (
     <>
       {isWalletConnected ? (
-        <Button onClick={() => setDrawerOpen(true)}>My Wallet</Button>
+        <Button onClick={() => setDrawerOpen(true)} variant="primary">
+          My Wallet
+        </Button>
       ) : (
-        <Button onClick={() => setConnectOpen(true)}>Connect Wallet</Button>
+        <Button onClick={() => setConnectOpen(true)} variant="primary">
+          Connect Wallet
+        </Button>
       )}
 
       <WalletConnectDialog onOpenChange={setConnectOpen} open={connectOpen} />

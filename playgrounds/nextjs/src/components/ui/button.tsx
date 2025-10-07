@@ -9,14 +9,27 @@ const buttonVariants = cva(
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
-      size: { default: "h-10 px-4 py-2", icon: "h-10 w-10", lg: "h-11 rounded-md px-8", sm: "h-9 rounded-md px-3" },
+      // biome-ignore assist/source/useSortedKeys: sort by size, not alphabetically
+      size: {
+        sm: "h-9 rounded-md px-3",
+        default: "h-10 px-4 py-2",
+        lg: "h-12 font-medium text-base rounded-lg px-4",
+        xl: "h-11 font-medium text-base rounded-xl px-8",
+        icon: "size-10",
+        unstyled: "p-0 m-0 h-auto w-auto",
+      },
+      // biome-ignore assist/source/useSortedKeys: sort by role, not alphabetically
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-white/[0.08] bg-transparent hover:text-foreground text-muted-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+
+        primary: "bg-primary-foreground text-primary hover:opacity-80 transition-opacity",
+        secondary: "bg-secondary text-secondary-foreground hover:opacity-80 transition-opacity",
+        tertiary: "bg-tertiary text-tertiary-foreground hover:opacity-80 transition-opacity",
+
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
       },
     },
   },
