@@ -1,7 +1,7 @@
 import { AllChains, type Chain, WalletOption } from "@swapkit/core";
 import type { SKWalletsSupportedChains } from "@swapkit/wallets";
 import { useMemo, useState } from "react";
-import { useSwapKit } from "../context";
+import { useSwapKit } from "../../context";
 
 export function ConnectButton<Wallets extends WalletOption[]>({
   availableWallets,
