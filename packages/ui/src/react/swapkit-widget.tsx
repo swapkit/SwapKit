@@ -7,11 +7,10 @@ import { SwapInputWithChainSelector } from "./components/composable/swap-input-c
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { Toaster, toast } from "./components/ui/sonner";
-import { type SwapKitProviderProps, useSwapKit } from "./swapkit-context";
+import { useSwapKit } from "./swapkit-context";
+import type { SwapKitWidgetProps } from "./types";
 
-type SwapKitWidgetProps = Omit<SwapKitProviderProps, "children">;
-
-export function SwapKitWidget(_props: SwapKitWidgetProps) {
+export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
   const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
   const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
   const [amount, setAmount] = useState("4.20");
@@ -19,7 +18,12 @@ export function SwapKitWidget(_props: SwapKitWidgetProps) {
   const [estimatedOutput, setEstimatedOutput] = useState<string>();
   const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
 
-  const { swapKit, isWalletConnected } = useSwapKit();
+  const { swapKit, isWalletConnected, loadSwapKit } = useSwapKit();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: temporarily use this approach to set apiKey and config
+  useEffect(() => {
+    void loadSwapKit({ apiKey, config });
+  }, []);
 
   const updateEstimatedOutput = useCallback(async () => {
     if (!(inputAsset && outputAsset && amount && swapKit)) {

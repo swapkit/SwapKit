@@ -1,28 +1,10 @@
 "use client";
 
-import type { Chain, createSwapKit, EVMChain, PluginName, TokenListName } from "@swapkit/sdk";
+import type { Chain, EVMChain } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
-
-type KeystoreFile = { keystore: import("@swapkit/sdk/wallets").Keystore; file: File; chains: Chain[] } | null;
-
-interface SwapKitState {
-  swapKit: ReturnType<typeof createSwapKit> | null;
-  balances: AssetValue[];
-  walletType: WalletOption | null;
-  isWalletConnected: boolean;
-  keystoreFile: KeystoreFile;
-  isKeystoreOpen: boolean;
-  isKeystoreDecrypting: boolean;
-
-  setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
-  setBalances: (balances: AssetValue[]) => void;
-  setWalletState: (state: { connected: boolean; type: WalletOption | null }) => void;
-  setKeystoreFile: (file: KeystoreFile) => void;
-  setIsKeystoreOpen: (isOpen: boolean) => void;
-  setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
-}
+import type { SwapKitState, SwapKitWidgetProps } from "./types";
 
 export const useSwapKitStore = create<SwapKitState>((set) => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -47,54 +29,60 @@ export const useSwapKitStore = create<SwapKitState>((set) => {
 });
 
 export const useSwapKit = () => {
-  const swapKit = useSwapKitStore((state) => state.swapKit);
-  const balances = useSwapKitStore((state) => state.balances);
-  const walletType = useSwapKitStore((state) => state.walletType);
-  const isWalletConnected = useSwapKitStore((state) => state.isWalletConnected);
-  const keystoreFile = useSwapKitStore((state) => state.keystoreFile);
-  const isKeystoreOpen = useSwapKitStore((state) => state.isKeystoreOpen);
-  const isKeystoreDecrypting = useSwapKitStore((state) => state.isKeystoreDecrypting);
-
-  const setSwapKit = useSwapKitStore((state) => state.setSwapKit);
-  const setBalances = useSwapKitStore((state) => state.setBalances);
-  const setWalletState = useSwapKitStore((state) => state.setWalletState);
-  const setKeystoreFile = useSwapKitStore((state) => state.setKeystoreFile);
-  const setIsKeystoreOpen = useSwapKitStore((state) => state.setIsKeystoreOpen);
-  const setIsKeystoreDecrypting = useSwapKitStore((state) => state.setIsKeystoreDecrypting);
+  const {
+    swapKit,
+    balances,
+    walletType,
+    isWalletConnected,
+    keystoreFile,
+    isKeystoreOpen,
+    isKeystoreDecrypting,
+    setSwapKit,
+    setBalances,
+    setWalletState,
+    setKeystoreFile,
+    setIsKeystoreOpen,
+    setIsKeystoreDecrypting,
+  } = useSwapKitStore((state) => state);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
   useEffect(() => {
     if (swapKit) return;
 
+    const defaultApiKey = process.env.NEXT_PUBLIC_TEST_API_KEY;
+
+    if (!defaultApiKey) return;
+
+    void loadSwapKit({ apiKey: defaultApiKey });
     void AssetValue.loadStaticAssets();
-    void loadSwapKit();
+  }, []);
 
-    async function loadSwapKit() {
-      const { createSwapKit } = await import("@swapkit/sdk");
+  async function loadSwapKit({ apiKey, config }: SwapKitWidgetProps) {
+    const { createSwapKit } = await import("@swapkit/sdk");
 
-      const swapKitClient = createSwapKit({
-        config: {
-          apiKeys: {
-            keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-            swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
-            walletConnectProjectId: "",
-          },
-          envs: { isDev: true },
-          integrations: {
-            keepKey: {
-              basePath: "http://localhost:1646/spec/swagger.json",
-              imageUrl:
-                "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
-              name: "SwapKit",
-              url: "http://localhost:1646",
-            },
+    const swapKitClient = createSwapKit({
+      config: {
+        apiKeys: {
+          keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
+          swapKit: apiKey,
+          walletConnectProjectId: "",
+        },
+        envs: { isDev: true },
+        integrations: {
+          keepKey: {
+            basePath: "http://localhost:1646/spec/swagger.json",
+            imageUrl:
+              "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
+            name: "SwapKit",
+            url: "http://localhost:1646",
           },
         },
-      });
+        ...config,
+      },
+    });
 
-      setSwapKit(swapKitClient);
-    }
-  }, []);
+    setSwapKit(swapKitClient);
+  }
 
   const getBalances = useCallback(
     async (refresh?: boolean) => {
@@ -221,7 +209,7 @@ export const useSwapKit = () => {
   const disconnectWallet = useCallback(() => {
     swapKit?.disconnectAll();
     setWalletState({ connected: false, type: null });
-  }, [setWalletState, swapKit]);
+  }, [swapKit?.disconnectAll, setWalletState]);
 
   const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
 
@@ -282,6 +270,7 @@ export const useSwapKit = () => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
   return {
     swapKit,
+    loadSwapKit,
 
     walletType,
     balanceGroupedByChain,
@@ -304,41 +293,5 @@ export const useSwapKit = () => {
     setIsKeystoreDecrypting,
     setIsKeystoreOpen,
     setKeystoreFile,
-  };
-};
-
-export type SwapKitProviderProps = {
-  children: React.ReactNode;
-
-  /**
-   * SwapKit API key - get it from https://partners.swapkit.dev/login
-   */
-  apiKey: string;
-  /**
-   * List of predefined assets available for selection
-   * By default, assets from token lists are available
-   */
-  availableAssets?: AssetValue[];
-  config?: {
-    /**
-     * List of wallets available for connection
-     * By default, all wallets are available
-     */
-    wallets?: WalletOption[];
-    /**
-     * List of chains available for connection
-     * By default, all chains are available
-     */
-    chains?: Chain[];
-    /**
-     * List of token lists to load
-     * By default, all token lists are loaded
-     */
-    tokenLists?: TokenListName[];
-    /**
-     * List of plugins to load
-     * By default, all plugins are loaded
-     */
-    plugins?: PluginName[];
   };
 };
