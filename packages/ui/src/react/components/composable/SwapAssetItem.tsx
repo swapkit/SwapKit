@@ -1,3 +1,5 @@
+"use client";
+
 import { AssetValue } from "@swapkit/sdk";
 
 export function SwapAssetItem({ asset }: { asset: string | undefined }) {
@@ -5,28 +7,29 @@ export function SwapAssetItem({ asset }: { asset: string | undefined }) {
 
   const assetValue = AssetValue.from({ asset });
 
-  const iconUrl = assetValue?.getIconUrl();
-
-  if (!iconUrl) return;
-
   return (
     <div className="flex items-center gap-3">
+      {/* // TODO: OR Turn both into <AssetIcon asset={assetValue} /> - automatically hides small icon when type is Native*/}
       <div className="relative">
+        {/* // TODO: use TokenIcon/AssetIcon/TickerIcon? */}
         <img
-          alt={assetValue?.symbol}
+          alt={assetValue?.ticker}
           className="size-10 overflow-hidden rounded-full"
-          height={40}
-          src={iconUrl}
-          width={40}
+          height={24}
+          src={`https://storage.googleapis.com/token-list-swapkit-dev/images/${assetValue?.chain?.toLowerCase()}.${assetValue?.symbol?.toLowerCase()}.png`}
+          width={24}
         />
 
-        <img
-          alt={assetValue?.chainId}
-          className="-bottom-0.5 absolute right-0 size-4 rounded-full border-2 border-secondary bg-secondary"
-          height={16}
-          src={iconUrl}
-          width={16}
-        />
+        {assetValue?.type !== "Native" && (
+          // TODO: use NetworkIcon/ChainIcon?
+          <img
+            alt={assetValue?.chain}
+            className="-bottom-0.5 absolute right-0 size-4 rounded-full border-2 border-secondary bg-secondary"
+            height={24}
+            src={`https://storage.googleapis.com/token-list-swapkit-dev/images/${assetValue?.chain?.toLowerCase()}.${assetValue?.chainId?.toLowerCase()}.png`}
+            width={24}
+          />
+        )}
       </div>
 
       <div className="flex flex-col items-start">
