@@ -4,13 +4,10 @@ import { AssetValue, type Chain } from "@swapkit/helpers";
 import type { QuoteResponseRoute } from "@swapkit/helpers/api";
 import { ProviderName, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUp, Loader2 } from "lucide-react";
-import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import { useSwapKit } from "~/lib/swapKit";
 
 export default function SwapPage() {
@@ -189,149 +186,6 @@ export default function SwapPage() {
           "Connect wallet"
         )}
       </Button>
-    </div>
-  );
-}
-
-function SwapInputWithChainSelector({
-  label,
-
-  selectedAsset,
-  setSelectedAsset,
-
-  amount,
-  setAmount,
-
-  isSwapping,
-}: {
-  label: string;
-
-  // TODO: move to react-hook-form
-  selectedAsset: string | undefined;
-  setSelectedAsset: (asset: string) => void;
-  amount: string | undefined;
-  setAmount?: (amount: string) => void;
-  isSwapping: boolean;
-}) {
-  return (
-    <div className="-my-2">
-      <span className="text-muted-foreground text-xs">{label}</span>
-
-      <div className="flex justify-between">
-        <SwapAssetSelect selectedAsset={selectedAsset} setSelectedAsset={setSelectedAsset} />
-
-        <div className="flex flex-col items-end">
-          <Input
-            className="-mr-4 !shadow-none !border-0 !ring-0 !ring-offset-0 bg-transparent text-end font-medium text-2xl"
-            disabled={!selectedAsset || isSwapping || !setAmount}
-            onChange={(e) => setAmount?.(e.target.value)}
-            placeholder="0.00"
-            type="text"
-            value={amount}
-          />
-
-          <span className="text-muted-foreground text-sm">$0.00</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SwapAssetSelect({
-  selectedAsset,
-  setSelectedAsset,
-}: {
-  selectedAsset: string | undefined;
-  setSelectedAsset: (asset: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const { chains, balanceGroupedByChain } = useSwapKit();
-
-  useEffect(() => {
-    if (!selectedAsset) return;
-
-    setOpen(false);
-  }, [selectedAsset]);
-
-  return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger className="-ml-2 mt-1 w-auto min-w-48 max-w-1/2 rounded-lg px-2 transition-colors duration-100 hover:bg-white/[0.08]">
-        <SwapAssetItem asset={selectedAsset} />
-      </DialogTrigger>
-
-      <DialogContent>
-        <DialogHeader>Select Token</DialogHeader>
-
-        <Input placeholder="Search" />
-
-        <span className="text-muted-foreground text-sm">
-          Network: <span className="text-foreground">All</span>
-        </span>
-
-        <div className="grid gap-4">
-          {chains.map((chain) => {
-            if (!balanceGroupedByChain[chain]?.length) return null;
-
-            return (
-              <div className="flex flex-col gap-2" key={`select-asset-chain-${chain}`}>
-                {balanceGroupedByChain[chain]?.map((assetValue) => (
-                  <Button
-                    className="-mx-2 w-auto flex-1 justify-between rounded-lg px-2 py-1"
-                    key={`swap-asset-item-${assetValue.toString()}`}
-                    onClick={() => setSelectedAsset?.(assetValue.toString())}
-                    variant="ghost">
-                    <SwapAssetItem asset={assetValue.toString()} key={`swap-asset-item-${assetValue.toString()}`} />
-
-                    <div className="flex flex-col items-end">
-                      <span className="font-medium text-base text-foreground">Label</span>
-
-                      <span className="-mt-0.5 text-muted-foreground text-sm">Label</span>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function SwapAssetItem({ asset }: { asset: string | undefined }) {
-  if (!asset) return;
-
-  const assetValue = AssetValue.from({ asset });
-
-  const iconUrl = assetValue?.getIconUrl();
-
-  if (!iconUrl) return;
-
-  return (
-    <div className="flex items-center gap-3">
-      <div className="relative">
-        <Image
-          alt={assetValue?.symbol}
-          className="size-10 overflow-hidden rounded-full"
-          height={40}
-          src={iconUrl}
-          width={40}
-        />
-
-        <Image
-          alt={assetValue?.chainId}
-          className="-bottom-0.5 absolute right-0 size-4 rounded-full border-2 border-secondary bg-secondary"
-          height={16}
-          src={iconUrl}
-          width={16}
-        />
-      </div>
-
-      <div className="flex flex-col items-start">
-        <span className="font-medium text-base text-foreground">{assetValue?.ticker}</span>
-
-        <span className="-mt-0.5 text-muted-foreground text-sm">{assetValue?.chain}</span>
-      </div>
     </div>
   );
 }
