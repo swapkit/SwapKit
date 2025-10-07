@@ -12,7 +12,7 @@
   "tailwind": {
     "baseColor": "stone",
     "config": "./tailwind.config.ts",
-    "css": "./src/lib/swapkit.css",
+    "css": "./src/swapkit.css",
     "cssVariables": true,
     "prefix": ""
   },

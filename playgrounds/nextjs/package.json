@@ -37,7 +37,6 @@
     "clsx": "2.1.1",
     "crypto-browserify": "3.12.1",
     "https-browserify": "1.0.0",
-    "jotai": "2.13.1",
     "lucide-react": "0.541.0",
     "next": "15.5.0",
     "next-themes": "0.4.6",
@@ -56,8 +55,6 @@
     "zod": "3.25.74"
   },
   "devDependencies": {
-    "@swc-jotai/debug-label": "0.2.0",
-    "@swc-jotai/react-refresh": "0.3.0",
     "autoprefixer": "10.4.21",
     "global": "4.4.0",
     "node-polyfill-webpack-plugin": "4.1.0",
