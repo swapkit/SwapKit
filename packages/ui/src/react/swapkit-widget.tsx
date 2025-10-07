@@ -1,9 +1,8 @@
 import { AssetValue, type Chain, type SKConfigState, type TokenListName, type WalletOption } from "@swapkit/core";
 import type { PluginName } from "@swapkit/plugins";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
-
-import { AssetInput } from "./components/asset-input";
-import { ConnectButton } from "./components/connect-button";
+import { AssetInput } from "./components/standalone/asset-input";
+import { ConnectButton } from "./components/standalone/connect-button";
 import { SwapKitProvider } from "./context";
 
 export function SwapKitWidget({ apiKey, availableAssets, config }: SwapKitWidgetProps) {
