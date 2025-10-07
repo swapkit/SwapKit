@@ -1,7 +1,6 @@
 import { AllChains, type Chain, WalletOption } from "@swapkit/core";
-import type { SKWalletsSupportedChains } from "@swapkit/wallets";
 import { useMemo, useState } from "react";
-import { useSwapKit } from "../../context";
+import { useSwapKit } from "../../swapkit-context";
 
 export function ConnectButton<Wallets extends WalletOption[]>({
   availableWallets,
@@ -14,7 +13,7 @@ export function ConnectButton<Wallets extends WalletOption[]>({
   onConnect?: (client: any) => void;
   buttonText?: string;
 }) {
-  const { connect } = useSwapKit();
+  const { connectWallet } = useSwapKit();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<Wallets[number] | undefined>(undefined);
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
@@ -26,10 +25,7 @@ export function ConnectButton<Wallets extends WalletOption[]>({
   const handleConnect = async () => {
     if (!(selectedWallet && selectedChains)) return;
 
-    const client = await connect({
-      chains: selectedChains as SKWalletsSupportedChains[Wallets[number]],
-      walletOption: selectedWallet,
-    });
+    const client = await connectWallet(selectedWallet, selectedChains);
 
     if (onConnect) onConnect(client);
   };
