@@ -1,154 +1,199 @@
-import { AssetValue, type Chain, type SKConfigState, type TokenListName, type WalletOption } from "@swapkit/core";
-import type { PluginName } from "@swapkit/plugins";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
-import { AssetInput } from "./components/standalone/asset-input";
-import { ConnectButton } from "./components/standalone/connect-button";
-import { SwapKitProvider } from "./context";
+"use client";
 
-export function SwapKitWidget({ apiKey, availableAssets, config }: SwapKitWidgetProps) {
-  const [tokensLoaded, setTokensLoaded] = useState(false);
+import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
+import { ArrowDownUpIcon, Loader2Icon } from "lucide-react"; // TODO: add in package.json
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner"; // TODO: add in package.json
+import { SwapInputWithChainSelector } from "./components/composable/SwapInputWithChainSelector";
+import { Button } from "./components/ui/button";
+import { Card, CardContent } from "./components/ui/card";
+import { SwapKitProvider, type SwapKitProviderProps, useSwapKit } from "./swapkit-context";
 
-  const loadTokens = useCallback(async () => {
-    await AssetValue.loadStaticAssets(config?.tokenLists);
-    setTokensLoaded(true);
-  }, [config?.tokenLists]);
+export function SwapKitWidget({ apiKey }: SwapKitProviderProps) {
+  const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
+  const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
+  const [amount, setAmount] = useState("4.20");
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [estimatedOutput, setEstimatedOutput] = useState<string>();
+  const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
 
-  const swapKitConfig: SKConfigState = useMemo(
-    () => ({ apiKeys: { swapKit: apiKey }, chains: config?.chains, wallets: config?.wallets }),
-    [apiKey, config],
-  );
+  const { swapKit, isWalletConnected } = useSwapKit();
+
+  const updateEstimatedOutput = useCallback(async () => {
+    if (!(inputAsset && outputAsset && amount && swapKit)) {
+      setEstimatedOutput(undefined);
+      setRoutes([]);
+      return;
+    }
+
+    try {
+      const sourceAddress = swapKit.getAddress(inputAsset.split(".")[0] as Chain);
+      const destinationAddress = swapKit.getAddress(outputAsset.split(".")[0] as Chain);
+
+      const quote = await SwapKitApi.getSwapQuote({
+        buyAsset: outputAsset,
+        destinationAddress,
+        includeTx: true,
+        sellAmount: amount,
+        sellAsset: inputAsset,
+        slippage: 3,
+        sourceAddress,
+      });
+
+      if (quote?.routes?.length <= 0) return;
+
+      setRoutes(quote.routes);
+      setEstimatedOutput(quote?.routes?.[0]?.expectedBuyAmount);
+    } catch (error) {
+      console.error("Failed to get quote:", error);
+      toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`);
+      setEstimatedOutput(undefined);
+      setRoutes([]);
+    }
+  }, [inputAsset, outputAsset, amount, swapKit]);
 
   useEffect(() => {
-    void loadTokens();
-  }, [loadTokens]);
+    void updateEstimatedOutput();
+  }, [updateEstimatedOutput]);
+
+  const handleSwap = async (route: QuoteResponseRoute) => {
+    if (!swapKit) return;
+
+    try {
+      setIsSwapping(true);
+      const swap = await swapKit.swap({ route });
+
+      await swap.wait();
+      setAmount("");
+      setEstimatedOutput(undefined);
+      setRoutes([]);
+      toast.success("Swap completed successfully");
+    } catch (error) {
+      console.error("Swap failed:", error);
+      toast.error(`Swap failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+      setIsSwapping(false);
+    }
+  };
+
+  const swap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
+    if (!(inputAssetValue && swapKit)) return;
+
+    try {
+      const isChainflip = route?.providers?.includes(ProviderName.CHAINFLIP);
+      if (isChainflip) {
+        await handleSwap(route);
+        return;
+      }
+
+      const tx = route.tx;
+      if (!tx || typeof tx === "string" || !("from" in tx)) {
+        throw new Error("Invalid transaction format");
+      }
+
+      const isApproved = await swapKit.isAssetValueApproved(inputAssetValue, tx.from);
+      if (isApproved) {
+        await handleSwap(route);
+      } else {
+        await swapKit.approveAssetValue(inputAssetValue, tx.from);
+        toast.success("Asset approved, you can now swap");
+      }
+    } catch (error) {
+      console.error("Swap process failed:", error);
+      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
 
   return (
-    <SwapKitProvider config={swapKitConfig} plugins={config?.plugins}>
-      <SwapKitContent availableAssets={availableAssets} tokensLoaded={tokensLoaded} />
+    <SwapKitProvider apiKey={apiKey}>
+      <div className="flex flex-col gap-4">
+        <h1 className="font-medium text-2xl">Swap</h1>
+
+        <Card>
+          <CardContent className="grid gap-6">
+            <div className="space-y-4">
+              <div className="grid gap-4">
+                <SwapInputWithChainSelector
+                  amount={amount}
+                  isSwapping={isSwapping}
+                  label="Pay"
+                  selectedAsset={inputAsset}
+                  setAmount={setAmount}
+                  setSelectedAsset={setInputAsset}
+                />
+
+                <div className="-my-4 flex items-center space-x-4">
+                  <span className="h-px w-full bg-border" />
+
+                  <Button
+                    className="size-10 shrink-0 rounded-full"
+                    onClick={() => {
+                      const temp = inputAsset;
+                      setInputAsset(outputAsset);
+                      setOutputAsset(temp);
+                    }}
+                    size="unstyled"
+                    variant="tertiary">
+                    <ArrowDownUpIcon className="size-6" />
+                  </Button>
+
+                  <span className="h-px w-full bg-border" />
+                </div>
+
+                <SwapInputWithChainSelector
+                  amount={estimatedOutput}
+                  isSwapping={isSwapping}
+                  label="Receive"
+                  selectedAsset={outputAsset}
+                  setSelectedAsset={setOutputAsset}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Button
+          className="w-full"
+          disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
+          onClick={async () => {
+            if (!(routes?.length && inputAsset)) return;
+
+            try {
+              const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
+              const amountValue = assetValue.set(amount);
+
+              const route = routes?.[0];
+
+              if (!route) return;
+
+              await swap(route, amountValue);
+            } catch (error) {
+              console.error("Failed to prepare swap:", error);
+              toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
+            }
+          }}
+          size="xl"
+          variant="primary">
+          {isSwapping ? (
+            <>
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              Swapping...
+            </>
+          ) : isWalletConnected ? (
+            inputAsset && outputAsset ? (
+              amount ? (
+                "Swap"
+              ) : (
+                "Enter Amount"
+              )
+            ) : (
+              "Select Assets"
+            )
+          ) : (
+            "Connect wallet"
+          )}
+        </Button>
+      </div>
     </SwapKitProvider>
   );
 }
-
-const initialState = {
-  inputAsset: undefined as AssetValue | undefined,
-  isConnected: false,
-  outputAsset: undefined as AssetValue | undefined,
-};
-
-function SwapKitContent({ availableAssets, tokensLoaded }: { availableAssets?: AssetValue[]; tokensLoaded: boolean }) {
-  const [{ isConnected, inputAsset, outputAsset }, dispatch] = useReducer(reducer, initialState);
-  const setInputAsset = useCallback((inputAsset: AssetValue) => {
-    dispatch({ inputAsset, type: "setInputAsset" });
-  }, []);
-
-  const setInputAmount = useCallback(
-    (inputAmount: string) => {
-      if (inputAsset) {
-        inputAsset.set(inputAmount);
-      }
-    },
-    [inputAsset],
-  );
-
-  const setOutputAsset = useCallback((outputAsset: AssetValue) => {
-    dispatch({ outputAsset, type: "setOutputAsset" });
-  }, []);
-
-  const setOutputAmount = useCallback(
-    (outputAmount: string) => {
-      if (outputAsset) {
-        outputAsset.set(outputAmount);
-      }
-    },
-    [outputAsset],
-  );
-
-  if (!tokensLoaded) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div className="swapkit-widget">
-      <div className="swap-inputs">
-        <AssetInput
-          label="From"
-          onAssetChange={setInputAsset}
-          onValueChange={setInputAmount}
-          predefinedAssets={availableAssets}
-          selectedAsset={inputAsset}
-        />
-
-        <div className="swap-direction-indicator">→</div>
-
-        <AssetInput
-          label="To"
-          onAssetChange={setOutputAsset}
-          onValueChange={setOutputAmount}
-          predefinedAssets={availableAssets}
-          selectedAsset={outputAsset}
-        />
-      </div>
-
-      {!isConnected && <ConnectButton />}
-    </div>
-  );
-}
-
-function reducer(state: State, action: Action) {
-  switch (action.type) {
-    case "connect":
-      return { ...state, isConnected: true };
-    case "disconnect":
-      return { ...state, isConnected: false };
-    case "tokensLoaded":
-      return { ...state, tokensLoaded: true };
-    case "setInputAsset":
-      return { ...state, inputAsset: action.inputAsset };
-    case "setOutputAsset":
-      return { ...state, outputAsset: action.outputAsset };
-    default:
-      return state;
-  }
-}
-
-type State = typeof initialState;
-type Action =
-  | { type: "connect" }
-  | { type: "disconnect" }
-  | { type: "tokensLoaded" }
-  | { type: "setInputAsset"; inputAsset: AssetValue }
-  | { type: "setOutputAsset"; outputAsset: AssetValue };
-
-type SwapKitWidgetProps = {
-  /**
-   * SwapKit API key - get it from https://partners.swapkit.dev/login
-   */
-  apiKey: string;
-  /**
-   * List of predefined assets available for selection
-   * By default, assets from token lists are available
-   */
-  availableAssets?: AssetValue[];
-  config?: {
-    /**
-     * List of wallets available for connection
-     * By default, all wallets are available
-     */
-    wallets?: WalletOption[];
-    /**
-     * List of chains available for connection
-     * By default, all chains are available
-     */
-    chains?: Chain[];
-    /**
-     * List of token lists to load
-     * By default, all token lists are loaded
-     */
-    tokenLists?: TokenListName[];
-    /**
-     * List of plugins to load
-     * By default, all plugins are loaded
-     */
-    plugins?: PluginName[];
-  };
-};

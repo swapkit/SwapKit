@@ -1,8 +1,11 @@
 {
   "author": "swapkit-oss",
-  "dependencies": { "@swapkit/browser": "workspace:*" },
+  "dependencies": { "@swapkit/sdk": "workspace:*" },
   "description": "SwapKit - UI",
   "devDependencies": {
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.541.0",
     "postcss": "8.5.6",
     "react": "19.1.1",
     "tailwind-merge": "3.3.1",
@@ -16,11 +19,22 @@
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     },
-    "./standalone/*": {
-      "default": "./dist/standalone/[name].js",
-      "require": "./dist/standalone/[name].cjs",
-      "types": "./dist/types/standalone/[name].d.ts"
-    }
+    "./react/*": {
+      "default": "./dist/react/*.js",
+      "require": "./dist/react/*.cjs",
+      "types": "./dist/types/react/*.d.ts"
+    },
+    "./react/composable/*": {
+      "default": "./dist/react/components/composable/*.js",
+      "require": "./dist/react/components/composable/*.cjs",
+      "types": "./dist/types/react/components/composable/*.d.ts"
+    },
+    "./react/standalone/*": {
+      "default": "./dist/react/components/standalone/*.js",
+      "require": "./dist/react/components/standalone/*.cjs",
+      "types": "./dist/types/react/components/standalone/*.d.ts"
+    },
+    "./swapkit.css": "./dist/swapkit.css"
   },
   "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",
