@@ -208,7 +208,7 @@ function SwapInputWithChainSelector({
 
   // TODO: move to react-hook-form
   selectedAsset: string | undefined;
-  setSelectedAsset: (asset: string | undefined) => void;
+  setSelectedAsset: (asset: string) => void;
   amount: string | undefined;
   setAmount?: (amount: string) => void;
   isSwapping: boolean;
@@ -242,7 +242,7 @@ function SwapAssetSelect({
   setSelectedAsset,
 }: {
   selectedAsset: string | undefined;
-  setSelectedAsset: (asset: string | undefined) => void;
+  setSelectedAsset: (asset: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const { chains, balanceGroupedByChain } = useSwapKit();
