@@ -64,7 +64,6 @@ export const useSwapKit = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
   useEffect(() => {
-    console.log("loading swapkit", swapKit);
     if (swapKit) return;
 
     void AssetValue.loadStaticAssets();

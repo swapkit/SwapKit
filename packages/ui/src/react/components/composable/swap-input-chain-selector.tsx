@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "../ui/input";
-import { SwapAssetSelect } from "./SwapAssetSelect";
+import { SwapAssetSelect } from "./swap-asset-select";
 
 export function SwapInputWithChainSelector({
   label,

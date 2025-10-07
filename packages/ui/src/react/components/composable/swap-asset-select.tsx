@@ -5,7 +5,7 @@ import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { SwapAssetItem } from "./SwapAssetItem";
+import { SwapAssetItem } from "./swap-asset-item";
 
 export function SwapAssetSelect({
   selectedAsset,

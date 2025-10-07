@@ -3,7 +3,7 @@
 import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { SwapInputWithChainSelector } from "./components/composable/SwapInputWithChainSelector";
+import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { Toaster, toast } from "./components/ui/sonner";
