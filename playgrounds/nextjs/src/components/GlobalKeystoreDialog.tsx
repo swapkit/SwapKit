@@ -1,5 +1,6 @@
 "use client";
 
+import { useSwapKit } from "@swapkit/ui/react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -11,7 +12,6 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { useSwapKit } from "~/lib/swapKit";
 
 export const GlobalKeystoreDialog = () => {
   const { isKeystoreOpen, setIsKeystoreOpen, isKeystoreDecrypting, keystoreFile, setKeystoreFile, connectKeystore } =

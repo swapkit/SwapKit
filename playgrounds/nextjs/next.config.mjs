@@ -17,6 +17,7 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
+  transpilePackages: ["@swapkit/ui"],
   typescript: { ignoreBuildErrors: true },
 
   webpack: (config, { isServer, webpack }) => {

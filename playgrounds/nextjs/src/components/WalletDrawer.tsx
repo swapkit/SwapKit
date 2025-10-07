@@ -1,11 +1,11 @@
 "use client";
 import type { Chain } from "@swapkit/helpers";
+import { useSwapKit } from "@swapkit/ui/react";
 import { LogOut } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { ChainIcon } from "~/components/ui/chain-icon";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
-import { useSwapKit } from "~/lib/swapKit";
 import { TokenBalance } from "./TokenBalance";
 import { TruncatedAddress } from "./TruncatedAddress";
 
@@ -47,7 +47,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
         </SheetHeader>
 
         <div className="mt-6 space-y-6 pb-16">
-          {connectedChains.map((chain) => {
+          {connectedChains?.map((chain) => {
             const chainBalances = balances.filter((b) => b.chain === chain);
             const address = chainAddresses.get(chain);
             const gasAsset = chainBalances.find((b) => b.isGasAsset);
