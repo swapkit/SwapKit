@@ -2,22 +2,71 @@
 
 import type { Chain, createSwapKit, EVMChain, PluginName, TokenListName } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
-import { atom, Provider as JotaiProvider, useAtom } from "jotai"; // TODO: add in package.json
 import { useCallback, useEffect, useMemo } from "react";
+import { create } from "zustand";
 
 type KeystoreFile = { keystore: import("@swapkit/sdk/wallets").Keystore; file: File; chains: Chain[] } | null;
 
-const swapKitAtom = atom<ReturnType<typeof createSwapKit> | null>(null);
-const balanceAtom = atom<AssetValue[]>([]);
-const walletState = atom<{ connected: boolean; type: WalletOption | null }>({ connected: false, type: null });
-const keystoreFileAtom = atom<KeystoreFile>(null);
-const isKeystoreOpenAtom = atom<boolean>(false);
-const isKeystoreDecryptingAtom = atom<boolean>(false);
+interface SwapKitState {
+  swapKit: ReturnType<typeof createSwapKit> | null;
+  balances: AssetValue[];
+  walletType: WalletOption | null;
+  isWalletConnected: boolean;
+  keystoreFile: KeystoreFile;
+  isKeystoreOpen: boolean;
+  isKeystoreDecrypting: boolean;
 
-export function SwapKitProvider({ children }: SwapKitProviderProps) {
-  const [_swapKit, setSwapKit] = useAtom(swapKitAtom);
+  setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
+  setBalances: (balances: AssetValue[]) => void;
+  setWalletState: (state: { connected: boolean; type: WalletOption | null }) => void;
+  setKeystoreFile: (file: KeystoreFile) => void;
+  setIsKeystoreOpen: (isOpen: boolean) => void;
+  setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
+}
 
+export const useSwapKitStore = create<SwapKitState>((set) => {
+  // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
+  return {
+    swapKit: null,
+
+    balances: [],
+    walletType: null,
+    isWalletConnected: false,
+
+    keystoreFile: null,
+    isKeystoreOpen: false,
+    isKeystoreDecrypting: false,
+
+    setSwapKit: (swapKit) => set({ swapKit }),
+    setBalances: (balances) => set({ balances }),
+    setWalletState: ({ connected, type }) => set({ isWalletConnected: connected, walletType: type }),
+    setKeystoreFile: (keystoreFile) => set({ keystoreFile }),
+    setIsKeystoreOpen: (isKeystoreOpen) => set({ isKeystoreOpen }),
+    setIsKeystoreDecrypting: (isKeystoreDecrypting) => set({ isKeystoreDecrypting }),
+  };
+});
+
+export const useSwapKit = () => {
+  const swapKit = useSwapKitStore((state) => state.swapKit);
+  const balances = useSwapKitStore((state) => state.balances);
+  const walletType = useSwapKitStore((state) => state.walletType);
+  const isWalletConnected = useSwapKitStore((state) => state.isWalletConnected);
+  const keystoreFile = useSwapKitStore((state) => state.keystoreFile);
+  const isKeystoreOpen = useSwapKitStore((state) => state.isKeystoreOpen);
+  const isKeystoreDecrypting = useSwapKitStore((state) => state.isKeystoreDecrypting);
+
+  const setSwapKit = useSwapKitStore((state) => state.setSwapKit);
+  const setBalances = useSwapKitStore((state) => state.setBalances);
+  const setWalletState = useSwapKitStore((state) => state.setWalletState);
+  const setKeystoreFile = useSwapKitStore((state) => state.setKeystoreFile);
+  const setIsKeystoreOpen = useSwapKitStore((state) => state.setIsKeystoreOpen);
+  const setIsKeystoreDecrypting = useSwapKitStore((state) => state.setIsKeystoreDecrypting);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
   useEffect(() => {
+    console.log("loading swapkit", swapKit);
+    if (swapKit) return;
+
     void AssetValue.loadStaticAssets();
     void loadSwapKit();
 
@@ -46,15 +95,7 @@ export function SwapKitProvider({ children }: SwapKitProviderProps) {
 
       setSwapKit(swapKitClient);
     }
-  }, [setSwapKit]);
-
-  return <JotaiProvider>{children}</JotaiProvider>;
-}
-
-export const useSwapKit = () => {
-  const [swapKit] = useAtom(swapKitAtom);
-  const [balances, setBalances] = useAtom(balanceAtom);
-  const [{ type: walletType, connected: isWalletConnected }, setWalletState] = useAtom(walletState);
+  }, []);
 
   const getBalances = useCallback(
     async (refresh?: boolean) => {
@@ -184,10 +225,6 @@ export const useSwapKit = () => {
   }, [setWalletState, swapKit]);
 
   const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
-
-  const [keystoreFile, setKeystoreFile] = useAtom(keystoreFileAtom);
-  const [isKeystoreOpen, setIsKeystoreOpen] = useAtom(isKeystoreOpenAtom);
-  const [isKeystoreDecrypting, setIsKeystoreDecrypting] = useAtom(isKeystoreDecryptingAtom);
 
   const connectKeystore = useCallback(
     async (password: string) => {

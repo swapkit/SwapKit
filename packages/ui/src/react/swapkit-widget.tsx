@@ -1,15 +1,17 @@
 "use client";
 
 import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
-import { ArrowDownUpIcon, Loader2Icon } from "lucide-react"; // TODO: add in package.json
+import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner"; // TODO: add in package.json
 import { SwapInputWithChainSelector } from "./components/composable/SwapInputWithChainSelector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
-import { SwapKitProvider, type SwapKitProviderProps, useSwapKit } from "./swapkit-context";
+import { Toaster, toast } from "./components/ui/sonner";
+import { type SwapKitProviderProps, useSwapKit } from "./swapkit-context";
 
-export function SwapKitWidget({ apiKey }: SwapKitProviderProps) {
+type SwapKitWidgetProps = Omit<SwapKitProviderProps, "children">;
+
+export function SwapKitWidget(_props: SwapKitWidgetProps) {
   const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
   const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
   const [amount, setAmount] = useState("4.20");
@@ -105,95 +107,95 @@ export function SwapKitWidget({ apiKey }: SwapKitProviderProps) {
   };
 
   return (
-    <SwapKitProvider apiKey={apiKey}>
-      <div className="flex flex-col gap-4">
-        <h1 className="font-medium text-2xl">Swap</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="font-medium text-2xl">Swap</h1>
 
-        <Card>
-          <CardContent className="grid gap-6">
-            <div className="space-y-4">
-              <div className="grid gap-4">
-                <SwapInputWithChainSelector
-                  amount={amount}
-                  isSwapping={isSwapping}
-                  label="Pay"
-                  selectedAsset={inputAsset}
-                  setAmount={setAmount}
-                  setSelectedAsset={setInputAsset}
-                />
+      <Card>
+        <CardContent className="grid gap-6">
+          <div className="space-y-4">
+            <div className="grid gap-4">
+              <SwapInputWithChainSelector
+                amount={amount}
+                isSwapping={isSwapping}
+                label="Pay"
+                selectedAsset={inputAsset}
+                setAmount={setAmount}
+                setSelectedAsset={setInputAsset}
+              />
 
-                <div className="-my-4 flex items-center space-x-4">
-                  <span className="h-px w-full bg-border" />
+              <div className="-my-4 flex items-center space-x-4">
+                <span className="h-px w-full bg-border" />
 
-                  <Button
-                    className="size-10 shrink-0 rounded-full"
-                    onClick={() => {
-                      const temp = inputAsset;
-                      setInputAsset(outputAsset);
-                      setOutputAsset(temp);
-                    }}
-                    size="unstyled"
-                    variant="tertiary">
-                    <ArrowDownUpIcon className="size-6" />
-                  </Button>
+                <Button
+                  className="size-10 shrink-0 rounded-full"
+                  onClick={() => {
+                    const temp = inputAsset;
+                    setInputAsset(outputAsset);
+                    setOutputAsset(temp);
+                  }}
+                  size="unstyled"
+                  variant="tertiary">
+                  <ArrowDownUpIcon className="size-6" />
+                </Button>
 
-                  <span className="h-px w-full bg-border" />
-                </div>
-
-                <SwapInputWithChainSelector
-                  amount={estimatedOutput}
-                  isSwapping={isSwapping}
-                  label="Receive"
-                  selectedAsset={outputAsset}
-                  setSelectedAsset={setOutputAsset}
-                />
+                <span className="h-px w-full bg-border" />
               </div>
+
+              <SwapInputWithChainSelector
+                amount={estimatedOutput}
+                isSwapping={isSwapping}
+                label="Receive"
+                selectedAsset={outputAsset}
+                setSelectedAsset={setOutputAsset}
+              />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Button
-          className="w-full"
-          disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
-          onClick={async () => {
-            if (!(routes?.length && inputAsset)) return;
+      <Button
+        className="w-full"
+        disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
+        onClick={async () => {
+          if (!(routes?.length && inputAsset)) return;
 
-            try {
-              const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
-              const amountValue = assetValue.set(amount);
+          try {
+            const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
+            const amountValue = assetValue.set(amount);
 
-              const route = routes?.[0];
+            const route = routes?.[0];
 
-              if (!route) return;
+            if (!route) return;
 
-              await swap(route, amountValue);
-            } catch (error) {
-              console.error("Failed to prepare swap:", error);
-              toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
-            }
-          }}
-          size="xl"
-          variant="primary">
-          {isSwapping ? (
-            <>
-              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-              Swapping...
-            </>
-          ) : isWalletConnected ? (
-            inputAsset && outputAsset ? (
-              amount ? (
-                "Swap"
-              ) : (
-                "Enter Amount"
-              )
+            await swap(route, amountValue);
+          } catch (error) {
+            console.error("Failed to prepare swap:", error);
+            toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
+          }
+        }}
+        size="xl"
+        variant="primary">
+        {isSwapping ? (
+          <>
+            <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+            Swapping...
+          </>
+        ) : isWalletConnected ? (
+          inputAsset && outputAsset ? (
+            amount ? (
+              "Swap"
             ) : (
-              "Select Assets"
+              "Enter Amount"
             )
           ) : (
-            "Connect wallet"
-          )}
-        </Button>
-      </div>
-    </SwapKitProvider>
+            "Select Assets"
+          )
+        ) : (
+          "Connect wallet"
+        )}
+      </Button>
+
+      <Toaster position="bottom-right" />
+    </div>
   );
 }
