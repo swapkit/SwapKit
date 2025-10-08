@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.2.1
+
+### Patch Changes
+
+- [#1524](https://github.com/swapkit/SwapKit/pull/1524) [`0700c2b`](https://github.com/swapkit/SwapKit/commit/0700c2b7f1990e6ddebe77df88506ae3c08ff8e1) Thanks [@towanTG](https://github.com/towanTG)! - Fixes garden plugin
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.30
+
 ## 4.2.0
 
 ### Minor Changes

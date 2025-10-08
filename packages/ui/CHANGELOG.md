@@ -1,5 +1,12 @@
 # @swapkit/ui
 
+## 0.1.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/browser@4.0.33
+
 ## 0.1.32
 
 ### Patch Changes
