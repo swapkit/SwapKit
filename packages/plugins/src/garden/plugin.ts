@@ -1,22 +1,42 @@
-import { AssetValue, type Chain, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
-import type { QuoteResponseRoute } from "@swapkit/helpers/api";
+import { VersionedTransaction } from "@solana/web3.js";
+import { AssetValue, Chain, EVMChains, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
+import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
+import { match } from "ts-pattern";
 import { createPlugin } from "../utils";
 
 export const GardenPlugin = createPlugin({
   methods: ({ getWallet }) => ({
-    swap: async function gardenSwap({ route }: SwapParams<"garden", QuoteResponseRoute>) {
-      const { meta, sellAsset, sellAmount } = route;
+    swap: function gardenSwap({ route }: SwapParams<"garden", QuoteResponseRoute>) {
+      const { sellAsset, sellAmount, targetAddress, tx } = route;
 
-      if (!meta.garden?.destinationAddress) {
-        throw new SwapKitError("plugin_garden_missing_meta_data", { meta });
-      }
       const sellAssetValue = AssetValue.from({ asset: sellAsset, value: sellAmount });
 
-      const wallet = getWallet(sellAssetValue.chain as Exclude<Chain, Chain.Radix>);
+      return match(sellAssetValue.chain as Chain)
+        .returnType<Promise<string>>()
+        .with(...EVMChains, (chain) => {
+          const wallet = getWallet(chain);
 
-      const txHash = await wallet.transfer({ assetValue: sellAssetValue, recipient: meta.garden?.destinationAddress });
+          const { from, to, data, value } = tx as EVMTransaction;
+          return wallet.sendTransaction({ data, from, to, value: BigInt(value) });
+        })
+        .with(Chain.Solana, async (chain) => {
+          const wallet = getWallet(chain);
+          const transaction = VersionedTransaction.deserialize(Buffer.from(tx as string, "base64"));
 
-      return txHash;
+          const signedTransaction = await wallet.signTransaction(transaction);
+
+          return wallet.broadcastTransaction(signedTransaction);
+        })
+        .otherwise(async (chain) => {
+          if (!targetAddress) {
+            throw new SwapKitError("plugin_garden_missing_data", { message: "Missing target address: " });
+          }
+          const wallet = getWallet(chain as Exclude<Chain, Chain.Radix>);
+
+          const txHash = await wallet.transfer({ assetValue: sellAssetValue, recipient: targetAddress });
+
+          return txHash;
+        });
     },
   }),
   name: "garden",
