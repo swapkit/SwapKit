@@ -3,6 +3,7 @@ import { type AssetValue, Chain, SKConfig } from "@swapkit/core";
 import type { FullWallet } from "@swapkit/sdk";
 import { SwapKitWidget } from "@swapkit/ui/react";
 import { useCallback, useMemo, useState } from "react";
+import { AssetSearch } from "./components/AssetSearch";
 import Liquidity from "./Liquidity";
 import Multisig from "./Multisig";
 import NearNames from "./NearNames";
@@ -294,8 +295,11 @@ const App = () => {
 
         <div style={{ borderTop: "1px solid #222", marginTop: "auto", paddingTop: 12 }}>
           <div style={{ color: "#666", fontSize: 10, fontWeight: 600, marginBottom: 8 }}>ASSET SELECTION</div>
+
+          <AssetSearch onSelectAsset={setAsset} />
+
           {inputAsset || outputAsset ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
               {inputAsset && (
                 <div
                   style={{
@@ -338,7 +342,7 @@ const App = () => {
               </button>
             </div>
           ) : (
-            <div style={{ color: "#555", fontSize: 9 }}>Click assets from wallets to select</div>
+            <div style={{ color: "#555", fontSize: 9, marginTop: 12 }}>Search or click assets from wallets</div>
           )}
         </div>
       </div>
