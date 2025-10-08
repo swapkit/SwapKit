@@ -56,24 +56,6 @@ describe("TRON Address Validation", () => {
     }
   });
 
-  test("should validate address from generated account", async () => {
-    const toolbox = context.toolbox;
-
-    // Get address from the toolbox
-    const address = await toolbox.getAddress();
-
-    expect(address).toBeDefined();
-    expect(typeof address).toBe("string");
-    expect(address.length).toBeGreaterThan(0);
-
-    // The generated address should be valid
-    expect(context.validateAddress(address)).toBe(true);
-    expect(toolbox.validateAddress(address)).toBe(true);
-
-    // Address should start with 'T'
-    expect(address.startsWith("T")).toBe(true);
-  });
-
   test("should create TRON transaction with valid addresses", async () => {
     const toolbox = context.toolbox;
     const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";

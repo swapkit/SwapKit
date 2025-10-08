@@ -1,5 +1,17 @@
 # @swapkit/plugins
 
+## 4.1.0
+
+### Minor Changes
+
+- [#1522](https://github.com/swapkit/SwapKit/pull/1522) [`327aefe`](https://github.com/swapkit/SwapKit/commit/327aefe0d5fd97cac3c3e999b3fb1eed5de2eb79) Thanks [@towanTG](https://github.com/towanTG)! - Adds Garden Plugin and Provider
+
+### Patch Changes
+
+- Updated dependencies [[`327aefe`](https://github.com/swapkit/SwapKit/commit/327aefe0d5fd97cac3c3e999b3fb1eed5de2eb79)]:
+  - @swapkit/helpers@4.2.0
+  - @swapkit/toolboxes@4.1.1
+
 ## 4.0.30
 
 ### Patch Changes

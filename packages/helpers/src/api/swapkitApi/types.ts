@@ -530,6 +530,7 @@ export const RouteQuoteMetadataV2Schema = RouteQuoteMetadataSchema.extend({
   affiliateFee: optional(string()),
   approvalAddress: optional(string().describe("Approval address for swap")),
   chainflip: ChainflipMetadataSchema.optional(),
+  garden: NearDepositChannelParamsSchema.optional(),
   near: NearDepositChannelParamsSchema.optional(),
   priceImpact: optional(number().describe("Price impact")),
   referrer: optional(string()),
