@@ -406,6 +406,10 @@ const errorCodes = {
   plugin_near_registration_failed: 41004,
   plugin_near_transfer_failed: 41005,
   /**
+   * Garden Plugin
+   */
+  plugin_garden_missing_meta_data: 42001,
+  /**
    * SwapKit API
    */
   api_v2_invalid_response: 60001,

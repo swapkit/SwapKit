@@ -27,6 +27,11 @@
       "require": "./dist/evm/index.cjs",
       "types": "./dist/types/evm/index.d.ts"
     },
+    "./garden": {
+      "default": "./dist/garden/index.js",
+      "require": "./dist/garden/index.cjs",
+      "types": "./dist/types/garden/index.d.ts"
+    },
     "./near": {
       "default": "./dist/near/index.js",
       "require": "./dist/near/index.cjs",
