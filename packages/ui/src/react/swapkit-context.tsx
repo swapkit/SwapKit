@@ -49,12 +49,13 @@ export const useSwapKit = () => {
   useEffect(() => {
     if (swapKit) return;
 
+    void AssetValue.loadStaticAssets();
+
     const defaultApiKey = process.env.NEXT_PUBLIC_TEST_API_KEY;
 
     if (!defaultApiKey) return;
 
     void loadSwapKit({ apiKey: defaultApiKey });
-    void AssetValue.loadStaticAssets();
   }, []);
 
   async function loadSwapKit({ apiKey, config }: SwapKitWidgetProps) {
