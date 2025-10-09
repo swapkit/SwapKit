@@ -7,6 +7,7 @@ import {
   SwapKitError,
   type WalletOption,
 } from "@swapkit/sdk";
+import type { SwapKitWidgetProps } from "./react/types";
 
 export async function getSkClient<W extends WalletOption, P extends PluginName[]>({
   walletOption,
@@ -40,3 +41,14 @@ export async function loadPlugins<P extends PluginName[]>(pluginNames: P): Promi
 
   return connectedPlugins;
 }
+
+export const getStableConfigMemoKey = (config: SwapKitWidgetProps["config"]) => {
+  if (!config) return null;
+
+  const chainsId = config?.chains?.sort?.((a, b) => a.localeCompare(b)).join("_");
+  const tokenListsId = config?.tokenLists?.sort?.((a, b) => a.localeCompare(b)).join("_");
+  const pluginsId = config?.plugins?.sort?.((a, b) => a.localeCompare(b)).join("_");
+  const walletsId = config?.wallets?.sort?.((a, b) => a.localeCompare(b)).join("_");
+
+  return `${config?.apiUrl}-${chainsId}-${tokenListsId}-${pluginsId}-${walletsId}`;
+};

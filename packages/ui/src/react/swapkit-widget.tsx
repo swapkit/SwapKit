@@ -4,6 +4,7 @@ import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SKConfig
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { match, P } from "ts-pattern";
+import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -21,12 +22,16 @@ export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
 
   const { swapKit, isWalletConnected, loadSwapKit } = useSwapKit();
 
+  const stableConfigMemoKey = getStableConfigMemoKey(config);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
-    if (SKConfig?.get("apiKeys")?.swapKit === apiKey) return;
-    if (SKConfig?.get("envs")?.apiUrl === config?.apiUrl) return;
+    if (swapKit && SKConfig?.get("apiKeys")?.swapKit === apiKey && SKConfig?.get("envs")?.apiUrl === config?.apiUrl) {
+      return;
+    }
 
     void loadSwapKit({ apiKey, config });
-  }, [apiKey, config, loadSwapKit]);
+  }, [apiKey, stableConfigMemoKey]);
 
   const updateEstimatedOutput = useCallback(async () => {
     if (!(inputAsset && outputAsset && amount && swapKit)) {

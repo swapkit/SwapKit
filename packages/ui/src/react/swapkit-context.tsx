@@ -68,7 +68,7 @@ export const useSwapKit = () => {
           swapKit: apiKey,
           walletConnectProjectId: "",
         },
-        envs: { isDev: true },
+        envs: { isDev: true, ...(config?.apiUrl && { apiUrl: config?.apiUrl, devApiUrl: config?.apiUrl }) },
         integrations: {
           keepKey: {
             basePath: "http://localhost:1646/spec/swagger.json",
@@ -78,7 +78,6 @@ export const useSwapKit = () => {
             url: "http://localhost:1646",
           },
         },
-        ...config,
       },
     });
 
