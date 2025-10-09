@@ -1,4 +1,4 @@
-import type { AssetValue, Chain, createSwapKit, PluginName, TokenListName, WalletOption } from "@swapkit/sdk";
+import type { AssetValue, Chain, createSwapKit, SKConfigState, WalletOption } from "@swapkit/sdk";
 
 export type KeystoreFile = { keystore: import("@swapkit/sdk/wallets").Keystore; file: File; chains: Chain[] } | null;
 
@@ -19,42 +19,4 @@ export interface SwapKitState {
   setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
 }
 
-export type SwapKitWidgetProps = {
-  /**
-   * SwapKit API key - get it from https://partners.swapkit.dev/login
-   */
-  apiKey: string;
-  /**
-   * List of predefined assets available for selection
-   * By default, assets from token lists are available
-   */
-  availableAssets?: AssetValue[];
-  config?: {
-    /**
-     * SwapKit API URL
-     * By default, https://api.swapkit.dev is used
-     * @default https://api.swapkit.dev
-     */
-    apiUrl?: string;
-    /**
-     * List of wallets available for connection
-     * By default, all wallets are available
-     */
-    wallets?: WalletOption[];
-    /**
-     * List of chains available for connection
-     * By default, all chains are available
-     */
-    chains?: Chain[];
-    /**
-     * List of token lists to load
-     * By default, all token lists are loaded
-     */
-    tokenLists?: TokenListName[];
-    /**
-     * List of plugins to load
-     * By default, all plugins are loaded
-     */
-    plugins?: PluginName[];
-  };
-};
+export type SwapKitWidgetProps = { config?: SKConfigState };

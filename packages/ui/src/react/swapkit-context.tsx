@@ -1,12 +1,12 @@
 "use client";
 
-import type { Chain, EVMChain } from "@swapkit/sdk";
+import type { Chain, EVMChain, SKConfigState } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
-import type { SwapKitState, SwapKitWidgetProps } from "./types";
+import type { SwapKitState } from "./types";
 
-export const useSwapKitStore = create<SwapKitState>((set) => {
+const useSwapKitStore = create<SwapKitState>((set) => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
   return {
     swapKit: null,
@@ -50,36 +50,13 @@ export const useSwapKit = () => {
     if (swapKit) return;
 
     void AssetValue.loadStaticAssets();
-
-    const defaultApiKey = process.env.NEXT_PUBLIC_TEST_API_KEY;
-
-    if (!defaultApiKey) return;
-
-    void loadSwapKit({ apiKey: defaultApiKey });
+    void loadSwapKit();
   }, []);
 
-  async function loadSwapKit({ apiKey, config }: SwapKitWidgetProps) {
+  async function loadSwapKit(params?: { config: SKConfigState | undefined }) {
     const { createSwapKit } = await import("@swapkit/sdk");
 
-    const swapKitClient = createSwapKit({
-      config: {
-        apiKeys: {
-          keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-          swapKit: apiKey,
-          walletConnectProjectId: "",
-        },
-        envs: { isDev: true, ...(config?.apiUrl && { apiUrl: config?.apiUrl, devApiUrl: config?.apiUrl }) },
-        integrations: {
-          keepKey: {
-            basePath: "http://localhost:1646/spec/swagger.json",
-            imageUrl:
-              "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
-            name: "SwapKit",
-            url: "http://localhost:1646",
-          },
-        },
-      },
-    });
+    const swapKitClient = createSwapKit({ config: params?.config });
 
     setSwapKit(swapKitClient);
   }
