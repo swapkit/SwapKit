@@ -1,6 +1,6 @@
 "use client";
 
-import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
+import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SKConfig, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { match, P } from "ts-pattern";
@@ -21,10 +21,12 @@ export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
 
   const { swapKit, isWalletConnected, loadSwapKit } = useSwapKit();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: temporarily use this approach to set apiKey and config
   useEffect(() => {
+    if (SKConfig?.get("apiKeys")?.swapKit === apiKey) return;
+    if (SKConfig?.get("envs")?.apiUrl === config?.apiUrl) return;
+
     void loadSwapKit({ apiKey, config });
-  }, []);
+  }, [apiKey, config, loadSwapKit]);
 
   const updateEstimatedOutput = useCallback(async () => {
     if (!(inputAsset && outputAsset && amount && swapKit)) {
