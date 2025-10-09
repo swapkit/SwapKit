@@ -31,6 +31,12 @@ export type SwapKitWidgetProps = {
   availableAssets?: AssetValue[];
   config?: {
     /**
+     * SwapKit API URL
+     * By default, https://api.swapkit.dev is used
+     * @default https://api.swapkit.dev
+     */
+    apiUrl?: string;
+    /**
      * List of wallets available for connection
      * By default, all wallets are available
      */
