@@ -4,8 +4,6 @@
 
 @layer base {
   :root {
-    --navbar-height: 4rem;
-
     --white: 0 0% 100%;
     --black: 0 0% 0%;
 
@@ -39,12 +37,32 @@
     --border: var(--white) / 0.12;
     --input: 12 6.5% 15.1%;
     --ring: 24 5.7% 82.9%;
+
+    --navbar-height: 4rem;
+
+    --sidebar-background: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
   }
 }
 
 @layer base {
   * {
     @apply border-border antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
