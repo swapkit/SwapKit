@@ -5,37 +5,36 @@ const sizeData: Record<string, { esm: number; cjs: number }> = {};
 
 export async function buildPackage({
   entrypoints: packageEntrypoints,
+  evmOnly,
   ...rest
-}: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
+}: Omit<BuildConfig, "entrypoints"> & { evmOnly?: boolean; entrypoints?: string[] } = {}) {
   const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
-    exports: Record<string, { types: string }>;
+    exports: Record<string, { types: string } | string>;
     name: string;
   };
 
-  const filteredEntrypoints = Object.entries(exports)
-    .filter(([key]) => {
-      const isCssFile = key.includes("css");
+  const parsedEntrypoints = Object.entries(exports).map(async ([key, value]) => {
+    if (key.includes("css") && typeof value === "string") {
+      return value.replace("dist", "src");
+    }
 
-      if (isCssFile) {
-        console.warn("Found CSS file, skipping for now");
-        return false;
-      }
+    let basePath = "";
 
-      return true;
-    })
-    .map(async ([key, value]) => {
-      const basePath = value.types
-        ? value.types.replace("./dist/types/", "./src/").replace(".d.ts", "")
-        : key === "."
-          ? "./src/index"
-          : `./src/${key.replace("./", "")}/index`;
+    if (typeof value === "object" && value.types) {
+      basePath = value.types.replace("./dist/types/", "./src/").replace(".d.ts", "");
+    } else if (key === ".") {
+      basePath = "./src/index";
+    } else {
+      basePath = `./src/${key.replace("./", "")}/index`;
+    }
 
-      const isTsx = await Bun.file(`${basePath}.tsx`).exists();
+    const isTsx = await Bun.file(`${basePath}.tsx`).exists();
+    const entrypoint = `${basePath}.${isTsx ? "tsx" : "ts"}`;
 
-      return `${basePath}.${isTsx ? "tsx" : "ts"}`;
-    });
+    return entrypoint;
+  });
 
-  const entrypoints = packageEntrypoints || (await Promise.all(filteredEntrypoints));
+  const entrypoints = packageEntrypoints || (await Promise.all(parsedEntrypoints));
 
   if (isDebug) {
     console.info("Package:", pkgName);
@@ -53,7 +52,9 @@ export async function buildPackage({
   };
 
   const buildESM = await Bun.build(buildOptions);
-  const buildCJS = await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
+  const buildCJS = evmOnly
+    ? { logs: [], outputs: [], success: true }
+    : await Bun.build({ ...buildOptions, format: "cjs", naming: "[dir]/[name].cjs" });
 
   if (!(buildESM.success || buildCJS.success)) {
     throw new AggregateError(buildESM.logs.concat(buildCJS.logs), "Build failed");
@@ -82,31 +83,36 @@ ${"CJS: ".padStart(21)}${formatBytes(cjsBytesize)}`,
 }
 
 function saveSizes({ pkgName, files, type }: { pkgName: string; files: BuildArtifact[]; type: "esm" | "cjs" }) {
-  const { files: mappedFiles, maxLength } = mapFiles({ files, pkgName, type });
-  console.info(`📦 ${type.toUpperCase()} Import Sizes:`);
+  const { files: mappedFiles, maxLength } = mapFiles({ files, pkgName });
+  mappedFiles.length && console.info(`📦 ${type.toUpperCase()} Import Sizes:`);
+
   for (const { size, name, label } of mappedFiles) {
     if (sizeData[name]) {
       sizeData[name][type] = size;
     } else {
       sizeData[name] = { cjs: 0, esm: 0, [type]: size };
     }
+
     console.info(`${label.padEnd(maxLength)}${formatBytes(size)}`);
   }
 }
 
-function mapFiles({ pkgName, files, type }: { pkgName: string; files: BuildArtifact[]; type: "esm" | "cjs" }) {
-  const ext = type === "esm" ? "js" : "cjs";
+function mapFiles({ pkgName, files }: { pkgName: string; files: BuildArtifact[] }) {
   let maxLength = 0;
 
   const mappedFiles = files
-    .filter((file) => file.path.endsWith(`.${ext}`))
-    .map(({ size, path }) => {
+    .filter((file) => [".js", ".cjs", ".css"].some((ext) => file.path.endsWith(ext)))
+    .map(({ size, loader, path }) => {
+      const fileExt = loader === "css" ? "css" : path.split(".").pop() || "";
       const [moduleName, fileName] = path.split("/").slice(-2);
+
       const params =
         moduleName === "dist" || moduleName === "src"
-          ? fileName === `index.${ext}`
+          ? fileName === `index.${fileExt}`
             ? { exportName: "", type: "root" }
-            : { exportName: fileName, type: "chunk" }
+            : fileName?.endsWith(".css")
+              ? { exportName: fileName, type: "package" }
+              : { exportName: fileName, type: "chunk" }
           : { exportName: moduleName, type: "package" };
 
       const { label, name } = importName({ pkgName, ...params });

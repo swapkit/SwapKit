@@ -16,6 +16,7 @@
     "zustand": "5.0.8"
   },
   "description": "SwapKit - UI",
+  "devDependencies": { "bun-plugin-tailwind": "0.1.2" },
   "exports": {
     ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
     "./react": {

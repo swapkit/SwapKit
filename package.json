@@ -40,6 +40,8 @@
   },
   "trustedDependencies": [
     "@biomejs/biome",
+    "bun",
+    "@swc/core",
     "bigint-buffer",
     "blake-hash",
     "bufferutil",
