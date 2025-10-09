@@ -3,6 +3,7 @@
 import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { match, P } from "ts-pattern";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -110,6 +111,36 @@ export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
     }
   };
 
+  const handleSubmitButtonClick = async () => {
+    if (!(routes?.length && inputAsset)) return;
+
+    try {
+      const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
+      const amountValue = assetValue.set(amount);
+
+      const route = routes?.[0];
+
+      if (!route) return;
+
+      await swap(route, amountValue);
+    } catch (error) {
+      console.error("Failed to prepare swap:", error);
+      toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
+
+  const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
+    .with({ isSwapping: true }, () => (
+      <>
+        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+        Swapping...
+      </>
+    ))
+    .with({ isWalletConnected: false }, () => "Connect wallet")
+    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
+    .with({ amount: P.nullish }, () => "Enter Amount")
+    .otherwise(() => "Swap");
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-medium text-2xl">Swap</h1>
@@ -160,43 +191,10 @@ export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
       <Button
         className="w-full"
         disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
-        onClick={async () => {
-          if (!(routes?.length && inputAsset)) return;
-
-          try {
-            const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
-            const amountValue = assetValue.set(amount);
-
-            const route = routes?.[0];
-
-            if (!route) return;
-
-            await swap(route, amountValue);
-          } catch (error) {
-            console.error("Failed to prepare swap:", error);
-            toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
-          }
-        }}
+        onClick={handleSubmitButtonClick}
         size="xl"
         variant="primary">
-        {isSwapping ? (
-          <>
-            <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-            Swapping...
-          </>
-        ) : isWalletConnected ? (
-          inputAsset && outputAsset ? (
-            amount ? (
-              "Swap"
-            ) : (
-              "Enter Amount"
-            )
-          ) : (
-            "Select Assets"
-          )
-        ) : (
-          "Connect wallet"
-        )}
+        {submitButtonContent}
       </Button>
 
       <Toaster position="bottom-right" />
