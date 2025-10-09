@@ -24,10 +24,17 @@ import type {
   BASEToolbox,
   BERAToolbox,
   BSCToolbox,
+  COREToolbox,
+  CORNToolbox,
+  CROToolbox,
   ETHToolbox,
   GNOToolbox,
+  HYPEREVMToolbox,
   MATICToolbox,
   OPToolbox,
+  SONICToolbox,
+  UNIToolbox,
+  XLayerToolbox,
 } from "./toolbox";
 
 export enum EthNetwork {
@@ -120,8 +127,16 @@ export type EVMToolboxes = {
   [Chain.Base]: Awaited<ReturnType<typeof BASEToolbox>>;
   [Chain.Berachain]: Awaited<ReturnType<typeof BERAToolbox>>;
   [Chain.BinanceSmartChain]: Awaited<ReturnType<typeof BSCToolbox>>;
+  [Chain.Botanix]: Awaited<ReturnType<typeof SONICToolbox>>;
+  [Chain.Core]: Awaited<ReturnType<typeof COREToolbox>>;
+  [Chain.Corn]: Awaited<ReturnType<typeof CORNToolbox>>;
+  [Chain.Cronos]: Awaited<ReturnType<typeof CROToolbox>>;
+  [Chain.Hyperevm]: Awaited<ReturnType<typeof HYPEREVMToolbox>>;
   [Chain.Ethereum]: Awaited<ReturnType<typeof ETHToolbox>>;
   [Chain.Gnosis]: Awaited<ReturnType<typeof GNOToolbox>>;
   [Chain.Optimism]: Awaited<ReturnType<typeof OPToolbox>>;
   [Chain.Polygon]: Awaited<ReturnType<typeof MATICToolbox>>;
+  [Chain.Sonic]: Awaited<ReturnType<typeof SONICToolbox>>;
+  [Chain.Unichain]: Awaited<ReturnType<typeof UNIToolbox>>;
+  [Chain.XLayer]: Awaited<ReturnType<typeof XLayerToolbox>>;
 };

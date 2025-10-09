@@ -34,8 +34,16 @@ export const AVAXToolbox = createEvmToolbox(Chain.Avalanche);
 export const BASEToolbox = createEvmToolbox(Chain.Base);
 export const BERAToolbox = createEvmToolbox(Chain.Berachain);
 export const BSCToolbox = createEvmToolbox(Chain.BinanceSmartChain);
+export const BotanixToolbox = createEvmToolbox(Chain.Botanix);
+export const COREToolbox = createEvmToolbox(Chain.Core);
+export const CORNToolbox = createEvmToolbox(Chain.Corn);
+export const CROToolbox = createEvmToolbox(Chain.Cronos);
 export const GNOToolbox = createEvmToolbox(Chain.Gnosis);
+export const HYPEREVMToolbox = createEvmToolbox(Chain.Hyperevm);
 export const MATICToolbox = createEvmToolbox(Chain.Polygon);
+export const SONICToolbox = createEvmToolbox(Chain.Sonic);
+export const UNIToolbox = createEvmToolbox(Chain.Unichain);
+export const XLayerToolbox = createEvmToolbox(Chain.XLayer);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
   return async function createEvmToolbox({ provider: providerParam, ...toolboxSignerParams }: EVMToolboxParams) {

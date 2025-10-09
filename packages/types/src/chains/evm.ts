@@ -157,11 +157,11 @@ const BERAConfig = createChain({
   type,
 });
 
-const HYPEConfig = createChain({
+const HYPEREVMConfig = createChain({
   baseDecimal,
   blockTime: 2, // TODO: Check this value
-  chain: Chain.Hyperliquid,
-  chainId: ChainId.Hyperliquid,
+  chain: Chain.Hyperevm,
+  chainId: ChainId.Hyperevm,
   chainIdHex: "0x3e7",
   explorerUrl: "https://app.hyperliquid.xyz/explorer",
   name: "Hyperliquid",
@@ -241,7 +241,7 @@ const CROConfig = createChain({
   type,
 });
 
-const OKBConfig = createChain({
+const XLAYERConfig = createChain({
   baseDecimal,
   blockTime: 2,
   chain: Chain.XLayer,
@@ -282,8 +282,8 @@ export const EVMChainConfigs = [
   CROConfig,
   ETHConfig,
   GNOConfig,
-  HYPEConfig,
-  OKBConfig,
+  HYPEREVMConfig,
+  XLAYERConfig,
   OPConfig,
   POLConfig,
   SONICConfig,
@@ -303,10 +303,11 @@ export const EVMChains = [
   Chain.Cronos,
   Chain.Ethereum,
   Chain.Gnosis,
-  Chain.Hyperliquid,
+  Chain.Hyperevm,
   Chain.Optimism,
   Chain.Polygon,
   Chain.Sonic,
   Chain.Unichain,
+  Chain.XLayer,
 ] as const;
 export type EVMChain = (typeof EVMChains)[number];
