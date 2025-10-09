@@ -1,5 +1,14 @@
 # @swapkit/ui
 
+## 0.1.34
+
+### Patch Changes
+
+- [#1526](https://github.com/swapkit/SwapKit/pull/1526) [`41ea03c`](https://github.com/swapkit/SwapKit/commit/41ea03cc82888137680b97f1fba986f5750692c2) Thanks [@Drakeoon](https://github.com/Drakeoon)! - Adds sidebar allowing to configure SwapKitWidget in Nextjs playground
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.0.34
+
 ## 0.1.33
 
 ### Patch Changes
