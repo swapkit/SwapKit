@@ -283,11 +283,11 @@ export const EVMChainConfigs = [
   ETHConfig,
   GNOConfig,
   HYPEREVMConfig,
-  XLAYERConfig,
   OPConfig,
   POLConfig,
   SONICConfig,
   UNIConfig,
+  XLAYERConfig,
 ] as const;
 export const EVMChains = [
   Chain.Arbitrum,

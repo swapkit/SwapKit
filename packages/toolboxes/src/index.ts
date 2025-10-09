@@ -2,11 +2,13 @@ import {
   AssetValue,
   Chain,
   type CosmosChain,
+  CosmosChains,
   type EVMChain,
   EVMChains,
   FeeOption,
   type GenericCreateTransactionParams,
   type SubstrateChain,
+  SubstrateChains,
   SwapKitError,
   type UTXOChain,
   UTXOChains,
@@ -80,28 +82,16 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
 
     return match(chain as Chain)
       .returnType<Promise<AssetValue>>()
-      .with(
-        Chain.Arbitrum,
-        Chain.Aurora,
-        Chain.Avalanche,
-        Chain.Base,
-        Chain.Berachain,
-        Chain.BinanceSmartChain,
-        Chain.Ethereum,
-        Chain.Gnosis,
-        Chain.Optimism,
-        Chain.Polygon,
-        async (chain) => {
-          const toolbox = await getToolbox(chain);
-          const txObject = await toolbox.createTransaction(params);
+      .with(...EVMChains, async (chain) => {
+        const toolbox = await getToolbox(chain);
+        const txObject = await toolbox.createTransaction(params);
 
-          return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
-            ...txObject,
-            chain,
-            feeOption: params.feeOptionKey || FeeOption.Fast,
-          });
-        },
-      )
+        return (toolbox as Awaited<ReturnType<typeof ETHToolbox>>).estimateTransactionFee({
+          ...txObject,
+          chain,
+          feeOption: params.feeOptionKey || FeeOption.Fast,
+        });
+      })
       .with(
         Chain.Bitcoin,
         Chain.BitcoinCash,
@@ -129,7 +119,7 @@ export function getFeeEstimator<T extends keyof CreateTransactionParams>(chain: 
         const tonToolbox = await getTONToolbox();
         return tonToolbox.estimateTransactionFee();
       })
-      .with(Chain.THORChain, Chain.Maya, Chain.Kujira, Chain.Noble, Chain.Cosmos, async () => {
+      .with(...CosmosChains, async () => {
         const { estimateTransactionFee } = await import("./cosmos");
         return estimateTransactionFee(params);
       })
@@ -198,29 +188,17 @@ export async function getToolbox<T extends keyof Toolboxes>(
 
   return match(chain as Chain)
     .returnType<Promise<Toolboxes[T]>>()
-    .with(
-      Chain.Arbitrum,
-      Chain.Aurora,
-      Chain.Avalanche,
-      Chain.Base,
-      Chain.Berachain,
-      Chain.BinanceSmartChain,
-      Chain.Ethereum,
-      Chain.Gnosis,
-      Chain.Optimism,
-      Chain.Polygon,
-      async () => {
-        const { getEvmToolbox } = await import("./evm/toolbox");
-        const evmToolbox = await getEvmToolbox(chain as EVMChain, params as Parameters<typeof getEvmToolbox>[1]);
-        return evmToolbox as Toolboxes[T];
-      },
-    )
-    .with(Chain.Litecoin, Chain.Dash, Chain.Dogecoin, Chain.BitcoinCash, Chain.Bitcoin, Chain.Zcash, async () => {
+    .with(...EVMChains, async () => {
+      const { getEvmToolbox } = await import("./evm/toolbox");
+      const evmToolbox = await getEvmToolbox(chain as EVMChain, params as Parameters<typeof getEvmToolbox>[1]);
+      return evmToolbox as Toolboxes[T];
+    })
+    .with(...UTXOChains, async () => {
       const { getUtxoToolbox } = await import("./utxo");
       const utxoToolbox = await getUtxoToolbox(chain as UTXOChain, params as Parameters<typeof getUtxoToolbox>[1]);
       return utxoToolbox as Toolboxes[T];
     })
-    .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, async () => {
+    .with(...CosmosChains, async () => {
       const { getCosmosToolbox } = await import("./cosmos");
       const cosmosToolbox = await getCosmosToolbox(
         chain as Exclude<CosmosChain, Chain.Harbor>,
@@ -228,7 +206,7 @@ export async function getToolbox<T extends keyof Toolboxes>(
       );
       return cosmosToolbox as Toolboxes[T];
     })
-    .with(Chain.Chainflip, Chain.Polkadot, async () => {
+    .with(...SubstrateChains, async () => {
       const { getSubstrateToolbox } = await import("./substrate");
       const substrateToolbox = await getSubstrateToolbox(
         chain as SubstrateChain,
