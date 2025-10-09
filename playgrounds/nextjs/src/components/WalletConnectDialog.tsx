@@ -1,15 +1,14 @@
 "use client";
 
 import { Chain, EVMChains, WalletOption } from "@swapkit/helpers";
+import { ChainIcon, WalletIcon } from "@swapkit/ui/react";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { ChainIcon } from "~/components/ui/chain-icon";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { WalletIcon } from "~/components/ui/wallet-icon";
 import { useWalletConnect } from "~/hooks/useWalletConnect";
 
 const CHAIN_GROUPS: Record<string, Chain[]> = {

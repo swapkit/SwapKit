@@ -9,25 +9,33 @@ export async function buildPackage({
 }: Omit<BuildConfig, "entrypoints"> & { entrypoints?: string[] } = {}) {
   const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
     exports: Record<string, { types: string }>;
-
     name: string;
   };
 
-  const entrypoints =
-    packageEntrypoints ||
-    (await Promise.all(
-      Object.entries(exports).map(async ([key, value]) => {
-        const basePath = value.types
-          ? value.types.replace("./dist/types/", "./src/").replace(".d.ts", "")
-          : key === "."
-            ? "./src/index"
-            : `./src/${key.replace("./", "")}/index`;
+  const filteredEntrypoints = Object.entries(exports)
+    .filter(([key]) => {
+      const isCssFile = key.includes("css");
 
-        const isTsx = await Bun.file(`${basePath}.tsx`).exists();
+      if (isCssFile) {
+        console.warn("Found CSS file, skipping for now");
+        return false;
+      }
 
-        return `${basePath}.${isTsx ? "tsx" : "ts"}`;
-      }),
-    ));
+      return true;
+    })
+    .map(async ([key, value]) => {
+      const basePath = value.types
+        ? value.types.replace("./dist/types/", "./src/").replace(".d.ts", "")
+        : key === "."
+          ? "./src/index"
+          : `./src/${key.replace("./", "")}/index`;
+
+      const isTsx = await Bun.file(`${basePath}.tsx`).exists();
+
+      return `${basePath}.${isTsx ? "tsx" : "ts"}`;
+    });
+
+  const entrypoints = packageEntrypoints || (await Promise.all(filteredEntrypoints));
 
   if (isDebug) {
     console.info("Package:", pkgName);
@@ -137,7 +145,7 @@ function importName({ pkgName, exportName, type }: { pkgName: string; exportName
   return { label: `${base || prefix}: `, name: (base || prefix).trim() };
 }
 
-function formatBytes(bytes: number) {
+export function formatBytes(bytes: number) {
   const units = ["B", "KB", "MB"];
   let index = 0;
   let size = bytes;

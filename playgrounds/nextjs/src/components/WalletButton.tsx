@@ -1,8 +1,8 @@
 "use client";
 
+import { useSwapKit } from "@swapkit/ui/react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { useSwapKit } from "~/lib/swapKit";
 import { WalletConnectDialog } from "./WalletConnectDialog";
 import { WalletDrawer } from "./WalletDrawer";
 
