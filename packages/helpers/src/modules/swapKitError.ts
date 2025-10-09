@@ -408,7 +408,7 @@ const errorCodes = {
   /**
    * Garden Plugin
    */
-  plugin_garden_missing_meta_data: 42001,
+  plugin_garden_missing_data: 42001,
   /**
    * SwapKit API
    */

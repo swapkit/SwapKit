@@ -1,5 +1,17 @@
 # @swapkit/sdk
 
+## 4.0.33
+
+### Patch Changes
+
+- [#1524](https://github.com/swapkit/SwapKit/pull/1524) [`0700c2b`](https://github.com/swapkit/SwapKit/commit/0700c2b7f1990e6ddebe77df88506ae3c08ff8e1) Thanks [@towanTG](https://github.com/towanTG)! - Fixes garden plugin
+
+- Updated dependencies [[`0700c2b`](https://github.com/swapkit/SwapKit/commit/0700c2b7f1990e6ddebe77df88506ae3c08ff8e1)]:
+  - @swapkit/plugins@4.1.1
+  - @swapkit/core@4.0.31
+  - @swapkit/server@4.0.30
+  - @swapkit/wallets@4.1.29
+
 ## 4.0.32
 
 ### Patch Changes
