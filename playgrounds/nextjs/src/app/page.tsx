@@ -36,7 +36,25 @@ export default function SwapPage() {
       </AppSidebar>
 
       <div className="col-span-2 flex w-full max-w-xl items-center justify-center">
-        <SwapKitWidget config={{ apiKeys: { swapKit: apiKey }, envs: { devApiUrl: apiUrl, isDev: true } }} />
+        <SwapKitWidget
+          config={{
+            apiKeys: {
+              keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
+              swapKit: apiKey,
+              walletConnectProjectId: "",
+            },
+            envs: { devApiUrl: apiUrl, isDev: true },
+            integrations: {
+              keepKey: {
+                basePath: "http://localhost:1646/spec/swagger.json",
+                imageUrl:
+                  "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
+                name: "SwapKit",
+                url: "http://localhost:1646",
+              },
+            },
+          }}
+        />
       </div>
     </div>
   );
