@@ -6,8 +6,7 @@ import {
   StagenetMAYAConfig,
   StagenetTHORConfig,
 } from "@swapkit/types";
-import { createStore } from "zustand/vanilla";
-
+import { create } from "zustand";
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
@@ -102,7 +101,7 @@ type SwapKitConfigStore = SKState & {
   setFeeMultipliers: (multipliers: FeeMultiplierConfig) => void;
 };
 
-const swapKitState = createStore<SwapKitConfigStore>((set) => ({
+export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
   ...initialState,
 
   setApiKey: (key, apiKey) => set((s) => ({ apiKeys: { ...s.apiKeys, [key]: apiKey } })),
@@ -131,19 +130,19 @@ const swapKitState = createStore<SwapKitConfigStore>((set) => ({
 }));
 
 export const SKConfig = {
-  get: <T extends keyof SKState>(key: T) => swapKitState.getState()[key],
-  getState: swapKitState.getState,
-  reinitialize: () => swapKitState.setState(initialState),
-  set: <T extends SKConfigState>(config: T) => swapKitState.getState().setConfig(config),
+  get: <T extends keyof SKState>(key: T) => useSwapKitStore.getState()[key],
+  getState: useSwapKitStore.getState,
+  reinitialize: () => useSwapKitStore.setState(initialState),
+  set: <T extends SKConfigState>(config: T) => useSwapKitStore.getState().setConfig(config),
 
   setApiKey: <T extends keyof SKState["apiKeys"]>(key: T, apiKey: string) =>
-    swapKitState.getState().setApiKey(key, apiKey),
+    useSwapKitStore.getState().setApiKey(key, apiKey),
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) =>
-    swapKitState.getState().setEnv(key, value),
-  setFeeMultipliers: (multipliers: FeeMultiplierConfig) => swapKitState.getState().setFeeMultipliers(multipliers),
+    useSwapKitStore.getState().setEnv(key, value),
+  setFeeMultipliers: (multipliers: FeeMultiplierConfig) => useSwapKitStore.getState().setFeeMultipliers(multipliers),
   setIntegrationConfig: <T extends keyof SKState["integrations"]>(integration: T, config: SKConfigIntegrations[T]) =>
-    swapKitState.getState().setIntegrationConfig(integration, config),
-  setRequestOptions: (options: SKState["requestOptions"]) => swapKitState.getState().setRequestOptions(options),
+    useSwapKitStore.getState().setIntegrationConfig(integration, config),
+  setRequestOptions: (options: SKState["requestOptions"]) => useSwapKitStore.getState().setRequestOptions(options),
   setRpcUrl: <T extends keyof SKState["rpcUrls"]>(chain: T, urls: string[]) =>
-    swapKitState.getState().setRpcUrl(chain, urls),
+    useSwapKitStore.getState().setRpcUrl(chain, urls),
 };

@@ -1,9 +1,17 @@
 "use client";
 
-import { AssetValue, type Chain, ProviderName, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
+import {
+  AssetValue,
+  type Chain,
+  ProviderName,
+  type QuoteResponseRoute,
+  SwapKitApi,
+  useSwapKitStore,
+} from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
+import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -11,20 +19,30 @@ import { Toaster, toast } from "./components/ui/sonner";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
-export function SwapKitWidget({ apiKey, config }: SwapKitWidgetProps) {
+export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
   const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
   const [amount, setAmount] = useState("4.20");
   const [isSwapping, setIsSwapping] = useState(false);
   const [estimatedOutput, setEstimatedOutput] = useState<string>();
   const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
+  const cachedStableConfigMemoKey = useRef<string | null>(null);
 
-  const { swapKit, isWalletConnected, loadSwapKit } = useSwapKit();
+  const { setConfig } = useSwapKitStore();
+  const { swapKit, isWalletConnected } = useSwapKit();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: temporarily use this approach to set apiKey and config
+  const stableConfigMemoKey = getStableConfigMemoKey(config);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
-    void loadSwapKit({ apiKey, config });
-  }, []);
+    const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
+
+    if (swapKit && isConfigSame) return;
+
+    void setConfig(config ?? {});
+
+    cachedStableConfigMemoKey.current = stableConfigMemoKey;
+  }, [swapKit, stableConfigMemoKey]);
 
   const updateEstimatedOutput = useCallback(async () => {
     if (!(inputAsset && outputAsset && amount && swapKit)) {

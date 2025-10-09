@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { NavigationBar } from "~/components/containers/NavigationBar";
+import { AppNavbar } from "~/components/containers/AppNavbar";
 import { AppProviders } from "~/components/providers";
 import "./globals.css";
+import { SidebarProvider } from "~/components/ui/sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,13 +14,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html className="dark" lang="en" style={{ colorScheme: "dark" }}>
       <body className={inter.className}>
         <AppProviders>
-          <div className="flex min-h-screen w-full flex-col items-center">
-            <NavigationBar />
+          <SidebarProvider>
+            <div className="flex min-h-screen w-full flex-col items-center">
+              <AppNavbar />
 
-            <div className="mx-auto w-full max-w-screen-lg pt-[calc(var(--navbar-height)+4rem)] [&>*]:mx-auto [&>*]:max-w-xl">
-              {children}
+              <div className="mx-auto flex w-full max-w-screen-lg gap-4 pt-[calc(var(--navbar-height)+4rem)]">
+                {children}
+              </div>
             </div>
-          </div>
+          </SidebarProvider>
         </AppProviders>
       </body>
     </html>

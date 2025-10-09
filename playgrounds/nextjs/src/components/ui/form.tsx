@@ -2,11 +2,13 @@ import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import {
+  type Control,
   Controller,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
   FormProvider,
+  useController,
   useFormContext,
 } from "react-hook-form";
 
@@ -18,7 +20,7 @@ const Form = FormProvider;
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = { name: TName };
+> = { name: TName; control: Control<TFieldValues> | undefined };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
 
@@ -29,7 +31,7 @@ const FormField = <
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldContext.Provider value={{ control: props?.control as Control<FieldValues>, name: props.name }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   );
@@ -38,9 +40,12 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
-
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const formContext = useFormContext();
+  const controlState = useController({ control: fieldContext.control, name: fieldContext.name });
+  const formState = formContext?.formState;
+  const fieldState = formContext?.getFieldState
+    ? formContext.getFieldState(fieldContext.name, formState)
+    : controlState?.fieldState;
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
