@@ -39,10 +39,11 @@
     --ring: 24 5.7% 82.9%;
   }
 
-  /* * {
+  * {
     @apply border-border antialiased;
   }
+  
   body {
     @apply bg-background text-foreground;
-  } */
+  }
 }
