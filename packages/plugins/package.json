@@ -32,6 +32,11 @@
       "require": "./dist/garden/index.cjs",
       "types": "./dist/types/garden/index.d.ts"
     },
+    "./genericSwap": {
+      "default": "./dist/genericSwap/index.js",
+      "require": "./dist/genericSwap/index.cjs",
+      "types": "./dist/types/genericSwap/index.d.ts"
+    },
     "./near": {
       "default": "./dist/near/index.js",
       "require": "./dist/near/index.cjs",

@@ -192,6 +192,16 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     return result.transaction.hash;
   }
 
+  async function signAndBroadcastTransaction(transaction: Transaction) {
+    try {
+      const signedTransaction = await signTransaction(transaction);
+
+      return await broadcastTransaction(signedTransaction);
+    } catch (error) {
+      throw new SwapKitError("toolbox_near_transfer_failed", { error });
+    }
+  }
+
   async function estimateTransactionFee(params: NearTransferParams | NearGasEstimateParams) {
     if ("assetValue" in params) {
       const baseTransferCost = "115123062500";
@@ -364,6 +374,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     nep141,
     provider,
     serializeTransaction,
+    signAndBroadcastTransaction,
+    signer,
     signTransaction,
     transfer,
     validateAddress: await getValidateNearAddress(),

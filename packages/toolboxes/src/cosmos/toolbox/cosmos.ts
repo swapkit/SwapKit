@@ -21,7 +21,8 @@ import {
   type TCLikeChain,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { type CosmosTransaction, SwapKitApi } from "@swapkit/helpers/api";
+import type { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { match, P } from "ts-pattern";
 import type { CosmosToolboxParams } from "../types";
 import {
@@ -136,6 +137,42 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     return base64.encode(account?.pubkey);
   }
 
+  async function signTransaction(transaction: CosmosTransaction): Promise<TxRaw> {
+    const from = await getAddress();
+
+    if (!(signer && from)) {
+      throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+    }
+
+    const signingClient = await createSigningStargateClient(rpcUrl, signer);
+
+    const txRaw = await signingClient.sign(from, transaction.msgs, transaction.fee, transaction.memo, {
+      accountNumber: transaction.accountNumber,
+      chainId: transaction.chainId,
+      sequence: transaction.sequence,
+    });
+
+    return txRaw;
+  }
+
+  async function signAndBroadcastTransaction(transaction: CosmosTransaction) {
+    const from = await getAddress();
+
+    if (!(signer && from)) {
+      throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+    }
+
+    const signingClient = await createSigningStargateClient(rpcUrl, signer);
+
+    const result = await signingClient.signAndBroadcast(from, transaction.msgs, transaction.fee, transaction.memo);
+
+    if (result.code !== 0) {
+      throw new SwapKitError("core_swap_transaction_error", { code: result.code, message: result.rawLog });
+    }
+
+    return result.transactionHash;
+  }
+
   async function transfer({
     recipient,
     assetValue,
@@ -207,6 +244,10 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         importedSigning.DirectSecp256k1Wallet ?? importedSigning.default?.DirectSecp256k1Wallet;
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
+
+    signAndBroadcastTransaction,
+    signer,
+    signTransaction,
     transfer,
     validateAddress: getCosmosValidateAddress(chainPrefix),
     verifySignature: verifySignature(getAccount),

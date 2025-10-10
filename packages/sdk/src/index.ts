@@ -6,6 +6,7 @@ import { SwapKit } from "@swapkit/core";
 import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 import { EVMPlugin } from "@swapkit/plugins/evm";
 import { GardenPlugin } from "@swapkit/plugins/garden";
+import { GenericSwapPlugin } from "@swapkit/plugins/genericSwap";
 import { NearPlugin } from "@swapkit/plugins/near";
 import { RadixPlugin } from "@swapkit/plugins/radix";
 import { SolanaPlugin } from "@swapkit/plugins/solana";
@@ -85,6 +86,7 @@ export const defaultPlugins = {
   ...SolanaPlugin,
   ...NearPlugin,
   ...GardenPlugin,
+  ...GenericSwapPlugin,
 };
 
 export const defaultWallets = {

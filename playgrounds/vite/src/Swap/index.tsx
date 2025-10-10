@@ -23,6 +23,7 @@ export default function Swap({
       const txHash = await skClient.swap({
         feeOptionKey: FeeOption.Fast,
         route,
+        // useApiTx: true, // enable this to use the API transaction instead of the plugin transactionF
         ...(isChainflipBoost ? { maxBoostFeeBps: 10 } : {}),
       });
 

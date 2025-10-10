@@ -16,6 +16,7 @@ import {
   SwapKitError,
   type SwapParams,
   UTXOChains,
+  WalletOption,
 } from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { createPlugin } from "@swapkit/plugins";
@@ -201,7 +202,18 @@ export function SwapKit<
     return wallet;
   }
 
-  function swap<T extends PluginName>({ route, pluginName, ...rest }: SwapParams<T, QuoteResponseRoute>) {
+  function swap<T extends PluginName>({ route, pluginName, useApiTx, ...rest }: SwapParams<T, QuoteResponseRoute>) {
+    const fromChain = AssetValue.from({ asset: route.sellAsset }).chain;
+
+    // only keystore supports straight signing of all chains
+    if (useApiTx && getWallet(fromChain)?.walletType === WalletOption.KEYSTORE) {
+      const plugin = getSwapKitPlugin("genericSwap");
+      if ("swap" in plugin) {
+        // @ts-expect-error TODO: fix this
+        return plugin.swap({ ...rest, route });
+      }
+    }
+
     const plugin = getSwapKitPlugin(pluginName || route.providers[0]);
 
     if ("swap" in plugin) {

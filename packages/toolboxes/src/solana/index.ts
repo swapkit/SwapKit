@@ -2,18 +2,6 @@ import type { PublicKey, Transaction, VersionedTransaction } from "@solana/web3.
 import type { GenericCreateTransactionParams, GenericTransferParams } from "@swapkit/helpers";
 import type { getSolanaToolbox } from "./toolbox";
 
-// type DisplayEncoding = "utf8" | "hex";
-
-// type PhantomRequestMethod =
-//   | "connect"
-//   | "disconnect"
-//   | "signAndSendTransaction"
-//   | "signAndSendTransactionV0"
-//   | "signAndSendTransactionV0WithLookupTable"
-//   | "signTransaction"
-//   | "signAllTransactions"
-//   | "signMessage";
-
 interface ConnectOpts {
   onlyIfTrusted: boolean;
 }

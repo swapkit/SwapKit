@@ -1,0 +1,1 @@
+export { GenericSwapPlugin } from "./plugin";

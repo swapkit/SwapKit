@@ -234,11 +234,32 @@ export async function createZcashToolbox(
     return keys.toWIF();
   }
 
+  function getSignTransaction(signer?: ZcashSigner) {
+    return async function signTransaction(psbt: ZcashPsbt): Promise<ZcashPsbt> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedPsbt = await signer.signTransaction(psbt);
+      return signedPsbt;
+    };
+  }
+
+  function getSignAndBroadcastTransaction(signer?: ZcashSigner) {
+    return async function signAndBroadcastTransaction(psbt: ZcashPsbt): Promise<string> {
+      if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+      const signedPsbt = await signer.signTransaction(psbt);
+      signedPsbt.finalizeAllInputs();
+      const txHex = signedPsbt.extractTransaction().toHex();
+      return baseToolbox.broadcastTx(txHex);
+    };
+  }
+
   return {
     ...baseToolbox,
     createKeysForPath,
     createTransaction,
     getPrivateKeyFromMnemonic,
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction(signer),
+    signer,
+    signTransaction: getSignTransaction(signer),
     transfer,
     validateAddress: validateZcashAddress,
   };

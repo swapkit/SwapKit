@@ -100,10 +100,7 @@ export const utxoWalletMethods = async ({
     if (!recipient)
       throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Recipient address must be provided" });
 
-    const createTxMethod =
-      chain === Chain.BitcoinCash
-        ? (toolbox as UTXOToolboxes["BCH"]).buildTx
-        : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
+    const createTxMethod = (toolbox as UTXOToolboxes["BTC"]).createTransaction;
 
     const { psbt, inputs: rawInputs } = await createTxMethod({
       ...rest,

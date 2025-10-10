@@ -263,10 +263,7 @@ async function getTrezorWallet<T extends Chain>({
 
         const feeRate = paramFeeRate || (await toolbox.getFeeRates())[feeOptionKey || FeeOption.Fast];
 
-        const createTxMethod =
-          chain === Chain.BitcoinCash
-            ? (toolbox as UTXOToolboxes["BCH"]).buildTx
-            : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
+        const createTxMethod = (toolbox as UTXOToolboxes["BTC"]).createTransaction;
 
         const { psbt, inputs } = await createTxMethod({
           ...rest,
