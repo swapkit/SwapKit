@@ -6,10 +6,10 @@ import { SwapKit } from "@swapkit/core";
 import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 import { EVMPlugin } from "@swapkit/plugins/evm";
 import { GardenPlugin } from "@swapkit/plugins/garden";
-import { GenericSwapPlugin } from "@swapkit/plugins/genericSwap";
 import { NearPlugin } from "@swapkit/plugins/near";
 import { RadixPlugin } from "@swapkit/plugins/radix";
 import { SolanaPlugin } from "@swapkit/plugins/solana";
+import { SwapPlugin } from "@swapkit/plugins/swap";
 import { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
 
 import { bitgetWallet } from "@swapkit/wallets/bitget";
@@ -86,7 +86,7 @@ export const defaultPlugins = {
   ...SolanaPlugin,
   ...NearPlugin,
   ...GardenPlugin,
-  ...GenericSwapPlugin,
+  ...SwapPlugin,
 };
 
 export const defaultWallets = {

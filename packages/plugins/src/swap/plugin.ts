@@ -13,9 +13,9 @@ const isEVMTransaction = (tx: unknown) => EVMTransactionSchema.safeParse(tx).suc
 const isTronTransaction = (tx: unknown) => TronTransactionSchema.safeParse(tx).success;
 const isCosmosTransaction = (tx: unknown) => CosmosTransactionSchema.safeParse(tx).success;
 
-export const GenericSwapPlugin = createPlugin({
+export const SwapPlugin = createPlugin({
   methods: ({ getWallet }) => ({
-    swap: function genericSwapSwap({ route }: SwapParams<"genericSwap", QuoteResponseRoute>) {
+    swap: function swap({ route }: SwapParams<"swap", QuoteResponseRoute>) {
       const { sellAsset, tx } = route;
       const sellAssetValue = AssetValue.from({ asset: sellAsset });
       const chain = sellAssetValue.chain;
@@ -93,6 +93,6 @@ export const GenericSwapPlugin = createPlugin({
         });
     },
   }),
-  name: "genericSwap",
+  name: "swap",
   properties: { supportedSwapkitProviders: [] },
 });

@@ -32,11 +32,6 @@
       "require": "./dist/garden/index.cjs",
       "types": "./dist/types/garden/index.d.ts"
     },
-    "./genericSwap": {
-      "default": "./dist/genericSwap/index.js",
-      "require": "./dist/genericSwap/index.cjs",
-      "types": "./dist/types/genericSwap/index.d.ts"
-    },
     "./near": {
       "default": "./dist/near/index.js",
       "require": "./dist/near/index.cjs",
@@ -51,6 +46,11 @@
       "default": "./dist/solana/index.js",
       "require": "./dist/solana/index.cjs",
       "types": "./dist/types/solana/index.d.ts"
+    },
+    "./swap": {
+      "default": "./dist/swap/index.js",
+      "require": "./dist/swap/index.cjs",
+      "types": "./dist/types/swap/index.d.ts"
     },
     "./thorchain": {
       "default": "./dist/thorchain/index.js",

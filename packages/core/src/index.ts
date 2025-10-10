@@ -207,7 +207,7 @@ export function SwapKit<
 
     // only keystore supports straight signing of all chains
     if (useApiTx && getWallet(fromChain)?.walletType === WalletOption.KEYSTORE) {
-      const plugin = getSwapKitPlugin("genericSwap");
+      const plugin = getSwapKitPlugin("swap");
       if ("swap" in plugin) {
         // @ts-expect-error TODO: fix this
         return plugin.swap({ ...rest, route });
