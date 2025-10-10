@@ -9,13 +9,15 @@ import {
   useSwapKitStore,
 } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
+import { useShallow } from "zustand/shallow";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { Toaster, toast } from "./components/ui/sonner";
+import { useDebouncedEffect } from "./hooks/use-debounced-effect";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
@@ -28,33 +30,34 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
+  const swapKitConfig = useSwapKitStore(
+    useShallow((state) => ({
+      apiKeys: state.apiKeys,
+      chains: state.chains,
+      envs: state.envs,
+      feeMultipliers: state.feeMultipliers,
+      integrations: state.integrations,
+      rpcUrls: state.rpcUrls,
+      wallets: state.wallets,
+    })),
+  );
+
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
-  useEffect(() => {
-    const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
+  const updateEstimatedOutput = async () => {
+    const sourceAddress = swapKit?.getAddress?.(inputAsset?.split?.(".")?.[0] as Chain);
+    const destinationAddress = swapKit?.getAddress?.(outputAsset?.split?.(".")?.[0] as Chain);
 
-    if (swapKit && isConfigSame) return;
-
-    void setConfig(config ?? {});
-
-    cachedStableConfigMemoKey.current = stableConfigMemoKey;
-  }, [swapKit, stableConfigMemoKey]);
-
-  const updateEstimatedOutput = useCallback(async () => {
-    if (!(inputAsset && outputAsset && amount && swapKit)) {
+    if (!(inputAsset && outputAsset && amount && swapKit && sourceAddress && destinationAddress)) {
       setEstimatedOutput(undefined);
       setRoutes([]);
       return;
     }
 
     try {
-      const sourceAddress = swapKit.getAddress(inputAsset.split(".")[0] as Chain);
-      const destinationAddress = swapKit.getAddress(outputAsset.split(".")[0] as Chain);
-
       const quote = await SwapKitApi.getSwapQuote({
         buyAsset: outputAsset,
         destinationAddress,
@@ -75,11 +78,24 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       setEstimatedOutput(undefined);
       setRoutes([]);
     }
-  }, [inputAsset, outputAsset, amount, swapKit]);
+  };
 
+  useDebouncedEffect(
+    updateEstimatedOutput,
+    [inputAsset, outputAsset, amount, swapKit, swapKitConfig, swapKitConfig],
+    1000,
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
-    void updateEstimatedOutput();
-  }, [updateEstimatedOutput]);
+    const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
+
+    if (swapKit && isConfigSame) return;
+
+    setConfig(config ?? {});
+
+    cachedStableConfigMemoKey.current = stableConfigMemoKey;
+  }, [swapKit, stableConfigMemoKey, setConfig]);
 
   const handleSwap = async (route: QuoteResponseRoute) => {
     if (!swapKit) return;
