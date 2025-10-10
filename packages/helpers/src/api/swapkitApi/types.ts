@@ -446,20 +446,6 @@ export const EVMTransactionSchema = object({
 
 export type EVMTransaction = z.infer<typeof EVMTransactionSchema>;
 
-export const NEARTransactionSchema = z.object({
-  details: z.object({
-    blockHash: z.string().describe("Hash of the block"),
-    nonce: z.number().describe("Nonce of the transaction"),
-    signerId: z.string().describe("ID of the signer"),
-  }),
-  gas: z.string().describe("Gas limit for the transaction"),
-  gasPrice: z.string().describe("Gas price for the transaction"),
-  publicKey: z.string().describe("Public key of the signer"),
-  serialized: z.string().describe("Serialized transaction"),
-});
-
-export type NEARTransaction = z.infer<typeof NEARTransactionSchema>;
-
 export const TronTransactionSchema = z.object({
   raw_data: z.object({
     contract: z.any(),
@@ -629,9 +615,7 @@ const QuoteResponseRouteItem = object({
   sourceAddress: string().describe("Source address"),
   targetAddress: optional(string().describe("Target address")),
   totalSlippageBps: number().describe("Total slippage in bps"),
-  tx: optional(
-    union([EVMTransactionSchema, CosmosTransactionSchema, NEARTransactionSchema, TronTransactionSchema, string()]),
-  ),
+  tx: optional(union([EVMTransactionSchema, CosmosTransactionSchema, TronTransactionSchema, string()])),
   txType: optional(z.enum(RouteQuoteTxType)),
   warnings: RouteQuoteWarningSchema,
 });
