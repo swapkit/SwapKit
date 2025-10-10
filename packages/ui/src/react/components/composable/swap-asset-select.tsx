@@ -1,9 +1,13 @@
 "use client";
 
+import { Chain } from "@swapkit/sdk";
+import { defaultLists } from "@swapkit/tokens";
+import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSwapKit } from "../../swapkit-context";
+import { temp_host } from "../asset-icon";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SwapAssetItem } from "./swap-asset-item";
 
@@ -14,8 +18,15 @@ export function SwapAssetSelect({
   selectedAsset: string | undefined;
   setSelectedAsset: (asset: string) => void;
 }) {
+  const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
   const { chains, balanceGroupedByChain } = useSwapKit();
+
+  // 8 cols * 2 rows - 1 (button "all") - 2 (button "hide/show more")
+  const collapsedNetworksAmount = 8 * 2 - 1 - 2;
+  const visibleNetworksAmount = isNetworkListExpanded ? Object.values(Chain).length : collapsedNetworksAmount;
+  const canShowMore = visibleNetworksAmount < Object.values(Chain).length - 2;
 
   useEffect(() => {
     if (!selectedAsset) return;
@@ -30,15 +41,55 @@ export function SwapAssetSelect({
       </DialogTrigger>
 
       <DialogContent>
-        <DialogHeader>Select Token</DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Select Token</DialogTitle>
+        </DialogHeader>
 
-        <Input placeholder="Search" />
+        <div className="relative">
+          <Input
+            className="h-10 bg-secondary pl-9 placeholer:text-muted-foreground text-base text-foreground"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search token name"
+            value={searchQuery}
+          />
 
-        <span className="text-muted-foreground text-sm">
-          Network: <span className="text-foreground">All</span>
-        </span>
+          <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground" />
+        </div>
 
-        <div className="grid gap-4">
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-sm">
+            Network: <span className="text-foreground">All</span>
+          </span>
+
+          <div className="grid grid-cols-8 gap-2">
+            <Button className="aspect-[1.3/1] h-auto">All</Button>
+
+            {Object.values(Chain)
+              .filter((chain) => chain.toLowerCase().includes(searchQuery.toLowerCase()))
+              .slice(0, canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2)
+              .map((chain) => (
+                <Button className="aspect-[1.3/1] h-auto" key={`swap-asset-item-${chain}`}>
+                  <img
+                    alt={chain}
+                    className="h-auto w-full overflow-clip rounded-full"
+                    height={24}
+                    src={`${temp_host}/images/${chain}.${chain}.png`}
+                    width={24}
+                  />
+                </Button>
+              ))}
+
+            {visibleNetworksAmount < defaultLists?.length - 3 && (
+              <Button
+                className="col-span-2 col-start-7 h-auto"
+                onClick={() => setIsNetworkListExpanded((isNetworkListExpanded) => !isNetworkListExpanded)}>
+                {isNetworkListExpanded ? "Hide" : "Show More"}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <DialogFooter className="grid gap-4">
           {chains?.map((chain) => {
             if (!balanceGroupedByChain?.[chain]?.length) return null;
 
@@ -62,7 +113,7 @@ export function SwapAssetSelect({
               </div>
             );
           })}
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
