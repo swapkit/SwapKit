@@ -1,9 +1,16 @@
-import "@nomicfoundation/hardhat-toolbox";
-import "@nomicfoundation/hardhat-ethers";
+import hardhatEthers from "@nomicfoundation/hardhat-ethers";
+import hardhatNetworkHelpers from "@nomicfoundation/hardhat-network-helpers";
 
 /** @type {import('hardhat/config').HardhatUserConfig} */
 const config = {
-  networks: { hardhat: { forking: { url: "https://ethereum-rpc.publicnode.com" || "" } } },
+  networks: {
+    hardhat: {
+      chainType: "l1",
+      forking: { enabled: true, url: "https://ethereum-rpc.publicnode.com" },
+      type: "edr-simulated",
+    },
+  },
+  plugins: [hardhatEthers, hardhatNetworkHelpers],
   solidity: "0.8.24",
 };
 
