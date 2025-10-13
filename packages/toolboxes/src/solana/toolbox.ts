@@ -31,13 +31,21 @@ type TokenMetadata = {
   logoURI?: string;
   tags?: string[];
   daily_volume?: number;
+  id: string; // mint address
 };
 
-async function fetchTokenMetaData(mintAddress: string): Promise<TokenMetadata | null> {
+export async function fetchTokenMetaData(mintAddress: string): Promise<TokenMetadata | null> {
+  const url = `https://lite-api.jup.ag/tokens/v2/search?query=${encodeURIComponent(mintAddress)}`;
+
   try {
-    const response = await fetch(`https://lite-api.jup.ag/tokens/v1/token/${mintAddress}`);
-    if (!response.ok) return null;
-    return await response.json();
+    const res = await fetch(url);
+    if (!res.ok) return null;
+
+    const arr = (await res.json()) as TokenMetadata[];
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+
+    const exact = arr.find((t) => t.id === mintAddress);
+    return exact || null;
   } catch {
     return null;
   }
