@@ -110,6 +110,7 @@ export async function createNearSignerFromProvider(provider: NearBrowserWalletPr
       const result = await (provider as Required<Pick<NearBrowserWalletProvider, "signMessage">>).signMessage({
         callbackUrl,
         message,
+        // @ts-expect-error TODO: Check on this
         nonce: Buffer.from(nonce),
         recipient,
       });

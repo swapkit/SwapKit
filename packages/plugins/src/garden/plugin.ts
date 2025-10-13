@@ -21,6 +21,7 @@ export const GardenPlugin = createPlugin({
         })
         .with(Chain.Solana, async (chain) => {
           const wallet = getWallet(chain);
+          // @ts-expect-error TODO: Check on this
           const transaction = VersionedTransaction.deserialize(Buffer.from(tx as string, "base64"));
 
           const signedTransaction = await wallet.signTransaction(transaction);

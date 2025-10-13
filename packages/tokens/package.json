@@ -3,9 +3,11 @@
   "dependencies": {
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "@swapkit/wallets": "workspace:*"
+    "@swapkit/wallets": "workspace:*",
+    "ts-pattern": "^5.7.0"
   },
   "description": "SwapKit - Tokens",
+  "devDependencies": { "ts-pattern": "5.8.0" },
   "exports": {
     ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
   },

@@ -34,6 +34,7 @@
     "@cosmjs/amino": "0.33.1",
     "@cosmjs/crypto": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",
+    "@cosmjs/stargate": "0.33.1",
     "@keplr-wallet/types": "0.12.238",
     "@passkeys/core": "4.1.0",
     "@passkeys/react": "3.0.1",
@@ -52,10 +53,14 @@
     "bitcoinjs-lib": "6.1.7",
     "blakejs": "1.2.1",
     "cosmjs-types": "0.9.0",
+    "ecpair": "2.1.0",
+    "ethers": "6.15.0",
     "near-api-js": "6.1.0",
     "pino-pretty": "13.1.1",
     "ripple-binary-codec": "2.4.1",
+    "sats-connect": "1.0.0",
     "ts-pattern": "5.8.0",
+    "xrpl": "4.3.0",
     "xumm": "1.8.0"
   },
   "exports": {

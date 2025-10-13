@@ -54,6 +54,7 @@ function createZcashSignerFromPhrase({
 
   // Create key pair using BitGo's ECPair with ECPair-compatible network
   const ecpairNetwork = getECPairNetwork();
+  // @ts-expect-error TODO: Check on this
   const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 
   const pubKeyHash = crypto.hash160(keyPair.publicKey);
@@ -64,7 +65,7 @@ function createZcashSignerFromPhrase({
     : Buffer.from([0x1c, 0xb8]); // mainnet prefix (results in t1... addresses)
 
   const payload = Buffer.concat([prefix, pubKeyHash]);
-
+  // @ts-expect-error TODO: Check on this
   const address = bs58check.encode(payload);
 
   return {
@@ -150,6 +151,7 @@ async function createTransaction(buildTxParams: UTXOBuildTxParams) {
   //   const branchId = tipHeight >= 2726400 ? NU6 : tipHeight >= 1687104 ? NU5 : NU5;
   const branchId = NU5;
 
+  // @ts-expect-error TODO: Check on this
   const CONSENSUS_BRANCH_ID_KEY = Buffer.concat([Buffer.of(0xfc), Buffer.of(0x05), Buffer.from("BITGO"), Buffer.of(0)]);
 
   // PSBT value must be 4-byte little-endian
@@ -218,6 +220,7 @@ export async function createZcashToolbox(
     }
 
     const ecpairNetwork = getECPairNetwork();
+    // @ts-expect-error TODO: Check on this
     const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 
     return keyPair;

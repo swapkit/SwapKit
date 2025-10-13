@@ -342,7 +342,6 @@ export function SwapKit<
     ...connectWalletMethods,
 
     approveAssetValue,
-
     disconnectAll,
     disconnectChain,
     estimateTransactionFee,

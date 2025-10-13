@@ -6,6 +6,7 @@
     "@swapkit/wallet-core": "workspace:*"
   },
   "description": "SwapKit - Wallet Keystore",
+  "devDependencies": { "@scure/bip39": "1.6.0", "blakejs": "1.2.1" },
   "exports": {
     ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
   },

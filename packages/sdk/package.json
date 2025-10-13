@@ -2,8 +2,10 @@
   "author": "swapkit-oss",
   "dependencies": {
     "@swapkit/core": "workspace:*",
+    "@swapkit/helpers": "workspace:*",
     "@swapkit/plugins": "workspace:*",
     "@swapkit/server": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*"
   },
   "description": "SwapKit - SDK",

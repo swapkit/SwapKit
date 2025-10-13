@@ -326,6 +326,7 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
         }
         if (!phrase) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "No phrase provided" });
 
+        // @ts-expect-error TODO: Check on this
         const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
         const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
 
@@ -359,6 +360,7 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
         if (!master.privateKey)
           throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Could not get private key from phrase" });
 
+        // @ts-expect-error TODO: Check on this
         return factory.fromPrivateKey(Buffer.from(master.privateKey), { network });
       } as (params: { wif?: string; phrase?: string; derivationPath?: string }) => CreateKeysForPathReturnType[T];
     }

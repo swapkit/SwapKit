@@ -10,7 +10,8 @@ import type { TronTransaction } from "@swapkit/toolboxes/tron";
 import { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
 
-export async function getWalletMethods(chain: Chain) {
+// TODO: The inferred type of 'getWalletMethods' cannot be named without a reference
+export async function getWalletMethods(chain: Chain): Promise<any> {
   const { match, P } = await import("ts-pattern");
   const bitget = window.bitkeep;
 

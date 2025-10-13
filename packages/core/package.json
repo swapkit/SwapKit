@@ -1,7 +1,15 @@
 {
   "author": "swapkit-oss",
-  "dependencies": { "@swapkit/helpers": "workspace:*", "@swapkit/toolboxes": "workspace:*" },
+  "dependencies": {
+    "@swapkit/core": "workspace:*",
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/plugins": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallets": "workspace:*",
+    "ts-pattern": "^5.7.0"
+  },
   "description": "SwapKit - Core",
+  "devDependencies": { "ts-pattern": "5.8.0" },
   "exports": {
     ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
   },

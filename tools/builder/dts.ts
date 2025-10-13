@@ -26,7 +26,7 @@ const dtsPlugin = {
     };
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
-      await $`cd ${scope} && bun tsc -p .tsconfig.tmp.json`;
+      await $`cd ${scope} && bun --bun tsc -p .tsconfig.tmp.json --pretty`;
     } catch (error: any) {
       if (error?.stdout) {
         console.error(Buffer.from(error.stdout).toString());
@@ -42,31 +42,26 @@ const dtsPlugin = {
 };
 
 export const orderedPackages = [
-  ["contracts", "tokens", "types"],
+  "contracts",
+  "tokens",
+  "types",
   "helpers",
   "toolboxes",
   "plugins",
   "wallet-core",
-  ["wallet-extension", "wallet-hardware", "wallet-keystore", "wallet-mobile"],
+  "wallet-extension",
+  "wallet-hardware",
+  "wallet-keystore",
+  "wallet-mobile",
   "wallets",
   "core",
-  ["browser", "server"],
+  "browser",
+  "server",
   "sdk",
   "ui",
 ];
 
 for (const pkg of orderedPackages) {
-  if (typeof pkg === "string") {
-    console.info(`Building @swapkit/${pkg} d.ts files`);
-    await dtsPlugin.setup(pkg);
-  }
-
-  if (Array.isArray(pkg)) {
-    await Promise.all(
-      pkg.map(async (p) => {
-        console.info(`Building @swapkit/${p} d.ts files`);
-        await dtsPlugin.setup(p);
-      }),
-    );
-  }
+  console.info(`Building @swapkit/${pkg} d.ts files`);
+  await dtsPlugin.setup(pkg);
 }

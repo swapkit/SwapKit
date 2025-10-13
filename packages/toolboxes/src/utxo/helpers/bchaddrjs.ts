@@ -153,6 +153,7 @@ function encodeAsLegacy(decoded: DecodedType) {
   const buffer = Buffer.alloc(1 + decoded.hash.length);
   buffer[0] = versionByte;
   buffer.set(decoded.hash, 1);
+  // @ts-expect-error TODO: Check on this
   return base58check.encode(buffer);
 }
 

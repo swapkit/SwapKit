@@ -51,6 +51,7 @@ export async function getNearLedgerClient(transport: Transport, derivationPath?:
           throw new Error("Signature undefined");
         }
 
+        // @ts-expect-error TODO: Check on this
         const signature = new Signature({ data: signatureArray, keyType: 0 });
 
         const signedTransaction = new SignedTransaction({ signature, transaction });

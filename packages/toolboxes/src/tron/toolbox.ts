@@ -68,6 +68,7 @@ export async function getTronPrivateKeyFromMnemonic({
     throw new SwapKitError("toolbox_tron_no_signer");
   }
 
+  // @ts-expect-error TODO: Check on this
   return Buffer.from(derived.privateKey).toString("hex");
 }
 
@@ -92,6 +93,7 @@ async function createKeysForPath({
   }
 
   // Convert private key to hex string for TronWeb
+  // @ts-expect-error TODO: Check on this
   const privateKeyHex = Buffer.from(derived.privateKey).toString("hex");
 
   tronWeb.setPrivateKey(privateKeyHex);
