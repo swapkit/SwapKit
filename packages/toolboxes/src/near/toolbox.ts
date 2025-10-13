@@ -132,7 +132,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const { utils } = await import("near-api-js");
 
     const serializedTx = utils.serialize.serialize(SCHEMA.Transaction, transaction);
-    // @ts-expect-error TODO: Check on this
     return Buffer.from(serializedTx).toString("base64");
   }
 

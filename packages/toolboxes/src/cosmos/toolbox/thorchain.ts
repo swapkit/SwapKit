@@ -129,7 +129,6 @@ async function signWithPrivateKey({ privateKey, message }: { privateKey: Uint8Ar
   const { Secp256k1 } = (await import("@cosmjs/crypto")).default;
 
   const signature = await Secp256k1.createSignature(base64.decode(message), privateKey);
-  // @ts-expect-error TODO: Check on this
   return base64.encode(Buffer.concat([signature.r(32), signature.s(32)]));
 }
 

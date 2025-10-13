@@ -65,6 +65,5 @@ export const getSignature = (signatureArray: any) => {
     throw new SwapKitError("wallet_ledger_invalid_signature", { reason: "must be 32 bytes each" });
   }
 
-  // @ts-expect-error
   return base64.encode(Buffer.concat([rSignature, sSignature]));
 };

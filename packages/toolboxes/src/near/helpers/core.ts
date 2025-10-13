@@ -52,7 +52,6 @@ class SKKeyPairSigner extends KeyPairSigner {
 
   getAddress(): Promise<string> {
     const publicKey = this.#keyPair.getPublicKey();
-    // @ts-expect-error TODO: Check on this
     const hexAddress = Buffer.from(publicKey.data).toString("hex");
     return Promise.resolve(hexAddress);
   }

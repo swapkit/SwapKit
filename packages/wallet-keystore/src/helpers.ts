@@ -21,6 +21,7 @@ async function blake256(initData: Buffer | string) {
   let data = initData;
 
   if (!(data instanceof Buffer)) {
+    // @ts-expect-error
     data = Buffer.from(data, "hex");
   }
 

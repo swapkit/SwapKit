@@ -12,12 +12,23 @@ const dtsPlugin = {
     const tempConfig = {
       compilerOptions: {
         allowImportingTsExtensions: false,
+        baseUrl: ".",
         declaration: true,
         declarationMap: true,
         emitDeclarationOnly: true,
         isolatedDeclarations: false,
         noEmit: false,
         outDir: "./dist/types",
+        paths: {
+          "@bitgo/*": ["../../node_modules/@bitgo/*"],
+          "@cosmjs/*": ["../../node_modules/@cosmjs/*"],
+          "@solana/*": ["../../node_modules/@solana/*"],
+          "@ton/*": ["../../node_modules/@ton/*"],
+          "@walletconnect/*": ["../../node_modules/@walletconnect/*"],
+          "bitcoinjs-lib": ["../../node_modules/bitcoinjs-lib"],
+          ecpair: ["../../node_modules/ecpair"],
+          xrpl: ["../../node_modules/xrpl"],
+        },
         rootDir: "./src",
       },
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
