@@ -35,6 +35,17 @@ type TokenMetadata = {
 };
 
 export async function fetchTokenMetaData(mintAddress: string): Promise<TokenMetadata | null> {
+  const assetValue = AssetValue.from({ address: mintAddress, chain: Chain.Solana });
+  if (assetValue.symbol !== "UNKNOWN") {
+    return {
+      decimals: assetValue.decimal || 0,
+      id: mintAddress,
+      logoURI: assetValue.getIconUrl(),
+      name: assetValue.symbol,
+      symbol: assetValue.ticker,
+    };
+  }
+
   const url = `https://lite-api.jup.ag/tokens/v2/search?query=${encodeURIComponent(mintAddress)}`;
 
   try {
@@ -76,13 +87,12 @@ async function getSolanaBalance(address: string) {
 
     if (Number(amount) === 0) continue;
 
-    // Fetch token metadata from Jupiter
     const metadata = await fetchTokenMetaData(mintAddress);
-    const symbol = metadata?.symbol || "UNKNOWN";
+    const ticker = metadata?.symbol || "UNKNOWN";
     const decimals = metadata?.decimals || tokenInfo.tokenAmount.decimals;
 
     balances.push(
-      AssetValue.from({ asset: `${Chain.Solana}.${symbol}-${mintAddress}`, fromBaseDecimal: decimals, value: amount }),
+      AssetValue.from({ asset: `${Chain.Solana}.${ticker}-${mintAddress}`, fromBaseDecimal: decimals, value: amount }),
     );
   }
 
