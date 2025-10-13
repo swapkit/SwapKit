@@ -60,7 +60,7 @@ export const orderedPackages = [
   "toolboxes",
   "plugins",
   "wallet-core",
-  "wallet-extension",
+  "wallet-extensions",
   "wallet-hardware",
   "wallet-keystore",
   "wallet-mobile",

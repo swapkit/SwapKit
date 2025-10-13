@@ -81,6 +81,8 @@ export async function createNearSignerFromProvider(provider: NearBrowserWalletPr
       const { PublicKey } = await import("near-api-js/lib/utils");
       // Create a dummy ed25519 public key
       const dummyKeyData = Buffer.alloc(32);
+      // biome-ignore lint/suspicious/noTsIgnore: TODO: check on this as generating types throws error
+      // @ts-ignore
       const dummyKey = `ed25519:${Buffer.from(dummyKeyData).toString("base64")}`;
       return PublicKey.from(dummyKey);
     },
