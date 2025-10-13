@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 4.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`d7b12b5`](https://github.com/swapkit/SwapKit/commit/d7b12b5d9b521672598c1372ce8801699c1f751d)]:
+  - @swapkit/types@0.2.1
+  - @swapkit/tokens@4.0.32
+
 ## 4.2.2
 
 ### Patch Changes

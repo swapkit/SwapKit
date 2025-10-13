@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1528](https://github.com/swapkit/SwapKit/pull/1528) [`d7b12b5`](https://github.com/swapkit/SwapKit/commit/d7b12b5d9b521672598c1372ce8801699c1f751d) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Add new chains: hype, unichain, corn, core, botanix, cro, xlayer, sonic
+
 ## 0.2.0
 
 ### Minor Changes
