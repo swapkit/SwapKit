@@ -8,8 +8,7 @@ interface GetWalletForChainParams {
   xumm: Xumm;
 }
 
-// TODO: The inferred type of 'getWalletMethods' cannot be named without a reference
-export async function getWalletForChain({ xumm, chain, address }: GetWalletForChainParams): Promise<any> {
+export async function getWalletForChain({ xumm, chain, address }: GetWalletForChainParams) {
   switch (chain) {
     case Chain.Ripple: {
       const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");

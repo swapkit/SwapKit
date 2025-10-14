@@ -61,8 +61,7 @@ async function getWeb3WalletMethods({
   return prepareNetworkSwitch({ chain, provider, toolbox });
 }
 
-// TODO: The inferred type of 'getWalletMethods' cannot be named without a reference
-export async function getWalletMethods(chain: Chain): Promise<any> {
+export async function getWalletMethods(chain: Chain) {
   const { match, P } = await import("ts-pattern");
 
   return match(chain)

@@ -22,7 +22,6 @@ interface KeepKeyInputObject {
   hex: string;
 }
 
-// TODO: The inferred type of 'utxoWalletMethods' cannot be named without a reference
 export async function utxoWalletMethods({
   sdk,
   chain,
@@ -31,7 +30,12 @@ export async function utxoWalletMethods({
   sdk: KeepKeySdk;
   chain: Exclude<UTXOChain, typeof Chain.Zcash>;
   derivationPath?: DerivationPathArray;
-}): Promise<any> {
+}): Promise<
+  UTXOToolboxes[UTXOChain] & {
+    address: string;
+    signTransaction: (psbt: Psbt, inputs: KeepKeyInputObject[], memo?: string) => Promise<string>;
+  }
+> {
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
   // This might not work for BCH
   const toolbox = await getUtxoToolbox(chain);
