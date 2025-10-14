@@ -23,6 +23,7 @@ export type SKConfigIntegrations = {
     headlessMode?: boolean;
     reloadOnDisconnect?: boolean;
   };
+  nearWalletSelector?: { contractId?: string };
   trezor?: { email: string; appUrl: string };
   keepKey?: { name: string; imageUrl: string; basePath: string; url: string };
   radix: {

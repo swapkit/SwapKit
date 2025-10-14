@@ -1,164 +1,119 @@
-import type { Wallet } from "@near-wallet-selector/core";
 import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui-js";
-import { Chain, filterSupportedChains, WalletOption } from "@swapkit/helpers";
-import { getNearToolbox } from "@swapkit/toolboxes/near";
-import type { NearSigner } from "@swapkit/toolboxes/near";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupSender } from "@near-wallet-selector/sender";
+import { Chain, filterSupportedChains, SKConfig, SwapKitError, WalletOption } from "@swapkit/helpers";
+import { getNearToolbox, type NearSigner } from "@swapkit/toolboxes/near";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
-/**
- * Adapter class to make Near Wallet Selector's Wallet compatible with SwapKit's NearSigner interface
- */
-class NearSignerAdapter implements NearSigner {
-  private readonly wallet: Wallet;
+function createNearSigner(wallet: any): NearSigner {
+  return {
+    getAddress: async () => {
+      const accounts = await wallet.getAccounts();
+      const accountId = accounts[0]?.accountId;
 
-  constructor(wallet: Wallet) {
-    this.wallet = wallet;
-  }
+      if (!accountId) {
+        throw new SwapKitError("wallet_connection_rejected_by_user");
+      }
 
-  async getAddress(): Promise<string> {
-    const accounts = await this.wallet.getAccounts();
-    const accountId = accounts[0]?.accountId;
-    
-    if (!accountId) {
-      throw new Error("No NEAR account found. Please ensure the wallet is connected and has an active account.");
-    }
-    
-    return accountId;
-  }
+      return accountId;
+    },
 
-  // Delegate wallet methods
-  getAccounts() {
-    return this.wallet.getAccounts();
-  }
+    getPublicKey: () => {
+      throw new SwapKitError("wallet_near_method_not_supported");
+    },
 
-  signAndSendTransaction(params: any) {
-    if (!this.wallet.signAndSendTransaction) {
-      throw new Error(`The wallet does not support signAndSendTransaction`);
-    }
-    return this.wallet.signAndSendTransaction(params);
-  }
+    signDelegateAction: () => {
+      throw new SwapKitError("wallet_near_method_not_supported");
+    },
 
-  signAndSendTransactions(params: any) {
-    if (!this.wallet.signAndSendTransactions) {
-      throw new Error(`The wallet does not support signAndSendTransactions`);
-    }
-    return this.wallet.signAndSendTransactions(params);
-  }
+    signMessage: (params: any) => {
+      if (!wallet.signMessage) {
+        throw new SwapKitError("wallet_near_method_not_supported");
+      }
+      return wallet.signMessage(params);
+    },
 
-  verifyOwner(params: any) {
-    if (!this.wallet.verifyOwner) {
-      throw new Error(`The wallet does not support verifyOwner`);
-    }
-    return this.wallet.verifyOwner(params);
-  }
+    signNep413Message: () => {
+      throw new SwapKitError("wallet_near_method_not_supported");
+    },
 
-  signMessage(params: any) {
-    if (!this.wallet.signMessage) {
-      throw new Error(`The wallet does not support signMessage`);
-    }
-    return this.wallet.signMessage(params);
-  }
+    signTransaction: (params: any) => {
+      if (!wallet.signAndSendTransaction) {
+        throw new SwapKitError("wallet_near_method_not_supported");
+      }
+      return wallet.signAndSendTransaction(params);
+    },
+
+    signTransactions: (params: any) => {
+      if (!wallet.signAndSendTransactions) {
+        throw new SwapKitError("wallet_near_method_not_supported");
+      }
+      return wallet.signAndSendTransactions(params);
+    },
+  } as NearSigner;
 }
 
-const selector = await setupWalletSelector({
-  modules: [
-    // setupArepaWallet(),
-    // setupBitgetWallet(),
-    // setupBitteWallet(),
-    // setupCoin98Wallet(),
-    // setupEthereumWallets({ wagmiConfig, web3Modal }),
-    // setupHereWallet(),
-    // setupHotWallet(),
-    // setupIntearWallet(),
-    // setupLedger(),
-    // setupMathWallet(),
-    setupMeteorWallet(),
-    // setupMyNearWallet(),
-    // setupNarwallets(),
-    // setupNearMobileWallet(),
-    // setupNearSnap(),
-    // setupNightly(),
-    // setupOkxWallet(),
-    // setupRamperWallet(),
-    // setupSender(),
-    // setupUnityWallet({
-    //   projectId: "c4f79cc...",
-    //   metadata: {
-    //     name: "Your dApp name",
-    //     description: "Example dApp used by NEAR Wallet Selector",
-    //     url: "https://github.com/near/wallet-selector",
-    //     icons: ["https://avatars.githubusercontent.com/u/37784886"],
-    //   },
-    // }),
-    // setupWalletConnect({
-    //   projectId: "c4f79cc...",
-    //   metadata: {
-    //     name: "NEAR Wallet Selector",
-    //     description: "Example dApp used by NEAR Wallet Selector",
-    //     url: "https://github.com/near/wallet-selector",
-    //     icons: ["https://avatars.githubusercontent.com/u/37784886"],
-    //   },
-    // }),
-    // setupWelldoneWallet(),
-    // setupXDEFI(),
-  ],
-  network: "mainnet",
-});
+async function getWalletMethods() {
+  const config = SKConfig.get("integrations")?.nearWalletSelector;
+  const contractId = config?.contractId || "swapkit.near";
 
-const modal = setupModal(selector, { contractId: "guest-book.testnet" });
+  const selector = await setupWalletSelector({
+    modules: [setupMyNearWallet(), setupMeteorWallet(), setupSender(), setupHereWallet(), setupNightly()],
+    network: "mainnet",
+  });
 
-export const exodusWallet = createWallet({
-  connect: ({ addChain, walletType, supportedChains }) =>
-    async function connectExodusWallet(chains: Chain[]) {
+  const modal = setupModal(selector, { contractId, description: "Connect your NEAR wallet to SwapKit" });
+
+  modal.show();
+
+  const wallet = await selector.wallet();
+  const signer = createNearSigner(wallet);
+  const toolbox = await getNearToolbox({ signer });
+  const address = await signer.getAddress();
+
+  const disconnect = async () => {
+    try {
+      await wallet.signOut();
+      modal.hide();
+    } catch (error) {
+      throw new SwapKitError("wallet_connection_rejected_by_user", error);
+    }
+  };
+
+  return { ...toolbox, address, disconnect };
+}
+
+export const walletSelector = createWallet({
+  connect: ({ addChain, supportedChains, walletType }) =>
+    async function connectWalletSelector(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
-      const selector = await setupWalletSelector({ modules: [setupMeteorWallet()], network: "mainnet" });
+      if (filteredChains.length === 0) {
+        throw new SwapKitError("wallet_chain_not_supported", {
+          chain: chains[0],
+          wallet: WalletOption.WALLET_SELECTOR,
+        });
+      }
 
-      const modal = setupModal(await selector, { contractId: "test.test" });
-      modal.show();
+      try {
+        const walletMethods = await getWalletMethods();
+        const { address, ...methods } = walletMethods;
 
-      await Promise.all(
-        filteredChains.map(async (chain) => {
-          try {
-            const walletSelector = await selector;
-            const signer = await walletSelector.wallet();
+        addChain({ ...methods, address, balance: [], chain: Chain.Near, walletType });
 
-            const toolbox = await getNearToolbox({
-              signer: new NearSignerAdapter(signer),
-            });
-
-            const { address, ...walletMethods } = walletData;
-            const disconnect = wallet.disconnect;
-
-            const finalDisconnect =
-              disconnect ||
-              (async () => {
-                if (wallet.disconnect) {
-                  await wallet.disconnect();
-                }
-              });
-
-            addChain({
-              ...walletMethods,
-              address,
-              chain,
-              disconnect: finalDisconnect,
-              walletType: WalletOption.EXOWALLET_SELECTORDUS,
-            });
-          } catch (error) {
-            console.error(`Failed to connect ${chain} wallet:`, error);
-            throw error;
-          }
-        }),
-      );
-
-      return true;
+        return true;
+      } catch (error) {
+        if (error instanceof SwapKitError) throw error;
+        throw new SwapKitError("wallet_connection_rejected_by_user", error);
+      }
     },
-  name: "connectExodusWallet",
+  name: "connectWalletSelector",
   supportedChains: [Chain.Near],
   walletType: WalletOption.WALLET_SELECTOR,
 });
 
-export const EXODUS_SUPPORTED_CHAINS = getWalletSupportedChains(exodusWallet);
+export const WALLET_SELECTOR_SUPPORTED_CHAINS = getWalletSupportedChains(walletSelector);
