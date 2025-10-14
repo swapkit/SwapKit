@@ -29,7 +29,7 @@ export const getLedgerTransport = async () => {
     throw new SwapKitError("wallet_ledger_device_not_found");
   }
 
-  await device.open();
+  device.opened || (await device.open());
   if (device.configuration === null) await device.selectConfiguration(1);
 
   try {
@@ -38,14 +38,31 @@ export const getLedgerTransport = async () => {
     // reset fails on devices that are already open
   }
 
-  const iface = device.configurations[0].interfaces.find(
-    ({ alternates }: { alternates: { interfaceClass: number }[] }) =>
-      alternates.some(({ interfaceClass }) => interfaceClass === 255),
+  const configuration = device.configuration ?? device.configurations?.[0];
+
+  const iface = configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
+    alternates.some(({ interfaceClass }) => interfaceClass === 0x03 || interfaceClass === 0xff),
   );
 
   if (!iface) {
     await device.close();
     throw new SwapKitError("wallet_ledger_connection_error");
+  }
+
+  const klass = iface.alternates?.find(
+    ({ interfaceClass }: { interfaceClass: number }) => interfaceClass === 0x03 || interfaceClass === 0xff,
+  )?.interfaceClass;
+
+  if (klass === 0x03) {
+    // -------- HID class (NEAR, ETH, SOL, etc.) -> WebHID transport --------
+    const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid")).default;
+    const supported = await TransportWebHID.isSupported();
+    if (!supported) {
+      await device.close();
+      throw new SwapKitError("wallet_ledger_webhid_not_supported");
+    }
+    const transport = await TransportWebHID.create();
+    return transport;
   }
 
   try {
