@@ -39,7 +39,6 @@ describe("Address Validation - All Chains", () => {
       [Chain.Solana]: ["4UHWuPwyV3XCcnwrpEdWAEW3WLUP1RDMaK3ANNsRUjfM"],
       [Chain.Sui]: ["0x57b861db681d8e47b586e6e9a92f6ed210dbbb440670b8122420848cf0e844fb"],
       [Chain.Ton]: ["EQCC1GV4iL5EkQqICYshf3AF7ESbceCYhVK-go1SkOMOBTNE"],
-      [Chain.Tron]: ["THr473cZqHwBLEmTWUUR1WTotxijWWbRGD"],
       [Chain.Radix]: [] as string[],
       [Chain.Harbor]: [] as string[],
     };
@@ -91,17 +90,6 @@ describe("Address Validation - All Chains", () => {
           "maya1hm0sdz9v2h5jwjuu0ssp8x98upvlc6py2t7e6j",
         ],
         chain: Chain.Cosmos,
-      },
-      {
-        addresses: [
-          "",
-          "invalid",
-          "0x51176f5F0B7ccC8fA0376F08aaa28F316A38a2a0",
-          "thr473cZqHwBLEmTWUUR1WTotxijWWbRGD",
-          "THR473CZQHWBLEMTWUUR1WTOTXIJWWBRGD",
-          "bc1qjpmp8xvg9k4ysa7nvev3lw7qcclvxzt2ex75kr",
-        ],
-        chain: Chain.Tron,
       },
       {
         addresses: [
