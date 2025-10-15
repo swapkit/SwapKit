@@ -3,7 +3,7 @@ export const list = {
   keywords: [],
   name: "CHAINFLIP",
   provider: "CHAINFLIP",
-  timestamp: "2025-09-23T11:43:35.311Z",
+  timestamp: "2025-10-15T15:08:30.853Z",
   tokens: [
     {
       chain: "ARB",
