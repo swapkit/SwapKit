@@ -1,5 +1,25 @@
 # @swapkit/helpers
 
+## 4.3.0
+
+### Minor Changes
+
+- [#1538](https://github.com/swapkit/SwapKit/pull/1538) [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec) Thanks [@towanTG](https://github.com/towanTG)! - Add NEAR Wallet Selector integration
+
+  - Added `walletSelector` wallet adapter supporting 5 NEAR wallet modules (MyNearWallet, Meteor, Sender, HERE Wallet, Nightly)
+  - Added `nearWalletSelector` configuration to SKConfig integrations for optional contractId
+  - Integrated wallet selector into SDK's default wallets
+  - Modal auto-shows on connection for wallet selection
+  - Supports mainnet only (hardcoded)
+
+### Patch Changes
+
+- [#1539](https://github.com/swapkit/SwapKit/pull/1539) [`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421) Thanks [@towanTG](https://github.com/towanTG)! - Ledger and OKX Near Wallet improvment and fixes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421)]:
+  - @swapkit/types@0.2.2
+  - @swapkit/tokens@4.0.33
+
 ## 4.2.3
 
 ### Patch Changes

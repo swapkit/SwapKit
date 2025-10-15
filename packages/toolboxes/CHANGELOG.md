@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.1.5
+
+### Patch Changes
+
+- [#1539](https://github.com/swapkit/SwapKit/pull/1539) [`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421) Thanks [@towanTG](https://github.com/towanTG)! - Ledger and OKX Near Wallet improvment and fixes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421), [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec)]:
+  - @swapkit/helpers@4.3.0
+
 ## 4.1.4
 
 ### Patch Changes
