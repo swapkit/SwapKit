@@ -1,5 +1,12 @@
 # @swapkit/helpers
 
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`faa713e`](https://github.com/swapkit/SwapKit/commit/faa713e86b02d2ad10ca5636e545a707a74b901b)]:
+  - @swapkit/tokens@4.0.34
+
 ## 4.3.0
 
 ### Minor Changes

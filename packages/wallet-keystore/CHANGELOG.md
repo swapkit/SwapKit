@@ -1,5 +1,14 @@
 # @swapkit/wallet-keystore
 
+## 4.0.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.3.1
+  - @swapkit/toolboxes@4.1.6
+  - @swapkit/wallet-core@4.0.34
+
 ## 4.0.33
 
 ### Patch Changes
