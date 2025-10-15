@@ -1,15 +1,20 @@
-import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupBitgetWallet } from "@near-wallet-selector/bitget-wallet";
+import { setupWalletSelector, type Wallet } from "@near-wallet-selector/core";
+import { setupHotWallet } from "@near-wallet-selector/hot-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupMeteorWalletApp } from "@near-wallet-selector/meteor-wallet-app";
 import { setupModal } from "@near-wallet-selector/modal-ui-js";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
+import "@near-wallet-selector/modal-ui-js/styles.css";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
-import { setupSender } from "@near-wallet-selector/sender";
+import { setupOKXWallet } from "@near-wallet-selector/okx-wallet";
 import { Chain, filterSupportedChains, SKConfig, SwapKitError, WalletOption } from "@swapkit/helpers";
-import { getNearToolbox, type NearSigner } from "@swapkit/toolboxes/near";
+import { getNearToolbox } from "@swapkit/toolboxes/near";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
+import type { Transaction } from "near-api-js/lib/transaction";
 
-function createNearSigner(wallet: any): NearSigner {
+function createNearSigner(wallet: Wallet) {
   return {
     getAddress: async () => {
       const accounts = await wallet.getAccounts();
@@ -30,45 +35,57 @@ function createNearSigner(wallet: any): NearSigner {
       throw new SwapKitError("wallet_near_method_not_supported");
     },
 
-    signMessage: (params: any) => {
-      if (!wallet.signMessage) {
-        throw new SwapKitError("wallet_near_method_not_supported");
-      }
-      return wallet.signMessage(params);
-    },
-
     signNep413Message: () => {
       throw new SwapKitError("wallet_near_method_not_supported");
     },
 
-    signTransaction: (params: any) => {
-      if (!wallet.signAndSendTransaction) {
+    signTransaction: (params: Transaction) => {
+      if (!wallet.signTransaction) {
         throw new SwapKitError("wallet_near_method_not_supported");
       }
-      return wallet.signAndSendTransaction(params);
+      return wallet.signTransaction(params);
     },
+  };
+}
 
-    signTransactions: (params: any) => {
-      if (!wallet.signAndSendTransactions) {
-        throw new SwapKitError("wallet_near_method_not_supported");
+function waitForWalletSelection(selector: any, modal: any) {
+  return new Promise<void>((resolve) => {
+    const subscription = selector.store.observable.subscribe((state: any) => {
+      if (state.selectedWalletId) {
+        subscription.unsubscribe();
+        modal.hide();
+        resolve();
       }
-      return wallet.signAndSendTransactions(params);
-    },
-  } as NearSigner;
+    });
+
+    modal.show();
+  });
 }
 
 async function getWalletMethods() {
-  const config = SKConfig.get("integrations")?.nearWalletSelector;
-  const contractId = config?.contractId || "swapkit.near";
-
+  const contractId = SKConfig.get("integrations")?.nearWalletSelector?.contractId || "";
   const selector = await setupWalletSelector({
-    modules: [setupMyNearWallet(), setupMeteorWallet(), setupSender(), setupHereWallet(), setupNightly()],
+    modules: [
+      setupBitgetWallet(),
+      setupHotWallet(),
+      setupMeteorWallet(),
+      setupMeteorWalletApp({ contractId }),
+      setupMyNearWallet(),
+      setupNearMobileWallet(),
+      setupNightly(),
+      setupOKXWallet(),
+    ],
     network: "mainnet",
   });
 
-  const modal = setupModal(selector, { contractId, description: "Connect your NEAR wallet to SwapKit" });
+  const isSignedIn = selector.isSignedIn();
 
-  modal.show();
+  if (!isSignedIn) {
+    // Only show modal if not already connected
+    const modal = setupModal(selector, { contractId, description: "Connect your NEAR wallet to SwapKit" });
+
+    await waitForWalletSelection(selector, modal);
+  }
 
   const wallet = await selector.wallet();
   const signer = createNearSigner(wallet);
@@ -78,7 +95,6 @@ async function getWalletMethods() {
   const disconnect = async () => {
     try {
       await wallet.signOut();
-      modal.hide();
     } catch (error) {
       throw new SwapKitError("wallet_connection_rejected_by_user", error);
     }
@@ -87,7 +103,7 @@ async function getWalletMethods() {
   return { ...toolbox, address, disconnect };
 }
 
-export const walletSelector = createWallet({
+export const walletSelectorWallet = createWallet({
   connect: ({ addChain, supportedChains, walletType }) =>
     async function connectWalletSelector(chains: Chain[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
@@ -101,9 +117,8 @@ export const walletSelector = createWallet({
 
       try {
         const walletMethods = await getWalletMethods();
-        const { address, ...methods } = walletMethods;
 
-        addChain({ ...methods, address, balance: [], chain: Chain.Near, walletType });
+        addChain({ ...walletMethods, balance: [], chain: Chain.Near, walletType });
 
         return true;
       } catch (error) {
@@ -116,4 +131,4 @@ export const walletSelector = createWallet({
   walletType: WalletOption.WALLET_SELECTOR,
 });
 
-export const WALLET_SELECTOR_SUPPORTED_CHAINS = getWalletSupportedChains(walletSelector);
+export const WALLET_SELECTOR_SUPPORTED_CHAINS = getWalletSupportedChains(walletSelectorWallet);

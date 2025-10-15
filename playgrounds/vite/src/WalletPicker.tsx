@@ -62,6 +62,7 @@ export const availableChainsByWallet = {
   [WalletOption.TRUSTWALLET_WEB]: EVMChains,
   [WalletOption.VULTISIG]: VULTISIG_SUPPORTED_CHAINS,
   [WalletOption.WALLETCONNECT]: WC_SUPPORTED_CHAINS,
+  [WalletOption.WALLET_SELECTOR]: [Chain.Near],
   [WalletOption.XAMAN]: XAMAN_SUPPORTED_CHAINS,
 };
 
@@ -143,6 +144,8 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
           return skClient.connectTronLink?.(chains);
         case WalletOption.XAMAN:
           return skClient.connectXaman?.(chains);
+        case WalletOption.WALLET_SELECTOR:
+          return skClient.connectWalletSelector?.(chains);
 
         default:
           throw new Error(`Unsupported wallet option: ${option}`);
