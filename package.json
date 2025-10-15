@@ -11,6 +11,10 @@
   },
   "name": "swapkit-monorepo",
   "packageManager": "bun@^1.2.18",
+  "patchedDependencies": {
+    "@near-wallet-selector/bitget-wallet@10.0.0": "patches/@near-wallet-selector%2Fbitget-wallet@10.0.0.patch",
+    "@near-wallet-selector/okx-wallet@10.0.0": "patches/@near-wallet-selector%2Fokx-wallet@10.0.0.patch"
+  },
   "private": true,
   "scripts": {
     "bootstrap": "bun clean --force; bun build:ci",

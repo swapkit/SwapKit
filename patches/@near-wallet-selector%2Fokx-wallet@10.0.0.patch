@@ -1,0 +1,17 @@
+diff --git a/src/lib/okx-wallet.d.ts b/src/lib/okx-wallet.d.ts
+index c032a242a9a9c43456b75306ad58aa30070f1c98..5b85e81a07982018c68e23446a04a1a0ac2ffa45 100644
+--- a/src/lib/okx-wallet.d.ts
++++ b/src/lib/okx-wallet.d.ts
+@@ -1,12 +1,5 @@
+ import type { InjectedWallet, WalletModuleFactory } from "@near-wallet-selector/core";
+ import type { InjectedOkx } from "./injected-okx-wallet";
+-declare global {
+-    interface Window {
+-        okxwallet: {
+-            near: InjectedOkx | undefined;
+-        };
+-    }
+-}
+ export interface OKXWalletParams {
+     iconUrl?: string;
+     deprecated?: boolean;

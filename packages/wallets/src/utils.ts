@@ -41,6 +41,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.RADIX_WALLET, async () => (await import("./radix")).radixWallet)
     .with(WalletOption.TALISMAN, async () => (await import("./talisman")).talismanWallet)
     .with(WalletOption.TRONLINK, async () => (await import("./tronlink")).tronlinkWallet)
+    .with(WalletOption.WALLET_SELECTOR, async () => (await import("./near-wallet-selector")).walletSelectorWallet)
     .with(WalletOption.XAMAN, async () => (await import("./xaman")).xamanWallet)
     .exhaustive();
 

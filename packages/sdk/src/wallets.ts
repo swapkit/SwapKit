@@ -9,6 +9,7 @@ export * from "@swapkit/wallets/keepkey-bex";
 export * from "@swapkit/wallets/keplr";
 export * from "@swapkit/wallets/keystore";
 export * from "@swapkit/wallets/ledger";
+export * from "@swapkit/wallets/near-wallet-selector";
 export * from "@swapkit/wallets/okx";
 export * from "@swapkit/wallets/onekey";
 export * from "@swapkit/wallets/phantom";
