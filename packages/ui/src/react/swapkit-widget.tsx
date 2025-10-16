@@ -80,11 +80,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  useDebouncedEffect(
-    updateEstimatedOutput,
-    [inputAsset, outputAsset, amount, swapKit, swapKitConfig, swapKitConfig],
-    1000,
-  );
+  useDebouncedEffect(updateEstimatedOutput, [inputAsset, outputAsset, amount, swapKit, swapKitConfig], 1000);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
