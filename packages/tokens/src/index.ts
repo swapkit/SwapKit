@@ -37,7 +37,7 @@ export type TokenListName = keyof TokenLists;
 export type TokenTax = { buy: number; sell: number };
 export type TokenNames = (typeof tokenLists)[ListOfTokens]["tokens"][number]["identifier"];
 
-export const defaultLists = [
+const defaultLists = [
   "camelot",
   "caviar",
   "chainflip",
