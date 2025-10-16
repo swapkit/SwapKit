@@ -12,10 +12,6 @@ import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
-// import { Button } from "~/components/ui/button";
-// import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-// import { useWalletConnect } from "~/hooks/useWalletConnect";
-
 const CHAIN_GROUPS: Record<string, Chain[]> = {
   "Cosmos Chains": [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira],
   "EVM Chains": [
