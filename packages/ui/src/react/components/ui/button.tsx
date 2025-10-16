@@ -13,8 +13,8 @@ const buttonVariants = cva(
     variants: {
       // biome-ignore assist/source/useSortedKeys: sort by size, not alphabetically
       size: {
-        sm: "h-9 rounded-md px-3",
-        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3 gap-1.5",
+        default: "h-10 px-4 py-2 gap-2",
         lg: "h-12 font-medium text-base rounded-lg px-4",
         xl: "h-11 font-medium text-base rounded-xl px-8",
         icon: "size-10",
