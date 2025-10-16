@@ -5,15 +5,12 @@ import { LogOut } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
+import { useModal } from "~/hooks/use-modal";
 import { TokenBalance } from "./TokenBalance";
 import { TruncatedAddress } from "./TruncatedAddress";
 
-interface WalletDrawerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
+export function WalletDrawer() {
+  const modal = useModal();
   const { balances, walletType, disconnectWallet } = useSwapKit();
 
   const connectedChains = useMemo(() => {
@@ -35,7 +32,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
   }, [balances]);
 
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
+    <Sheet {...modal}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Connected Wallets</SheetTitle>
@@ -81,7 +78,7 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
             className="w-full"
             onClick={() => {
               disconnectWallet();
-              onOpenChange(false);
+              modal.resolve({ confirmed: true });
             }}
             variant="destructive">
             <LogOut className="mr-2 h-4 w-4" />
