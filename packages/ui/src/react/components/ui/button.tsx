@@ -1,9 +1,9 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader2Icon } from "lucide-react";
 import * as React from "react";
-
 import { cn } from "../../../lib/utils";
 
 const buttonVariants = cva(
@@ -41,12 +41,29 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, isLoading, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ className, size, variant }))} ref={ref} {...props} />;
+    return (
+      <Comp className={cn(buttonVariants({ className, size, variant }))} ref={ref} {...props}>
+        {isLoading ? (
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2Icon className="size-5 animate-spin" />
+            </div>
+
+            <div className="invisible">
+              <Slottable>{children}</Slottable>
+            </div>
+          </div>
+        ) : (
+          children
+        )}
+      </Comp>
+    );
   },
 );
 Button.displayName = "Button";
