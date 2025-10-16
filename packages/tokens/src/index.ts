@@ -18,8 +18,10 @@ export type TokenLists = {
   caviar: typeof tokenLists.CaviarV1List;
   chainflip: typeof tokenLists.ChainflipList;
   jupiter: typeof tokenLists.JupiterList;
+  garden: typeof tokenLists.GardenList;
   mayachain: typeof tokenLists.MayaList;
   near: typeof tokenLists.NearList;
+  okx: typeof tokenLists.OkxList;
   oneinch: typeof tokenLists.OneInchList;
   openocean: typeof tokenLists.OpenOceanV2List;
   pancakeswap: typeof tokenLists.PancakeswapList;
@@ -41,7 +43,9 @@ const defaultLists = [
   "chainflip",
   "jupiter",
   "mayachain",
+  "garden",
   "near",
+  "okx",
   "oneinch",
   "openocean",
   "pancakeswap",
@@ -72,9 +76,11 @@ async function loadTokenList<T extends TokenListName>(listName: T): Promise<Toke
     .with("camelot", () => import("./lists/camelot_v3"))
     .with("caviar", () => import("./lists/caviar_v1"))
     .with("chainflip", () => import("./lists/chainflip"))
+    .with("garden", () => import("./lists/garden"))
     .with("jupiter", () => import("./lists/jupiter"))
     .with("mayachain", () => import("./lists/mayachain"))
     .with("near", () => import("./lists/near"))
+    .with("okx", () => import("./lists/okx"))
     .with("oneinch", () => import("./lists/oneinch"))
     .with("openocean", () => import("./lists/openocean_v2"))
     .with("pancakeswap", () => import("./lists/pancakeswap"))

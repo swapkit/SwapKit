@@ -249,7 +249,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     signer,
     signTransaction,
     transfer,
-    validateAddress: getCosmosValidateAddress(chainPrefix),
+    validateAddress: getCosmosValidateAddress(chain),
     verifySignature: verifySignature(getAccount),
   };
 }
@@ -297,9 +297,10 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-export function getCosmosValidateAddress(prefix: string) {
+export function getCosmosValidateAddress(chain: CosmosChain) {
+  const chainPrefix = CosmosChainPrefixes[chain];
   return function validateAddress(address: string) {
-    if (!address.startsWith(prefix)) return false;
+    if (!address.startsWith(chainPrefix)) return false;
 
     try {
       const { prefix, words } = bech32.decode(address as `${string}1${string}`);

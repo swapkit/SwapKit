@@ -1,56 +1,65 @@
 "use client";
 
-import type { Chain, EVMChain } from "@swapkit/helpers";
-import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/helpers";
-import type { createSwapKit } from "@swapkit/sdk";
-import { atom, useAtom } from "jotai";
+import type { Chain, EVMChain, SKConfigState } from "@swapkit/sdk";
+import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
+import { create } from "zustand";
+import type { SwapKitState } from "./types";
 
-type KeystoreFile = { keystore: import("@swapkit/wallets/keystore").Keystore; file: File; chains: Chain[] } | null;
+const useSwapKitStore = create<SwapKitState>((set) => {
+  // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
+  return {
+    swapKit: null,
 
-const swapKitAtom = atom<ReturnType<typeof createSwapKit> | null>(null);
-const balanceAtom = atom<AssetValue[]>([]);
-const walletState = atom<{ connected: boolean; type: WalletOption | null }>({ connected: false, type: null });
-const keystoreFileAtom = atom<KeystoreFile>(null);
-const isKeystoreOpenAtom = atom<boolean>(false);
-const isKeystoreDecryptingAtom = atom<boolean>(false);
+    balances: [],
+    walletType: null,
+    isWalletConnected: false,
+
+    keystoreFile: null,
+    isKeystoreOpen: false,
+    isKeystoreDecrypting: false,
+
+    setSwapKit: (swapKit) => set({ swapKit }),
+    setBalances: (balances) => set({ balances }),
+    setWalletState: ({ connected, type }) => set({ isWalletConnected: connected, walletType: type }),
+    setKeystoreFile: (keystoreFile) => set({ keystoreFile }),
+    setIsKeystoreOpen: (isKeystoreOpen) => set({ isKeystoreOpen }),
+    setIsKeystoreDecrypting: (isKeystoreDecrypting) => set({ isKeystoreDecrypting }),
+  };
+});
 
 export const useSwapKit = () => {
-  const [swapKit, setSwapKit] = useAtom(swapKitAtom);
-  const [balances, setBalances] = useAtom(balanceAtom);
-  const [{ type: walletType, connected: isWalletConnected }, setWalletState] = useAtom(walletState);
+  const {
+    swapKit,
+    balances,
+    walletType,
+    isWalletConnected,
+    keystoreFile,
+    isKeystoreOpen,
+    isKeystoreDecrypting,
+    setSwapKit,
+    setBalances,
+    setWalletState,
+    setKeystoreFile,
+    setIsKeystoreOpen,
+    setIsKeystoreDecrypting,
+  } = useSwapKitStore((state) => state);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
   useEffect(() => {
-    const loadSwapKit = async () => {
-      const { createSwapKit } = await import("@swapkit/sdk");
+    if (swapKit) return;
 
-      void AssetValue.loadStaticAssets();
+    void AssetValue.loadStaticAssets();
+    void loadSwapKit();
+  }, []);
 
-      const swapKitClient = createSwapKit({
-        config: {
-          apiKeys: {
-            keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-            swapKit: process.env.NEXT_PUBLIC_TEST_API_KEY || "",
-            walletConnectProjectId: "",
-          },
-          envs: { isDev: true },
-          integrations: {
-            keepKey: {
-              basePath: "http://localhost:1646/spec/swagger.json",
-              imageUrl:
-                "https://raw.githubusercontent.com/swapkit/SwapKit/refs/heads/develop/docs/src/assets/logo-black.png",
-              name: "SwapKit",
-              url: "http://localhost:1646",
-            },
-          },
-        },
-      });
+  async function loadSwapKit(params?: { config: SKConfigState | undefined }) {
+    const { createSwapKit } = await import("@swapkit/sdk");
 
-      setSwapKit(swapKitClient);
-    };
+    const swapKitClient = createSwapKit({ config: params?.config });
 
-    loadSwapKit();
-  }, [setSwapKit]);
+    setSwapKit(swapKitClient);
+  }
 
   const getBalances = useCallback(
     async (refresh?: boolean) => {
@@ -177,13 +186,9 @@ export const useSwapKit = () => {
   const disconnectWallet = useCallback(() => {
     swapKit?.disconnectAll();
     setWalletState({ connected: false, type: null });
-  }, [setWalletState, swapKit]);
+  }, [swapKit?.disconnectAll, setWalletState]);
 
   const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
-
-  const [keystoreFile, setKeystoreFile] = useAtom(keystoreFileAtom);
-  const [isKeystoreOpen, setIsKeystoreOpen] = useAtom(isKeystoreOpenAtom);
-  const [isKeystoreDecrypting, setIsKeystoreDecrypting] = useAtom(isKeystoreDecryptingAtom);
 
   const connectKeystore = useCallback(
     async (password: string) => {
@@ -242,6 +247,7 @@ export const useSwapKit = () => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
   return {
     swapKit,
+    loadSwapKit,
 
     walletType,
     balanceGroupedByChain,

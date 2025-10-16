@@ -17,4 +17,7 @@ jobs:
       image: returntocorp/semgrep:sha-b396800
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
       - run: semgrep ci --config p/ci --config p/xss --config p/jwt --config p/r2c --config p/react --config p/r2c-ci --config p/secrets --config p/javascript --config p/clientside-js --config p/owasp-top-ten --config p/security-audit --config p/github-actions --max-lines-per-finding 0 --force-color

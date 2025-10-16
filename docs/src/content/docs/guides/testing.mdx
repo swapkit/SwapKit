@@ -1,9 +1,3 @@
----
-title: Testing
-description: Comprehensive testing strategies for SwapKit applications including unit tests, integration tests, and mocking techniques
----
-
-import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 Testing is essential for building reliable SwapKit applications. This guide covers unit testing, integration testing, mocking strategies, and testing different chain interactions.
 
@@ -960,6 +954,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - uses: oven-sh/setup-bun@v1
         with:

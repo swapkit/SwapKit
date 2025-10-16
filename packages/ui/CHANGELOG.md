@@ -1,5 +1,46 @@
 # @swapkit/ui
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.2
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.1
+
+## 0.2.0
+
+### Minor Changes
+
+- [#1538](https://github.com/swapkit/SwapKit/pull/1538) [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec) Thanks [@towanTG](https://github.com/towanTG)! - Adds Near Wallet Selector
+
+### Patch Changes
+
+- Updated dependencies [[`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec)]:
+  - @swapkit/sdk@4.1.0
+
+## 0.1.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.0.35
+
+## 0.1.34
+
+### Patch Changes
+
+- [#1526](https://github.com/swapkit/SwapKit/pull/1526) [`41ea03c`](https://github.com/swapkit/SwapKit/commit/41ea03cc82888137680b97f1fba986f5750692c2) Thanks [@Drakeoon](https://github.com/Drakeoon)! - Adds sidebar allowing to configure SwapKitWidget in Nextjs playground
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.0.34
+
 ## 0.1.33
 
 ### Patch Changes

@@ -1,0 +1,17 @@
+diff --git a/src/lib/bitget-wallet.d.ts b/src/lib/bitget-wallet.d.ts
+index 79017d00a1db5559666abe3ae28cbbf5b3199e9c..b78e303fb4b7a073f32aab66b1cb2c25fbe07d63 100644
+--- a/src/lib/bitget-wallet.d.ts
++++ b/src/lib/bitget-wallet.d.ts
+@@ -1,12 +1,5 @@
+ import type { WalletModuleFactory, InjectedWallet } from "@near-wallet-selector/core";
+ import type { InjectedBitgetWallet } from "./injected-bitget-wallet";
+-declare global {
+-    interface Window {
+-        bitkeep: {
+-            near: InjectedBitgetWallet | undefined;
+-        };
+-    }
+-}
+ export interface BitgetWalletParams {
+     iconUrl?: string;
+     deprecated?: boolean;

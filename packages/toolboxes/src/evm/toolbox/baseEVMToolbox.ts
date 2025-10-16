@@ -5,6 +5,7 @@ import {
   Chain,
   type ChainSigner,
   type EVMChain,
+  EVMChains,
   FeeOption,
   isGasAsset,
   SwapKitError,
@@ -153,15 +154,16 @@ export function getChecksumAddressFromAsset(asset: Asset, chain: EVMChain) {
   throw new SwapKitError("toolbox_evm_invalid_gas_asset_address");
 }
 
+const baseContractAddresses = EVMChains.reduce(
+  (acc, chain) => {
+    acc[chain] = "0x0000000000000000000000000000000000000000";
+    return acc;
+  },
+  {} as Record<EVMChain, string>,
+);
+
 export const ContractAddress: Record<EVMChain, string> = {
-  [Chain.Arbitrum]: "0x0000000000000000000000000000000000000000",
-  [Chain.Aurora]: "0x0000000000000000000000000000000000000000",
-  [Chain.Avalanche]: "0x0000000000000000000000000000000000000000",
-  [Chain.Base]: "0x0000000000000000000000000000000000000000",
-  [Chain.Berachain]: "0x0000000000000000000000000000000000000000",
-  [Chain.BinanceSmartChain]: "0x0000000000000000000000000000000000000000",
-  [Chain.Ethereum]: "0x0000000000000000000000000000000000000000",
-  [Chain.Gnosis]: "0x0000000000000000000000000000000000000000",
+  ...baseContractAddresses,
   [Chain.Optimism]: "0x4200000000000000000000000000000000000042",
   [Chain.Polygon]: "0x0000000000000000000000000000000000001010",
 };

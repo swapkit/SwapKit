@@ -47,5 +47,5 @@ const FLIP = createChain({
 // });
 
 export const SubstrateChainConfigs = [DOT, FLIP] as const;
-export const SubstrateChains = SubstrateChainConfigs.map((config) => config.chain);
+export const SubstrateChains = [Chain.Polkadot, Chain.Chainflip] as const;
 export type SubstrateChain = (typeof SubstrateChains)[number];

@@ -165,10 +165,10 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const toolbox = await getNearToolbox({ signer });
 
       const transfer = async (params: GenericTransferParams) => {
-        const { transfer: transferAction } = await import("near-api-js/lib/transaction");
+        const { actionCreators } = await import("@near-js/transactions");
 
         const amountInYocto = params.assetValue.getBaseValue("string");
-        const action = transferAction(BigInt(amountInYocto));
+        const action = actionCreators.transfer(BigInt(amountInYocto));
 
         const transaction = { actions: [action], receiverId: params.recipient, signerId: accountId };
 

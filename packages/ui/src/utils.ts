@@ -1,6 +1,13 @@
-import { SwapKit, SwapKitError, type WalletOption } from "@swapkit/core";
-import { loadPlugin, type PluginName, type SKPlugins } from "@swapkit/plugins";
-import { loadWallet } from "@swapkit/wallets";
+import {
+  loadPlugin,
+  loadWallet,
+  type PluginName,
+  type SKConfigState,
+  type SKPlugins,
+  SwapKit,
+  SwapKitError,
+  type WalletOption,
+} from "@swapkit/sdk";
 
 export async function getSkClient<W extends WalletOption, P extends PluginName[]>({
   walletOption,
@@ -34,3 +41,14 @@ export async function loadPlugins<P extends PluginName[]>(pluginNames: P): Promi
 
   return connectedPlugins;
 }
+
+export const getStableConfigMemoKey = (config: SKConfigState | undefined) => {
+  if (!config) return null;
+
+  try {
+    return JSON.stringify(config);
+  } catch (error) {
+    console.error("Failed to get stable config memo key:", error);
+    return null;
+  }
+};

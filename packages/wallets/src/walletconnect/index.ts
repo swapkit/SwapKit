@@ -1,4 +1,5 @@
 import type { StdSignDoc } from "@cosmjs/amino";
+import type { Transaction } from "@near-js/transactions";
 import {
   Chain,
   filterSupportedChains,
@@ -15,7 +16,6 @@ import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { WalletConnectModal } from "@walletconnect/modal";
 import type { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
-import type { Transaction } from "near-api-js/lib/transaction";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,

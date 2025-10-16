@@ -29,6 +29,11 @@ const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.KEYSTORE]: Coins,
   [WalletOption.CTRL]: Wallet,
   [WalletOption.RADIX_WALLET]: Wallet,
+  [WalletOption.WALLET_SELECTOR]: Laptop,
+  [WalletOption.COSMOSTATION]: Laptop,
+  [WalletOption.TRONLINK]: Laptop,
+  [WalletOption.VULTISIG]: Laptop,
+  [WalletOption.XAMAN]: Laptop,
 };
 
 export function WalletIcon({ wallet, className = "" }: { wallet: WalletOption; className?: string }) {

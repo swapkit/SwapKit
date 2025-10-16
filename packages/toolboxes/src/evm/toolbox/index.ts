@@ -1,47 +1,37 @@
-import { Chain, type EVMChain, SwapKitError } from "@swapkit/helpers";
+import { Chain, type EVMChain } from "@swapkit/helpers";
+import { match } from "ts-pattern";
 
 import { getProvider } from "../helpers";
-import type { EVMToolboxParams } from "../types";
-import {
-  ARBToolbox,
-  AURORAToolbox,
-  AVAXToolbox,
-  BASEToolbox,
-  BERAToolbox,
-  BSCToolbox,
-  ETHToolbox,
-  GNOToolbox,
-  MATICToolbox,
-} from "./evm";
+import type { EVMToolboxes, EVMToolboxParams } from "../types";
+import * as evmToolboxes from "./evm";
 import { OPToolbox } from "./op";
 
 export async function getEvmToolbox<T extends EVMChain>(chain: T, params?: EVMToolboxParams) {
   const toolboxParams = { ...params, provider: params?.provider || (await getProvider(chain)) };
 
-  switch (chain) {
-    case Chain.Arbitrum:
-      return ARBToolbox(toolboxParams);
-    case Chain.Aurora:
-      return AURORAToolbox(toolboxParams);
-    case Chain.Avalanche:
-      return AVAXToolbox(toolboxParams);
-    case Chain.Base:
-      return BASEToolbox(toolboxParams);
-    case Chain.Berachain:
-      return BERAToolbox(toolboxParams);
-    case Chain.BinanceSmartChain:
-      return BSCToolbox(toolboxParams);
-    case Chain.Gnosis:
-      return GNOToolbox(toolboxParams);
-    case Chain.Optimism:
-      return OPToolbox(toolboxParams);
-    case Chain.Polygon:
-      return MATICToolbox(toolboxParams);
-    case Chain.Ethereum:
-      return ETHToolbox(toolboxParams);
-    default:
-      throw new SwapKitError("toolbox_evm_not_supported", { chain });
-  }
+  type Toolbox = Promise<EVMToolboxes[T]>;
+
+  return match(chain as EVMChain)
+    .returnType<Toolbox>()
+    .with(Chain.Arbitrum, () => evmToolboxes.ARBToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Aurora, () => evmToolboxes.AURORAToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Avalanche, () => evmToolboxes.AVAXToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Base, () => evmToolboxes.BASEToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Berachain, () => evmToolboxes.BERAToolbox(toolboxParams) as Toolbox)
+    .with(Chain.BinanceSmartChain, () => evmToolboxes.BSCToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Botanix, () => evmToolboxes.SONICToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Core, () => evmToolboxes.COREToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Corn, () => evmToolboxes.CORNToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Cronos, () => evmToolboxes.CROToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Ethereum, () => evmToolboxes.ETHToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Gnosis, () => evmToolboxes.GNOToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Hyperevm, () => evmToolboxes.HYPEREVMToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Optimism, () => OPToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Polygon, () => evmToolboxes.MATICToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Sonic, () => evmToolboxes.SONICToolbox(toolboxParams) as Toolbox)
+    .with(Chain.Unichain, () => evmToolboxes.UNIToolbox(toolboxParams) as Toolbox)
+    .with(Chain.XLayer, () => evmToolboxes.XLayerToolbox(toolboxParams) as Toolbox)
+    .exhaustive();
 }
 
 export * from "./baseEVMToolbox";

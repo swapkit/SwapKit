@@ -1,5 +1,58 @@
 # @swapkit/helpers
 
+## 4.3.2
+
+### Patch Changes
+
+- [#1544](https://github.com/swapkit/SwapKit/pull/1544) [`68cb4ce`](https://github.com/swapkit/SwapKit/commit/68cb4cef9ee3a4451a44eea45f52dca34506b973) Thanks [@towanTG](https://github.com/towanTG)! - Bumps near-api-js version and improves near-wallet-selector for cases that wallets do not support signTransaction
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.35
+
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`faa713e`](https://github.com/swapkit/SwapKit/commit/faa713e86b02d2ad10ca5636e545a707a74b901b)]:
+  - @swapkit/tokens@4.0.34
+
+## 4.3.0
+
+### Minor Changes
+
+- [#1538](https://github.com/swapkit/SwapKit/pull/1538) [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec) Thanks [@towanTG](https://github.com/towanTG)! - Add NEAR Wallet Selector integration
+
+  - Added `walletSelector` wallet adapter supporting 5 NEAR wallet modules (MyNearWallet, Meteor, Sender, HERE Wallet, Nightly)
+  - Added `nearWalletSelector` configuration to SKConfig integrations for optional contractId
+  - Integrated wallet selector into SDK's default wallets
+  - Modal auto-shows on connection for wallet selection
+  - Supports mainnet only (hardcoded)
+
+### Patch Changes
+
+- [#1539](https://github.com/swapkit/SwapKit/pull/1539) [`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421) Thanks [@towanTG](https://github.com/towanTG)! - Ledger and OKX Near Wallet improvment and fixes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421)]:
+  - @swapkit/types@0.2.2
+  - @swapkit/tokens@4.0.33
+
+## 4.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`d7b12b5`](https://github.com/swapkit/SwapKit/commit/d7b12b5d9b521672598c1372ce8801699c1f751d)]:
+  - @swapkit/types@0.2.1
+  - @swapkit/tokens@4.0.32
+
+## 4.2.2
+
+### Patch Changes
+
+- [#1526](https://github.com/swapkit/SwapKit/pull/1526) [`41ea03c`](https://github.com/swapkit/SwapKit/commit/41ea03cc82888137680b97f1fba986f5750692c2) Thanks [@Drakeoon](https://github.com/Drakeoon)! - Adds sidebar allowing to configure SwapKitWidget in Nextjs playground
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.31
+
 ## 4.2.1
 
 ### Patch Changes

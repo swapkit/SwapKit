@@ -1,8 +1,8 @@
 "use client";
 
 import type { Chain, WalletOption } from "@swapkit/helpers";
+import { useSwapKit } from "@swapkit/ui/react";
 import { useCallback, useState } from "react";
-import { useSwapKit } from "~/lib/swapKit";
 
 export function useWalletConnect(selectedChains: Chain[]) {
   const { connectWallet } = useSwapKit();

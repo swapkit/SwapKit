@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "aliases": {
+    "components": "src/react/components",
+    "hooks": "src/react/hooks",
+    "lib": "src/lib",
+    "ui": "src/react/components/ui",
+    "utils": "src/lib/utils"
+  },
+  "rsc": true,
+  "style": "default",
+  "tailwind": {
+    "baseColor": "stone",
+    "config": "./tailwind.config.ts",
+    "css": "./src/swapkit.css",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "tsx": true
+}

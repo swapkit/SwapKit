@@ -1,4 +1,4 @@
-import { AllChainConfigs, Chain, ProviderName, SKConfig } from "@swapkit/helpers";
+import { Chain, ProviderName, SKConfig } from "@swapkit/helpers";
 import { SwapKitApi } from "@swapkit/helpers/api";
 
 SKConfig.set({ apiKeys: { swapKit: process.env.SWAPKIT_API_KEY || "" }, envs: { isDev: true } });
@@ -26,12 +26,11 @@ for (const { provider } of providers) {
     if (!tokenList) continue;
 
     console.info(`✅ ${provider} token list fetched (${tokenList.tokens.length} tokens)`);
-    const chainConfig = AllChainConfigs.find((chain) => chain.chainId === tokenList.chainId);
 
     const tokens = tokenList.tokens
       .map((token) => ({
         address: token.address,
-        chain: chainConfig?.chain as Chain,
+        chain: token.chain,
         chainId: token.chainId,
         decimals: token.decimals,
         identifier: parseIdentifier(token.identifier),

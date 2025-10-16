@@ -2,10 +2,11 @@ import { createChain } from "./_createChain";
 import { Chain, ChainId } from "./_enums";
 
 const type = "evm";
+const baseDecimal = 18;
 const networkDerivationPath = [44, 60, 0, 0, 0] as [number, number, number, number, number];
 
 const ETHConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 12.5,
   chain: Chain.Ethereum,
   chainId: ChainId.Ethereum,
@@ -19,7 +20,7 @@ const ETHConfig = createChain({
 });
 
 const BSCConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 1,
   chain: Chain.BinanceSmartChain,
   chainId: ChainId.BinanceSmartChain,
@@ -37,7 +38,7 @@ const BSCConfig = createChain({
 });
 
 const AVAXConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 2,
   chain: Chain.Avalanche,
   chainId: ChainId.Avalanche,
@@ -55,7 +56,7 @@ const AVAXConfig = createChain({
 });
 
 const POLConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 2.1,
   chain: Chain.Polygon,
   chainId: ChainId.Polygon,
@@ -69,7 +70,7 @@ const POLConfig = createChain({
 });
 
 const ARBConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 0.3,
   chain: Chain.Arbitrum,
   chainId: ChainId.Arbitrum,
@@ -87,7 +88,7 @@ const ARBConfig = createChain({
 });
 
 const OPConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 2,
   chain: Chain.Optimism,
   chainId: ChainId.Optimism,
@@ -101,7 +102,7 @@ const OPConfig = createChain({
 });
 
 const BASEConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 2,
   chain: Chain.Base,
   chainId: ChainId.Base,
@@ -115,7 +116,7 @@ const BASEConfig = createChain({
 });
 
 const GNOConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 5.2,
   chain: Chain.Gnosis,
   chainId: ChainId.Gnosis,
@@ -129,7 +130,7 @@ const GNOConfig = createChain({
 });
 
 const AURORAConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 1,
   chain: Chain.Aurora,
   chainId: ChainId.Aurora,
@@ -143,7 +144,7 @@ const AURORAConfig = createChain({
 });
 
 const BERAConfig = createChain({
-  baseDecimal: 18,
+  baseDecimal,
   blockTime: 2,
   chain: Chain.Berachain,
   chainId: ChainId.Berachain,
@@ -156,17 +157,137 @@ const BERAConfig = createChain({
   type,
 });
 
+const HYPEREVMConfig = createChain({
+  baseDecimal,
+  blockTime: 2, // TODO: Check this value
+  chain: Chain.Hyperevm,
+  chainId: ChainId.Hyperevm,
+  chainIdHex: "0x3e7",
+  explorerUrl: "https://app.hyperliquid.xyz/explorer",
+  name: "Hyperliquid",
+  nativeCurrency: "HYPE",
+  networkDerivationPath,
+  rpcUrls: ["https://rpc.hyperliquid.xyz/evm", "https://rpc.hypurrscan.io"],
+  type,
+});
+
+const UNIConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Unichain,
+  chainId: ChainId.Unichain,
+  chainIdHex: "0x82",
+  explorerUrl: "https://unichain.blockscout.com",
+  name: "Unichain",
+  nativeCurrency: "ETH",
+  networkDerivationPath,
+  rpcUrls: ["https://unichain-rpc.publicnode.com", "https://unichain.drpc.org"],
+  type,
+});
+
+const CORNConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Corn,
+  chainId: ChainId.Corn,
+  chainIdHex: "0x1406f40",
+  explorerUrl: "https://cornscan.io",
+  name: "Corn",
+  nativeCurrency: "BTCN",
+  networkDerivationPath,
+  rpcUrls: ["https://mainnet.corn-rpc.com", "https://rpc.ankr.com/corn_maizenet"],
+  type,
+});
+
+const COREConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Core,
+  chainId: ChainId.Core,
+  chainIdHex: "0x45c",
+  explorerUrl: "https://corescan.io",
+  name: "Core",
+  nativeCurrency: "CORE",
+  networkDerivationPath,
+  rpcUrls: ["https://core-rpc.publicnode.com", "https://1rpc.io/core"],
+  type,
+});
+
+const BOTANIXConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Botanix,
+  chainId: ChainId.Botanix,
+  chainIdHex: "0xe35",
+  explorerUrl: "https://botanixscan.io",
+  name: "Botanix",
+  nativeCurrency: "BTC",
+  networkDerivationPath,
+  rpcUrls: ["https://core.drpc.org", "https://1rpc.io/core"],
+  type,
+});
+
+const CROConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Cronos,
+  chainId: ChainId.Cronos,
+  chainIdHex: "0x19",
+  explorerUrl: "https://croscan.io",
+  name: "Cronos",
+  nativeCurrency: "CRO",
+  networkDerivationPath,
+  rpcUrls: ["https://rpc.vvs.finance"],
+  type,
+});
+
+const XLAYERConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.XLayer,
+  chainId: ChainId.XLayer,
+  chainIdHex: "0xc4",
+  explorerUrl: "https://okbscan.com",
+  name: "X Layer",
+  nativeCurrency: "OKB",
+  networkDerivationPath,
+  rpcUrls: ["https://rpc.xlayer.tech"],
+  type,
+});
+
+const SONICConfig = createChain({
+  baseDecimal,
+  blockTime: 2,
+  chain: Chain.Sonic,
+  chainId: ChainId.Sonic,
+  chainIdHex: "0x92",
+  explorerUrl: "https://sonicscan.io",
+  name: "Sonic",
+  nativeCurrency: "S",
+  networkDerivationPath,
+  rpcUrls: ["https://rpc.sonic.xyz"],
+  type,
+});
+
 export const EVMChainConfigs = [
-  ETHConfig,
-  BSCConfig,
-  AVAXConfig,
-  POLConfig,
   ARBConfig,
-  OPConfig,
-  BASEConfig,
-  GNOConfig,
   AURORAConfig,
+  AVAXConfig,
+  BASEConfig,
   BERAConfig,
+  BOTANIXConfig,
+  BSCConfig,
+  COREConfig,
+  CORNConfig,
+  CROConfig,
+  ETHConfig,
+  GNOConfig,
+  HYPEREVMConfig,
+  OPConfig,
+  POLConfig,
+  SONICConfig,
+  UNIConfig,
+  XLAYERConfig,
 ] as const;
 export const EVMChains = [
   Chain.Arbitrum,
@@ -175,9 +296,18 @@ export const EVMChains = [
   Chain.Base,
   Chain.Berachain,
   Chain.BinanceSmartChain,
+  Chain.Botanix,
+  Chain.Core,
+  Chain.Corn,
+  Chain.Corn,
+  Chain.Cronos,
   Chain.Ethereum,
   Chain.Gnosis,
+  Chain.Hyperevm,
   Chain.Optimism,
   Chain.Polygon,
+  Chain.Sonic,
+  Chain.Unichain,
+  Chain.XLayer,
 ] as const;
 export type EVMChain = (typeof EVMChains)[number];
