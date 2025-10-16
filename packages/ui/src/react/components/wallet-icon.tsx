@@ -2,6 +2,7 @@
 
 import { WalletOption } from "@swapkit/helpers";
 import { Coins, Globe2, HardDrive, Laptop, type LucideIcon, Smartphone, Wallet } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 const WALLET_ICONS: Record<WalletOption, LucideIcon> = {
   [WalletOption.LEDGER]: HardDrive,
@@ -40,5 +41,5 @@ export function WalletIcon({ wallet, className = "" }: { wallet: WalletOption; c
   const Icon = WALLET_ICONS[wallet];
   if (!Icon) return null;
 
-  return <Icon className={`inline-block h-4 w-4 ${className}`} />;
+  return <Icon className={cn("inline-block h-4 w-4", className)} />;
 }
