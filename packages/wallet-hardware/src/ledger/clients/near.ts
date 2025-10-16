@@ -1,17 +1,16 @@
-import type Transport from "@ledgerhq/hw-transport";
 import type { DerivationPathArray } from "@swapkit/helpers";
 import type { NearSigner } from "@swapkit/toolboxes/near";
 import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
+import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
-export async function getNearLedgerClient(transport: Transport, derivationPath?: DerivationPathArray) {
-  const Near = await import("@ledgerhq/hw-app-near");
-  const { Chain, DerivationPath, derivationPathToString, SwapKitError } = await import("@swapkit/helpers");
-  const nearApp = new Near.default(transport);
+export async function getNearLedgerClient(derivationPath?: DerivationPathArray) {
+  const Near = (await import("@ledgerhq/hw-app-near")).default;
+  const { Chain, NetworkDerivationPath, SwapKitError } = await import("@swapkit/helpers");
+  const transport = await getLedgerTransport();
+  const nearApp = new Near(transport);
 
-  // NEAR uses m/44'/397'/0'/0'/0' by default
-  const path = derivationPath ? derivationPathToString(derivationPath) : DerivationPath[Chain.Near];
+  const path = (derivationPath || NetworkDerivationPath[Chain.Near]).join("'/").concat("'");
 
-  // Get address and public key from Ledger
   const { address, publicKey: pubKeyHex } = await nearApp.getAddress(path);
 
   const signer = {
@@ -20,7 +19,6 @@ export async function getNearLedgerClient(transport: Transport, derivationPath?:
     },
     async getPublicKey() {
       const { utils } = await import("near-api-js");
-      // Convert hex public key to NEAR PublicKey format
       return utils.PublicKey.fromString(`ed25519:${pubKeyHex}`);
     },
 
@@ -37,7 +35,6 @@ export async function getNearLedgerClient(transport: Transport, derivationPath?:
       _nonce: Uint8Array,
       _callbackUrl?: string,
     ) {
-      // Most NEAR Ledger apps don't support arbitrary message signing
       return Promise.reject(
         new SwapKitError("wallet_ledger_method_not_supported", { method: "signNep413Message", wallet: "Ledger" }),
       );

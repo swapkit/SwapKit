@@ -97,6 +97,7 @@ const errorCodes = {
   wallet_ledger_invalid_account: 20121,
   wallet_ledger_address_not_found: 20122,
   wallet_ledger_failed_to_get_address: 20123,
+  wallet_ledger_webhid_not_supported: 20124,
   /**
    * Wallets - Phantom
    */

@@ -1,5 +1,25 @@
 # @swapkit/tokens
 
+## 4.0.34
+
+### Patch Changes
+
+- [#1541](https://github.com/swapkit/SwapKit/pull/1541) [`faa713e`](https://github.com/swapkit/SwapKit/commit/faa713e86b02d2ad10ca5636e545a707a74b901b) Thanks [@towanTG](https://github.com/towanTG)! - Updates tokens
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.3.1
+  - @swapkit/toolboxes@4.1.6
+  - @swapkit/wallets@4.2.1
+
+## 4.0.33
+
+### Patch Changes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421), [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec)]:
+  - @swapkit/toolboxes@4.1.5
+  - @swapkit/helpers@4.3.0
+  - @swapkit/wallets@4.2.0
+
 ## 4.0.32
 
 ### Patch Changes

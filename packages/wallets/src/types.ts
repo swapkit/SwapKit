@@ -15,9 +15,10 @@ import type { vultisigWallet } from "@swapkit/wallet-extensions/vultisig";
 import type { keepkeyWallet } from "@swapkit/wallet-hardware/keepkey";
 import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
-import type { keystoreWallet } from "@swapkit/wallet-keystore";
 import type { coinbaseWallet } from "./coinbase";
 import type { exodusWallet } from "./exodus";
+import type { keystoreWallet } from "./keystore";
+import type { walletSelectorWallet } from "./near-wallet-selector";
 import type { radixWallet } from "./radix";
 import type { walletconnectWallet } from "./walletconnect";
 import type { xamanWallet } from "./xaman";
@@ -51,6 +52,7 @@ export type SKWallets = {
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet;
   [WalletOption.VULTISIG]: typeof vultisigWallet;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
+  [WalletOption.WALLET_SELECTOR]: typeof walletSelectorWallet;
   [WalletOption.XAMAN]: typeof xamanWallet;
 };
 
@@ -85,5 +87,6 @@ export type SKWalletsSupportedChains = {
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.VULTISIG]: typeof vultisigWallet.connectVultisig.supportedChains;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet.connectWalletconnect.supportedChains;
+  [WalletOption.WALLET_SELECTOR]: typeof walletSelectorWallet.connectWalletSelector.supportedChains;
   [WalletOption.XAMAN]: typeof xamanWallet.connectXaman.supportedChains;
 };

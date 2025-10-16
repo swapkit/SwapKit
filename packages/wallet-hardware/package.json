@@ -1,7 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@cosmjs/crypto": "~0.36.1",
+    "@cosmjs/crypto": "0.36.1",
     "@keepkey/keepkey-sdk": "~0.2.62",
     "@ledgerhq/devices": "~8.6.1",
     "@ledgerhq/errors": "~6.26.0",
@@ -12,6 +12,7 @@
     "@ledgerhq/hw-app-trx": "~6.31.8",
     "@ledgerhq/hw-app-xrp": "~6.32.6",
     "@ledgerhq/hw-transport": "~6.31.0",
+    "@ledgerhq/hw-transport-webhid": "~6.30.8",
     "@ledgerhq/hw-transport-webusb": "~6.29.12",
     "@ledgerhq/wallet-api-client": "~1.12.3",
     "@scure/base": "~2.0.0",
@@ -38,6 +39,7 @@
     "@ledgerhq/hw-app-trx": "6.31.8",
     "@ledgerhq/hw-app-xrp": "6.32.6",
     "@ledgerhq/hw-transport": "6.31.10",
+    "@ledgerhq/hw-transport-webhid": "6.30.8",
     "@ledgerhq/hw-transport-webusb": "6.29.12",
     "@ledgerhq/wallet-api-client": "1.12.3",
     "@scure/base": "2.0.0",
@@ -85,5 +87,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.1.31"
+  "version": "4.1.33"
 }

@@ -1,9 +1,9 @@
 export const list = {
-  count: 509,
+  count: 510,
   keywords: [],
   name: "UNISWAP_V2",
   provider: "UNISWAP_V2",
-  timestamp: "2025-09-22T16:42:29.816Z",
+  timestamp: "2025-10-15T15:08:39.237Z",
   tokens: [
     {
       address: "0x6314C31A7a1652cE482cffe247E9CB7c3f4BB9aF",
@@ -1296,6 +1296,16 @@ export const list = {
       ticker: "PRQ",
     },
     {
+      address: "0x327006c8712FE0AbdbbD55B7999DB39b0967342E",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 6,
+      identifier: "ARB.PYUSD-0x327006c8712FE0AbdbbD55B7999DB39b0967342E",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.pyusd-0x327006c8712fe0abdbbd55b7999db39b0967342e.png",
+      ticker: "PYUSD",
+    },
+    {
       address: "0xC7557C73e0eCa2E1BF7348bB6874Aee63C7eFF85",
       chain: "ARB",
       chainId: "42161",
@@ -1666,6 +1676,16 @@ export const list = {
       ticker: "UNI",
     },
     {
+      address: "0x7550dE0A4b9Fb8CAbA8c32E72Ee356AFdd217A33",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 18,
+      identifier: "ARB.USD1-0x7550dE0A4b9Fb8CAbA8c32E72Ee356AFdd217A33",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usd1-0x7550de0a4b9fb8caba8c32e72ee356afdd217a33.png",
+      ticker: "USD1",
+    },
+    {
       address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       chain: "ARB",
       chainId: "42161",
@@ -1704,16 +1724,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usds-0x6491c05a82219b8d1479057361ff1654749b876b.png",
       ticker: "USDS",
-    },
-    {
-      address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 6,
-      identifier: "ARB.USDT-0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
-      ticker: "USDT",
     },
     {
       address: "0x7639AB8599f1b417CbE4ceD492fB30162140AbbB",

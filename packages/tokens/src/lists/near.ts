@@ -1,9 +1,9 @@
 export const list = {
-  count: 89,
+  count: 100,
   keywords: [],
   name: "NEAR",
   provider: "NEAR",
-  timestamp: "2025-09-23T11:46:42.314Z",
+  timestamp: "2025-10-14T15:20:40.009Z",
   tokens: [
     {
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
@@ -160,6 +160,14 @@ export const list = {
       ticker: "USDC",
     },
     {
+      chain: "BERA",
+      chainId: "80094",
+      decimals: 18,
+      identifier: "BERA.BERA",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/bera.bera.png",
+      ticker: "BERA",
+    },
+    {
       address: "0x000ae314e2a2172a039b26378814c252734f556a",
       chain: "BSC",
       chainId: "56",
@@ -176,6 +184,16 @@ export const list = {
       identifier: "BSC.BNB",
       logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bnb.png",
       ticker: "BNB",
+    },
+    {
+      address: "0x1fa4a73a3f0133f0025378af00236f3abdee5d63",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.NEAR-0x1fa4a73a3f0133f0025378af00236f3abdee5d63",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.near-0x1fa4a73a3f0133f0025378af00236f3abdee5d63.png",
+      ticker: "NEAR",
     },
     {
       address: "0x4c067de26475e1cefee8b8d1f6e2266b33a2372e",
@@ -410,6 +428,84 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
+    },
+    {
+      address: "0x177127622c4a00f3d409b75571e12cb3c8973d3c",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.COW-0x177127622c4a00f3d409b75571e12cb3c8973d3c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.cow-0x177127622c4a00f3d409b75571e12cb3c8973d3c.png",
+      ticker: "COW",
+    },
+    {
+      address: "0x420ca0f9b9b604ce0fd9c18ef134c705e5fa3430",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.EURe-0x420ca0f9b9b604ce0fd9c18ef134c705e5fa3430",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.eure-0x420ca0f9b9b604ce0fd9c18ef134c705e5fa3430.png",
+      ticker: "EURe",
+    },
+    {
+      address: "0x5cb9073902f2035222b9749f8fb0c9bfe5527108",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.GBPe-0x5cb9073902f2035222b9749f8fb0c9bfe5527108",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.gbpe-0x5cb9073902f2035222b9749f8fb0c9bfe5527108.png",
+      ticker: "GBPe",
+    },
+    {
+      address: "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.GNO-0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.gno-0x9c58bacc331c9aa871afd802db6379a98e80cedb.png",
+      ticker: "GNO",
+    },
+    {
+      address: "0x4d18815d14fe5c3304e87b3fa18318baa5c23820",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.SAFE-0x4d18815d14fe5c3304e87b3fa18318baa5c23820",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.safe-0x4d18815d14fe5c3304e87b3fa18318baa5c23820.png",
+      ticker: "SAFE",
+    },
+    {
+      address: "0x2a22f9c3b484c3629090feed35f17ff8f88f76f0",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 6,
+      identifier: "GNO.USDC-0x2a22f9c3b484c3629090feed35f17ff8f88f76f0",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.usdc-0x2a22f9c3b484c3629090feed35f17ff8f88f76f0.png",
+      ticker: "USDC",
+    },
+    {
+      address: "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1",
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.WETH-0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.weth-0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1.png",
+      ticker: "WETH",
+    },
+    {
+      chain: "GNO",
+      chainId: "100",
+      decimals: 18,
+      identifier: "GNO.xDAI",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/gno.xdai.png",
+      ticker: "xDAI",
     },
     {
       address: "abg-966.meme-cooking.near",
@@ -715,53 +811,43 @@ export const list = {
       ticker: "USDT",
     },
     {
-      address: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.$WIF-EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.$wif-ekpqgsjtjmfqkz9kqansqyxrcf8fbopzlhyxdm65zcjm.png",
+      identifier: "SOL.$WIF",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.$wif.png",
       ticker: "$WIF",
     },
     {
-      address: "ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.BOME-ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bome-ukhh6c7mmyiwcf1b9pnwe25tspkddt3h5pqzgz74j82.png",
+      identifier: "SOL.BOME",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.bome.png",
       ticker: "BOME",
     },
     {
-      address: "EJZJpNa4tDZ3kYdcRZgaAtaKm3fLJ5akmyPkCaKmfWvd",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.LOUD-EJZJpNa4tDZ3kYdcRZgaAtaKm3fLJ5akmyPkCaKmfWvd",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.loud-ejzjpna4tdz3kydcrzgaatakm3flj5akmypkcakmfwvd.png",
+      identifier: "SOL.LOUD",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.loud.png",
       ticker: "LOUD",
     },
     {
-      address: "FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.MELANIA-FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.melania-fuafbo2jgks6gb4z4lfzkqszgznucisehqnnebarxm1p.png",
+      identifier: "SOL.MELANIA",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.melania.png",
       ticker: "MELANIA",
     },
     {
-      address: "AXCp86262ZPfpcV9bmtmtnzmJSL5sD99mCVJD4GR9vS",
       chain: "SOL",
       chainId: "solana",
       decimals: 9,
-      identifier: "SOL.PUBLIC-AXCp86262ZPfpcV9bmtmtnzmJSL5sD99mCVJD4GR9vS",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.public-axcp86262zpfpcv9bmtmtnzmjsl5sd99mcvjd4gr9vs.png",
+      identifier: "SOL.PUBLIC",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.public.png",
       ticker: "PUBLIC",
     },
     {
@@ -773,54 +859,54 @@ export const list = {
       ticker: "SOL",
     },
     {
-      address: "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.TRUMP-6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.trump-6p6xghyf7aee6tzksmfsko444wqop15icusqi2jfgipn.png",
+      identifier: "SOL.TRUMP",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.trump.png",
       ticker: "TRUMP",
     },
     {
-      address: "2Dyzu65QA9zdX1UeE7Gx71k7fiwyUK6sZdrvJ7auq5wm",
       chain: "SOL",
       chainId: "solana",
       decimals: 8,
-      identifier: "SOL.TURBO-2Dyzu65QA9zdX1UeE7Gx71k7fiwyUK6sZdrvJ7auq5wm",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.turbo-2dyzu65qa9zdx1uee7gx71k7fiwyuk6szdrvj7auq5wm.png",
+      identifier: "SOL.TURBO",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.turbo.png",
       ticker: "TURBO",
     },
     {
-      address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdc-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.png",
+      identifier: "SOL.USDC",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdc.png",
       ticker: "USDC",
     },
     {
-      address: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
       chain: "SOL",
       chainId: "solana",
       decimals: 6,
-      identifier: "SOL.USDT-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdt-es9vmfrzacermjfrf4h2fyd4kconky11mcce8benwnyb.png",
+      identifier: "SOL.USDT",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdt.png",
       ticker: "USDT",
     },
     {
-      address: "CtzPWv73Sn1dMGVU3ZtLv9yWSyUAanBni19YWDaznnkn",
       chain: "SOL",
       chainId: "solana",
       decimals: 8,
-      identifier: "SOL.xBTC-CtzPWv73Sn1dMGVU3ZtLv9yWSyUAanBni19YWDaznnkn",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.xbtc-ctzpwv73sn1dmgvu3ztlv9ywsyuaanbni19ywdaznnkn.png",
+      identifier: "SOL.xBTC",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.xbtc.png",
       ticker: "xBTC",
+    },
+    {
+      address: "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 8,
+      identifier: "SOL.ZEC-A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.zec-a7bdiyds5gjqgftxf17pprhtdkpkkrqbktr27dxvqxas.png",
+      ticker: "ZEC",
     },
     {
       chain: "TRON",

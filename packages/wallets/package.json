@@ -2,7 +2,19 @@
   "dependencies": {
     "@coinbase/wallet-sdk": "~4.3.7",
     "@cosmjs/amino": "~0.36.1",
+    "@cosmjs/crypto": "0.36.1",
     "@cosmjs/proto-signing": "~0.36.1",
+    "@keplr-wallet/types": "0.12.280",
+    "@near-wallet-selector/bitget-wallet": "~10.0.0",
+    "@near-wallet-selector/core": "~10.0.0",
+    "@near-wallet-selector/hot-wallet": "~10.0.0",
+    "@near-wallet-selector/meteor-wallet": "~10.0.0",
+    "@near-wallet-selector/meteor-wallet-app": "~10.0.0",
+    "@near-wallet-selector/modal-ui-js": "~10.0.0",
+    "@near-wallet-selector/my-near-wallet": "~10.0.0",
+    "@near-wallet-selector/near-mobile-wallet": "~10.0.0",
+    "@near-wallet-selector/nightly": "~10.0.0",
+    "@near-wallet-selector/okx-wallet": "~10.0.0",
     "@passkeys/core": "~4.1.0",
     "@passkeys/react": "~3.0.1",
     "@radixdlt/babylon-gateway-api-sdk": "~1.10.0",
@@ -27,7 +39,19 @@
   "devDependencies": {
     "@coinbase/wallet-sdk": "4.3.7",
     "@cosmjs/amino": "0.36.1",
+    "@cosmjs/crypto": "0.36.1",
     "@cosmjs/proto-signing": "0.36.1",
+    "@keplr-wallet/types": "0.12.280",
+    "@near-wallet-selector/bitget-wallet": "10.0.0",
+    "@near-wallet-selector/core": "10.0.0",
+    "@near-wallet-selector/hot-wallet": "10.0.0",
+    "@near-wallet-selector/meteor-wallet": "10.0.0",
+    "@near-wallet-selector/meteor-wallet-app": "10.0.0",
+    "@near-wallet-selector/modal-ui-js": "10.0.0",
+    "@near-wallet-selector/my-near-wallet": "10.0.0",
+    "@near-wallet-selector/near-mobile-wallet": "10.0.0",
+    "@near-wallet-selector/nightly": "10.0.0",
+    "@near-wallet-selector/okx-wallet": "10.0.0",
     "@passkeys/core": "4.1.0",
     "@passkeys/react": "3.0.1",
     "@radixdlt/babylon-gateway-api-sdk": "1.10.1",
@@ -98,6 +122,11 @@
       "require": "./dist/src/ledger.cjs",
       "types": "./dist/types/ledger.d.ts"
     },
+    "./near-wallet-selector": {
+      "default": "./dist/src/near-wallet-selector/index.js",
+      "require": "./dist/src/near-wallet-selector/index.cjs",
+      "types": "./dist/types/near-wallet-selector/index.d.ts"
+    },
     "./okx": { "default": "./dist/src/okx.js", "require": "./dist/src/okx.cjs", "types": "./dist/types/okx.d.ts" },
     "./onekey": {
       "default": "./dist/src/onekey.js",
@@ -163,5 +192,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.1.31"
+  "version": "4.2.1"
 }

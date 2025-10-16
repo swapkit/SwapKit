@@ -3,7 +3,7 @@
     "@bitcoinerlab/secp256k1": "~1.2.0",
     "@bitgo/utxo-lib": "~11.11.0",
     "@cosmjs/amino": "~0.36.1",
-    "@cosmjs/crypto": "~0.36.1",
+    "@cosmjs/crypto": "0.36.1",
     "@cosmjs/proto-signing": "~0.36.1",
     "@cosmjs/stargate": "~0.36.1",
     "@meshsdk/core": "1.9.0-beta.81",
@@ -175,5 +175,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.1.4"
+  "version": "4.1.6"
 }
