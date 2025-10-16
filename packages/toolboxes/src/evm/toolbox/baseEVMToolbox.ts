@@ -25,6 +25,7 @@ import {
   type Provider,
   type Signer,
 } from "ethers";
+import { match } from "ts-pattern";
 import { toHexString } from "../helpers";
 import type {
   ApproveParams,
@@ -205,53 +206,87 @@ export function getEstimateGasPrices({
 }): () => Promise<{
   [key in FeeOption]: { l1GasPrice?: bigint; gasPrice?: bigint; maxFeePerGas?: bigint; maxPriorityFeePerGas?: bigint };
 }> {
-  if (chain === Chain.Arbitrum) {
-    return async function estimateGasPrices() {
-      try {
-        const { gasPrice } = await provider.getFeeData();
-        if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
+  return match(chain)
+    .with(Chain.Gnosis, () => {
+      return async function estimateGasPrices() {
+        try {
+          const { gasPrice, maxPriorityFeePerGas } = await provider.getFeeData();
+          if (!gasPrice || maxPriorityFeePerGas === null) throw new SwapKitError("toolbox_evm_no_fee_data");
 
-        return { [FeeOption.Average]: { gasPrice }, [FeeOption.Fast]: { gasPrice }, [FeeOption.Fastest]: { gasPrice } };
-      } catch (error) {
-        throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-          error: (error as any).msg ?? (error as any).toString(),
-        });
-      }
-    };
-  }
-
-  return async function estimateGasPrices() {
-    try {
-      const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
-
-      if (isEIP1559Compatible) {
-        if (maxFeePerGas === null || maxPriorityFeePerGas === null) throw new SwapKitError("toolbox_evm_no_fee_data");
-
-        return {
-          [FeeOption.Average]: { maxFeePerGas, maxPriorityFeePerGas },
-          [FeeOption.Fast]: {
-            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fast),
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
-          },
-          [FeeOption.Fastest]: {
-            maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fastest),
-            maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fastest),
-          },
-        };
-      }
-      if (!gasPrice) throw new SwapKitError("toolbox_evm_no_gas_price");
-
-      return {
-        [FeeOption.Average]: { gasPrice },
-        [FeeOption.Fast]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fast) },
-        [FeeOption.Fastest]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fastest) },
+          return {
+            [FeeOption.Average]: {
+              maxFeePerGas: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Average),
+              maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Average),
+            },
+            [FeeOption.Fast]: {
+              maxFeePerGas: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fast),
+              maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
+            },
+            [FeeOption.Fastest]: {
+              maxFeePerGas: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fastest),
+              maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fastest),
+            },
+          };
+        } catch (error) {
+          throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+            error: (error as any).msg ?? (error as any).toString(),
+          });
+        }
       };
-    } catch (error) {
-      throw new SwapKitError("toolbox_evm_gas_estimation_error", {
-        error: (error as any).msg ?? (error as any).toString(),
-      });
-    }
-  };
+    })
+    .with(Chain.Arbitrum, () => {
+      return async function estimateGasPrices() {
+        try {
+          const { gasPrice } = await provider.getFeeData();
+          if (!gasPrice) throw new SwapKitError("toolbox_evm_no_fee_data");
+
+          return {
+            [FeeOption.Average]: { gasPrice },
+            [FeeOption.Fast]: { gasPrice },
+            [FeeOption.Fastest]: { gasPrice },
+          };
+        } catch (error) {
+          throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+            error: (error as any).msg ?? (error as any).toString(),
+          });
+        }
+      };
+    })
+    .otherwise(() => {
+      return async function estimateGasPrices() {
+        try {
+          const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
+
+          if (isEIP1559Compatible) {
+            if (maxFeePerGas === null || maxPriorityFeePerGas === null)
+              throw new SwapKitError("toolbox_evm_no_fee_data");
+
+            return {
+              [FeeOption.Average]: { maxFeePerGas, maxPriorityFeePerGas },
+              [FeeOption.Fast]: {
+                maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fast),
+                maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fast),
+              },
+              [FeeOption.Fastest]: {
+                maxFeePerGas: applyFeeMultiplierToBigInt(maxFeePerGas, FeeOption.Fastest),
+                maxPriorityFeePerGas: applyFeeMultiplierToBigInt(maxPriorityFeePerGas, FeeOption.Fastest),
+              },
+            };
+          }
+          if (!gasPrice) throw new SwapKitError("toolbox_evm_no_gas_price");
+
+          return {
+            [FeeOption.Average]: { gasPrice },
+            [FeeOption.Fast]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fast) },
+            [FeeOption.Fastest]: { gasPrice: applyFeeMultiplierToBigInt(gasPrice, FeeOption.Fastest) },
+          };
+        } catch (error) {
+          throw new SwapKitError("toolbox_evm_gas_estimation_error", {
+            error: (error as any).msg ?? (error as any).toString(),
+          });
+        }
+      };
+    });
 }
 
 function getCall({ provider, isEIP1559Compatible, signer, chain }: ToolboxWrapParams) {
