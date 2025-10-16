@@ -13,7 +13,7 @@
   "devDependencies": {
     "@swapkit/toolboxes": "workspace:*",
     "ethers": "6.15.0",
-    "near-api-js": "6.1.0",
+    "near-api-js": "6.3.0",
     "tronweb": "6.0.4",
     "ts-pattern": "5.8.0",
     "zod": "3.25.74",

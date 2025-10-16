@@ -1,5 +1,6 @@
+import type { Provider } from "@near-js/providers";
 import type { AssetValue, DerivationPathArray } from "@swapkit/helpers";
-import type { Account, Contract, providers } from "near-api-js";
+import type { Account, Contract } from "near-api-js";
 import type { Action, SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import type { NEP141Token } from "../helpers/nep141";
 import type { NearCreateTransactionParams, NearFunctionCallParams, NearSigner, NearTransferParams } from "../types";
@@ -30,7 +31,7 @@ export interface GetSignerFromPhraseParams {
 export interface NearToolbox {
   getAddress: () => Promise<string>;
   getPublicKey: () => Promise<string>;
-  provider: providers.JsonRpcProvider;
+  provider: Provider;
   transfer: (params: NearTransferParams) => Promise<string>;
   createAction: (params: CreateActionParams) => Promise<Action>;
   createTransaction: (params: NearCreateTransactionParams) => Promise<Transaction>;

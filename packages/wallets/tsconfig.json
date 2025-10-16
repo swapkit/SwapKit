@@ -1,1 +1,1 @@
-{ "extends": "../../tools/typescript/base.json", "include": ["src", "./build.ts", "modules.d.ts"] }
+{ "extends": "../../tools/typescript/base.json", "include": ["src", "./build.ts"] }
