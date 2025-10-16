@@ -54,7 +54,7 @@ function createZcashSignerFromPhrase({
 
   // Create key pair using BitGo's ECPair with ECPair-compatible network
   const ecpairNetwork = getECPairNetwork();
-  // biome-ignore lint/suspicious/noTsIgnore: TODO: check on this
+  // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
   // @ts-ignore
   const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 
@@ -99,7 +99,7 @@ function addInputsAndOutputs({
       nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
     };
 
-    // biome-ignore lint/suspicious/noTsIgnore: TODO: Check this via build:dts
+    // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
     // @ts-ignore
     psbt.addInput({ hash: utxo.hash, index: utxo.index, ...witnessInfo, ...nonWitnessInfo });
   }
@@ -116,7 +116,7 @@ function addInputsAndOutputs({
       ? { script: compiledMemo as Buffer<ArrayBufferLike>, value: 0n }
       : { script: zcashAddress.toOutputScript(address, getZcashNetwork()), value: BigInt(output.value) };
 
-    // biome-ignore lint/suspicious/noTsIgnore: TODO: Check this via build:dts
+    // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
     // @ts-ignore
     psbt.addOutput(mappedOutput);
   }
@@ -155,6 +155,8 @@ async function createTransaction(buildTxParams: UTXOBuildTxParams) {
   //   const branchId = tipHeight >= 2726400 ? NU6 : tipHeight >= 1687104 ? NU5 : NU5;
   const branchId = NU5;
 
+  // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
+  // @ts-ignore
   const CONSENSUS_BRANCH_ID_KEY = Buffer.concat([Buffer.of(0xfc), Buffer.of(0x05), Buffer.from("BITGO"), Buffer.of(0)]);
 
   // PSBT value must be 4-byte little-endian
@@ -204,7 +206,7 @@ export async function createZcashToolbox(
 
     signedPsbt.finalizeAllInputs();
 
-    // biome-ignore lint/suspicious/noTsIgnore:  Property 'toHex' does not exist on type 'UtxoTransaction<bigint>'
+    // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
     // @ts-ignore
     return baseToolbox.broadcastTx(signedPsbt.extractTransaction().toHex());
   }
@@ -225,7 +227,7 @@ export async function createZcashToolbox(
     }
 
     const ecpairNetwork = getECPairNetwork();
-    // biome-ignore lint/suspicious/noTsIgnore: TODO: check on this
+    // biome-ignore lint/suspicious/noTsIgnore: TODO: wrong buffer typing
     // @ts-ignore
     const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 

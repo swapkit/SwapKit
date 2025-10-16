@@ -109,9 +109,9 @@ export const defaultWallets = {
   ...trezorWallet,
   ...tronlinkWallet,
   ...vultisigWallet,
+  ...walletSelectorWallet,
   ...walletconnectWallet,
   ...xamanWallet,
-  connectWalletSelector: walletSelectorWallet.connectWalletSelector as any, // TODO: fix near wallet selector type
 };
 
 export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {

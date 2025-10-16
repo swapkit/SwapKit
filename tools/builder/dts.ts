@@ -22,6 +22,7 @@ const dtsPlugin = {
         paths: {
           "@bitgo/*": ["../../node_modules/@bitgo/*"],
           "@cosmjs/*": ["../../node_modules/@cosmjs/*"],
+          "@near-wallet-selector/*": ["../../node_modules/@near-wallet-selector/*"],
           "@solana/*": ["../../node_modules/@solana/*"],
           "@ton/*": ["../../node_modules/@ton/*"],
           "@walletconnect/*": ["../../node_modules/@walletconnect/*"],
