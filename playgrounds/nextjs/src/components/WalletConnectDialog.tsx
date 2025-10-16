@@ -9,6 +9,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
+import { useModal } from "~/hooks/use-modal";
 import { useWalletConnect } from "~/hooks/useWalletConnect";
 
 const CHAIN_GROUPS: Record<string, Chain[]> = {
@@ -79,7 +80,7 @@ const AllChainsSupported = [
   Chain.Solana,
 ];
 
-export const availableChainsByWallet = {
+export const availableChainsByWallet: Record<WalletOption, Chain[] | readonly Chain[]> = {
   [WalletOption.BITGET]: BITGET_SUPPORTED_CHAINS,
   [WalletOption.BRAVE]: EVMChains,
   [WalletOption.COINBASE_MOBILE]: EVMChains,
@@ -194,14 +195,12 @@ export const availableChainsByWallet = {
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.TRONLINK]: [Chain.Tron],
   [WalletOption.XAMAN]: [Chain.Ripple],
+  [WalletOption.WALLET_SELECTOR]: [Chain.Near],
 };
 
-interface WalletConnectDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export function WalletConnectDialog() {
+  const modal = useModal();
 
-export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogProps) {
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
   const { loadingWallet, handleConnect } = useWalletConnect(selectedChains);
 
@@ -215,12 +214,12 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
   };
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog {...modal}>
       <DialogContent className="flex h-[80vh] max-w-5xl flex-col p-0">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl">Connect Wallet</DialogTitle>
-            <Button onClick={() => onOpenChange(false)} size="icon" variant="ghost">
+            <Button onClick={() => modal.onOpenChange(false)} size="icon" variant="ghost">
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -310,7 +309,6 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
 
                           return (
                             supportedChains?.length > 0 &&
-                            //@ts-expect-error
                             selectedChains.every((chain) => supportedChains.includes(chain))
                           );
                         });
@@ -326,7 +324,7 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                                   try {
                                     await handleConnect(wallet);
 
-                                    onOpenChange(false);
+                                    modal.resolve({ confirmed: true });
                                   } catch (error) {
                                     if (error instanceof Error) {
                                       toast.error("Failed to connect wallet", { description: error.message });
