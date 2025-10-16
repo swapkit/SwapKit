@@ -73,7 +73,7 @@ export function SwapAssetSelect({
                     alt={chain}
                     className="h-auto w-full overflow-clip rounded-full"
                     height={24}
-                    src={`${temp_host}/images/${chain}.${chain}.png`}
+                    src={`${temp_host}/images/${chain?.toLowerCase()}.${chain?.toLowerCase()}.png`}
                     width={24}
                   />
                 </Button>
@@ -89,15 +89,15 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="grid gap-4">
+        <DialogFooter className="mt-2 flex flex-col">
           {chains?.map((chain) => {
             if (!balanceGroupedByChain?.[chain]?.length) return null;
 
             return (
-              <div className="flex flex-col gap-2" key={`select-asset-chain-${chain}`}>
+              <div className="flex w-full flex-col" key={`select-asset-chain-${chain}`}>
                 {balanceGroupedByChain?.[chain]?.map((assetValue) => (
                   <Button
-                    className="-mx-2 w-auto flex-1 justify-between rounded-lg px-2 py-1"
+                    className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
                     key={`swap-asset-item-${assetValue.toString()}`}
                     onClick={() => setSelectedAsset?.(assetValue.toString())}
                     variant="ghost">
