@@ -11,6 +11,8 @@
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
     "astro": "5.14.5",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "sharp": "0.34.4",
     "starlight-links-validator": "0.18.0",
     "starlight-openapi": "0.21.0",
