@@ -1,11 +1,11 @@
 "use client";
 
 import { Chain } from "@swapkit/sdk";
-import { defaultLists } from "@swapkit/tokens";
 import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { cn } from "../../../lib/utils";
 import { useSwapKit } from "../../swapkit-context";
-import { temp_host } from "../asset-icon";
+import { ChainIcon } from "../chain-icon";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
@@ -20,13 +20,15 @@ export function SwapAssetSelect({
 }) {
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedNetworks, setSelectedNetworks] = useState<Chain[]>([]);
   const [open, setOpen] = useState(false);
   const { chains, balanceGroupedByChain } = useSwapKit();
 
   // 8 cols * 2 rows - 1 (button "all") - 2 (button "hide/show more")
   const collapsedNetworksAmount = 8 * 2 - 1 - 2;
-  const visibleNetworksAmount = isNetworkListExpanded ? Object.values(Chain).length : collapsedNetworksAmount;
-  const canShowMore = visibleNetworksAmount < Object.values(Chain).length - 2;
+  const totalNetworksAmount = Object.values(Chain).length;
+  const visibleNetworksAmount = isNetworkListExpanded ? totalNetworksAmount : collapsedNetworksAmount;
+  const canShowMore = collapsedNetworksAmount < totalNetworksAmount - 2;
 
   useEffect(() => {
     if (!selectedAsset) return;
@@ -58,28 +60,50 @@ export function SwapAssetSelect({
 
         <div className="flex flex-col gap-2">
           <span className="text-muted-foreground text-sm">
-            Network: <span className="text-foreground">All</span>
+            Network:{" "}
+            <span className="font-medium text-foreground">
+              {selectedNetworks?.length ? selectedNetworks?.map((network) => network.toString()).join(", ") : "All"}
+            </span>
           </span>
 
           <div className="grid grid-cols-8 gap-2">
-            <Button className="aspect-[1.3/1] h-auto">All</Button>
+            <Button
+              className={cn(
+                "aspect-[1.3/1] h-auto border border-transparent",
+                selectedNetworks?.length === 0 && "border-foreground text-foreground",
+              )}
+              onClick={() => setSelectedNetworks([])}>
+              All
+            </Button>
 
             {Object.values(Chain)
-              .filter((chain) => chain.toLowerCase().includes(searchQuery.toLowerCase()))
-              .slice(0, canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2)
-              .map((chain) => (
-                <Button className="aspect-[1.3/1] h-auto" key={`swap-asset-item-${chain}`}>
-                  <img
-                    alt={chain}
-                    className="h-auto w-full overflow-clip rounded-full"
-                    height={24}
-                    src={`${temp_host}/images/${chain?.toLowerCase()}.${chain?.toLowerCase()}.png`}
-                    width={24}
-                  />
-                </Button>
-              ))}
+              ?.sort((a, b) => a?.localeCompare(b))
+              ?.filter((chain) => chain?.toLowerCase()?.includes(searchQuery.toLowerCase()))
+              ?.slice(0, canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2)
+              ?.map((chain) => {
+                const isSelected = selectedNetworks?.includes(chain);
+                return (
+                  <Button
+                    className={cn(
+                      "aspect-[1.3/1] h-auto border border-transparent p-0",
+                      isSelected && "border-foreground text-foreground",
+                    )}
+                    key={`swap-asset-item-${chain}`}
+                    onClick={() => {
+                      setSelectedNetworks((selectedNetworks) => {
+                        if (isSelected) {
+                          return selectedNetworks.filter((c) => c !== chain);
+                        }
 
-            {visibleNetworksAmount < defaultLists?.length - 3 && (
+                        return Array.from(new Set([...selectedNetworks, chain]));
+                      });
+                    }}>
+                    <ChainIcon chain={chain} className="size-5" />
+                  </Button>
+                );
+              })}
+
+            {canShowMore && (
               <Button
                 className="col-span-2 col-start-7 h-auto"
                 onClick={() => setIsNetworkListExpanded((isNetworkListExpanded) => !isNetworkListExpanded)}>
