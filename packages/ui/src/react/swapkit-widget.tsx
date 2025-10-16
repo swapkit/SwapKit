@@ -88,11 +88,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
+    if (!config) return;
+
     const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
 
     if (swapKit && isConfigSame) return;
 
-    setConfig(config ?? {});
+    setConfig(config);
 
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey, setConfig]);
