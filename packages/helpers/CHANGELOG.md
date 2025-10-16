@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.3.2
+
+### Patch Changes
+
+- [#1544](https://github.com/swapkit/SwapKit/pull/1544) [`68cb4ce`](https://github.com/swapkit/SwapKit/commit/68cb4cef9ee3a4451a44eea45f52dca34506b973) Thanks [@towanTG](https://github.com/towanTG)! - Bumps near-api-js version and improves near-wallet-selector for cases that wallets do not support signTransaction
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.35
+
 ## 4.3.1
 
 ### Patch Changes
