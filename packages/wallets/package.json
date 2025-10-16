@@ -2,9 +2,7 @@
   "dependencies": {
     "@coinbase/wallet-sdk": "~4.3.7",
     "@cosmjs/amino": "~0.36.1",
-    "@cosmjs/crypto": "0.36.1",
     "@cosmjs/proto-signing": "~0.36.1",
-    "@keplr-wallet/types": "0.12.280",
     "@near-js/transactions": "~2.3.3",
     "@near-wallet-selector/bitget-wallet": "~10.0.0",
     "@near-wallet-selector/core": "~10.0.0",
@@ -29,10 +27,8 @@
     "@walletconnect/modal": "~2.7.0",
     "@walletconnect/sign-client": "~2.22.4",
     "bitcoinjs-lib": "~6.1.0",
-    "blakejs": "~1.2.1",
     "cosmjs-types": "~0.10.1",
     "ethers": "^6.14.0",
-    "ripple-binary-codec": "2.5.0",
     "sats-connect": "~1.0.0",
     "ts-pattern": "^5.7.0",
     "xumm": "1.8.0"
@@ -41,9 +37,7 @@
   "devDependencies": {
     "@coinbase/wallet-sdk": "4.3.7",
     "@cosmjs/amino": "0.36.1",
-    "@cosmjs/crypto": "0.36.1",
     "@cosmjs/proto-signing": "0.36.1",
-    "@keplr-wallet/types": "0.12.280",
     "@near-js/transactions": "2.3.3",
     "@near-wallet-selector/bitget-wallet": "10.0.0",
     "@near-wallet-selector/core": "10.0.0",
@@ -64,11 +58,9 @@
     "@walletconnect/sign-client": "2.22.4",
     "@walletconnect/types": "2.22.4",
     "bitcoinjs-lib": "6.1.7",
-    "blakejs": "1.2.1",
     "cosmjs-types": "0.10.1",
     "ethers": "6.15.0",
     "pino-pretty": "13.1.2",
-    "ripple-binary-codec": "2.5.0",
     "sats-connect": "1.0.0",
     "ts-pattern": "5.8.0",
     "xumm": "1.8.0"
