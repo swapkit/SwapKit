@@ -18,12 +18,7 @@ export type Keystore = {
 async function blake256(initData: Buffer | string) {
   const blakeModule = await import("blakejs");
   const { blake2bFinal, blake2bInit, blake2bUpdate } = blakeModule?.default || blakeModule;
-  let data = initData;
-
-  if (!(data instanceof Buffer)) {
-    // @ts-expect-error
-    data = Buffer.from(data, "hex");
-  }
+  const data = initData instanceof Buffer ? initData : Buffer.from(initData, "hex");
 
   const context = blake2bInit(32);
   blake2bUpdate(context, data);

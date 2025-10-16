@@ -37,5 +37,5 @@
     "useDefineForClassFields": true,
     "verbatimModuleSyntax": true
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["dist"]
 }
