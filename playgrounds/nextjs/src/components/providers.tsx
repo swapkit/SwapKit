@@ -1,7 +1,6 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import { ModalSpawner } from "~/hooks/use-modal";
 import { ThemeProvider } from "./containers/Theme";
 import { GlobalKeystoreDialog } from "./GlobalKeystoreDialog";
 import { Toaster } from "./ui/sonner";
@@ -14,7 +13,6 @@ export function AppProviders({ children }: PropsWithChildren) {
         <div className="mx-auto max-w-1/2">{children}</div>
         <Toaster position="bottom-right" />
         <GlobalKeystoreDialog />
-        <ModalSpawner />
       </TooltipProvider>
     </ThemeProvider>
   );

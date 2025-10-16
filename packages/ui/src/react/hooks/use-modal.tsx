@@ -36,6 +36,7 @@ export function useModal<T = unknown>() {
     onOpenChange: (open: boolean) => !open && id && removeModal({ confirmed: false, id }),
     open: true,
     resolve: ({ confirmed, data }: { confirmed: boolean; data?: T }) => {
+      removeModal({ confirmed, id });
       modal?._promise?.resolve?.({ confirmed, data });
     },
   };

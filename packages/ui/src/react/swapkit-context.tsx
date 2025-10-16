@@ -13,6 +13,7 @@ const useSwapKitStore = create<SwapKitState>((set) => {
 
     balances: [],
     walletType: null,
+    isConnectingWallet: false,
     isWalletConnected: false,
 
     keystoreFile: null,
@@ -25,6 +26,7 @@ const useSwapKitStore = create<SwapKitState>((set) => {
     setKeystoreFile: (keystoreFile) => set({ keystoreFile }),
     setIsKeystoreOpen: (isKeystoreOpen) => set({ isKeystoreOpen }),
     setIsKeystoreDecrypting: (isKeystoreDecrypting) => set({ isKeystoreDecrypting }),
+    setIsConnectingWallet: (isConnectingWallet) => set({ isConnectingWallet }),
   };
 });
 
@@ -37,12 +39,14 @@ export const useSwapKit = () => {
     keystoreFile,
     isKeystoreOpen,
     isKeystoreDecrypting,
+    isConnectingWallet,
     setSwapKit,
     setBalances,
     setWalletState,
     setKeystoreFile,
     setIsKeystoreOpen,
     setIsKeystoreDecrypting,
+    setIsConnectingWallet,
   } = useSwapKitStore((state) => state);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
@@ -80,6 +84,7 @@ export const useSwapKit = () => {
 
   const connectWallet = useCallback(
     async (option: WalletOption, chains: Chain[]) => {
+      setIsConnectingWallet(true);
       try {
         switch (option) {
           case WalletOption.METAMASK:
@@ -178,9 +183,11 @@ export const useSwapKit = () => {
       } catch (error) {
         console.error(`Failed to connect ${option}:`, error);
         setWalletState({ connected: false, type: null });
+      } finally {
+        setIsConnectingWallet(false);
       }
     },
-    [setWalletState, setBalances, swapKit],
+    [setWalletState, setBalances, swapKit, setIsConnectingWallet],
   );
 
   const disconnectWallet = useCallback(() => {
@@ -253,6 +260,7 @@ export const useSwapKit = () => {
     balanceGroupedByChain,
     balances,
     chains,
+    isConnectingWallet,
     isWalletConnected,
 
     checkIfChainConnected,

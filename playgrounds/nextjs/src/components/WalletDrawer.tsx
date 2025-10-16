@@ -1,11 +1,10 @@
 "use client";
 import type { Chain } from "@swapkit/helpers";
-import { ChainIcon, useSwapKit } from "@swapkit/ui/react";
+import { ChainIcon, useModal, useSwapKit } from "@swapkit/ui/react";
 import { LogOut } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
-import { useModal } from "~/hooks/use-modal";
 import { TokenBalance } from "./TokenBalance";
 import { TruncatedAddress } from "./TruncatedAddress";
 

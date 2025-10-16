@@ -17,6 +17,7 @@ export interface SwapKitState {
   setKeystoreFile: (file: KeystoreFile) => void;
   setIsKeystoreOpen: (isOpen: boolean) => void;
   setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
+  setIsConnectingWallet: (isConnectingWallet: boolean) => void;
 }
 
 export type SwapKitWidgetProps = { config?: SKConfigState };

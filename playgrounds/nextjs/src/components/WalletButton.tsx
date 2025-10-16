@@ -1,9 +1,7 @@
 "use client";
 
-import { useSwapKit } from "@swapkit/ui/react";
+import { showModal, useSwapKit, WalletConnectDialog } from "@swapkit/ui/react";
 import { Button } from "~/components/ui/button";
-import { showModal } from "~/hooks/use-modal";
-import { WalletConnectDialog } from "./WalletConnectDialog";
 import { WalletDrawer } from "./WalletDrawer";
 
 export function WalletButton({ className }: { className?: string }) {
