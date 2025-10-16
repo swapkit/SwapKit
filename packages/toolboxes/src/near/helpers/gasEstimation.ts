@@ -1,4 +1,4 @@
-import type { Account } from "near-api-js";
+import type { Account } from "@near-js/accounts";
 import type { NearGasEstimateParams } from "../types/contract";
 
 export const GAS_COSTS = {

@@ -10,8 +10,6 @@
  * - NEAR API JS types
  */
 
-import type { PublicKey } from "near-api-js/lib/utils";
-
 /**
  * Transaction action types supported by NEAR
  */
@@ -86,7 +84,7 @@ export interface NearAccount {
  * Access key information
  */
 export interface NearAccessKey {
-  publicKey: PublicKey;
+  publicKey: any;
   accessKey: {
     nonce: number;
     permission: "FullAccess" | { FunctionCall: { allowance?: string; receiverId: string; methodNames: string[] } };

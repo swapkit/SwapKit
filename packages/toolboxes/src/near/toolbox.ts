@@ -1,6 +1,6 @@
+import type { Account, Contract } from "@near-js/accounts";
+import type { SignedTransaction, Transaction } from "@near-js/transactions";
 import { AssetValue, Chain, getChainConfig, getRPCUrl, SwapKitError } from "@swapkit/helpers";
-import type { Account, Contract } from "near-api-js";
-import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import { getBalance } from "../utils";
 import {
   getFullAccessPublicKey,
@@ -19,7 +19,7 @@ import {
   isCustomEstimator,
   isSimpleTransfer,
 } from "./helpers/gasEstimation";
-import { createNEP141Token, createNearContract } from "./helpers/nep141";
+import { createNearContract } from "./helpers/nep141";
 import type {
   NearCreateTransactionParams,
   NearFunctionCallParams,
@@ -32,12 +32,11 @@ import type {
   ContractFunctionCallParams,
   CreateActionParams,
   GetSignerFromPhraseParams,
-  NearToolbox,
 } from "./types/toolbox";
 
-export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise<NearToolbox> {
+export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
   const { P, match } = await import("ts-pattern");
-  const { providers } = await import("near-api-js");
+  const { JsonRpcProvider } = await import("@near-js/providers");
   const signer = await match(toolboxParams)
     .with({ phrase: P.string }, async (params) => {
       const signer = await getNearSignerFromPhrase(params);
@@ -48,10 +47,10 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
   const url = await getRPCUrl(Chain.Near);
 
-  const provider = new providers.JsonRpcProvider({ url });
+  const provider = new JsonRpcProvider({ url });
 
   async function getAccount(address?: string) {
-    const { Account } = await import("near-api-js");
+    const { Account } = await import("@near-js/accounts");
 
     const _address = address || (await getAddress());
 
@@ -75,7 +74,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
     const transaction = await createTransaction({ ...params, sender: await getAddress() });
 
-    return broadcastTransaction(await signTransaction(transaction));
+    return signAndSendTransaction(transaction);
   }
 
   async function createTransaction(params: NearCreateTransactionParams) {
@@ -113,25 +112,23 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const { publicKey, nonce } = await getFullAccessPublicKey(provider, signerId);
     const baseAmount = assetValue.getBaseValue("bigint");
 
-    const { transactions, utils } = await import("near-api-js");
+    const { actionCreators, createTransaction } = await import("@near-js/transactions");
+    const { baseDecode } = await import("@near-js/utils");
 
-    const txActions = [transactions.transfer(baseAmount)];
+    const txActions = [actionCreators.transfer(baseAmount)];
 
     if (memo && attachedDeposit) {
-      txActions.push(transactions.functionCall("memo", { memo }, BigInt("250000000000000"), BigInt(attachedDeposit)));
+      txActions.push(actionCreators.functionCall("memo", { memo }, BigInt("250000000000000"), BigInt(attachedDeposit)));
     }
 
     const block = await provider.block({ finality: "final" });
-    const blockHash = utils.serialize.base_decode(block.header.hash);
+    const blockHash = baseDecode(block.header.hash);
 
-    return transactions.createTransaction(signerId, publicKey, recipient, nonce + 1, txActions, blockHash);
+    return createTransaction(signerId, publicKey, recipient, nonce + 1, txActions, blockHash);
   }
 
-  async function serializeTransaction(transaction: Transaction) {
-    const { SCHEMA } = await import("near-api-js/lib/transaction");
-    const { utils } = await import("near-api-js");
-
-    const serializedTx = utils.serialize.serialize(SCHEMA.Transaction, transaction);
+  function serializeTransaction(transaction: Transaction) {
+    const serializedTx = transaction.encode();
     return Buffer.from(serializedTx).toString("base64");
   }
 
@@ -140,12 +137,13 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
 
     const { publicKey, nonce } = await getFullAccessPublicKey(provider, accountId);
 
-    const { transactions, utils } = await import("near-api-js");
+    const { createTransaction, actionCreators } = await import("@near-js/transactions");
+    const { baseDecode } = await import("@near-js/utils");
     const block = await provider.block({ finality: "final" });
-    const blockHash = utils.serialize.base_decode(block.header.hash);
+    const blockHash = baseDecode(block.header.hash);
 
     const actions = [
-      transactions.functionCall(
+      actionCreators.functionCall(
         params.methodName,
         Buffer.from(JSON.stringify(params.args)),
         BigInt(params.gas),
@@ -153,22 +151,15 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
       ),
     ];
 
-    const transaction = transactions.createTransaction(
-      accountId,
-      publicKey,
-      params.contractId,
-      nonce + 1,
-      actions,
-      blockHash,
-    );
+    const transaction = createTransaction(accountId, publicKey, params.contractId, nonce + 1, actions, blockHash);
 
     return transaction;
   }
 
   async function createAction(params: CreateActionParams) {
-    const { transactions } = await import("near-api-js");
+    const { actionCreators } = await import("@near-js/transactions");
 
-    const action = transactions.functionCall(
+    const action = actionCreators.functionCall(
       params.methodName,
       Buffer.from(JSON.stringify(params.args)),
       BigInt(params.gas),
@@ -190,6 +181,20 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
   async function broadcastTransaction(signedTransaction: SignedTransaction) {
     const result = await provider.sendTransaction(signedTransaction);
     return result.transaction.hash;
+  }
+
+  async function signAndSendTransaction(transaction: Transaction) {
+    if (!signer) {
+      throw new SwapKitError("toolbox_near_no_signer");
+    }
+
+    try {
+      const signedTx = await signTransaction(transaction);
+      const txHash = await broadcastTransaction(signedTx);
+      return txHash;
+    } catch {
+      return signer.signAndSendTransactions?.({ transactions: [transaction] });
+    }
   }
 
   async function estimateTransactionFee(params: NearTransferParams | NearGasEstimateParams) {
@@ -233,15 +238,12 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     }
 
     const account = await getAccount();
-    const { utils } = await import("near-api-js");
+    const { formatNearAmount } = await import("@near-js/utils");
+    const { PublicKey } = await import("@near-js/crypto");
 
-    const balanceInYocto = utils.format.parseNearAmount(initialBalance) || "0";
+    const balanceInYocto = formatNearAmount(initialBalance) || "0";
 
-    const result = await account.createAccount(
-      subAccountId,
-      utils.PublicKey.fromString(publicKey),
-      BigInt(balanceInYocto),
-    );
+    const result = await account.createAccount(subAccountId, PublicKey.fromString(publicKey), BigInt(balanceInYocto));
 
     return result.transaction.hash;
   }
@@ -252,14 +254,14 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
         throw new SwapKitError("toolbox_near_no_signer");
       }
 
-      const { transactions } = await import("near-api-js");
+      const { actionCreators } = await import("@near-js/transactions");
 
       const { contractId, methodName, args, deposit } = params;
       const account = await getAccount();
 
       const estimatedGas = await estimateGas({ args: args || {}, contractId, methodName });
 
-      const functionAction = transactions.functionCall(
+      const functionAction = actionCreators.functionCall(
         methodName,
         args || {},
         estimatedGas.getBaseValue("bigint"),
@@ -301,11 +303,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     const result = await account.signAndSendTransaction({ actions: batch.actions, receiverId: batch.receiverId });
 
     return result.transaction.hash;
-  }
-
-  async function nep141(contractId: string) {
-    const account = await getAccount();
-    return createNEP141Token({ account, contractId });
   }
 
   async function estimateGas(params: NearGasEstimateParams, account?: Account) {
@@ -361,9 +358,9 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     getPublicKey: async () => (signer ? (await signer.getPublicKey()).toString() : ""),
     getSignerFromPhrase: (params: GetSignerFromPhraseParams) => getNearSignerFromPhrase(params),
     getSignerFromPrivateKey: getNearSignerFromPrivateKey,
-    nep141,
     provider,
     serializeTransaction,
+    signAndSendTransaction,
     signTransaction,
     transfer,
     validateAddress: await getValidateNearAddress(),
