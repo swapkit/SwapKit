@@ -3,11 +3,13 @@
 import { Chain, EVMChains, WalletOption } from "@swapkit/helpers";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, WalletMinimalIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useModal } from "../../hooks/use-modal";
+import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { WalletIcon } from "../wallet-icon";
 
@@ -184,10 +186,11 @@ export const availableChainsByWallet: Record<WalletOption, Chain[] | readonly Ch
 
 export function WalletConnectDialog() {
   const modal = useModal();
+  const [isShowingAllWallets, setIsShowingAllWallets] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [_selectedChains, _setSelectedChainss] = useState<Chain[]>([]);
-  // const { connectWallet, isConnectingWallet } = useSwapKit();
+  const { connectWallet, isConnectingWallet, walletType } = useSwapKit();
 
   return (
     <Dialog {...modal}>
@@ -207,32 +210,95 @@ export function WalletConnectDialog() {
           <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground" />
         </div>
 
-        <div className="-mx-6 -mb-6 flex max-h-[60svh] flex-1 flex-col gap-4 overflow-auto px-6 pb-6">
-          {Object.entries(WALLET_GROUPS).map(([groupTitle, wallets]) => {
-            return (
-              <div className="flex flex-col gap-2" key={`wallet-group-${groupTitle}`}>
-                <header className="text-muted-foreground text-sm">{groupTitle}</header>
+        <div className="-mx-6 -mb-4 flex max-h-[60svh] flex-1 flex-col gap-4 overflow-auto px-6 pb-6">
+          {isShowingAllWallets ? (
+            Object.entries(WALLET_GROUPS).map(([groupTitle, wallets]) => {
+              return (
+                <div className="flex flex-col gap-2" key={`wallet-group-${groupTitle}`}>
+                  <header className="text-muted-foreground text-sm">{groupTitle}</header>
 
-                <div className="grid grid-cols-4 gap-2">
-                  {wallets?.map((wallet) => (
-                    <Button
-                      className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
-                      key={`wallet-button-${wallet}`}>
-                      <WalletIcon className="size-5" wallet={wallet} />
+                  <div className="grid grid-cols-4 gap-2">
+                    {wallets?.map((wallet) => (
+                      <Button
+                        className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
+                        isLoading={isConnectingWallet && walletType === wallet}
+                        key={`wallet-button-${wallet}`}
+                        onClick={async () => {
+                          try {
+                            await connectWallet(wallet, [
+                              Chain.Cosmos,
+                              Chain.Maya,
+                              Chain.THORChain,
+                              Chain.Kujira,
+                            ] as Chain[]);
+                            modal.resolve({ confirmed: true });
+                          } catch (error) {
+                            toast.error(error instanceof Error ? error.message : "Failed to connect wallet");
+                          }
+                        }}>
+                        <WalletIcon className="size-5" wallet={wallet} />
 
-                      <span className="text-foreground text-sm">
-                        {wallet
-                          ?.split("")
-                          .map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
-                          .join("")}
-                      </span>
-                    </Button>
-                  ))}
+                        <span className="text-foreground text-sm">
+                          {wallet
+                            ?.split("")
+                            .map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
+                            .join("")}
+                        </span>
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="grid grid-cols-4 gap-2">
+              {WALLET_GROUPS["Browser Extensions"]?.map((wallet) => {
+                return (
+                  <Button
+                    className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
+                    key={`wallet-button-${wallet}`}
+                    onClick={() => {
+                      connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
+                    }}>
+                    <WalletIcon className="size-5" wallet={wallet} />
+
+                    <span className="text-foreground text-sm">
+                      {wallet
+                        ?.split("")
+                        ?.map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
+                        ?.join("")}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          )}
         </div>
+
+        <DialogFooter className="items-center justify-center">
+          <Button
+            className="-mt-1 w-auto text-foreground"
+            onClick={() => {
+              setIsShowingAllWallets((isShowingAllWallets) => !isShowingAllWallets);
+            }}
+            size="sm"
+            variant="ghost">
+            <WalletMinimalIcon className="size-4" />
+
+            <span>{isShowingAllWallets ? "Hide all wallets" : "Show all wallets"}</span>
+          </Button>
+
+          <p className="max-w-sm text-center text-muted-foreground text-sm">
+            By connecting your wallet, you agree to our{" "}
+            <a className="text-foreground underline" href="/terms">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a className="text-foreground underline" href="/privacy">
+              Privacy Policy
+            </a>
+          </p>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

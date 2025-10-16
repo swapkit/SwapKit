@@ -10,6 +10,7 @@ export interface SwapKitState {
   keystoreFile: KeystoreFile;
   isKeystoreOpen: boolean;
   isKeystoreDecrypting: boolean;
+  isConnectingWallet: boolean;
 
   setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
   setBalances: (balances: AssetValue[]) => void;

@@ -85,6 +85,8 @@ export const useSwapKit = () => {
   const connectWallet = useCallback(
     async (option: WalletOption, chains: Chain[]) => {
       setIsConnectingWallet(true);
+      setWalletState({ connected: false, type: option });
+
       try {
         switch (option) {
           case WalletOption.METAMASK:
@@ -260,8 +262,8 @@ export const useSwapKit = () => {
     balanceGroupedByChain,
     balances,
     chains,
-    isConnectingWallet,
     isWalletConnected,
+    isConnectingWallet,
 
     checkIfChainConnected,
     connectKeystore,
