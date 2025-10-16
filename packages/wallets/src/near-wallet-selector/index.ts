@@ -9,9 +9,7 @@ function createNearSigner(wallet: Wallet) {
   return {
     getAddress: async () => {
       const accounts = await wallet.getAccounts();
-      console.log(accounts);
       const accountId = accounts[0]?.accountId;
-      console.log(accountId);
 
       if (!accountId) {
         throw new SwapKitError("wallet_connection_rejected_by_user");
