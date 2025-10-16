@@ -1,4 +1,4 @@
-import type { Wallet } from "@near-wallet-selector/core";
+import type { Wallet, WalletModuleFactory } from "@near-wallet-selector/core";
 import "@near-wallet-selector/modal-ui-js/styles.css";
 import type { Transaction } from "@near-js/transactions";
 import { Chain, filterSupportedChains, SKConfig, SwapKitError, WalletOption } from "@swapkit/helpers";
@@ -57,7 +57,7 @@ function waitForWalletSelection(selector: any, modal: any) {
   });
 }
 
-async function getWalletMethods() {
+async function getWalletMethods(walletFactories?: WalletModuleFactory[]) {
   const { setupWalletSelector } = await import("@near-wallet-selector/core");
   const { setupBitgetWallet } = await import("@near-wallet-selector/bitget-wallet");
   const { setupHotWallet } = await import("@near-wallet-selector/hot-wallet");
@@ -80,6 +80,7 @@ async function getWalletMethods() {
       setupNearMobileWallet(),
       setupNightly(),
       setupOKXWallet(),
+      ...(walletFactories || []),
     ],
     network: "mainnet",
   });
@@ -111,7 +112,7 @@ async function getWalletMethods() {
 
 export const walletSelectorWallet = createWallet({
   connect: ({ addChain, supportedChains, walletType }) =>
-    async function connectWalletSelector(chains: Chain[]) {
+    async function connectWalletSelector(chains: Chain[], walletFactories?: WalletModuleFactory[]) {
       const filteredChains = filterSupportedChains({ chains, supportedChains, walletType });
 
       if (filteredChains.length === 0) {
@@ -121,7 +122,7 @@ export const walletSelectorWallet = createWallet({
         });
       }
 
-      const walletMethods = await getWalletMethods();
+      const walletMethods = await getWalletMethods(walletFactories);
 
       addChain({ ...walletMethods, balance: [], chain: Chain.Near, walletType });
 
