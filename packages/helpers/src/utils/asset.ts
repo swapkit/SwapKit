@@ -236,9 +236,9 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
 
       try {
-        const { providers } = await import("near-api-js");
+        const { JsonRpcProvider } = await import("@near-js/providers");
         const rpcUrl = await getRPCUrl(Chain.Near);
-        const provider = new providers.JsonRpcProvider({ url: rpcUrl });
+        const provider = new JsonRpcProvider({ url: rpcUrl });
 
         const metadata = await provider.query({
           account_id: address,

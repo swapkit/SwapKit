@@ -1,6 +1,7 @@
+import type { KeyPair } from "@near-js/crypto";
 import type { Provider } from "@near-js/providers";
+import { KeyPairSigner } from "@near-js/signers";
 import { type DerivationPathArray, derivationPathToString, SwapKitError } from "@swapkit/helpers";
-import { type KeyPair, KeyPairSigner } from "near-api-js";
 import type { NearSigner } from "../types";
 
 export async function getValidateNearAddress() {
@@ -23,7 +24,7 @@ export async function getNearSignerFromPhrase(params: {
   index?: number;
 }) {
   const { parseSeedPhrase } = await import("near-seed-phrase");
-  const { KeyPair } = await import("near-api-js");
+  const { KeyPair } = await import("@near-js/crypto");
 
   const index = params.index || 0;
   const derivationPath = params.derivationPath
@@ -37,7 +38,7 @@ export async function getNearSignerFromPhrase(params: {
 }
 
 export async function getNearSignerFromPrivateKey(privateKey: string) {
-  const { KeyPair } = await import("near-api-js/lib/utils");
+  const { KeyPair } = await import("@near-js/crypto");
   const keyPair = KeyPair.fromString(privateKey as any);
   return createNearSignerFromKeyPair(keyPair);
 }
@@ -75,9 +76,9 @@ export async function getFullAccessPublicKey(provider: Provider, accountId: stri
   if (!fullAccessKey) {
     throw new SwapKitError("toolbox_near_no_public_key_found");
   }
+  const { PublicKey } = await import("@near-js/crypto");
 
-  const { utils } = await import("near-api-js");
-  const publicKey = utils.PublicKey.fromString(fullAccessKey.public_key);
+  const publicKey = PublicKey.fromString(fullAccessKey.public_key);
   const nonce = (fullAccessKey.access_key.nonce as number) || 0;
 
   return { nonce, publicKey };
