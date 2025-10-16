@@ -15,7 +15,6 @@ export type {
 } from "./types/contract";
 export type {
   FungibleTokenMetadata,
-  NEP141Contract,
   StorageBalance,
   StorageBalanceBounds,
   TokenTransferParams,

@@ -1,5 +1,5 @@
-import type { Account } from "near-api-js";
-import type { Action } from "near-api-js/lib/transaction";
+import type { Account } from "@near-js/accounts";
+import type { Action } from "@near-js/transactions";
 
 // Custom interface for contract metadata (not in SDK)
 export interface NearContractInterface {

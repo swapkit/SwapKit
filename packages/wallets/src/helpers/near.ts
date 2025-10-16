@@ -1,8 +1,9 @@
 //TBD @towan to be moved somewhere else
+
+import type { Account } from "@near-js/accounts";
+import { type Action, SignedTransaction, type Transaction } from "@near-js/transactions";
 import { SwapKitError } from "@swapkit/helpers";
 import type { NearSigner } from "@swapkit/toolboxes/near";
-import type { Account } from "near-api-js";
-import { type Action, SignedTransaction, type Transaction } from "near-api-js/lib/transaction";
 
 /**
  * NEAR Browser Wallet Provider Interface
@@ -59,11 +60,11 @@ export async function createNearSignerFromProvider(provider: NearBrowserWalletPr
       throw new SwapKitError("wallet_connection_rejected_by_user", { wallet: walletName });
     },
     async getPublicKey() {
-      const { utils } = await import("near-api-js");
+      const { PublicKey } = await import("@near-js/crypto");
 
       if (provider.getPublicKey) {
         const pubKey = await provider.getPublicKey();
-        return utils.PublicKey.from(pubKey);
+        return PublicKey.from(pubKey);
       }
 
       throw new SwapKitError("wallet_ledger_method_not_supported", { method: "getPublicKey", wallet: walletName });

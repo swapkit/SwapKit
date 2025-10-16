@@ -1,6 +1,6 @@
+import type { SignedTransaction, Transaction } from "@near-js/transactions";
 import type { DerivationPathArray } from "@swapkit/helpers";
 import type { NearSigner } from "@swapkit/toolboxes/near";
-import type { SignedTransaction, Transaction } from "near-api-js/lib/transaction";
 import { getLedgerTransport } from "../helpers/getLedgerTransport";
 
 export async function getNearLedgerClient(derivationPath?: DerivationPathArray) {
@@ -18,8 +18,8 @@ export async function getNearLedgerClient(derivationPath?: DerivationPathArray) 
       return Promise.resolve(address);
     },
     async getPublicKey() {
-      const { utils } = await import("near-api-js");
-      return utils.PublicKey.fromString(`ed25519:${pubKeyHex}`);
+      const { PublicKey } = await import("@near-js/crypto");
+      return PublicKey.fromString(`ed25519:${pubKeyHex}`);
     },
 
     signDelegateAction(_delegateAction: any) {
@@ -41,7 +41,7 @@ export async function getNearLedgerClient(derivationPath?: DerivationPathArray) 
     },
 
     async signTransaction(transaction: Transaction) {
-      const { Signature, SignedTransaction } = await import("near-api-js/lib/transaction");
+      const { Signature, SignedTransaction } = await import("@near-js/transactions");
       try {
         const signatureArray = await nearApp.signTransaction(transaction.encode(), path);
         if (!signatureArray) {
