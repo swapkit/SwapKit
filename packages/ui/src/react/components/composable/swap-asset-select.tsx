@@ -119,21 +119,25 @@ export function SwapAssetSelect({
 
             return (
               <div className="flex w-full flex-col" key={`select-asset-chain-${chain}`}>
-                {balanceGroupedByChain?.[chain]?.map((assetValue) => (
-                  <Button
-                    className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
-                    key={`swap-asset-item-${assetValue.toString()}`}
-                    onClick={() => setSelectedAsset?.(assetValue.toString())}
-                    variant="ghost">
-                    <SwapAssetItem asset={assetValue.toString()} key={`swap-asset-item-${assetValue.toString()}`} />
+                {balanceGroupedByChain?.[chain]?.map((assetValue) => {
+                  const assetValueString = assetValue?.toString();
 
-                    <div className="flex flex-col items-end">
-                      <span className="font-medium text-base text-foreground">Label</span>
+                  return (
+                    <Button
+                      className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
+                      key={`swap-asset-item-${assetValueString}`}
+                      onClick={() => setSelectedAsset?.(assetValueString)}
+                      variant="ghost">
+                      <SwapAssetItem asset={assetValueString} />
 
-                      <span className="-mt-0.5 text-muted-foreground text-sm">Label</span>
-                    </div>
-                  </Button>
-                ))}
+                      <div className="flex flex-col items-end">
+                        <span className="font-medium text-base text-foreground">Label</span>
+
+                        <span className="-mt-0.5 text-muted-foreground text-sm">Label</span>
+                      </div>
+                    </Button>
+                  );
+                })}
               </div>
             );
           })}
