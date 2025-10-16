@@ -6,12 +6,12 @@ import {
   ProviderName,
   type QuoteResponseRoute,
   SwapKitApi,
+  useSwapKitConfig,
   useSwapKitStore,
 } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
-import { useShallow } from "zustand/shallow";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { Button } from "./components/ui/button";
@@ -30,18 +30,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
-  const swapKitConfig = useSwapKitStore(
-    useShallow((state) => ({
-      apiKeys: state.apiKeys,
-      chains: state.chains,
-      envs: state.envs,
-      feeMultipliers: state.feeMultipliers,
-      integrations: state.integrations,
-      rpcUrls: state.rpcUrls,
-      wallets: state.wallets,
-    })),
-  );
-
+  const swapKitConfig = useSwapKitConfig();
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
 

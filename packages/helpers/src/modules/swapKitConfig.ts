@@ -7,6 +7,7 @@ import {
   StagenetTHORConfig,
 } from "@swapkit/types";
 import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
@@ -129,6 +130,19 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
     })),
   setRpcUrl: (chain, url) => set((s) => ({ rpcUrls: { ...s.rpcUrls, [chain]: url } })),
 }));
+
+export const useSwapKitConfig = () =>
+  useSwapKitStore(
+    useShallow((state) => ({
+      apiKeys: state?.apiKeys,
+      chains: state?.chains,
+      envs: state?.envs,
+      feeMultipliers: state?.feeMultipliers,
+      integrations: state?.integrations,
+      rpcUrls: state?.rpcUrls,
+      wallets: state?.wallets,
+    })),
+  );
 
 export const SKConfig = {
   get: <T extends keyof SKState>(key: T) => useSwapKitStore.getState()[key],
