@@ -186,9 +186,9 @@ export const useSwapKit = () => {
   const disconnectWallet = useCallback(() => {
     swapKit?.disconnectAll();
     setWalletState({ connected: false, type: null });
-  }, [swapKit?.disconnectAll, setWalletState]);
+  }, [swapKit, setWalletState]);
 
-  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
+  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit]);
 
   const connectKeystore = useCallback(
     async (password: string) => {
