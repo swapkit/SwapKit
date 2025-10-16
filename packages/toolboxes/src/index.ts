@@ -2,6 +2,7 @@ import {
   AssetValue,
   Chain,
   type CosmosChain,
+  CosmosChainPrefixes,
   CosmosChains,
   type EVMChain,
   EVMChains,
@@ -56,7 +57,7 @@ export async function getAddressValidator() {
       .with(...EVMChains, () => evmValidateAddress({ address }))
       .with(...UTXOChains, () => utxoValidateAddress({ address, chain: chain as UTXOChain }))
       .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, Chain.Maya, Chain.THORChain, (chain) => {
-        const cosmosValidateAddress = getCosmosValidateAddress(chain);
+        const cosmosValidateAddress = getCosmosValidateAddress(CosmosChainPrefixes[chain]);
         return cosmosValidateAddress(address);
       })
       .with(Chain.Chainflip, Chain.Polkadot, () =>

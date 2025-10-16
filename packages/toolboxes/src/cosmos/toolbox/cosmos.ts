@@ -256,7 +256,7 @@ function getMinTransactionFee(chain: Chain) {
   );
 }
 
-export function getCosmosValidateAddress(prefix: string) {
+export function getCosmosValidateAddress(prefix: (typeof CosmosChainPrefixes)[CosmosChain]) {
   return function validateAddress(address: string) {
     if (!address.startsWith(prefix)) return false;
 
