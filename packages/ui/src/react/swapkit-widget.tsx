@@ -236,7 +236,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         {submitButtonContent}
       </Button>
 
-      <SwapQuotePreview />
+      <SwapQuotePreview className="!mt-6" />
 
       <Toaster position="bottom-right" />
       <ModalSpawner />
