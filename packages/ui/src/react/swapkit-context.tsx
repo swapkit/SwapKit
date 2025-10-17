@@ -163,10 +163,8 @@ export const useSwapKit = () => {
             await swapKit?.connectTalisman(chains);
             break;
 
-          default: {
-            console.warn(`Unsupported wallet option: ${option}`);
-            return;
-          }
+          default:
+            throw new Error(`Unsupported wallet option: ${option}`);
         }
 
         const isConnected = chains.some((chain) => !!swapKit?.getAddress(chain));
@@ -184,7 +182,10 @@ export const useSwapKit = () => {
         }
       } catch (error) {
         console.error(`Failed to connect ${option}:`, error);
+
         setWalletState({ connected: false, type: null });
+
+        throw new Error(`Failed to connect ${option}: ${error instanceof Error ? error.message : "Unknown error"}`);
       } finally {
         setIsConnectingWallet(false);
       }

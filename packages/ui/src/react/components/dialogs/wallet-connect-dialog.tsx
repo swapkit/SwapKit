@@ -11,6 +11,7 @@ import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { SWAPKIT_WIDGET_TOASTER_ID } from "../ui/sonner";
 import { WalletIcon } from "../wallet-icon";
 
 const WALLET_GROUPS = {
@@ -231,9 +232,15 @@ export function WalletConnectDialog() {
                               Chain.THORChain,
                               Chain.Kujira,
                             ] as Chain[]);
+
                             modal.resolve({ confirmed: true });
                           } catch (error) {
-                            toast.error(error instanceof Error ? error.message : "Failed to connect wallet");
+                            console.error("CAUGHT SPAWNING TOAST", error);
+
+                            toast.error("Failed to connect your wallet", {
+                              description: "Make sure your wallet is connected and accessible by the browser.",
+                              toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+                            });
                           }
                         }}>
                         <WalletIcon className="size-5" wallet={wallet} />
@@ -257,8 +264,24 @@ export function WalletConnectDialog() {
                   <Button
                     className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
                     key={`wallet-button-${wallet}`}
-                    onClick={() => {
-                      connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
+                    onClick={async () => {
+                      try {
+                        await connectWallet(wallet, [
+                          Chain.Cosmos,
+                          Chain.Maya,
+                          Chain.THORChain,
+                          Chain.Kujira,
+                        ] as Chain[]);
+
+                        modal.resolve({ confirmed: true });
+                      } catch (error) {
+                        console.error("CAUGHT SPAWNING TOAST", error);
+
+                        toast.error("Failed to connect your wallet", {
+                          description: "Make sure your wallet is connected and accessible by the browser.",
+                          toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+                        });
+                      }
                     }}>
                     <WalletIcon className="size-5" wallet={wallet} />
 

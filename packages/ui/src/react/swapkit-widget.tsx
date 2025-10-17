@@ -17,7 +17,7 @@ import { SwapInputWithChainSelector } from "./components/composable/swap-input-c
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
-import { Toaster, toast } from "./components/ui/sonner";
+import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
 import { useDebouncedEffect } from "./hooks/use-debounced-effect";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
@@ -65,7 +65,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       setEstimatedOutput(quote?.routes?.[0]?.expectedBuyAmount);
     } catch (error) {
       console.error("Failed to get quote:", error);
-      toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
+        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+      });
       setEstimatedOutput(undefined);
       setRoutes([]);
     }
@@ -97,10 +99,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       setAmount("");
       setEstimatedOutput(undefined);
       setRoutes([]);
-      toast.success("Swap completed successfully");
+      toast.success("Swap completed successfully", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
     } catch (error) {
       console.error("Swap failed:", error);
-      toast.error(`Swap failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(`Swap failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
+        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+      });
     } finally {
       setIsSwapping(false);
     }
@@ -126,11 +130,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         await handleSwap(route);
       } else {
         await swapKit.approveAssetValue(inputAssetValue, tx.from);
-        toast.success("Asset approved, you can now swap");
+        toast.success("Asset approved, you can now swap", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
       }
     } catch (error) {
       console.error("Swap process failed:", error);
-      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
+        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+      });
     }
   };
 
@@ -153,7 +159,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       await swap(route, amountValue);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
-      toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
+        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+      });
     }
   };
 
