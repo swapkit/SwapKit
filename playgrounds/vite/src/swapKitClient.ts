@@ -1,4 +1,4 @@
-import { AssetValue, createSwapKit } from "@swapkit/sdk";
+import { AssetValue, createSwapKit, SKConfig } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
 let currentConfig: { walletConnectProjectId?: string; brokerEndpoint?: string; swapKit?: string } = {};
@@ -18,7 +18,13 @@ export const getSwapKitClient = ({
     currentConfig.swapKit !== swapKit;
 
   if (skClient && !configChanged) {
-    return { config: currentConfig, skClient };
+    const { apiKeys, envs, integrations, apis, chains, feeMultipliers, requestOptions, rpcUrls, wallets } =
+      SKConfig.getState();
+
+    return {
+      config: { apiKeys, apis, chains, envs, feeMultipliers, integrations, requestOptions, rpcUrls, wallets },
+      skClient,
+    };
   }
 
   if (configChanged && skClient) {
