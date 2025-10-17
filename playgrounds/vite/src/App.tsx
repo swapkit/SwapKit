@@ -36,7 +36,7 @@ const App = () => {
     {},
   );
 
-  const skClient = getSwapKitClient(keys);
+  const { skClient, config } = getSwapKitClient(keys);
 
   const toggleStagenet = useCallback(() => {
     setStagenet((v) => {
@@ -345,7 +345,7 @@ const App = () => {
 
       {showWidget ? (
         <div style={{ display: "flex", padding: 20 }}>
-          <SwapKitWidget apiKey={keys.swapKit} />
+          <SwapKitWidget config={config} />
         </div>
       ) : (
         <div style={{ display: "flex", flex: 1, justifyContent: "flex-start", overflow: "hidden" }}>
