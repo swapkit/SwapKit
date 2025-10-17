@@ -14,6 +14,7 @@ const tickerMap: Record<string, string> = {
   [Chain.Optimism]: "ETH",
   [Chain.THORChain]: "RUNE",
   [Chain.Tron]: "TRX",
+  [Chain.XLayer]: "OKB",
 };
 
 describe("getAssetType", () => {
