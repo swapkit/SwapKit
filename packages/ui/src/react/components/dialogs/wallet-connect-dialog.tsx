@@ -4,7 +4,7 @@ import { Chain, EVMChains, WalletOption } from "@swapkit/helpers";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { SearchIcon, WalletMinimalIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
@@ -190,8 +190,6 @@ export function WalletConnectDialog() {
   const [isShowingAllWallets, setIsShowingAllWallets] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [_selectedChains, _setSelectedChainss] = useState<Chain[]>([]);
-  const { connectWallet, isConnectingWallet, walletType } = useSwapKit();
 
   return (
     <Dialog {...modal}>
@@ -220,38 +218,7 @@ export function WalletConnectDialog() {
 
                   <div className="grid grid-cols-4 gap-2">
                     {wallets?.map((wallet) => (
-                      <Button
-                        className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
-                        isLoading={isConnectingWallet && walletType === wallet}
-                        key={`wallet-button-${wallet}`}
-                        onClick={async () => {
-                          try {
-                            await connectWallet(wallet, [
-                              Chain.Cosmos,
-                              Chain.Maya,
-                              Chain.THORChain,
-                              Chain.Kujira,
-                            ] as Chain[]);
-
-                            modal.resolve({ confirmed: true });
-                          } catch (error) {
-                            console.error("CAUGHT SPAWNING TOAST", error);
-
-                            toast.error("Failed to connect your wallet", {
-                              description: "Make sure your wallet is connected and accessible by the browser.",
-                              toasterId: SWAPKIT_WIDGET_TOASTER_ID,
-                            });
-                          }
-                        }}>
-                        <WalletIcon className="size-5" wallet={wallet} />
-
-                        <span className="text-foreground text-sm">
-                          {wallet
-                            ?.split("")
-                            .map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
-                            .join("")}
-                        </span>
-                      </Button>
+                      <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
                     ))}
                   </div>
                 </div>
@@ -259,41 +226,9 @@ export function WalletConnectDialog() {
             })
           ) : (
             <div className="grid grid-cols-4 gap-2">
-              {WALLET_GROUPS["Browser Extensions"]?.map((wallet) => {
-                return (
-                  <Button
-                    className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
-                    key={`wallet-button-${wallet}`}
-                    onClick={async () => {
-                      try {
-                        await connectWallet(wallet, [
-                          Chain.Cosmos,
-                          Chain.Maya,
-                          Chain.THORChain,
-                          Chain.Kujira,
-                        ] as Chain[]);
-
-                        modal.resolve({ confirmed: true });
-                      } catch (error) {
-                        console.error("CAUGHT SPAWNING TOAST", error);
-
-                        toast.error("Failed to connect your wallet", {
-                          description: "Make sure your wallet is connected and accessible by the browser.",
-                          toasterId: SWAPKIT_WIDGET_TOASTER_ID,
-                        });
-                      }
-                    }}>
-                    <WalletIcon className="size-5" wallet={wallet} />
-
-                    <span className="text-foreground text-sm">
-                      {wallet
-                        ?.split("")
-                        ?.map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
-                        ?.join("")}
-                    </span>
-                  </Button>
-                );
-              })}
+              {WALLET_GROUPS["Browser Extensions"]?.map((wallet) => (
+                <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
+              ))}
             </div>
           )}
         </div>
@@ -324,5 +259,40 @@ export function WalletConnectDialog() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
+  const { connectWallet, isConnectingWallet, walletType } = useSwapKit();
+  const modal = useModal();
+
+  const handleButtonClick = useCallback(async () => {
+    try {
+      await connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
+
+      modal.resolve({ confirmed: true });
+    } catch {
+      toast.error("Failed to connect your wallet", {
+        description: "Make sure your wallet is connected and accessible by the browser.",
+        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+      });
+    }
+  }, [connectWallet, modal, wallet]);
+
+  const walletName = wallet
+    ?.split("")
+    ?.map((letter, index) => (index === 0 ? letter.toUpperCase() : letter.toLowerCase()))
+    ?.join("");
+
+  return (
+    <Button
+      className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
+      isLoading={isConnectingWallet && walletType === wallet}
+      key={`wallet-connect-button-${wallet}`}
+      onClick={handleButtonClick}>
+      <WalletIcon className="size-5" wallet={wallet} />
+
+      <span className="text-foreground text-sm">{walletName}</span>
+    </Button>
   );
 }
