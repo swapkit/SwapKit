@@ -10,7 +10,6 @@ const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
 const openApiPlugin = starlightOpenAPI([{ base: "api", schema: "https://api.swapkit.dev/docs/json" }]);
 
 export default defineConfig({
-  base: "/SwapKit",
   integrations: [
     react(),
     starlight({
@@ -86,7 +85,7 @@ export default defineConfig({
     },
     syntaxHighlight: "shiki",
   },
-  site: "https://swapkit.github.io",
+  site: "https://swapkit.github.io/SwapKit",
 });
 
 function createDocs() {
