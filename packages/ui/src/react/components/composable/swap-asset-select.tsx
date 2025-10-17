@@ -18,7 +18,7 @@ export function SwapAssetSelect({
   selectedAsset,
   setSelectedAsset,
 }: {
-  selectedAsset: string | undefined;
+  selectedAsset: string | null;
   setSelectedAsset: (asset: string) => void;
 }) {
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);

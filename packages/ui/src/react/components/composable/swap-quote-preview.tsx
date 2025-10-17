@@ -1,18 +1,49 @@
 "use client";
 
+import { AssetValue, type QuoteResponseRoute } from "@swapkit/sdk";
 import { ArrowLeftRight, ChevronRight, InfoIcon, TimerIcon } from "lucide-react";
+import { useMemo } from "react";
+import { temp_host } from "../asset-icon";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Card, CardContent, CardHeader } from "../ui/card";
 
-export function SwapQuotePreview({ className }: { className?: string }) {
+export function SwapQuotePreview({
+  className,
+  selectedRoute,
+}: {
+  className?: string;
+  selectedRoute: QuoteResponseRoute;
+}) {
+  const formattedEstimatedTime = useMemo(() => {
+    if (!selectedRoute?.estimatedTime?.total) return "00m 00s";
+
+    const hours = Math.floor(selectedRoute?.estimatedTime?.total / 3600);
+    const minutes = Math.floor((selectedRoute?.estimatedTime?.total % 3600) / 60);
+    const seconds = selectedRoute?.estimatedTime?.total % 60;
+
+    return `${hours ? `${hours.toFixed(0)}h ` : ""}${`${minutes.toFixed(0)}m `}${`${seconds.toFixed(0)}s`}`;
+  }, [selectedRoute?.estimatedTime?.total]);
+
+  const providerName = selectedRoute?.providers?.[0] ?? "Unknown";
+  const sellAsset = selectedRoute?.sellAsset
+    ? AssetValue.from({ asset: selectedRoute?.sellAsset })
+    : { ticker: "Unknown" };
+  const buyAsset = selectedRoute?.buyAsset
+    ? AssetValue.from({ asset: selectedRoute?.buyAsset })
+    : { ticker: "Unknown" };
+
   return (
     <Card className={className}>
       <CardContent>
         <CardHeader className="flex flex-row items-center space-y-0 pb-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="size-6 rounded-full bg-primary" />
+            <img
+              alt={providerName}
+              className="size-6 rounded-full bg-primary"
+              src={`${temp_host}/images/${providerName.toLowerCase()}.${providerName?.toLowerCase()}.png`}
+            />
 
-            <div className="font-medium">1inch</div>
+            <div className="font-medium">{providerName}</div>
 
             <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">Best</div>
           </div>
@@ -20,10 +51,12 @@ export function SwapQuotePreview({ className }: { className?: string }) {
           <div className="!ml-auto mr-4 flex items-center gap-1 text-muted-foreground text-sm">
             <TimerIcon className="size-4" />
 
-            <span>00m 12s</span>
+            <span>{formattedEstimatedTime}</span>
           </div>
 
-          <div className="font-medium text-foreground">1894.42 USDT</div>
+          <div className="font-medium text-foreground">
+            {selectedRoute?.expectedBuyAmount} {buyAsset?.ticker}
+          </div>
 
           <ChevronRight className="ml-2 size-4 text-foreground" />
         </CardHeader>
@@ -33,7 +66,9 @@ export function SwapQuotePreview({ className }: { className?: string }) {
             <AccordionTrigger className="flex items-center rounded-b-lg border-card border-r border-b border-l bg-background p-4 text-sm hover:bg-background/50 hover:no-underline data-[state=open]:rounded-b-none data-[state=open]:border-b-transparent">
               <ArrowLeftRight className="size-4 text-muted-foreground" />
 
-              <span className="ml-2">1 USDT ≈ 0.00052448 ETH</span>
+              <span className="ml-2">
+                1 {sellAsset?.ticker} ≈ {selectedRoute?.expectedBuyAmount} {buyAsset?.ticker}
+              </span>
 
               <span className="mr-2 ml-auto font-medium">Fees: $0.161711</span>
             </AccordionTrigger>
@@ -45,7 +80,9 @@ export function SwapQuotePreview({ className }: { className?: string }) {
 
                   <InfoIcon className="size-4" />
 
-                  <span className="ml-auto font-medium text-foreground">00.00 USDT</span>
+                  <span className="ml-auto font-medium text-foreground">
+                    {selectedRoute?.expectedBuyAmountMaxSlippage} {buyAsset?.ticker}
+                  </span>
                 </li>
 
                 <li className="flex items-center gap-1">
@@ -53,7 +90,9 @@ export function SwapQuotePreview({ className }: { className?: string }) {
 
                   <InfoIcon className="size-4" />
 
-                  <span className="ml-auto font-medium text-foreground">$0.00</span>
+                  <span className="ml-auto font-medium text-foreground">
+                    ${selectedRoute?.fees?.find((fee) => fee.type === "liquidity")?.amount || "0.00"}
+                  </span>
                 </li>
 
                 <li className="flex items-center gap-1">
@@ -69,7 +108,9 @@ export function SwapQuotePreview({ className }: { className?: string }) {
 
                   <InfoIcon className="size-4" />
 
-                  <span className="ml-auto font-medium text-foreground">$0,161711</span>
+                  <span className="ml-auto font-medium text-foreground">
+                    ${selectedRoute?.fees?.find((fee) => fee.type === "inbound")?.amount || "0.00"}
+                  </span>
                 </li>
               </ul>
             </AccordionContent>

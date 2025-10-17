@@ -10,7 +10,7 @@ import {
   useSwapKitStore,
 } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
@@ -27,12 +27,11 @@ import "@swapkit/ui/swapkit.css";
 import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
-  const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
-  const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
-  const [amount, setAmount] = useState("4.20");
+  const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
+  const [outputAsset, setOutputAsset] = useState<string | null>("KUJI.KUJI");
+  const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
-  const [estimatedOutput, setEstimatedOutput] = useState<string>();
-  const [routes, setRoutes] = useState<QuoteResponseRoute[]>([]);
+  const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>([]);
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const swapKitConfig = useSwapKitConfig();
@@ -41,13 +40,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
-  const updateEstimatedOutput = async () => {
+  const fetchSwapQuote = async () => {
     const sourceAddress = swapKit?.getAddress?.(inputAsset?.split?.(".")?.[0] as Chain);
     const destinationAddress = swapKit?.getAddress?.(outputAsset?.split?.(".")?.[0] as Chain);
 
     if (!(inputAsset && outputAsset && amount && swapKit && sourceAddress && destinationAddress)) {
-      setEstimatedOutput(undefined);
-      setRoutes([]);
+      setQuoteRoutes([]);
       return;
     }
 
@@ -64,19 +62,17 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       if (quote?.routes?.length <= 0) return;
 
-      setRoutes(quote.routes);
-      setEstimatedOutput(quote?.routes?.[0]?.expectedBuyAmount);
+      setQuoteRoutes(quote.routes);
     } catch (error) {
       console.error("Failed to get quote:", error);
       toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
         toasterId: SWAPKIT_WIDGET_TOASTER_ID,
       });
-      setEstimatedOutput(undefined);
-      setRoutes([]);
+      setQuoteRoutes([]);
     }
   };
 
-  useDebouncedEffect(updateEstimatedOutput, [inputAsset, outputAsset, amount, swapKit, swapKitConfig], 1000);
+  useDebouncedEffect(fetchSwapQuote, [inputAsset, outputAsset, amount, swapKit, swapKitConfig], 1000);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
@@ -100,8 +96,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       await swap.wait();
       setAmount("");
-      setEstimatedOutput(undefined);
-      setRoutes([]);
+      setQuoteRoutes([]);
       toast.success("Swap completed successfully", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
     } catch (error) {
       console.error("Swap failed:", error);
@@ -113,7 +108,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const swap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
+  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
     if (!(inputAssetValue && swapKit)) return;
 
     try {
@@ -149,17 +144,17 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       return;
     }
 
-    if (!(routes?.length && inputAsset)) return;
+    if (!(quoteRoutes?.length && inputAsset)) return;
 
     try {
       const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
       const amountValue = assetValue.set(amount);
 
-      const route = routes?.[0];
+      const route = quoteRoutes?.[0];
 
       if (!route) return;
 
-      await swap(route, amountValue);
+      await performSwap(route, amountValue);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -167,6 +162,10 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       });
     }
   };
+
+  const estimatedOutput = useMemo(() => {
+    return quoteRoutes?.[0]?.expectedBuyAmount;
+  }, [quoteRoutes]);
 
   const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
@@ -236,7 +235,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         {submitButtonContent}
       </Button>
 
-      <SwapQuotePreview className="!mt-6" />
+      <SwapQuotePreview className="!mt-6" selectedRoute={quoteRoutes?.[0]} />
 
       <Toaster position="bottom-right" />
       <ModalSpawner />

@@ -17,7 +17,7 @@ export function SwapInputWithChainSelector({
   label: string;
 
   // TODO: move to react-hook-form
-  selectedAsset: string | undefined;
+  selectedAsset: string | null;
   setSelectedAsset: (asset: string) => void;
   amount: string | undefined;
   setAmount?: (amount: string) => void;
