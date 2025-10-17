@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, ReplaceIcon, TimerIcon } from "lucide-react";
+import { ArrowLeftRight, ChevronRight, TimerIcon } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 
 export function SwapQuotePreview() {
@@ -27,9 +27,14 @@ export function SwapQuotePreview() {
           <ChevronRight className="ml-2 size-4 text-foreground" />
         </CardHeader>
 
-        <div className="-mx-4 -mb-6 rounded-b-lg border-card border-r border-b border-l bg-background p-4">
-          <ReplaceIcon className="size-4" />
-          <span>1 USDT ≈ 0.00052448 ETH</span>
+        <div className="-mx-4 -mb-6 flex items-center rounded-b-lg border-card border-r border-b border-l bg-background p-4 text-sm">
+          <ArrowLeftRight className="size-4 text-muted-foreground" />
+
+          <span className="ml-2">1 USDT ≈ 0.00052448 ETH</span>
+
+          <span className="ml-auto font-medium">Fees: $0.161711</span>
+
+          <ChevronRight className="ml-2 size-4" />
         </div>
       </CardContent>
     </Card>
