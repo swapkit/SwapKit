@@ -11,6 +11,7 @@ const cosmostationSupportedEVMChains = [
   Chain.Arbitrum,
   Chain.Optimism,
   Chain.Base,
+  Chain.XLayer,
 ] as const;
 
 declare global {
@@ -110,6 +111,7 @@ export const cosmostationWallet = createWallet({
     Chain.Arbitrum,
     Chain.Optimism,
     Chain.Base,
+    Chain.XLayer,
   ],
 });
 

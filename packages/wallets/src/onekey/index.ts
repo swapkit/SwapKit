@@ -102,7 +102,8 @@ async function getWalletMethodsForExtension(chain: Chain) {
     case Chain.Ethereum:
     case Chain.Gnosis:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       if (!window.$onekey?.ethereum) {
         throw new SwapKitError({ errorKey: "wallet_onekey_not_found", info: { chain } });
@@ -169,6 +170,7 @@ export const onekeyWallet = createWallet({
     Chain.Optimism,
     Chain.Polygon,
     Chain.Solana,
+    Chain.XLayer,
   ],
   walletType: WalletOption.ONEKEY,
 });

@@ -90,7 +90,8 @@ async function getWalletMethods({ wallet, chain }: { wallet: Wallet; chain: Chai
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
 
