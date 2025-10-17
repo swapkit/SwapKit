@@ -1,8 +1,8 @@
 "use client";
 
-import { AssetValue, type QuoteResponseRoute } from "@swapkit/sdk";
+import { AssetValue, type PriceResponse, type QuoteResponseRoute, SwapKitApi } from "@swapkit/sdk";
 import { ArrowLeftRight, ChevronRight, InfoIcon, TimerIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { temp_host } from "../asset-icon";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -14,6 +14,8 @@ export function SwapQuotePreview({
   className?: string;
   selectedRoute: QuoteResponseRoute;
 }) {
+  const [price, setPrice] = useState<PriceResponse | null>(null);
+
   const formattedEstimatedTime = useMemo(() => {
     if (!selectedRoute?.estimatedTime?.total) return "00m 00s";
 
@@ -24,13 +26,45 @@ export function SwapQuotePreview({
     return `${hours ? `${hours.toFixed(0)}h ` : ""}${`${minutes.toFixed(0)}m `}${`${seconds.toFixed(0)}s`}`;
   }, [selectedRoute?.estimatedTime?.total]);
 
+  const sellAsset = selectedRoute?.sellAsset && AssetValue.from({ asset: selectedRoute?.sellAsset });
+  const buyAsset = selectedRoute?.buyAsset && AssetValue.from({ asset: selectedRoute?.buyAsset });
+
+  useEffect(() => {
+    if (!sellAsset || !buyAsset) return;
+
+    SwapKitApi.getPrice({
+      metadata: true,
+      tokens: [
+        { identifier: `${sellAsset?.chain}.${sellAsset?.ticker}` },
+        { identifier: `${buyAsset?.chain}.${buyAsset?.ticker}` },
+      ],
+    }).then(setPrice);
+  }, [sellAsset, buyAsset]);
+
   const providerName = selectedRoute?.providers?.[0] ?? "Unknown";
-  const sellAsset = selectedRoute?.sellAsset
-    ? AssetValue.from({ asset: selectedRoute?.sellAsset })
-    : { ticker: "Unknown" };
-  const buyAsset = selectedRoute?.buyAsset
-    ? AssetValue.from({ asset: selectedRoute?.buyAsset })
-    : { ticker: "Unknown" };
+
+  const { sellAssetPriceUSD, buyAssetPriceUSD } = useMemo(() => {
+    if (!price || !buyAsset || !sellAsset) return { buyAssetPrice: null, sellAssetPrice: null };
+
+    return {
+      buyAssetPrice: price?.find((p) => p.identifier === `${buyAsset?.chain}.${buyAsset?.ticker}`)?.price_usd,
+      sellAssetPrice: price?.find((p) => p.identifier === `${sellAsset?.chain}.${sellAsset?.ticker}`)?.price_usd,
+    };
+  }, [price, sellAsset, buyAsset]);
+
+  const toUSD = ({ amount, asset }: { amount: number; asset: string }) => {
+    const assetPriceUSD = price?.find((p) => p.identifier === asset)?.price_usd;
+
+    if (!assetPriceUSD) return 0;
+
+    return amount * assetPriceUSD;
+  };
+
+  const totalFeesUSD =
+    selectedRoute?.fees?.reduce(
+      (acc, fee) => acc + toUSD({ amount: Number.parseFloat(fee.amount), asset: fee.asset }),
+      0,
+    ) || 0;
 
   return (
     <Card className={className}>
@@ -55,7 +89,7 @@ export function SwapQuotePreview({
           </div>
 
           <div className="font-medium text-foreground">
-            {selectedRoute?.expectedBuyAmount} {buyAsset?.ticker}
+            {selectedRoute?.expectedBuyAmount} {buyAsset ? buyAsset?.ticker : "Unknown"}
           </div>
 
           <ChevronRight className="ml-2 size-4 text-foreground" />
@@ -67,10 +101,11 @@ export function SwapQuotePreview({
               <ArrowLeftRight className="size-4 text-muted-foreground" />
 
               <span className="ml-2">
-                1 {sellAsset?.ticker} ≈ {selectedRoute?.expectedBuyAmount} {buyAsset?.ticker}
+                1 {sellAsset ? sellAsset?.ticker : "Unknown"} ≈ {selectedRoute?.expectedBuyAmount}{" "}
+                {buyAsset ? buyAsset?.ticker : "Unknown"}
               </span>
 
-              <span className="mr-2 ml-auto font-medium">Fees: $0.161711</span>
+              <span className="mr-2 ml-auto font-medium">Fees: {sellAsset ? `$${totalFeesUSD}` : "Unknown"}</span>
             </AccordionTrigger>
 
             <AccordionContent className="rounded-b-lg border-card border-r border-b border-l bg-background px-4 pb-4 duration-150">
