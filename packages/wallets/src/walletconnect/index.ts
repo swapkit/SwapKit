@@ -82,6 +82,7 @@ export const walletconnectWallet = createWallet({
     Chain.Polygon,
     Chain.THORChain,
     Chain.Tron,
+    Chain.XLayer,
   ],
   walletType: WalletOption.WALLETCONNECT,
 });
@@ -110,7 +111,8 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const provider = await getProvider(chain);
