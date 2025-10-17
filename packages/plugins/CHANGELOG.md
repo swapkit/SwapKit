@@ -1,5 +1,11 @@
 # @swapkit/plugins
 
+## 4.1.9
+
+### Patch Changes
+
+- [#1556](https://github.com/swapkit/SwapKit/pull/1556) [`4ae40d2`](https://github.com/swapkit/SwapKit/commit/4ae40d2b2f9f949fc3408a0b61600f8db903bd04) Thanks [@towanTG](https://github.com/towanTG)! - Adds deleted near token handling in near plugin
+
 ## 4.1.8
 
 ### Patch Changes
