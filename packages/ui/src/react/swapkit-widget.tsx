@@ -24,6 +24,7 @@ import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
 import "@swapkit/ui/swapkit.css";
+import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
@@ -234,6 +235,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         variant="primary">
         {submitButtonContent}
       </Button>
+
+      <SwapQuotePreview />
 
       <Toaster position="bottom-right" />
       <ModalSpawner />
