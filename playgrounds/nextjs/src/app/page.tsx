@@ -2,8 +2,6 @@
 
 import { SwapKitWidget } from "@swapkit/ui/react";
 
-import "@swapkit/ui/swapkit.css";
-
 import { useForm } from "react-hook-form";
 import { AppSidebar } from "~/components/containers/AppSidebar";
 import { WidgetConfigurator, type WidgetConfiguratorFormValues } from "~/components/WidgetConfigurator";

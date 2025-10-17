@@ -23,6 +23,8 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
+import "@swapkit/ui/swapkit.css";
+
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [inputAsset, setInputAsset] = useState<string>("NEAR.USDT-usdt.tether-token.near");
   const [outputAsset, setOutputAsset] = useState<string>("THOR.RUNE");
