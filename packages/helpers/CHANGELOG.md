@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.3.3
+
+### Patch Changes
+
+- [#1547](https://github.com/swapkit/SwapKit/pull/1547) [`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949) Thanks [@towanTG](https://github.com/towanTG)! - Adds special gas estimation flow for gnosis
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.36
+
 ## 4.3.2
 
 ### Patch Changes

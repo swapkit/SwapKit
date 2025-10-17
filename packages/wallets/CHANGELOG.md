@@ -1,5 +1,18 @@
 # @swapkit/wallets
 
+## 4.2.3
+
+### Patch Changes
+
+- [#1550](https://github.com/swapkit/SwapKit/pull/1550) [`11ebcac`](https://github.com/swapkit/SwapKit/commit/11ebcac6a0b0c4f4000ecf406ca099cd51e71dd2) Thanks [@towanTG](https://github.com/towanTG)! - Disables default Near Selector wallets
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949)]:
+  - @swapkit/toolboxes@4.1.8
+  - @swapkit/helpers@4.3.3
+  - @swapkit/wallet-hardware@4.1.35
+  - @swapkit/wallet-keystore@4.0.36
+  - @swapkit/wallet-core@4.0.36
+
 ## 4.2.2
 
 ### Patch Changes

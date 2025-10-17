@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.1.8
+
+### Patch Changes
+
+- [#1547](https://github.com/swapkit/SwapKit/pull/1547) [`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949) Thanks [@towanTG](https://github.com/towanTG)! - Adds special gas estimation flow for gnosis
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949)]:
+  - @swapkit/helpers@4.3.3
+
 ## 4.1.7
 
 ### Patch Changes
