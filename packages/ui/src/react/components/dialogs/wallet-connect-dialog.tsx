@@ -208,11 +208,11 @@ export function WalletConnectDialog() {
       ?.map(([groupTitle, wallets]) => {
         const matchingWallets = wallets?.filter((wallet) => wallet.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        if (matchingWallets?.length === 0) return false;
+        if (matchingWallets?.length === 0) return null;
 
         return { groupTitle, wallets: matchingWallets };
       })
-      .filter(Boolean);
+      ?.filter((group) => group !== null);
   }, [searchQuery]);
 
   return (
