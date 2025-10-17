@@ -4,8 +4,9 @@ import { Chain, EVMChains, WalletOption } from "@swapkit/helpers";
 import { BITGET_SUPPORTED_CHAINS } from "@swapkit/wallets/bitget";
 import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { SearchIcon, WalletMinimalIcon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { match, P } from "ts-pattern";
 import { useModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
@@ -185,11 +186,34 @@ export const availableChainsByWallet: Record<WalletOption, Chain[] | readonly Ch
   [WalletOption.WALLET_SELECTOR]: [],
 };
 
+const FEATURED_WALLETS = [
+  WalletOption.METAMASK,
+  WalletOption.CTRL,
+  WalletOption.COINBASE_WEB,
+  WalletOption.PHANTOM,
+  WalletOption.LEDGER,
+  WalletOption.TREZOR,
+  WalletOption.BRAVE,
+  WalletOption.OKX,
+];
+
 export function WalletConnectDialog() {
   const modal = useModal();
   const [isShowingAllWallets, setIsShowingAllWallets] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredWalletGroups = useMemo(() => {
+    return Object.entries(WALLET_GROUPS)
+      ?.map(([groupTitle, wallets]) => {
+        const matchingWallets = wallets?.filter((wallet) => wallet.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        if (matchingWallets?.length === 0) return false;
+
+        return { groupTitle, wallets: matchingWallets };
+      })
+      .filter(Boolean);
+  }, [searchQuery]);
 
   return (
     <Dialog {...modal}>
@@ -210,27 +234,29 @@ export function WalletConnectDialog() {
         </div>
 
         <div className="-mx-6 -mb-4 flex max-h-[60svh] flex-1 flex-col gap-4 overflow-auto px-6 pb-6">
-          {isShowingAllWallets ? (
-            Object.entries(WALLET_GROUPS).map(([groupTitle, wallets]) => {
-              return (
-                <div className="flex flex-col gap-2" key={`wallet-group-${groupTitle}`}>
-                  <header className="text-muted-foreground text-sm">{groupTitle}</header>
+          {match({ isShowingAllWallets, searchQuery })
+            .with({ isShowingAllWallets: true }, { searchQuery: P.string.minLength(2) }, () =>
+              filteredWalletGroups?.map(({ groupTitle, wallets }) => {
+                return (
+                  <div className="flex flex-col gap-2" key={`wallet-group-${groupTitle}`}>
+                    <header className="text-muted-foreground text-sm">{groupTitle}</header>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    {wallets?.map((wallet) => (
-                      <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
-                    ))}
+                    <div className="grid grid-cols-4 gap-2">
+                      {wallets?.map((wallet) => (
+                        <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="grid grid-cols-4 gap-2">
-              {WALLET_GROUPS["Browser Extensions"]?.map((wallet) => (
-                <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
-              ))}
-            </div>
-          )}
+                );
+              }),
+            )
+            .otherwise(() => (
+              <div className="grid grid-cols-4 gap-2">
+                {FEATURED_WALLETS?.map((wallet) => (
+                  <WalletConnectButton key={`wallet-button-${wallet}`} wallet={wallet} />
+                ))}
+              </div>
+            ))}
         </div>
 
         <DialogFooter className="items-center justify-center">
