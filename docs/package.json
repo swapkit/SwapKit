@@ -11,12 +11,15 @@
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
     "astro": "5.13.3",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "sharp": "0.34.3",
     "starlight-links-validator": "0.17.1",
     "starlight-openapi": "0.20.0",
     "starlight-typedoc": "0.21.3",
     "typedoc": "0.28.10",
-    "typedoc-plugin-markdown": "4.8.1"
+    "typedoc-plugin-markdown": "4.8.1",
+    "unist-util-visit": "^5.0.0"
   },
   "name": "@internal/docs",
   "private": true,

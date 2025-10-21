@@ -247,11 +247,11 @@ const XLAYERConfig = createChain({
   chain: Chain.XLayer,
   chainId: ChainId.XLayer,
   chainIdHex: "0xc4",
-  explorerUrl: "https://okbscan.com",
+  explorerUrl: "https://www.oklink.com/x-layer",
   name: "X Layer",
   nativeCurrency: "OKB",
   networkDerivationPath,
-  rpcUrls: ["https://rpc.xlayer.tech"],
+  rpcUrls: ["https://xlayerrpc.okx.com"],
   type,
 });
 

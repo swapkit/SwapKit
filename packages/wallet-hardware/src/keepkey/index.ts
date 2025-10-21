@@ -70,6 +70,7 @@ export const keepkeyWallet = createWallet({
     Chain.Polygon,
     Chain.THORChain,
     Chain.Maya,
+    Chain.XLayer,
   ],
   walletType: WalletOption.KEEPKEY,
 });
@@ -94,7 +95,8 @@ async function getWalletMethods({
     case Chain.Polygon:
     case Chain.Avalanche:
     case Chain.Base:
-    case Chain.Ethereum: {
+    case Chain.Ethereum:
+    case Chain.XLayer: {
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ chain, derivationPath, provider, sdk });
       const toolbox = await getEvmToolbox(chain, { provider, signer });
