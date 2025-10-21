@@ -1,6 +1,5 @@
 import {
   ApproveMode,
-  type ApproveReturnType,
   AssetValue,
   type EVMChain,
   EVMChains,
@@ -9,35 +8,7 @@ import {
   type SwapParams,
 } from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
-import type { SwapKitPluginParams } from "../types";
-import { createPlugin } from "../utils";
-
-function approve<T extends ApproveMode>({ approveMode, getWallet }: { approveMode: T } & SwapKitPluginParams) {
-  return function approveEVM({ assetValue, spenderAddress }: { spenderAddress: string; assetValue: AssetValue }) {
-    const evmChain = assetValue.chain as EVMChain;
-    const isEVMChain = EVMChains.includes(evmChain);
-    const isNativeEVM = isEVMChain && assetValue.isGasAsset;
-
-    if (isNativeEVM || !isEVMChain || assetValue.isSynthetic) {
-      const isApproved = approveMode === "checkOnly" || "approved";
-      return Promise.resolve(isApproved) as ApproveReturnType<T>;
-    }
-
-    const wallet = getWallet(evmChain);
-    const walletAction = approveMode === "checkOnly" ? wallet.isApproved : wallet.approve;
-
-    if (!(assetValue.address && wallet.address)) {
-      throw new SwapKitError("core_approve_asset_address_or_from_not_found");
-    }
-
-    return walletAction({
-      amount: assetValue.getBaseValue("bigint"),
-      assetAddress: assetValue.address,
-      from: wallet.address,
-      spenderAddress,
-    });
-  };
-}
+import { approve, createPlugin } from "../utils";
 
 export const EVMPlugin = createPlugin({
   methods: ({ getWallet }) => ({

@@ -7,6 +7,7 @@ export interface SwapKitState {
   balances: AssetValue[];
   walletType: WalletOption | null;
   isWalletConnected: boolean;
+  isConnectingWallet: boolean;
   keystoreFile: KeystoreFile;
   isKeystoreOpen: boolean;
   isKeystoreDecrypting: boolean;

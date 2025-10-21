@@ -1,5 +1,12 @@
 # @swapkit/ui
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [[`0adb662`](https://github.com/swapkit/SwapKit/commit/0adb662fac2d8d84555f91e7ee1b88e8bd4bcc0b)]:
+  - @swapkit/sdk@4.1.6
+
 ## 0.2.5
 
 ### Patch Changes

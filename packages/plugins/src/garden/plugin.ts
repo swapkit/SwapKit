@@ -1,11 +1,21 @@
 import { VersionedTransaction } from "@solana/web3.js";
-import { AssetValue, Chain, EVMChains, ProviderName, SwapKitError, type SwapParams } from "@swapkit/helpers";
+import {
+  ApproveMode,
+  AssetValue,
+  Chain,
+  EVMChains,
+  ProviderName,
+  SwapKitError,
+  type SwapParams,
+} from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import { match } from "ts-pattern";
-import { createPlugin } from "../utils";
+import { approve, createPlugin } from "../utils";
 
 export const GardenPlugin = createPlugin({
   methods: ({ getWallet }) => ({
+    approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
+    isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
     swap: function gardenSwap({ route }: SwapParams<"garden", QuoteResponseRoute>) {
       const { sellAsset, sellAmount, targetAddress, tx } = route;
 
