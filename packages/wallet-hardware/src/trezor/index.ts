@@ -43,7 +43,8 @@ async function getTrezorWallet<T extends Chain>({
     case Chain.Ethereum:
     case Chain.Gnosis:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { getEVMSigner } = await import("./evmSigner");
 
@@ -337,6 +338,7 @@ export const trezorWallet = createWallet({
     Chain.Litecoin,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.XLayer,
     Chain.Zcash,
   ],
   walletType: WalletOption.TREZOR,

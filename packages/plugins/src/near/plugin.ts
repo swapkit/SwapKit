@@ -171,9 +171,33 @@ export const NearPlugin = createPlugin({
 
       const sellAsset = await AssetValue.from({ asset: sellAssetString, value: sellAmount });
 
+      const sellAssetChain = sellAsset.chain;
+
       const wallet = getWallet(sellAsset.chain as Exclude<Chain, typeof Chain.Radix>);
 
-      if (!wallet || !("transfer" in wallet)) {
+      if (sellAssetChain === Chain.Near && !sellAsset.isGasAsset) {
+        const wallet = getWallet(sellAsset.chain as Chain.Near);
+        if (!wallet) {
+          throw new SwapKitError("core_wallet_connection_not_found");
+        }
+
+        const unsignedTransaction = await wallet.createContractFunctionCall({
+          args: {
+            amount: sellAsset.getBaseValue("string"),
+            msg: JSON.stringify({ receiver_id: inboundAddress }),
+            receiver_id: "intents.near",
+          },
+          attachedDeposit: "1",
+          contractId: sellAsset.address as string,
+          gas: "250000000000000",
+          methodName: "ft_transfer_call",
+          sender: wallet.address,
+        });
+
+        return wallet.signAndSendTransaction(unsignedTransaction);
+      }
+
+      if (!wallet) {
         throw new SwapKitError("core_wallet_connection_not_found");
       }
 
