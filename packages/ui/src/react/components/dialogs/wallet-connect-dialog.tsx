@@ -7,9 +7,10 @@ import { PHANTOM_SUPPORTED_CHAINS } from "@swapkit/wallets/phantom";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { useWalletConnect } from "~/hooks/useWalletConnect";
+import { useModal } from "../../hooks/use-modal";
+import { useSwapKit } from "../../swapkit-context";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 const CHAIN_GROUPS: Record<string, Chain[]> = {
   "Cosmos Chains": [Chain.Cosmos, Chain.THORChain, Chain.Maya, Chain.Kujira],
@@ -79,7 +80,7 @@ const AllChainsSupported = [
   Chain.Solana,
 ];
 
-export const availableChainsByWallet = {
+export const availableChainsByWallet: Record<WalletOption, Chain[] | readonly Chain[]> = {
   [WalletOption.BITGET]: BITGET_SUPPORTED_CHAINS,
   [WalletOption.BRAVE]: EVMChains,
   [WalletOption.COINBASE_MOBILE]: EVMChains,
@@ -194,16 +195,14 @@ export const availableChainsByWallet = {
   [WalletOption.RADIX_WALLET]: [Chain.Radix],
   [WalletOption.TRONLINK]: [Chain.Tron],
   [WalletOption.XAMAN]: [Chain.Ripple],
+  [WalletOption.WALLET_SELECTOR]: [],
 };
 
-interface WalletConnectDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export function WalletConnectDialog() {
+  const modal = useModal();
 
-export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogProps) {
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
-  const { loadingWallet, handleConnect } = useWalletConnect(selectedChains);
+  const { connectWallet, isConnectingWallet } = useSwapKit();
 
   const handleToggleGroup = (chains: Chain[]) => {
     const allSelected = chains.every((chain) => selectedChains.includes(chain));
@@ -215,12 +214,12 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
   };
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog {...modal}>
       <DialogContent className="flex h-[80vh] max-w-5xl flex-col p-0">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl">Connect Wallet</DialogTitle>
-            <Button onClick={() => onOpenChange(false)} size="icon" variant="ghost">
+            <Button onClick={() => modal.onOpenChange(false)} size="icon" variant="ghost">
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -310,7 +309,6 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
 
                           return (
                             supportedChains?.length > 0 &&
-                            //@ts-expect-error
                             selectedChains.every((chain) => supportedChains.includes(chain))
                           );
                         });
@@ -324,9 +322,9 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                               {groupWallets.map((wallet) => {
                                 const handleWalletConnect = async () => {
                                   try {
-                                    await handleConnect(wallet);
+                                    await connectWallet(wallet, selectedChains);
 
-                                    onOpenChange(false);
+                                    modal.resolve({ confirmed: true });
                                   } catch (error) {
                                     if (error instanceof Error) {
                                       toast.error("Failed to connect wallet", { description: error.message });
@@ -337,7 +335,7 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                                 return (
                                   <Button
                                     className="h-auto justify-start py-4"
-                                    disabled={loadingWallet !== null}
+                                    disabled={isConnectingWallet}
                                     key={wallet}
                                     onClick={handleWalletConnect}
                                     size="lg"
@@ -345,7 +343,7 @@ export function WalletConnectDialog({ open, onOpenChange }: WalletConnectDialogP
                                     <WalletIcon className="mr-3 h-6 w-6" wallet={wallet} />
                                     <div className="flex flex-col items-start">
                                       <span className="font-medium">{wallet}</span>
-                                      {loadingWallet === wallet && (
+                                      {isConnectingWallet && (
                                         <span className="text-muted-foreground text-xs">Connecting...</span>
                                       )}
                                     </div>

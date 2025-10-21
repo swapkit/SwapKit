@@ -5,8 +5,10 @@ import { SearchIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { match } from "ts-pattern";
 import { cn } from "../../../lib/utils";
+import { showModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
 import { ChainIcon } from "../chain-icon";
+import { WalletConnectDialog } from "../dialogs/wallet-connect-dialog";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
@@ -64,9 +66,27 @@ export function SwapAssetSelect({
       ?.filter((assetValue) => assetValue !== null);
   }, [balanceGroupedByChain, selectedNetworks, lowerSearchQuery, chains?.flatMap]);
 
+  const handleDialogTriggerClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isWalletConnected) {
+      setOpen(true);
+      return;
+    }
+
+    const { confirmed } = await showModal(<WalletConnectDialog />);
+
+    if (!confirmed) return;
+
+    setOpen(true);
+  };
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger className="-ml-2 mt-1 w-auto min-w-48 max-w-1/2 rounded-lg px-2 transition-colors duration-100 hover:bg-white/[0.08]">
+      <DialogTrigger
+        className="-ml-2 mt-1 w-auto min-w-48 max-w-1/2 rounded-lg px-2 transition-colors duration-100 hover:bg-white/[0.08]"
+        onClick={handleDialogTriggerClick}>
         <SwapAssetItem asset={selectedAsset} />
       </DialogTrigger>
 

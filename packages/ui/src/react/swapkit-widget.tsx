@@ -14,10 +14,12 @@ import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
+import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { Toaster, toast } from "./components/ui/sonner";
 import { useDebouncedEffect } from "./hooks/use-debounced-effect";
+import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
@@ -133,6 +135,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   };
 
   const handleSubmitButtonClick = async () => {
+    if (!isWalletConnected) {
+      void showModal(<WalletConnectDialog />);
+      return;
+    }
+
     if (!(routes?.length && inputAsset)) return;
 
     try {
@@ -211,7 +218,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       <Button
         className="w-full"
-        disabled={!(inputAsset && outputAsset && amount) || isSwapping || !isWalletConnected}
+        disabled={!(inputAsset && outputAsset && amount) || isSwapping}
         onClick={handleSubmitButtonClick}
         size="xl"
         variant="primary">
@@ -219,6 +226,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       </Button>
 
       <Toaster position="bottom-right" />
+      <ModalSpawner />
     </div>
   );
 }
