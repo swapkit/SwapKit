@@ -1,5 +1,14 @@
 # @swapkit/sdk
 
+## 4.1.6
+
+### Patch Changes
+
+- [#1558](https://github.com/swapkit/SwapKit/pull/1558) [`0adb662`](https://github.com/swapkit/SwapKit/commit/0adb662fac2d8d84555f91e7ee1b88e8bd4bcc0b) Thanks [@towanTG](https://github.com/towanTG)! - Lets users overwrite defaultWallets and plugins when initializing the sdk
+
+- Updated dependencies [[`0c66d52`](https://github.com/swapkit/SwapKit/commit/0c66d52276c7d2859d5455a83342a16c32d83573)]:
+  - @swapkit/plugins@4.1.10
+
 ## 4.1.5
 
 ### Patch Changes

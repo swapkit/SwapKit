@@ -1,5 +1,11 @@
 # @swapkit/plugins
 
+## 4.1.10
+
+### Patch Changes
+
+- [#1560](https://github.com/swapkit/SwapKit/pull/1560) [`0c66d52`](https://github.com/swapkit/SwapKit/commit/0c66d52276c7d2859d5455a83342a16c32d83573) Thanks [@towanTG](https://github.com/towanTG)! - Adds approval check and execute functionality to garden plugin
+
 ## 4.1.9
 
 ### Patch Changes
