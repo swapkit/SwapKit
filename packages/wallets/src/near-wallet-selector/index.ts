@@ -59,31 +59,10 @@ function waitForWalletSelection(selector: any, modal: any) {
 
 async function getWalletMethods(walletFactories?: WalletModuleFactory[]) {
   const { setupWalletSelector } = await import("@near-wallet-selector/core");
-  const { setupBitgetWallet } = await import("@near-wallet-selector/bitget-wallet");
-  const { setupHotWallet } = await import("@near-wallet-selector/hot-wallet");
-  const { setupMeteorWallet } = await import("@near-wallet-selector/meteor-wallet");
-  const { setupMeteorWalletApp } = await import("@near-wallet-selector/meteor-wallet-app");
-  const { setupMyNearWallet } = await import("@near-wallet-selector/my-near-wallet");
-  const { setupNearMobileWallet } = await import("@near-wallet-selector/near-mobile-wallet");
-  const { setupNightly } = await import("@near-wallet-selector/nightly");
-  const { setupOKXWallet } = await import("@near-wallet-selector/okx-wallet");
   const { setupModal } = await import("@near-wallet-selector/modal-ui-js");
 
   const contractId = SKConfig.get("integrations")?.nearWalletSelector?.contractId || "";
-  const selector = await setupWalletSelector({
-    modules: [
-      setupBitgetWallet(),
-      setupHotWallet(),
-      setupMeteorWallet(),
-      setupMeteorWalletApp({ contractId }),
-      setupMyNearWallet(),
-      setupNearMobileWallet(),
-      setupNightly(),
-      setupOKXWallet(),
-      ...(walletFactories || []),
-    ],
-    network: "mainnet",
-  });
+  const selector = await setupWalletSelector({ modules: [...(walletFactories || [])], network: "mainnet" });
 
   const isSignedIn = selector.isSignedIn();
 

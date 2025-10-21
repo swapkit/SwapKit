@@ -35,5 +35,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.1.2"
+  "version": "4.1.5"
 }
