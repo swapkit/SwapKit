@@ -41,7 +41,7 @@ export function SwapQuotePreview({
     }).then(setPrice);
   }, [sellAsset, buyAsset]);
 
-  const providerName = selectedRoute?.providers?.[0] ?? "Unknown";
+  const providerName = selectedRoute?.providers?.[0];
 
   const { sellAssetPriceUSD, buyAssetPriceUSD } = useMemo(() => {
     if (!price || !buyAsset || !sellAsset) return { buyAssetPrice: null, sellAssetPrice: null };
@@ -74,7 +74,7 @@ export function SwapQuotePreview({
             <img
               alt={providerName}
               className="size-6 rounded-full bg-primary"
-              src={`${temp_host}/images/${providerName.toLowerCase()}.${providerName?.toLowerCase()}.png`}
+              src={`${temp_host}/images/${providerName?.toLowerCase()}.png`}
             />
 
             <div className="font-medium">{providerName}</div>

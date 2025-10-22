@@ -24,14 +24,14 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
-import "../swapkit.css";
+import "@swapkit/ui/swapkit.css";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
-  const [inputAsset, setInputAsset] = useState<Chain | null>(Chain.THORChain);
-  const [outputAsset, setOutputAsset] = useState<Chain | null>(Chain.Kujira);
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
-  const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>([]);
+  const [inputChain, setInputChain] = useState<Chain | null>(Chain.THORChain);
+  const [outputChain, setOutputChain] = useState<Chain | null>(Chain.Kujira);
+  const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>();
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const swapKitConfig = useSwapKitConfig();
@@ -52,20 +52,20 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   }, [swapKit, stableConfigMemoKey]);
 
   const fetchSwapQuote = useCallback(async () => {
-    if (!(inputAsset && outputAsset && amount && swapKit)) {
-      setQuoteRoutes([]);
+    if (!(inputChain && outputChain && amount && swapKit)) {
+      // setQuoteRoutes([]);
       return;
     }
 
     try {
       const quote = await SwapKitApi.getSwapQuote({
-        buyAsset: outputAsset,
-        destinationAddress: swapKit.getAddress(outputAsset),
+        buyAsset: AssetValue.from({ chain: outputChain }).toString(),
+        destinationAddress: swapKit.getAddress(outputChain),
         includeTx: true,
         sellAmount: amount,
-        sellAsset: inputAsset,
+        sellAsset: AssetValue.from({ chain: inputChain }).toString(),
         slippage: 3,
-        sourceAddress: swapKit.getAddress(inputAsset),
+        sourceAddress: swapKit.getAddress(inputChain),
       });
 
       if (quote?.routes?.length <= 0) return;
@@ -76,11 +76,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
         toasterId: SWAPKIT_WIDGET_TOASTER_ID,
       });
-      setQuoteRoutes([]);
+      // setQuoteRoutes([]);
     }
-  }, [inputAsset, outputAsset, amount, swapKit]);
+  }, [amount, swapKit, outputChain, inputChain]);
 
-  useDebouncedEffect(fetchSwapQuote, [inputAsset, outputAsset, amount, swapKit, swapKitConfig], 1000);
+  useDebouncedEffect(fetchSwapQuote, [amount, swapKit, swapKitConfig, outputChain, inputChain], 1000);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
@@ -152,11 +152,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       return;
     }
 
-    if (!(quoteRoutes?.length && inputAsset)) return;
+    if (quoteRoutes?.length <= 0 || !inputChain || !outputChain) return;
 
     try {
-      const assetValue = await AssetValue.from({ amount, asset: inputAsset, asyncTokenLookup: true });
-      const amountValue = assetValue.set(amount);
+      const inputAssetValue = await AssetValue.from({ amount, asyncTokenLookup: true, chain: inputChain });
+      const amountValue = inputAssetValue.set(amount);
 
       const route = quoteRoutes?.[0];
 
@@ -175,7 +175,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     return quoteRoutes?.[0]?.expectedBuyAmount;
   }, [quoteRoutes]);
 
-  const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
+  const submitButtonContent = match({ amount, inputChain, isSwapping, isWalletConnected, outputChain })
     .with({ isSwapping: true }, () => (
       <>
         <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
@@ -183,7 +183,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       </>
     ))
     .with({ isWalletConnected: false }, () => "Connect wallet")
-    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
+    .with({ inputChain: P.nullish }, { outputChain: P.nullish }, () => "Select Assets")
     .with({ amount: P.nullish }, () => "Enter Amount")
     .otherwise(() => "Swap");
 
@@ -199,9 +199,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 amount={amount}
                 isSwapping={isSwapping}
                 label="Pay"
-                selectedAsset={inputAsset}
+                selectedChain={inputChain}
                 setAmount={setAmount}
-                setSelectedAsset={setInputAsset}
+                setSelectedChain={setInputChain}
               />
 
               <div className="-my-4 flex items-center space-x-4">
@@ -210,9 +210,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 <Button
                   className="size-10 shrink-0 rounded-full"
                   onClick={() => {
-                    const temp = inputAsset;
-                    setInputAsset(outputAsset);
-                    setOutputAsset(temp);
+                    setInputChain(outputChain);
+                    setOutputChain(inputChain);
                   }}
                   size="unstyled"
                   variant="tertiary">
@@ -226,8 +225,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 amount={estimatedOutput}
                 isSwapping={isSwapping}
                 label="Receive"
-                selectedAsset={outputAsset}
-                setSelectedAsset={setOutputAsset}
+                selectedChain={outputChain}
+                setSelectedChain={setOutputChain}
               />
             </div>
           </div>
@@ -236,7 +235,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       <Button
         className="w-full"
-        disabled={!(inputAsset && outputAsset && amount) || isSwapping}
+        disabled={
+          (isWalletConnected && !(inputChain && outputChain && Number.parseFloat(amount ?? "0") > 0)) || isSwapping
+        }
         onClick={handleSubmitButtonClick}
         size="xl"
         variant="primary">
