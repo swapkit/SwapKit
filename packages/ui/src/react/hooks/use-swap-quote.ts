@@ -35,13 +35,13 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   }, [outputAsset]);
 
   useEffect(() => {
-    if (!inputAsset || !outputAsset) return;
+    if (!inputAsset || !outputAsset || !swapKitConfig?.apiKeys?.swapKit) return;
 
     void SwapKitApi.getPrice({
       metadata: false,
       tokens: [{ identifier: inputAsset }, { identifier: outputAsset }],
     }).then((price) => setPriceResponse(price));
-  }, [inputAsset, outputAsset]);
+  }, [inputAsset, outputAsset, swapKitConfig?.apiKeys?.swapKit]);
 
   const buyAssetIdentifier = outputAssetValue?.toString();
   const sellAssetIdentifier = inputAssetValue?.toString();
@@ -146,8 +146,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   const canShowFees = buyAssetPriceUSD && sellAssetPriceUSD;
 
   const swapQuote = useMemo(() => {
-    if (!buyAssetPriceUSD || !sellAssetPriceUSD) return null;
-
     // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
     return {
       buyAssetPriceUSD,
