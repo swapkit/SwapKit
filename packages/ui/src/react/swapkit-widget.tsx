@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  AssetValue,
-  Chain,
-  ProviderName,
-  type QuoteResponseRoute,
-  SwapKitApi,
-  useSwapKitConfig,
-  useSwapKitStore,
-} from "@swapkit/sdk";
+import { AssetValue, Chain, ProviderName, type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
@@ -19,12 +11,12 @@ import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog"
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
-import { useDebouncedEffect } from "./hooks/use-debounced-effect";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
 import "@swapkit/ui/swapkit.css";
+import { useSwapQuote } from "./hooks/use-swap-quote";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
@@ -34,9 +26,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>();
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
-  const swapKitConfig = useSwapKitConfig();
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
+  const { swapQuote } = useSwapQuote({ amount, inputChain, outputChain });
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
@@ -50,50 +42,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey]);
-
-  const fetchSwapQuote = useCallback(async () => {
-    if (!(inputChain && outputChain && amount && swapKit)) {
-      // setQuoteRoutes([]);
-      return;
-    }
-
-    try {
-      const quote = await SwapKitApi.getSwapQuote({
-        buyAsset: AssetValue.from({ chain: outputChain }).toString(),
-        destinationAddress: swapKit.getAddress(outputChain),
-        includeTx: true,
-        sellAmount: amount,
-        sellAsset: AssetValue.from({ chain: inputChain }).toString(),
-        slippage: 3,
-        sourceAddress: swapKit.getAddress(inputChain),
-      });
-
-      if (quote?.routes?.length <= 0) return;
-
-      setQuoteRoutes(quote.routes);
-    } catch (error) {
-      console.error("Failed to get quote:", error);
-      toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
-        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
-      });
-      // setQuoteRoutes([]);
-    }
-  }, [amount, swapKit, outputChain, inputChain]);
-
-  useDebouncedEffect(fetchSwapQuote, [amount, swapKit, swapKitConfig, outputChain, inputChain], 1000);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
-  useEffect(() => {
-    if (!config) return;
-
-    const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
-
-    if (swapKit && isConfigSame) return;
-
-    setConfig(config);
-
-    cachedStableConfigMemoKey.current = stableConfigMemoKey;
-  }, [swapKit, stableConfigMemoKey, setConfig]);
 
   const handleSwap = async (route: QuoteResponseRoute) => {
     if (!swapKit) return;
@@ -152,7 +100,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       return;
     }
 
-    if (quoteRoutes?.length <= 0 || !inputChain || !outputChain) return;
+    if (!swapQuote || !inputChain || !outputChain) return;
 
     try {
       const inputAssetValue = await AssetValue.from({ amount, asyncTokenLookup: true, chain: inputChain });
@@ -244,7 +192,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         {submitButtonContent}
       </Button>
 
-      <SwapQuotePreview className="!mt-6" selectedRoute={quoteRoutes?.[0]} />
+      <SwapQuotePreview className="!mt-6" swapQuote={swapQuote} />
 
       <Toaster position="bottom-right" />
       <ModalSpawner />
