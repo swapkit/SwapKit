@@ -74,6 +74,7 @@ export async function getWalletMethods(chain: Chain) {
           Chain.Berachain,
           Chain.BinanceSmartChain,
           Chain.Ethereum,
+          Chain.XLayer,
           Chain.Gnosis,
           Chain.Optimism,
           Chain.Polygon,

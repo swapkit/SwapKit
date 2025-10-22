@@ -263,8 +263,8 @@ export const useSwapKit = () => {
     balanceGroupedByChain,
     balances,
     chains,
-    isWalletConnected,
     isConnectingWallet,
+    isWalletConnected,
 
     checkIfChainConnected,
     connectKeystore,

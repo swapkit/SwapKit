@@ -2,7 +2,7 @@
 
 import {
   AssetValue,
-  type Chain,
+  Chain,
   ProviderName,
   type QuoteResponseRoute,
   SwapKitApi,
@@ -10,10 +10,11 @@ import {
   useSwapKitStore,
 } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
+import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -23,12 +24,11 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
-import "@swapkit/ui/swapkit.css";
-import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
+import "../swapkit.css";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
-  const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
-  const [outputAsset, setOutputAsset] = useState<string | null>("KUJI.KUJI");
+  const [inputAsset, setInputAsset] = useState<Chain | null>(Chain.THORChain);
+  const [outputAsset, setOutputAsset] = useState<Chain | null>(Chain.Kujira);
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>([]);
@@ -40,11 +40,19 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
-  const fetchSwapQuote = async () => {
-    const sourceAddress = swapKit?.getAddress?.(inputAsset?.split?.(".")?.[0] as Chain);
-    const destinationAddress = swapKit?.getAddress?.(outputAsset?.split?.(".")?.[0] as Chain);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
+  useEffect(() => {
+    const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
 
-    if (!(inputAsset && outputAsset && amount && swapKit && sourceAddress && destinationAddress)) {
+    if (swapKit && isConfigSame) return;
+
+    setConfig(config ?? {});
+
+    cachedStableConfigMemoKey.current = stableConfigMemoKey;
+  }, [swapKit, stableConfigMemoKey]);
+
+  const fetchSwapQuote = useCallback(async () => {
+    if (!(inputAsset && outputAsset && amount && swapKit)) {
       setQuoteRoutes([]);
       return;
     }
@@ -52,12 +60,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     try {
       const quote = await SwapKitApi.getSwapQuote({
         buyAsset: outputAsset,
-        destinationAddress,
+        destinationAddress: swapKit.getAddress(outputAsset),
         includeTx: true,
         sellAmount: amount,
         sellAsset: inputAsset,
         slippage: 3,
-        sourceAddress,
+        sourceAddress: swapKit.getAddress(inputAsset),
       });
 
       if (quote?.routes?.length <= 0) return;
@@ -70,7 +78,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       });
       setQuoteRoutes([]);
     }
-  };
+  }, [inputAsset, outputAsset, amount, swapKit]);
 
   useDebouncedEffect(fetchSwapQuote, [inputAsset, outputAsset, amount, swapKit, swapKitConfig], 1000);
 

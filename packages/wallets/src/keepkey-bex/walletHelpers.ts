@@ -90,6 +90,7 @@ export function getKEEPKEYProvider<T extends Chain>(chain: T) {
     case Chain.Arbitrum:
     case Chain.Optimism:
     case Chain.Polygon:
+    case Chain.XLayer:
       return window.keepkey.ethereum as Eip1193Provider;
     case Chain.Cosmos:
       return window.keepkey.cosmos as Eip1193Provider;

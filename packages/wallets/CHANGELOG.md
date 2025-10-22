@@ -1,5 +1,31 @@
 # @swapkit/wallets
 
+## 4.2.4
+
+### Patch Changes
+
+- [#1552](https://github.com/swapkit/SwapKit/pull/1552) [`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b) Thanks [@towanTG](https://github.com/towanTG)! - Enables Xlayer for supporting wallets and corrects Xlayer config
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/wallet-hardware@4.1.36
+  - @swapkit/toolboxes@4.1.9
+  - @swapkit/helpers@4.3.4
+  - @swapkit/wallet-keystore@4.0.37
+  - @swapkit/wallet-core@4.0.37
+
+## 4.2.3
+
+### Patch Changes
+
+- [#1550](https://github.com/swapkit/SwapKit/pull/1550) [`11ebcac`](https://github.com/swapkit/SwapKit/commit/11ebcac6a0b0c4f4000ecf406ca099cd51e71dd2) Thanks [@towanTG](https://github.com/towanTG)! - Disables default Near Selector wallets
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949)]:
+  - @swapkit/toolboxes@4.1.8
+  - @swapkit/helpers@4.3.3
+  - @swapkit/wallet-hardware@4.1.35
+  - @swapkit/wallet-keystore@4.0.36
+  - @swapkit/wallet-core@4.0.36
+
 ## 4.2.2
 
 ### Patch Changes

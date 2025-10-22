@@ -77,6 +77,7 @@ export const vultisigWallet = createWallet({
     Chain.Solana,
     Chain.THORChain,
     Chain.Zcash,
+    Chain.XLayer,
   ],
   walletType: WalletOption.VULTISIG,
 });
@@ -126,6 +127,7 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
       Chain.Ethereum,
       Chain.Optimism,
       Chain.Polygon,
+      Chain.XLayer,
       async () => {
         const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
         const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");

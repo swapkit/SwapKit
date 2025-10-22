@@ -12,7 +12,7 @@ export function SwapQuotePreview({
   selectedRoute,
 }: {
   className?: string;
-  selectedRoute: QuoteResponseRoute;
+  selectedRoute: QuoteResponseRoute | undefined;
 }) {
   const [price, setPrice] = useState<PriceResponse | null>(null);
 

@@ -115,5 +115,5 @@ export const defaultWallets = {
 };
 
 export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {
-  return SwapKit({ ...config, plugins: defaultPlugins, wallets: defaultWallets });
+  return SwapKit({ plugins: defaultPlugins, wallets: defaultWallets, ...config });
 }

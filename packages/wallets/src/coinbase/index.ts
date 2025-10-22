@@ -36,6 +36,7 @@ export const coinbaseWallet = createWallet({
     Chain.Ethereum,
     Chain.Optimism,
     Chain.Polygon,
+    Chain.XLayer,
   ],
   walletType: WalletOption.COINBASE_MOBILE,
 });

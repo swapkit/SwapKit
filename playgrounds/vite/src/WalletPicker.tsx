@@ -1,3 +1,4 @@
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { Chain, EVMChains, getDerivationPathFor, getEIP6963Wallets, SKConfig, WalletOption } from "@swapkit/helpers";
 import type { DerivationPathArray, FullWallet } from "@swapkit/sdk";
 import { LEDGER_SUPPORTED_CHAINS } from "@swapkit/wallet-hardware/ledger";
@@ -145,7 +146,7 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         case WalletOption.XAMAN:
           return skClient.connectXaman?.(chains);
         case WalletOption.WALLET_SELECTOR:
-          return skClient.connectWalletSelector?.(chains);
+          return skClient.connectWalletSelector?.(chains, [setupMeteorWallet()]);
 
         default:
           throw new Error(`Unsupported wallet option: ${option}`);

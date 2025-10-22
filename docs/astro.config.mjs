@@ -4,6 +4,7 @@ import { rendererRich, transformerTwoslash } from "@shikijs/twoslash";
 import { defineConfig } from "astro/config";
 import starlightOpenAPI, { openAPISidebarGroups } from "starlight-openapi";
 import { createStarlightTypeDocPlugin } from "starlight-typedoc";
+import { remarkRewriteLinks } from "./remark-rewrite-links.mjs";
 
 const { plugins: docsPlugins, sidebarItems: docsSidebarItems } = createDocs();
 
@@ -62,6 +63,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    remarkPlugins: [remarkRewriteLinks],
     shikiConfig: {
       transformers: [
         transformerTwoslash({
