@@ -9,9 +9,8 @@ import {
   SwapKitApi,
   useSwapKitConfig,
 } from "@swapkit/sdk";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { create } from "zustand";
 import { temp_host } from "../components/asset-icon";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
 import { useSwapKit } from "../swapkit-context";
@@ -44,37 +43,11 @@ export type UseSwapQuoteResult = {
 
 type UseSwapQuoteParams = { inputChain: Chain | null; outputChain: Chain | null; amount: string };
 
-type SwapQuoteStore = {
-  quoteResponse: QuoteResponse | null;
-  setQuoteResponse: (quote: QuoteResponse | null) => void;
-
-  priceResponse: PriceResponse | null;
-  setPriceResponse: (price: PriceResponse | null) => void;
-
-  selectedQuoteRouteIndex: number;
-  setSelectedQuoteRouteIndex: (index: number) => void;
-};
-
-export const useSwapQuoteStore = create<SwapQuoteStore>((set, _get) => ({
-  priceResponse: null,
-  quoteResponse: null,
-
-  selectedQuoteRouteIndex: 0,
-
-  setPriceResponse: (price) => set({ priceResponse: price }),
-  setQuoteResponse: (quote) => set({ quoteResponse: quote }),
-  setSelectedQuoteRouteIndex: (index: number) => set({ selectedQuoteRouteIndex: index }),
-}));
-
 export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuoteParams): UseSwapQuoteResult => {
-  const {
-    selectedQuoteRouteIndex,
-    setSelectedQuoteRouteIndex,
-    priceResponse,
-    quoteResponse,
-    setPriceResponse,
-    setQuoteResponse,
-  } = useSwapQuoteStore();
+  const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
+  const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
+  const [selectedQuoteRouteIndex, setSelectedQuoteRouteIndex] = useState(0);
+
   const { swapKit } = useSwapKit();
   const swapKitConfig = useSwapKitConfig();
 
@@ -125,7 +98,7 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
       });
       setQuoteResponse(null);
     }
-  }, [outputChain, amount, swapKit, inputChain, setQuoteResponse]);
+  }, [outputChain, amount, swapKit, inputChain]);
 
   useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputChain, inputChain], 1000);
 
