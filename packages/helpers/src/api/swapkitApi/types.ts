@@ -610,6 +610,7 @@ const QuoteResponseRouteItem = object({
   memo: optional(string().describe("Memo")),
   meta: RouteQuoteMetadataV2Schema,
   providers: array(z.enum(ProviderName)),
+  routeId: string().describe("Route ID"),
   sellAmount: string().describe("Sell amount"),
   sellAsset: string().describe("Asset to sell"),
   sourceAddress: string().describe("Source address"),
@@ -665,3 +666,34 @@ const BalanceResponseSchema = array(
 );
 
 export type BalanceResponse = z.infer<typeof BalanceResponseSchema>;
+
+export const ApproveRequestParams = z.union([
+  z.object({ amount: z.string(), spender: z.string(), tokenIdentifier: z.string(), userWalletAddress: z.string() }),
+  z.object({
+    amount: z.string(),
+    chainId: z.enum(ChainId),
+    spender: z.string(),
+    tokenContractAddress: z.string(),
+    userWalletAddress: z.string(),
+  }),
+  z.object({ routeId: z.string() }),
+]);
+
+export type ApproveRequest = z.infer<typeof ApproveRequestParams>;
+
+export const ApproveResponseSchema = z.object({
+  approvalTransaction: z.optional(
+    z.object({
+      data: z.string(),
+      from: z.string(),
+      gasLimit: z.optional(z.string()),
+      gasPrice: z.optional(z.string()),
+      to: z.string(),
+      value: z.string(),
+    }),
+  ),
+  approvedAmount: z.string(),
+  isApproved: z.boolean(),
+});
+
+export type ApproveResponse = z.infer<typeof ApproveResponseSchema>;

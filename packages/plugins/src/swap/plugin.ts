@@ -1,5 +1,13 @@
 import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
-import { AssetValue, Chain, CosmosChains, EVMChains, SwapKitError, type SwapParams } from "@swapkit/helpers";
+import {
+  ApproveMode,
+  AssetValue,
+  Chain,
+  CosmosChains,
+  EVMChains,
+  SwapKitError,
+  type SwapParams,
+} from "@swapkit/helpers";
 import {
   CosmosTransactionSchema,
   EVMTransactionSchema,
@@ -7,7 +15,7 @@ import {
   TronTransactionSchema,
 } from "@swapkit/helpers/api";
 import { match, P } from "ts-pattern";
-import { createPlugin } from "../utils";
+import { approve, createPlugin } from "../utils";
 
 const isEVMTransaction = (tx: unknown) => EVMTransactionSchema.safeParse(tx).success;
 const isTronTransaction = (tx: unknown) => TronTransactionSchema.safeParse(tx).success;
@@ -15,6 +23,8 @@ const isCosmosTransaction = (tx: unknown) => CosmosTransactionSchema.safeParse(t
 
 export const SwapPlugin = createPlugin({
   methods: ({ getWallet }) => ({
+    approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
+    isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
     swap: function swap({ route }: SwapParams<"swap", QuoteResponseRoute>) {
       const { sellAsset, tx } = route;
       const sellAssetValue = AssetValue.from({ asset: sellAsset });
