@@ -1,5 +1,5 @@
 ---
-title: SwapKit - Build Cross-Chain DeFi in Minutes
+title: SwapKit SDK - Unified Cross-Chain DeFi Development
 description: SwapKit provides everything you need to integrate blockchain functionality into your application with a single, unified API supporting 20+ blockchains.
 ---
 
@@ -9,129 +9,67 @@ import TryItYourself from "../../components/TryItYourself.astro";
 
 <div class="hero-section">
 
-## Build Cross-Chain DeFi in Minutes
+## What is SwapKit?
 
-SwapKit provides everything you need to integrate blockchain functionality into your application with a single, unified API. Now with v4's enhanced architecture and runtime flexibility.
+SwapKit is a comprehensive, production-ready SDK that unifies cross-chain DeFi interactions into a single, elegant API. Supporting **20+ blockchains**, **20+ wallets**, and access to **6,000+ assets** across multiple DeFi protocols, SwapKit eliminates the complexity of building multi-chain applications.
+
+**Built for flexibility**: SwapKit's highly modular architecture means you can use the full SDK or integrate just the pieces you need. Bring your own wallet infrastructure, implement custom signing logic, create protocol-specific plugins, or simply leverage SwapKit's quote aggregation and swap execution while managing everything else yourself. [Create Custom Plugins →](/guides/create-plugin) | [Build Wallet Adapters →](/guides/create-wallet)
+
+### The Problem SwapKit Solves
+
+Building cross-chain functionality today is hard. Each blockchain has its own RPC endpoints, wallet standards, fee models, and liquidity sources. Most DeFi protocols only work on a handful of networks. If you try to integrate multiple chains yourself, you quickly end up managing a patchwork of libraries, API keys, and bespoke logic.
+
+**The challenges teams face**:
+- Learning and maintaining separate SDKs for Bitcoin, Ethereum, Cosmos, Solana, and other networks
+- Integrating dozens of wallet providers with incompatible signing interfaces
+- Managing chain-specific quirks: different transaction formats, fee structures, and decimal precision
+- Coordinating swaps across multiple DEX aggregators and bridging protocols
+- Handling complex decimal conversions, gas estimation, and error states for each chain
+- Building custom routing logic to find optimal swap paths across protocols
+
+**SwapKit eliminates this complexity** with a unified interface that works consistently across all supported chains, wallets, and protocols. Write your code once, and it works everywhere.
 
 <CardGrid stagger>
   <Card title="20+ Blockchains" icon="rocket">
-    Support for EVM chains, Bitcoin, Cosmos ecosystem, Solana, Ripple (XRP), and
-    more - all through one consistent interface. [Explore Networks
-    →](/guides/chains/ethereum)
+    EVM chains (Ethereum, Arbitrum, Polygon, BNB Smart Chain, Avalanche, Optimism, Base), Bitcoin family (BTC, BCH, LTC, DOGE, Dash, Zcash), Cosmos ecosystem (ATOM, THOR, MAYA, Kujira), plus Solana, Ripple (XRP), Radix, Polkadot, and Chainflip - all through one consistent API. [Explore Chains →](/guides/chains/ethereum)
   </Card>
-  <Card title="Multi-Wallet Support" icon="open">
-    Connect with 20+ wallets including MetaMask, WalletConnect, Ledger,
-    Keystore, and hardware wallets. [Wallet Integration
-    →](/guides/wallets/browser-extensions/metamask)
+  <Card title="20+ Wallet Integrations" icon="open">
+    MetaMask, WalletConnect, Ledger, Trezor, KeepKey, Keplr, Cosmostation, Phantom, OKX, Bitget, Exodus, and more. Hardware wallets, browser extensions, mobile wallets - all supported with consistent connection flows. [View Wallets →](/guides/wallets/browser-extensions/metamask)
   </Card>
-  <Card title="DeFi Protocols" icon="puzzle">
-    Built-in integrations with THORChain, Chainflip, 1inch, and other leading
-    DeFi protocols. [View API Reference →](/guides/api-reference)
+  <Card title="Native DeFi Integrations" icon="puzzle">
+    Built-in support for THORChain, Chainflip, Maya Protocol, 1inch, and other leading DeFi protocols. Aggregated quotes from multiple liquidity sources with automatic route optimization for best pricing. [DeFi Features →](/guides/thorchain-features)
   </Card>
-  <Card title="Runtime Configuration" icon="setting">
-    **New in v4**: Update API keys, RPC URLs, and settings at runtime without
-    recreating your client. [Learn About v4 →](/guides/whats-new-v4)
+  <Card title="Runtime Configuration (v4)" icon="setting">
+    Update API keys, RPC URLs, and settings at runtime without recreating your client. Enhanced flexibility for production environments with dynamic configuration updates. [What's New in v4 →](/guides/whats-new-v4)
   </Card>
 </CardGrid>
 
-## Quick Start
+## See SwapKit in Action
+
+Execute cross-chain swaps in just a few lines of code:
 
 ```typescript
 // @noErrorValidation
-
 import { createSwapKit, Chain, SwapKitApi } from "@swapkit/sdk";
 
-const swapKit = createSwapKit();
-
-await swapKit.connectKeystore(
-  [Chain.Ethereum, Chain.Bitcoin, Chain.Ripple],
-  "your mnemonic phrase"
-);
-
-const ethBalance = await swapKit.getBalance(Chain.Ethereum);
-const btcBalance = await swapKit.getBalance(Chain.Bitcoin);
-const xrpBalance = await swapKit.getBalance(Chain.Ripple);
+const swapKit = createSwapKit("your-swapkit-api-key");
+await swapKit.connectKeystore([Chain.Ethereum, Chain.Bitcoin], "your mnemonic phrase");
 
 const { routes } = await SwapKitApi.getSwapQuote({
-  sellAsset: "ETH.ETH",
-  sellAmount: "1000000000000000000",
-  buyAsset: "BTC.BTC",
+  sellAsset: "ETH.ETH", sellAmount: "1", buyAsset: "BTC.BTC",
   sourceAddress: swapKit.getAddress(Chain.Ethereum),
   destinationAddress: swapKit.getAddress(Chain.Bitcoin),
-  slippage: 3,
 });
 
-if (routes.length > 0) {
-  const txHash = await swapKit.swap({ route: routes[0] });
-}
+const route = routes.find((r) => r.meta?.tags?.includes("RECOMMENDED"));
+const txHash = await swapKit.swap({ route });
 ```
 
-## Why SwapKit?
+## Ready to Build?
 
-<CardGrid>
-  <Card title="Unified API" icon="setting">
-    One consistent API for all chains and protocols. No need to learn different
-    interfaces for each blockchain. [Essential Actions
-    →](/guides/actions/connect-wallet)
-  </Card>
-  <Card title="Production Ready" icon="star">
-    Battle-tested in production by leading DeFi applications.
-    [Best Practices →](/guides/production-best-practices)
-  </Card>
-  <Card title="Modular Design" icon="puzzle">
-    Use only what you need - from lightweight toolboxes to the full SDK.
-    [Framework Integration →](/guides/integrations/nextjs)
-  </Card>
-  <Card title="Active Development" icon="github">
-    Regular updates, new chain integrations, and responsive community support.
-    [What's New →](/guides/whats-new-v4)
-  </Card>
-</CardGrid>
+Get SwapKit integrated in under 5 minutes.
 
-## Popular Integration Paths
-
-Whether you're building a simple wallet connector or a complex DeFi protocol, SwapKit has the right approach for your needs:
-
-<CardGrid>
-  <Card title="🚀 Quick Start" icon="rocket">
-    **Perfect for**: New developers, prototyping, learning Get up and running in
-    minutes with the complete SDK package. - Full feature set out of the box -
-    All wallets and chains included - Production-ready defaults [Get Started
-    →](/start/getting-started)
-  </Card>
-
-  <Card title="⚡ Essential Actions" icon="star">
-    **Perfect for**: Basic DeFi apps, wallet integrations Learn the core
-    functionality every SwapKit app needs. - Connect wallets across 20+ chains -
-    Send transactions with proper fee handling - Perform cross-chain swaps
-    [Essential Actions →](/guides/actions/connect-wallet)
-  </Card>
-
-  <Card title="🌐 Multi-Chain Focus" icon="puzzle">
-    **Perfect for**: Cross-chain applications, portfolio trackers Dive deep into
-    specific blockchain ecosystems. - EVM networks (Ethereum, Arbitrum, Polygon)
-    - Bitcoin family (BTC, BCH, LTC, DOGE) - Cosmos ecosystem (ATOM, THOR, MAYA)
-    [Explore Chains →](/guides/chains/ethereum)
-  </Card>
-
-  <Card title="🔧 Advanced Development" icon="setting">
-    **Perfect for**: Custom protocols, enterprise applications Extend SwapKit
-    with your own plugins and wallets. - Create custom plugins for new protocols
-    - Build wallet adapters for new providers - Optimize for production
-    environments [Advanced Features →](/guides/advanced-features)
-  </Card>
-</CardGrid>
-
-## Features at a Glance
-
-- **🔗 Cross-Chain Swaps**: Seamlessly swap assets across different blockchains
-- **💰 Multi-Chain Wallets**: Manage wallets and balances across all supported chains
-- **🔐 Hardware Wallet Support**: Full support for Ledger, Trezor, and KeepKey
-- **📊 Real-Time Quotes**: Get accurate swap quotes from multiple DEX aggregators
-- **🛠️ Toolbox System**: Low-level utilities for direct blockchain interactions
-- **🔌 Plugin Architecture**: Extend functionality with custom plugins
-- **📱 Mobile Ready**: Works in React Native and mobile environments
-- **⚡ Optimized Performance**: Efficient caching and request batching
+[Get Started →](/start/getting-started)
 
 <PlaygroundLinks
   title="🚀 Jump Right In!"
@@ -140,86 +78,19 @@ Whether you're building a simple wallet connector or a complex DeFi protocol, Sw
   codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
 />
 
-## Get Started in 3 Steps
-
-### 1. Install SwapKit
-
-<Tabs syncKey="package-manager">
-  <TabItem label="bun" icon="bun">
-    ```bash bun add @swapkit/sdk ```
-  </TabItem>
-  <TabItem label="pnpm">```bash pnpm add @swapkit/sdk ```</TabItem>
-  <TabItem label="npm">```bash npm install @swapkit/sdk ```</TabItem>
-  <TabItem label="yarn">```bash yarn add @swapkit/sdk ```</TabItem>
-</Tabs>
-
-### 2. Initialize the SDK
-
-```typescript
-// @noErrorValidation
-
-import { createSwapKit } from "@swapkit/sdk";
-
-const swapKit = createSwapKit({
-  config: {
-    apiKeys: {
-      swapKit: "your-swapkit-api-key",
-    },
-  },
-});
-```
-
-### 3. Start Building
-
-```typescript
-// @noErrorValidation
-
-import { createSwapKit, Chain, AssetValue, FeeOption } from "@swapkit/sdk";
-
-const swapKit = createSwapKit();
-
-await swapKit.connectEVMWallet([Chain.Ethereum]);
-
-const balance = await swapKit.getBalance(Chain.Ethereum);
-
-const assetValue = AssetValue.from({
-  asset: "ETH.ETH",
-  value: "0.1",
-});
-
-const txHash = await swapKit.transfer({
-  assetValue,
-  recipient: "0x742d35Cc6634C0532925a3b844Bc9e7595f6E321",
-  feeOptionKey: FeeOption.Fast,
-});
-```
-
-<TryItYourself
-  title="Ready to Build?"
-  description="Take this code for a spin in one of our live environments"
-  variant="accent"
-  icon="play"
->
-  <PlaygroundLinks
-    compact={true}
-    stackblitzUrl="https://stackblitz.com/github/swapkit/swapkit/tree/develop/playgrounds/nextjs"
-    codesandboxUrl="https://codesandbox.io/p/github/swapkit/swapkit/develop/playgrounds/nextjs"
-  />
-</TryItYourself>
-
 ## Join the Community
 
 <CardGrid>
   <Card title="Discord" icon="open">
     Join our Discord server for support and discussions with the community.
 
-    [Join Discord →](https:
+    [Join Discord →](https://discord.gg/swapkit)
 
   </Card>
   <Card title="GitHub" icon="github">
     Contribute to SwapKit development or report issues on GitHub.
 
-    [View on GitHub →](https:
+    [View on GitHub →](https://github.com/swapkit/SwapKit)
 
   </Card>
 </CardGrid>

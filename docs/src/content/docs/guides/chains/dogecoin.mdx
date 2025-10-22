@@ -1,5 +1,5 @@
 ---
-title: Dogecoin Integration
+title: Dogecoin
 description: Complete guide to integrating Dogecoin with SwapKit SDK for UTXO operations and cross-chain swaps
 ---
 
@@ -77,9 +77,9 @@ import { Chain, FeeOption } from "@swapkit/sdk";
 
 await swapKit.connectKeystore([Chain.Dogecoin], "your mnemonic phrase");
 
-await swapKit.connectLedger([Chain.Dogecoin]);
+await swapKit.connectLedger(Chain.Dogecoin);
 
-await swapKit.connectTrezor([Chain.Dogecoin]);
+await swapKit.connectTrezor(Chain.Dogecoin);
 ```
 
 ### Address Generation

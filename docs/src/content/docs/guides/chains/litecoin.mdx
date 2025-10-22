@@ -1,5 +1,5 @@
 ---
-title: Litecoin Integration
+title: Litecoin
 description: Complete guide to integrating Litecoin with SwapKit SDK for UTXO operations and cross-chain swaps
 ---
 
@@ -77,11 +77,11 @@ import { Chain, FeeOption } from "@swapkit/sdk";
 
 await swapKit.connectKeystore([Chain.Litecoin], "your mnemonic phrase");
 
-await swapKit.connectLedger([Chain.Litecoin]);
+await swapKit.connectLedger(Chain.Litecoin);
 
-await swapKit.connectTrezor([Chain.Litecoin]);
+await swapKit.connectTrezor(Chain.Litecoin);
 
-await swapKit.connectKeepKey([Chain.Litecoin]);
+await swapKit.connectKeepKey(Chain.Litecoin);
 ```
 
 ### Address Generation

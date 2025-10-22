@@ -1,0 +1,456 @@
+---
+title: AssetValue Deep Dive
+description: Master AssetValue with advanced usage patterns, flexible type support, custom tokens, and token list management
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+AssetValue is SwapKit's core abstraction for handling token amounts across all supported chains. This guide covers advanced patterns, flexible type support, and custom token creation.
+
+## Flexible Type Support
+
+AssetValue operations accept multiple types for maximum flexibility. You can use `AssetValue`, `SwapKitNumber`, `string`, `number`, or `bigint` in arithmetic and comparison operations.
+
+### Arithmetic with Mixed Types
+
+```typescript
+// @noErrorValidation
+import { AssetValue, SwapKitNumber } from "@swapkit/sdk";
+
+const ethAmount = AssetValue.from({ asset: "ETH.ETH", value: "1.5" });
+
+const result1 = ethAmount.add("0.5");
+
+const result2 = ethAmount.mul(2);
+
+const swapKitNum = new SwapKitNumber("0.25");
+const result3 = ethAmount.sub(swapKitNum);
+
+const result4 = ethAmount.div(BigInt(3));
+
+const anotherAmount = AssetValue.from({ asset: "ETH.ETH", value: "1.0" });
+const result5 = ethAmount.add(anotherAmount);
+```
+
+### Comparisons with Mixed Types
+
+All comparison operations also support flexible types:
+
+```typescript
+// @noErrorValidation
+const btcAmount = AssetValue.from({ asset: "BTC.BTC", value: "0.5" });
+
+btcAmount.gt("0.3");
+
+btcAmount.gte(0.5);
+
+btcAmount.lt(new SwapKitNumber("1.0"));
+
+btcAmount.lte(BigInt(1));
+
+const compareAmount = AssetValue.from({ asset: "BTC.BTC", value: "0.5" });
+btcAmount.eq(compareAmount);
+```
+
+### Type Conversion
+
+AssetValue provides methods to extract values in different formats:
+
+```typescript
+// @noErrorValidation
+const amount = AssetValue.from({ asset: "ETH.ETH", value: "1.234567" });
+
+const asString = amount.getValue("string");
+
+const asNumber = amount.getValue("number");
+
+const asBigInt = amount.getValue("bigint");
+
+const baseString = amount.getBaseValue("string");
+
+const baseNumber = amount.getBaseValue("number");
+```
+
+## Asset Comparison
+
+AssetValue compares both the **value** and the **asset identifier** to ensure type safety.
+
+### Same Asset Comparison
+
+When comparing AssetValue instances, the asset must match:
+
+```typescript
+// @noErrorValidation
+const eth1 = AssetValue.from({ asset: "ETH.ETH", value: "1.0" });
+const eth2 = AssetValue.from({ asset: "ETH.ETH", value: "1.0" });
+
+eth1.eq(eth2);
+
+const usdc = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: "1.0",
+});
+
+eth1.eq(usdc);
+```
+
+### Asset Identity
+
+Check if two AssetValue instances represent the same asset:
+
+```typescript
+// @noErrorValidation
+const eth1 = AssetValue.from({ asset: "ETH.ETH", value: "1.0" });
+const eth2 = AssetValue.from({ asset: "ETH.ETH", value: "2.0" });
+
+eth1.eqAsset(eth2);
+
+eth1.eq(eth2);
+
+const asset1 = eth1.toString();
+const asset2 = eth2.toString();
+console.log(asset1 === asset2);
+```
+
+## Creating Custom AssetValues
+
+SwapKit supports creating AssetValue for tokens not in the default token lists. This is essential for:
+
+- New token launches
+- Private/internal tokens
+- Testing with custom assets
+- Integration with proprietary systems
+
+### Basic Custom Token
+
+Create an AssetValue for any token by providing the asset identifier and decimal precision:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const customToken = AssetValue.from({
+  asset: "ETH.CUSTOM-0x1234567890123456789012345678901234567890",
+  value: "100",
+  decimal: 18,
+});
+
+console.log(customToken.getValue("string"));
+console.log(customToken.getBaseValue("string"));
+```
+
+### Asset Identifier Format
+
+SwapKit uses a consistent format: `CHAIN.SYMBOL-ADDRESS`
+
+```typescript
+// @noErrorValidation
+
+const ethereumToken = AssetValue.from({
+  asset: "ETH.MYTOKEN-0xabcdef...",
+  value: "1000",
+  decimal: 18,
+});
+
+const bscToken = AssetValue.from({
+  asset: "BSC.MYTOKEN-0x123456...",
+  value: "500",
+  decimal: 8,
+});
+
+const solanaToken = AssetValue.from({
+  asset: "SOL.MYTOKEN-TokenMintAddress...",
+  value: "250",
+  decimal: 9,
+});
+
+const cosmosToken = AssetValue.from({
+  asset: "GAIA.ATOM",
+  value: "10",
+  decimal: 6,
+});
+```
+
+### Registering Custom Tokens
+
+For tokens you'll use repeatedly, register them with SwapKit's static asset registry:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+AssetValue.setStaticAssets(
+  new Map([
+    [
+      "ETH.CUSTOM-0x1234567890123456789012345678901234567890",
+      {
+        identifier: "ETH.CUSTOM-0x1234567890123456789012345678901234567890",
+        chain: "ETH",
+        decimal: 18,
+      },
+    ],
+  ])
+);
+
+const customToken = AssetValue.from({
+  asset: "ETH.CUSTOM-0x1234567890123456789012345678901234567890",
+  value: "100",
+});
+```
+
+### Multiple Custom Tokens
+
+Register multiple tokens at once:
+
+```typescript
+// @noErrorValidation
+const customTokens = new Map([
+  [
+    "ETH.TOKEN1-0xabc...",
+    {
+      identifier: "ETH.TOKEN1-0xabc...",
+      chain: "ETH",
+      decimal: 18,
+    },
+  ],
+  [
+    "ETH.TOKEN2-0xdef...",
+    {
+      identifier: "ETH.TOKEN2-0xdef...",
+      chain: "ETH",
+      decimal: 6,
+    },
+  ],
+  [
+    "BSC.TOKEN3-0x123...",
+    {
+      identifier: "BSC.TOKEN3-0x123...",
+      chain: "BSC",
+      decimal: 18,
+    },
+  ],
+]);
+
+AssetValue.setStaticAssets(customTokens);
+
+const token1 = AssetValue.from({ asset: "ETH.TOKEN1-0xabc...", value: "100" });
+const token2 = AssetValue.from({ asset: "ETH.TOKEN2-0xdef...", value: "1000" });
+const token3 = AssetValue.from({ asset: "BSC.TOKEN3-0x123...", value: "500" });
+```
+
+## Token Lists
+
+SwapKit integrates with multiple DEX token lists to provide comprehensive token metadata. Loading token lists before using SwapKit gives you automatic access to token information for thousands of assets.
+
+### Loading Token Lists
+
+```typescript
+// @noErrorValidation
+import { AssetValue, ProviderName } from "@swapkit/sdk";
+import { SwapKitApi } from "@swapkit/helpers/api";
+
+const tokenList = await SwapKitApi.getTokenList(ProviderName.UNISWAP);
+
+const tokens = tokenList.tokens.map((token) => [
+  token.identifier,
+  {
+    identifier: token.identifier,
+    chain: token.chain,
+    decimal: token.decimals,
+  },
+]);
+
+AssetValue.setStaticAssets(new Map(tokens));
+
+const uniToken = AssetValue.from({
+  asset: "ETH.UNI-0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+  value: "10",
+});
+```
+
+### Supported Token List Providers
+
+SwapKit supports token lists from multiple providers:
+
+```typescript
+// @noErrorValidation
+import { ProviderName } from "@swapkit/sdk";
+
+ProviderName.UNISWAP;
+ProviderName.SUSHISWAP;
+ProviderName.PANCAKESWAP;
+ProviderName.THORCHAIN;
+ProviderName.CHAINFLIP;
+```
+
+### Automatic Metadata
+
+Once token lists are loaded, AssetValue automatically handles decimal precision:
+
+```typescript
+// @noErrorValidation
+
+await SwapKitApi.getTokenList(ProviderName.UNISWAP).then((list) => {
+  AssetValue.setStaticAssets(
+    new Map(
+      list.tokens.map((t) => [
+        t.identifier,
+        { identifier: t.identifier, chain: t.chain, decimal: t.decimals },
+      ])
+    )
+  );
+});
+
+const usdc = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: "1000",
+});
+
+const dai = AssetValue.from({
+  asset: "ETH.DAI-0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  value: "500",
+});
+```
+
+### Token List Caching
+
+For production applications, cache token lists to avoid repeated API calls:
+
+```typescript
+// @noErrorValidation
+class TokenListManager {
+  private cache: Map<string, any> = new Map();
+  private cacheTTL = 86400000;
+
+  async loadAndCache(provider: ProviderName) {
+    const cached = this.cache.get(provider);
+    if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
+      return cached.data;
+    }
+
+    const tokenList = await SwapKitApi.getTokenList(provider);
+    this.cache.set(provider, { data: tokenList, timestamp: Date.now() });
+
+    AssetValue.setStaticAssets(
+      new Map(
+        tokenList.tokens.map((t) => [
+          t.identifier,
+          { identifier: t.identifier, chain: t.chain, decimal: t.decimals },
+        ])
+      )
+    );
+
+    return tokenList;
+  }
+}
+
+const manager = new TokenListManager();
+await manager.loadAndCache(ProviderName.UNISWAP);
+```
+
+## Common Patterns
+
+### Portfolio Value Calculation
+
+```typescript
+// @noErrorValidation
+import { SwapKitApi } from "@swapkit/helpers/api";
+
+const holdings = [
+  AssetValue.from({ asset: "ETH.ETH", value: "10" }),
+  AssetValue.from({ asset: "BTC.BTC", value: "0.5" }),
+  AssetValue.from({ asset: "SOL.SOL", value: "100" }),
+];
+
+const priceData = await SwapKitApi.getPrice({
+  tokens: holdings.map((h) => ({ identifier: h.toString() })),
+  metadata: false,
+});
+
+const prices = priceData.reduce((acc, item) => {
+  if (item.identifier && item.price_usd) {
+    acc[item.identifier] = item.price_usd;
+  }
+  return acc;
+}, {} as Record<string, number>);
+
+const totalValue = holdings.reduce((sum, holding) => {
+  const price = prices[holding.toString()] || 0;
+  return sum + holding.getValue("number") * price;
+}, 0);
+
+console.log(`Total portfolio value: $${totalValue.toFixed(2)}`);
+```
+
+### Safe Amount Validation
+
+```typescript
+// @noErrorValidation
+function validateTransferAmount(
+  balance: AssetValue,
+  transferAmount: AssetValue,
+  minAmount: string = "0"
+): boolean {
+  if (!balance.eqAsset(transferAmount)) {
+    throw new Error("Asset mismatch");
+  }
+
+  if (transferAmount.lte(minAmount)) {
+    throw new Error("Amount too small");
+  }
+
+  if (transferAmount.gt(balance)) {
+    throw new Error("Insufficient balance");
+  }
+
+  return true;
+}
+
+const balance = AssetValue.from({ asset: "ETH.ETH", value: "5.0" });
+const transfer = AssetValue.from({ asset: "ETH.ETH", value: "2.0" });
+
+validateTransferAmount(balance, transfer, "0.001");
+```
+
+### Percentage Calculations
+
+```typescript
+// @noErrorValidation
+const balance = AssetValue.from({ asset: "ETH.ETH", value: "10" });
+
+const twentyPercent = balance.mul(0.2);
+
+const fee = balance.mul("0.003");
+
+const remaining = balance.sub(fee);
+```
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Use String Values" icon="star">
+    Always use strings for token amounts to avoid JavaScript floating-point
+    precision issues. This is especially important for financial calculations.
+  </Card>
+
+  <Card title="Register Custom Tokens" icon="setting">
+    Use `setStaticAssets()` for tokens you'll use repeatedly. This ensures
+    consistent decimal handling and reduces errors.
+  </Card>
+
+  <Card title="Load Token Lists Early" icon="rocket">
+    Load token lists at application startup to have metadata available for all
+    operations. Cache the results to minimize API calls.
+  </Card>
+
+  <Card title="Validate Asset Matches" icon="warning">
+    Use `eqAsset()` to verify AssetValue instances represent the same token
+    before performing operations. This prevents mixing incompatible assets.
+  </Card>
+</CardGrid>
+
+## Next Steps
+
+- [Core Concepts](/start/core-concepts) - Basic AssetValue usage
+- [Advanced Features](/guides/advanced-features) - Working with base decimals and token registries
+- [API Reference](/guides/api-reference) - Complete AssetValue API documentation

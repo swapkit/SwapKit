@@ -515,7 +515,7 @@ export const mockSwapKitApi = {
         {
           sellAsset: "ETH.ETH",
           buyAsset: "BTC.BTC",
-          sellAmount: "1000000000000000000",
+          sellAmount: "1",
           buyAmount: "4000000",
           providers: ["thorchain"],
           transactions: [
@@ -614,7 +614,7 @@ export const createMockToolbox = (chain: Chain) => ({
     Promise.resolve([
       {
         asset: `${chain}.${chain}`,
-        amount: "1000000000000000000",
+        amount: "1",
         decimal: 18,
       },
     ])
@@ -861,7 +861,7 @@ export function createMockRoute(sellAsset: string, buyAsset: string) {
   return {
     sellAsset,
     buyAsset,
-    sellAmount: "1000000000000000000",
+    sellAmount: "1",
     buyAmount: "4000000",
     providers: ["thorchain"],
     transactions: [

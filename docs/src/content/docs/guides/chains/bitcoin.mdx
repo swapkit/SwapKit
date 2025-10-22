@@ -1,5 +1,5 @@
 ---
-title: Bitcoin Integration
+title: Bitcoin
 description: Complete guide to integrating Bitcoin with SwapKit SDK for UTXO operations and cross-chain swaps
 ---
 
@@ -77,11 +77,11 @@ import { Chain, FeeOption } from "@swapkit/sdk";
 
 await swapKit.connectKeystore([Chain.Bitcoin], "your mnemonic phrase");
 
-await swapKit.connectLedger([Chain.Bitcoin]);
+await swapKit.connectLedger(Chain.Bitcoin);
 
-await swapKit.connectTrezor([Chain.Bitcoin]);
+await swapKit.connectTrezor(Chain.Bitcoin);
 
-await swapKit.connectKeepKey([Chain.Bitcoin]);
+await swapKit.connectKeepKey(Chain.Bitcoin);
 ```
 
 ### Address Generation

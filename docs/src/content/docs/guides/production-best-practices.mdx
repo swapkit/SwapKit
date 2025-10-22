@@ -46,8 +46,8 @@ import { createSwapKit, Chain } from "@swapkit/sdk";
 const swapKit = createSwapKit();
 
 await swapKit.connectEVMWallet([Chain.Ethereum]);
-await swapKit.connectLedger([Chain.Bitcoin]);
-await swapKit.connectTrezor([Chain.Bitcoin]);
+await swapKit.connectLedger(Chain.Bitcoin);
+await swapKit.connectTrezor(Chain.Bitcoin);
 ```
 
 ### Input Validation
@@ -544,6 +544,6 @@ async function healthCheck(): Promise<HealthStatus> {
 
 ## Next Steps
 
-- Review [Security considerations](https:
+- Review [Security considerations](/guides/security)
 - Implement [Advanced Features](/guides/advanced-features)
 - Monitor performance with [API Reference](/guides/api-reference)

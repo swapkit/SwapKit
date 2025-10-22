@@ -254,7 +254,7 @@ const swapKit = SwapKit({
 
 async function signWithLedger() {
   try {
-    await swapKit.connectLedger([Chain.Ethereum]);
+    await swapKit.connectLedger(Chain.Ethereum);
 
     const ledgerWallet = swapKit.getWallet(Chain.Ethereum);
 

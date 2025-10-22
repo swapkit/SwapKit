@@ -1,5 +1,5 @@
 ---
-title: Bitcoin Cash Integration
+title: Bitcoin Cash
 description: Complete guide to integrating Bitcoin Cash with SwapKit SDK for UTXO operations and cross-chain swaps
 ---
 
@@ -77,9 +77,9 @@ import { Chain, FeeOption } from "@swapkit/sdk";
 
 await swapKit.connectKeystore([Chain.BitcoinCash], "your mnemonic phrase");
 
-await swapKit.connectLedger([Chain.BitcoinCash]);
+await swapKit.connectLedger(Chain.BitcoinCash);
 
-await swapKit.connectTrezor([Chain.BitcoinCash]);
+await swapKit.connectTrezor(Chain.BitcoinCash);
 ```
 
 ### Address Formats

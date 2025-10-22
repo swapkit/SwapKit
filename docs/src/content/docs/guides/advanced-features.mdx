@@ -101,6 +101,59 @@ results.forEach((result, index) => {
 });
 ```
 
+## Advanced AssetValue Operations
+
+### Working with Base Decimals
+
+For advanced use cases, you may need to work directly with base decimal values (Wei, Satoshi, etc.). AssetValue supports this through the `fromBaseDecimal` parameter:
+
+```typescript
+// @noErrorValidation
+import { AssetValue } from "@swapkit/sdk";
+
+const oneEthInWei = AssetValue.from({
+  asset: "ETH.ETH",
+  value: "1000000000000000000",
+  fromBaseDecimal: true,
+});
+
+const oneBtcInSatoshi = AssetValue.from({
+  asset: "BTC.BTC",
+  value: "100000000",
+  fromBaseDecimal: true,
+});
+
+const usdcAmount = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: "1000000",
+  fromBaseDecimal: true,
+});
+```
+
+This is particularly useful when:
+- Parsing blockchain transaction data
+- Working with smart contract return values
+- Interfacing with low-level toolbox operations
+- Processing raw API responses
+
+```typescript
+// @noErrorValidation
+
+const txData = await ethereumToolbox.getTransaction(txHash);
+const gasUsed = AssetValue.from({
+  asset: "ETH.ETH",
+  value: txData.gasUsed.toString(),
+  fromBaseDecimal: true,
+});
+
+const contractBalance = await contractInstance.balanceOf(address);
+const balance = AssetValue.from({
+  asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  value: contractBalance.toString(),
+  fromBaseDecimal: true,
+});
+```
+
 ## Synthetic Assets
 
 THORChain synthetic assets provide instant swaps without waiting for L1 confirmations.
@@ -165,7 +218,7 @@ Convert synthetics back to L1 assets:
 
 const redeemQuote = await SwapKitApi.getSwapQuote({
   sellAsset: "ETH/ETH",
-  sellAmount: "1000000000000000000",
+  sellAmount: "1",
   buyAsset: "ETH.ETH",
   sourceAddress: swapKit.getAddress(Chain.THORChain),
   destinationAddress: swapKit.getAddress(Chain.Ethereum),
@@ -227,7 +280,7 @@ Build custom swap routes for specific requirements:
 
 const { routes } = await SwapKitApi.getSwapQuote({
   sellAsset: "ETH.ETH",
-  sellAmount: "1000000000000000000",
+  sellAmount: "1",
   buyAsset: "BTC.BTC",
   sourceAddress: swapKit.getAddress(Chain.Ethereum),
   destinationAddress: swapKit.getAddress(Chain.Bitcoin),
@@ -529,4 +582,4 @@ async function getCachedQuote(params: any) {
 
 - Explore [THORChain Features](/guides/thorchain-features) for protocol-specific operations
 - Review [API Reference](/guides/api-reference) for all available methods
-- Check [Playgrounds](https:
+- Check [Playgrounds](https://github.com/swapkit/SwapKit/tree/develop/playgrounds)

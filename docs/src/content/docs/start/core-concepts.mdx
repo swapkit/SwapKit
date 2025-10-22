@@ -11,6 +11,10 @@ Before diving into SwapKit's features, it's essential to understand its core con
 
 `AssetValue` is SwapKit's primary way of representing amounts of any asset across all supported chains. It handles decimal precision, formatting, and arithmetic operations automatically.
 
+:::tip[AssetValue Deep Dive]
+For advanced usage including flexible type support, custom tokens, and token list management, see the [AssetValue Deep Dive →](/guides/assetvalue-deep-dive)
+:::
+
 ### Creating AssetValue
 
 ```typescript
@@ -19,66 +23,97 @@ import { AssetValue } from "@swapkit/sdk";
 
 const oneEth = AssetValue.from({
   asset: "ETH.ETH",
-  value: 1,
+  value: "1",
 });
 
-const oneEthInWei = AssetValue.from({
-  asset: "ETH.ETH",
-  value: "1000000000000000000",
-  fromBaseDecimal: true,
+const halfBtc = AssetValue.from({
+  asset: "BTC.BTC",
+  value: "0.5",
 });
 ```
 
 ### Asset Notation
 
-SwapKit uses a consistent format for identifying assets:
+SwapKit uses a consistent format for identifying assets: **`CHAIN.TICKER-CONTRACT_ADDRESS`**
+
+**Structure:**
+- `CHAIN` - The blockchain identifier (ETH, BTC, AVAX, etc.)
+- `TICKER` - The asset symbol (ETH, USDC, BTC, etc.)
+- `CONTRACT_ADDRESS` - Optional contract address for tokens (not needed for gas assets)
 
 ```typescript
 // @noErrorValidation
 
-"ETH.ETH";
-"BTC.BTC";
-"AVAX.AVAX";
+// Gas assets (native blockchain tokens)
+"ETH.ETH"    // Ethereum
+"BTC.BTC"    // Bitcoin
+"AVAX.AVAX"  // Avalanche
 
-"ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-"AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E";
+// ERC-20 tokens (require contract address)
+"ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"  // USDC on Ethereum
+"AVAX.USDC-0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E" // USDC on Avalanche
 
-"ETH/ETH";
-"BTC/BTC";
+// Synthetic assets (use "/" instead of ".")
+"ETH/ETH"    // Synthetic ETH on THORChain
+"BTC/BTC"    // Synthetic BTC on THORChain
 ```
+
+:::tip[Token Registry]
+All swap-supported tokens and their identifiers are available in the `@swapkit/tokens` package. Import and use these for type-safe asset references.
+:::
 
 ### Arithmetic Operations
 
-AssetValue provides safe arithmetic operations:
+AssetValue provides safe arithmetic operations with **automatic precision handling**. It maintains exact values internally and supports operations between assets from different chains with different decimal places (e.g., ETH with 18 decimals and BTC with 8 decimals) without losing precision.
+
+**All operations are immutable** - they create new AssetValue instances rather than modifying the original.
+
+**Flexible input types**: Operations accept `string`, `number`, `SwapKitNumber`, or `AssetValue`:
 
 ```typescript
 // @noErrorValidation
-const amount1 = AssetValue.from({ asset: "ETH.ETH", value: 1.5 });
-const amount2 = AssetValue.from({ asset: "ETH.ETH", value: 0.5 });
+const amount = AssetValue.from({ asset: "ETH.ETH", value: "1.5" });
 
-const sum = amount1.add(amount2);
+// All of these work
+amount.add("0.5");                                  // string
+amount.add(0.5);                                     // number
+amount.add(new SwapKitNumber("0.5"));               // SwapKitNumber
+amount.add(AssetValue.from({ asset: "ETH.ETH", value: "0.5" })); // AssetValue
 
-const difference = amount1.sub(amount2);
+// Basic operations
+const sum = amount.add("0.5");      // 2.0 ETH
+const diff = amount.sub("0.5");     // 1.0 ETH
+const doubled = amount.mul(2);      // 3.0 ETH
+const halved = amount.div(2);       // 0.75 ETH
 
-const doubled = amount1.mul(2);
+console.log(amount.getValue("string")); // Still "1.5" (immutable)
 
-const halved = amount1.div(2);
+// Cross-chain operations with different decimals (no precision loss)
+const eth = AssetValue.from({ asset: "ETH.ETH", value: "1.5" });      // 18 decimals
+const usdc = AssetValue.from({ asset: "ETH.USDC-0xA0b8...", value: "1000" }); // 6 decimals
+const btc = AssetValue.from({ asset: "BTC.BTC", value: "0.05" });     // 8 decimals
+
+// All operations maintain precision regardless of decimal differences
 ```
 
 ### Comparisons
 
-Compare AssetValue instances safely:
+Compare AssetValue instances safely. Like arithmetic operations, comparisons also accept `string`, `number`, `SwapKitNumber`, or `AssetValue`:
 
 ```typescript
 // @noErrorValidation
-const amount1 = AssetValue.from({ asset: "BTC.BTC", value: 1 });
-const amount2 = AssetValue.from({ asset: "BTC.BTC", value: 0.5 });
+const amount = AssetValue.from({ asset: "BTC.BTC", value: "1" });
 
-amount1.gt(amount2);
-amount1.gte(amount2);
-amount1.lt(amount2);
-amount1.lte(amount2);
-amount1.eq(amount2);
+// All comparison types work
+amount.gt("0.5");     // true - greater than
+amount.gte(1);        // true - greater than or equal
+amount.lt("2");       // true - less than
+amount.lte(1);        // true - less than or equal
+amount.eq("1");       // true - equal to
+
+// Compare with another AssetValue
+const amount2 = AssetValue.from({ asset: "BTC.BTC", value: "0.5" });
+amount.gt(amount2);   // true
 ```
 
 ### Formatting
@@ -87,13 +122,13 @@ Format values for display:
 
 ```typescript
 // @noErrorValidation
-const btcAmount = AssetValue.from({ asset: "BTC.BTC", value: 0.00123456 });
+const btcAmount = AssetValue.from({ asset: "BTC.BTC", value: "0.00123456" });
 
 btcAmount.toSignificant(4);
 
 btcAmount.toCurrency("USD", 45000);
 
-const largeAmount = AssetValue.from({ asset: "ETH.ETH", value: 1234567 });
+const largeAmount = AssetValue.from({ asset: "ETH.ETH", value: "1234567" });
 largeAmount.toAbbreviation();
 
 btcAmount.getValue("string");
@@ -106,12 +141,12 @@ Check asset properties:
 
 ```typescript
 // @noErrorValidation
-const ethAmount = AssetValue.from({ asset: "ETH.ETH", value: 1 });
+const ethAmount = AssetValue.from({ asset: "ETH.ETH", value: "1" });
 const usdcAmount = AssetValue.from({
   asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  value: 100,
+  value: "100",
 });
-const synthEth = AssetValue.from({ asset: "ETH/ETH", value: 1 });
+const synthEth = AssetValue.from({ asset: "ETH/ETH", value: "1" });
 
 ethAmount.isGasAsset();
 usdcAmount.isGasAsset();
@@ -310,7 +345,7 @@ ProviderName.PANCAKESWAP;
 ```typescript
 // @noErrorValidation
 
-const amount = AssetValue.from({ asset: "ETH.ETH", value: 1 });
+const amount = AssetValue.from({ asset: "ETH.ETH", value: "1" });
 await swapKit.transfer({ assetValue: amount, recipient });
 
 await swapKit.transfer({ value: 1, recipient });
@@ -323,13 +358,12 @@ await swapKit.transfer({ value: 1, recipient });
 
 const usdcAmount = AssetValue.from({
   asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  value: 100,
+  value: "100",
 });
 
-const weiAmount = AssetValue.from({
+const ethAmount = AssetValue.from({
   asset: "ETH.ETH",
-  value: "1000000000000000000",
-  fromBaseDecimal: true,
+  value: "1.5",
 });
 ```
 
@@ -352,7 +386,7 @@ if (Number(balance.getValue()) >= Number(requiredAmount.getValue())) {
 ```typescript
 // @noErrorValidation
 
-const btcBalance = AssetValue.from({ asset: "BTC.BTC", value: 0.00123456 });
+const btcBalance = AssetValue.from({ asset: "BTC.BTC", value: "0.00123456" });
 
 const displayValue = btcBalance.toSignificant(6);
 

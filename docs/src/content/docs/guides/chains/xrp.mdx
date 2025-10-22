@@ -1,5 +1,5 @@
 ---
-title: XRP Ledger Integration
+title: XRP Ledger
 description: Complete guide to integrating XRP Ledger with SwapKit SDK for XRP operations and cross-chain swaps
 ---
 
@@ -79,7 +79,7 @@ await swapKit.connectKeystore([Chain.Ripple], "your mnemonic phrase");
 
 await swapKit.connectXumm([Chain.Ripple]);
 
-await swapKit.connectLedger([Chain.Ripple]);
+await swapKit.connectLedger(Chain.Ripple);
 ```
 
 ### Address Generation and Validation

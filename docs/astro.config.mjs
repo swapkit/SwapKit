@@ -1,3 +1,4 @@
+/** biome-ignore-all assist/source/useSortedKeys: sorted by topic and order in sidebar */
 import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import { rendererRich, transformerTwoslash } from "@shikijs/twoslash";
@@ -23,35 +24,121 @@ export default defineConfig({
       pagination: true,
       plugins: [openApiPlugin, ...docsPlugins],
       sidebar: [
+        // 1-3: Introduction, Integration Paths, Getting Started
         {
+          label: "Getting Started",
           items: [
-            { label: "Getting started", link: "/start/getting-started" },
-            { label: "Core Concepts", link: "/start/core-concepts" },
-            { label: "Configuration", link: "/start/configuration" },
-            { label: "Toolbox usage", link: "/start/toolbox-usage" },
+            { label: "Introduction", link: "/" },
+            { label: "Installation & Setup", link: "/start/getting-started" },
+            { label: "Quick Start", link: "/start/quick-start" },
           ],
-          label: "Start Here",
         },
+
+        // 4-6: Core Concepts, Configuration, Toolboxes
         {
+          label: "Fundamentals",
+          items: [
+            { label: "Core Concepts", link: "/start/core-concepts" },
+            { label: "Configuration & Runtime Settings", link: "/start/configuration" },
+            { label: "Toolboxes: Low-Level Access", link: "/start/toolbox-usage" },
+          ],
+        },
+
+        // 7: Connecting Wallets & Basic Actions
+        {
+          label: "Essential Actions",
+          items: [
+            { label: "Connecting Wallets", link: "/guides/actions/connect-wallet" },
+            { label: "Signing Transactions", link: "/guides/actions/sign-transaction" },
+            { label: "Performing Swaps", link: "/guides/actions/swap" },
+            { label: "Executing Transactions", link: "/guides/actions/transaction" },
+          ],
+        },
+
+        // 8: Extending SwapKit
+        {
+          label: "Extending SwapKit",
+          items: [
+            { label: "Creating Custom Plugins", link: "/guides/create-plugin" },
+            { label: "Creating Custom Wallets", link: "/guides/create-wallet" },
+          ],
+        },
+
+        // 9-10: Advanced Features & Production
+        {
+          label: "Advanced Topics",
+          items: [
+            { label: "AssetValue Deep Dive", link: "/guides/assetvalue-deep-dive" },
+            { label: "Advanced Features", link: "/guides/advanced-features" },
+            { label: "THORChain Features", link: "/guides/thorchain-features" },
+            { label: "Production Best Practices", link: "/guides/production-best-practices" },
+            { label: "Security", link: "/guides/security" },
+            { label: "Error Handling", link: "/guides/error-handling" },
+            { label: "Testing", link: "/guides/testing" },
+          ],
+        },
+
+        // Additional Reference Materials
+        {
+          label: "Reference",
+          collapsed: true,
           items: [
             { label: "API Reference", link: "/guides/api-reference" },
-            { label: "THORChain Features", link: "/guides/thorchain-features" },
+            { label: "NEAR Integration", link: "/guides/near-integration" },
             { label: "Zcash Integration", link: "/guides/zcash-integration" },
-            { label: "Advanced Features", link: "/guides/advanced-features" },
-            { label: "Production Best Practices", link: "/guides/production-best-practices" },
-            { label: "Create custom plugin", link: "/guides/create-plugin" },
-            { label: "Create custom wallet", link: "/guides/create-wallet" },
           ],
-          label: "Guides",
         },
-        { autogenerate: { directory: "guides/actions" }, collapsed: true, label: "Actions" },
-        { autogenerate: { directory: "guides/integrations" }, collapsed: true, label: "Integrations" },
-        { autogenerate: { directory: "others" }, collapsed: true, label: "Others" },
+
+        // Framework-specific integrations
+        {
+          label: "Framework Integration",
+          collapsed: true,
+          items: [
+            { label: "Next.js", link: "/guides/integrations/nextjs" },
+            { label: "Vite", link: "/guides/integrations/vite" },
+            { label: "React Native", link: "/guides/integrations/react-native" },
+            { label: "Bun", link: "/guides/integrations/bun" },
+          ],
+        },
+
+        // Chain-specific deep dives
+        { label: "Chain Integrations", collapsed: true, autogenerate: { directory: "guides/chains" } },
+
+        // Wallet-specific documentation
+        {
+          label: "Wallet Integrations",
+          collapsed: true,
+          items: [
+            {
+              label: "Browser Extensions",
+              collapsed: true,
+              autogenerate: { directory: "guides/wallets/browser-extensions" },
+            },
+            { label: "Hardware Wallets", collapsed: true, autogenerate: { directory: "guides/wallets/hardware" } },
+            {
+              label: "Mobile & Desktop",
+              collapsed: true,
+              autogenerate: { directory: "guides/wallets/mobile-desktop" },
+            },
+          ],
+        },
+
+        // Migration guides for existing users
+        {
+          label: "Migration & Updates",
+          collapsed: true,
+          items: [
+            { label: "What's New in v4", link: "/guides/whats-new-v4" },
+            { label: "Migrate from v3 to v4", link: "/others/migrate-to-v4" },
+          ],
+        },
+
+        // 🔍 Deep Knowledge - API specs and TypeDoc (collapsed)
         ...openAPISidebarGroups,
         {
-          collapsed: true,
-          items: process.env.REFERENCES ? [{ items: docsSidebarItems, label: "@swapkit" }] : [],
           label: "References",
+          collapsed: true,
+          items: process.env.REFERENCES ? [{ label: "@swapkit", items: docsSidebarItems }] : [],
         },
       ],
       social: [

@@ -108,7 +108,7 @@ const swapKit = SwapKit({
 
 async function connectLedgerBitcoin() {
   try {
-    await swapKit.connectLedger([Chain.Bitcoin]);
+    await swapKit.connectLedger(Chain.Bitcoin);
 
     const address = swapKit.getAddress(Chain.Bitcoin);
     const balance = await swapKit.getBalance(Chain.Bitcoin, true);
@@ -209,7 +209,7 @@ const swapKit = SwapKit({
   wallets: { ...ledgerWallet },
 });
 
-await swapKit.connectLedger([Chain.Bitcoin]);
+await swapKit.connectLedger(Chain.Bitcoin);
 
 async function sendBitcoin() {
   const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
@@ -240,7 +240,7 @@ const swapKit = SwapKit({
   wallets: { ...ledgerWallet },
 });
 
-await swapKit.connectLedger([Chain.Ethereum]);
+await swapKit.connectLedger(Chain.Ethereum);
 
 async function sendEthereum() {
   const recipient = "0x742d35Cc6632C0532c718C5E6F99d7E89b12c9bC";
@@ -291,7 +291,7 @@ const swapKit = SwapKit({
   wallets: { ...ledgerWallet },
 });
 
-await swapKit.connectLedger([Chain.Cosmos]);
+await swapKit.connectLedger(Chain.Cosmos);
 
 async function sendCosmos() {
   const recipient = "cosmos1xy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
@@ -323,7 +323,7 @@ For Bitcoin transactions, ensure you have the Bitcoin app installed on your Ledg
 import { SwapKit, ledgerWallet, Chain, FeeOption } from "@swapkit/sdk";
 
 const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
-await swapKit.connectLedger([Chain.Bitcoin]);
+await swapKit.connectLedger(Chain.Bitcoin);
 
 async function bitcoinTransactionWithCustomFee() {
   const amount = AssetValue.fromChainOrSignature("BTC.BTC", 0.001);
@@ -385,10 +385,10 @@ const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
 
 async function setupCosmosEcosystem() {
   try {
-    await swapKit.connectLedger([Chain.Cosmos]);
+    await swapKit.connectLedger(Chain.Cosmos);
     const cosmosAddress = swapKit.getAddress(Chain.Cosmos);
 
-    await swapKit.connectLedger([Chain.THORChain]);
+    await swapKit.connectLedger(Chain.THORChain);
     const thorAddress = swapKit.getAddress(Chain.THORChain);
 
     console.log("Cosmos address:", cosmosAddress);
@@ -414,7 +414,7 @@ async function diagnosticConnection() {
   try {
     console.log("Attempting to connect to Ledger...");
 
-    await swapKit.connectLedger([Chain.Bitcoin]);
+    await swapKit.connectLedger(Chain.Bitcoin);
     console.log("✅ Ledger connected successfully");
 
     const address = swapKit.getAddress(Chain.Bitcoin);
@@ -481,7 +481,7 @@ import { SwapKit, ledgerWallet, Chain } from "@swapkit/sdk";
 
 async function verifyAddressOnDevice() {
   const swapKit = SwapKit({ wallets: { ...ledgerWallet } });
-  await swapKit.connectLedger([Chain.Bitcoin]);
+  await swapKit.connectLedger(Chain.Bitcoin);
 
   const address = swapKit.getAddress(Chain.Bitcoin);
 
@@ -614,7 +614,7 @@ export function LedgerWallet({ onConnect, onError }: LedgerWalletProps) {
     setIsConnecting(true);
 
     try {
-      await swapKit.connectLedger([Chain.Bitcoin]);
+      await swapKit.connectLedger(Chain.Bitcoin);
       const btcAddress = swapKit.getAddress(Chain.Bitcoin);
 
       setAddress(btcAddress);

@@ -21,10 +21,7 @@ const RIPPLE_ERROR_CODES = { ACCOUNT_NOT_FOUND: 19 } as const;
 function createSigner(phrase: string): ChainSigner<Transaction, { tx_blob: string; hash: string }> {
   const wallet = Wallet.fromMnemonic(phrase);
   return {
-    // publicKey: wallet.publicKey,
-    // Address is sync, but interface requires async
     getAddress: () => Promise.resolve(wallet.address),
-    // Signing is sync, but interface requires async
     signTransaction: (tx: Transaction) => Promise.resolve(wallet.sign(tx as Transaction)), // Cast needed as Wallet.sign expects Transaction
   };
 }

@@ -114,6 +114,33 @@ export const defaultWallets = {
   ...xamanWallet,
 };
 
-export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {
-  return SwapKit({ plugins: defaultPlugins, wallets: defaultWallets, ...config });
+/**
+ * Creates a SwapKit instance with default plugins and wallets.
+ *
+ * @param config - Optional configuration. Can be:
+ *   - undefined: Uses default configuration
+ *   - string: SwapKit API key (sets config.apiKeys.swapKit)
+ *   - object: Full SwapKit configuration object
+ *
+ * @example
+ * // No config (uses defaults)
+ * const swapKit = createSwapKit();
+ *
+ * @example
+ * // Quick setup with API key
+ * const swapKit = createSwapKit("your-swapkit-api-key");
+ *
+ * @example
+ * // Full configuration
+ * const swapKit = createSwapKit({
+ *   config: {
+ *     apiKeys: { swapKit: "your-api-key" },
+ *     rpcUrls: { ETH: "https://..." }
+ *   }
+ * });
+ */
+export function createSwapKit(config?: Parameters<typeof SwapKit>[0] | string) {
+  const finalConfig = typeof config === "string" ? { config: { apiKeys: { swapKit: config } } } : config || {};
+
+  return SwapKit({ plugins: defaultPlugins, wallets: defaultWallets, ...finalConfig });
 }

@@ -1,5 +1,5 @@
 ---
-title: Ethereum Integration
+title: Ethereum
 description: Complete guide to integrating Ethereum with SwapKit SDK for DeFi operations and cross-chain swaps
 ---
 
@@ -81,7 +81,7 @@ await swapKit.connectBrowserWallet(Chain.Ethereum);
 
 await swapKit.connectWalletConnect([Chain.Ethereum]);
 
-await swapKit.connectLedger([Chain.Ethereum]);
+await swapKit.connectLedger(Chain.Ethereum);
 ```
 
 ### Native ETH Transfers
@@ -622,4 +622,4 @@ console.log("Transaction parameters:", txParams);
 
 **Building multi-chain apps?** Explore [Bitcoin](/guides/chains/bitcoin) and [Cosmos](/guides/chains/cosmos) integrations.
 
-**Need help?** Join our [Discord community](https:
+**Need help?** Join our [Discord community](https://discord.gg/swapkit)

@@ -1,0 +1,121 @@
+---
+title: Quick Start
+description: Build your first SwapKit application with working code examples
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+Get up and running with SwapKit in minutes. These examples show the essential operations you'll use in every SwapKit application.
+
+## 1. Connect a Wallet
+
+```typescript
+import { createSwapKit, Chain, WalletOption } from "@swapkit/sdk";
+
+const swapKit = createSwapKit("your-swapkit-api-key");
+
+// Connect with keystore (mnemonic)
+await swapKit.connectKeystore(
+  [Chain.Ethereum, Chain.Bitcoin, Chain.Solana],
+  "your twelve word mnemonic phrase here"
+);
+
+// Or connect with MetaMask
+await swapKit.connectEVMWallet([Chain.Ethereum], WalletOption.METAMASK);
+
+// Get connected addresses
+const ethAddress = swapKit.getAddress(Chain.Ethereum);
+const btcAddress = swapKit.getAddress(Chain.Bitcoin);
+```
+
+## 2. Get Balances
+
+```typescript
+// Get balance for a specific chain
+const ethBalance = await swapKit.getBalance(Chain.Ethereum);
+console.log(ethBalance); // [AssetValue, AssetValue, ...]
+
+// Get all balances across all connected chains
+const allBalances = await swapKit.getAllBalances();
+
+// Work with AssetValue
+const usdcBalance = ethBalance.find(
+  (asset) => asset.ticker === "USDC"
+);
+
+if (usdcBalance) {
+  console.log(usdcBalance.getValue("string")); // "1234.56"
+}
+```
+
+## 3. Send a Transaction
+
+```typescript
+import { AssetValue } from "@swapkit/sdk";
+
+// Create the amount to send
+const amount = AssetValue.from({
+  asset: "ETH.ETH",
+  value: "0.1",
+});
+
+// Send the transaction
+const txHash = await swapKit.transfer({
+  assetValue: amount,
+  recipient: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+});
+
+console.log("Transaction hash:", txHash);
+```
+
+## 4. Execute a Swap
+
+```typescript
+import { SwapKitApi } from "@swapkit/sdk";
+
+// Get swap quote
+const { routes } = await SwapKitApi.getSwapQuote({
+  sellAsset: "ETH.ETH",
+  sellAmount: "1",
+  buyAsset: "BTC.BTC",
+  sourceAddress: swapKit.getAddress(Chain.Ethereum),
+  destinationAddress: swapKit.getAddress(Chain.Bitcoin),
+});
+
+// Find recommended route
+const route = routes.find((r) =>
+  r.meta?.tags?.includes("RECOMMENDED")
+);
+
+// Execute the swap
+if (route) {
+  const txHash = await swapKit.swap({ route });
+  console.log("Swap transaction:", txHash);
+}
+```
+
+## Next Steps
+
+<CardGrid>
+  <Card title="Core Concepts" icon="star">
+    Learn about AssetValue, error handling, and TypeScript types
+
+    [Core Concepts →](/start/core-concepts)
+  </Card>
+
+  <Card title="Wallet Integration" icon="open">
+    Connect 20+ wallets including MetaMask, Ledger, WalletConnect
+
+    [Connect Wallets →](/guides/actions/connect-wallet)
+  </Card>
+
+  <Card title="Swap Deep Dive" icon="puzzle">
+    Advanced swap features, routing, and cross-chain operations
+
+    [Swap Guide →](/guides/actions/swap)
+  </Card>
+</CardGrid>
+
+---
+
+**Need Help?** 💬 [Discord](https://discord.gg/swapkit) · 🐛 [GitHub](https://github.com/swapkit/swapkit/issues) · 📚 [API Reference](/guides/api-reference)

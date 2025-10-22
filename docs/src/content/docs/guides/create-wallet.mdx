@@ -1,9 +1,11 @@
 ---
 title: Creating a Custom Wallet
-description: A guide to create a custom wallet adapter
+description: Complete guide to create and integrate custom wallet adapters into SwapKit
 ---
 
-This guide explains how to create a custom wallet adapter for SwapKit using the `createWallet` function.
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+This comprehensive guide explains how to create a custom wallet adapter for SwapKit and integrate it into the SDK. You'll learn how to build adapters for browser extensions, mobile wallets, and hardware wallets.
 
 ## Wallet Adapter Structure
 
@@ -199,21 +201,148 @@ export const customHardwareWallet = createWallet({
 
 ## Using Your Custom Wallet with SwapKit
 
-To use your custom wallet adapter with SwapKit:
+Once you've created your wallet adapter, integrate it into SwapKit:
 
+<Tabs>
+  <TabItem label="Full SDK">
 ```ts twoslash
 import { SwapKit, Chain } from "@swapkit/sdk";
 import { myCustomWallet } from "./my-custom-wallet";
 
+// Create SwapKit instance with your custom wallet
 const swapKit = SwapKit({
   wallets: { ...myCustomWallet },
 });
 
+// Connect to chains
 async function connectWithCustomWallet() {
-  await swapKit.connectMyCustomWallet(["ETH", "BSC"]);
+  await swapKit.connectMyCustomWallet([Chain.Ethereum, Chain.BinanceSmartChain]);
 
-  const ethWallet = await swapKit.getWallet("ETH");
+  // Access connected wallet
+  const ethWallet = swapKit.getWallet(Chain.Ethereum);
+  console.log('Connected address:', ethWallet.address);
+
+  // Get balance
+  const balance = await ethWallet.getBalance();
+  console.log('Balance:', balance);
 }
+```
+  </TabItem>
+
+  <TabItem label="Core Only">
+```ts twoslash
+import { SwapKit } from "@swapkit/core";
+import { myCustomWallet } from "./my-custom-wallet";
+
+// Use with core package
+const swapKit = SwapKit({
+  wallets: { ...myCustomWallet },
+});
+
+await swapKit.connectMyCustomWallet([Chain.Ethereum]);
+```
+  </TabItem>
+
+  <TabItem label="React Usage">
+```tsx
+import { useState } from 'react';
+import { SwapKit, Chain } from "@swapkit/sdk";
+import { myCustomWallet } from "./my-custom-wallet";
+
+function WalletConnector() {
+  const [swapKit] = useState(() => SwapKit({
+    wallets: { ...myCustomWallet }
+  }));
+  const [connected, setConnected] = useState(false);
+
+  const handleConnect = async () => {
+    const success = await swapKit.connectMyCustomWallet([Chain.Ethereum]);
+    setConnected(success);
+  };
+
+  return (
+    <button onClick={handleConnect}>
+      {connected ? 'Connected' : 'Connect Custom Wallet'}
+    </button>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+## Publishing Your Wallet Adapter
+
+To make your wallet adapter available to others:
+
+### 1. Package Structure
+
+Create a proper package structure:
+
+```
+my-wallet-adapter/
+├── src/
+│   ├── index.ts          # Main export
+│   └── wallet.ts         # Wallet implementation
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+### 2. Package.json Configuration
+
+```json
+{
+  "name": "@myorg/swapkit-wallet-custom",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@swapkit/sdk": "^4.0.0"
+  }
+}
+```
+
+### 3. Export Your Wallet
+
+```ts
+// src/index.ts
+export { myCustomWallet } from './wallet';
+export type { CustomWalletOptions } from './types';
+```
+
+### 4. Publish to npm
+
+```bash
+# Build your package
+bun run build
+
+# Publish to npm
+npm publish --access public
+```
+
+### 5. Usage by Others
+
+```bash
+# Install your wallet adapter
+bun add @myorg/swapkit-wallet-custom
+```
+
+```ts
+import { SwapKit } from "@swapkit/sdk";
+import { myCustomWallet } from "@myorg/swapkit-wallet-custom";
+
+const swapKit = SwapKit({
+  wallets: { ...myCustomWallet }
+});
 ```
 
 ## Testing Your Wallet Adapter
@@ -275,11 +404,273 @@ describe("MyCustomWallet", () => {
 
 When creating a custom wallet adapter, follow these best practices:
 
-1. **Error Handling**: Provide clear error messages when connection or operations fail
-2. **Chain Filtering**: Properly filter and validate supported chains
-3. **Feature Detection**: Check if features like signing or specific networks are supported
-4. **Security**: Be careful with private keys and sensitive operations
-5. **Testing**: Test thoroughly with both happy and error paths
-6. **Documentation**: Document any special requirements or features of your wallet
+### 1. **Error Handling**
 
-By following this guide, you can create a custom wallet adapter that integrates seamlessly with the SwapKit ecosystem.
+Provide clear, actionable error messages:
+
+```ts
+if (!provider) {
+  throw new SwapKitError('wallet_provider_not_found', {
+    wallet: 'MyCustomWallet',
+    message: 'Please install the MyCustomWallet browser extension'
+  });
+}
+```
+
+### 2. **Chain Filtering**
+
+Validate chains before attempting connection:
+
+```ts
+const validChains = chains.filter(chain => {
+  if (!supportedChains.includes(chain)) {
+    console.warn(`Chain ${chain} not supported by MyCustomWallet`);
+    return false;
+  }
+  return true;
+});
+
+if (validChains.length === 0) {
+  throw new SwapKitError('wallet_no_supported_chains', {
+    requested: chains,
+    supported: supportedChains
+  });
+}
+```
+
+### 3. **Feature Detection**
+
+Check capabilities before using them:
+
+```ts
+async function connectMyCustomWallet(chains: Chain[]) {
+  // Check if wallet is available
+  if (!window.myWallet) {
+    throw new Error('Wallet not installed');
+  }
+
+  // Check if wallet supports required features
+  if (!window.myWallet.signTransaction) {
+    console.warn('Wallet does not support transaction signing');
+  }
+
+  // Check network support
+  const supportedNetworks = await window.myWallet.getSupportedNetworks();
+  // ... continue
+}
+```
+
+### 4. **Security**
+
+Never expose private keys or sensitive data:
+
+```ts
+// ❌ BAD - Exposing private key
+const wallet = {
+  address: '0x...',
+  privateKey: privateKey, // NEVER DO THIS
+};
+
+// ✅ GOOD - Only expose what's needed
+const wallet = {
+  address: '0x...',
+  // Sign transactions without exposing keys
+  transfer: async (params) => {
+    return await signAndBroadcast(params);
+  }
+};
+```
+
+### 5. **Async Operations**
+
+Handle async operations properly:
+
+```ts
+async function connectMyCustomWallet(chains: Chain[]) {
+  try {
+    // Use Promise.all for parallel operations
+    const wallets = await Promise.all(
+      chains.map(chain => connectChain(chain))
+    );
+
+    for (const wallet of wallets) {
+      addChain(wallet);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Connection failed:', error);
+    return false;
+  }
+}
+```
+
+### 6. **TypeScript Support**
+
+Provide proper types for better DX:
+
+```ts
+import type { Chain, ChainWallet } from '@swapkit/sdk';
+
+export interface CustomWalletOptions {
+  deviceId?: string;
+  testnet?: boolean;
+}
+
+export interface CustomWalletMethods {
+  connectMyCustomWallet: (
+    chains: Chain[],
+    options?: CustomWalletOptions
+  ) => Promise<boolean>;
+}
+```
+
+### 7. **Documentation**
+
+Document your wallet adapter:
+
+```ts
+/**
+ * Custom Wallet Adapter for SwapKit
+ *
+ * @example
+ * ```ts
+ * import { SwapKit } from '@swapkit/sdk';
+ * import { myCustomWallet } from '@myorg/swapkit-wallet-custom';
+ *
+ * const swapKit = SwapKit({
+ *   wallets: { ...myCustomWallet }
+ * });
+ *
+ * await swapKit.connectMyCustomWallet([Chain.Ethereum]);
+ * ```
+ *
+ * Supported chains: Ethereum, BSC, Avalanche, Polygon
+ * Requirements: Browser extension or mobile app installed
+ */
+export const myCustomWallet = createWallet({
+  // ...
+});
+```
+
+## Common Patterns
+
+### Multi-Chain Connection
+
+Handle multiple chains efficiently:
+
+```ts
+async function connectMultipleChains(chains: Chain[]) {
+  const results = await Promise.allSettled(
+    chains.map(chain => connectChain(chain))
+  );
+
+  const successful = results
+    .filter((r): r is PromiseFulfilledResult<ChainWallet> => r.status === 'fulfilled')
+    .map(r => r.value);
+
+  const failed = results
+    .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+    .map((r, i) => ({ chain: chains[i], reason: r.reason }));
+
+  if (failed.length > 0) {
+    console.warn('Some chains failed to connect:', failed);
+  }
+
+  return successful.length > 0;
+}
+```
+
+### Network Switching
+
+Support network switching for EVM chains:
+
+```ts
+async function switchNetwork(chainId: number) {
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${chainId.toString(16)}` }],
+    });
+  } catch (error: any) {
+    // Network not added, try adding it
+    if (error.code === 4902) {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: `0x${chainId.toString(16)}`,
+          chainName: 'Custom Network',
+          rpcUrls: ['https://rpc.example.com'],
+          // ... other params
+        }],
+      });
+    }
+  }
+}
+```
+
+### Event Handling
+
+Listen for wallet events:
+
+```ts
+function setupWalletListeners() {
+  window.ethereum?.on('accountsChanged', (accounts: string[]) => {
+    console.log('Account changed:', accounts[0]);
+    // Update connected wallet
+  });
+
+  window.ethereum?.on('chainChanged', (chainId: string) => {
+    console.log('Network changed:', chainId);
+    // Update chain
+  });
+
+  window.ethereum?.on('disconnect', () => {
+    console.log('Wallet disconnected');
+    // Clean up
+  });
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Problem:** Wallet connection returns `false`
+
+```ts
+// Check these:
+1. Is the wallet extension/app installed?
+2. Are the chains supported by the wallet?
+3. Did the user approve the connection request?
+4. Check browser console for errors
+```
+
+**Problem:** Transaction signing fails
+
+```ts
+// Debug steps:
+1. Verify the transaction format matches chain requirements
+2. Check if the wallet has sufficient balance for fees
+3. Ensure the connected account has permission to sign
+4. Look for specific error messages from the wallet
+```
+
+**Problem:** Balance queries return 0
+
+```ts
+// Verify:
+1. Is the address format correct for the chain?
+2. Is the RPC endpoint accessible?
+3. Check if the wallet is connected to the right network
+4. Try querying the balance directly from the chain
+```
+
+## Next Steps
+
+- Review [existing wallet implementations](https://github.com/swapkit/swapkit/tree/develop/packages/wallets/src) for inspiration
+- Check [Wallet Integration Guides](/guides/wallets/browser-extensions/metamask) for examples
+- Read about [Core Concepts](/start/core-concepts) to understand SwapKit architecture
+- Join the [SwapKit Discord](https://discord.gg/swapkit) for help and feedback
+
+By following this comprehensive guide, you can create a robust custom wallet adapter that integrates seamlessly with the SwapKit ecosystem and can be easily shared with the community.
