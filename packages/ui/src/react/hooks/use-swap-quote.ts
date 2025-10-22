@@ -1,47 +1,14 @@
 "use client";
 
-import {
-  AssetValue,
-  type Chain,
-  type PriceResponse,
-  type ProviderName,
-  type QuoteResponse,
-  SwapKitApi,
-  useSwapKitConfig,
-} from "@swapkit/sdk";
+import { AssetValue, type PriceResponse, type QuoteResponse, SwapKitApi, useSwapKitConfig } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { formatCurrency } from "../../lib/utils";
 import { temp_host } from "../components/asset-icon";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
 import { useSwapKit } from "../swapkit-context";
+import type { UseSwapQuoteParams, UseSwapQuoteResult } from "../types";
 import { useDebouncedEffect } from "./use-debounced-effect";
-
-export type UseSwapQuoteResult = {
-  swapQuote: {
-    providerName: ProviderName | null;
-    providerLogoURI: string | null;
-
-    expectedBuyAmount: string | null;
-    expectedBuyAmountMaxSlippage: string | null;
-
-    formattedEstimatedTime: string | null;
-    formattedExchangeFeeUSD: string | null;
-    formattedInboundNetworkFeeUSD: string | null;
-    formattedLiquidityFeeUSD: string | null;
-    formattedTotalFeesUSD: string | null;
-
-    sellAssetPriceUSD: number | null;
-    sellAssetTicker: string | null;
-
-    buyAssetPriceUSD: number | null;
-    buyAssetTicker: string | null;
-
-    totalFeesUSD: number | null;
-  } | null;
-  setSelectedQuoteRouteIndex: (index: number) => void;
-};
-
-type UseSwapQuoteParams = { inputChain: Chain | null; outputChain: Chain | null; amount: string };
 
 export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuoteParams): UseSwapQuoteResult => {
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
@@ -161,39 +128,45 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
 
   const canShowFees = buyAssetPriceUSD && sellAssetPriceUSD;
 
-  const swapQuote = selectedQuoteRoute
-    ? {
-        buyAssetPriceUSD,
-        buyAssetTicker,
+  const swapQuote = useMemo(() => {
+    if (!selectedQuoteRoute) return null;
 
-        expectedBuyAmount,
-        expectedBuyAmountMaxSlippage,
+    return {
+      buyAssetPriceUSD,
+      buyAssetTicker,
 
-        formattedEstimatedTime,
-        formattedExchangeFeeUSD: canShowFees ? formatCurrency(exchangeFeeUSD) : "-",
-        formattedInboundNetworkFeeUSD: canShowFees ? formatCurrency(inboundNetworkFeeUSD) : "-",
-        formattedLiquidityFeeUSD: canShowFees ? formatCurrency(liquidityFeeUSD) : "-",
-        formattedTotalFeesUSD: canShowFees ? formatCurrency(totalFeesUSD) : "-",
+      expectedBuyAmount,
+      expectedBuyAmountMaxSlippage,
 
-        providerLogoURI: `${temp_host}/images/${providerName?.toLowerCase()}.png`,
-        providerName,
+      formattedEstimatedTime,
+      formattedExchangeFeeUSD: canShowFees ? formatCurrency(exchangeFeeUSD) : "-",
+      formattedInboundNetworkFeeUSD: canShowFees ? formatCurrency(inboundNetworkFeeUSD) : "-",
+      formattedLiquidityFeeUSD: canShowFees ? formatCurrency(liquidityFeeUSD) : "-",
+      formattedTotalFeesUSD: canShowFees ? formatCurrency(totalFeesUSD) : "-",
 
-        sellAssetPriceUSD,
-        sellAssetTicker,
-        totalFeesUSD,
-      }
-    : null;
+      providerLogoURI: `${temp_host}/images/${providerName?.toLowerCase()}.png`,
+      providerName,
 
-  return { setSelectedQuoteRouteIndex: (index: number) => setSelectedQuoteRouteIndex(index), swapQuote };
+      sellAssetPriceUSD,
+      sellAssetTicker,
+      totalFeesUSD,
+    };
+  }, [
+    selectedQuoteRoute,
+    buyAssetPriceUSD,
+    buyAssetTicker,
+    expectedBuyAmount,
+    expectedBuyAmountMaxSlippage,
+    formattedEstimatedTime,
+    exchangeFeeUSD,
+    inboundNetworkFeeUSD,
+    liquidityFeeUSD,
+    totalFeesUSD,
+    providerName,
+    sellAssetPriceUSD,
+    sellAssetTicker,
+    canShowFees,
+  ]);
+
+  return { setSelectedQuoteRouteIndex, swapQuote };
 };
-
-function formatCurrency(amount: number | null) {
-  console.log("amount", amount);
-
-  return Intl.NumberFormat("en-US", {
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-    style: "currency",
-  }).format(amount ?? 0);
-}

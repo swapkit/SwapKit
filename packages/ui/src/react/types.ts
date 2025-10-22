@@ -1,4 +1,4 @@
-import type { AssetValue, Chain, createSwapKit, SKConfigState, WalletOption } from "@swapkit/sdk";
+import type { AssetValue, Chain, createSwapKit, ProviderName, SKConfigState, WalletOption } from "@swapkit/sdk";
 
 export type KeystoreFile = { keystore: import("@swapkit/sdk/wallets").Keystore; file: File; chains: Chain[] } | null;
 
@@ -11,7 +11,6 @@ export interface SwapKitState {
   keystoreFile: KeystoreFile;
   isKeystoreOpen: boolean;
   isKeystoreDecrypting: boolean;
-  isConnectingWallet: boolean;
 
   setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
   setBalances: (balances: AssetValue[]) => void;
@@ -23,3 +22,30 @@ export interface SwapKitState {
 }
 
 export type SwapKitWidgetProps = { config?: SKConfigState };
+
+export type UseSwapQuoteResult = {
+  swapQuote: {
+    providerName: ProviderName | null;
+    providerLogoURI: string | null;
+
+    expectedBuyAmount: string | null;
+    expectedBuyAmountMaxSlippage: string | null;
+
+    formattedEstimatedTime: string | null;
+    formattedExchangeFeeUSD: string | null;
+    formattedInboundNetworkFeeUSD: string | null;
+    formattedLiquidityFeeUSD: string | null;
+    formattedTotalFeesUSD: string | null;
+
+    sellAssetPriceUSD: number | null;
+    sellAssetTicker: string | null;
+
+    buyAssetPriceUSD: number | null;
+    buyAssetTicker: string | null;
+
+    totalFeesUSD: number | null;
+  } | null;
+  setSelectedQuoteRouteIndex: (index: number) => void;
+};
+
+export type UseSwapQuoteParams = { inputChain: Chain | null; outputChain: Chain | null; amount: string };
