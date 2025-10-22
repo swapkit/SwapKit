@@ -7,10 +7,10 @@ import { formatCurrency } from "../../lib/utils";
 import { temp_host } from "../components/asset-icon";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
 import { useSwapKit } from "../swapkit-context";
-import type { UseSwapQuoteParams, UseSwapQuoteResult } from "../types";
+import type { UseSwapQuoteParams } from "../types";
 import { useDebouncedEffect } from "./use-debounced-effect";
 
-export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuoteParams): UseSwapQuoteResult => {
+export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuoteParams) => {
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
   const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
   const [selectedQuoteRouteIndex, setSelectedQuoteRouteIndex] = useState(0);
@@ -22,37 +22,53 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
     return quoteResponse?.routes?.[selectedQuoteRouteIndex] ?? null;
   }, [quoteResponse, selectedQuoteRouteIndex]);
 
-  const sellAsset = selectedQuoteRoute?.sellAsset ? AssetValue.from({ asset: selectedQuoteRoute?.sellAsset }) : null;
-  const buyAsset = selectedQuoteRoute?.buyAsset ? AssetValue.from({ asset: selectedQuoteRoute?.buyAsset }) : null;
+  const inputAssetValue = useMemo(() => {
+    if (!inputAsset) return null;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: optimisation for fetching price only when primitive values change
+    return AssetValue.from({ asset: inputAsset });
+  }, [inputAsset]);
+
+  const outputAssetValue = useMemo(() => {
+    if (!outputAsset) return null;
+
+    return AssetValue.from({ asset: outputAsset });
+  }, [outputAsset]);
+
   useEffect(() => {
-    if (!sellAsset || !buyAsset) return;
+    if (!inputAsset || !outputAsset) return;
 
     void SwapKitApi.getPrice({
       metadata: false,
-      tokens: [
-        { identifier: `${sellAsset?.chain}.${sellAsset?.ticker}` },
-        { identifier: `${buyAsset?.chain}.${buyAsset?.ticker}` },
-      ],
+      tokens: [{ identifier: inputAsset }, { identifier: outputAsset }],
     }).then((price) => setPriceResponse(price));
-  }, [selectedQuoteRoute?.sellAsset, selectedQuoteRoute?.buyAsset]);
+  }, [inputAsset, outputAsset]);
+
+  const buyAssetIdentifier = outputAssetValue?.toString();
+  const sellAssetIdentifier = inputAssetValue?.toString();
 
   const fetchSwapQuote = useCallback(async () => {
-    if (!(inputChain && outputChain && amount && swapKit)) {
+    const isValid =
+      amount &&
+      swapKit &&
+      inputAssetValue?.chain &&
+      outputAssetValue?.chain &&
+      buyAssetIdentifier &&
+      sellAssetIdentifier;
+
+    if (!isValid) {
       setQuoteResponse(null);
       return;
     }
 
     try {
       const quote = await SwapKitApi.getSwapQuote({
-        buyAsset: AssetValue.from({ chain: outputChain }).toString(),
-        destinationAddress: swapKit.getAddress(outputChain),
+        buyAsset: buyAssetIdentifier,
+        destinationAddress: swapKit.getAddress(outputAssetValue?.chain),
         includeTx: true,
         sellAmount: amount,
-        sellAsset: AssetValue.from({ chain: inputChain }).toString(),
+        sellAsset: sellAssetIdentifier,
         slippage: 3,
-        sourceAddress: swapKit.getAddress(inputChain),
+        sourceAddress: swapKit.getAddress(inputAssetValue?.chain),
       });
 
       if (quote?.routes?.length <= 0) return;
@@ -65,9 +81,9 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
       });
       setQuoteResponse(null);
     }
-  }, [outputChain, amount, swapKit, inputChain]);
+  }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, sellAssetIdentifier, buyAssetIdentifier]);
 
-  useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputChain, inputChain], 1000);
+  useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputAsset, inputAsset], 1000);
 
   const formattedEstimatedTime = useMemo(() => {
     if (!selectedQuoteRoute?.estimatedTime?.total) return "00m 00s";
@@ -82,17 +98,18 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
   const providerName = selectedQuoteRoute?.providers?.[0] || null;
 
   const getAssetPriceUSD = (asset: AssetValue) => {
-    const assetIdentifier = `${asset?.chain}.${asset?.ticker}`;
+    const assetIdentifier = asset.toString();
+
     const price = priceResponse?.find((p) => p.identifier === assetIdentifier)?.price_usd || null;
 
     return price;
   };
 
-  const sellAssetPriceUSD = sellAsset && getAssetPriceUSD(sellAsset);
-  const sellAssetTicker = sellAsset?.ticker || null;
+  const sellAssetPriceUSD = inputAssetValue && getAssetPriceUSD(inputAssetValue);
+  const sellAssetTicker = inputAssetValue?.ticker || null;
 
-  const buyAssetPriceUSD = buyAsset && getAssetPriceUSD(buyAsset);
-  const buyAssetTicker = buyAsset?.ticker || null;
+  const buyAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
+  const buyAssetTicker = outputAssetValue?.ticker || null;
 
   const assetValueToUSD = (assetValue: AssetValue) => {
     const assetPriceUSD = getAssetPriceUSD(assetValue);
@@ -104,23 +121,23 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
 
   const totalFeesUSD =
     selectedQuoteRoute?.fees?.reduce(
-      (acc, fee) => acc + assetValueToUSD(AssetValue.from({ asset: fee.asset, value: fee.amount })),
+      (acc, fee) => acc + assetValueToUSD(AssetValue.from({ asset: fee?.asset, value: fee?.amount })),
       0,
     ) || 0;
 
   const liquidityFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "liquidity");
   const liquidityFeeUSD = liquidityFee
-    ? assetValueToUSD(AssetValue.from({ asset: liquidityFee.asset, value: liquidityFee.amount }))
+    ? assetValueToUSD(AssetValue.from({ asset: liquidityFee?.asset, value: liquidityFee?.amount }))
     : null;
 
   const exchangeFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "affiliate");
   const exchangeFeeUSD = exchangeFee
-    ? assetValueToUSD(AssetValue.from({ asset: exchangeFee.asset, value: exchangeFee.amount }))
+    ? assetValueToUSD(AssetValue.from({ asset: exchangeFee?.asset, value: exchangeFee?.amount }))
     : null;
 
   const inboundNetworkFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "inbound");
   const inboundNetworkFeeUSD = inboundNetworkFee
-    ? assetValueToUSD(AssetValue.from({ asset: inboundNetworkFee.asset, value: inboundNetworkFee.amount }))
+    ? assetValueToUSD(AssetValue.from({ asset: inboundNetworkFee?.asset, value: inboundNetworkFee?.amount }))
     : null;
 
   const expectedBuyAmountMaxSlippage = selectedQuoteRoute?.expectedBuyAmountMaxSlippage || null;
@@ -129,11 +146,17 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
   const canShowFees = buyAssetPriceUSD && sellAssetPriceUSD;
 
   const swapQuote = useMemo(() => {
-    if (!selectedQuoteRoute) return null;
+    if (!buyAssetPriceUSD || !sellAssetPriceUSD) return null;
 
+    // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
     return {
       buyAssetPriceUSD,
       buyAssetTicker,
+      formattedBuyAssetPriceUSD: formatCurrency(buyAssetPriceUSD),
+
+      sellAssetPriceUSD,
+      sellAssetTicker,
+      formattedSellAssetPriceUSD: formatCurrency(sellAssetPriceUSD),
 
       expectedBuyAmount,
       expectedBuyAmountMaxSlippage,
@@ -146,13 +169,8 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
 
       providerLogoURI: `${temp_host}/images/${providerName?.toLowerCase()}.png`,
       providerName,
-
-      sellAssetPriceUSD,
-      sellAssetTicker,
-      totalFeesUSD,
     };
   }, [
-    selectedQuoteRoute,
     buyAssetPriceUSD,
     buyAssetTicker,
     expectedBuyAmount,
@@ -168,5 +186,8 @@ export const useSwapQuote = ({ inputChain, outputChain, amount }: UseSwapQuotePa
     canShowFees,
   ]);
 
-  return { setSelectedQuoteRouteIndex, swapQuote };
+  return useMemo(
+    () => ({ selectedQuoteRoute, setSelectedQuoteRouteIndex, swapQuote }),
+    [selectedQuoteRoute, swapQuote],
+  );
 };

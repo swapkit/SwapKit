@@ -1,6 +1,6 @@
 "use client";
 
-import { AssetValue, Chain } from "@swapkit/sdk";
+import { Chain } from "@swapkit/sdk";
 import { SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
@@ -15,11 +15,11 @@ import { Input } from "../ui/input";
 import { SwapAssetItem } from "./swap-asset-item";
 
 export function SwapAssetSelect({
-  selectedChain,
-  setSelectedChain,
+  selectedAsset,
+  setSelectedAsset,
 }: {
-  selectedChain: Chain | null;
-  setSelectedChain: (chain: Chain) => void;
+  selectedAsset: string | undefined;
+  setSelectedAsset: (asset: string) => void;
 }) {
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,14 +76,14 @@ export function SwapAssetSelect({
     setOpen(true);
   };
 
-  if (!selectedChain) return null;
+  if (!selectedAsset) return null;
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
         className="-ml-2 mt-1 w-auto min-w-48 max-w-1/2 rounded-lg px-2 transition-colors duration-100 hover:bg-white/[0.08]"
         onClick={handleDialogTriggerClick}>
-        <SwapAssetItem asset={AssetValue.from({ chain: selectedChain }).toString()} />
+        <SwapAssetItem asset={selectedAsset} />
       </DialogTrigger>
 
       <DialogContent>
@@ -183,7 +183,7 @@ export function SwapAssetSelect({
                     <Button
                       className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
                       key={`swap-asset-item-${assetValueString}`}
-                      onClick={() => setSelectedChain(assetValue.chain)}
+                      onClick={() => setSelectedAsset(assetValueString)}
                       variant="ghost">
                       <SwapAssetItem asset={assetValueString} />
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { AssetValue, Chain, ProviderName, type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
+import { AssetValue, ProviderName, type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
@@ -12,23 +12,22 @@ import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
+import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
 import "@swapkit/ui/swapkit.css";
-import { useSwapQuote } from "./hooks/use-swap-quote";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
-  const [inputChain, setInputChain] = useState<Chain | null>(Chain.THORChain);
-  const [outputChain, setOutputChain] = useState<Chain | null>(Chain.Kujira);
-  const [quoteRoutes, setQuoteRoutes] = useState<QuoteResponseRoute[]>();
+  const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
+  const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.MAYA");
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
-  const { swapQuote } = useSwapQuote({ amount, inputChain, outputChain });
+  const { swapQuote, selectedQuoteRoute } = useSwapQuote({ amount, inputAsset, outputAsset });
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
@@ -52,7 +51,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       await swap.wait();
       setAmount("");
-      setQuoteRoutes([]);
       toast.success("Swap completed successfully", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
     } catch (error) {
       console.error("Swap failed:", error);
@@ -100,17 +98,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       return;
     }
 
-    if (!swapQuote || !inputChain || !outputChain) return;
+    if (!swapQuote || !inputAsset || !outputAsset || !selectedQuoteRoute) return;
 
     try {
-      const inputAssetValue = await AssetValue.from({ amount, asyncTokenLookup: true, chain: inputChain });
+      const inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
       const amountValue = inputAssetValue.set(amount);
 
-      const route = quoteRoutes?.[0];
-
-      if (!route) return;
-
-      await performSwap(route, amountValue);
+      await performSwap(selectedQuoteRoute, amountValue);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -119,11 +113,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const estimatedOutput = useMemo(() => {
-    return quoteRoutes?.[0]?.expectedBuyAmount;
-  }, [quoteRoutes]);
-
-  const submitButtonContent = match({ amount, inputChain, isSwapping, isWalletConnected, outputChain })
+  const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
       <>
         <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
@@ -131,7 +121,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       </>
     ))
     .with({ isWalletConnected: false }, () => "Connect wallet")
-    .with({ inputChain: P.nullish }, { outputChain: P.nullish }, () => "Select Assets")
+    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
     .with({ amount: P.nullish }, () => "Enter Amount")
     .otherwise(() => "Swap");
 
@@ -145,11 +135,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
             <div className="grid gap-4">
               <SwapInputWithChainSelector
                 amount={amount}
+                formattedAmountUSD={swapQuote?.formattedBuyAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Pay"
-                selectedChain={inputChain}
+                selectedAsset={inputAsset?.toString()}
                 setAmount={setAmount}
-                setSelectedChain={setInputChain}
+                setSelectedAsset={setInputAsset}
               />
 
               <div className="-my-4 flex items-center space-x-4">
@@ -158,8 +149,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 <Button
                   className="size-10 shrink-0 rounded-full"
                   onClick={() => {
-                    setInputChain(outputChain);
-                    setOutputChain(inputChain);
+                    setInputAsset(outputAsset);
+                    setOutputAsset(inputAsset);
                   }}
                   size="unstyled"
                   variant="tertiary">
@@ -170,11 +161,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
               </div>
 
               <SwapInputWithChainSelector
-                amount={estimatedOutput}
+                amount={swapQuote?.expectedBuyAmount}
+                formattedAmountUSD={swapQuote?.formattedSellAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Receive"
-                selectedChain={outputChain}
-                setSelectedChain={setOutputChain}
+                selectedAsset={outputAsset?.toString()}
+                setSelectedAsset={setOutputAsset}
               />
             </div>
           </div>
@@ -184,7 +176,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       <Button
         className="w-full"
         disabled={
-          (isWalletConnected && !(inputChain && outputChain && Number.parseFloat(amount ?? "0") > 0)) || isSwapping
+          (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) || isSwapping
         }
         onClick={handleSubmitButtonClick}
         size="xl"

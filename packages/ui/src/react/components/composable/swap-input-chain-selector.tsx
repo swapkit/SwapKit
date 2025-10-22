@@ -1,14 +1,14 @@
 "use client";
 
-import type { Chain } from "@swapkit/sdk";
 import { Input } from "../ui/input";
 import { SwapAssetSelect } from "./swap-asset-select";
 
 export function SwapInputWithChainSelector({
   label,
+  formattedAmountUSD,
 
-  selectedChain,
-  setSelectedChain,
+  selectedAsset,
+  setSelectedAsset,
 
   amount,
   setAmount,
@@ -17,9 +17,10 @@ export function SwapInputWithChainSelector({
 }: {
   label: string;
 
-  selectedChain: Chain | null;
-  setSelectedChain: (chain: Chain) => void;
-  amount: string | undefined;
+  formattedAmountUSD: string | undefined;
+  selectedAsset: string | undefined;
+  setSelectedAsset: (asset: string) => void;
+  amount: string | null | undefined;
   setAmount?: (amount: string) => void;
   isSwapping: boolean;
 }) {
@@ -28,19 +29,19 @@ export function SwapInputWithChainSelector({
       <span className="text-muted-foreground text-xs">{label}</span>
 
       <div className="flex justify-between">
-        <SwapAssetSelect selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
+        <SwapAssetSelect selectedAsset={selectedAsset} setSelectedAsset={setSelectedAsset} />
 
         <div className="flex flex-col items-end">
           <Input
             className="-mr-4 !shadow-none !border-0 !ring-0 !ring-offset-0 bg-transparent text-end font-medium text-2xl"
-            disabled={!selectedChain || isSwapping || !setAmount}
+            disabled={!selectedAsset || isSwapping || !setAmount}
             onChange={(e) => setAmount?.(e.target.value)}
             placeholder="0.00"
             type="text"
-            value={amount}
+            value={amount ?? ""}
           />
 
-          <span className="text-muted-foreground text-sm">$0.00</span>
+          <span className="text-muted-foreground text-sm">{formattedAmountUSD ?? "$0.00"}</span>
         </div>
       </div>
     </div>
