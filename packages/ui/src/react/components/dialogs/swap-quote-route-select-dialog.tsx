@@ -26,7 +26,7 @@ export const SwapQuoteRouteSelectDialog = ({
             <Button
               className={cn(
                 "h-auto w-full justify-start p-4",
-                route?.routeIndex === selectedRoute?.routeIndex && "ring-2 ring-primary",
+                route?.routeIndex === selectedRoute?.routeIndex && "ring-2 ring-white/[0.64]",
               )}
               key={`swap-quote-route-${route?.providerName}`}
               onClick={() => modal.resolve({ confirmed: true, data: route?.routeIndex })}>
