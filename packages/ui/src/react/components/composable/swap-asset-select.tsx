@@ -183,7 +183,10 @@ export function SwapAssetSelect({
                     <Button
                       className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
                       key={`swap-asset-item-${assetValueString}`}
-                      onClick={() => setSelectedAsset(assetValueString)}
+                      onClick={() => {
+                        setSelectedAsset(assetValueString);
+                        setOpen(false);
+                      }}
                       variant="ghost">
                       <SwapAssetItem asset={assetValueString} />
 
