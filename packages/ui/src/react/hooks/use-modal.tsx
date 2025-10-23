@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { create } from "zustand";
 
 export const useModalStore = create<{
@@ -27,18 +27,33 @@ export const useModalStore = create<{
 }));
 
 export function useModal<T = unknown>() {
+  const defaultOpen = true;
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const { id } = useContext(ModalContext);
 
   const modal = useModalStore.getState().modals.find((m) => m.id === id);
 
+  const resolve = ({ confirmed, data }: { confirmed: boolean; data?: T }) => {
+    modal?._promise?.resolve?.({ confirmed, data });
+    setIsOpen(false);
+
+    setTimeout(() => {
+      removeModal({ id });
+    }, 200);
+  };
+
   return {
-    defaultOpen: true,
-    onOpenChange: (open: boolean) => !open && id && removeModal({ confirmed: false, id }),
-    open: true,
-    resolve: ({ confirmed, data }: { confirmed: boolean; data?: T }) => {
-      removeModal({ confirmed, id });
-      modal?._promise?.resolve?.({ confirmed, data });
+    defaultOpen,
+    onOpenChange: (open: boolean) => {
+      if (open) {
+        setIsOpen(true);
+        return;
+      }
+
+      resolve({ confirmed: false });
     },
+    open: isOpen,
+    resolve,
   };
 }
 
@@ -46,12 +61,12 @@ export function showModal<T = unknown>(component: React.ReactNode): Promise<{ co
   return useModalStore.getState().addModal<T>(component);
 }
 
-const removeModal = ({ id, confirmed }: { id: string; confirmed: boolean }) => {
+const removeModal = ({ id }: { id: string }) => {
   const modal = useModalStore.getState().modals.find((m) => m.id === id);
 
-  useModalStore.getState().removeModal(id);
+  if (!modal) return;
 
-  modal?._promise?.resolve?.({ confirmed });
+  useModalStore.getState().removeModal(id);
 };
 
 const ModalContext = createContext<{ id: string }>({ id: "" });
