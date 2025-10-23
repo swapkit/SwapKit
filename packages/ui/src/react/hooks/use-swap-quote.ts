@@ -88,7 +88,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     }
   }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, inputAssetIdentifier, outputAssetIdentifier]);
 
-  useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputAsset, inputAsset], 1000);
+  useDebouncedEffect(fetchSwapQuote, [amount, swapKit, swapKitConfig, outputAsset, inputAsset], 700);
 
   const getAssetPriceUSD = useCallback(
     (asset: AssetValue) => {
@@ -186,8 +186,14 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     return quoteResponse?.routes?.map(parseQuoteResponseRoute);
   }, [quoteResponse?.routes, outputAssetValue, getAssetPriceUSD, inputAssetPriceUSD]);
 
+  const reset = useCallback(() => {
+    setQuoteResponse(null);
+    setSelectedRouteIndex(0);
+  }, []);
+
   return useMemo(
     () => ({
+      reset,
       routes: swapQuoteRoutes,
       selectedRoute: {
         ...(swapQuoteRoutes?.[selectedRouteIndex] ?? null),
@@ -197,6 +203,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       },
       setSelectedRouteIndex,
     }),
-    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker],
+    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker, reset],
   );
 };

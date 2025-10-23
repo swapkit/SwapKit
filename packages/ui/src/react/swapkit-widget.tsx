@@ -26,7 +26,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
-  const { selectedRoute, setSelectedRouteIndex, routes } = useSwapQuote({ amount, inputAsset, outputAsset });
+  const { selectedRoute, setSelectedRouteIndex, routes, reset } = useSwapQuote({ amount, inputAsset, outputAsset });
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
@@ -150,6 +150,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                   onClick={() => {
                     setInputAsset(outputAsset);
                     setOutputAsset(inputAsset);
+                    setAmount(selectedRoute?.expectedBuyAmount ?? "");
+                    reset();
                   }}
                   size="unstyled"
                   variant="tertiary">
