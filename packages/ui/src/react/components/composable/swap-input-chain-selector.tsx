@@ -41,7 +41,7 @@ export function SwapInputWithChainSelector({
             value={amount ?? ""}
           />
 
-          <span className="text-muted-foreground text-sm">{formattedAmountUSD ?? "$0.00"}</span>
+          <span className="text-muted-foreground text-sm">{formattedAmountUSD}</span>
         </div>
       </div>
     </div>

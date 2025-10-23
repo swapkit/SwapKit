@@ -150,11 +150,11 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     return {
       outputAssetPriceUSD,
       outputAssetTicker,
-      formattedOutputAssetPriceUSD: formatCurrency(outputAssetPriceUSD),
+      formattedOutputAssetPriceUSD: outputAssetPriceUSD ? formatCurrency(outputAssetPriceUSD) : "$0.00",
 
       inputAssetPriceUSD,
       inputAssetTicker,
-      formattedInputAssetPriceUSD: formatCurrency(inputAssetPriceUSD),
+      formattedInputAssetPriceUSD: inputAssetPriceUSD ? formatCurrency(inputAssetPriceUSD * Number(amount)) : "$0.00",
 
       expectedBuyAmount,
       expectedBuyAmountMaxSlippage,
@@ -182,6 +182,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     inputAssetPriceUSD,
     inputAssetTicker,
     canShowFees,
+    amount,
   ]);
 
   return useMemo(
