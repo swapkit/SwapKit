@@ -20,6 +20,7 @@ import { useDebouncedEffect } from "./use-debounced-effect";
 export type UseSwapQuoteReturn = ReturnType<typeof useSwapQuote>;
 
 export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuoteParams) => {
+  const [isFetchingQuote, setIsFetchingQuote] = useState(false);
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
   const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
@@ -66,6 +67,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     }
 
     try {
+      setIsFetchingQuote(true);
+
       const quote = await SwapKitApi.getSwapQuote({
         buyAsset: outputAssetIdentifier,
         destinationAddress: swapKit.getAddress(outputAssetValue?.chain),
@@ -85,6 +88,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
         toasterId: SWAPKIT_WIDGET_TOASTER_ID,
       });
       setQuoteResponse(null);
+    } finally {
+      setIsFetchingQuote(false);
     }
   }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, inputAssetIdentifier, outputAssetIdentifier]);
 
@@ -193,6 +198,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
   return useMemo(
     () => ({
+      isFetchingQuote,
       reset,
       routes: swapQuoteRoutes,
       selectedRoute: {
@@ -203,6 +209,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       },
       setSelectedRouteIndex,
     }),
-    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker, reset],
+    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker, reset, isFetchingQuote],
   );
 };

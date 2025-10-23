@@ -26,7 +26,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
-  const { selectedRoute, setSelectedRouteIndex, routes, reset } = useSwapQuote({ amount, inputAsset, outputAsset });
+  const { isFetchingQuote, selectedRoute, setSelectedRouteIndex, routes, reset } = useSwapQuote({
+    amount,
+    inputAsset,
+    outputAsset,
+  });
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
@@ -164,6 +168,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
               <SwapInputWithChainSelector
                 amount={selectedRoute?.expectedBuyAmount}
                 formattedAmountUSD={selectedRoute?.formattedOutputAssetPriceUSD ?? "$0.00"}
+                isLoading={isFetchingQuote}
                 isSwapping={isSwapping}
                 label="Receive"
                 selectedAsset={outputAsset?.toString()}
@@ -177,7 +182,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       <Button
         className="w-full"
         disabled={
-          (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) || isSwapping
+          (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) ||
+          isSwapping ||
+          isFetchingQuote
         }
         onClick={handleSubmitButtonClick}
         size="xl"
