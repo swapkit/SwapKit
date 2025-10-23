@@ -148,13 +148,16 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   const swapQuote = useMemo(() => {
     // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
     return {
-      outputAssetPriceUSD,
-      outputAssetTicker,
-      formattedOutputAssetPriceUSD: outputAssetPriceUSD ? formatCurrency(outputAssetPriceUSD) : "$0.00",
-
       inputAssetPriceUSD,
       inputAssetTicker,
       formattedInputAssetPriceUSD: inputAssetPriceUSD ? formatCurrency(inputAssetPriceUSD * Number(amount)) : "$0.00",
+
+      outputAssetPriceUSD,
+      outputAssetTicker,
+      formattedOutputAssetPriceUSD:
+        expectedBuyAmount && outputAssetPriceUSD
+          ? formatCurrency(outputAssetPriceUSD * Number(expectedBuyAmount) - totalFeesUSD)
+          : "$0.00",
 
       expectedBuyAmount,
       expectedBuyAmountMaxSlippage,
