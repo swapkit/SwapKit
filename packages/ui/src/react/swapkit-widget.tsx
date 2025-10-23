@@ -15,7 +15,6 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
-
 import "@swapkit/ui/swapkit.css";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
@@ -27,7 +26,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const { setConfig } = useSwapKitStore();
   const { swapKit, isWalletConnected } = useSwapKit();
-  const { swapQuote, selectedQuoteRoute } = useSwapQuote({ amount, inputAsset, outputAsset });
+  const { selectedRoute, setSelectedRouteIndex, routes } = useSwapQuote({ amount, inputAsset, outputAsset });
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
@@ -98,13 +97,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       return;
     }
 
-    if (!swapQuote || !inputAsset || !outputAsset || !selectedQuoteRoute) return;
+    if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     try {
       const inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
       const amountValue = inputAssetValue.set(amount);
 
-      await performSwap(selectedQuoteRoute, amountValue);
+      await performSwap(selectedRoute?.route, amountValue);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -135,7 +134,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
             <div className="grid gap-4">
               <SwapInputWithChainSelector
                 amount={amount}
-                formattedAmountUSD={swapQuote?.formattedInputAssetPriceUSD}
+                formattedAmountUSD={selectedRoute?.formattedInputAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Pay"
                 selectedAsset={inputAsset?.toString()}
@@ -161,8 +160,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
               </div>
 
               <SwapInputWithChainSelector
-                amount={swapQuote?.expectedBuyAmount}
-                formattedAmountUSD={swapQuote?.formattedOutputAssetPriceUSD}
+                amount={selectedRoute?.expectedBuyAmount}
+                formattedAmountUSD={selectedRoute?.formattedOutputAssetPriceUSD ?? "$0.00"}
                 isSwapping={isSwapping}
                 label="Receive"
                 selectedAsset={outputAsset?.toString()}
@@ -184,7 +183,14 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         {submitButtonContent}
       </Button>
 
-      {selectedQuoteRoute && <SwapQuotePreview className="!mt-6" swapQuote={swapQuote} />}
+      {selectedRoute?.route && (
+        <SwapQuotePreview
+          className="!mt-6"
+          routes={routes}
+          selectedRoute={selectedRoute}
+          setSelectedRouteIndex={setSelectedRouteIndex}
+        />
+      )}
 
       <Toaster position="bottom-right" />
       <ModalSpawner />

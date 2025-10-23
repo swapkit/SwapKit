@@ -1,15 +1,18 @@
 import { TimerIcon } from "lucide-react";
+import { cn } from "../../../lib/utils";
 import { useModal } from "../../hooks/use-modal";
-import type { useSwapQuote } from "../../hooks/use-swap-quote";
+import type { UseSwapQuoteReturn } from "../../hooks/use-swap-quote";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 export const SwapQuoteRouteSelectDialog = ({
-  swapQuoteRoutes,
+  routes,
+  selectedRoute,
 }: {
-  swapQuoteRoutes: ReturnType<typeof useSwapQuote>["swapQuote"][];
+  routes: UseSwapQuoteReturn["routes"];
+  selectedRoute: UseSwapQuoteReturn["selectedRoute"];
 }) => {
-  const modal = useModal();
+  const modal = useModal<NonNullable<UseSwapQuoteReturn["selectedRoute"]>["routeIndex"]>();
 
   return (
     <Dialog {...modal}>
@@ -19,22 +22,25 @@ export const SwapQuoteRouteSelectDialog = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-2">
-          {swapQuoteRoutes?.map((swapQuoteRoute) => (
+          {routes?.map((route) => (
             <Button
-              className="h-auto w-full justify-start p-4"
-              key={`swap-quote-route-${swapQuoteRoute?.providerName}`}
-              onClick={() => modal.resolve({ confirmed: true, data: swapQuoteRoute })}>
-              {swapQuoteRoute?.providerName && (
+              className={cn(
+                "h-auto w-full justify-start p-4",
+                route?.routeIndex === selectedRoute?.routeIndex && "ring-2 ring-primary",
+              )}
+              key={`swap-quote-route-${route?.providerName}`}
+              onClick={() => modal.resolve({ confirmed: true, data: route?.routeIndex })}>
+              {route?.providerName && (
                 <img
-                  alt={swapQuoteRoute?.providerName}
+                  alt={route?.providerName}
                   className="size-10 rounded-full bg-primary"
-                  src={swapQuoteRoute?.providerLogoURI ?? ""}
+                  src={route?.providerLogoURI ?? ""}
                 />
               )}
 
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-base text-foreground">{swapQuoteRoute?.providerName}</span>
+                  <span className="font-medium text-base text-foreground">{route?.providerName}</span>
 
                   <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">Best</div>
                 </div>
@@ -42,17 +48,17 @@ export const SwapQuoteRouteSelectDialog = ({
                 <div className="flex items-center gap-1 text-muted-foreground text-xs">
                   <TimerIcon className="size-4" />
 
-                  <div className="mt-0.5 font-normal">{swapQuoteRoute?.formattedEstimatedTime}</div>
+                  <div className="mt-0.5 font-normal">{route?.formattedEstimatedTime}</div>
                 </div>
               </div>
 
               <div className="ml-auto flex flex-col items-end gap-1">
                 <span className="font-medium text-base text-foreground">
-                  {swapQuoteRoute?.expectedBuyAmount} {swapQuoteRoute?.outputAssetTicker}
+                  {route?.expectedBuyAmount} {route?.outputAssetTicker}
                 </span>
 
                 <span className="font-normal text-muted-foreground text-xs">
-                  ≈ {swapQuoteRoute?.formattedOutputAssetPriceUSD}
+                  ≈ {route?.formattedOutputAssetPriceUSD}
                 </span>
               </div>
             </Button>

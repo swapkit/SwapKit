@@ -32,6 +32,7 @@ const buttonVariants = cva(
         tertiary: "bg-tertiary text-tertiary-foreground hover:opacity-80 transition-opacity",
 
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        unstyled: "p-0 m-0 h-auto w-auto",
       },
     },
   },

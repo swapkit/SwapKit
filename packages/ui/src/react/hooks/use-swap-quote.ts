@@ -1,6 +1,13 @@
 "use client";
 
-import { AssetValue, type PriceResponse, type QuoteResponse, SwapKitApi, useSwapKitConfig } from "@swapkit/sdk";
+import {
+  AssetValue,
+  type PriceResponse,
+  type QuoteResponse,
+  type QuoteResponseRoute,
+  SwapKitApi,
+  useSwapKitConfig,
+} from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "../../lib/utils";
@@ -10,17 +17,15 @@ import { useSwapKit } from "../swapkit-context";
 import type { UseSwapQuoteParams } from "../types";
 import { useDebouncedEffect } from "./use-debounced-effect";
 
+export type UseSwapQuoteReturn = ReturnType<typeof useSwapQuote>;
+
 export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuoteParams) => {
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
   const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
-  const [selectedQuoteRouteIndex, setSelectedQuoteRouteIndex] = useState(0);
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
 
   const { swapKit } = useSwapKit();
   const swapKitConfig = useSwapKitConfig();
-
-  const selectedQuoteRoute = useMemo(() => {
-    return quoteResponse?.routes?.[selectedQuoteRouteIndex] ?? null;
-  }, [quoteResponse, selectedQuoteRouteIndex]);
 
   const inputAssetValue = useMemo(() => {
     if (!inputAsset) return null;
@@ -85,111 +90,113 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
   useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputAsset, inputAsset], 1000);
 
-  const formattedEstimatedTime = useMemo(() => {
-    if (!selectedQuoteRoute?.estimatedTime?.total) return "00m 00s";
+  const getAssetPriceUSD = useCallback(
+    (asset: AssetValue) => {
+      const assetIdentifier = asset.toString();
 
-    const hours = Math.floor(selectedQuoteRoute?.estimatedTime?.total / 3600);
-    const minutes = Math.floor((selectedQuoteRoute?.estimatedTime?.total % 3600) / 60);
-    const seconds = selectedQuoteRoute?.estimatedTime?.total % 60;
+      const price = priceResponse?.find((p) => p.identifier === assetIdentifier)?.price_usd || null;
 
-    return `${hours ? `${hours.toFixed(0)}h ` : ""}${`${minutes.toFixed(0)}m `}${`${seconds.toFixed(0)}s`}`;
-  }, [selectedQuoteRoute?.estimatedTime?.total]);
-
-  const providerName = selectedQuoteRoute?.providers?.[0] || null;
-
-  const getAssetPriceUSD = (asset: AssetValue) => {
-    const assetIdentifier = asset.toString();
-
-    const price = priceResponse?.find((p) => p.identifier === assetIdentifier)?.price_usd || null;
-
-    return price;
-  };
+      return price;
+    },
+    [priceResponse],
+  );
 
   const inputAssetPriceUSD = inputAssetValue && getAssetPriceUSD(inputAssetValue);
   const inputAssetTicker = inputAssetValue?.ticker || null;
 
-  const outputAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
-  const outputAssetTicker = outputAssetValue?.ticker || null;
+  const swapQuoteRoutes = useMemo(() => {
+    const formatEstimatedTime = (estimatedTime: QuoteResponseRoute["estimatedTime"]) => {
+      if (!estimatedTime?.total) return "00m 00s";
 
-  const assetValueToUSD = (assetValue: AssetValue) => {
-    const assetPriceUSD = getAssetPriceUSD(assetValue);
+      const hours = Math.floor(estimatedTime?.total / 3600);
+      const minutes = Math.floor((estimatedTime?.total % 3600) / 60);
+      const seconds = estimatedTime?.total % 60;
 
-    if (!assetPriceUSD) return 0;
-
-    return assetValue.getValue("number") * assetPriceUSD;
-  };
-
-  const totalFeesUSD =
-    selectedQuoteRoute?.fees?.reduce(
-      (acc, fee) => acc + assetValueToUSD(AssetValue.from({ asset: fee?.asset, value: fee?.amount })),
-      0,
-    ) || 0;
-
-  const liquidityFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "liquidity");
-  const liquidityFeeUSD = liquidityFee
-    ? assetValueToUSD(AssetValue.from({ asset: liquidityFee?.asset, value: liquidityFee?.amount }))
-    : null;
-
-  const exchangeFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "affiliate");
-  const exchangeFeeUSD = exchangeFee
-    ? assetValueToUSD(AssetValue.from({ asset: exchangeFee?.asset, value: exchangeFee?.amount }))
-    : null;
-
-  const inboundNetworkFee = selectedQuoteRoute?.fees?.find((fee) => fee.type === "inbound");
-  const inboundNetworkFeeUSD = inboundNetworkFee
-    ? assetValueToUSD(AssetValue.from({ asset: inboundNetworkFee?.asset, value: inboundNetworkFee?.amount }))
-    : null;
-
-  const expectedBuyAmountMaxSlippage = selectedQuoteRoute?.expectedBuyAmountMaxSlippage || null;
-  const expectedBuyAmount = selectedQuoteRoute?.expectedBuyAmount || null;
-
-  const canShowFees = outputAssetPriceUSD && inputAssetPriceUSD;
-
-  const swapQuote = useMemo(() => {
-    // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
-    return {
-      inputAssetPriceUSD,
-      inputAssetTicker,
-      formattedInputAssetPriceUSD: inputAssetPriceUSD ? formatCurrency(inputAssetPriceUSD * Number(amount)) : "$0.00",
-
-      outputAssetPriceUSD,
-      outputAssetTicker,
-      formattedOutputAssetPriceUSD:
-        expectedBuyAmount && outputAssetPriceUSD
-          ? formatCurrency(outputAssetPriceUSD * Number(expectedBuyAmount) - totalFeesUSD)
-          : "$0.00",
-
-      expectedBuyAmount,
-      expectedBuyAmountMaxSlippage,
-
-      formattedEstimatedTime,
-      formattedExchangeFeeUSD: canShowFees ? formatCurrency(exchangeFeeUSD) : "-",
-      formattedInboundNetworkFeeUSD: canShowFees ? formatCurrency(inboundNetworkFeeUSD) : "-",
-      formattedLiquidityFeeUSD: canShowFees ? formatCurrency(liquidityFeeUSD) : "-",
-      formattedTotalFeesUSD: canShowFees ? formatCurrency(totalFeesUSD) : "-",
-
-      providerLogoURI: `${temp_host}/images/${providerName?.toLowerCase()}.png`,
-      providerName,
+      return `${hours ? `${hours.toFixed(0)}h ` : ""}${`${minutes.toFixed(0)}m `}${`${seconds.toFixed(0)}s`}`;
     };
-  }, [
-    outputAssetPriceUSD,
-    outputAssetTicker,
-    expectedBuyAmount,
-    expectedBuyAmountMaxSlippage,
-    formattedEstimatedTime,
-    exchangeFeeUSD,
-    inboundNetworkFeeUSD,
-    liquidityFeeUSD,
-    totalFeesUSD,
-    providerName,
-    inputAssetPriceUSD,
-    inputAssetTicker,
-    canShowFees,
-    amount,
-  ]);
+
+    const assetValueToUSD = (assetValue: AssetValue) => {
+      const assetPriceUSD = getAssetPriceUSD(assetValue);
+
+      if (!assetPriceUSD) return 0;
+
+      return assetValue.getValue("number") * assetPriceUSD;
+    };
+
+    const parseQuoteResponseRoute = (quoteResponseRoute: QuoteResponseRoute, index: number) => {
+      const formattedEstimatedTime = formatEstimatedTime(quoteResponseRoute?.estimatedTime);
+
+      const providerName = quoteResponseRoute?.providers?.[0] || null;
+
+      const outputAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
+      const outputAssetTicker = outputAssetValue?.ticker || null;
+
+      const totalFeesUSD =
+        quoteResponseRoute?.fees?.reduce(
+          (acc, fee) => acc + assetValueToUSD(AssetValue.from({ asset: fee?.asset, value: fee?.amount })),
+          0,
+        ) || 0;
+
+      const liquidityFee = quoteResponseRoute?.fees?.find((fee) => fee.type === "liquidity");
+      const liquidityFeeUSD = liquidityFee
+        ? assetValueToUSD(AssetValue.from({ asset: liquidityFee?.asset, value: liquidityFee?.amount }))
+        : null;
+
+      const exchangeFee = quoteResponseRoute?.fees?.find((fee) => fee.type === "affiliate");
+      const exchangeFeeUSD = exchangeFee
+        ? assetValueToUSD(AssetValue.from({ asset: exchangeFee?.asset, value: exchangeFee?.amount }))
+        : null;
+
+      const inboundNetworkFee = quoteResponseRoute?.fees?.find((fee) => fee.type === "inbound");
+      const inboundNetworkFeeUSD = inboundNetworkFee
+        ? assetValueToUSD(AssetValue.from({ asset: inboundNetworkFee?.asset, value: inboundNetworkFee?.amount }))
+        : null;
+
+      const expectedBuyAmountMaxSlippage = quoteResponseRoute?.expectedBuyAmountMaxSlippage || null;
+      const expectedBuyAmount = quoteResponseRoute?.expectedBuyAmount || null;
+
+      const canShowFees = outputAssetPriceUSD && inputAssetPriceUSD;
+
+      // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
+      return {
+        routeIndex: index,
+        route: quoteResponseRoute,
+
+        outputAssetPriceUSD,
+        outputAssetTicker,
+        formattedOutputAssetPriceUSD:
+          expectedBuyAmount && outputAssetPriceUSD
+            ? formatCurrency(outputAssetPriceUSD * Number(expectedBuyAmount) - totalFeesUSD)
+            : "$0.00",
+
+        expectedBuyAmount,
+        expectedBuyAmountMaxSlippage,
+
+        formattedEstimatedTime,
+        formattedExchangeFeeUSD: canShowFees ? formatCurrency(exchangeFeeUSD) : "-",
+        formattedInboundNetworkFeeUSD: canShowFees ? formatCurrency(inboundNetworkFeeUSD) : "-",
+        formattedLiquidityFeeUSD: canShowFees ? formatCurrency(liquidityFeeUSD) : "-",
+        formattedTotalFeesUSD: canShowFees ? formatCurrency(totalFeesUSD) : "-",
+
+        providerLogoURI: `${temp_host}/images/${providerName?.toLowerCase()}.png`,
+        providerName,
+      };
+    };
+
+    return quoteResponse?.routes?.map(parseQuoteResponseRoute);
+  }, [quoteResponse?.routes, outputAssetValue, getAssetPriceUSD, inputAssetPriceUSD]);
 
   return useMemo(
-    () => ({ selectedQuoteRoute, setSelectedQuoteRouteIndex, swapQuote }),
-    [selectedQuoteRoute, swapQuote],
+    () => ({
+      routes: swapQuoteRoutes,
+      selectedRoute: {
+        ...(swapQuoteRoutes?.[selectedRouteIndex] ?? null),
+        formattedInputAssetPriceUSD: inputAssetPriceUSD ? formatCurrency(inputAssetPriceUSD * Number(amount)) : "$0.00",
+        inputAssetPriceUSD,
+        inputAssetTicker,
+      },
+      setSelectedRouteIndex,
+    }),
+    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker],
   );
 };

@@ -6,23 +6,23 @@ import { SwapAssetSelect } from "./swap-asset-select";
 export function SwapInputWithChainSelector({
   label,
   formattedAmountUSD,
+  isSwapping,
 
   selectedAsset,
   setSelectedAsset,
 
   amount,
   setAmount,
-
-  isSwapping,
 }: {
   label: string;
-
   formattedAmountUSD: string | undefined;
+  isSwapping: boolean;
+
   selectedAsset: string | undefined;
   setSelectedAsset: (asset: string) => void;
+
   amount: string | null | undefined;
   setAmount?: (amount: string) => void;
-  isSwapping: boolean;
 }) {
   return (
     <div className="-my-2">
