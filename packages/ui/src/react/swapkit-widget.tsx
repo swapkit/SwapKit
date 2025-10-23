@@ -184,7 +184,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         {submitButtonContent}
       </Button>
 
-      <SwapQuotePreview className="!mt-6" swapQuote={swapQuote} />
+      {selectedQuoteRoute && <SwapQuotePreview className="!mt-6" swapQuote={swapQuote} />}
 
       <Toaster position="bottom-right" />
       <ModalSpawner />
