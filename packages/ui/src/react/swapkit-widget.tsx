@@ -135,7 +135,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
             <div className="grid gap-4">
               <SwapInputWithChainSelector
                 amount={amount}
-                formattedAmountUSD={swapQuote?.formattedBuyAssetPriceUSD}
+                formattedAmountUSD={swapQuote?.formattedInputAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Pay"
                 selectedAsset={inputAsset?.toString()}
@@ -162,7 +162,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
               <SwapInputWithChainSelector
                 amount={swapQuote?.expectedBuyAmount}
-                formattedAmountUSD={swapQuote?.formattedSellAssetPriceUSD}
+                formattedAmountUSD={swapQuote?.formattedOutputAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Receive"
                 selectedAsset={outputAsset?.toString()}

@@ -43,8 +43,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     }).then((price) => setPriceResponse(price));
   }, [inputAsset, outputAsset, swapKitConfig?.apiKeys?.swapKit]);
 
-  const buyAssetIdentifier = outputAssetValue?.toString();
-  const sellAssetIdentifier = inputAssetValue?.toString();
+  const outputAssetIdentifier = outputAssetValue?.toString();
+  const inputAssetIdentifier = inputAssetValue?.toString();
 
   const fetchSwapQuote = useCallback(async () => {
     const isValid =
@@ -52,8 +52,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       swapKit &&
       inputAssetValue?.chain &&
       outputAssetValue?.chain &&
-      buyAssetIdentifier &&
-      sellAssetIdentifier;
+      outputAssetIdentifier &&
+      inputAssetIdentifier;
 
     if (!isValid) {
       setQuoteResponse(null);
@@ -62,11 +62,11 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
     try {
       const quote = await SwapKitApi.getSwapQuote({
-        buyAsset: buyAssetIdentifier,
+        buyAsset: outputAssetIdentifier,
         destinationAddress: swapKit.getAddress(outputAssetValue?.chain),
         includeTx: true,
         sellAmount: amount,
-        sellAsset: sellAssetIdentifier,
+        sellAsset: inputAssetIdentifier,
         slippage: 3,
         sourceAddress: swapKit.getAddress(inputAssetValue?.chain),
       });
@@ -81,7 +81,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       });
       setQuoteResponse(null);
     }
-  }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, sellAssetIdentifier, buyAssetIdentifier]);
+  }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, inputAssetIdentifier, outputAssetIdentifier]);
 
   useDebouncedEffect(fetchSwapQuote, [amount, swapKitConfig, outputAsset, inputAsset], 1000);
 
@@ -105,11 +105,11 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     return price;
   };
 
-  const sellAssetPriceUSD = inputAssetValue && getAssetPriceUSD(inputAssetValue);
-  const sellAssetTicker = inputAssetValue?.ticker || null;
+  const inputAssetPriceUSD = inputAssetValue && getAssetPriceUSD(inputAssetValue);
+  const inputAssetTicker = inputAssetValue?.ticker || null;
 
-  const buyAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
-  const buyAssetTicker = outputAssetValue?.ticker || null;
+  const outputAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
+  const outputAssetTicker = outputAssetValue?.ticker || null;
 
   const assetValueToUSD = (assetValue: AssetValue) => {
     const assetPriceUSD = getAssetPriceUSD(assetValue);
@@ -143,18 +143,18 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   const expectedBuyAmountMaxSlippage = selectedQuoteRoute?.expectedBuyAmountMaxSlippage || null;
   const expectedBuyAmount = selectedQuoteRoute?.expectedBuyAmount || null;
 
-  const canShowFees = buyAssetPriceUSD && sellAssetPriceUSD;
+  const canShowFees = outputAssetPriceUSD && inputAssetPriceUSD;
 
   const swapQuote = useMemo(() => {
     // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
     return {
-      buyAssetPriceUSD,
-      buyAssetTicker,
-      formattedBuyAssetPriceUSD: formatCurrency(buyAssetPriceUSD),
+      outputAssetPriceUSD,
+      outputAssetTicker,
+      formattedOutputAssetPriceUSD: formatCurrency(outputAssetPriceUSD),
 
-      sellAssetPriceUSD,
-      sellAssetTicker,
-      formattedSellAssetPriceUSD: formatCurrency(sellAssetPriceUSD),
+      inputAssetPriceUSD,
+      inputAssetTicker,
+      formattedInputAssetPriceUSD: formatCurrency(inputAssetPriceUSD),
 
       expectedBuyAmount,
       expectedBuyAmountMaxSlippage,
@@ -169,8 +169,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       providerName,
     };
   }, [
-    buyAssetPriceUSD,
-    buyAssetTicker,
+    outputAssetPriceUSD,
+    outputAssetTicker,
     expectedBuyAmount,
     expectedBuyAmountMaxSlippage,
     formattedEstimatedTime,
@@ -179,8 +179,8 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     liquidityFeeUSD,
     totalFeesUSD,
     providerName,
-    sellAssetPriceUSD,
-    sellAssetTicker,
+    inputAssetPriceUSD,
+    inputAssetTicker,
     canShowFees,
   ]);
 

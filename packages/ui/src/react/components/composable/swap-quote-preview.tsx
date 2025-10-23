@@ -39,7 +39,7 @@ export function SwapQuotePreview({
           </div>
 
           <div className="font-medium text-foreground">
-            {swapQuote?.expectedBuyAmount} {swapQuote?.buyAssetTicker}
+            {swapQuote?.expectedBuyAmount} {swapQuote?.outputAssetTicker}
           </div>
 
           <ChevronRight className="ml-2 size-4 text-foreground" />
@@ -51,7 +51,7 @@ export function SwapQuotePreview({
               <ArrowLeftRight className="size-4 text-muted-foreground" />
 
               <span className="ml-2">
-                1 {swapQuote?.sellAssetTicker} ≈ {swapQuote?.expectedBuyAmount} {swapQuote?.buyAssetTicker}
+                1 {swapQuote?.inputAssetTicker} ≈ {swapQuote?.expectedBuyAmount} {swapQuote?.outputAssetTicker}
               </span>
 
               <span className="mr-2 ml-auto font-medium">Fees: {swapQuote?.formattedTotalFeesUSD}</span>
@@ -65,7 +65,7 @@ export function SwapQuotePreview({
                   <InfoIcon className="size-4" />
 
                   <span className="ml-auto font-medium text-foreground">
-                    {swapQuote?.expectedBuyAmountMaxSlippage} {swapQuote?.buyAssetTicker}
+                    {swapQuote?.expectedBuyAmountMaxSlippage} {swapQuote?.outputAssetTicker}
                   </span>
                 </li>
 
