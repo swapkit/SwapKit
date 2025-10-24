@@ -2,7 +2,8 @@
 // - `sdk/toolboxes`
 // - `sdk/plugins`
 // - `sdk/wallets`
-import { SwapKit } from "@swapkit/core";
+import { type SKConfigState, SwapKit } from "@swapkit/core";
+import type { createPlugin } from "@swapkit/plugins";
 import { ChainflipPlugin } from "@swapkit/plugins/chainflip";
 import { EVMPlugin } from "@swapkit/plugins/evm";
 import { GardenPlugin } from "@swapkit/plugins/garden";
@@ -10,6 +11,7 @@ import { NearPlugin } from "@swapkit/plugins/near";
 import { RadixPlugin } from "@swapkit/plugins/radix";
 import { SolanaPlugin } from "@swapkit/plugins/solana";
 import { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
+import type { createWallet } from "@swapkit/wallets";
 
 import { bitgetWallet } from "@swapkit/wallets/bitget";
 import { coinbaseWallet } from "@swapkit/wallets/coinbase";
@@ -114,6 +116,16 @@ export const defaultWallets = {
   ...xamanWallet,
 };
 
-export function createSwapKit(config: Parameters<typeof SwapKit>[0] = {}) {
-  return SwapKit({ plugins: defaultPlugins, wallets: defaultWallets, ...config });
+export function createSwapKit<
+  Plugins extends ReturnType<typeof createPlugin>,
+  Wallets extends ReturnType<typeof createWallet>,
+>(config: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
+  const mergedPlugins = { ...defaultPlugins, ...config.plugins };
+  const mergedWallets = { ...defaultWallets, ...config.wallets };
+
+  return SwapKit({
+    config: config.config,
+    plugins: mergedPlugins as typeof defaultPlugins & Plugins,
+    wallets: mergedWallets as typeof defaultWallets & Wallets,
+  });
 }

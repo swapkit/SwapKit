@@ -212,5 +212,5 @@ export const NearPlugin = createPlugin({
     },
   }),
   name: "near",
-  properties: { supportedSwapkitProviders: [ProviderName.NEAR] },
+  properties: { supportedSwapkitProviders: [ProviderName.NEAR] as const },
 });

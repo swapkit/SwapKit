@@ -20,5 +20,5 @@ export const RadixPlugin = createPlugin({
     },
   }),
   name: "radix",
-  properties: { supportedSwapkitProviders: [ProviderName.CAVIAR_V1] },
+  properties: { supportedSwapkitProviders: [ProviderName.CAVIAR_V1] as const },
 });
