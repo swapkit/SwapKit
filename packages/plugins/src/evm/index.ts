@@ -32,6 +32,7 @@ export const EVMPlugin = createPlugin({
     supportedSwapkitProviders: [
       ProviderName.CAMELOT_V3,
       ProviderName.OPENOCEAN_V2,
+      ProviderName.OKX,
       ProviderName.ONEINCH,
       ProviderName.PANCAKESWAP,
       ProviderName.PANGOLIN_V1,
@@ -39,6 +40,6 @@ export const EVMPlugin = createPlugin({
       ProviderName.TRADERJOE_V2,
       ProviderName.UNISWAP_V2,
       ProviderName.UNISWAP_V3,
-    ],
+    ] as const,
   },
 });
