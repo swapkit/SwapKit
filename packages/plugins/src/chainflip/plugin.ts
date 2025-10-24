@@ -48,5 +48,5 @@ export const ChainflipPlugin = createPlugin({
     },
   }),
   name: "chainflip",
-  properties: { supportedSwapkitProviders: [ProviderName.CHAINFLIP, ProviderName.CHAINFLIP_STREAMING] },
+  properties: { supportedSwapkitProviders: [ProviderName.CHAINFLIP, ProviderName.CHAINFLIP_STREAMING] as const },
 });

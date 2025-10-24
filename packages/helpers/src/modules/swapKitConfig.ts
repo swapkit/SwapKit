@@ -7,6 +7,7 @@ import {
   StagenetTHORConfig,
 } from "@swapkit/types";
 import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
@@ -108,13 +109,13 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
   setApiKey: (key, apiKey) => set((s) => ({ apiKeys: { ...s.apiKeys, [key]: apiKey } })),
   setConfig: (config) =>
     set((s) => ({
-      apiKeys: { ...s.apiKeys, ...config.apiKeys },
-      chains: s.chains.concat(config.chains || []),
-      envs: { ...s.envs, ...config.envs },
-      feeMultipliers: config.feeMultipliers || s.feeMultipliers,
-      integrations: { ...s.integrations, ...config.integrations },
-      rpcUrls: { ...s.rpcUrls, ...config.rpcUrls },
-      wallets: s.wallets.concat(config.wallets || []),
+      apiKeys: { ...s.apiKeys, ...config?.apiKeys },
+      chains: s.chains.concat(config?.chains || []),
+      envs: { ...s.envs, ...config?.envs },
+      feeMultipliers: config?.feeMultipliers || s.feeMultipliers,
+      integrations: { ...s.integrations, ...config?.integrations },
+      rpcUrls: { ...s.rpcUrls, ...config?.rpcUrls },
+      wallets: s.wallets.concat(config?.wallets || []),
     })),
   setEnv: (key, value) => set((s) => ({ envs: { ...s.envs, [key]: value } })),
   setFeeMultipliers: (multipliers) => set(() => ({ feeMultipliers: multipliers })),
@@ -129,6 +130,19 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
     })),
   setRpcUrl: (chain, url) => set((s) => ({ rpcUrls: { ...s.rpcUrls, [chain]: url } })),
 }));
+
+export const useSwapKitConfig = () =>
+  useSwapKitStore(
+    useShallow((state) => ({
+      apiKeys: state?.apiKeys,
+      chains: state?.chains,
+      envs: state?.envs,
+      feeMultipliers: state?.feeMultipliers,
+      integrations: state?.integrations,
+      rpcUrls: state?.rpcUrls,
+      wallets: state?.wallets,
+    })),
+  );
 
 export const SKConfig = {
   get: <T extends keyof SKState>(key: T) => useSwapKitStore.getState()[key],

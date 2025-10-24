@@ -69,13 +69,13 @@ const MayaSpecificAbi = { [Chain.Arbitrum]: MayaArbitrumVaultAbi, [Chain.Ethereu
 export const ThorchainPlugin = createPlugin({
   methods: createTCBasedPlugin(Chain.THORChain),
   name: "thorchain",
-  properties: { supportedSwapkitProviders: [ProviderName.THORCHAIN, ProviderName.THORCHAIN_STREAMING] },
+  properties: { supportedSwapkitProviders: [ProviderName.THORCHAIN, ProviderName.THORCHAIN_STREAMING] as const },
 });
 
 export const MayachainPlugin = createPlugin({
   methods: createTCBasedPlugin(Chain.Maya),
   name: "mayachain",
-  properties: { supportedSwapkitProviders: [ProviderName.MAYACHAIN, ProviderName.MAYACHAIN_STREAMING] },
+  properties: { supportedSwapkitProviders: [ProviderName.MAYACHAIN, ProviderName.MAYACHAIN_STREAMING] as const },
 });
 
 function getInboundDataFunction(type?: THORNodeType) {

@@ -33,7 +33,8 @@ export const getLedgerAddress = async <
     case Chain.Optimism:
     case Chain.Base:
     case Chain.Aurora:
-    case Chain.Gnosis: {
+    case Chain.Gnosis:
+    case Chain.XLayer: {
       return (ledgerClient as EVMLedgerClients).getAddress();
     }
 

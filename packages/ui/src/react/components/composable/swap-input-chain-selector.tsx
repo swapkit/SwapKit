@@ -5,6 +5,7 @@ import { SwapAssetSelect } from "./swap-asset-select";
 
 export function SwapInputWithChainSelector({
   label,
+  formattedAmountUSD,
 
   selectedAsset,
   setSelectedAsset,
@@ -16,10 +17,10 @@ export function SwapInputWithChainSelector({
 }: {
   label: string;
 
-  // TODO: move to react-hook-form
+  formattedAmountUSD: string | undefined;
   selectedAsset: string | undefined;
   setSelectedAsset: (asset: string) => void;
-  amount: string | undefined;
+  amount: string | null | undefined;
   setAmount?: (amount: string) => void;
   isSwapping: boolean;
 }) {
@@ -37,10 +38,10 @@ export function SwapInputWithChainSelector({
             onChange={(e) => setAmount?.(e.target.value)}
             placeholder="0.00"
             type="text"
-            value={amount}
+            value={amount ?? ""}
           />
 
-          <span className="text-muted-foreground text-sm">$0.00</span>
+          <span className="text-muted-foreground text-sm">{formattedAmountUSD}</span>
         </div>
       </div>
     </div>

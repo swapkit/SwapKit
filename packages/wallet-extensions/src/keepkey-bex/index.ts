@@ -46,6 +46,7 @@ export const keepkeyBexWallet = createWallet({
     Chain.Ripple,
     Chain.Solana,
     Chain.THORChain,
+    Chain.XLayer,
   ],
   walletType: WalletOption.KEEPKEY_BEX,
 });

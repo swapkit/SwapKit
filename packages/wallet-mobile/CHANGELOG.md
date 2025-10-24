@@ -1,5 +1,37 @@
 # @swapkit/wallet-mobile
 
+## 4.0.39
+
+### Patch Changes
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/helpers@4.4.1
+  - @swapkit/toolboxes@4.1.11
+
+## 4.0.38
+
+### Patch Changes
+
+- Updated dependencies [[`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186)]:
+  - @swapkit/helpers@4.4.0
+  - @swapkit/toolboxes@4.1.10
+
+## 4.0.37
+
+### Patch Changes
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/toolboxes@4.1.9
+  - @swapkit/helpers@4.3.4
+
+## 4.0.36
+
+### Patch Changes
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949)]:
+  - @swapkit/toolboxes@4.1.8
+  - @swapkit/helpers@4.3.3
+
 ## 4.0.35
 
 ### Patch Changes

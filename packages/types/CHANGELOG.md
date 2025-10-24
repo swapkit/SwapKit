@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.2.3
+
+### Patch Changes
+
+- [#1552](https://github.com/swapkit/SwapKit/pull/1552) [`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b) Thanks [@towanTG](https://github.com/towanTG)! - Enables Xlayer for supporting wallets and corrects Xlayer config
+
 ## 0.2.2
 
 ### Patch Changes
