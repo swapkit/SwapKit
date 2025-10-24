@@ -43,51 +43,58 @@ describe("BigIntArithmetics", () => {
   describe("toFixed", () => {
     test("returns fixed decimal places for positive number", () => {
       const num = new BigIntArithmetics(123.456789);
-      expect(num.toFixed(2)).toBe("123.45");
-      expect(num.toFixed(4)).toBe("123.4567");
+      expect(num.toFixed(2)).toBe("123.46");
+      expect(num.toFixed(4)).toBe("123.4568");
       expect(num.toFixed(6)).toBe("123.456789");
     });
 
     test("returns fixed decimal places for decimal less than 1", () => {
       const num = new BigIntArithmetics(0.123456);
       expect(num.toFixed(2)).toBe("0.12");
-      expect(num.toFixed(4)).toBe("0.1234");
+      expect(num.toFixed(4)).toBe("0.1235");
       expect(num.toFixed(6)).toBe("0.123456");
     });
 
     test("pads with zeros when needed", () => {
       const num = new BigIntArithmetics(1.2);
-      expect(num.toFixed(4)).toBe("1.20");
+      expect(num.toFixed(4)).toBe("1.2000");
 
       const num2 = new BigIntArithmetics(10);
-      expect(num2.toFixed(2)).toBe("10.");
+      expect(num2.toFixed(2)).toBe("10.00");
     });
 
     test("handles zero with fixed decimals", () => {
       const num = new BigIntArithmetics(0);
-      const result1 = num.toFixed(0);
-      expect(result1).toBeDefined();
-
-      const result2 = num.toFixed(2);
-      expect(result2).toBeDefined();
+      expect(num.toFixed(0)).toBe("0");
+      expect(num.toFixed(2)).toBe("0.00");
     });
 
     test("handles very small decimals", () => {
       const num = new BigIntArithmetics(0.00000123);
       expect(num.toFixed(8)).toBe("0.00000123");
-      expect(num.toFixed(6)).toBe("0.00000123");
+      expect(num.toFixed(6)).toBe("0.000001");
     });
 
     test("handles negative numbers", () => {
       const num = new BigIntArithmetics(-123.456);
-      expect(num.toFixed(2)).toBe("-123.45");
-      expect(num.toFixed(4)).toBe("-123.456");
+      expect(num.toFixed(2)).toBe("-123.46");
+      expect(num.toFixed(4)).toBe("-123.4560");
     });
 
     test("handles integer with toFixed", () => {
       const num = new BigIntArithmetics(1234);
-      expect(num.toFixed(0)).toBe("1234.");
-      expect(num.toFixed(2)).toBe("1234.");
+      expect(num.toFixed(0)).toBe("1234.0");
+      expect(num.toFixed(2)).toBe("1234.00");
+    });
+
+    test("handles very large numbers without precision loss", () => {
+      const large = new BigIntArithmetics("12345678901234567890.123456789");
+      expect(large.toFixed(2)).toBe("12345678901234567890.12");
+      expect(large.toFixed(6)).toBe("12345678901234567890.123457");
+
+      const roundUp = new BigIntArithmetics("999999999999999999.999");
+      expect(roundUp.toFixed(2)).toBe("1000000000000000000.00");
+      expect(roundUp.toFixed(0)).toBe("1000000000000000000.0");
     });
   });
 
@@ -241,8 +248,7 @@ describe("BigIntArithmetics", () => {
     test("handles very large numbers beyond defined abbreviations", () => {
       const num = new BigIntArithmetics("1234567890123456789012345");
       const result = num.toAbbreviation();
-      // Should return string representation when no suffix available
-      expect(result).toBeDefined();
+      expect(result).toEqual(num.getValue("string"));
     });
 
     test("respects custom digit parameter", () => {

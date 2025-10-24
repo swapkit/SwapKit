@@ -146,16 +146,10 @@ export class BigIntArithmetics {
     const divisor = this.decimalMultiplier / toMultiplier(decimal || this.decimal || DEFAULT_DECIMAL);
     const baseValue = divideBigIntWithRounding(this.bigIntValue, divisor);
 
-    switch (type) {
-      case "number":
-        return Number(baseValue) as NumberPrimitivesType[T];
-      case "string":
-        return baseValue.toString() as NumberPrimitivesType[T];
-      case "bigint":
-        return baseValue as NumberPrimitivesType[T];
-      default:
-        return baseValue as NumberPrimitivesType[T];
-    }
+    return match(type as AllowedNumberTypes)
+      .with("number", () => Number(baseValue) as NumberPrimitivesType[T])
+      .with("string", () => baseValue.toString() as NumberPrimitivesType[T])
+      .otherwise(() => baseValue as NumberPrimitivesType[T]);
   }
 
   getBigIntValue(value: InitialisationValueType, decimal?: number) {
@@ -169,77 +163,85 @@ export class BigIntArithmetics {
   }
 
   toSignificant(significantDigits = 6) {
-    const [int, dec] = this.getValue("string").split(".");
-    const integer = int || "";
-    const decimal = dec || "";
-    const valueLength = Number.parseInt(integer, 10) ? integer.length + decimal.length : decimal.length;
+    const valueStr = this.getValue("string");
+    const [int = "", dec = ""] = valueStr.split(".");
+    const hasInteger = Number.parseInt(int, 10) > 0;
+    const totalLength = hasInteger ? int.length + dec.length : dec.length;
 
-    if (valueLength <= significantDigits) {
-      return this.getValue("string");
-    }
+    if (totalLength <= significantDigits) return valueStr;
+    if (int.length >= significantDigits) return int.slice(0, significantDigits).padEnd(int.length, "0");
+    if (hasInteger) return `${int}.${dec.slice(0, significantDigits - int.length)}`;
 
-    if (integer.length >= significantDigits) {
-      return integer.slice(0, significantDigits).padEnd(integer.length, "0");
-    }
+    const trimmed = Number.parseInt(dec, 10).toString();
+    const sliced = trimmed.slice(0, significantDigits);
+    const leadingZeros = dec.length - trimmed.length;
 
-    if (Number.parseInt(integer, 10)) {
-      return `${integer}.${decimal.slice(0, significantDigits - integer.length)}`.padEnd(
-        significantDigits - integer.length,
-        "0",
-      );
-    }
-
-    const trimmedDecimal = Number.parseInt(decimal, 10);
-    const slicedDecimal = `${trimmedDecimal}`.slice(0, significantDigits);
-
-    return `0.${slicedDecimal.padStart(decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length, "0")}`;
+    return `0.${sliced.padStart(leadingZeros + sliced.length, "0")}`;
   }
 
   toFixed(fixedDigits = 6) {
-    const [int, dec] = this.getValue("string").split(".");
-    const integer = int || "";
-    const decimal = dec || "";
+    const valueStr = this.getValue("string");
+    const isNegative = valueStr.startsWith("-");
+    const [int = "0", dec = ""] = (isNegative ? valueStr.slice(1) : valueStr).split(".");
+    const sign = isNegative ? "-" : "";
 
-    if (Number.parseInt(integer, 10)) {
-      return `${integer}.${decimal.slice(0, fixedDigits)}`.padEnd(fixedDigits, "0");
+    if (fixedDigits === 0) {
+      if (int === "0" && !dec) return "0";
+      const shouldRound = dec && Number.parseInt(dec[0] || "0", 10) >= 5;
+      return shouldRound ? `${sign}${BigInt(int) + 1n}.0` : `${sign}${int}.0`;
     }
 
-    const trimmedDecimal = Number.parseInt(decimal, 10);
-    const slicedDecimal = `${trimmedDecimal}`.slice(0, fixedDigits);
+    if (!dec) return `${sign}${int}.${"0".repeat(fixedDigits)}`;
 
-    return `0.${slicedDecimal.padStart(decimal.length - `${trimmedDecimal}`.length + slicedDecimal.length, "0")}`;
+    const nextDigit = dec[fixedDigits];
+    const shouldRound = nextDigit && Number.parseInt(nextDigit, 10) >= 5;
+
+    if (!shouldRound) return `${sign}${int}.${dec.slice(0, fixedDigits).padEnd(fixedDigits, "0")}`;
+
+    const decimalValue = BigInt(dec.slice(0, fixedDigits).padEnd(fixedDigits, "0")) + 1n;
+    const multiplier = 10n ** BigInt(fixedDigits);
+
+    if (decimalValue >= multiplier) return `${sign}${BigInt(int) + 1n}.${"0".repeat(fixedDigits)}`;
+
+    return `${sign}${int}.${decimalValue.toString().padStart(fixedDigits, "0")}`;
   }
 
   toAbbreviation(digits = 2) {
-    const value = this.getValue("number");
+    const valueStr = this.getValue("string");
+    const value = Number(valueStr);
     const abbreviations = ["", "K", "M", "B", "T", "Q", "Qi", "S"] as const;
     const tier = Math.floor(Math.log10(Math.abs(value)) / 3);
-    const suffix = abbreviations[tier];
 
-    if (!suffix) return this.getValue("string");
+    if (tier === 0 || !abbreviations[tier]) return valueStr;
 
-    const scale = 10 ** (tier * 3);
-    const scaled = value / scale;
-
-    return `${scaled.toFixed(digits)}${suffix}`;
+    return `${(value / 10 ** (tier * 3)).toFixed(digits)}${abbreviations[tier]}`;
   }
 
   toCurrency(
     currency = "$",
     { currencyPosition = "start", decimal = 2, decimalSeparator = ".", thousandSeparator = "," } = {},
   ) {
-    const value = this.getValue("number");
-    const [int = "", dec = ""] = value.toFixed(6).split(".");
-    const integer = int.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+    const valueStr = this.getValue("string");
+    const [int = "0", dec = ""] = valueStr.split(".");
 
-    const parsedValue =
-      int || dec
-        ? int === "0"
-          ? `${Number.parseFloat(`0.${dec}`)}`.replace(".", decimalSeparator)
-          : `${integer}${Number.parseInt(dec, 10) ? `${decimalSeparator}${dec.slice(0, decimal)}` : ""}`
-        : "0.00";
+    if (int === "0" && dec) {
+      const formatted = `${Number.parseFloat(`0.${dec}`)}`.replace(".", decimalSeparator);
+      return match(currencyPosition)
+        .with("start", () => `${currency}${formatted}`)
+        .with("end", () => `${formatted}${currency}`)
+        .otherwise(() => `${currency}${formatted}`);
+    }
 
-    return `${currencyPosition === "start" ? currency : ""}${parsedValue}${currencyPosition === "end" ? currency : ""}`;
+    const roundedStr = this.toFixed(decimal);
+    const [roundedInt = "0", roundedDec = ""] = roundedStr.split(".");
+    const formattedInt = roundedInt.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+    const hasDecimals = roundedDec && Number.parseInt(roundedDec, 10) > 0;
+    const value = hasDecimals ? `${formattedInt}${decimalSeparator}${roundedDec}` : formattedInt;
+
+    return match(currencyPosition)
+      .with("start", () => `${currency}${value}`)
+      .with("end", () => `${value}${currency}`)
+      .otherwise(() => `${currency}${value}`);
   }
 
   formatBigIntToSafeValue(value: bigint, decimal?: number) {
@@ -328,6 +330,7 @@ export class BigIntArithmetics {
 }
 
 const numberFormatter = Intl.NumberFormat("fullwide", { maximumFractionDigits: 20, useGrouping: false });
+
 function toSafeValue(value: InitialisationValueType) {
   const parsedValue = typeof value === "number" ? numberFormatter.format(value) : getStringValue(value);
   const splitValue = `${parsedValue}`.replaceAll(",", ".").split(".");

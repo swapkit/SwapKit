@@ -1449,17 +1449,13 @@ describe("asyncTokenLookup", () => {
   describe("getIconUrl", () => {
     test("returns logoURI when token is in static map", async () => {
       await AssetValue.loadStaticAssets();
-
       const asset = AssetValue.from({ asset: "BTC.BTC" });
-      const iconUrl = asset.getIconUrl();
 
-      // BTC should have an icon URL
-      expect(iconUrl).toBeDefined();
-      expect(typeof iconUrl).toBe("string");
+      expect(asset.getIconUrl()).toBeString();
+      expect(asset.getIconUrl()?.length).toBeGreaterThan(0);
     });
 
     test("returns undefined for custom token not in map", () => {
-      // Clear and set empty map
       AssetValue.setStaticAssets(new Map());
 
       const asset = AssetValue.from({ asset: "BTC.BTC" });
