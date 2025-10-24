@@ -445,7 +445,7 @@ describe("SwapKitNumber", () => {
       const divider = new SwapKitNumber("105.2562773915526");
       const result = asset1.mul(multiplier).div(divider);
 
-      expect(result.getValue("string")).toBe("2.125399527674726");
+      expect(result.getValue("string")).toBe("2.12539952767472630150052259932285534");
     });
   });
 
