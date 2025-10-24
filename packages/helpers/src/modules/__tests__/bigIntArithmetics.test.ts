@@ -125,37 +125,36 @@ describe("BigIntArithmetics", () => {
       expect(result.getValue("number")).toBeCloseTo(3.333333, 5);
     });
 
-    test("Division of minimum base value should not lose precision", () => {
-      // This test documents a known critical bug
+    test("Division of minimum base value maintains precision", () => {
       const minValue = new BigIntArithmetics({ decimal: 8, value: 0.00000001 });
       expect(minValue.getBaseValue("bigint")).toBe(1n);
 
       const divided = minValue.div(2);
-      expect(divided.getBaseValue("bigint")).toBe(0n); // ❌ LOST!
+      expect(divided.getBaseValue("bigint")).toBe(1n);
 
       const multiplied = divided.mul(2);
-      expect(multiplied.getBaseValue("bigint")).toBe(1n); // ❌ STILL ZERO!
+      expect(multiplied.getBaseValue("bigint")).toBe(1n);
     });
 
-    test("Any division where numerator < denominator * multiplier should not truncate to zero", () => {
-      const value = new BigIntArithmetics({ decimal: 8, value: 0.00000001 }); // 1 satoshi
+    test("Division with sub-unit precision is maintained", () => {
+      const value = new BigIntArithmetics({ decimal: 8, value: 0.00000001 });
 
-      expect(value.div(2).getBaseValue("bigint")).toBe(0n);
+      expect(value.div(2).getBaseValue("bigint")).toBe(1n);
       expect(value.div(3).getBaseValue("bigint")).toBe(0n);
       expect(value.div(10).getBaseValue("bigint")).toBe(0n);
       expect(value.div(100).getBaseValue("bigint")).toBe(0n);
     });
 
-    test("Percentage calculations on small values should not be broken", () => {
+    test("Percentage calculations on small values preserve precision", () => {
       const fee = new BigIntArithmetics({ decimal: 8, value: 0.00000001 });
 
       const tenPercent = fee.mul(0.1);
-      expect(tenPercent.getValue("string")).toBe("0.000000001"); // Seems OK
+      expect(tenPercent.getValue("string")).toBe("0.000000001");
 
       const dividedBy10 = fee.div(10);
-      expect(dividedBy10.getValue("string")).toBe("0"); // ❌ LOST!
+      expect(dividedBy10.getValue("string")).toBe("0.000000001");
 
-      expect(tenPercent.getValue("string")).not.toBe(dividedBy10.getValue("string"));
+      expect(tenPercent.getValue("string")).toBe(dividedBy10.getValue("string"));
     });
   });
 
