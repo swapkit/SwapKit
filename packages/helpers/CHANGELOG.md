@@ -1,5 +1,16 @@
 # @swapkit/helpers
 
+## 4.4.0
+
+### Minor Changes
+
+- [#1562](https://github.com/swapkit/SwapKit/pull/1562) [`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186) Thanks [@mfaizan1](https://github.com/mfaizan1)! - Adds service to fee type enum
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.38
+
 ## 4.3.4
 
 ### Patch Changes

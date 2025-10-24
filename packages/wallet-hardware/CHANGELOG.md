@@ -1,5 +1,15 @@
 # @swapkit/wallet-hardware
 
+## 4.1.37
+
+### Patch Changes
+
+- [#1563](https://github.com/swapkit/SwapKit/pull/1563) [`57d4a14`](https://github.com/swapkit/SwapKit/commit/57d4a14561f519e85f13998dd9b0d642fd660900) Thanks [@towanTG](https://github.com/towanTG)! - Fixes ledger transport creation of both USB interfaces are exposed by an app
+
+- Updated dependencies [[`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186)]:
+  - @swapkit/helpers@4.4.0
+  - @swapkit/toolboxes@4.1.10
+
 ## 4.1.36
 
 ### Patch Changes

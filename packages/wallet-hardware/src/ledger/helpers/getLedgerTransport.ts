@@ -40,20 +40,28 @@ export const getLedgerTransport = async () => {
 
   const configuration = device.configuration ?? device.configurations?.[0];
 
-  const iface = configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
-    alternates.some(({ interfaceClass }) => interfaceClass === 0x03 || interfaceClass === 0xff),
-  );
+  const iface =
+    configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
+      alternates.some(({ interfaceClass }) => interfaceClass === 0xff),
+    ) ||
+    configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
+      alternates.some(({ interfaceClass }) => interfaceClass === 0x03),
+    );
 
   if (!iface) {
     await device.close();
     throw new SwapKitError("wallet_ledger_connection_error");
   }
 
-  const klass = iface.alternates?.find(
-    ({ interfaceClass }: { interfaceClass: number }) => interfaceClass === 0x03 || interfaceClass === 0xff,
-  )?.interfaceClass;
+  const klass0x03 = (iface.alternates as any[])?.find(
+    ({ interfaceClass }: { interfaceClass: number }) => interfaceClass === 0x03,
+  )?.interfaceClass as number;
 
-  if (klass === 0x03) {
+  const klass0xff = (iface.alternates as any[])?.find(
+    ({ interfaceClass }: { interfaceClass: number }) => interfaceClass === 0xff,
+  )?.interfaceClass as number;
+
+  if (klass0x03 && !klass0xff) {
     // -------- HID class (NEAR, ETH, SOL, etc.) -> WebHID transport --------
     const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid")).default;
     const supported = await TransportWebHID.isSupported();
