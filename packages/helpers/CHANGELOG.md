@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.4.1
+
+### Patch Changes
+
+- [#1565](https://github.com/swapkit/SwapKit/pull/1565) [`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8) Thanks [@towanTG](https://github.com/towanTG)! - Adds OKX Provider
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.39
+
 ## 4.4.0
 
 ### Minor Changes

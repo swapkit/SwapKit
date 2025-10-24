@@ -1,5 +1,12 @@
 # @swapkit/toolboxes
 
+## 4.1.11
+
+### Patch Changes
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/helpers@4.4.1
+
 ## 4.1.10
 
 ### Patch Changes
