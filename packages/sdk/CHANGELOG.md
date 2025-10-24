@@ -1,5 +1,11 @@
 # @swapkit/sdk
 
+## 4.1.9
+
+### Patch Changes
+
+- [#1567](https://github.com/swapkit/SwapKit/pull/1567) [`4ff0c31`](https://github.com/swapkit/SwapKit/commit/4ff0c316f50a7616725ec6f29e54b7e2038997d7) Thanks [@towanTG](https://github.com/towanTG)! - Fixes createSwapKit default typing
+
 ## 4.1.8
 
 ### Patch Changes
