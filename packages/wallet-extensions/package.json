@@ -25,68 +25,86 @@
     "ts-pattern": "5.8.0"
   },
   "exports": {
-    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./bitget": {
+      "bun": "./src/bitget/index.ts",
       "default": "./dist/src/bitget/index.js",
       "require": "./dist/src/bitget/index.cjs",
       "types": "./dist/types/bitget/index.d.ts"
     },
     "./cosmostation": {
+      "bun": "./src/cosmostation/index.ts",
       "default": "./dist/src/cosmostation/index.js",
       "require": "./dist/src/cosmostation/index.cjs",
       "types": "./dist/types/cosmostation/index.d.ts"
     },
     "./ctrl": {
+      "bun": "./src/ctrl/index.ts",
       "default": "./dist/src/ctrl/index.js",
       "require": "./dist/src/ctrl/index.cjs",
       "types": "./dist/types/ctrl/index.d.ts"
     },
     "./evm-extensions": {
+      "bun": "./src/evm-extensions/index.ts",
       "default": "./dist/src/evm-extensions/index.js",
       "require": "./dist/src/evm-extensions/index.cjs",
       "types": "./dist/types/evm-extensions/index.d.ts"
     },
     "./keepkey-bex": {
+      "bun": "./src/keepkey-bex/index.ts",
       "default": "./dist/src/keepkey-bex/index.js",
       "require": "./dist/src/keepkey-bex/index.cjs",
       "types": "./dist/types/keepkey-bex/index.d.ts"
     },
     "./keplr": {
+      "bun": "./src/keplr/index.ts",
       "default": "./dist/src/keplr/index.js",
       "require": "./dist/src/keplr/index.cjs",
       "types": "./dist/types/keplr/index.d.ts"
     },
     "./okx": {
+      "bun": "./src/okx/index.ts",
       "default": "./dist/src/okx/index.js",
       "require": "./dist/src/okx/index.cjs",
       "types": "./dist/types/okx/index.d.ts"
     },
     "./onekey": {
+      "bun": "./src/onekey/index.ts",
       "default": "./dist/src/onekey/index.js",
       "require": "./dist/src/onekey/index.cjs",
       "types": "./dist/types/onekey/index.d.ts"
     },
     "./phantom": {
+      "bun": "./src/phantom/index.ts",
       "default": "./dist/src/phantom/index.js",
       "require": "./dist/src/phantom/index.cjs",
       "types": "./dist/types/phantom/index.d.ts"
     },
     "./polkadotjs": {
+      "bun": "./src/polkadotjs/index.ts",
       "default": "./dist/src/polkadotjs/index.js",
       "require": "./dist/src/polkadotjs/index.cjs",
       "types": "./dist/types/polkadotjs/index.d.ts"
     },
     "./talisman": {
+      "bun": "./src/talisman/index.ts",
       "default": "./dist/src/talisman/index.js",
       "require": "./dist/src/talisman/index.cjs",
       "types": "./dist/types/talisman/index.d.ts"
     },
     "./tronlink": {
+      "bun": "./src/tronlink/index.ts",
       "default": "./dist/src/tronlink/index.js",
       "require": "./dist/src/tronlink/index.cjs",
       "types": "./dist/types/tronlink/index.d.ts"
     },
     "./vultisig": {
+      "bun": "./src/vultisig/index.ts",
       "default": "./dist/src/vultisig/index.js",
       "require": "./dist/src/vultisig/index.cjs",
       "types": "./dist/types/vultisig/index.d.ts"

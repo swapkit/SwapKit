@@ -31,13 +31,19 @@
   "description": "SwapKit - UI",
   "devDependencies": { "ts-pattern": "5.8.0", "zustand": "5.0.8" },
   "exports": {
-    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./react": {
+      "bun": "./src/react/index.tsx",
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     },
-    "./swapkit.css": "./dist/swapkit.css"
+    "./swapkit.css": { "bun": "./src/swapkit.css", "default": "./dist/swapkit.css" }
   },
   "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",

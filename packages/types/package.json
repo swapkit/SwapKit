@@ -2,7 +2,12 @@
   "author": "swapkit-oss",
   "description": "SwapKit - Shared Types",
   "exports": {
-    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
   },
   "files": ["dist/"],
   "homepage": "https://github.com/swapkit/SwapKit",

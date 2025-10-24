@@ -107,63 +107,80 @@
     "xrpl": "4.4.2"
   },
   "exports": {
-    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./cardano": {
+      "bun": "./src/cardano/index.ts",
       "default": "./dist/src/cardano/index.js",
       "require": "./dist/src/cardano/index.cjs",
       "types": "./dist/types/cardano/index.d.ts"
     },
     "./cosmos": {
+      "bun": "./src/cosmos/index.ts",
       "default": "./dist/src/cosmos/index.js",
       "require": "./dist/src/cosmos/index.cjs",
       "types": "./dist/types/cosmos/index.d.ts"
     },
     "./evm": {
+      "bun": "./src/evm/index.ts",
       "default": "./dist/src/evm/index.js",
       "require": "./dist/src/evm/index.cjs",
       "types": "./dist/types/evm/index.d.ts"
     },
     "./near": {
+      "bun": "./src/near/index.ts",
       "default": "./dist/src/near/index.js",
       "require": "./dist/src/near/index.cjs",
       "types": "./dist/types/near/index.d.ts"
     },
     "./radix": {
+      "bun": "./src/radix/index.ts",
       "default": "./dist/src/radix/index.js",
       "require": "./dist/src/radix/index.cjs",
       "types": "./dist/types/radix/index.d.ts"
     },
     "./ripple": {
+      "bun": "./src/ripple/index.ts",
       "default": "./dist/src/ripple/index.js",
       "require": "./dist/src/ripple/index.cjs",
       "types": "./dist/types/ripple/index.d.ts"
     },
     "./solana": {
+      "bun": "./src/solana/index.ts",
       "default": "./dist/src/solana/index.js",
       "require": "./dist/src/solana/index.cjs",
       "types": "./dist/types/solana/index.d.ts"
     },
     "./substrate": {
+      "bun": "./src/substrate/index.ts",
       "default": "./dist/src/substrate/index.js",
       "require": "./dist/src/substrate/index.cjs",
       "types": "./dist/types/substrate/index.d.ts"
     },
     "./sui": {
+      "bun": "./src/sui/index.ts",
       "default": "./dist/src/sui/index.js",
       "require": "./dist/src/sui/index.cjs",
       "types": "./dist/types/sui/index.d.ts"
     },
     "./ton": {
+      "bun": "./src/ton/index.ts",
       "default": "./dist/src/ton/index.js",
       "require": "./dist/src/ton/index.cjs",
       "types": "./dist/types/ton/index.d.ts"
     },
     "./tron": {
+      "bun": "./src/tron/index.ts",
       "default": "./dist/src/tron/index.js",
       "require": "./dist/src/tron/index.cjs",
       "types": "./dist/types/tron/index.d.ts"
     },
     "./utxo": {
+      "bun": "./src/utxo/index.ts",
       "default": "./dist/src/utxo/index.js",
       "require": "./dist/src/utxo/index.cjs",
       "types": "./dist/types/utxo/index.d.ts"
