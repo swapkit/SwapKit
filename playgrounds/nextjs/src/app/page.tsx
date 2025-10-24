@@ -8,7 +8,7 @@ import { WidgetConfigurator, type WidgetConfiguratorFormValues } from "~/compone
 
 export default function SwapPage() {
   const { watch, control } = useForm<WidgetConfiguratorFormValues>({
-    defaultValues: { apiKey: "", apiUrl: "https://dev-api.swapkit.dev" },
+    defaultValues: { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" },
   });
 
   const [apiKey, apiUrl] = watch(["apiKey", "apiUrl"]);

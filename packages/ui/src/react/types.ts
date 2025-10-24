@@ -22,3 +22,5 @@ export interface SwapKitState {
 }
 
 export type SwapKitWidgetProps = { config?: SKConfigState };
+
+export type UseSwapQuoteParams = { inputAsset: string | null; outputAsset: string | null; amount: string };

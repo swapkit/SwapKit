@@ -2,7 +2,7 @@
 
 import { Chain } from "@swapkit/sdk";
 import { SearchIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
 import { cn } from "../../../lib/utils";
 import { showModal } from "../../hooks/use-modal";
@@ -32,12 +32,6 @@ export function SwapAssetSelect({
   const totalNetworksAmount = Object.values(Chain).length;
   const visibleNetworksAmount = isNetworkListExpanded ? totalNetworksAmount : collapsedNetworksAmount;
   const canShowMore = collapsedNetworksAmount < totalNetworksAmount - 2;
-
-  useEffect(() => {
-    if (!selectedAsset) return;
-
-    setOpen(false);
-  }, [selectedAsset]);
 
   const lowerSearchQuery = searchQuery.toLowerCase();
 
@@ -81,6 +75,8 @@ export function SwapAssetSelect({
 
     setOpen(true);
   };
+
+  if (!selectedAsset) return null;
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -187,7 +183,10 @@ export function SwapAssetSelect({
                     <Button
                       className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
                       key={`swap-asset-item-${assetValueString}`}
-                      onClick={() => setSelectedAsset?.(assetValueString)}
+                      onClick={() => {
+                        setSelectedAsset(assetValueString);
+                        setOpen(false);
+                      }}
                       variant="ghost">
                       <SwapAssetItem asset={assetValueString} />
 
