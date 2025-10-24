@@ -117,15 +117,11 @@ export const defaultWallets = {
 };
 
 export function createSwapKit<
-  Plugins extends ReturnType<typeof createPlugin>,
-  Wallets extends ReturnType<typeof createWallet>,
->(config: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
-  const mergedPlugins = { ...defaultPlugins, ...config.plugins };
-  const mergedWallets = { ...defaultWallets, ...config.wallets };
+  Plugins extends ReturnType<typeof createPlugin> = typeof defaultPlugins,
+  Wallets extends ReturnType<typeof createWallet> = typeof defaultWallets,
+>({ config, plugins, wallets }: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
+  const mergedPlugins = { ...defaultPlugins, ...plugins } as typeof defaultPlugins & Plugins;
+  const mergedWallets = { ...defaultWallets, ...wallets } as typeof defaultWallets & Wallets;
 
-  return SwapKit({
-    config: config.config,
-    plugins: mergedPlugins as typeof defaultPlugins & Plugins,
-    wallets: mergedWallets as typeof defaultWallets & Wallets,
-  });
+  return SwapKit({ config: config, plugins: mergedPlugins, wallets: mergedWallets });
 }
