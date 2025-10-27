@@ -50,5 +50,5 @@ export const GardenPlugin = createPlugin({
     },
   }),
   name: "garden",
-  properties: { supportedSwapkitProviders: [ProviderName.GARDEN] },
+  properties: { supportedSwapkitProviders: [ProviderName.GARDEN] as const },
 });

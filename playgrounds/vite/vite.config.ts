@@ -52,6 +52,9 @@ export default defineConfig({
       "@swapkit/plugins": resolve("../../packages/plugins/src"),
       "@swapkit/sdk": resolve("../../packages/sdk/src"),
       "@swapkit/toolboxes": resolve("../../packages/toolboxes/src"),
+      "@swapkit/wallet-core": resolve("../../packages/wallet-core/src"),
+      "@swapkit/wallet-hardware": resolve("../../packages/wallet-hardware/src"),
+      "@swapkit/wallet-hardware/ledger": resolve("../../packages/wallet-hardware/src/ledger"),
       "@swapkit/wallets": resolve("../../packages/wallets/src"),
 
       crypto: "crypto-browserify",

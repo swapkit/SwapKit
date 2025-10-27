@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
-import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -18,8 +17,11 @@ import type { SwapKitWidgetProps } from "./types";
 import "@swapkit/ui/swapkit.css";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
+  const [_amount, _setAmountt] = useState("");
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
+  const [_inputAsset, _setInputAssett] = useState<string | null>("THOR.RUNE");
+  const [_outputAsset, _setOutputAssett] = useState<string | null>("MAYA.MAYA");
   const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
   const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.MAYA");
   const cachedStableConfigMemoKey = useRef<string | null>(null);
@@ -38,9 +40,9 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   useEffect(() => {
     const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
 
-    if (swapKit && isConfigSame) return;
+    if ((swapKit && isConfigSame) || !config) return;
 
-    setConfig(config ?? {});
+    setConfig(config);
 
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey]);
@@ -65,7 +67,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
+  const _performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
     if (!(inputAssetValue && swapKit)) return;
 
     try {
@@ -104,6 +106,8 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     try {
+      const _inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
+      const _amountValue = inputAssetValue.set(amount);
       const inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
       const amountValue = inputAssetValue.set(amount);
 
@@ -141,6 +145,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 formattedAmountUSD={selectedRoute?.formattedInputAssetPriceUSD}
                 isSwapping={isSwapping}
                 label="Pay"
+                selectedAsset={inputAsset?.toString()}
                 selectedAsset={inputAsset?.toString()}
                 setAmount={setAmount}
                 setSelectedAsset={setInputAsset}

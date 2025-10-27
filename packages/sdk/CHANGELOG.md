@@ -1,5 +1,33 @@
 # @swapkit/sdk
 
+## 4.1.9
+
+### Patch Changes
+
+- [#1567](https://github.com/swapkit/SwapKit/pull/1567) [`4ff0c31`](https://github.com/swapkit/SwapKit/commit/4ff0c316f50a7616725ec6f29e54b7e2038997d7) Thanks [@towanTG](https://github.com/towanTG)! - Fixes createSwapKit default typing
+
+## 4.1.8
+
+### Patch Changes
+
+- [#1565](https://github.com/swapkit/SwapKit/pull/1565) [`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8) Thanks [@towanTG](https://github.com/towanTG)! - Improves typing for wallet + plugin injection
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/plugins@4.1.12
+  - @swapkit/core@4.0.40
+  - @swapkit/server@4.0.39
+  - @swapkit/wallets@4.2.6
+
+## 4.1.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/wallets@4.2.5
+  - @swapkit/core@4.0.39
+  - @swapkit/plugins@4.1.11
+  - @swapkit/server@4.0.38
+
 ## 4.1.6
 
 ### Patch Changes

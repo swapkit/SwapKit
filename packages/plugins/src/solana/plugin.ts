@@ -22,5 +22,5 @@ export const SolanaPlugin = createPlugin({
     },
   }),
   name: "solana",
-  properties: { supportedSwapkitProviders: [ProviderName.JUPITER] },
+  properties: { supportedSwapkitProviders: [ProviderName.JUPITER] as const },
 });

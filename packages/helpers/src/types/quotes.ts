@@ -159,6 +159,7 @@ export enum ProviderName {
   UNISWAP_V3 = "UNISWAP_V3",
   NEAR = "NEAR",
   GARDEN = "GARDEN",
+  OKX = "OKX",
 }
 
 export enum FeeTypeEnum {
@@ -169,4 +170,5 @@ export enum FeeTypeEnum {
   AFFILIATE = "affiliate",
   TAX = "tax",
   PRIORITY = "priority",
+  SERVICE = "service",
 }
