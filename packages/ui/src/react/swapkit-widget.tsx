@@ -15,13 +15,11 @@ import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 import "@swapkit/ui/swapkit.css";
+import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
-  const [_amount, _setAmountt] = useState("");
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
-  const [_inputAsset, _setInputAssett] = useState<string | null>("THOR.RUNE");
-  const [_outputAsset, _setOutputAssett] = useState<string | null>("MAYA.MAYA");
   const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
   const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.MAYA");
   const cachedStableConfigMemoKey = useRef<string | null>(null);
@@ -67,7 +65,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const _performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
+  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
     if (!(inputAssetValue && swapKit)) return;
 
     try {
@@ -106,8 +104,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     try {
-      const _inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
-      const _amountValue = inputAssetValue.set(amount);
       const inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
       const amountValue = inputAssetValue.set(amount);
 
@@ -146,7 +142,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 isSwapping={isSwapping}
                 label="Pay"
                 selectedAsset={inputAsset?.toString()}
-                selectedAsset={inputAsset?.toString()}
                 setAmount={setAmount}
                 setSelectedAsset={setInputAsset}
               />
@@ -159,7 +154,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                   onClick={() => {
                     setInputAsset(outputAsset);
                     setOutputAsset(inputAsset);
-                    setAmount(selectedRoute?.expectedBuyAmount ?? "");
+                    setAmount(selectedRoute?.expectedBuyAmount?.toString() ?? "");
                     reset();
                   }}
                   size="unstyled"
@@ -171,7 +166,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
               </div>
 
               <SwapInputWithChainSelector
-                amount={selectedRoute?.expectedBuyAmount}
+                amount={selectedRoute?.expectedBuyAmount?.toString() ?? ""}
                 formattedAmountUSD={selectedRoute?.formattedOutputAssetPriceUSD ?? "$0.00"}
                 isLoading={isFetchingQuote}
                 isSwapping={isSwapping}
