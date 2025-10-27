@@ -1,6 +1,8 @@
 "use client";
 
+import { PriorityLabel } from "@swapkit/sdk";
 import { ArrowLeftRight, ChevronRight, InfoIcon, TimerIcon } from "lucide-react";
+import { match } from "ts-pattern";
 import { showModal } from "../../hooks/use-modal";
 import type { UseSwapQuoteReturn } from "../../hooks/use-swap-quote";
 import { SwapQuoteRouteSelectDialog } from "../dialogs/swap-quote-route-select-dialog";
@@ -31,6 +33,8 @@ export function SwapQuotePreview({
     setSelectedRouteIndex(selectedRouteIndex);
   };
 
+  const selectedRouteHasTags = selectedRoute?.tags && selectedRoute?.tags?.length > 0;
+
   return (
     <Card className={className}>
       <CardContent className="fade-in-0 flex animate-in flex-col items-stretch duration-300">
@@ -50,7 +54,24 @@ export function SwapQuotePreview({
 
               <div className="font-medium">{selectedRoute?.providerName}</div>
 
-              <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">Best</div>
+              {selectedRouteHasTags && (
+                <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">
+                  {match(selectedRoute?.tags)
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.RECOMMENDED),
+                      () => "Best",
+                    )
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.CHEAPEST),
+                      () => "Cheapest",
+                    )
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.FASTEST),
+                      () => "Fastest",
+                    )
+                    .otherwise(() => null)}
+                </div>
+              )}
             </div>
 
             <div className="!ml-auto mr-4 flex items-center gap-1 text-muted-foreground text-sm">

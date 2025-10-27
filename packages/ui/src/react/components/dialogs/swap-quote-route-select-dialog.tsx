@@ -1,4 +1,6 @@
+import { PriorityLabel } from "@swapkit/sdk";
 import { TimerIcon } from "lucide-react";
+import { match } from "ts-pattern";
 import { cn } from "../../../lib/utils";
 import { useModal } from "../../hooks/use-modal";
 import type { UseSwapQuoteReturn } from "../../hooks/use-swap-quote";
@@ -42,7 +44,24 @@ export const SwapQuoteRouteSelectDialog = ({
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-base text-foreground">{route?.providerName}</span>
 
-                  <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">Best</div>
+                  {route?.tags?.length > 0 && (
+                    <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">
+                      {match(route?.tags)
+                        .when(
+                          (tags) => tags?.includes(PriorityLabel.RECOMMENDED),
+                          () => "Best",
+                        )
+                        .when(
+                          (tags) => tags?.includes(PriorityLabel.CHEAPEST),
+                          () => "Cheapest",
+                        )
+                        .when(
+                          (tags) => tags?.includes(PriorityLabel.FASTEST),
+                          () => "Fastest",
+                        )
+                        .otherwise((tags) => tags?.[0] ?? null)}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-1 text-muted-foreground text-xs">
@@ -54,7 +73,7 @@ export const SwapQuoteRouteSelectDialog = ({
 
               <div className="ml-auto flex flex-col items-end gap-1">
                 <span className="font-medium text-base text-foreground">
-                  {route?.expectedBuyAmount} {route?.outputAssetTicker}
+                  {route?.expectedBuyAmount?.toFixed(6)} {route?.outputAssetTicker}
                 </span>
 
                 <span className="font-normal text-muted-foreground text-xs">

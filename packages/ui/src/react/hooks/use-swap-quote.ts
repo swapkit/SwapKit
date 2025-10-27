@@ -3,6 +3,7 @@
 import {
   AssetValue,
   type PriceResponse,
+  PriorityLabel,
   type QuoteResponse,
   type QuoteResponseRoute,
   SwapKitApi,
@@ -83,6 +84,9 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       if (quote?.routes?.length <= 0) return;
 
       setQuoteResponse(quote);
+      setSelectedRouteIndex(
+        quote?.routes?.findIndex((route) => route?.meta?.tags?.includes(PriorityLabel.RECOMMENDED)) ?? 0,
+      );
 
       setExpectedBuyAmountFor1Input(
         quote?.routes?.[0]?.expectedBuyAmount
@@ -165,7 +169,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
         : null;
 
       const expectedBuyAmountMaxSlippage = quoteResponseRoute?.expectedBuyAmountMaxSlippage || null;
-      const expectedBuyAmount = quoteResponseRoute?.expectedBuyAmount || null;
+      const expectedBuyAmount = Number.parseFloat(quoteResponseRoute?.expectedBuyAmount) || null;
 
       const canShowFees = outputAssetPriceUSD && inputAssetPriceUSD;
 
@@ -173,6 +177,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       return {
         routeIndex: index,
         route: quoteResponseRoute,
+        tags: quoteResponseRoute?.meta?.tags,
 
         outputAssetPriceUSD,
         outputAssetTicker,
