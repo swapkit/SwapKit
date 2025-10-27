@@ -296,7 +296,7 @@ function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
     try {
       await connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
 
-      modal.resolve({ confirmed: true });
+      modal.resolve({ confirmed: true, data: wallet });
     } catch {
       toast.error("Failed to connect your wallet", {
         description: "Make sure your wallet is connected and accessible by the browser.",
