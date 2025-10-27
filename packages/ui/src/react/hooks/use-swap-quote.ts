@@ -89,31 +89,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
         quote?.routes?.findIndex((route) => route?.meta?.tags?.includes(PriorityLabel.RECOMMENDED)) || 0;
 
       setSelectedRouteIndex(recommendedRouteIndex);
-
-      const recommendedRoute = quote?.routes?.[recommendedRouteIndex];
-
-      setExpectedBuyAmountFor1Input(
-        recommendedRoute?.expectedBuyAmount
-          ? Number.parseFloat(recommendedRoute?.expectedBuyAmount) / Number(amount)
-          : 0,
-      );
-
-      setPriceResponse((oldPriceResponse) => {
-        const newPriceResponse = [...(oldPriceResponse ?? [])];
-
-        recommendedRoute?.meta?.assets?.forEach((asset) => {
-          const priceIndex = newPriceResponse?.findIndex((p) => p?.identifier === asset?.asset);
-
-          if (priceIndex === -1) {
-            newPriceResponse.push({ identifier: asset?.asset, price_usd: asset?.price });
-            return;
-          }
-
-          newPriceResponse[priceIndex] = { ...newPriceResponse[priceIndex], price_usd: asset?.price };
-        });
-
-        return newPriceResponse;
-      });
     } catch (error) {
       console.error("Failed to get quote:", error);
       toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -126,6 +101,31 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, inputAssetIdentifier, outputAssetIdentifier]);
 
   useDebouncedEffect(fetchSwapQuote, [amount, swapKit, swapKitConfig, outputAsset, inputAsset], 700);
+
+  useEffect(() => {
+    const selectedRoute = quoteResponse?.routes?.[selectedRouteIndex];
+
+    setExpectedBuyAmountFor1Input(
+      selectedRoute?.expectedBuyAmount ? Number.parseFloat(selectedRoute?.expectedBuyAmount) / Number(amount) : 0,
+    );
+
+    setPriceResponse((oldPriceResponse) => {
+      const newPriceResponse = [...(oldPriceResponse ?? [])];
+
+      selectedRoute?.meta?.assets?.forEach((asset) => {
+        const priceIndex = newPriceResponse?.findIndex((p) => p?.identifier === asset?.asset);
+
+        if (priceIndex === -1) {
+          newPriceResponse.push({ identifier: asset?.asset, price_usd: asset?.price });
+          return;
+        }
+
+        newPriceResponse[priceIndex] = { ...newPriceResponse[priceIndex], price_usd: asset?.price };
+      });
+
+      return newPriceResponse;
+    });
+  }, [amount, quoteResponse?.routes, selectedRouteIndex]);
 
   const getAssetPriceUSD = useCallback(
     (asset: AssetValue) => {
