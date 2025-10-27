@@ -143,13 +143,16 @@ export const StagenetCosmosChainConfigs = [StagenetTHORConfig, StagenetMAYAConfi
 export const StagenetCosmosChains = [StagenetChain.Maya, StagenetChain.THORChain, StagenetChain.Harbor] as const;
 export type StagenetCosmosChain = (typeof StagenetCosmosChains)[number];
 
-export const CosmosChainPrefixes: Record<CosmosChain, string> = {
+export const CosmosChainPrefixes: Record<CosmosChain | StagenetCosmosChain, string> = {
   [GAIAConfig.chain]: "cosmos",
   [THORConfig.chain]: "thor",
+  [StagenetTHORConfig.chain]: "sthor",
   [MAYAConfig.chain]: "maya",
+  [StagenetMAYAConfig.chain]: "smaya",
   [KUJIConfig.chain]: "kujira",
   [NOBLEConfig.chain]: "noble",
   [HARBORConfig.chain]: "harbor",
+  [StagenetHARBORConfig.chain]: "sharbor",
 };
 
 export const TCLikeChains = [THORConfig.chain, MAYAConfig.chain] as const;

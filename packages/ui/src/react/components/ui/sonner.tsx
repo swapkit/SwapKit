@@ -4,10 +4,13 @@ import { Toaster as Sonner, toast } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
+export const SWAPKIT_WIDGET_TOASTER_ID = "swapkit-widget-toaster";
+
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
+      id={SWAPKIT_WIDGET_TOASTER_ID}
       theme="dark"
       toastOptions={{
         classNames: {

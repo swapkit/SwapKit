@@ -1,5 +1,80 @@
 # @swapkit/helpers
 
+## 4.4.1
+
+### Patch Changes
+
+- [#1565](https://github.com/swapkit/SwapKit/pull/1565) [`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8) Thanks [@towanTG](https://github.com/towanTG)! - Adds OKX Provider
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.39
+
+## 4.4.0
+
+### Minor Changes
+
+- [#1562](https://github.com/swapkit/SwapKit/pull/1562) [`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186) Thanks [@mfaizan1](https://github.com/mfaizan1)! - Adds service to fee type enum
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.38
+
+## 4.3.4
+
+### Patch Changes
+
+- [#1552](https://github.com/swapkit/SwapKit/pull/1552) [`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b) Thanks [@towanTG](https://github.com/towanTG)! - Enables Xlayer for supporting wallets and corrects Xlayer config
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/types@0.2.3
+  - @swapkit/tokens@4.0.37
+
+## 4.3.3
+
+### Patch Changes
+
+- [#1547](https://github.com/swapkit/SwapKit/pull/1547) [`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949) Thanks [@towanTG](https://github.com/towanTG)! - Adds special gas estimation flow for gnosis
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.36
+
+## 4.3.2
+
+### Patch Changes
+
+- [#1544](https://github.com/swapkit/SwapKit/pull/1544) [`68cb4ce`](https://github.com/swapkit/SwapKit/commit/68cb4cef9ee3a4451a44eea45f52dca34506b973) Thanks [@towanTG](https://github.com/towanTG)! - Bumps near-api-js version and improves near-wallet-selector for cases that wallets do not support signTransaction
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.35
+
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`faa713e`](https://github.com/swapkit/SwapKit/commit/faa713e86b02d2ad10ca5636e545a707a74b901b)]:
+  - @swapkit/tokens@4.0.34
+
+## 4.3.0
+
+### Minor Changes
+
+- [#1538](https://github.com/swapkit/SwapKit/pull/1538) [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec) Thanks [@towanTG](https://github.com/towanTG)! - Add NEAR Wallet Selector integration
+
+  - Added `walletSelector` wallet adapter supporting 5 NEAR wallet modules (MyNearWallet, Meteor, Sender, HERE Wallet, Nightly)
+  - Added `nearWalletSelector` configuration to SKConfig integrations for optional contractId
+  - Integrated wallet selector into SDK's default wallets
+  - Modal auto-shows on connection for wallet selection
+  - Supports mainnet only (hardcoded)
+
+### Patch Changes
+
+- [#1539](https://github.com/swapkit/SwapKit/pull/1539) [`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421) Thanks [@towanTG](https://github.com/towanTG)! - Ledger and OKX Near Wallet improvment and fixes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421)]:
+  - @swapkit/types@0.2.2
+  - @swapkit/tokens@4.0.33
+
 ## 4.2.3
 
 ### Patch Changes

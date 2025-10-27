@@ -1,4 +1,4 @@
-import { AssetValue, createSwapKit } from "@swapkit/sdk";
+import { AssetValue, createSwapKit, SKConfig } from "@swapkit/sdk";
 
 let skClient: ReturnType<typeof createSwapKit> | undefined;
 let currentConfig: { walletConnectProjectId?: string; brokerEndpoint?: string; swapKit?: string } = {};
@@ -18,7 +18,13 @@ export const getSwapKitClient = ({
     currentConfig.swapKit !== swapKit;
 
   if (skClient && !configChanged) {
-    return skClient;
+    const { apiKeys, envs, integrations, apis, chains, feeMultipliers, requestOptions, rpcUrls, wallets } =
+      SKConfig.getState();
+
+    return {
+      config: { apiKeys, apis, chains, envs, feeMultipliers, integrations, requestOptions, rpcUrls, wallets },
+      skClient,
+    };
   }
 
   if (configChanged && skClient) {
@@ -28,28 +34,28 @@ export const getSwapKitClient = ({
 
   currentConfig = { brokerEndpoint, swapKit, walletConnectProjectId };
 
-  skClient = createSwapKit({
-    config: {
-      apiKeys: {
-        keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
-        swapKit: swapKit || process.env.TEST_API_KEY || "",
-        walletConnectProjectId: walletConnectProjectId || "",
-        xaman: process.env.XAMAN_API_KEY || "",
-      },
-      envs: { isDev: true },
-      integrations: {
-        chainflip: { brokerUrl: brokerEndpoint || "" },
-        keepKey: {
-          basePath: "http://localhost:1646/spec/swagger.json",
-          imageUrl: "https://repository-images.githubusercontent.com/587472295/feec8a61-39b2-4615-b293-145e97f49b5a",
-          name: "swapKit-demo-app",
-          url: "http://localhost:1646",
-        },
+  const config = {
+    apiKeys: {
+      keepKey: localStorage.getItem("keepkeyApiKey") || "1234",
+      swapKit: swapKit || process.env.TEST_API_KEY || "",
+      walletConnectProjectId: walletConnectProjectId || "",
+      xaman: process.env.XAMAN_API_KEY || "",
+    },
+    envs: { isDev: true },
+    integrations: {
+      chainflip: { brokerUrl: brokerEndpoint || "" },
+      keepKey: {
+        basePath: "http://localhost:1646/spec/swagger.json",
+        imageUrl: "https://repository-images.githubusercontent.com/587472295/feec8a61-39b2-4615-b293-145e97f49b5a",
+        name: "swapKit-demo-app",
+        url: "http://localhost:1646",
       },
     },
-  });
+  };
 
-  return skClient;
+  skClient = createSwapKit({ config });
+
+  return { config, skClient };
 };
 
 export const resetSwapKitClient = () => {
@@ -62,4 +68,4 @@ export const resetSwapKitClient = () => {
 
 await AssetValue.loadStaticAssets();
 
-export type SwapKitClient = ReturnType<typeof getSwapKitClient>;
+export type SwapKitClient = ReturnType<typeof getSwapKitClient>["skClient"];

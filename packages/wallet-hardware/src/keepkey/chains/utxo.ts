@@ -22,7 +22,7 @@ interface KeepKeyInputObject {
   hex: string;
 }
 
-export const utxoWalletMethods = async ({
+export async function utxoWalletMethods({
   sdk,
   chain,
   derivationPath,
@@ -30,7 +30,12 @@ export const utxoWalletMethods = async ({
   sdk: KeepKeySdk;
   chain: Exclude<UTXOChain, typeof Chain.Zcash>;
   derivationPath?: DerivationPathArray;
-}) => {
+}): Promise<
+  UTXOToolboxes[UTXOChain] & {
+    address: string;
+    signTransaction: (psbt: Psbt, inputs: KeepKeyInputObject[], memo?: string) => Promise<string>;
+  }
+> {
   const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
   // This might not work for BCH
   const toolbox = await getUtxoToolbox(chain);
@@ -129,4 +134,4 @@ export const utxoWalletMethods = async ({
   };
 
   return { ...toolbox, address: walletAddress, signTransaction, transfer };
-};
+}

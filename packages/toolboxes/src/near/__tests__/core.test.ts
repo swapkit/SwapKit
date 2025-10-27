@@ -1,16 +1,16 @@
 import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { JsonRpcProvider } from "@near-js/providers";
 import { AssetValue, Chain, getRPCUrl } from "@swapkit/helpers";
-import { providers } from "near-api-js";
 import { getFullAccessPublicKey } from "../helpers/core";
 import { getNearToolbox } from "../toolbox";
 
 const accountId = "ea03292d08136cca439513a33c76af083e5204eceb4ce720320fff84071a447f";
 
-const context: { provider: providers.JsonRpcProvider; toolbox: Awaited<ReturnType<typeof getNearToolbox>> } = {} as any;
+const context: { provider: JsonRpcProvider; toolbox: Awaited<ReturnType<typeof getNearToolbox>> } = {} as any;
 
 beforeAll(async () => {
   const rpcUrl = await getRPCUrl(Chain.Near);
-  context.provider = new providers.JsonRpcProvider({ url: rpcUrl });
+  context.provider = new JsonRpcProvider({ url: rpcUrl });
 });
 
 beforeEach(async () => {
@@ -41,7 +41,7 @@ describe("NEAR createTransaction", () => {
   }, 10000);
 
   test("should handle network errors gracefully", async () => {
-    const invalidProvider = new providers.JsonRpcProvider({ url: "https://invalid-rpc-url.test" });
+    const invalidProvider = new JsonRpcProvider({ url: "https://invalid-rpc-url.test" });
 
     await expect(async () => {
       await getFullAccessPublicKey(invalidProvider, "any-account.testnet");

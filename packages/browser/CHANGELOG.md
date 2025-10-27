@@ -1,5 +1,89 @@
 # @swapkit/browser
 
+## 4.0.44
+
+### Patch Changes
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/helpers@4.4.1
+  - @swapkit/plugins@4.1.12
+  - @swapkit/core@4.0.40
+  - @swapkit/wallets@4.2.6
+
+## 4.0.43
+
+### Patch Changes
+
+- Updated dependencies [[`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186)]:
+  - @swapkit/helpers@4.4.0
+  - @swapkit/wallets@4.2.5
+  - @swapkit/core@4.0.39
+  - @swapkit/plugins@4.1.11
+
+## 4.0.42
+
+### Patch Changes
+
+- Updated dependencies [[`0c66d52`](https://github.com/swapkit/SwapKit/commit/0c66d52276c7d2859d5455a83342a16c32d83573)]:
+  - @swapkit/plugins@4.1.10
+
+## 4.0.41
+
+### Patch Changes
+
+- Updated dependencies [[`4ae40d2`](https://github.com/swapkit/SwapKit/commit/4ae40d2b2f9f949fc3408a0b61600f8db903bd04)]:
+  - @swapkit/plugins@4.1.9
+
+## 4.0.40
+
+### Patch Changes
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/helpers@4.3.4
+  - @swapkit/wallets@4.2.4
+  - @swapkit/core@4.0.38
+  - @swapkit/plugins@4.1.8
+
+## 4.0.39
+
+### Patch Changes
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949), [`11ebcac`](https://github.com/swapkit/SwapKit/commit/11ebcac6a0b0c4f4000ecf406ca099cd51e71dd2)]:
+  - @swapkit/helpers@4.3.3
+  - @swapkit/wallets@4.2.3
+  - @swapkit/core@4.0.37
+  - @swapkit/plugins@4.1.7
+
+## 4.0.38
+
+### Patch Changes
+
+- Updated dependencies [[`68cb4ce`](https://github.com/swapkit/SwapKit/commit/68cb4cef9ee3a4451a44eea45f52dca34506b973)]:
+  - @swapkit/helpers@4.3.2
+  - @swapkit/plugins@4.1.6
+  - @swapkit/wallets@4.2.2
+  - @swapkit/core@4.0.36
+
+## 4.0.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.3.1
+  - @swapkit/core@4.0.35
+  - @swapkit/plugins@4.1.5
+  - @swapkit/wallets@4.2.1
+
+## 4.0.36
+
+### Patch Changes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421), [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec)]:
+  - @swapkit/helpers@4.3.0
+  - @swapkit/wallets@4.2.0
+  - @swapkit/core@4.0.34
+  - @swapkit/plugins@4.1.4
+
 ## 4.0.35
 
 ### Patch Changes

@@ -49,6 +49,7 @@ export const ctrlWallet = createWallet({
     Chain.Polygon,
     Chain.Solana,
     Chain.THORChain,
+    Chain.XLayer,
   ],
   walletType: WalletOption.CTRL,
 });
@@ -122,7 +123,8 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Ethereum:
     case Chain.Gnosis:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
@@ -165,10 +167,10 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const toolbox = await getNearToolbox({ signer });
 
       const transfer = async (params: GenericTransferParams) => {
-        const { transfer: transferAction } = await import("near-api-js/lib/transaction");
+        const { actionCreators } = await import("@near-js/transactions");
 
         const amountInYocto = params.assetValue.getBaseValue("string");
-        const action = transferAction(BigInt(amountInYocto));
+        const action = actionCreators.transfer(BigInt(amountInYocto));
 
         const transaction = { actions: [action], receiverId: params.recipient, signerId: accountId };
 

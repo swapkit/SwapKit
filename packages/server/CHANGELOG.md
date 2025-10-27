@@ -1,5 +1,75 @@
 # @swapkit/server
 
+## 4.0.39
+
+### Patch Changes
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/helpers@4.4.1
+  - @swapkit/tokens@4.0.39
+  - @swapkit/toolboxes@4.1.11
+  - @swapkit/wallet-keystore@4.0.39
+
+## 4.0.38
+
+### Patch Changes
+
+- Updated dependencies [[`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186)]:
+  - @swapkit/helpers@4.4.0
+  - @swapkit/tokens@4.0.38
+  - @swapkit/toolboxes@4.1.10
+  - @swapkit/wallet-keystore@4.0.38
+
+## 4.0.37
+
+### Patch Changes
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/toolboxes@4.1.9
+  - @swapkit/helpers@4.3.4
+  - @swapkit/tokens@4.0.37
+  - @swapkit/wallet-keystore@4.0.37
+
+## 4.0.36
+
+### Patch Changes
+
+- Updated dependencies [[`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949)]:
+  - @swapkit/toolboxes@4.1.8
+  - @swapkit/helpers@4.3.3
+  - @swapkit/tokens@4.0.36
+  - @swapkit/wallet-keystore@4.0.36
+
+## 4.0.35
+
+### Patch Changes
+
+- Updated dependencies [[`68cb4ce`](https://github.com/swapkit/SwapKit/commit/68cb4cef9ee3a4451a44eea45f52dca34506b973)]:
+  - @swapkit/toolboxes@4.1.7
+  - @swapkit/helpers@4.3.2
+  - @swapkit/tokens@4.0.35
+  - @swapkit/wallet-keystore@4.0.35
+
+## 4.0.34
+
+### Patch Changes
+
+- Updated dependencies [[`faa713e`](https://github.com/swapkit/SwapKit/commit/faa713e86b02d2ad10ca5636e545a707a74b901b)]:
+  - @swapkit/tokens@4.0.34
+  - @swapkit/helpers@4.3.1
+  - @swapkit/toolboxes@4.1.6
+  - @swapkit/wallet-keystore@4.0.34
+
+## 4.0.33
+
+### Patch Changes
+
+- Updated dependencies [[`357a262`](https://github.com/swapkit/SwapKit/commit/357a2625fe7d528b377b2cac954dcab7a6adc421), [`0d56165`](https://github.com/swapkit/SwapKit/commit/0d56165668372c41711bb3fbea21436cb1c7bbec)]:
+  - @swapkit/toolboxes@4.1.5
+  - @swapkit/helpers@4.3.0
+  - @swapkit/tokens@4.0.33
+  - @swapkit/wallet-keystore@4.0.33
+
 ## 4.0.32
 
 ### Patch Changes

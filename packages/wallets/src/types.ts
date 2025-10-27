@@ -3,7 +3,6 @@ import type { Keplr } from "@keplr-wallet/types";
 import { type EthereumWindowProvider, WalletOption } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { SubstrateInjectedExtension } from "@swapkit/toolboxes/substrate";
-
 import type { keepkeyWallet } from "@swapkit/wallet-hardware/keepkey";
 import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
@@ -18,6 +17,7 @@ import type { NearBrowserWalletProvider } from "./helpers/near";
 import type { keepkeyBexWallet } from "./keepkey-bex";
 import type { keplrWallet } from "./keplr";
 import type { keystoreWallet } from "./keystore";
+import type { walletSelectorWallet } from "./near-wallet-selector";
 import type { okxWallet } from "./okx";
 import type { onekeyWallet } from "./onekey";
 import type { phantomWallet } from "./phantom";
@@ -67,6 +67,7 @@ export type SKWallets = {
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet;
   [WalletOption.VULTISIG]: typeof vultisigWallet;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet;
+  [WalletOption.WALLET_SELECTOR]: typeof walletSelectorWallet;
   [WalletOption.XAMAN]: typeof xamanWallet;
 };
 
@@ -101,6 +102,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.TRUSTWALLET_WEB]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.VULTISIG]: typeof vultisigWallet.connectVultisig.supportedChains;
   [WalletOption.WALLETCONNECT]: typeof walletconnectWallet.connectWalletconnect.supportedChains;
+  [WalletOption.WALLET_SELECTOR]: typeof walletSelectorWallet.connectWalletSelector.supportedChains;
   [WalletOption.XAMAN]: typeof xamanWallet.connectXaman.supportedChains;
 };
 

@@ -1,4 +1,4 @@
-import { parseNearAmount } from "near-api-js/lib/utils/format";
+import { parseNearAmount } from "@near-js/utils";
 
 const MINIMUM_NAME_LENGTH = 2;
 const MAXIMUM_NAME_LENGTH = 64;

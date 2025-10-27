@@ -7,6 +7,7 @@ export interface SwapKitState {
   balances: AssetValue[];
   walletType: WalletOption | null;
   isWalletConnected: boolean;
+  isConnectingWallet: boolean;
   keystoreFile: KeystoreFile;
   isKeystoreOpen: boolean;
   isKeystoreDecrypting: boolean;
@@ -17,6 +18,9 @@ export interface SwapKitState {
   setKeystoreFile: (file: KeystoreFile) => void;
   setIsKeystoreOpen: (isOpen: boolean) => void;
   setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
+  setIsConnectingWallet: (isConnectingWallet: boolean) => void;
 }
 
 export type SwapKitWidgetProps = { config?: SKConfigState };
+
+export type UseSwapQuoteParams = { inputAsset: string | null; outputAsset: string | null; amount: string };

@@ -1,4 +1,5 @@
 import type { StdSignDoc } from "@cosmjs/amino";
+import type { Transaction } from "@near-js/transactions";
 import {
   Chain,
   filterSupportedChains,
@@ -15,7 +16,6 @@ import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 import type { WalletConnectModal } from "@walletconnect/modal";
 import type { SignClient } from "@walletconnect/sign-client";
 import type { SessionTypes, SignClientTypes } from "@walletconnect/types";
-import type { Transaction } from "near-api-js/lib/transaction";
 import {
   DEFAULT_APP_METADATA,
   DEFAULT_COSMOS_METHODS,
@@ -82,6 +82,7 @@ export const walletconnectWallet = createWallet({
     Chain.Polygon,
     Chain.THORChain,
     Chain.Tron,
+    Chain.XLayer,
   ],
   walletType: WalletOption.WALLETCONNECT,
 });
@@ -110,7 +111,8 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Optimism:
-    case Chain.Polygon: {
+    case Chain.Polygon:
+    case Chain.XLayer: {
       const { getProvider, getEvmToolbox } = await import("@swapkit/toolboxes/evm");
 
       const provider = await getProvider(chain);

@@ -1,10 +1,10 @@
 export const list = {
   chainId: "radix-mainnet",
-  count: 176,
+  count: 179,
   keywords: [],
   name: "CAVIAR_V1",
   provider: "CAVIAR_V1",
-  timestamp: "2025-09-23T11:44:41.243Z",
+  timestamp: "2025-10-15T15:09:25.896Z",
   tokens: [
     {
       address: "resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5",
@@ -15,6 +15,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.$nerd-resource_rdx1t4hw37aufauds7h7cwq24h25rxtzwe5gl7pz9qvrls2m3a7dmhh0v5.png",
       ticker: "$NERD",
+    },
+    {
+      address: "resource_rdx1t4a4c4l430z45zyhvkwltdsrfexwejzxsvtnhlt53gl530yqa4qzy4",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.3IATLAS-resource_rdx1t4a4c4l430z45zyhvkwltdsrfexwejzxsvtnhlt53gl530yqa4qzy4",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.3iatlas-resource_rdx1t4a4c4l430z45zyhvkwltdsrfexwejzxsvtnhlt53gl530yqa4qzy4.png",
+      ticker: "3IATLAS",
     },
     {
       address: "resource_rdx1t5an9vvvgw045rkd5drghr7luu23q74w4x7ydyzjrjtfe3rlc95dk2",
@@ -627,6 +637,16 @@ export const list = {
       ticker: "HODL",
     },
     {
+      address: "resource_rdx1t5ljlq97xfcewcdjxsqld89443fchqg96xv8a8k8gdftdycy9haxpx",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 9,
+      identifier: "XRD.hSOL-resource_rdx1t5ljlq97xfcewcdjxsqld89443fchqg96xv8a8k8gdftdycy9haxpx",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.hsol-resource_rdx1t5ljlq97xfcewcdjxsqld89443fchqg96xv8a8k8gdftdycy9haxpx.png",
+      ticker: "hSOL",
+    },
+    {
       address: "resource_rdx1t5kmyj54jt85malva7fxdrnpvgfgs623yt7ywdaval25vrdlmnwe97",
       chain: "XRD",
       chainId: "radix-mainnet",
@@ -1165,6 +1185,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.scorp-resource_rdx1t5egwd52s2xemaa6r8jkhj0vs4q82ym93efn4g4267de4fwnfww7cy.png",
       ticker: "scorp",
+    },
+    {
+      address: "resource_rdx1tkff46jkeu98jgl8naxpzfkn0m0hytysxzex3l3a8m7qps49f7m45c",
+      chain: "XRD",
+      chainId: "radix-mainnet",
+      decimals: 18,
+      identifier: "XRD.SCRYPTO-resource_rdx1tkff46jkeu98jgl8naxpzfkn0m0hytysxzex3l3a8m7qps49f7m45c",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/xrd.scrypto-resource_rdx1tkff46jkeu98jgl8naxpzfkn0m0hytysxzex3l3a8m7qps49f7m45c.png",
+      ticker: "SCRYPTO",
     },
     {
       address: "resource_rdx1t4hka09gp6ptfa57wupze0u2dpdrrh0vs9w09mfq3xh2pp4zwvg46n",

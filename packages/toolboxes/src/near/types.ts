@@ -1,20 +1,15 @@
+import type { Signer } from "@near-js/signers";
+import type { SignedTransaction, Transaction } from "@near-js/transactions";
 import type {
   ChainSigner,
   DerivationPathArray,
   GenericCreateTransactionParams,
   GenericTransferParams,
 } from "@swapkit/helpers";
-import type { KeyPairSigner, Signer, transactions } from "near-api-js";
 
-interface NearKeyPairSigner
-  extends KeyPairSigner,
-    Omit<ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>, "signTransaction"> {}
-
-interface NearGeneralSigner
-  extends Signer,
-    Omit<ChainSigner<typeof transactions.Transaction, typeof transactions.SignedTransaction>, "signTransaction"> {}
-
-export type NearSigner = NearKeyPairSigner | NearGeneralSigner;
+export interface NearSigner extends Signer, Omit<ChainSigner<Transaction, SignedTransaction>, "signTransaction"> {
+  signAndSendTransactions?(params: { transactions: Transaction[] }): Promise<string>;
+}
 
 export type NearToolboxParams =
   | { signer?: NearSigner; accountId?: string }
