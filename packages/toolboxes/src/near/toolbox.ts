@@ -68,13 +68,58 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams): Promise
     return address;
   }
 
+  async function transferTokenWithStorageDeposit(params: {
+    recipient: string;
+    assetValue: AssetValue;
+    memo?: string;
+    contractId: string;
+  }) {
+    const token = await nep141(params.contractId);
+    const bounds = await token.contract.storage_balance_bounds();
+    const storageDeposit = bounds?.min || "1250000000000000000000"; // 0.00125 NEAR
+
+    const actions = [
+      await createAction({
+        args: { account_id: params.recipient },
+        attachedDeposit: storageDeposit,
+        gas: "150000000000000", // 150 TGas for storage_deposit
+        methodName: "storage_deposit",
+      }),
+      await createAction({
+        args: {
+          amount: params.assetValue.getBaseValue("string"),
+          memo: params.memo || null,
+          receiver_id: params.recipient,
+        },
+        attachedDeposit: "1",
+        gas: "150000000000000", // 150 TGas for ft_transfer
+        methodName: "ft_transfer",
+      }),
+    ];
+
+    return executeBatchTransaction({ actions, receiverId: params.contractId });
+  }
+
   async function transfer(params: NearTransferParams) {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
 
-    const transaction = await createTransaction({ ...params, sender: await getAddress() });
+    const { assetValue, recipient, memo } = params;
+    const sender = await getAddress();
 
+    // Handle NEP-141 token transfers - check if recipient needs storage
+    if (!assetValue.isGasAsset && assetValue.address) {
+      const token = await nep141(assetValue.address);
+      const storageBalance = await token.storageBalanceOf(recipient);
+
+      if (!storageBalance) {
+        return transferTokenWithStorageDeposit({ assetValue, contractId: assetValue.address, memo, recipient });
+      }
+    }
+
+    // Standard transfer (native NEAR or token with registered storage)
+    const transaction = await createTransaction({ ...params, sender });
     return broadcastTransaction(await signTransaction(transaction));
   }
 
