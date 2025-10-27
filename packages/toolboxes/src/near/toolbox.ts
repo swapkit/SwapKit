@@ -68,6 +68,16 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     return address;
   }
 
+  async function checkStorageBalance(params: { contractId: string; accountId: string }) {
+    const contract = await createContract<NEP141StorageContract>({
+      changeMethods: [],
+      contractId: params.contractId,
+      viewMethods: ["storage_balance_of"],
+    });
+
+    return contract.storage_balance_of({ account_id: params.accountId });
+  }
+
   async function transferTokenWithStorageDeposit(params: {
     recipient: string;
     assetValue: AssetValue;
@@ -108,13 +118,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
 
     // Handle NEP-141 token transfers - check if recipient needs storage
     if (!assetValue.isGasAsset && assetValue.address) {
-      const contract = await createContract<NEP141StorageContract>({
-        changeMethods: [],
-        contractId: assetValue.address,
-        viewMethods: ["storage_balance_of"],
-      });
-
-      const storageBalance = await contract.storage_balance_of({ account_id: recipient });
+      const storageBalance = await checkStorageBalance({ accountId: recipient, contractId: assetValue.address });
 
       if (!storageBalance) {
         return transferTokenWithStorageDeposit({ assetValue, contractId: assetValue.address, memo, recipient });
