@@ -84,15 +84,36 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       if (quote?.routes?.length <= 0) return;
 
       setQuoteResponse(quote);
-      setSelectedRouteIndex(
-        quote?.routes?.findIndex((route) => route?.meta?.tags?.includes(PriorityLabel.RECOMMENDED)) ?? 0,
-      );
+
+      const recommendedRouteIndex =
+        quote?.routes?.findIndex((route) => route?.meta?.tags?.includes(PriorityLabel.RECOMMENDED)) || 0;
+
+      setSelectedRouteIndex(recommendedRouteIndex);
+
+      const recommendedRoute = quote?.routes?.[recommendedRouteIndex];
 
       setExpectedBuyAmountFor1Input(
-        quote?.routes?.[0]?.expectedBuyAmount
-          ? Number.parseFloat(quote?.routes?.[0]?.expectedBuyAmount) / Number(amount)
+        recommendedRoute?.expectedBuyAmount
+          ? Number.parseFloat(recommendedRoute?.expectedBuyAmount) / Number(amount)
           : 0,
       );
+
+      setPriceResponse((oldPriceResponse) => {
+        const newPriceResponse = [...(oldPriceResponse ?? [])];
+
+        recommendedRoute?.meta?.assets?.forEach((asset) => {
+          const priceIndex = newPriceResponse?.findIndex((p) => p?.identifier === asset?.asset);
+
+          if (priceIndex === -1) {
+            newPriceResponse.push({ identifier: asset?.asset, price_usd: asset?.price });
+            return;
+          }
+
+          newPriceResponse[priceIndex] = { ...newPriceResponse[priceIndex], price_usd: asset?.price };
+        });
+
+        return newPriceResponse;
+      });
     } catch (error) {
       console.error("Failed to get quote:", error);
       toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
