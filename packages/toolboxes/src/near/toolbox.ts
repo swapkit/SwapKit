@@ -27,6 +27,7 @@ import type {
   NearTransferParams,
 } from "./types";
 import type { NearContractInterface, NearGasEstimateParams } from "./types/contract";
+import type { NEP141StorageContract } from "./types/nep141";
 import type {
   BatchTransaction,
   ContractFunctionCallParams,
@@ -107,13 +108,13 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
 
     // Handle NEP-141 token transfers - check if recipient needs storage
     if (!assetValue.isGasAsset && assetValue.address) {
-      const contract = await createContract({
+      const contract = await createContract<NEP141StorageContract>({
         changeMethods: [],
         contractId: assetValue.address,
         viewMethods: ["storage_balance_of"],
       });
 
-      const storageBalance = await (contract as any).storage_balance_of({ account_id: recipient });
+      const storageBalance = await contract.storage_balance_of({ account_id: recipient });
 
       if (!storageBalance) {
         return transferTokenWithStorageDeposit({ assetValue, contractId: assetValue.address, memo, recipient });
