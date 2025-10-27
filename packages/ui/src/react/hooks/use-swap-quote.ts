@@ -24,6 +24,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
   const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
+  const [expectedBuyAmountFor1Input, setExpectedBuyAmountFor1Input] = useState(0);
 
   const { swapKit } = useSwapKit();
   const swapKitConfig = useSwapKitConfig();
@@ -82,6 +83,12 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       if (quote?.routes?.length <= 0) return;
 
       setQuoteResponse(quote);
+
+      setExpectedBuyAmountFor1Input(
+        quote?.routes?.[0]?.expectedBuyAmount
+          ? Number.parseFloat(quote?.routes?.[0]?.expectedBuyAmount) / Number(amount)
+          : 0,
+      );
     } catch (error) {
       console.error("Failed to get quote:", error);
       toast.error(`Failed to get quote: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -203,12 +210,23 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       routes: swapQuoteRoutes,
       selectedRoute: {
         ...(swapQuoteRoutes?.[selectedRouteIndex] ?? null),
+        amount,
+        expectedBuyAmountFor1Input,
         formattedInputAssetPriceUSD: inputAssetPriceUSD ? formatCurrency(inputAssetPriceUSD * Number(amount)) : "$0.00",
         inputAssetPriceUSD,
         inputAssetTicker,
       },
       setSelectedRouteIndex,
     }),
-    [swapQuoteRoutes, selectedRouteIndex, amount, inputAssetPriceUSD, inputAssetTicker, reset, isFetchingQuote],
+    [
+      swapQuoteRoutes,
+      selectedRouteIndex,
+      amount,
+      inputAssetPriceUSD,
+      inputAssetTicker,
+      reset,
+      isFetchingQuote,
+      expectedBuyAmountFor1Input,
+    ],
   );
 };

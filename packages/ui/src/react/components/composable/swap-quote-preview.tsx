@@ -73,7 +73,7 @@ export function SwapQuotePreview({
               <ArrowLeftRight className="size-4 text-muted-foreground" />
 
               <span className="ml-2">
-                1 {selectedRoute?.inputAssetTicker} ≈ {selectedRoute?.expectedBuyAmount}{" "}
+                1 {selectedRoute?.inputAssetTicker} ≈ {selectedRoute?.expectedBuyAmountFor1Input.toFixed(6)}{" "}
                 {selectedRoute?.outputAssetTicker}
               </span>
 
