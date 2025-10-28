@@ -100,11 +100,16 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
       }
 
       return createContractFunctionCall({
-        args: { amount: assetValue.getBaseValue("string"), memo: memo || null, receiver_id: recipient },
+        args: {
+          amount: assetValue.getBaseValue("string"),
+          ...(memo ? { memo } : {}),
+          msg: JSON.stringify({ receiver_id: recipient, ...(memo ? { memo } : {}) }),
+          receiver_id: "intents.near",
+        },
         attachedDeposit: attachedDeposit || "1",
         contractId,
         gas: "250000000000000",
-        methodName: "ft_transfer",
+        methodName: "ft_transfer_call",
         sender: signerId,
       });
     }
