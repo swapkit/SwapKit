@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.1.12
+
+### Patch Changes
+
+- [#1570](https://github.com/swapkit/SwapKit/pull/1570) [`2c328fd`](https://github.com/swapkit/SwapKit/commit/2c328fd19a23c16d241ca1c6bd5abe163e502b85) Thanks [@0xepicode](https://github.com/0xepicode)! - Fix NEP tokens send by checking storage deposit
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.4.2
+
 ## 4.1.11
 
 ### Patch Changes
