@@ -1,49 +1,92 @@
 "use client";
 
+import { PriorityLabel } from "@swapkit/sdk";
 import { ArrowLeftRight, ChevronRight, InfoIcon, TimerIcon } from "lucide-react";
-import type { useSwapQuote } from "../../hooks/use-swap-quote";
+import { match } from "ts-pattern";
+import { showModal } from "../../hooks/use-modal";
+import type { UseSwapQuoteReturn } from "../../hooks/use-swap-quote";
+import { SwapQuoteRouteSelectDialog } from "../dialogs/swap-quote-route-select-dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 
 export function SwapQuotePreview({
-  swapQuote,
+  selectedRoute,
+  routes,
+  setSelectedRouteIndex,
   className,
 }: {
-  swapQuote: ReturnType<typeof useSwapQuote>["swapQuote"];
+  selectedRoute: UseSwapQuoteReturn["selectedRoute"];
+  routes: UseSwapQuoteReturn["routes"];
+  setSelectedRouteIndex: UseSwapQuoteReturn["setSelectedRouteIndex"];
   className?: string;
 }) {
-  if (!swapQuote) return null;
+  if (!selectedRoute) return null;
+
+  const selectQuoteRoute = async () => {
+    const { confirmed, data: selectedRouteIndex } = await showModal<number>(
+      <SwapQuoteRouteSelectDialog routes={routes} selectedRoute={selectedRoute} />,
+    );
+
+    if (!confirmed) return;
+
+    setSelectedRouteIndex(selectedRouteIndex);
+  };
+
+  const selectedRouteHasTags = selectedRoute?.tags && selectedRoute?.tags?.length > 0;
 
   return (
     <Card className={className}>
-      <CardContent className="fade-in-0 animate-in duration-300">
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4 text-sm">
-          <div className="flex items-center gap-2">
-            {swapQuote?.providerName && (
-              <img
-                alt={swapQuote?.providerName}
-                className="size-6 rounded-full bg-primary"
-                src={swapQuote?.providerLogoURI ?? ""}
-              />
-            )}
+      <CardContent className="fade-in-0 flex animate-in flex-col items-stretch duration-300">
+        <Button
+          className="-mt-4 -mx-4 flex rounded-t-xl rounded-b-none px-4 py-3 hover:bg-white/[0.08]"
+          onClick={selectQuoteRoute}
+          variant="unstyled">
+          <CardHeader className="flex w-full flex-row items-center space-y-0 text-sm">
+            <div className="flex items-center gap-2">
+              {selectedRoute?.providerName && (
+                <img
+                  alt={selectedRoute?.providerName}
+                  className="size-6 rounded-full bg-primary"
+                  src={selectedRoute?.providerLogoURI ?? ""}
+                />
+              )}
 
-            <div className="font-medium">{swapQuote?.providerName}</div>
+              <div className="font-medium">{selectedRoute?.providerName}</div>
 
-            <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">Best</div>
-          </div>
+              {selectedRouteHasTags && (
+                <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">
+                  {match(selectedRoute?.tags)
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.RECOMMENDED),
+                      () => "Best",
+                    )
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.CHEAPEST),
+                      () => "Cheapest",
+                    )
+                    .when(
+                      (tags) => tags?.includes(PriorityLabel.FASTEST),
+                      () => "Fastest",
+                    )
+                    .otherwise(() => null)}
+                </div>
+              )}
+            </div>
 
-          <div className="!ml-auto mr-4 flex items-center gap-1 text-muted-foreground text-sm">
-            <TimerIcon className="size-4" />
+            <div className="!ml-auto mr-4 flex items-center gap-1 text-muted-foreground text-sm">
+              <TimerIcon className="size-4" />
 
-            <span>{swapQuote?.formattedEstimatedTime}</span>
-          </div>
+              <span className="font-normal">{selectedRoute?.formattedEstimatedTime}</span>
+            </div>
 
-          <div className="font-medium text-foreground">
-            {swapQuote?.expectedBuyAmount} {swapQuote?.outputAssetTicker}
-          </div>
+            <div className="font-medium text-foreground">
+              {selectedRoute?.expectedBuyAmount} {selectedRoute?.outputAssetTicker}
+            </div>
 
-          <ChevronRight className="ml-2 size-4 text-foreground" />
-        </CardHeader>
+            <ChevronRight className="ml-2 size-4 text-foreground" />
+          </CardHeader>
+        </Button>
 
         <Accordion collapsible type="single">
           <AccordionItem className="-mb-4 -mx-4" value="quote">
@@ -51,10 +94,11 @@ export function SwapQuotePreview({
               <ArrowLeftRight className="size-4 text-muted-foreground" />
 
               <span className="ml-2">
-                1 {swapQuote?.inputAssetTicker} ≈ {swapQuote?.expectedBuyAmount} {swapQuote?.outputAssetTicker}
+                1 {selectedRoute?.inputAssetTicker} ≈ {selectedRoute?.expectedBuyAmountFor1Input.toFixed(6)}{" "}
+                {selectedRoute?.outputAssetTicker}
               </span>
 
-              <span className="mr-2 ml-auto font-medium">Fees: {swapQuote?.formattedTotalFeesUSD}</span>
+              <span className="mr-2 ml-auto font-medium">Fees: {selectedRoute?.formattedTotalFeesUSD}</span>
             </AccordionTrigger>
 
             <AccordionContent className="rounded-b-lg border-card border-r border-b border-l bg-background px-4 pb-4 duration-150">
@@ -65,7 +109,7 @@ export function SwapQuotePreview({
                   <InfoIcon className="size-4" />
 
                   <span className="ml-auto font-medium text-foreground">
-                    {swapQuote?.expectedBuyAmountMaxSlippage} {swapQuote?.outputAssetTicker}
+                    {selectedRoute?.expectedBuyAmountMaxSlippage} {selectedRoute?.outputAssetTicker}
                   </span>
                 </li>
 
@@ -74,10 +118,12 @@ export function SwapQuotePreview({
 
                   <InfoIcon className="size-4" />
 
-                  {swapQuote?.formattedLiquidityFeeUSD === "$0.00" ? (
+                  {selectedRoute?.formattedLiquidityFeeUSD === "$0.00" ? (
                     <span className="ml-auto font-medium text-success-foreground">FREE</span>
                   ) : (
-                    <span className="ml-auto font-medium text-foreground">{swapQuote?.formattedLiquidityFeeUSD}</span>
+                    <span className="ml-auto font-medium text-foreground">
+                      {selectedRoute?.formattedLiquidityFeeUSD}
+                    </span>
                   )}
                 </li>
 
@@ -86,10 +132,12 @@ export function SwapQuotePreview({
 
                   <InfoIcon className="size-4" />
 
-                  {swapQuote?.formattedExchangeFeeUSD === "$0.00" ? (
+                  {selectedRoute?.formattedExchangeFeeUSD === "$0.00" ? (
                     <span className="ml-auto font-medium text-success-foreground">FREE</span>
                   ) : (
-                    <span className="ml-auto font-medium text-foreground">{swapQuote?.formattedExchangeFeeUSD}</span>
+                    <span className="ml-auto font-medium text-foreground">
+                      {selectedRoute?.formattedExchangeFeeUSD}
+                    </span>
                   )}
                 </li>
 
@@ -98,11 +146,11 @@ export function SwapQuotePreview({
 
                   <InfoIcon className="size-4" />
 
-                  {swapQuote?.formattedInboundNetworkFeeUSD === "$0.00" ? (
+                  {selectedRoute?.formattedInboundNetworkFeeUSD === "$0.00" ? (
                     <span className="ml-auto font-medium text-success-foreground">FREE</span>
                   ) : (
                     <span className="ml-auto font-medium text-foreground">
-                      {swapQuote?.formattedInboundNetworkFeeUSD}
+                      {selectedRoute?.formattedInboundNetworkFeeUSD}
                     </span>
                   )}
                 </li>

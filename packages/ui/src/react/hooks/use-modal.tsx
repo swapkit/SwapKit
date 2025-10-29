@@ -1,57 +1,99 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { create } from "zustand";
 
-export const useModalStore = create<{
+type ModalStore = {
   modals: {
     id: string;
     component: React.ReactNode;
     _promise: {
-      promise: Promise<{ confirmed: boolean; data?: unknown }>;
-      resolve: (value?: { confirmed: boolean; data?: unknown }) => void;
+      promise: Promise<{ confirmed: true; data: unknown } | { confirmed: false; data?: never }>;
+      resolve: <T>(value?: { confirmed: true; data: T } | { confirmed: false; data?: never }) => void;
     };
   }[];
-  addModal: <T = unknown>(component: React.ReactNode) => Promise<{ confirmed: boolean; data?: T }>;
+  addModal: <T>(
+    component: React.ReactNode,
+  ) => Promise<{ confirmed: true; data: T } | { confirmed: false; data?: never }>;
   removeModal: (id: string) => void;
-}>((set) => ({
-  addModal<T = unknown>(component: React.ReactNode): Promise<{ confirmed: boolean; data?: T }> {
-    const { resolve, promise } = Promise.withResolvers<{ confirmed: boolean }>();
+};
+
+export const useModalStore = create<ModalStore>((set) => ({
+  addModal<T>(component: React.ReactNode) {
+    const { resolve, promise } = Promise.withResolvers<
+      { confirmed: true; data: T } | { confirmed: false; data?: never }
+    >();
 
     set((state) => {
-      return { modals: [...state.modals, { _promise: { promise, resolve }, component, id: crypto.randomUUID() }] };
+      return {
+        modals: [
+          ...state.modals,
+          {
+            _promise: {
+              promise,
+              resolve: resolve as <T>(
+                value?: { confirmed: true; data: T } | { confirmed: false; data?: never },
+              ) => void,
+            },
+            component,
+            id: crypto.randomUUID(),
+          },
+        ],
+      };
     });
 
-    return promise as Promise<{ confirmed: boolean; data?: T }>;
+    return promise;
   },
   modals: [],
   removeModal: (id: string) => set((state) => ({ modals: state.modals.filter((m) => m.id !== id) })),
 }));
 
 export function useModal<T = unknown>() {
+  const defaultOpen = true;
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const { id } = useContext(ModalContext);
 
   const modal = useModalStore.getState().modals.find((m) => m.id === id);
 
+  function resolve({ confirmed, data }: { confirmed: true; data: T } | { confirmed: false; data?: never }) {
+    if (!confirmed) {
+      modal?._promise?.resolve?.({ confirmed: false, data: undefined });
+    } else {
+      modal?._promise?.resolve?.({ confirmed: true, data });
+    }
+
+    setIsOpen(false);
+
+    setTimeout(() => {
+      removeModal({ id });
+    }, 200);
+  }
+
   return {
-    defaultOpen: true,
-    onOpenChange: (open: boolean) => !open && id && removeModal({ confirmed: false, id }),
-    open: true,
-    resolve: ({ confirmed, data }: { confirmed: boolean; data?: T }) => {
-      removeModal({ confirmed, id });
-      modal?._promise?.resolve?.({ confirmed, data });
+    defaultOpen,
+    onOpenChange: (open: boolean) => {
+      if (open) {
+        setIsOpen(true);
+        return;
+      }
+
+      resolve({ confirmed: false });
     },
+    open: isOpen,
+    resolve,
   };
 }
 
-export function showModal<T = unknown>(component: React.ReactNode): Promise<{ confirmed: boolean; data?: T }> {
+export function showModal<T = unknown>(
+  component: React.ReactNode,
+): Promise<{ confirmed: true; data: T } | { confirmed: false; data?: never }> {
   return useModalStore.getState().addModal<T>(component);
 }
 
-const removeModal = ({ id, confirmed }: { id: string; confirmed: boolean }) => {
+const removeModal = ({ id }: { id: string }) => {
   const modal = useModalStore.getState().modals.find((m) => m.id === id);
 
-  useModalStore.getState().removeModal(id);
+  if (!modal) return;
 
-  modal?._promise?.resolve?.({ confirmed });
+  useModalStore.getState().removeModal(id);
 };
 
 const ModalContext = createContext<{ id: string }>({ id: "" });

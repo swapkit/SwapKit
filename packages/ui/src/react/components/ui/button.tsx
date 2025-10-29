@@ -7,7 +7,7 @@ import * as React from "react";
 import { cn } from "../../../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -32,6 +32,7 @@ const buttonVariants = cva(
         tertiary: "bg-tertiary text-tertiary-foreground hover:opacity-80 transition-opacity",
 
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        unstyled: "p-0 m-0 h-auto w-auto",
       },
     },
   },

@@ -27,6 +27,7 @@ import type {
   NearTransferParams,
 } from "./types";
 import type { NearContractInterface, NearGasEstimateParams } from "./types/contract";
+import type { NEP141StorageContract } from "./types/nep141";
 import type {
   BatchTransaction,
   ContractFunctionCallParams,
@@ -67,13 +68,65 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     return address;
   }
 
+  async function checkStorageBalance(params: { contractId: string; accountId: string }) {
+    const contract = await createContract<NEP141StorageContract>({
+      changeMethods: [],
+      contractId: params.contractId,
+      viewMethods: ["storage_balance_of"],
+    });
+
+    return contract.storage_balance_of({ account_id: params.accountId });
+  }
+
+  async function transferTokenWithStorageDeposit(params: {
+    recipient: string;
+    assetValue: AssetValue;
+    memo?: string;
+    contractId: string;
+  }) {
+    const storageDeposit = "1250000000000000000000"; // 0.00125 NEAR default
+
+    const actions = [
+      await createAction({
+        args: { account_id: params.recipient },
+        attachedDeposit: storageDeposit,
+        gas: "150000000000000", // 150 TGas for storage_deposit
+        methodName: "storage_deposit",
+      }),
+      await createAction({
+        args: {
+          amount: params.assetValue.getBaseValue("string"),
+          memo: params.memo || null,
+          receiver_id: params.recipient,
+        },
+        attachedDeposit: "1",
+        gas: "150000000000000", // 150 TGas for ft_transfer
+        methodName: "ft_transfer",
+      }),
+    ];
+
+    return executeBatchTransaction({ actions, receiverId: params.contractId });
+  }
+
   async function transfer(params: NearTransferParams) {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
 
-    const transaction = await createTransaction({ ...params, sender: await getAddress() });
+    const { assetValue, recipient, memo } = params;
+    const sender = await getAddress();
 
+    // Handle NEP-141 token transfers - check if recipient needs storage
+    if (!assetValue.isGasAsset && assetValue.address) {
+      const storageBalance = await checkStorageBalance({ accountId: recipient, contractId: assetValue.address });
+
+      if (!storageBalance) {
+        return transferTokenWithStorageDeposit({ assetValue, contractId: assetValue.address, memo, recipient });
+      }
+    }
+
+    // Standard transfer (native NEAR or token with registered storage)
+    const transaction = await createTransaction({ ...params, sender });
     return signAndSendTransaction(transaction);
   }
 
