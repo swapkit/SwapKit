@@ -127,11 +127,13 @@ describe("TRON Address Validation", () => {
 describe("TRON createTransaction with Extended Expiration", () => {
   const baseExpiration = 60; // default is 60s
   const extendedExpiration = 240; // Adding 240 for 5 minutes total
+  const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
+  const toAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+  const buffer = 10000;
+  const memo = "Test transfer with memo";
+
   test("should create native TRX transfer with extended expiration", async () => {
     const toolbox = context.toolbox;
-    const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-
     const beforeTimestamp = Date.now();
 
     const transaction = await toolbox.createTransaction({
@@ -144,26 +146,17 @@ describe("TRON createTransaction with Extended Expiration", () => {
       sender: fromAddress,
     });
 
-    expect(transaction).toBeDefined();
-    expect(transaction.raw_data).toBeDefined();
     expect(transaction.raw_data.expiration).toBeDefined();
 
-    // Validate that expiration is approximately current time + 60 seconds + 240 seconds
-    // Transaction expiration should be in milliseconds
     const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
     const actualExpiration = transaction.raw_data.expiration;
 
-    // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - 10000);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + 10000);
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
   });
 
   test("should create native TRX transfer with extended expiration and memo", async () => {
     const toolbox = context.toolbox;
-    const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-    const memo = "Test transfer with memo";
-
     const beforeTimestamp = Date.now();
 
     const transaction = await toolbox.createTransaction({
@@ -177,18 +170,13 @@ describe("TRON createTransaction with Extended Expiration", () => {
       sender: fromAddress,
     });
 
-    expect(transaction).toBeDefined();
-    expect(transaction.raw_data).toBeDefined();
     expect(transaction.raw_data.expiration).toBeDefined();
 
-    // Validate that expiration is approximately current time + 60 seconds + 240 seconds
-    // Transaction expiration should be in milliseconds
     const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
     const actualExpiration = transaction.raw_data.expiration;
 
-    // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - 10000);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + 10000);
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
 
     // Validate memo is included
     expect(transaction.raw_data.data).toBeDefined();
@@ -196,8 +184,6 @@ describe("TRON createTransaction with Extended Expiration", () => {
 
   test("should create token transfer with extended expiration", async () => {
     const toolbox = context.toolbox;
-    const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TT87ESmqUmH87hMx1MKCEqYrJKaQyNg9ao";
     const beforeTimestamp = Date.now();
 
     const transaction = await toolbox.createTransaction({
@@ -210,26 +196,18 @@ describe("TRON createTransaction with Extended Expiration", () => {
       sender: fromAddress,
     });
 
-    expect(transaction).toBeDefined();
-    expect(transaction.raw_data).toBeDefined();
     expect(transaction.raw_data.expiration).toBeDefined();
 
-    // Validate that expiration is approximately current time + 60 seconds + 240 seconds
-    // Transaction expiration should be in milliseconds
     const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
     const actualExpiration = transaction.raw_data.expiration;
 
     // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - 10000);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + 10000);
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
   });
 
   test("should create token transfer with extended expiration and memo", async () => {
     const toolbox = context.toolbox;
-    const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TT87ESmqUmH87hMx1MKCEqYrJKaQyNg9ao";
-    const memo = "Token transfer with memo";
-
     const beforeTimestamp = Date.now();
 
     const transaction = await toolbox.createTransaction({
@@ -243,18 +221,14 @@ describe("TRON createTransaction with Extended Expiration", () => {
       sender: fromAddress,
     });
 
-    expect(transaction).toBeDefined();
-    expect(transaction.raw_data).toBeDefined();
     expect(transaction.raw_data.expiration).toBeDefined();
 
-    // Validate that expiration is approximately current time + 60 seconds + 240 seconds
-    // Transaction expiration should be in milliseconds
     const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
     const actualExpiration = transaction.raw_data.expiration;
 
     // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - 10000);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + 10000);
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
 
     // Validate memo is included
     expect(transaction.raw_data.data).toBeDefined();

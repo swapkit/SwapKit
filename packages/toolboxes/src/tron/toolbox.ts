@@ -258,7 +258,9 @@ export const createTronToolbox = async (
       warnOnce({
         condition: true,
         id: "tron_toolbox_get_token_metadata_failed",
-        warning: `Failed to get token metadata for ${contractAddress}: ${error instanceof Error ? error.message : error}`,
+        warning: `Failed to get token metadata for ${contractAddress}: ${
+          error instanceof Error ? error.message : error
+        }`,
       });
       return null;
     }
@@ -354,8 +356,8 @@ export const createTronToolbox = async (
     assetValue,
     recipient,
     sender,
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
-  }: TronTransferParams & { sender?: string }) => {
+  }: // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO
+  TronTransferParams & { sender?: string }) => {
     const isNative = assetValue.isGasAsset;
 
     try {
@@ -413,7 +415,9 @@ export const createTronToolbox = async (
       warnOnce({
         condition: true,
         id: "tron_toolbox_fee_estimation_failed",
-        warning: `Failed to calculate exact fee, using conservative estimate: ${error instanceof Error ? error.message : error}`,
+        warning: `Failed to calculate exact fee, using conservative estimate: ${
+          error instanceof Error ? error.message : error
+        }`,
       });
 
       throw new SwapKitError("toolbox_tron_fee_estimation_failed", { error });
@@ -424,7 +428,15 @@ export const createTronToolbox = async (
     const { recipient, assetValue, memo, sender, expiration } = params;
     const isNative = assetValue.isGasAsset;
 
-    const addTxData = async (transaction: TronTransaction, memo?: string, expiration?: number) => {
+    const addTxData = async ({
+      transaction,
+      memo,
+      expiration,
+    }: {
+      transaction: TronTransaction;
+      memo?: string;
+      expiration?: number;
+    }) => {
       const transactionWithMemo = memo
         ? await tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8")
         : transaction;
@@ -443,7 +455,8 @@ export const createTronToolbox = async (
         sender,
       );
 
-      return addTxData(transaction, memo, expiration);
+      const txWithData = addTxData({ expiration, memo, transaction });
+      return txWithData;
     }
 
     tronWeb.setAddress(sender);
@@ -469,7 +482,8 @@ export const createTronToolbox = async (
         sender,
       );
 
-      return addTxData(transaction, memo, expiration);
+      const txWithData = addTxData({ expiration, memo, transaction });
+      return txWithData;
     } catch (error) {
       throw new SwapKitError("toolbox_tron_transaction_creation_failed", {
         message:
