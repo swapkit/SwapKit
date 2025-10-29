@@ -20,7 +20,9 @@ export type TronToolboxOptions =
   | { phrase?: string; derivationPath?: DerivationPathArray; index?: number }
   | {};
 
-export interface TronTransferParams extends GenericTransferParams {}
+export interface TronTransferParams extends GenericTransferParams {
+  expiration?: number;
+}
 
 export interface TronCreateTransactionParams extends Omit<GenericCreateTransactionParams, "feeRate"> {
   expiration?: number;

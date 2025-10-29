@@ -333,29 +333,12 @@ export const createTronToolbox = async (
     }
   };
 
-  const transfer = async ({ recipient, assetValue, memo }: TronTransferParams) => {
+  const transfer = async ({ recipient, assetValue, memo, expiration }: TronTransferParams) => {
     if (!signer) throw new SwapKitError("toolbox_tron_no_signer");
 
     const from = await getAddress();
     tronWeb.setAddress(from);
-    const isNative = assetValue.isGasAsset;
-
-    if (isNative) {
-      const transaction = await tronWeb.transactionBuilder.sendTrx(recipient, assetValue.getBaseValue("number"), from);
-
-      if (memo) {
-        const transactionWithMemo = await tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8");
-        const signedTx = await signer.signTransaction(transactionWithMemo);
-        const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
-        return txid;
-      }
-
-      const signedTx = await signer.signTransaction(transaction);
-      const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
-      return txid;
-    }
-
-    const transaction = await createTransaction({ assetValue, memo, recipient, sender: from });
+    const transaction = await createTransaction({ assetValue, expiration, memo, recipient, sender: from });
 
     const signedTx = await signer.signTransaction(transaction);
     const { txid } = await tronWeb.trx.sendRawTransaction(signedTx);
@@ -441,6 +424,18 @@ export const createTronToolbox = async (
     const { recipient, assetValue, memo, sender, expiration } = params;
     const isNative = assetValue.isGasAsset;
 
+    const addTxData = async (transaction: TronTransaction, memo?: string, expiration?: number) => {
+      const transactionWithMemo = memo
+        ? await tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8")
+        : transaction;
+
+      const transactionFinal = expiration
+        ? await tronWeb.transactionBuilder.extendExpiration(transactionWithMemo, expiration)
+        : transactionWithMemo;
+
+      return transactionFinal;
+    };
+
     if (isNative) {
       const transaction = await tronWeb.transactionBuilder.sendTrx(
         recipient,
@@ -448,15 +443,7 @@ export const createTronToolbox = async (
         sender,
       );
 
-      if (memo) {
-        return tronWeb.transactionBuilder.addUpdateData(transaction, memo, "utf8");
-      }
-
-      if (expiration) {
-        tronWeb.transactionBuilder.extendExpiration(transaction, expiration);
-      }
-
-      return transaction;
+      return addTxData(transaction, memo, expiration);
     }
 
     tronWeb.setAddress(sender);
@@ -474,7 +461,7 @@ export const createTronToolbox = async (
 
       const options = { callValue: 0, feeLimit: calculateFeeLimit() };
 
-      const result = await tronWeb.transactionBuilder.triggerSmartContract(
+      const { transaction } = await tronWeb.transactionBuilder.triggerSmartContract(
         contractAddress,
         functionSelector,
         options,
@@ -482,15 +469,7 @@ export const createTronToolbox = async (
         sender,
       );
 
-      if (memo) {
-        return tronWeb.transactionBuilder.addUpdateData(result.transaction, memo, "utf8");
-      }
-
-      if (expiration) {
-        tronWeb.transactionBuilder.extendExpiration(result.transaction, expiration);
-      }
-
-      return result.transaction;
+      return addTxData(transaction, memo, expiration);
     } catch (error) {
       throw new SwapKitError("toolbox_tron_transaction_creation_failed", {
         message:
