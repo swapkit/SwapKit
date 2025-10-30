@@ -21,293 +21,105 @@ steps:
         git log --oneline -n 5
     secretEnv: ['GITHUB_TOKEN']
 
-  # Step 1: Detect changed files in playground/vite
+  # Step 1: Detect changed files
   - name: 'gcr.io/cloud-builders/git'
-    id: 'detect-vite-changes'
+    id: 'get-changed-files'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        set -e
-        
-        echo "=== Build environment ==="
+        echo "Build environment:"
         echo "PR_NUMBER: ${_PR_NUMBER:-NOT_SET}"
         echo "BRANCH_NAME: ${BRANCH_NAME:-NOT_SET}"
         echo "COMMIT_SHA: ${COMMIT_SHA:-NOT_SET}"
-        echo "HEAD SHA: $(git rev-parse HEAD)"
-        echo ""
 
-        # Skip change detection for non-core branches
-        if [ "$BRANCH_NAME" != "devops" ] && [ "$BRANCH_NAME" != "main" ] && [ "$BRANCH_NAME" != "staging" ]; then
-          echo "Non-core branch detected ($BRANCH_NAME) - skipping build"
-          echo "SKIP_BUILD=true" > /workspace/build_config.env
+        if [ "$BRANCH_NAME" != "feat/DOP-112" ] && [ "$BRANCH_NAME" != "main" ] && [ "$BRANCH_NAME" != "staging" ]; then
+          echo "Non-core branch - skipping"
+          echo "SKIP_BUILD=true" > /workspace/build_status.env
           exit 0
         fi
 
-        # Determine changed files
-        echo "=== Detecting changed files ==="
         if [ -n "$_PR_NUMBER" ]; then
-          echo "PR build detected - comparing with target branch $BRANCH_NAME"
           git fetch origin $BRANCH_NAME --depth=1
-          git diff --name-only origin/$BRANCH_NAME HEAD > /workspace/changed_files.txt || {
-            echo "Diff failed, fallback to listing all files"
-            git ls-files > /workspace/changed_files.txt
-          }
+          git diff --name-only origin/$BRANCH_NAME HEAD > /workspace/changed_files.txt || git ls-files > /workspace/changed_files.txt
         else
-          echo "Non-PR build detected - comparing HEAD^ with HEAD"
           if [ $(git rev-list --count HEAD) -gt 1 ]; then
-            git diff --name-only HEAD^ HEAD > /workspace/changed_files.txt || {
-              git diff --name-only $COMMIT_SHA~1 $COMMIT_SHA > /workspace/changed_files.txt || {
-                echo "Final fallback - listing all files"
-                git ls-files > /workspace/changed_files.txt
-              }
-            }
+            git diff --name-only HEAD^ HEAD > /workspace/changed_files.txt || git ls-files > /workspace/changed_files.txt
           else
-            echo "Shallow clone with no history - listing all files"
             git ls-files > /workspace/changed_files.txt
           fi
         fi
 
-        echo "Changed files detected:"
+        echo "Changed files:"
         cat /workspace/changed_files.txt
-        echo "Total changed files: $(wc -l < /workspace/changed_files.txt)"
-        echo ""
-
-        # Check if playground/vite has changes
-        echo "=== Checking for playground/vite changes ==="
+        
         VITE_CHANGES=$(grep "^playground/vite/" /workspace/changed_files.txt | wc -l)
         
         if [ "$VITE_CHANGES" -eq 0 ]; then
-          echo "No changes in playground/vite directory - skipping build"
-          echo "SKIP_BUILD=true" > /workspace/build_config.env
-          exit 0
+          echo "No changes in playground/vite"
+          echo "SKIP_BUILD=true" > /workspace/build_status.env
+        else
+          echo "Found $VITE_CHANGES changes in playground/vite"
+          echo "SKIP_BUILD=false" > /workspace/build_status.env
         fi
-        
-        echo "Found $VITE_CHANGES changes in playground/vite"
-        echo "Changed files in playground/vite:"
-        grep "^playground/vite/" /workspace/changed_files.txt
-        echo ""
 
-        # Set build configuration
-        echo "=== Setting build configuration ==="
-        cat > /workspace/build_config.env <<EOF
-SKIP_BUILD=false
-SERVICE_NAME=vite
-BUILD_CONTEXT=/workspace/playground/vite
-DOCKERFILE_PATH=/workspace/playground/vite/Dockerfile
-RELATIVE_CONTEXT=playground/vite
-RELATIVE_DOCKERFILE=playground/vite/Dockerfile
-REPO_NAME=widget
-EOF
-
-        echo "Build configuration:"
-        cat /workspace/build_config.env
-
-  # Step 2: Set environment variables
-  - id: set-env-vars
-    name: 'gcr.io/cloud-builders/gcloud'
+  # Step 2: Set environment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'set-env-vars'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        set -e
-        
-        # Check if build should be skipped
-        if [ -f /workspace/build_config.env ]; then
-          source /workspace/build_config.env
-          
+        if [ -f /workspace/build_status.env ]; then
+          source /workspace/build_status.env
           if [ "$SKIP_BUILD" = "true" ]; then
-            echo "Build skipped - no changes in playground/vite"
+            echo "SKIP_BUILD=true" > /workspace/vars.env
             exit 0
           fi
-        else
-          echo "Build configuration not found"
-          exit 1
         fi
         
-        # Determine target environment
         TARGET_ENV=feat
         if [ "${BRANCH_NAME}" == "main" ]; then
           TARGET_ENV=dev
-        elif [ "${BRANCH_NAME}" == "staging" ]; then
-          TARGET_ENV=stage
         fi
         
-        echo "Building for environment: ${TARGET_ENV}"
-        echo "TARGET_ENV=${TARGET_ENV}" >> /workspace/build_config.env
-        
-        echo "=== Final build configuration ==="
-        cat /workspace/build_config.env
+        echo "TARGET_ENV=${TARGET_ENV}" > /workspace/vars.env
+        echo "SKIP_BUILD=false" >> /workspace/vars.env
+        cat /workspace/vars.env
     env:
       - 'BRANCH_NAME=${BRANCH_NAME}'
 
-  # Step 3: Verify Dockerfile and context
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'verify-build-context'
-    waitFor: ['set-env-vars']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        
-        # Load configuration
-        if [ -f /workspace/build_config.env ]; then
-          source /workspace/build_config.env
-          
-          if [ "$SKIP_BUILD" = "true" ]; then
-            echo "Build skipped"
-            exit 0
-          fi
-        else
-          echo "✗ Build configuration not found"
-          exit 1
-        fi
-        
-        echo "=== Verifying build context ==="
-        echo "Service name: $SERVICE_NAME"
-        echo "Repository name: $REPO_NAME"
-        echo "Dockerfile path: $DOCKERFILE_PATH"
-        echo "Build context: $BUILD_CONTEXT"
-        echo "Target environment: $TARGET_ENV"
-        echo ""
-        
-        # Verify playground/vite directory exists
-        if [ ! -d "$BUILD_CONTEXT" ]; then
-          echo "✗ Directory not found: $BUILD_CONTEXT"
-          exit 1
-        fi
-        echo "✓ Build context directory exists"
-        
-        # Verify Dockerfile exists
-        if [ ! -f "$DOCKERFILE_PATH" ]; then
-          echo "✗ Dockerfile not found at: $DOCKERFILE_PATH"
-          exit 1
-        fi
-        echo "✓ Dockerfile found"
-        
-        echo ""
-        echo "=== Dockerfile content ==="
-        cat "$DOCKERFILE_PATH"
-        echo ""
-        
-        # List build context
-        echo "=== Build context contents ==="
-        ls -lah "$BUILD_CONTEXT/" | head -20
-        echo ""
-        
-        # Check for package.json
-        if [ -f "$BUILD_CONTEXT/package.json" ]; then
-          echo "✓ package.json found"
-          echo "Package info:"
-          cat "$BUILD_CONTEXT/package.json" | grep -E '"name"|"version"' | head -2
-        else
-          echo "⚠ Warning: package.json not found"
-        fi
-        
-        # Check for vite.config.ts
-        if [ -f "$BUILD_CONTEXT/vite.config.ts" ]; then
-          echo "✓ vite.config.ts found"
-        fi
-
-  # Step 4: Build with Kaniko
+  # Step 3: Build with Kaniko directly
   - name: 'gcr.io/kaniko-project/executor:latest'
-    id: 'build-vite-image'
-    waitFor: ['verify-build-context']
+    id: 'build-widget-vite'
+    waitFor: ['set-env-vars']
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-        set -e
-        
-        # Load configuration
-        if [ ! -f /workspace/build_config.env ]; then
-          echo "✗ Build configuration not found"
-          exit 1
+        if [ -f /workspace/vars.env ]; then
+          . /workspace/vars.env
+          if [ "$SKIP_BUILD" = "true" ]; then
+            echo "Build skipped"
+            exit 0
+          fi
         fi
         
-        . /workspace/build_config.env
+        echo "Building widget/vite with Kaniko..."
         
-        if [ "$SKIP_BUILD" = "true" ]; then
-          echo "Build skipped"
-          exit 0
-        fi
-        
-        echo "=== Starting Kaniko build for playground/vite ==="
-        echo "Service: $SERVICE_NAME"
-        echo "Repository: $REPO_NAME"
-        echo "Context: $BUILD_CONTEXT"
-        echo "Dockerfile: $DOCKERFILE_PATH"
-        echo "Target env: $TARGET_ENV"
-        echo "Short SHA: $SHORT_SHA"
-        echo ""
-        
-        # Build image with Kaniko
         /kaniko/executor \
-          --destination=us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$SHORT_SHA \
-          --destination=us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TARGET_ENV \
+          --destination=us-docker.pkg.dev/$PROJECT_ID/widget/vite:$SHORT_SHA \
+          --destination=us-docker.pkg.dev/$PROJECT_ID/widget/vite:${TARGET_ENV} \
           --cache=true \
           --cache-ttl=6h \
-          --context=$BUILD_CONTEXT \
-          --dockerfile=$DOCKERFILE_PATH \
-          --build-arg=BUILD_ENV=$TARGET_ENV \
-          --build-arg=NODE_ENV=production \
-          --verbosity=info
-        
-        echo ""
-        echo "✓ Build completed successfully"
-        echo "Images pushed:"
-        echo "  - us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$SHORT_SHA"
-        echo "  - us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TARGET_ENV"
-
-  # Step 5: Output build summary
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'build-summary'
-    waitFor: ['build-vite-image']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        if [ ! -f /workspace/build_config.env ]; then
-          echo "=== Build Summary ==="
-          echo "Status: No build performed"
-          exit 0
-        fi
-        
-        . /workspace/build_config.env
-        
-        if [ "$SKIP_BUILD" = "true" ]; then
-          echo "=== Build Summary ==="
-          echo "Status: Skipped"
-          echo "Reason: No changes detected in playground/vite"
-          exit 0
-        fi
-        
-        echo "=== Build Summary ==="
-        echo "✓ Build completed successfully"
-        echo ""
-        echo "Project: playground/vite"
-        echo "Service: $SERVICE_NAME"
-        echo "Repository: $REPO_NAME"
-        echo "Environment: $TARGET_ENV"
-        echo "Commit: $SHORT_SHA"
-        echo ""
-        echo "Docker Images:"
-        echo "  1. us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$SHORT_SHA"
-        echo "  2. us-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TARGET_ENV"
-        echo ""
-        echo "Artifact Registry:"
-        echo "  https://console.cloud.google.com/artifacts/docker/$PROJECT_ID/us/$REPO_NAME/$SERVICE_NAME"
-        echo ""
-        echo "Next steps:"
-        echo "  - Image will trigger deployment pipeline via Pub/Sub"
-        echo "  - Monitor Cloud Run deployment in sk-ui-dev project"
-        echo "  - Check logs: gcloud builds log $BUILD_ID"
+          --context=/workspace/playground/vite \
+          --dockerfile=/workspace/playground/vite/Dockerfile \
+          --build-arg=BUILD_ENV=${TARGET_ENV} \
+          --build-arg=NODE_ENV=production
 
 tags:
-  - "playground-vite"
   - "widget-build"
-  - "vite-app"
+  - "playground-vite"
 
 availableSecrets:
   secretManager:
