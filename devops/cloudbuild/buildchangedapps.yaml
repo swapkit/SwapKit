@@ -125,7 +125,7 @@ steps:
         echo "      - --destination=us-docker.pkg.dev/$PROJECT_ID/widget/widget:$${TARGET_ENV}" >> /workspace/kaniko_steps.yaml
         echo "      - --cache=true" >> /workspace/kaniko_steps.yaml
         echo "      - --cache-ttl=6h" >> /workspace/kaniko_steps.yaml
-        echo "      - --context=/workspace/playgrounds/vite/" >> /workspace/kaniko_steps.yaml
+        echo "      - --context=/workspace/" >> /workspace/kaniko_steps.yaml
         echo "      - --dockerfile=/workspace/playgrounds/vite/Dockerfile" >> /workspace/kaniko_steps.yaml
         
         echo "options:" >> /workspace/kaniko_steps.yaml
