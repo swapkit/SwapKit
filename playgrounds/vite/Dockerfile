@@ -7,11 +7,11 @@ WORKDIR /app
 COPY package.json bun.lock ./
 
 COPY packages ./packages
-COPY playground ./playground
+COPY playgrounds ./playgrounds
 
 RUN bun install --frozen-lockfile
 
-WORKDIR /app/playground/vite
+WORKDIR /app/playgrounds/vite
 
 ENV NODE_ENV=production
 RUN bun run build-playground
@@ -19,10 +19,11 @@ RUN bun run build-playground
 # Production stage с nginx
 FROM nginx:alpine
 
-COPY --from=builder /app/playground/vite/dist /usr/share/nginx/html
+COPY --from=builder /app/playgrounds/vite/dist /usr/share/nginx/html
 
-COPY playground/vite/nginx.conf /etc/nginx/conf.d/default.conf
+COPY playgrounds/vite/nginx.conf /etc/nginx/conf.d/default.conf
 
+# Health check endpoint
 RUN echo "healthy" > /usr/share/nginx/html/health
 
 # Health check
