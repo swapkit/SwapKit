@@ -1,0 +1,137 @@
+timeout: 1800s
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Step 0: Fetch full Git history
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'fetch-full-history'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        git config --global url."https://$$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+        git fetch --unshallow --tags
+        
+        if [ -n "$_PR_NUMBER" ] && [ -n "$BRANCH_NAME" ]; then
+          git fetch origin $BRANCH_NAME
+        fi
+        
+        echo "Repository prepared:"
+        git log --oneline -n 5
+    secretEnv: ['GITHUB_TOKEN']
+
+  # Step 1: Detect changed files
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'get-changed-files'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Build environment:"
+        echo "PR_NUMBER: ${_PR_NUMBER:-NOT_SET}"
+        echo "BRANCH_NAME: ${BRANCH_NAME:-NOT_SET}"
+        echo "COMMIT_SHA: ${COMMIT_SHA:-NOT_SET}"
+        echo "HEAD SHA: $(git rev-parse HEAD)"
+
+        if [ "$BRANCH_NAME" = "devops" ] || [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "staging" ]; then
+          : # Allowed branch
+        else
+          echo "Non-core branch detected ($BRANCH_NAME)"
+          touch /workspace/changed_files.txt
+          exit 0
+        fi
+
+        if [ -n "$_PR_NUMBER" ]; then
+          echo "PR build detected"
+          git fetch origin $BRANCH_NAME --depth=1
+          git diff --name-only origin/$BRANCH_NAME HEAD > /workspace/changed_files.txt || {
+            git ls-files > /workspace/changed_files.txt
+          }
+        else
+          echo "Non-PR build detected"
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            git diff --name-only HEAD^ HEAD > /workspace/changed_files.txt || {
+              git diff --name-only $COMMIT_SHA~1 $COMMIT_SHA > /workspace/changed_files.txt || {
+                git ls-files > /workspace/changed_files.txt
+              }
+            }
+          else
+            git ls-files > /workspace/changed_files.txt
+          fi
+        fi
+
+        echo "Changed files detected:"
+        cat /workspace/changed_files.txt
+        echo "Total: $(wc -l < /workspace/changed_files.txt)"
+
+  # Step 2: Set environment variables
+  - id: set-env-vars
+    name: 'gcr.io/cloud-builders/gcloud'
+    script: |
+      #!/usr/bin/env bash
+      TARGET_ENV=feat
+      if [ "${BRANCH_NAME}" == "main" ]; then
+        TARGET_ENV=dev
+      fi
+      
+      echo "Building for environment: ${TARGET_ENV}"
+      echo "export TARGET_ENV=${TARGET_ENV}" >> /workspace/vars.env
+      cat /workspace/vars.env
+    env:
+      - 'BRANCH_NAME=${BRANCH_NAME}'
+
+  # Step 3: Generate Kaniko build configuration
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'generate-build-step'
+    waitFor: ['set-env-vars']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source /workspace/vars.env
+        
+        echo "Generating Kaniko build configuration for widget:"
+        cat > /workspace/kaniko_steps.yaml <<EOF
+        steps:
+          - name: 'gcr.io/kaniko-project/executor:latest'
+            id: 'build-widget-app'
+            args:
+              - --destination=us-docker.pkg.dev/$PROJECT_ID/widget/widget:$SHORT_SHA
+              - --destination=us-docker.pkg.dev/$PROJECT_ID/widget/widget:$${TARGET_ENV}
+              - --cache=true
+              - --cache-ttl=6h
+              - --context=/workspace
+              - --dockerfile=/workspace/Dockerfile
+        
+        options:
+          logging: CLOUD_LOGGING_ONLY
+        EOF
+        
+        echo "Generated kaniko_steps.yaml:"
+        cat /workspace/kaniko_steps.yaml
+
+  # Step 4: Execute Kaniko build
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'run-kaniko-build'
+    waitFor: ['generate-build-step']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Starting Kaniko build for widget..."
+        exec gcloud builds submit \
+          --region=us-central1 \
+          --config=/workspace/kaniko_steps.yaml \
+          --async \
+          --format='value(id)' \
+          --service-account="projects/${PROJECT_ID}/serviceAccounts/cloudbuild@${PROJECT_ID}.iam.gserviceaccount.com" \
+          .
+
+tags:
+  - "widget-build"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/cloudbuild-github-access-token/versions/latest
+      env: 'GITHUB_TOKEN'

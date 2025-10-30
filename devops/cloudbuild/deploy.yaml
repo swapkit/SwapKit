@@ -1,0 +1,126 @@
+steps:
+  # Step 1: Terraform Init
+  - name: 'hashicorp/terraform:1.5.5'
+    id: terraform-init
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        cd devops/terraform/$PROJECT_ID
+        terraform init -reconfigure
+    env:
+      - TF_VAR_project_id=${PROJECT_ID}
+      - TF_VAR_service_name=widget
+      - TF_VAR_image_url=${_DIGEST}
+
+  # Step 2: Terraform Validate
+  - name: 'hashicorp/terraform:1.5.5'
+    id: terraform-validate
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        cd devops/terraform/$PROJECT_ID
+        echo "PROJECT_ID: $${TF_VAR_project_id}"
+        echo "Service Name: widget"
+        echo "Image URL: $${TF_VAR_image_url}"
+        terraform validate
+    env:
+      - TF_VAR_project_id=${PROJECT_ID}
+      - TF_VAR_service_name=widget
+      - TF_VAR_image_url=${_DIGEST}
+
+  # Step 3: Terraform Plan
+  - name: 'hashicorp/terraform:1.5.5'
+    id: terraform-plan
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        cd devops/terraform/$PROJECT_ID
+        terraform init -reconfigure
+        terraform plan -out=plan.tfplan -input=false \
+          -var="project_id=${PROJECT_ID}" \
+          -var="service_name=widget" \
+          -var="image_url=${_DIGEST}"
+    env:
+      - TF_VAR_project_id=${PROJECT_ID}
+      - TF_VAR_service_name=widget
+      - TF_VAR_image_url=${_DIGEST}
+
+  # Step 4: Terraform Apply with imports
+  - name: 'hashicorp/terraform:1.5.5'
+    id: terraform-apply
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        cd devops/terraform/$PROJECT_ID
+        terraform init -reconfigure
+        
+        import_existing_service() {
+          local region=$1
+          local service_name="widget-$region"
+          
+          if gcloud run services describe $service_name --region=$region --project=${PROJECT_ID} --quiet >/dev/null 2>&1; then
+            echo "Importing existing Cloud Run service: $service_name"
+            terraform import "google_cloud_run_v2_service.default[\"$region\"]" "projects/${PROJECT_ID}/locations/$region/services/$service_name" || true
+          fi
+        }
+        
+        import_existing_iam() {
+          local region=$1
+          local service_name="widget-$region"
+          
+          echo "Importing IAM binding for: $service_name"
+          terraform import "google_cloud_run_v2_service_iam_binding.public_access[\"$region\"]" "projects/${PROJECT_ID}/locations/$region/services/$service_name" || true
+        }
+        
+        terraform apply -auto-approve -input=false plan.tfplan || {
+          echo "Initial apply failed, importing existing resources..."
+          
+          for region in us-central1 europe-west1; do
+            import_existing_service $region
+            import_existing_iam $region
+          done
+          
+          echo "Applying Terraform after imports..."
+          terraform apply -auto-approve -input=false plan.tfplan
+        }
+    env:
+      - TF_VAR_project_id=${PROJECT_ID}
+      - TF_VAR_service_name=widget
+      - TF_VAR_image_url=${_DIGEST}
+
+  # Step 5: Verify deployment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: verify-deployment
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        echo "Verifying Cloud Run deployments for widget..."
+        for region in us-central1 europe-west1; do
+          if gcloud run services describe widget-$region --region=$region --project=${PROJECT_ID} --format="value(status.url)" >/dev/null 2>&1; then
+            echo "✓ Service widget-$region deployed successfully"
+          else
+            echo "✗ Service widget-$region deployment failed"
+            exit 1
+          fi
+        done
+        echo "All widget services deployed successfully!"
+
+substitutions:
+  _TF_VERSION: "1.5.5"
+  _S_NAME: "widget"
+
+timeout: "1800s"
+
+tags:
+  - terraform
+  - widget
+  - cloud-run
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  dynamic_substitutions: true

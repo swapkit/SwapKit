@@ -1,0 +1,11 @@
+terraform/
+
+**/.git
+**/.gitignore
+**/.dockerignore
+**/.DS_Store
+**/node_modules
+**/venv
+**/*.log
+**/tmp
+**/*.swp
