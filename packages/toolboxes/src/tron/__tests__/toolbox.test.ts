@@ -153,6 +153,7 @@ describe("TRON createTransaction with Extended Expiration", () => {
 
     expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
     expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+    Bun.sleep(500);
   });
 
   test("should create native TRX transfer with extended expiration and memo", async () => {
@@ -180,6 +181,7 @@ describe("TRON createTransaction with Extended Expiration", () => {
 
     // Validate memo is included
     expect(transaction.raw_data.data).toBeDefined();
+    Bun.sleep(500);
   });
 
   test("should create token transfer with extended expiration", async () => {
@@ -204,6 +206,7 @@ describe("TRON createTransaction with Extended Expiration", () => {
     // Allow 10 second tolerance for test execution time
     expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
     expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+    Bun.sleep(500);
   });
 
   test("should create token transfer with extended expiration and memo", async () => {
@@ -232,5 +235,6 @@ describe("TRON createTransaction with Extended Expiration", () => {
 
     // Validate memo is included
     expect(transaction.raw_data.data).toBeDefined();
+    Bun.sleep(500);
   });
 });
