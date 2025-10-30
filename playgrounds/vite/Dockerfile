@@ -8,6 +8,8 @@ COPY package.json bun.lock ./
 
 COPY packages ./packages
 COPY playgrounds ./playgrounds
+COPY tools ./tools
+COPY docs ./docs
 
 RUN bun install --frozen-lockfile
 
