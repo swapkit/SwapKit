@@ -53,18 +53,26 @@
     "ts-pattern": "5.8.0"
   },
   "exports": {
-    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./keepkey": {
+      "bun": "./src/keepkey/index.ts",
       "import": "./dist/keepkey/index.js",
       "require": "./dist/keepkey/index.cjs",
       "types": "./dist/types/keepkey/index.d.ts"
     },
     "./ledger": {
+      "bun": "./src/ledger/index.ts",
       "import": "./dist/ledger/index.js",
       "require": "./dist/ledger/index.cjs",
       "types": "./dist/types/ledger/index.d.ts"
     },
     "./trezor": {
+      "bun": "./src/trezor/index.ts",
       "import": "./dist/trezor/index.js",
       "require": "./dist/trezor/index.cjs",
       "types": "./dist/types/trezor/index.d.ts"
