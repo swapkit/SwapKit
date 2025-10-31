@@ -8,10 +8,7 @@ const context: {
 } = {} as any;
 
 beforeAll(async () => {
-  // Set up TRON mainnet configuration
   SKConfig.set({ rpcUrls: { [Chain.Tron]: ["https://api.trongrid.io"] } });
-
-  // Get the address validator
   context.validateAddress = await getTronAddressValidator();
 });
 
@@ -39,15 +36,15 @@ describe("TRON Address Validation", () => {
 
   test("should reject invalid TRON addresses", () => {
     const invalidAddresses = [
-      "", // Empty string
-      "invalid", // Random string
-      "0x742d35Cc6648C532F5e7c3d2a7a8E1e1e5b7c8D3", // Ethereum address
-      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", // Bitcoin address
-      "cosmos1abc123", // Cosmos address
-      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6", // Too short
-      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6tt", // Too long
-      "XR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // Wrong prefix
-      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6O", // Invalid checksum
+      "",
+      "invalid",
+      "0x742d35Cc6648C532F5e7c3d2a7a8E1e1e5b7c8D3",
+      "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+      "cosmos1abc123",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6tt",
+      "XR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6O",
     ];
 
     for (const address of invalidAddresses) {
@@ -59,13 +56,11 @@ describe("TRON Address Validation", () => {
   test("should create TRON transaction with valid addresses", async () => {
     const toolbox = context.toolbox;
     const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // Valid TRON address
+    const toAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
-    // Both addresses should be valid
     expect(toolbox.validateAddress(fromAddress)).toBe(true);
     expect(toolbox.validateAddress(toAddress)).toBe(true);
 
-    // Create a transaction
     const transaction = await toolbox.createTransaction({
       assetValue: AssetValue.from({
         chain: Chain.Tron,
@@ -82,9 +77,8 @@ describe("TRON Address Validation", () => {
   test("should create TRON.USDT transaction with valid addresses", async () => {
     const toolbox = context.toolbox;
     const fromAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
-    const toAddress = "TT87ESmqUmH87hMx1MKCEqYrJKaQyNg9ao"; // Valid TRON address
+    const toAddress = "TT87ESmqUmH87hMx1MKCEqYrJKaQyNg9ao";
 
-    // Both addresses should be valid
     expect(toolbox.validateAddress(fromAddress)).toBe(true);
     expect(toolbox.validateAddress(toAddress)).toBe(true);
 
@@ -107,7 +101,6 @@ describe("TRON Address Validation", () => {
     const lowerCase = address.toLowerCase();
     const upperCase = address.toUpperCase();
 
-    // TRON addresses are case sensitive - only the original should be valid
     expect(context.validateAddress(address)).toBe(true);
     expect(context.validateAddress(lowerCase)).toBe(false);
     expect(context.validateAddress(upperCase)).toBe(false);
@@ -117,7 +110,6 @@ describe("TRON Address Validation", () => {
     const edgeCases = [null, undefined, 123, {}, [], true, false];
 
     for (const testCase of edgeCases) {
-      // Should not throw but return false for invalid inputs
       expect(context.validateAddress(testCase as any)).toBe(false);
       expect(context.toolbox.validateAddress(testCase as any)).toBe(false);
     }
@@ -153,7 +145,6 @@ describe("TRON createTransaction with Extended Expiration", () => {
 
     expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
     expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
-    Bun.sleep(500);
   });
 
   test("should create native TRX transfer with extended expiration and memo", async () => {
@@ -179,62 +170,61 @@ describe("TRON createTransaction with Extended Expiration", () => {
     expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
     expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
 
-    // Validate memo is included
     expect(transaction.raw_data.data).toBeDefined();
-    Bun.sleep(500);
   });
 
-  test("should create token transfer with extended expiration", async () => {
-    const toolbox = context.toolbox;
-    const beforeTimestamp = Date.now();
+  test(
+    "should create token transfer with extended expiration",
+    async () => {
+      const toolbox = context.toolbox;
+      const beforeTimestamp = Date.now();
 
-    const transaction = await toolbox.createTransaction({
-      assetValue: AssetValue.from({
-        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        value: "100", // 100 USDT
-      }),
-      expiration: extendedExpiration,
-      recipient: toAddress,
-      sender: fromAddress,
-    });
+      const transaction = await toolbox.createTransaction({
+        assetValue: AssetValue.from({
+          asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          value: "100", // 100 USDT
+        }),
+        expiration: extendedExpiration,
+        recipient: toAddress,
+        sender: fromAddress,
+      });
 
-    expect(transaction.raw_data.expiration).toBeDefined();
+      expect(transaction.raw_data.expiration).toBeDefined();
 
-    const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
-    const actualExpiration = transaction.raw_data.expiration;
+      const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
+      const actualExpiration = transaction.raw_data.expiration;
 
-    // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
-    Bun.sleep(500);
-  });
+      // Allow 10 second tolerance for test execution time
+      expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+      expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+    },
+    { retry: 3 },
+  );
 
-  test("should create token transfer with extended expiration and memo", async () => {
-    const toolbox = context.toolbox;
-    const beforeTimestamp = Date.now();
+  test(
+    "should create token transfer with extended expiration and memo",
+    async () => {
+      const toolbox = context.toolbox;
+      const beforeTimestamp = Date.now();
 
-    const transaction = await toolbox.createTransaction({
-      assetValue: AssetValue.from({
-        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        value: "100", // 100 USDT
-      }),
-      expiration: extendedExpiration,
-      memo,
-      recipient: toAddress,
-      sender: fromAddress,
-    });
+      const transaction = await toolbox.createTransaction({
+        assetValue: AssetValue.from({
+          asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          value: "100", // 100 USDT
+        }),
+        expiration: extendedExpiration,
+        memo,
+        recipient: toAddress,
+        sender: fromAddress,
+      });
 
-    expect(transaction.raw_data.expiration).toBeDefined();
+      const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
+      const actualExpiration = transaction.raw_data.expiration;
 
-    const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
-    const actualExpiration = transaction.raw_data.expiration;
-
-    // Allow 10 second tolerance for test execution time
-    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
-    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
-
-    // Validate memo is included
-    expect(transaction.raw_data.data).toBeDefined();
-    Bun.sleep(500);
-  });
+      expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+      expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+      expect(transaction.raw_data).toMatchObject({ data: expect.any(String), expiration: expect.any(Number) });
+    },
+    { retry: 3 },
+  );
 });
