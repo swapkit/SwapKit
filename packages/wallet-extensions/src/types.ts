@@ -34,7 +34,7 @@ declare global {
     trustwallet: EthereumWindowProvider;
     phantom: { solana: SolanaProvider };
 
-    xfi?: {
+    ctrl?: {
       binance: Eip1193Provider;
       bitcoin: Eip1193Provider;
       bitcoincash: Eip1193Provider;

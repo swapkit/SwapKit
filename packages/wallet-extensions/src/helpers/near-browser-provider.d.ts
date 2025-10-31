@@ -248,7 +248,7 @@ declare global {
     // Specific wallet providers
     okxwallet?: { near: NearBrowserWalletProvider };
 
-    xfi?: { near: NearBrowserWalletProvider };
+    ctrl?: { near: NearBrowserWalletProvider };
 
     // Add other wallet-specific providers as needed
   }
