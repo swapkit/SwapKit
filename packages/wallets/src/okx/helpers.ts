@@ -26,9 +26,8 @@ const cosmosTransfer =
     const rpcUrl = await getRPCUrl(Chain.Cosmos);
     const cosmJS = await createSigningStargateClient(rpcUrl, offlineSigner);
 
-    const coins = [
-      { amount: assetValue.getBaseValue("string"), denom: assetValue?.symbol === "MUON" ? "umuon" : "uatom" },
-    ];
+    const denom = assetValue?.symbol === "MUON" ? "umuon" : "uatom";
+    const coins = [{ amount: assetValue.getBaseValue("string"), denom }];
 
     const { transactionHash } = await cosmJS.sendTokens(sender, recipient, coins, 1.6, memo);
     return transactionHash;
