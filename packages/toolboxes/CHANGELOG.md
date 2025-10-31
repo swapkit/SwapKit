@@ -1,5 +1,16 @@
 # @swapkit/toolboxes
 
+## 4.2.0
+
+### Minor Changes
+
+- [#1572](https://github.com/swapkit/SwapKit/pull/1572) [`9bc18fc`](https://github.com/swapkit/SwapKit/commit/9bc18fcd4724a1c09731feca3e0a3e1926a8b2a4) Thanks [@olegpetroveth](https://github.com/olegpetroveth)! - Fix Tron transaction building and expiration extension logic
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.4.4
+
 ## 4.1.13
 
 ### Patch Changes
