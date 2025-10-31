@@ -23,7 +23,6 @@
     "@vitejs/plugin-react": "5.0.1",
     "rollup-plugin-visualizer": "6.0.3",
     "typescript": "5.9.2",
-    "vite-plugin-top-level-await": "1.6.0",
     "vite-plugin-wasm": "3.5.0"
   },
   "name": "@internal/playground-vite",

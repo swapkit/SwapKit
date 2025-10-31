@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import topLevelAwait from "vite-plugin-top-level-await";
 import wasm from "vite-plugin-wasm";
 
 // https://vitejs.dev/config/
@@ -13,7 +12,7 @@ export default defineConfig({
   build: {
     commonjsOptions: { transformMixedEsModules: true },
     reportCompressedSize: true,
-    rollupOptions: { plugins: [nodePolyfills()] },
+    rollupOptions: { plugins: [nodePolyfills()],external: ['@passkeys/react'], },
     sourcemap: true,
     target: "es2022",
   },
@@ -39,7 +38,6 @@ export default defineConfig({
     }),
     react(),
     wasm(),
-    topLevelAwait(),
   ].concat(
     process.env.VISUALISE === "true"
       ? [visualizer({ filename: "dist/stats.html", gzipSize: true, open: true, sourcemap: true })]

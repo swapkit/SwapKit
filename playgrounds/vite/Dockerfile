@@ -1,37 +1,38 @@
-FROM oven/bun:1-alpine AS builder
 
-RUN apk add --no-cache python3 make g++ git
+FROM oven/bun:1 AS builder
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
-
-COPY packages ./packages
-COPY playgrounds ./playgrounds
-COPY tools ./tools
-COPY docs ./docs
-
-RUN bun install --frozen-lockfile
+COPY . .
 
 WORKDIR /app/playgrounds/vite
+RUN rm -rf node_modules dist
+RUN bun install
 
-ENV NODE_ENV=production
-RUN bun run build-playground
+RUN NODE_OPTIONS="--max_old_space_size=4096" bun run build-playground
 
-# Production stage с nginx
 FROM nginx:alpine
 
-COPY --from=builder /app/playgrounds/vite/dist /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
 
-COPY playgrounds/vite/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/playgrounds/vite/dist ./
 
-# Health check endpoint
-RUN echo "healthy" > /usr/share/nginx/html/health
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+RUN echo '\
+server {\
+    listen 8080;\
+    root /usr/share/nginx/html;\
+    index index.html;\
+    location / {\
+        try_files \$uri \$uri/ /index.html;\
+    }\
+}' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
-
 CMD ["nginx", "-g", "daemon off;"]
