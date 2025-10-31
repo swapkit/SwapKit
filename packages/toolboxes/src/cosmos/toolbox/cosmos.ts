@@ -72,7 +72,7 @@ export async function getSignerFromPrivateKey({ privateKey, prefix }: { privateK
 }
 
 const SafeDefaultFeeValues = {
-  [Chain.Cosmos]: 500,
+  [Chain.Cosmos]: 1000,
   [Chain.Kujira]: 1000,
   [Chain.Noble]: 1000,
   [Chain.THORChain]: 5000000,

@@ -263,7 +263,7 @@ export async function createSubstrateToolbox({
 
   const rpcUrl = await getRPCUrl(chain);
   const provider = new WsProvider(rpcUrl);
-  const api = await ApiPromise.create({ provider });
+  const api = await ApiPromise.create({ noInitWarn: true, provider });
   const gasAsset = AssetValue.from({ chain });
   const network = generic ? SubstrateNetwork.GENERIC : SubstrateNetwork[chain];
 
