@@ -1,5 +1,5 @@
 
-FROM oven/bun:1 AS builder
+FROM oven/bun:1.2.23 AS builder
 
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -16,7 +16,7 @@ WORKDIR /app/playgrounds/vite
 RUN rm -rf node_modules dist
 RUN bun install
 
-RUN NODE_OPTIONS="--max_old_space_size=4096" bun run build-playground
+RUN bun run build-playground
 
 FROM nginx:alpine
 
