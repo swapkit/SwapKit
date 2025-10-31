@@ -1,3 +1,5 @@
+import type { Contract } from "@near-js/accounts";
+
 // NEP-141 Fungible Token Standard Types
 
 export interface FungibleTokenMetadata {
@@ -18,6 +20,10 @@ export interface StorageBalance {
 export interface StorageBalanceBounds {
   min: string;
   max?: string;
+}
+
+export interface NEP141StorageContract extends Contract {
+  storage_balance_of: (args: { account_id: string }) => Promise<StorageBalance | null>;
 }
 
 // Token transfer parameters

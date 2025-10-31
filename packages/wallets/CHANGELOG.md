@@ -1,5 +1,29 @@
 # @swapkit/wallets
 
+## 4.2.8
+
+### Patch Changes
+
+- [#1573](https://github.com/swapkit/SwapKit/pull/1573) [`955172a`](https://github.com/swapkit/SwapKit/commit/955172a033d7b5989d84e8e6f28d20a0b322952b) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix cosmos transfer base fee
+
+- Updated dependencies [[`955172a`](https://github.com/swapkit/SwapKit/commit/955172a033d7b5989d84e8e6f28d20a0b322952b)]:
+  - @swapkit/toolboxes@4.1.13
+  - @swapkit/helpers@4.4.3
+  - @swapkit/wallet-hardware@4.1.40
+  - @swapkit/wallet-keystore@4.0.41
+  - @swapkit/wallet-core@4.0.41
+
+## 4.2.7
+
+### Patch Changes
+
+- Updated dependencies [[`2c328fd`](https://github.com/swapkit/SwapKit/commit/2c328fd19a23c16d241ca1c6bd5abe163e502b85)]:
+  - @swapkit/toolboxes@4.1.12
+  - @swapkit/helpers@4.4.2
+  - @swapkit/wallet-hardware@4.1.39
+  - @swapkit/wallet-keystore@4.0.40
+  - @swapkit/wallet-core@4.0.40
+
 ## 4.2.6
 
 ### Patch Changes
