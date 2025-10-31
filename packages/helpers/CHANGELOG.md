@@ -1,5 +1,44 @@
 # @swapkit/helpers
 
+## 4.4.1
+
+### Patch Changes
+
+- [#1565](https://github.com/swapkit/SwapKit/pull/1565) [`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8) Thanks [@towanTG](https://github.com/towanTG)! - Adds OKX Provider
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.39
+
+## 4.4.0
+
+### Minor Changes
+
+- [#1562](https://github.com/swapkit/SwapKit/pull/1562) [`3536550`](https://github.com/swapkit/SwapKit/commit/3536550dc088c491d2d5efb874439bbf39005186) Thanks [@mfaizan1](https://github.com/mfaizan1)! - Adds service to fee type enum
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.38
+
+## 4.3.4
+
+### Patch Changes
+
+- [#1552](https://github.com/swapkit/SwapKit/pull/1552) [`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b) Thanks [@towanTG](https://github.com/towanTG)! - Enables Xlayer for supporting wallets and corrects Xlayer config
+
+- Updated dependencies [[`ad9ddce`](https://github.com/swapkit/SwapKit/commit/ad9ddceab07c1fb4dbce12da34ce6ce486ee483b)]:
+  - @swapkit/types@0.2.3
+  - @swapkit/tokens@4.0.37
+
+## 4.3.3
+
+### Patch Changes
+
+- [#1547](https://github.com/swapkit/SwapKit/pull/1547) [`19f4248`](https://github.com/swapkit/SwapKit/commit/19f42485c528c006e78e1bd335e7911b90481949) Thanks [@towanTG](https://github.com/towanTG)! - Adds special gas estimation flow for gnosis
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.36
+
 ## 4.3.2
 
 ### Patch Changes

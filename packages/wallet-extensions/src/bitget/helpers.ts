@@ -27,6 +27,7 @@ export async function getWalletMethods(chain: Chain) {
         Chain.Gnosis,
         Chain.Optimism,
         Chain.Polygon,
+        Chain.XLayer,
       ),
       async () => {
         if (!(bitget && "ethereum" in bitget)) {

@@ -1,5 +1,54 @@
 # @swapkit/ui
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [[`4ff0c31`](https://github.com/swapkit/SwapKit/commit/4ff0c316f50a7616725ec6f29e54b7e2038997d7)]:
+  - @swapkit/sdk@4.1.9
+
+## 0.2.8
+
+### Patch Changes
+
+- Updated dependencies [[`aef8b5a`](https://github.com/swapkit/SwapKit/commit/aef8b5a1b83861d3b99941ac82136294fb85d8d8)]:
+  - @swapkit/sdk@4.1.8
+
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.7
+
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [[`0adb662`](https://github.com/swapkit/SwapKit/commit/0adb662fac2d8d84555f91e7ee1b88e8bd4bcc0b)]:
+  - @swapkit/sdk@4.1.6
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.5
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.4
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.3
+
 ## 0.2.2
 
 ### Patch Changes
