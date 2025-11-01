@@ -1,11 +1,6 @@
 {
   "author": "swapkit-oss",
-  "dependencies": {
-    "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*",
-    "@swapkit/wallets": "workspace:*",
-    "ts-pattern": "^5.7.0"
-  },
+  "dependencies": { "ts-pattern": "^5.7.0" },
   "description": "SwapKit - Tokens",
   "devDependencies": { "ts-pattern": "5.8.0" },
   "exports": {

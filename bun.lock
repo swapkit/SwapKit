@@ -148,9 +148,6 @@
       "name": "@swapkit/tokens",
       "version": "4.0.41",
       "dependencies": {
-        "@swapkit/helpers": "workspace:*",
-        "@swapkit/toolboxes": "workspace:*",
-        "@swapkit/wallets": "workspace:*",
         "ts-pattern": "^5.7.0",
       },
       "devDependencies": {
