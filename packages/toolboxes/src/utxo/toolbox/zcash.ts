@@ -24,6 +24,17 @@ function getZcashNetwork() {
   return networks.zcash;
 }
 
+function getECPairNetwork() {
+  return {
+    bech32: undefined,
+    bip32: { private: 0x0488ade4, public: 0x0488b21e },
+    messagePrefix: "\x18ZCash Signed Message:\n",
+    pubKeyHash: 0x1c,
+    scriptHash: 0x1c,
+    wif: 0x80,
+  };
+}
+
 type ZcashSigner = ChainSigner<ZcashPsbt, ZcashPsbt>;
 
 function createZcashSignerFromPhrase({
@@ -41,9 +52,9 @@ function createZcashSignerFromPhrase({
     throw new SwapKitError("toolbox_utxo_invalid_params");
   }
 
-  // biome-ignore lint/suspicious/noTsIgnore: Create key pair using BitGo's ECPair with ECPair-compatible network
-  // @ts-ignore
-  const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: networks.zcash });
+  // Create key pair using BitGo's ECPair with ECPair-compatible network
+  const ecpairNetwork = getECPairNetwork();
+  const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 
   const pubKeyHash = crypto.hash160(keyPair.publicKey);
   const { isStagenet } = SKConfig.get("envs");
@@ -53,6 +64,7 @@ function createZcashSignerFromPhrase({
     : Buffer.from([0x1c, 0xb8]); // mainnet prefix (results in t1... addresses)
 
   const payload = Buffer.concat([prefix, pubKeyHash]);
+
   const address = bs58check.encode(payload);
 
   return {
@@ -86,8 +98,6 @@ function addInputsAndOutputs({
       nonWitnessUtxo: utxo.txHex ? Buffer.from(utxo.txHex, "hex") : undefined,
     };
 
-    // biome-ignore lint/suspicious/noTsIgnore: Add input to PSBT
-    // @ts-ignore
     psbt.addInput({ hash: utxo.hash, index: utxo.index, ...witnessInfo, ...nonWitnessInfo });
   }
 
@@ -103,8 +113,6 @@ function addInputsAndOutputs({
       ? { script: compiledMemo as Buffer<ArrayBufferLike>, value: 0n }
       : { script: zcashAddress.toOutputScript(address, getZcashNetwork()), value: BigInt(output.value) };
 
-    // biome-ignore lint/suspicious/noTsIgnore: Add output to PSBT
-    // @ts-ignore
     psbt.addOutput(mappedOutput);
   }
 
@@ -191,8 +199,6 @@ export async function createZcashToolbox(
 
     signedPsbt.finalizeAllInputs();
 
-    // biome-ignore lint/suspicious/noTsIgnore: Broadcast transaction
-    // @ts-ignore
     return baseToolbox.broadcastTx(signedPsbt.extractTransaction().toHex());
   }
 
@@ -211,9 +217,8 @@ export async function createZcashToolbox(
       throw new SwapKitError("toolbox_utxo_invalid_params");
     }
 
-    // biome-ignore lint/suspicious/noTsIgnore: Create key pair using BitGo's ECPair with ECPair-compatible network
-    // @ts-ignore
-    const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: networks.zcash });
+    const ecpairNetwork = getECPairNetwork();
+    const keyPair = ECPair.fromPrivateKey(Buffer.from(node.privateKey), { network: ecpairNetwork });
 
     return keyPair;
   }

@@ -19,23 +19,28 @@ const dtsPlugin = {
         isolatedDeclarations: false,
         noEmit: false,
         outDir: "./dist/types",
-        paths: {
-          "@bitgo/*": ["../../node_modules/@bitgo/*"],
-          "@cosmjs/*": ["../../node_modules/@cosmjs/*"],
-          "@near-wallet-selector/*": ["../../node_modules/@near-wallet-selector/*"],
-          "@solana/*": ["../../node_modules/@solana/*"],
-          "@ton/*": ["../../node_modules/@ton/*"],
-          "@walletconnect/*": ["../../node_modules/@walletconnect/*"],
-          "bitcoinjs-lib": ["../../node_modules/bitcoinjs-lib"],
-          ecpair: ["../../node_modules/ecpair"],
-          xrpl: ["../../node_modules/xrpl"],
-        },
+        paths: {} as Record<string, string[]>,
         rootDir: "./src",
       },
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
       extends: "./tsconfig.json",
       include: ["src/**/*"],
     };
+
+    if (pkgName.startsWith("wallet") || ["core", "browser", "server", "sdk", "ui"].includes(pkgName)) {
+      tempConfig.compilerOptions.paths = {
+        "@bitgo/*": ["../../node_modules/@bitgo/*"],
+        "@cosmjs/*": ["../../node_modules/@cosmjs/*"],
+        "@near-wallet-selector/*": ["../../node_modules/@near-wallet-selector/*"],
+        "@solana/*": ["../../node_modules/@solana/*"],
+        "@ton/*": ["../../node_modules/@ton/*"],
+        "@walletconnect/*": ["../../node_modules/@walletconnect/*"],
+        "bitcoinjs-lib": ["../../node_modules/bitcoinjs-lib"],
+        ecpair: ["../../node_modules/ecpair"],
+        xrpl: ["../../node_modules/xrpl"],
+      };
+    }
+
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
       await $`cd ${scope} && bun --bun tsc -p .tsconfig.tmp.json --pretty`;
