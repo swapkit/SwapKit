@@ -67,7 +67,7 @@
       "types": "./dist/types/thorchain/index.d.ts"
     }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",

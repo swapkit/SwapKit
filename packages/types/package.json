@@ -9,7 +9,7 @@
       "types": "./dist/types/index.d.ts"
     }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/types",
