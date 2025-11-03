@@ -101,59 +101,59 @@ steps:
         EOF
         }
         
-        REGIONS=$(get_regions)
+        REGION_LIST=$$(get_regions)
         
         # Fallback if terraform console doesn't work
-        if [ -z "$REGIONS" ]; then
+        if [ -z "$$REGION_LIST" ]; then
           echo "Fallback: Reading regions from default values..."
-          REGIONS="us-central1 europe-west1"
+          REGION_LIST="us-central1 europe-west1"
         fi
         
         echo "=== Configuration ==="
-        echo "Service Name: $SERVICE_NAME"
+        echo "Service Name: $$SERVICE_NAME"
         echo "Project ID: ${PROJECT_ID}"
-        echo "Regions: $REGIONS"
+        echo "Regions: $$REGION_LIST"
         echo ""
         
         # Function to import existing Cloud Run service if it exists
         import_existing_service() {
-          local region=$1
-          local full_service_name="${SERVICE_NAME}-$region"
+          local region=$$1
+          local full_service_name="$$SERVICE_NAME-$$region"
           
-          echo "Checking for existing service: $full_service_name in $region"
+          echo "Checking for existing service: $$full_service_name in $$region"
           
-          if gcloud run services describe $full_service_name \
-              --region=$region \
+          if gcloud run services describe $$full_service_name \
+              --region=$$region \
               --project=${PROJECT_ID} \
               --quiet >/dev/null 2>&1; then
             
-            echo "✓ Found existing Cloud Run service: $full_service_name"
+            echo "✓ Found existing Cloud Run service: $$full_service_name"
             echo "  Importing into Terraform state..."
             
             terraform import \
-              "google_cloud_run_v2_service.default[\"$region\"]" \
-              "projects/${PROJECT_ID}/locations/$region/services/$full_service_name" \
+              "google_cloud_run_v2_service.default[\"$$region\"]" \
+              "projects/${PROJECT_ID}/locations/$$region/services/$$full_service_name" \
               2>/dev/null || echo "  (Already imported or failed to import)"
           else
-            echo "✗ Service $full_service_name does not exist in $region (will be created)"
+            echo "✗ Service $$full_service_name does not exist in $$region (will be created)"
           fi
         }
         
         # Function to import existing IAM binding if it exists
         import_existing_iam() {
-          local region=$1
-          local full_service_name="${SERVICE_NAME}-$region"
+          local region=$$1
+          local full_service_name="$$SERVICE_NAME-$$region"
           
-          if gcloud run services describe $full_service_name \
-              --region=$region \
+          if gcloud run services describe $$full_service_name \
+              --region=$$region \
               --project=${PROJECT_ID} \
               --quiet >/dev/null 2>&1; then
             
-            echo "✓ Importing IAM binding for: $full_service_name"
+            echo "✓ Importing IAM binding for: $$full_service_name"
             
             terraform import \
-              "google_cloud_run_v2_service_iam_binding.public_access[\"$region\"]" \
-              "projects/${PROJECT_ID}/locations/$region/services/$full_service_name" \
+              "google_cloud_run_v2_service_iam_binding.public_access[\"$$region\"]" \
+              "projects/${PROJECT_ID}/locations/$$region/services/$$full_service_name" \
               2>/dev/null || echo "  (Already imported or failed to import)"
           fi
         }
@@ -170,10 +170,10 @@ steps:
           echo ""
           
           # Import existing resources for each region
-          for region in $REGIONS; do
-            echo "Processing region: $region"
-            import_existing_service $region
-            import_existing_iam $region
+          for region in $$REGION_LIST; do
+            echo "Processing region: $$region"
+            import_existing_service $$region
+            import_existing_iam $$region
             echo ""
           done
           
@@ -214,42 +214,42 @@ steps:
         SERVICE_NAME="${_SERVICE_NAME}"
         
         # Get regions from Terraform output
-        REGIONS=$(terraform output -json regions_deployed 2>/dev/null | grep -o '"[^"]*"' | tr -d '"')
+        REGION_LIST=$$(terraform output -json regions_deployed 2>/dev/null | grep -o '"[^"]*"' | tr -d '"')
         
         # Fallback
-        if [ -z "$REGIONS" ]; then
-          REGIONS="us-central1 europe-west1"
+        if [ -z "$$REGION_LIST" ]; then
+          REGION_LIST="us-central1 europe-west1"
         fi
         
-        echo "Service: $SERVICE_NAME"
+        echo "Service: $$SERVICE_NAME"
         echo "Project: ${PROJECT_ID}"
-        echo "Regions: $REGIONS"
+        echo "Regions: $$REGION_LIST"
         echo ""
         
         FAILED=0
         
-        for region in $REGIONS; do
-          FULL_SERVICE_NAME="${SERVICE_NAME}-$region"
+        for region in $$REGION_LIST; do
+          FULL_SERVICE_NAME="$$SERVICE_NAME-$$region"
           
           echo "─────────────────────────────────────────"
-          echo "Region: $region"
-          echo "Service: $FULL_SERVICE_NAME"
+          echo "Region: $$region"
+          echo "Service: $$FULL_SERVICE_NAME"
           
-          if SERVICE_URL=$(gcloud run services describe $FULL_SERVICE_NAME \
-            --region=$region \
+          if SERVICE_URL=$$(gcloud run services describe $$FULL_SERVICE_NAME \
+            --region=$$region \
             --project=${PROJECT_ID} \
             --format="value(status.url)" 2>/dev/null); then
             
-            REVISION=$(gcloud run services describe $FULL_SERVICE_NAME \
-              --region=$region \
+            REVISION=$$(gcloud run services describe $$FULL_SERVICE_NAME \
+              --region=$$region \
               --project=${PROJECT_ID} \
               --format="value(status.latestReadyRevisionName)" 2>/dev/null)
             
-            echo "Status: DEPLOYED"
-            echo "URL: $SERVICE_URL"
-            echo "Revision: $REVISION"
+            echo "Status: ✓ DEPLOYED"
+            echo "URL: $$SERVICE_URL"
+            echo "Revision: $$REVISION"
           else
-            echo "Status: FAILED"
+            echo "Status: ✗ FAILED"
             FAILED=1
           fi
           echo ""
@@ -263,13 +263,13 @@ steps:
         
         echo ""
         
-        if [ $FAILED -eq 0 ]; then
+        if [ $$FAILED -eq 0 ]; then
           echo "=========================================="
-          echo "All services deployed successfully!"
+          echo "✓ All services deployed successfully!"
           echo "=========================================="
         else
           echo "=========================================="
-          echo "Some deployments failed"
+          echo "✗ Some deployments failed"
           echo "=========================================="
           exit 1
         fi
@@ -289,7 +289,6 @@ tags:
   - widget
   - cloud-run
   - playgrounds-vite
-  - ${_SERVICE_NAME}
 
 options:
   logging: CLOUD_LOGGING_ONLY
