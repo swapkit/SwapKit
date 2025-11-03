@@ -22,7 +22,7 @@ resource "google_cloudbuild_trigger" "deploy-service-on-image" {
 
   service_account = "projects/${var.project_id}/serviceAccounts/cloudbuild@${var.project_id}.iam.gserviceaccount.com"
 
-  filter = "_ACTION.matches(\"INSERT\") && _TAG.matches(\"us-docker.pkg.dev/swapkit-devops/widget.*:(dev|dev-deploy|feat)$\") && !_TAG.matches(\".*cache.*\")"
+  filter = "_ACTION.matches(\"INSERT\") && _TAG.matches(\"us-docker.pkg.dev/swapkit-devops/widget.*:(dev|dev-deploy|feat|feature)$\") && !_TAG.matches(\".*cache.*\")"
 
   substitutions = {
     _ACTION         = "$(body.message.data.action)"
