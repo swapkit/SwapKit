@@ -1,125 +1,295 @@
 steps:
-  # Step 1: Terraform Init
-  - name: 'hashicorp/terraform:1.5.5'
+  # Step 0: Display build information
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: display-build-info
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        echo "=========================================="
+        echo "Widget Deployment Information"
+        echo "=========================================="
+        echo "Project ID: ${PROJECT_ID}"
+        echo "Image Digest: ${_DIGEST}"
+        echo "Image Tag: ${_TAG}"
+        echo "Build ID: ${BUILD_ID}"
+        echo "Commit SHA: ${SHORT_SHA}"
+        echo "=========================================="
+
+  # Step 1: Initialize Terraform with backend configuration
+  - name: 'hashicorp/terraform:${_TF_VERSION}'
     id: terraform-init
     entrypoint: /bin/sh
     args:
       - '-c'
       - |
-        cd devops/terraform/$PROJECT_ID
+        cd playgrounds/vite/terraform/${PROJECT_ID}
+        
+        echo "Initializing Terraform..."
+        echo "Backend bucket: sk-frontend-terraform-be"
+        echo "Backend prefix: terraform/state/${_SERVICE_NAME}/${PROJECT_ID}"
+        
         terraform init -reconfigure
     env:
       - TF_VAR_project_id=${PROJECT_ID}
-      - TF_VAR_service_name=widget
+      - TF_VAR_service_name=${_SERVICE_NAME}
       - TF_VAR_image_url=${_DIGEST}
 
-  # Step 2: Terraform Validate
-  - name: 'hashicorp/terraform:1.5.5'
+  # Step 2: Validate Terraform Configuration
+  - name: 'hashicorp/terraform:${_TF_VERSION}'
     id: terraform-validate
     entrypoint: /bin/sh
     args:
       - '-c'
       - |
-        cd devops/terraform/$PROJECT_ID
-        echo "PROJECT_ID: $${TF_VAR_project_id}"
-        echo "Service Name: widget"
-        echo "Image URL: $${TF_VAR_image_url}"
+        cd playgrounds/vite/terraform/${PROJECT_ID}
+        
+        echo "=== Terraform Configuration Validation ==="
+        echo "Project ID: ${PROJECT_ID}"
+        echo "Service Name: ${_SERVICE_NAME}"
+        echo "Image URL: ${_DIGEST}"
+        echo ""
+        
         terraform validate
+        
+        echo ""
+        echo "✓ Terraform configuration is valid"
     env:
       - TF_VAR_project_id=${PROJECT_ID}
-      - TF_VAR_service_name=widget
+      - TF_VAR_service_name=${_SERVICE_NAME}
       - TF_VAR_image_url=${_DIGEST}
 
-  # Step 3: Terraform Plan
-  - name: 'hashicorp/terraform:1.5.5'
+  # Step 3: Generate Terraform Plan
+  - name: 'hashicorp/terraform:${_TF_VERSION}'
     id: terraform-plan
     entrypoint: /bin/sh
     args:
       - '-c'
       - |
-        cd devops/terraform/$PROJECT_ID
-        terraform init -reconfigure
+        cd playgrounds/vite/terraform/${PROJECT_ID}
+        
+        echo "=== Generating Terraform Plan ==="
+        
         terraform plan -out=plan.tfplan -input=false \
           -var="project_id=${PROJECT_ID}" \
-          -var="service_name=widget" \
+          -var="service_name=${_SERVICE_NAME}" \
           -var="image_url=${_DIGEST}"
+        
+        echo ""
+        echo "✓ Terraform plan generated successfully"
     env:
       - TF_VAR_project_id=${PROJECT_ID}
-      - TF_VAR_service_name=widget
+      - TF_VAR_service_name=${_SERVICE_NAME}
       - TF_VAR_image_url=${_DIGEST}
 
-  # Step 4: Terraform Apply with imports
-  - name: 'hashicorp/terraform:1.5.5'
+  # Step 4: Apply Terraform Plan with error handling for existing resources
+  - name: 'hashicorp/terraform:${_TF_VERSION}'
     id: terraform-apply
     entrypoint: /bin/sh
     args:
       - '-c'
       - |
-        cd devops/terraform/$PROJECT_ID
-        terraform init -reconfigure
+        cd playgrounds/vite/terraform/${PROJECT_ID}
         
+        # Get service name and regions from Terraform variables
+        SERVICE_NAME="${_SERVICE_NAME}"
+        
+        # Extract regions from variables.tf
+        get_regions() {
+          terraform console <<EOF 2>/dev/null | tr -d '[]"' | tr ',' ' '
+        var.additional_regions
+        EOF
+        }
+        
+        REGIONS=$(get_regions)
+        
+        # Fallback if terraform console doesn't work
+        if [ -z "$REGIONS" ]; then
+          echo "Fallback: Reading regions from default values..."
+          REGIONS="us-central1 europe-west1"
+        fi
+        
+        echo "=== Configuration ==="
+        echo "Service Name: $SERVICE_NAME"
+        echo "Project ID: ${PROJECT_ID}"
+        echo "Regions: $REGIONS"
+        echo ""
+        
+        # Function to import existing Cloud Run service if it exists
         import_existing_service() {
           local region=$1
-          local service_name="widget-$region"
+          local full_service_name="${SERVICE_NAME}-$region"
           
-          if gcloud run services describe $service_name --region=$region --project=${PROJECT_ID} --quiet >/dev/null 2>&1; then
-            echo "Importing existing Cloud Run service: $service_name"
-            terraform import "google_cloud_run_v2_service.default[\"$region\"]" "projects/${PROJECT_ID}/locations/$region/services/$service_name" || true
+          echo "Checking for existing service: $full_service_name in $region"
+          
+          if gcloud run services describe $full_service_name \
+              --region=$region \
+              --project=${PROJECT_ID} \
+              --quiet >/dev/null 2>&1; then
+            
+            echo "✓ Found existing Cloud Run service: $full_service_name"
+            echo "  Importing into Terraform state..."
+            
+            terraform import \
+              "google_cloud_run_v2_service.default[\"$region\"]" \
+              "projects/${PROJECT_ID}/locations/$region/services/$full_service_name" \
+              2>/dev/null || echo "  (Already imported or failed to import)"
+          else
+            echo "✗ Service $full_service_name does not exist in $region (will be created)"
           fi
         }
         
+        # Function to import existing IAM binding if it exists
         import_existing_iam() {
           local region=$1
-          local service_name="widget-$region"
+          local full_service_name="${SERVICE_NAME}-$region"
           
-          echo "Importing IAM binding for: $service_name"
-          terraform import "google_cloud_run_v2_service_iam_binding.public_access[\"$region\"]" "projects/${PROJECT_ID}/locations/$region/services/$service_name" || true
+          if gcloud run services describe $full_service_name \
+              --region=$region \
+              --project=${PROJECT_ID} \
+              --quiet >/dev/null 2>&1; then
+            
+            echo "✓ Importing IAM binding for: $full_service_name"
+            
+            terraform import \
+              "google_cloud_run_v2_service_iam_binding.public_access[\"$region\"]" \
+              "projects/${PROJECT_ID}/locations/$region/services/$full_service_name" \
+              2>/dev/null || echo "  (Already imported or failed to import)"
+          fi
         }
         
-        terraform apply -auto-approve -input=false plan.tfplan || {
-          echo "Initial apply failed, importing existing resources..."
+        echo "=== Applying Terraform ==="
+        
+        # Try to apply
+        if terraform apply -auto-approve -input=false plan.tfplan; then
+          echo ""
+          echo "✓ Terraform apply completed successfully"
+        else
+          echo ""
+          echo "⚠ Initial apply failed, attempting to import existing resources..."
+          echo ""
           
-          for region in us-central1 europe-west1; do
+          # Import existing resources for each region
+          for region in $REGIONS; do
+            echo "Processing region: $region"
             import_existing_service $region
             import_existing_iam $region
+            echo ""
           done
           
-          echo "Applying Terraform after imports..."
+          # Regenerate plan after imports
+          echo "Regenerating Terraform plan after imports..."
+          terraform plan -out=plan.tfplan -input=false \
+            -var="project_id=${PROJECT_ID}" \
+            -var="service_name=${_SERVICE_NAME}" \
+            -var="image_url=${_DIGEST}"
+          
+          echo ""
+          echo "Applying Terraform after importing existing resources..."
           terraform apply -auto-approve -input=false plan.tfplan
-        }
+          
+          echo ""
+          echo "✓ Terraform apply completed after imports"
+        fi
     env:
       - TF_VAR_project_id=${PROJECT_ID}
-      - TF_VAR_service_name=widget
+      - TF_VAR_service_name=${_SERVICE_NAME}
       - TF_VAR_image_url=${_DIGEST}
 
-  # Step 5: Verify deployment
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Step 5: Verify deployment with detailed output
+  - name: 'hashicorp/terraform:${_TF_VERSION}'
     id: verify-deployment
     entrypoint: /bin/sh
     args:
       - '-c'
       - |
-        echo "Verifying Cloud Run deployments for widget..."
-        for region in us-central1 europe-west1; do
-          if gcloud run services describe widget-$region --region=$region --project=${PROJECT_ID} --format="value(status.url)" >/dev/null 2>&1; then
-            echo "✓ Service widget-$region deployed successfully"
+        cd playgrounds/vite/terraform/${PROJECT_ID}
+        
+        echo "=========================================="
+        echo "Deployment Verification"
+        echo "=========================================="
+        echo ""
+        
+        # Get service name from variable
+        SERVICE_NAME="${_SERVICE_NAME}"
+        
+        # Get regions from Terraform output
+        REGIONS=$(terraform output -json regions_deployed 2>/dev/null | grep -o '"[^"]*"' | tr -d '"')
+        
+        # Fallback
+        if [ -z "$REGIONS" ]; then
+          REGIONS="us-central1 europe-west1"
+        fi
+        
+        echo "Service: $SERVICE_NAME"
+        echo "Project: ${PROJECT_ID}"
+        echo "Regions: $REGIONS"
+        echo ""
+        
+        FAILED=0
+        
+        for region in $REGIONS; do
+          FULL_SERVICE_NAME="${SERVICE_NAME}-$region"
+          
+          echo "─────────────────────────────────────────"
+          echo "Region: $region"
+          echo "Service: $FULL_SERVICE_NAME"
+          
+          if SERVICE_URL=$(gcloud run services describe $FULL_SERVICE_NAME \
+            --region=$region \
+            --project=${PROJECT_ID} \
+            --format="value(status.url)" 2>/dev/null); then
+            
+            REVISION=$(gcloud run services describe $FULL_SERVICE_NAME \
+              --region=$region \
+              --project=${PROJECT_ID} \
+              --format="value(status.latestReadyRevisionName)" 2>/dev/null)
+            
+            echo "Status: DEPLOYED"
+            echo "URL: $SERVICE_URL"
+            echo "Revision: $REVISION"
           else
-            echo "✗ Service widget-$region deployment failed"
-            exit 1
+            echo "Status: FAILED"
+            FAILED=1
           fi
+          echo ""
         done
-        echo "All widget services deployed successfully!"
+        
+        # Display Terraform outputs
+        echo "=========================================="
+        echo "Terraform Outputs"
+        echo "=========================================="
+        terraform output
+        
+        echo ""
+        
+        if [ $FAILED -eq 0 ]; then
+          echo "=========================================="
+          echo "All services deployed successfully!"
+          echo "=========================================="
+        else
+          echo "=========================================="
+          echo "Some deployments failed"
+          echo "=========================================="
+          exit 1
+        fi
+    env:
+      - TF_VAR_project_id=${PROJECT_ID}
+      - TF_VAR_service_name=${_SERVICE_NAME}
+      - TF_VAR_image_url=${_DIGEST}
 
 substitutions:
   _TF_VERSION: "1.5.5"
-  _S_NAME: "widget"
+  _SERVICE_NAME: "widget"
 
-timeout: "1800s"
+timeout: "1800s"  # 30 minutes
 
 tags:
   - terraform
   - widget
   - cloud-run
+  - playgrounds-vite
+  - ${_SERVICE_NAME}
 
 options:
   logging: CLOUD_LOGGING_ONLY
