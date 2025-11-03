@@ -147,6 +147,7 @@ steps:
         exec gcloud builds submit \
           --region=us-central1 \
           --config=/workspace/kaniko_steps.yaml \
+          --machine-type=e2-highcpu-8 \
           --async \
           --format='value(id)' \
           --service-account="projects/${PROJECT_ID}/serviceAccounts/cloudbuild@${PROJECT_ID}.iam.gserviceaccount.com" \
