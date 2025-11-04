@@ -30,24 +30,28 @@ RUN rm -rf node_modules/.vite* .vite dist
 
 RUN bun run build-playground
 
+# Проверка что dist создан
 RUN ls -la dist/ && test -f dist/index.html
 
 FROM nginx:alpine
 
-RUN rm /etc/nginx/conf.d/default.conf
+# Удаляем дефолтную конфигурацию
+RUN rm -f /etc/nginx/conf.d/default.conf
 
+# Копирование собранного приложения
 COPY --from=builder /app/playgrounds/vite/dist /usr/share/nginx/html
 
+# Копирование nginx конфига
 COPY playgrounds/vite/nginx.conf /etc/nginx/conf.d/default.conf
 
+# Health check endpoint
 RUN echo "healthy" > /usr/share/nginx/html/health
 
-RUN ls -la /usr/share/nginx/html/ && \
-    test -f /usr/share/nginx/html/index.html && \
-    test -f /usr/share/nginx/html/health && \
-    test -f /etc/nginx/conf.d/default.conf
-
-RUN nginx -t
+# Проверка конфигурации
+RUN echo "=== Checking nginx config ===" && \
+    cat /etc/nginx/conf.d/default.conf && \
+    echo "=== Testing nginx ===" && \
+    nginx -t
 
 EXPOSE 8080
 
