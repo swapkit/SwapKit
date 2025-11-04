@@ -1,14 +1,8 @@
 FROM oven/bun:1.2.23 AS builder
 
 RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    gcc \
-    g++ \
-    git \
-    linux-libc-dev \
-    libudev-dev \
-    libusb-dev \
+    python3 make gcc g++ git \
+    linux-libc-dev libudev-dev libusb-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git config --global user.email "docker@build.local" && \
