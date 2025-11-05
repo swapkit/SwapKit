@@ -18,7 +18,7 @@ import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics"
 import { SwapKitError } from "./swapKitError";
 import type { SwapKitValueType } from "./swapKitNumber";
 
-const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near];
+const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near, Chain.Sui];
 const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
 const staticTokensMap = new Map<
@@ -170,7 +170,7 @@ export class AssetValue extends BigIntArithmetics {
     const parsedValue = value instanceof BigIntArithmetics ? value.getValue("string") : value;
     const assetOrChain = getAssetString(fromAssetOrChain);
 
-    const isChainAddressCombo = assetOrChain.includes(":");
+    const isChainAddressCombo = !assetOrChain.startsWith(Chain.Sui) && assetOrChain.includes(":");
 
     if (asyncTokenLookup && isChainAddressCombo) {
       const [chain, address] = assetOrChain.split(":");
