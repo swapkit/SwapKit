@@ -5,10 +5,10 @@
     "@swapkit/plugins": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
-    "ts-pattern": "^5.7.0"
+    "ts-pattern": "^5.9.0"
   },
   "description": "SwapKit - Core",
-  "devDependencies": { "ts-pattern": "5.8.0" },
+  "devDependencies": { "ts-pattern": "5.9.0" },
   "exports": {
     ".": {
       "bun": "./src/index.ts",

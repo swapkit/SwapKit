@@ -1,8 +1,8 @@
 {
   "author": "swapkit-oss",
-  "dependencies": { "ts-pattern": "^5.7.0" },
+  "dependencies": { "ts-pattern": "^5.9.0" },
   "description": "SwapKit - Tokens",
-  "devDependencies": { "ts-pattern": "5.8.0" },
+  "devDependencies": { "@swapkit/helpers": "workspace:*", "ts-pattern": "5.9.0" },
   "exports": {
     ".": {
       "bun": "./src/index.ts",
