@@ -1,4 +1,5 @@
 {
+  "compilerOptions": { "tsBuildInfoFile": "./tsconfig.tsbuildinfo" },
   "extends": "../../tools/typescript/base.json",
   "include": ["src", "./build.ts", "hardhat.config.js", "../plugins/src/near/types/intents.ts"]
 }

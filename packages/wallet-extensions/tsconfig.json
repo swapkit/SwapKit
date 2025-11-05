@@ -1,4 +1,5 @@
 {
+  "compilerOptions": { "tsBuildInfoFile": "./tsconfig.tsbuildinfo" },
   "extends": "../../tools/typescript/base.json",
   "include": ["src", "./build.ts", "./src/helpers/near-browser-provider.d.ts"]
 }
