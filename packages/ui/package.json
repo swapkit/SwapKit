@@ -31,7 +31,7 @@
   "private": true,
   "repository": { "directory": "packages/ui", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
-    "build": "bun run ./build.ts",
+    "build": "NODE_ENV=production bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo"
   },
