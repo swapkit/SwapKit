@@ -170,8 +170,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
         ]);
 
         return { decimals, ticker };
-      } catch (error) {
-        console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
+      } catch (error: any) {
+        console.warn(`Failed to fetch token info for ${address} on ${chain}: ${error?.code} ${error?.shortMessage}`);
         return { decimals: baseDecimal, ticker: undefined };
       }
     })
@@ -187,8 +187,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
             return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || undefined };
           }
         }
-      } catch (error) {
-        console.warn(`Failed to fetch Solana token info for ${address}:`, error);
+      } catch (error: any) {
+        console.warn(`Failed to fetch Solana token info for ${address}: ${error?.code} ${error?.message}`);
       }
       return { decimals: baseDecimal, ticker: undefined };
     })

@@ -1,5 +1,32 @@
 # @swapkit/toolboxes
 
+## 4.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`ad97c7f`](https://github.com/swapkit/SwapKit/commit/ad97c7fac861bf86ebb0eac7dd6d8e369965cd61)]:
+  - @swapkit/helpers@4.4.5
+
+## 4.2.0
+
+### Minor Changes
+
+- [#1572](https://github.com/swapkit/SwapKit/pull/1572) [`9bc18fc`](https://github.com/swapkit/SwapKit/commit/9bc18fcd4724a1c09731feca3e0a3e1926a8b2a4) Thanks [@olegpetroveth](https://github.com/olegpetroveth)! - Fix Tron transaction building and expiration extension logic
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.4.4
+
+## 4.1.13
+
+### Patch Changes
+
+- [#1573](https://github.com/swapkit/SwapKit/pull/1573) [`955172a`](https://github.com/swapkit/SwapKit/commit/955172a033d7b5989d84e8e6f28d20a0b322952b) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix cosmos transfer base fee
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.4.3
+
 ## 4.1.12
 
 ### Patch Changes
