@@ -22,6 +22,7 @@ export async function buildPackage({
   }
 
   const buildOptions: BuildConfig = {
+    define: { "process.env.NODE_ENV": JSON.stringify(isDebug ? "development" : "production") },
     entrypoints,
     minify: !isDebug,
     outdir: "./dist",
