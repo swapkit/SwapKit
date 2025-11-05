@@ -1,5 +1,12 @@
 # @swapkit/ui
 
+## 0.2.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/sdk@4.1.13
+
 ## 0.2.12
 
 ### Patch Changes

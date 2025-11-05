@@ -18,7 +18,7 @@ import { BigIntArithmetics, formatBigIntToSafeValue } from "./bigIntArithmetics"
 import { SwapKitError } from "./swapKitError";
 import type { SwapKitValueType } from "./swapKitNumber";
 
-const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near];
+const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near, Chain.Sui];
 const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
 const staticTokensMap = new Map<
@@ -170,18 +170,12 @@ export class AssetValue extends BigIntArithmetics {
     const parsedValue = value instanceof BigIntArithmetics ? value.getValue("string") : value;
     const assetOrChain = getAssetString(fromAssetOrChain);
 
-    const isChainAddressCombo = assetOrChain.includes(":");
+    const isChainAddressCombo = !assetOrChain.startsWith(Chain.Sui) && assetOrChain.includes(":");
 
     if (asyncTokenLookup && isChainAddressCombo) {
-      const [chain, address] = assetOrChain.split(":");
-      return (async () => {
-        const tokenData = await fetchTokenData({ address, chain: chain as Chain });
-        return createAssetValue({
-          decimal: tokenData.decimals,
-          identifier: tokenData.identifier,
-          value: fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue,
-        });
-      })() as ConditionalAssetValueReturn<T>;
+      const [chain, address] = assetOrChain.split(":") as [Chain, string];
+
+      return createAsyncAssetValue({ address, chain, fromBaseDecimal, parsedValue }) as ConditionalAssetValueReturn<T>;
     }
 
     const fallbackIdentifier = isChainAddressCombo ? assetOrChain.split(":").join(".UNKNOWN-") : assetOrChain;
@@ -385,6 +379,22 @@ function createSyntheticAssetValue(identifier: string, value: NumberPrimitives =
     identifier: `${chain || Chain.THORChain}.${synthChain}${assetSeparator}${symbol}`,
     value: safeValue(value, 8),
   });
+}
+
+async function createAsyncAssetValue({
+  address,
+  chain,
+  fromBaseDecimal,
+  parsedValue,
+}: {
+  address: string;
+  chain: Chain;
+  fromBaseDecimal?: number;
+  parsedValue: NumberPrimitives;
+}): Promise<AssetValue> {
+  const { decimals, identifier } = await fetchTokenData({ address, chain });
+  const value = fromBaseDecimal ? safeValue(BigInt(parsedValue), fromBaseDecimal) : parsedValue;
+  return createAssetValue({ decimal: decimals, identifier, value });
 }
 
 function safeValue(value: NumberPrimitives, decimal: number) {

@@ -156,15 +156,14 @@ async function getEVMAssetTicker({ chain, address }: { chain: EVMChain; address:
 
 export function fetchTokenInfo({ chain, address }: { chain: Chain; address: string }) {
   const { baseDecimal } = getChainConfig(chain);
+  const defaultResult = { decimals: baseDecimal, ticker: undefined };
 
   return match(chain)
     .with(...EVMChains, async () => {
       try {
         const { isAddress, getAddress } = await import("ethers");
 
-        if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) {
-          return { decimals: baseDecimal, ticker: undefined };
-        }
+        if (!isAddress(getAddress(address.replace(/^0X/, "0x")))) return defaultResult;
 
         const [ticker, decimals] = await Promise.all([
           getEVMAssetTicker({ address, chain: chain as EVMChain }),
@@ -172,14 +171,13 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
         ]);
 
         return { decimals, ticker };
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.warn(`Failed to fetch token info for ${address} on ${chain}: ${errorMessage}`);
-        return { decimals: baseDecimal, ticker: undefined };
+      } catch (error: any) {
+        console.warn(`Failed to fetch token info for ${address} on ${chain}: ${error?.code} ${error?.message}`);
+        return defaultResult;
       }
     })
     .with(Chain.Solana, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: undefined };
+      if (!address) return defaultResult;
 
       try {
         const response = await fetch(`https://lite-api.jup.ag/tokens/v2/search?query=${address}`);
@@ -190,14 +188,13 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
             return { decimals: token.decimals ?? baseDecimal, ticker: token.symbol || undefined };
           }
         }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.warn(`Failed to fetch Solana token info for ${address}: ${errorMessage}`);
+      } catch (error: any) {
+        console.warn(`Failed to fetch Solana token info for ${address}: ${error?.code} ${error?.message}`);
       }
-      return { decimals: baseDecimal, ticker: undefined };
+      return defaultResult;
     })
     .with(Chain.Tron, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: undefined };
+      if (!address) return defaultResult;
 
       try {
         const { TronWeb } = await import("tronweb");
@@ -234,11 +231,11 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         console.warn(`Failed to fetch Tron token info for ${address}: ${errorMessage}`);
-        return { decimals: baseDecimal, ticker: undefined };
+        return defaultResult;
       }
     })
     .with(Chain.Near, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: "UNKNOWN" };
+      if (!address) return defaultResult;
 
       try {
         const { JsonRpcProvider } = await import("@near-js/providers");
@@ -259,11 +256,11 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         console.warn(`Failed to fetch Near token info for ${address}: ${errorMessage}`);
-        return { decimals: baseDecimal, ticker: undefined };
+        return defaultResult;
       }
     })
     .with(Chain.Radix, async () => {
-      if (!address) return { decimals: baseDecimal, ticker: undefined };
+      if (!address) return defaultResult;
 
       try {
         const [ticker, decimals] = await Promise.all([getRadixAssetTicker(address), getRadixAssetDecimals(address)]);
@@ -272,10 +269,10 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         console.warn(`Failed to fetch Radix token info for ${address}: ${errorMessage}`);
-        return { decimals: baseDecimal, ticker: undefined };
+        return defaultResult;
       }
     })
-    .otherwise(async () => ({ decimals: baseDecimal, ticker: undefined }));
+    .otherwise(async () => defaultResult);
 }
 
 export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) {

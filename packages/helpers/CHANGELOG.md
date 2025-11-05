@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.4.5
+
+### Patch Changes
+
+- [#1576](https://github.com/swapkit/SwapKit/pull/1576) [`ad97c7f`](https://github.com/swapkit/SwapKit/commit/ad97c7fac861bf86ebb0eac7dd6d8e369965cd61) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Handle SUI tokens
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.0.43
+
 ## 4.4.4
 
 ### Patch Changes
