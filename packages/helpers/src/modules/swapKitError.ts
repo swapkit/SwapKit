@@ -459,9 +459,13 @@ export class SwapKitError extends Error {
 
     // Log errors for debugging - bundlers can strip this in production if needed
     if (sourceErrorOrInfo) {
-      console.error(`SwapKitError [${errorKey}]:`, sourceErrorOrInfo);
+      const errorMsg =
+        sourceErrorOrInfo instanceof Error
+          ? `${sourceErrorOrInfo.message}${sourceErrorOrInfo.cause ? ` (${sourceErrorOrInfo.cause})` : ""}`
+          : JSON.stringify(sourceErrorOrInfo);
+      console.error(`SwapKitError [${errorKey}]: ${errorMsg}`);
     } else if (info) {
-      console.error(`SwapKitError [${errorKey}]:`, info);
+      console.error(`SwapKitError [${errorKey}]: ${JSON.stringify(info)}`);
     }
   }
 }

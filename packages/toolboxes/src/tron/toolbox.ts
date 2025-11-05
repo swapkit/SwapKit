@@ -229,7 +229,8 @@ export const createTronToolbox = async (
 
       return balance ? (typeof balance === "bigint" ? balance : BigInt(balance)) : 0n;
     } catch (err) {
-      console.warn(`balanceOf() failed for ${contractAddress}:`, err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.warn(`balanceOf() failed for ${contractAddress}: ${errorMessage}`);
       return 0n;
     }
   };
@@ -329,7 +330,8 @@ export const createTronToolbox = async (
 
         return balances;
       } catch (fallbackError) {
-        console.error("Tron balance fetch failed:", fallbackError);
+        const errorMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+        console.error(`Tron balance fetch failed: ${errorMessage}`);
         return fallbackBalance;
       }
     }

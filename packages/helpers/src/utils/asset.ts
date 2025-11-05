@@ -42,7 +42,8 @@ async function getRadixAssetDecimals(address: string) {
 
     return manager?.divisibility?.value?.divisibility;
   } catch (error) {
-    console.warn(`Failed to fetch Radix asset decimals for ${address}:`, error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.warn(`Failed to fetch Radix asset decimals for ${address}: ${errorMessage}`);
     return baseDecimal;
   }
 }
@@ -64,8 +65,9 @@ async function getRadixAssetTicker(address: string) {
     const symbolMetadata = response.items[0]?.explicit_metadata?.items.find((item) => item.key === "symbol");
     return symbolMetadata?.value.typed.value || undefined;
   } catch (error) {
-    console.warn(`Failed to fetch Radix asset symbol for ${address}:`, error);
-    return undefined;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.warn(`Failed to fetch Radix asset symbol for ${address}: ${errorMessage}`);
+    return "";
   }
 }
 
@@ -171,7 +173,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
 
         return { decimals, ticker };
       } catch (error) {
-        console.warn(`Failed to fetch token info for ${address} on ${chain}:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.warn(`Failed to fetch token info for ${address} on ${chain}: ${errorMessage}`);
         return { decimals: baseDecimal, ticker: undefined };
       }
     })
@@ -188,7 +191,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
           }
         }
       } catch (error) {
-        console.warn(`Failed to fetch Solana token info for ${address}:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.warn(`Failed to fetch Solana token info for ${address}: ${errorMessage}`);
       }
       return { decimals: baseDecimal, ticker: undefined };
     })
@@ -228,7 +232,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
           ticker: symbolResult || undefined,
         };
       } catch (error) {
-        console.warn(`Failed to fetch Tron token info for ${address}:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.warn(`Failed to fetch Tron token info for ${address}: ${errorMessage}`);
         return { decimals: baseDecimal, ticker: undefined };
       }
     })
@@ -252,7 +257,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
 
         return { decimals: result?.decimals || baseDecimal, ticker: result?.symbol };
       } catch (error) {
-        console.warn(`Failed to fetch Near token info for ${address}:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.warn(`Failed to fetch Near token info for ${address}: ${errorMessage}`);
         return { decimals: baseDecimal, ticker: undefined };
       }
     })
@@ -264,7 +270,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
 
         return { decimals, ticker };
       } catch (error) {
-        console.warn(`Failed to fetch Radix token info for ${address}:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.warn(`Failed to fetch Radix token info for ${address}: ${errorMessage}`);
         return { decimals: baseDecimal, ticker: undefined };
       }
     })
