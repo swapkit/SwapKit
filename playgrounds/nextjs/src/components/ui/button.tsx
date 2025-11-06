@@ -22,7 +22,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "hover:bg-white/[0.08] bg-transparent hover:text-foreground text-muted-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-foreground underline-offset-4 hover:underline p-0 h-auto",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
 
         primary: "bg-primary-foreground text-primary hover:opacity-80 transition-opacity",
