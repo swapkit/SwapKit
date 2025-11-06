@@ -27,7 +27,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
   const [expectedBuyAmountFor1Input, setExpectedBuyAmountFor1Input] = useState(0);
 
-  const { swapKit } = useSwapKit();
+  const { swapKit, isWalletConnected } = useSwapKit();
   const swapKitConfig = useSwapKitConfig();
 
   const inputAssetValue = useMemo(() => {
@@ -58,6 +58,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     const isValid =
       amount &&
       swapKit &&
+      isWalletConnected &&
       inputAssetValue?.chain &&
       outputAssetValue?.chain &&
       outputAssetIdentifier &&
@@ -71,14 +72,21 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     try {
       setIsFetchingQuote(true);
 
+      const destinationAddress = swapKit.getAddress(outputAssetValue?.chain);
+      const sourceAddress = swapKit.getAddress(inputAssetValue?.chain);
+
+      if (!destinationAddress || !sourceAddress) {
+        throw new Error("Destination or source address not found");
+      }
+
       const quote = await SwapKitApi.getSwapQuote({
         buyAsset: outputAssetIdentifier,
-        destinationAddress: swapKit.getAddress(outputAssetValue?.chain),
+        destinationAddress,
         includeTx: true,
         sellAmount: amount,
         sellAsset: inputAssetIdentifier,
         slippage: 3,
-        sourceAddress: swapKit.getAddress(inputAssetValue?.chain),
+        sourceAddress,
       });
 
       if (quote?.routes?.length <= 0) return;
@@ -98,7 +106,15 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     } finally {
       setIsFetchingQuote(false);
     }
-  }, [amount, swapKit, outputAssetValue?.chain, inputAssetValue?.chain, inputAssetIdentifier, outputAssetIdentifier]);
+  }, [
+    amount,
+    swapKit,
+    outputAssetValue?.chain,
+    inputAssetValue?.chain,
+    inputAssetIdentifier,
+    outputAssetIdentifier,
+    isWalletConnected,
+  ]);
 
   useDebouncedEffect(fetchSwapQuote, [amount, swapKit, swapKitConfig, outputAsset, inputAsset], 700);
 
