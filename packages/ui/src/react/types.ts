@@ -1,6 +1,10 @@
 import type { AssetValue, Chain, createSwapKit, SKConfigState, WalletOption } from "@swapkit/sdk";
 
-export type KeystoreFile = { keystore: import("@swapkit/sdk/wallets").Keystore; file: File; chains: Chain[] } | null;
+export type KeystoreFile = {
+  keystore: import("@swapkit/sdk/wallets").Keystore | null;
+  file: File;
+  chains: Chain[];
+} | null;
 
 export interface SwapKitState {
   swapKit: ReturnType<typeof createSwapKit> | null;
@@ -24,3 +28,25 @@ export interface SwapKitState {
 export type SwapKitWidgetProps = { config?: SKConfigState };
 
 export type UseSwapQuoteParams = { inputAsset: string | null; outputAsset: string | null; amount: string };
+
+export type UseFilteredSortedAssetsToken = {
+  identifier: string;
+  ticker: string;
+  symbol?: string;
+  chain: Chain;
+  chainId: string;
+  address?: string;
+  decimals?: number;
+  logoURI?: string;
+};
+
+export type UseFiltetedSortedAssetsTokenWithBalance = UseFilteredSortedAssetsToken & {
+  balance?: AssetValue;
+  balanceValue?: number;
+};
+
+export type UseFilteredSortedAssetsOptions = {
+  searchQuery?: string;
+  selectedNetworks?: Chain[];
+  includeBalances?: boolean;
+};
