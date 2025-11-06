@@ -21,13 +21,13 @@ import {
 } from "./helpers/gasEstimation";
 import { createNearContract } from "./helpers/nep141";
 import type {
+  NEP141StorageContract,
   NearCreateTransactionParams,
   NearFunctionCallParams,
   NearToolboxParams,
   NearTransferParams,
 } from "./types";
 import type { NearContractInterface, NearGasEstimateParams } from "./types/contract";
-import type { NEP141StorageContract } from "./types/nep141";
 import type {
   BatchTransaction,
   ContractFunctionCallParams,

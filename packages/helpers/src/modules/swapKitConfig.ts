@@ -60,6 +60,9 @@ const initialState = {
   envs: {
     apiUrl: "https://api.swapkit.dev",
     devApiUrl: "https://dev-api.swapkit.dev",
+    experimental_apiKey: null as string | null,
+    experimental_apiUrlQuote: null as string | null,
+    experimental_apiUrlSwap: null as string | null,
     isDev: false,
     isStagenet: false,
   },

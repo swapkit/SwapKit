@@ -566,6 +566,7 @@ const QuoteResponseRouteItem = object({
   memo: optional(string().describe("Memo")),
   meta: RouteQuoteMetadataV2Schema,
   providers: array(z.enum(ProviderName)),
+  routeId: string().describe("Route ID"),
   sellAmount: string().describe("Sell amount"),
   sellAsset: string().describe("Asset to sell"),
   sourceAddress: string().describe("Source address"),
