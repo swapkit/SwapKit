@@ -8,7 +8,6 @@ export type KeystoreFile = {
 
 export interface SwapKitState {
   swapKit: ReturnType<typeof createSwapKit> | null;
-  balances: AssetValue[];
   walletType: WalletOption | null;
   isWalletConnected: boolean;
   isConnectingWallet: boolean;
@@ -17,7 +16,6 @@ export interface SwapKitState {
   isKeystoreDecrypting: boolean;
 
   setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
-  setBalances: (balances: AssetValue[]) => void;
   setWalletState: (state: { connected: boolean; type: WalletOption | null }) => void;
   setKeystoreFile: (file: KeystoreFile) => void;
   setIsKeystoreOpen: (isOpen: boolean) => void;
@@ -33,16 +31,12 @@ export type UseFilteredSortedAssetsToken = {
   identifier: string;
   ticker: string;
   symbol?: string;
-  chain: Chain;
   chainId: string;
   address?: string;
   decimals?: number;
   logoURI?: string;
-};
-
-export type UseFiltetedSortedAssetsTokenWithBalance = UseFilteredSortedAssetsToken & {
-  balance?: AssetValue;
-  balanceValue?: number;
+  chain: Chain | undefined;
+  assetValue: AssetValue | undefined;
 };
 
 export type UseFilteredSortedAssetsOptions = {

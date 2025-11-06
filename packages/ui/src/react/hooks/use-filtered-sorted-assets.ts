@@ -1,16 +1,12 @@
-import type { AssetValue, Chain } from "@swapkit/sdk";
+import type { Chain } from "@swapkit/sdk";
 import { loadTokenLists } from "@swapkit/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useSwapKit } from "../swapkit-context";
-import type {
-  UseFilteredSortedAssetsOptions,
-  UseFilteredSortedAssetsToken,
-  UseFiltetedSortedAssetsTokenWithBalance,
-} from "../types";
+import type { UseFilteredSortedAssetsOptions, UseFilteredSortedAssetsToken } from "../types";
 import { useDebouncedEffect } from "./use-debounced-effect";
 
 export function useFilteredSortedAssets() {
-  const { balanceGroupedByChain, isWalletConnected } = useSwapKit();
+  const { connectedChains } = useSwapKit();
 
   // internal and public state required to support debouncing
   const [filters, setFilters] = useState<UseFilteredSortedAssetsOptions>({ searchQuery: "", selectedNetworks: [] });
@@ -52,32 +48,14 @@ export function useFilteredSortedAssets() {
     };
   }, []);
 
-  const balanceLookupMap = useMemo(() => {
-    const lookupMap = new Map<string, AssetValue>();
-
-    if (!balanceGroupedByChain) return lookupMap;
-
-    for (const chain of Object.keys(balanceGroupedByChain) as Chain[]) {
-      const balances = balanceGroupedByChain[chain];
-
-      if (!balances) continue;
-
-      for (const balance of balances) {
-        const key = `${balance.chain}:${balance.chainId}:${balance.ticker}`;
-
-        lookupMap.set(key, balance);
-      }
-    }
-
-    return lookupMap;
-  }, [balanceGroupedByChain]);
-
   const networks = useMemo(() => {
     const uniqueNetworks = new Set<Chain>();
 
-    for (const token of tokens) {
+    tokens.forEach((token) => {
+      if (!token?.chain) return;
+
       uniqueNetworks.add(token.chain);
-    }
+    }, []);
 
     return Array.from(uniqueNetworks).sort((a, b) => a.localeCompare(b));
   }, [tokens]);
@@ -85,53 +63,45 @@ export function useFilteredSortedAssets() {
   const assets = useMemo(() => {
     const filteredTokens = filterAssets({ filters: internalFiltersState, tokens });
 
-    const assetsWithBalances: UseFiltetedSortedAssetsTokenWithBalance[] = filteredTokens.map((token) => {
-      const balance = findBalance({ balanceLookupMap, token });
+    const assets = filteredTokens.map((token) => {
+      const matchingConnectedChain = connectedChains?.find(
+        ({ chain, assetValue }) =>
+          chain === token.chain && token.chainId === assetValue.chainId && assetValue.ticker === token.ticker,
+      );
 
-      return { ...token, balance, balanceValue: balance?.getValue("number") };
+      return {
+        ...token,
+        assetValue: matchingConnectedChain?.assetValue,
+        chain: matchingConnectedChain?.chain,
+      } satisfies UseFilteredSortedAssetsToken;
     });
 
-    const sortedAssets = sortAssets({ assets: assetsWithBalances, filters: internalFiltersState, isWalletConnected });
+    return sortAssets({ assets, filters: internalFiltersState });
+  }, [tokens, internalFiltersState, connectedChains?.find]);
 
-    return sortedAssets;
-  }, [tokens, balanceLookupMap, isWalletConnected, internalFiltersState]);
-
-  return useMemo(
-    () => ({ assets, filters, isLoading, networks, setFilters, tokens }),
-    [assets, filters, isLoading, networks, tokens],
-  );
+  return useMemo(() => ({ assets, filters, isLoading, networks, setFilters }), [assets, filters, isLoading, networks]);
 }
 
 function sortAssets({
   assets,
   filters,
-  isWalletConnected,
 }: {
   assets: UseFilteredSortedAssetsToken[];
   filters: UseFilteredSortedAssetsOptions;
-  isWalletConnected: boolean;
 }): UseFilteredSortedAssetsToken[] {
   const lowerSearchQuery = filters?.searchQuery?.toLowerCase() ?? "";
 
   return [...assets].sort((tokenA, tokenB) => {
-    if (isWalletConnected) return sortByBalance({ tokenA, tokenB });
+    const hasAnyBalance =
+      (tokenA?.assetValue && tokenA?.assetValue?.getValue?.("number") > 0) ||
+      (tokenB?.assetValue && tokenB?.assetValue?.getValue?.("number") > 0);
+
+    if (hasAnyBalance) return sortByBalance({ tokenA, tokenB });
 
     if (lowerSearchQuery.length >= 2) return sortBySearchQuery({ searchQuery: lowerSearchQuery, tokenA, tokenB });
 
     return sortByTickerAlphabetically({ tokenA, tokenB });
   });
-}
-
-function findBalance({
-  token,
-  balanceLookupMap,
-}: {
-  token: UseFilteredSortedAssetsToken;
-  balanceLookupMap: Map<string, AssetValue>;
-}): AssetValue | undefined {
-  const key = `${token.chain}:${token.chainId}:${token.ticker}`;
-
-  return balanceLookupMap.get(key);
 }
 
 function filterAssets({
@@ -168,11 +138,11 @@ const sortByBalance = ({
   tokenA,
   tokenB,
 }: {
-  tokenA: UseFiltetedSortedAssetsTokenWithBalance;
-  tokenB: UseFiltetedSortedAssetsTokenWithBalance;
+  tokenA: UseFilteredSortedAssetsToken;
+  tokenB: UseFilteredSortedAssetsToken;
 }) => {
-  const hasBalanceA = tokenA.balanceValue !== undefined && tokenA.balanceValue > 0;
-  const hasBalanceB = tokenB.balanceValue !== undefined && tokenB.balanceValue > 0;
+  const hasBalanceA = tokenA?.assetValue && tokenA?.assetValue?.getValue?.("number") > 0;
+  const hasBalanceB = tokenB?.assetValue && tokenB?.assetValue?.getValue?.("number") > 0;
 
   if (hasBalanceA && !hasBalanceB) return -1;
   if (!hasBalanceA && hasBalanceB) return 1;

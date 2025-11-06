@@ -168,14 +168,14 @@ export function SwapAssetSelect({
                     variant="ghost">
                     <SwapAssetItem asset={asset.identifier} />
 
-                    {asset.balance && (
+                    {asset.assetValue && (
                       <div className="flex flex-col items-end">
                         <span className="font-medium text-base text-foreground">
-                          {asset.balance.getValue("number")}
+                          {asset.assetValue.getValue("number")}
                         </span>
 
                         <span className="-mt-0.5 text-muted-foreground text-sm">
-                          {formatCurrency(asset.balance.getValue("number"))}
+                          {formatCurrency(asset.assetValue.getValue("number"))}
                         </span>
                       </div>
                     )}
