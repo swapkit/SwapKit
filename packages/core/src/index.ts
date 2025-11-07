@@ -22,6 +22,7 @@ import type { createPlugin } from "@swapkit/plugins";
 import type { FullWallet } from "@swapkit/toolboxes";
 import type { EVMCreateTransactionParams, EVMTransferParams } from "@swapkit/toolboxes/evm";
 import type { createWallet } from "@swapkit/wallets";
+import { match } from "ts-pattern";
 
 export type SwapKitParams<P, W> = { config?: SKConfigState; plugins?: P; wallets?: W };
 
@@ -34,8 +35,7 @@ export function SwapKit<
   }
 
   type PluginName = keyof Plugins;
-  const connectedWallets = {} as FullWallet;
-  type ConnectedChains = keyof typeof connectedWallets;
+  const connectedWallets = {} as Partial<Record<Chain, ChainWallet<Chain>>>;
   type ActionType = "transfer" | "approve" | "swap";
 
   type ActionParams<P extends PluginName> = {
@@ -147,12 +147,12 @@ export function SwapKit<
   /**
    * @Public
    */
-  function getWallet<T extends ConnectedChains>(chain: T) {
-    return connectedWallets[chain];
+  function getWallet<T extends Chain>(chain: T) {
+    return connectedWallets[chain] as FullWallet[T];
   }
 
   function getAllWallets() {
-    return { ...connectedWallets };
+    return { ...connectedWallets } as Partial<FullWallet>;
   }
 
   function getAddress<T extends Chain>(chain: T) {
@@ -273,9 +273,8 @@ export function SwapKit<
     if (!getWallet(chain as Chain)) throw new SwapKitError("core_wallet_connection_not_found");
 
     const baseValue = AssetValue.from({ chain });
-    const { match } = await import("ts-pattern");
 
-    return match(chain as Chain)
+    return await match(chain as Chain)
       .returnType<Promise<AssetValue | undefined> | AssetValue | undefined>()
       .with(...EVMChains, (chain) => {
         const { address, ...wallet } = getWallet(chain);
