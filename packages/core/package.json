@@ -1,11 +1,23 @@
 {
   "author": "swapkit-oss",
-  "dependencies": { "@swapkit/helpers": "workspace:*", "@swapkit/toolboxes": "workspace:*" },
-  "description": "SwapKit - Core",
-  "exports": {
-    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
+  "dependencies": {
+    "@swapkit/helpers": "workspace:*",
+    "@swapkit/plugins": "workspace:*",
+    "@swapkit/toolboxes": "workspace:*",
+    "@swapkit/wallets": "workspace:*",
+    "ts-pattern": "^5.9.0"
   },
-  "files": ["dist/"],
+  "description": "SwapKit - Core",
+  "devDependencies": { "ts-pattern": "5.9.0" },
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/core",

@@ -1,0 +1,5 @@
+[install]
+linker = "isolated"
+
+[test]
+coverageReporter = ["text", "lcov"]

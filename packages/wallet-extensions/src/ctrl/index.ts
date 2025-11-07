@@ -61,7 +61,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
 
-      const solanaProvider = window.xfi?.solana;
+      const solanaProvider = window.ctrl?.solana;
 
       if (!solanaProvider) {
         throw new SwapKitError("wallet_ctrl_not_found");
@@ -154,14 +154,14 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     }
 
     case Chain.Near: {
-      if (!window.xfi?.near) {
+      if (!window.ctrl?.near) {
         throw new SwapKitError("wallet_ctrl_not_found", { chain: Chain.Near });
       }
 
       const { createNearSignerFromProvider } = await import("../helpers/near");
       const { getNearToolbox } = await import("@swapkit/toolboxes/near");
 
-      const provider = window.xfi.near;
+      const provider = window.ctrl.near;
       const signer = await createNearSignerFromProvider(provider, "CTRL");
       const accountId = await signer.getAddress();
       const toolbox = await getNearToolbox({ signer });

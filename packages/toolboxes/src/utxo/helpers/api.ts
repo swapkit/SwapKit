@@ -157,7 +157,8 @@ async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
     );
     return rawTxResponse?.[txHash]?.raw_transaction || "";
   } catch (error) {
-    console.error("Failed to fetch raw transaction:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to fetch raw transaction: ${errorMessage}`);
     return "";
   }
 }
@@ -254,7 +255,8 @@ async function getUnspentUtxos({
 
     return pickMostValuableTxs(allUtxos, targetValue);
   } catch (error) {
-    console.error("Failed to fetch unspent UTXOs:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to fetch unspent UTXOs: ${errorMessage}`);
     return [];
   }
 }

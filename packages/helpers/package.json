@@ -1,37 +1,52 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
+    "@near-js/providers": "~2.5.0",
     "@swapkit/contracts": "workspace:*",
     "@swapkit/tokens": "workspace:*",
     "@swapkit/types": "workspace:*",
     "ethers": "^6.14.0",
-    "ts-pattern": "^5.7.0",
+    "ts-pattern": "^5.9.0",
     "zod": "3.25.74",
     "zustand": "^5.0.0"
   },
   "description": "SwapKit - Helpers",
   "devDependencies": {
+    "@near-js/providers": "2.5.0",
     "@swapkit/toolboxes": "workspace:*",
     "ethers": "6.15.0",
-    "ts-pattern": "5.8.0",
+    "tronweb": "6.1.0",
+    "ts-pattern": "5.9.0",
     "zod": "3.25.74",
     "zustand": "5.0.8"
   },
   "exports": {
-    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./api": {
+      "bun": "./src/api/index.ts",
       "default": "./dist/api/index.js",
       "require": "./dist/api/index.cjs",
       "types": "./dist/types/api/index.d.ts"
     },
     "./contracts": {
+      "bun": "./src/contracts.ts",
       "default": "./dist/contracts.js",
       "require": "./dist/contracts.cjs",
       "types": "./dist/types/contracts.d.ts"
     },
-    "./tokens": { "default": "./dist/tokens.js", "require": "./dist/tokens.cjs", "types": "./dist/types/tokens.d.ts" }
+    "./tokens": {
+      "bun": "./src/tokens.ts",
+      "default": "./dist/tokens.js",
+      "require": "./dist/tokens.cjs",
+      "types": "./dist/types/tokens.d.ts"
+    }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/helpers",

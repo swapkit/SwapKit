@@ -1,59 +1,73 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@polkadot/keyring": "~13.5.0",
-    "@polkadot/util": "~13.5.0",
+    "@near-js/utils": "~2.5.0",
+    "@polkadot/keyring": "~13.5.7",
+    "@polkadot/util": "~13.5.7",
     "@solana/web3.js": "~1.98.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "ts-pattern": "~5.8.0"
+    "ts-pattern": "^5.9.0"
   },
   "description": "SwapKit Plugin - Chainflip",
   "devDependencies": {
-    "@polkadot/keyring": "13.5.5",
-    "@polkadot/util": "13.5.5",
+    "@near-js/utils": "2.5.0",
+    "@polkadot/keyring": "13.5.7",
+    "@polkadot/util": "13.5.7",
     "@solana/web3.js": "1.98.4",
-    "ts-pattern": "5.8.0"
+    "ts-pattern": "5.9.0"
   },
   "exports": {
-    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./chainflip": {
+      "bun": "./src/chainflip/index.ts",
       "default": "./dist/chainflip/index.js",
       "require": "./dist/chainflip/index.cjs",
       "types": "./dist/types/chainflip/index.d.ts"
     },
     "./evm": {
+      "bun": "./src/evm/index.ts",
       "default": "./dist/evm/index.js",
       "require": "./dist/evm/index.cjs",
       "types": "./dist/types/evm/index.d.ts"
     },
     "./garden": {
+      "bun": "./src/garden/index.ts",
       "default": "./dist/garden/index.js",
       "require": "./dist/garden/index.cjs",
       "types": "./dist/types/garden/index.d.ts"
     },
     "./near": {
+      "bun": "./src/near/index.ts",
       "default": "./dist/near/index.js",
       "require": "./dist/near/index.cjs",
       "types": "./dist/types/near/index.d.ts"
     },
     "./radix": {
+      "bun": "./src/radix/index.ts",
       "default": "./dist/radix/index.js",
       "require": "./dist/radix/index.cjs",
       "types": "./dist/types/radix/index.d.ts"
     },
     "./solana": {
+      "bun": "./src/solana/index.ts",
       "default": "./dist/solana/index.js",
       "require": "./dist/solana/index.cjs",
       "types": "./dist/types/solana/index.d.ts"
     },
     "./thorchain": {
+      "bun": "./src/thorchain/index.ts",
       "default": "./dist/thorchain/index.js",
       "require": "./dist/thorchain/index.cjs",
       "types": "./dist/types/thorchain/index.d.ts"
     }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/plugins",

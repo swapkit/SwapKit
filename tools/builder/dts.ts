@@ -12,21 +12,38 @@ const dtsPlugin = {
     const tempConfig = {
       compilerOptions: {
         allowImportingTsExtensions: false,
+        baseUrl: ".",
         declaration: true,
         declarationMap: true,
         emitDeclarationOnly: true,
         isolatedDeclarations: false,
         noEmit: false,
         outDir: "./dist/types",
+        paths: {} as Record<string, string[]>,
         rootDir: "./src",
       },
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
       extends: "./tsconfig.json",
       include: ["src/**/*"],
     };
+
+    if (pkgName.startsWith("wallet") || ["core", "browser", "server", "sdk", "ui"].includes(pkgName)) {
+      tempConfig.compilerOptions.paths = {
+        "@bitgo/*": ["../../node_modules/@bitgo/*"],
+        "@cosmjs/*": ["../../node_modules/@cosmjs/*"],
+        "@near-wallet-selector/*": ["../../node_modules/@near-wallet-selector/*"],
+        "@solana/*": ["../../node_modules/@solana/*"],
+        "@ton/*": ["../../node_modules/@ton/*"],
+        "@walletconnect/*": ["../../node_modules/@walletconnect/*"],
+        "bitcoinjs-lib": ["../../node_modules/bitcoinjs-lib"],
+        ecpair: ["../../node_modules/ecpair"],
+        xrpl: ["../../node_modules/xrpl"],
+      };
+    }
+
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
-      await $`cd ${scope} && bun tsc -p .tsconfig.tmp.json`;
+      await $`cd ${scope} && bun --bun tsc -p .tsconfig.tmp.json --pretty`;
     } catch (error: any) {
       if (error?.stdout) {
         console.error(Buffer.from(error.stdout).toString());
@@ -42,31 +59,26 @@ const dtsPlugin = {
 };
 
 export const orderedPackages = [
-  ["contracts", "tokens", "types"],
+  "contracts",
+  "tokens",
+  "types",
   "helpers",
   "toolboxes",
   "plugins",
   "wallet-core",
-  ["wallet-extension", "wallet-hardware", "wallet-keystore", "wallet-mobile"],
+  "wallet-extensions",
+  "wallet-hardware",
+  "wallet-keystore",
+  "wallet-mobile",
   "wallets",
   "core",
-  ["browser", "server"],
+  "browser",
+  "server",
   "sdk",
   "ui",
 ];
 
 for (const pkg of orderedPackages) {
-  if (typeof pkg === "string") {
-    console.info(`Building @swapkit/${pkg} d.ts files`);
-    await dtsPlugin.setup(pkg);
-  }
-
-  if (Array.isArray(pkg)) {
-    await Promise.all(
-      pkg.map(async (p) => {
-        console.info(`Building @swapkit/${p} d.ts files`);
-        await dtsPlugin.setup(p);
-      }),
-    );
-  }
+  console.info(`Building @swapkit/${pkg} d.ts files`);
+  await dtsPlugin.setup(pkg);
 }

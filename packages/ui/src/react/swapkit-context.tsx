@@ -175,9 +175,9 @@ export const useSwapKit = () => {
   const disconnectWallet = useCallback(() => {
     swapKit?.disconnectAll();
     setWalletState({ connected: false, type: null });
-  }, [swapKit?.disconnectAll, setWalletState]);
+  }, [swapKit, setWalletState]);
 
-  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
+  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit]);
 
   const connectKeystore = useCallback(
     async (password: string) => {
@@ -185,8 +185,7 @@ export const useSwapKit = () => {
 
       try {
         setIsKeystoreDecrypting(true);
-
-        const { decryptFromKeystore } = await import("@swapkit/wallets/keystore");
+        const { decryptFromKeystore } = await import("@swapkit/wallet-keystore");
         const phrase = await decryptFromKeystore(keystoreFile.keystore, password);
 
         if (!phrase) throw new Error("Failed to decrypt keystore");

@@ -16,7 +16,7 @@ declare const window: {
   coinbaseWalletExtension: EthereumWindowProvider;
   braveSolana: any;
   bitkeep?: { ethereum: EthereumWindowProvider };
-  xfi?: { ethereum: EthereumWindowProvider };
+  ctrl?: { ethereum: EthereumWindowProvider };
   $onekey?: { ethereum: EthereumWindowProvider };
   vultisig?: { ethereum: EthereumWindowProvider };
 } & Window;
@@ -31,7 +31,7 @@ export function isDetected(walletOption: WalletOption) {
 
 export function listWeb3EVMWallets() {
   const metamaskEnabled = window?.ethereum && !window.ethereum?.isBraveWallet;
-  const ctrlEnabled = window?.xfi || window?.ethereum?.__XDEFI;
+  const ctrlEnabled = window?.ctrl || window?.ethereum?.__XDEFI;
   const vultisigEnabled = window?.vultisig;
   const braveEnabled = window?.ethereum?.isBraveWallet;
   const trustEnabled = window?.ethereum?.isTrust || window?.trustwallet;
@@ -173,7 +173,7 @@ export function addEVMWalletNetwork(provider: BrowserProvider, networkParams: Ne
 
 export function addAccountsChangedCallback(callback: () => void) {
   window.ethereum?.on("accountsChanged", () => callback());
-  window.xfi?.ethereum.on("accountsChanged", () => callback());
+  window.ctrl?.ethereum.on("accountsChanged", () => callback());
 }
 
 export function getETHDefaultWallet() {

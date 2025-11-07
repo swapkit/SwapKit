@@ -9,32 +9,12 @@ export async function buildPackage({
   ...rest
 }: Omit<BuildConfig, "entrypoints"> & { evmOnly?: boolean; entrypoints?: string[] } = {}) {
   const { exports, name: pkgName } = (await Bun.file("package.json").json()) as {
-    exports: Record<string, { types: string } | string>;
+    exports: Record<string, { bun: string }>;
     name: string;
   };
 
-  const parsedEntrypoints = Object.entries(exports).map(async ([key, value]) => {
-    if (key.includes("css") && typeof value === "string") {
-      return value.replace("dist", "src");
-    }
-
-    let basePath = "";
-
-    if (typeof value === "object" && value.types) {
-      basePath = value.types.replace("./dist/types/", "./src/").replace(".d.ts", "");
-    } else if (key === ".") {
-      basePath = "./src/index";
-    } else {
-      basePath = `./src/${key.replace("./", "")}/index`;
-    }
-
-    const isTsx = await Bun.file(`${basePath}.tsx`).exists();
-    const entrypoint = `${basePath}.${isTsx ? "tsx" : "ts"}`;
-
-    return entrypoint;
-  });
-
-  const entrypoints = packageEntrypoints || (await Promise.all(parsedEntrypoints));
+  const parsedEntrypoints = Object.entries(exports).map(([, { bun }]) => bun);
+  const entrypoints = packageEntrypoints || parsedEntrypoints;
 
   if (isDebug) {
     console.info("Package:", pkgName);
@@ -42,6 +22,7 @@ export async function buildPackage({
   }
 
   const buildOptions: BuildConfig = {
+    define: { "process.env.NODE_ENV": JSON.stringify(isDebug ? "development" : "production") },
     entrypoints,
     minify: !isDebug,
     outdir: "./dist",

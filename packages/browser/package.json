@@ -8,14 +8,14 @@
   },
   "description": "SwapKit - Browser SDK",
   "exports": {
-    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
-    "./wallets": {
-      "import": "./dist/wallets.js",
-      "require": "./dist/wallets.cjs",
-      "types": "./dist/types/wallets.d.ts"
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
     }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/browser",

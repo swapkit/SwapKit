@@ -111,8 +111,8 @@ export const defaultWallets = {
   ...trezorWallet,
   ...tronlinkWallet,
   ...vultisigWallet,
-  ...walletconnectWallet,
   ...walletSelectorWallet,
+  ...walletconnectWallet,
   ...xamanWallet,
 } as ReturnType<typeof createWallet>;
 

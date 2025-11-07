@@ -176,6 +176,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       return assetValue.getValue("number") * assetPriceUSD;
     };
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: @Drakeoon fix/split that function
     const parseQuoteResponseRoute = (quoteResponseRoute: QuoteResponseRoute, index: number) => {
       const formattedEstimatedTime = formatEstimatedTime(quoteResponseRoute?.estimatedTime);
 

@@ -1,4 +1,4 @@
-# @swapkit/wallet-extension
+# @swapkit/wallet-extensions
 
 ## 4.0.43
 

@@ -1,186 +1,203 @@
 {
   "dependencies": {
-    "@coinbase/wallet-sdk": "~4.3.0",
-    "@cosmjs/amino": "~0.33.0",
-    "@cosmjs/crypto": "~0.33.0",
-    "@cosmjs/proto-signing": "~0.33.0",
-    "@keplr-wallet/types": "~0.12.238",
-    "@near-wallet-selector/core": "~10.0.0",
-    "@near-wallet-selector/modal-ui-js": "~10.0.0",
+    "@coinbase/wallet-sdk": "~4.3.7",
+    "@cosmjs/amino": "~0.37.0",
+    "@cosmjs/proto-signing": "~0.37.0",
+    "@near-js/transactions": "~2.5.0",
+    "@near-wallet-selector/bitget-wallet": "~10.1.0",
+    "@near-wallet-selector/core": "~10.1.0",
+    "@near-wallet-selector/modal-ui-js": "~10.1.0",
     "@passkeys/core": "~4.1.0",
     "@passkeys/react": "~3.0.1",
     "@radixdlt/babylon-gateway-api-sdk": "~1.10.0",
     "@radixdlt/radix-dapp-toolkit": "~2.2.0",
-    "@scure/base": "~1.2.0",
-    "@scure/bip39": "~1.6.0",
-    "@solana/web3.js": "~1.98.0",
     "@swapkit/helpers": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallet-core": "workspace:*",
+    "@swapkit/wallet-extensions": "workspace:*",
     "@swapkit/wallet-hardware": "workspace:*",
     "@swapkit/wallet-keystore": "workspace:*",
-    "@trezor/connect-web": "~9.6.0",
     "@walletconnect/modal": "~2.7.0",
-    "@walletconnect/sign-client": "~2.21.0",
+    "@walletconnect/sign-client": "~2.23.0",
     "bitcoinjs-lib": "~6.1.0",
-    "blakejs": "~1.2.1",
-    "cosmjs-types": "~0.9.0",
-    "near-api-js": "~6.3.0",
-    "ripple-binary-codec": "~2.4.0",
-    "ts-pattern": "^5.7.0",
+    "cosmjs-types": "~0.10.1",
+    "ethers": "^6.14.0",
+    "sats-connect": "~1.0.0",
+    "ts-pattern": "^5.9.0",
     "xumm": "1.8.0"
   },
   "description": "SwapKit - Wallets",
   "devDependencies": {
-    "@coinbase/wallet-sdk": "4.3.4",
-    "@cosmjs/amino": "0.33.1",
-    "@cosmjs/crypto": "0.33.1",
-    "@cosmjs/proto-signing": "0.33.1",
-    "@keplr-wallet/types": "0.12.238",
-    "@near-wallet-selector/core": "10.0.0",
-    "@near-wallet-selector/modal-ui-js": "10.0.0",
+    "@coinbase/wallet-sdk": "4.3.7",
+    "@cosmjs/amino": "0.37.0",
+    "@cosmjs/proto-signing": "0.37.0",
+    "@near-js/transactions": "2.5.0",
+    "@near-wallet-selector/bitget-wallet": "10.1.0",
+    "@near-wallet-selector/core": "10.1.0",
+    "@near-wallet-selector/modal-ui-js": "10.1.0",
     "@passkeys/core": "4.1.0",
     "@passkeys/react": "3.0.1",
     "@radixdlt/babylon-gateway-api-sdk": "1.10.1",
     "@radixdlt/radix-dapp-toolkit": "2.2.1",
-    "@scure/base": "1.2.6",
-    "@scure/bip39": "1.6.0",
-    "@solana/web3.js": "1.98.4",
-    "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*",
-    "@trezor/connect-web": "9.6.2",
-    "@walletconnect/logger": "2.1.2",
+    "@walletconnect/logger": "3.0.0",
     "@walletconnect/modal": "2.7.0",
-    "@walletconnect/sign-client": "2.21.8",
-    "@walletconnect/types": "2.21.8",
+    "@walletconnect/sign-client": "2.23.0",
+    "@walletconnect/types": "2.23.0",
     "bitcoinjs-lib": "6.1.7",
-    "blakejs": "1.2.1",
-    "cosmjs-types": "0.9.0",
-    "near-api-js": "6.3.0",
-    "pino-pretty": "13.1.1",
-    "ripple-binary-codec": "2.4.1",
-    "ts-pattern": "5.8.0",
+    "cosmjs-types": "0.10.1",
+    "ethers": "6.15.0",
+    "pino-pretty": "13.1.2",
+    "sats-connect": "1.0.0",
+    "ts-pattern": "5.9.0",
     "xumm": "1.8.0"
   },
   "exports": {
-    ".": { "default": "./dist/src/index.js", "require": "./dist/src/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./bitget": {
-      "default": "./dist/src/bitget/index.js",
-      "require": "./dist/src/bitget/index.cjs",
-      "types": "./dist/types/bitget/index.d.ts"
+      "bun": "./src/bitget.ts",
+      "default": "./dist/src/bitget.js",
+      "require": "./dist/src/bitget.cjs",
+      "types": "./dist/types/bitget.d.ts"
     },
     "./coinbase": {
+      "bun": "./src/coinbase/index.ts",
       "default": "./dist/src/coinbase/index.js",
       "require": "./dist/src/coinbase/index.cjs",
       "types": "./dist/types/coinbase/index.d.ts"
     },
     "./cosmostation": {
-      "default": "./dist/src/cosmostation/index.js",
-      "require": "./dist/src/cosmostation/index.cjs",
-      "types": "./dist/types/cosmostation/index.d.ts"
+      "bun": "./src/cosmostation.ts",
+      "default": "./dist/src/cosmostation.js",
+      "require": "./dist/src/cosmostation.cjs",
+      "types": "./dist/types/cosmostation.d.ts"
     },
     "./ctrl": {
-      "default": "./dist/src/ctrl/index.js",
-      "require": "./dist/src/ctrl/index.cjs",
-      "types": "./dist/types/ctrl/index.d.ts"
+      "bun": "./src/ctrl.ts",
+      "default": "./dist/src/ctrl.js",
+      "require": "./dist/src/ctrl.cjs",
+      "types": "./dist/types/ctrl.d.ts"
     },
     "./evm-extensions": {
-      "default": "./dist/src/evm-extensions/index.js",
-      "require": "./dist/src/evm-extensions/index.cjs",
-      "types": "./dist/types/evm-extensions/index.d.ts"
+      "bun": "./src/evm-extensions.ts",
+      "default": "./dist/src/evm-extensions.js",
+      "require": "./dist/src/evm-extensions.cjs",
+      "types": "./dist/types/evm-extensions.d.ts"
     },
     "./exodus": {
+      "bun": "./src/exodus/index.ts",
       "default": "./dist/src/exodus/index.js",
       "require": "./dist/src/exodus/index.cjs",
       "types": "./dist/types/exodus/index.d.ts"
     },
     "./keepkey": {
+      "bun": "./src/keepkey.ts",
       "default": "./dist/src/keepkey.js",
       "require": "./dist/src/keepkey.cjs",
       "types": "./dist/types/keepkey.d.ts"
     },
     "./keepkey-bex": {
-      "default": "./dist/src/keepkey-bex/index.js",
-      "require": "./dist/src/keepkey-bex/index.cjs",
-      "types": "./dist/types/keepkey-bex/index.d.ts"
+      "bun": "./src/keepkey-bex.ts",
+      "default": "./dist/src/keepkey-bex.js",
+      "require": "./dist/src/keepkey-bex.cjs",
+      "types": "./dist/types/keepkey-bex.d.ts"
     },
     "./keplr": {
-      "default": "./dist/src/keplr/index.js",
-      "require": "./dist/src/keplr/index.cjs",
-      "types": "./dist/types/keplr/index.d.ts"
+      "bun": "./src/keplr.ts",
+      "default": "./dist/src/keplr.js",
+      "require": "./dist/src/keplr.cjs",
+      "types": "./dist/types/keplr.d.ts"
     },
     "./keystore": {
+      "bun": "./src/keystore.ts",
       "default": "./dist/src/keystore.js",
       "require": "./dist/src/keystore.cjs",
       "types": "./dist/types/keystore.d.ts"
     },
     "./ledger": {
+      "bun": "./src/ledger.ts",
       "default": "./dist/src/ledger.js",
       "require": "./dist/src/ledger.cjs",
       "types": "./dist/types/ledger.d.ts"
     },
     "./near-wallet-selector": {
+      "bun": "./src/near-wallet-selector/index.ts",
       "default": "./dist/src/near-wallet-selector/index.js",
       "require": "./dist/src/near-wallet-selector/index.cjs",
       "types": "./dist/types/near-wallet-selector/index.d.ts"
     },
     "./okx": {
-      "default": "./dist/src/okx/index.js",
-      "require": "./dist/src/okx/index.cjs",
-      "types": "./dist/types/okx/index.d.ts"
+      "bun": "./src/okx.ts",
+      "default": "./dist/src/okx.js",
+      "require": "./dist/src/okx.cjs",
+      "types": "./dist/types/okx.d.ts"
     },
     "./onekey": {
-      "default": "./dist/src/onekey/index.js",
-      "require": "./dist/src/onekey/index.cjs",
-      "types": "./dist/types/onekey/index.d.ts"
+      "bun": "./src/onekey.ts",
+      "default": "./dist/src/onekey.js",
+      "require": "./dist/src/onekey.cjs",
+      "types": "./dist/types/onekey.d.ts"
     },
     "./phantom": {
-      "default": "./dist/src/phantom/index.js",
-      "require": "./dist/src/phantom/index.cjs",
-      "types": "./dist/types/phantom/index.d.ts"
+      "bun": "./src/phantom.ts",
+      "default": "./dist/src/phantom.js",
+      "require": "./dist/src/phantom.cjs",
+      "types": "./dist/types/phantom.d.ts"
     },
     "./polkadotjs": {
-      "default": "./dist/src/polkadotjs/index.js",
-      "require": "./dist/src/polkadotjs/index.cjs",
-      "types": "./dist/types/polkadotjs/index.d.ts"
+      "bun": "./src/polkadotjs.ts",
+      "default": "./dist/src/polkadotjs.js",
+      "require": "./dist/src/polkadotjs.cjs",
+      "types": "./dist/types/polkadotjs.d.ts"
     },
     "./radix": {
+      "bun": "./src/radix/index.ts",
       "default": "./dist/src/radix/index.js",
       "require": "./dist/src/radix/index.cjs",
       "types": "./dist/types/radix/index.d.ts"
     },
     "./talisman": {
-      "default": "./dist/src/talisman/index.js",
-      "require": "./dist/src/talisman/index.cjs",
-      "types": "./dist/types/talisman/index.d.ts"
+      "bun": "./src/talisman.ts",
+      "default": "./dist/src/talisman.js",
+      "require": "./dist/src/talisman.cjs",
+      "types": "./dist/types/talisman.d.ts"
     },
     "./trezor": {
+      "bun": "./src/trezor.ts",
       "default": "./dist/src/trezor.js",
       "require": "./dist/src/trezor.cjs",
       "types": "./dist/types/trezor.d.ts"
     },
     "./tronlink": {
-      "default": "./dist/src/tronlink/index.js",
-      "require": "./dist/src/tronlink/index.cjs",
-      "types": "./dist/types/tronlink/index.d.ts"
+      "bun": "./src/tronlink.ts",
+      "default": "./dist/src/tronlink.js",
+      "require": "./dist/src/tronlink.cjs",
+      "types": "./dist/types/tronlink.d.ts"
     },
     "./vultisig": {
-      "default": "./dist/src/vultisig/index.js",
-      "require": "./dist/src/vultisig/index.cjs",
-      "types": "./dist/types/vultisig/index.d.ts"
+      "bun": "./src/vultisig.ts",
+      "default": "./dist/src/vultisig.js",
+      "require": "./dist/src/vultisig.cjs",
+      "types": "./dist/types/vultisig.d.ts"
     },
     "./walletconnect": {
+      "bun": "./src/walletconnect/index.ts",
       "default": "./dist/src/walletconnect/index.js",
       "require": "./dist/src/walletconnect/index.cjs",
       "types": "./dist/types/walletconnect/index.d.ts"
     },
     "./xaman": {
+      "bun": "./src/xaman/index.ts",
       "default": "./dist/src/xaman/index.js",
       "require": "./dist/src/xaman/index.cjs",
       "types": "./dist/types/xaman/index.d.ts"
     }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/wallets",

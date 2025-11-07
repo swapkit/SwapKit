@@ -9,10 +9,10 @@ const getNavigatorUsb = () =>
     addEventListener: (event: string, callback: (e: any) => void) => void;
   };
 
-const getLedgerDevices = async () => {
+const getLedgerDevices = async (): Promise<USBDevice> => {
   const navigatorUsb = getNavigatorUsb();
 
-  if (typeof navigatorUsb?.getDevices !== "function") return [];
+  if (typeof navigatorUsb?.getDevices !== "function") return {} as USBDevice;
   const { ledgerUSBVendorId } = await import("@ledgerhq/devices");
 
   const devices = await navigatorUsb?.getDevices();
@@ -41,10 +41,10 @@ export const getLedgerTransport = async (): Promise<Transport> => {
   const configuration = device.configuration ?? device.configurations?.[0];
 
   const iface =
-    configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
+    configuration?.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
       alternates.some(({ interfaceClass }) => interfaceClass === 0xff),
     ) ||
-    configuration.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
+    configuration?.interfaces.find(({ alternates }: { alternates: { interfaceClass: number }[] }) =>
       alternates.some(({ interfaceClass }) => interfaceClass === 0x03),
     );
 

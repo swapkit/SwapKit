@@ -2,29 +2,52 @@
   "author": "swapkit-oss",
   "dependencies": {
     "@radix-ui/react-accordion": "1.2.12",
+    "@radix-ui/react-alert-dialog": "1.1.15",
+    "@radix-ui/react-checkbox": "1.3.3",
+    "@radix-ui/react-collapsible": "1.1.12",
+    "@radix-ui/react-dialog": "1.1.15",
+    "@radix-ui/react-dropdown-menu": "2.1.16",
+    "@radix-ui/react-hover-card": "1.1.15",
+    "@radix-ui/react-label": "2.1.8",
+    "@radix-ui/react-menubar": "1.1.16",
+    "@radix-ui/react-select": "2.2.6",
+    "@radix-ui/react-slot": "1.2.4",
+    "@radix-ui/react-switch": "1.2.6",
+    "@radix-ui/react-tabs": "1.1.13",
+    "@radix-ui/react-tooltip": "1.2.8",
+    "@swapkit/helpers": "workspace:*",
     "@swapkit/sdk": "workspace:*",
+    "@swapkit/wallet-keystore": "workspace:*",
+    "@swapkit/wallets": "workspace:*",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "lucide-react": "0.541.0",
+    "lucide-react": "0.552.0",
     "react": "19.1.1",
     "sonner": "2.0.7",
     "tailwind-merge": "3.3.1",
     "tailwindcss": "3.4.18",
     "tailwindcss-animate": "1.0.7",
-    "ts-pattern": "5.8.0",
-    "zustand": "5.0.8"
+    "ts-pattern": "^5.9.0",
+    "zustand": "^5.0.0"
   },
   "description": "SwapKit - UI",
+  "devDependencies": { "ts-pattern": "5.9.0", "zustand": "5.0.8" },
   "exports": {
-    ".": { "default": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" },
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
     "./react": {
+      "bun": "./src/react/index.tsx",
       "default": "./dist/react/index.js",
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     },
-    "./swapkit.css": "./dist/swapkit.css"
+    "./swapkit.css": { "bun": "./src/swapkit.css", "default": "./dist/swapkit.css" }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/ui",

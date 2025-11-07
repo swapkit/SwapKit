@@ -25,7 +25,7 @@ import type {
   UTXOTransferParams,
   UTXOType,
 } from "../types";
-import type { UtxoToolboxParams } from "./index";
+import type { UtxoToolboxParams } from "./params";
 import { createUTXOToolbox, getCreateKeysForPath } from "./utxo";
 import { bchValidateAddress, stripPrefix } from "./validators";
 
