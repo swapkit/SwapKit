@@ -6,15 +6,24 @@ import {
   SwapKitError,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { TronTransaction } from "@swapkit/toolboxes/tron";
+import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { getSolanaToolbox } from "@swapkit/toolboxes/solana";
+import type { createTronToolbox, TronTransaction } from "@swapkit/toolboxes/tron";
+import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 import { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
+import { match, P } from "ts-pattern";
+
+type WalletEvmMethods = Awaited<ReturnType<typeof getWeb3WalletMethods>> & { address: string };
+type WalletBitcoinMethods = Awaited<ReturnType<typeof getUtxoToolbox>> & { address: string };
+type WalletCosmosMethods = Awaited<ReturnType<typeof getCosmosToolbox>> & { address: string };
+type WalletSolanaMethods = Awaited<ReturnType<typeof getSolanaToolbox>> & { address: string };
+type WalletTronMethods = Awaited<ReturnType<typeof createTronToolbox>> & { address: string };
 
 export async function getWalletMethods(chain: Chain) {
-  const { match, P } = await import("ts-pattern");
   const bitget = window.bitkeep;
 
-  return match(chain)
+  return await match(chain)
     .with(
       P.union(
         Chain.Arbitrum,
@@ -29,7 +38,7 @@ export async function getWalletMethods(chain: Chain) {
         Chain.Polygon,
         Chain.XLayer,
       ),
-      async () => {
+      async (): Promise<WalletEvmMethods> => {
         if (!(bitget && "ethereum" in bitget)) {
           throw new SwapKitError("wallet_bitkeep_not_found");
         }
@@ -42,7 +51,7 @@ export async function getWalletMethods(chain: Chain) {
         return { ...evmWallet, address };
       },
     )
-    .with(Chain.Bitcoin, async () => {
+    .with(Chain.Bitcoin, async (): Promise<WalletBitcoinMethods> => {
       if (!(bitget && "unisat" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -63,7 +72,7 @@ export async function getWalletMethods(chain: Chain) {
 
       return { ...toolbox, address };
     })
-    .with(Chain.Cosmos, async () => {
+    .with(Chain.Cosmos, async (): Promise<WalletCosmosMethods> => {
       if (!(bitget && "keplr" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -87,7 +96,7 @@ export async function getWalletMethods(chain: Chain) {
 
       return { ...toolbox, address };
     })
-    .with(Chain.Solana, async () => {
+    .with(Chain.Solana, async (): Promise<WalletSolanaMethods> => {
       if (!(bitget && "solana" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }
@@ -106,7 +115,7 @@ export async function getWalletMethods(chain: Chain) {
 
       return { ...toolbox, address };
     })
-    .with(Chain.Tron, async () => {
+    .with(Chain.Tron, async (): Promise<WalletTronMethods> => {
       if (!(bitget && "tronLink" in bitget && "tronWeb" in bitget)) {
         throw new SwapKitError("wallet_bitkeep_not_found");
       }

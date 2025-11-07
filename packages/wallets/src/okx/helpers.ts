@@ -8,9 +8,12 @@ import {
   SwapKitError,
   switchEVMWalletNetwork,
 } from "@swapkit/helpers";
-import type { TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
+import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
+import type { createTronToolbox, TronSigner, TronTransaction } from "@swapkit/toolboxes/tron";
+import type { getUtxoToolbox } from "@swapkit/toolboxes/utxo";
 import { Psbt } from "bitcoinjs-lib";
 import type { Eip1193Provider } from "ethers";
+import { match, P } from "ts-pattern";
 
 const cosmosTransfer =
   (sender: string) =>
@@ -59,129 +62,130 @@ async function getWeb3WalletMethods({
   return prepareNetworkSwitch({ chain, provider, toolbox });
 }
 
+type WalletTronMethods = Awaited<ReturnType<typeof createTronToolbox>> & { address: string };
+type WalletEvmMethods = Awaited<ReturnType<typeof getWeb3WalletMethods>> & { address: string };
+type WalletCosmosMethods = Awaited<ReturnType<typeof getCosmosToolbox>> & { address: string };
+type WalletBitcoinMethods = Awaited<ReturnType<typeof getUtxoToolbox>> & { address: string };
+
 export async function getWalletMethods(chain: Chain) {
-  const { match, P } = await import("ts-pattern");
+  return await match(chain)
+    .with(
+      P.union(
+        Chain.Arbitrum,
+        Chain.Aurora,
+        Chain.Avalanche,
+        Chain.Base,
+        Chain.Berachain,
+        Chain.BinanceSmartChain,
+        Chain.Ethereum,
+        Chain.XLayer,
+        Chain.Gnosis,
+        Chain.Optimism,
+        Chain.Polygon,
+      ),
+      async (): Promise<WalletEvmMethods> => {
+        if (!(window.okxwallet && "send" in window.okxwallet)) {
+          throw new SwapKitError("wallet_okx_not_found", { chain });
+        }
 
-  return (
-    match(chain)
-      .with(
-        P.union(
-          Chain.Arbitrum,
-          Chain.Aurora,
-          Chain.Avalanche,
-          Chain.Base,
-          Chain.Berachain,
-          Chain.BinanceSmartChain,
-          Chain.Ethereum,
-          Chain.XLayer,
-          Chain.Gnosis,
-          Chain.Optimism,
-          Chain.Polygon,
-        ),
-        async () => {
-          if (!(window.okxwallet && "send" in window.okxwallet)) {
-            throw new SwapKitError("wallet_okx_not_found", { chain });
-          }
+        const evmWallet = await getWeb3WalletMethods({ chain: chain as EVMChain, walletProvider: window.okxwallet });
+        const address: string = (await window.okxwallet.send("eth_requestAccounts", [])).result[0];
 
-          const evmWallet = await getWeb3WalletMethods({ chain: chain as EVMChain, walletProvider: window.okxwallet });
-          const address: string = (await window.okxwallet.send("eth_requestAccounts", [])).result[0];
+        return { ...evmWallet, address };
+      },
+    )
+    .with(Chain.Bitcoin, async (): Promise<WalletBitcoinMethods> => {
+      if (!(window.okxwallet && "bitcoin" in window.okxwallet)) {
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Bitcoin });
+      }
 
-          return { ...evmWallet, address };
+      const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+
+      const { bitcoin: wallet } = window.okxwallet;
+      const address = (await wallet.connect()).address;
+
+      const signer = {
+        getAddress: async () => Promise.resolve(address),
+        signTransaction: async (psbt: InstanceType<typeof Psbt>) => {
+          const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });
+
+          return Psbt.fromHex(signedPsbt);
         },
-      )
-      .with(Chain.Bitcoin, async () => {
-        if (!(window.okxwallet && "bitcoin" in window.okxwallet)) {
-          throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Bitcoin });
-        }
+      };
 
-        const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+      const toolbox = await getUtxoToolbox(Chain.Bitcoin, { signer });
 
-        const { bitcoin: wallet } = window.okxwallet;
-        const address = (await wallet.connect()).address;
+      return { ...toolbox, address };
+    })
+    .with(Chain.Cosmos, async (): Promise<WalletCosmosMethods> => {
+      if (!(window.okxwallet && "keplr" in window.okxwallet)) {
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Cosmos });
+      }
+      const { keplr: wallet } = window.okxwallet;
 
-        const signer = {
-          getAddress: async () => Promise.resolve(address),
-          signTransaction: async (psbt: InstanceType<typeof Psbt>) => {
-            const signedPsbt = await wallet.signPsbt(psbt.toHex(), { from: address, type: "list" });
+      await wallet.enable(getChainConfig(chain).chainId);
+      const offlineSigner = wallet.getOfflineSignerOnlyAmino(getChainConfig(chain).chainId);
+      const accounts = await offlineSigner.getAccounts();
 
-            return Psbt.fromHex(signedPsbt);
-          },
-        };
+      // Add defensive check for accounts array
+      if (!(accounts && Array.isArray(accounts)) || accounts.length === 0) {
+        throw new SwapKitError("wallet_okx_no_accounts", {
+          chain: Chain.Cosmos,
+          message: "No Cosmos accounts returned from OKX Wallet",
+        });
+      }
 
-        const toolbox = await getUtxoToolbox(Chain.Bitcoin, { signer });
+      const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
+      const [{ address }] = accounts;
+      const toolbox = await getCosmosToolbox(Chain.Cosmos);
 
-        return { ...toolbox, address };
-      })
-      .with(Chain.Cosmos, async () => {
-        if (!(window.okxwallet && "keplr" in window.okxwallet)) {
-          throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Cosmos });
-        }
-        const { keplr: wallet } = window.okxwallet;
+      return { ...toolbox, address, transfer: cosmosTransfer(address) };
+    })
+    // INFO: OK wallet near is broken
+    // .with(Chain.Near, async () => {
+    //   if (!(window.okxwallet && "near" in window.okxwallet)) {
+    //     throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Near });
+    //   }
 
-        await wallet.enable(getChainConfig(chain).chainId);
-        const offlineSigner = wallet.getOfflineSignerOnlyAmino(getChainConfig(chain).chainId);
-        const accounts = await offlineSigner.getAccounts();
+    //   const { createNearSignerFromProvider } = await import("../helpers/near");
+    //   const { getNearToolbox } = await import("@swapkit/toolboxes/near");
 
-        // Add defensive check for accounts array
-        if (!(accounts && Array.isArray(accounts)) || accounts.length === 0) {
-          throw new SwapKitError("wallet_okx_no_accounts", {
-            chain: Chain.Cosmos,
-            message: "No Cosmos accounts returned from OKX Wallet",
-          });
-        }
+    //   const provider = window.okxwallet.near;
+    //   const signer = await createNearSignerFromProvider(provider, "OKX");
+    //   const accountId = await signer.getAddress();
+    //   const toolbox = await getNearToolbox({ signer });
 
-        const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
-        const [{ address }] = accounts;
-        const toolbox = await getCosmosToolbox(Chain.Cosmos);
+    //   return { ...toolbox, address: accountId } as NearToolbox & { address: string };
+    // })
+    .with(Chain.Tron, async (): Promise<WalletTronMethods> => {
+      if (!(window.okxwallet && "tronLink" in window.okxwallet)) {
+        throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Tron });
+      }
 
-        return { ...toolbox, address, transfer: cosmosTransfer(address) };
-      })
-      // INFO: OK wallet near is broken
-      // .with(Chain.Near, async () => {
-      //   if (!(window.okxwallet && "near" in window.okxwallet)) {
-      //     throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Near });
-      //   }
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
 
-      //   const { createNearSignerFromProvider } = await import("../helpers/near");
-      //   const { getNearToolbox } = await import("@swapkit/toolboxes/near");
+      const tronLink = window.okxwallet.tronLink;
 
-      //   const provider = window.okxwallet.near;
-      //   const signer = await createNearSignerFromProvider(provider, "OKX");
-      //   const accountId = await signer.getAddress();
-      //   const toolbox = await getNearToolbox({ signer });
+      // Request account access
+      const accounts = await tronLink.request({ method: "tron_requestAccounts" });
+      if (!accounts || accounts.length === 0) {
+        throw new SwapKitError("wallet_okx_no_accounts", { chain: Chain.Tron });
+      }
 
-      //   return { ...toolbox, address: accountId } as NearToolbox & { address: string };
-      // })
-      .with(Chain.Tron, async () => {
-        if (!(window.okxwallet && "tronLink" in window.okxwallet)) {
-          throw new SwapKitError("wallet_okx_not_found", { chain: Chain.Tron });
-        }
+      const address = tronLink.tronWeb.defaultAddress.base58;
 
-        const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const signer: TronSigner = {
+        getAddress: async () => address,
+        signTransaction: async (transaction: TronTransaction) => {
+          return await tronLink.tronWeb.trx.sign(transaction);
+        },
+      };
 
-        const tronLink = window.okxwallet.tronLink;
+      const toolbox = await createTronToolbox({ signer });
 
-        // Request account access
-        const accounts = await tronLink.request({ method: "tron_requestAccounts" });
-        if (!accounts || accounts.length === 0) {
-          throw new SwapKitError("wallet_okx_no_accounts", { chain: Chain.Tron });
-        }
-
-        const address = tronLink.tronWeb.defaultAddress.base58;
-
-        const signer: TronSigner = {
-          getAddress: async () => address,
-          signTransaction: async (transaction: TronTransaction) => {
-            return await tronLink.tronWeb.trx.sign(transaction);
-          },
-        };
-
-        const toolbox = await createTronToolbox({ signer });
-
-        return { ...toolbox, address };
-      })
-      .otherwise(() => {
-        throw new SwapKitError("wallet_okx_chain_not_supported", { chain });
-      })
-  );
+      return { ...toolbox, address };
+    })
+    .otherwise(() => {
+      throw new SwapKitError("wallet_okx_chain_not_supported", { chain });
+    });
 }

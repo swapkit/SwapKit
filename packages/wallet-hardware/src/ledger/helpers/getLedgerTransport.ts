@@ -22,7 +22,7 @@ const getLedgerDevices = async () => {
   return navigatorUsb?.requestDevice({ filters: [{ vendorId: ledgerUSBVendorId }] });
 };
 
-export const getLedgerTransport = async () => {
+export const getLedgerTransport = async (): Promise<Transport> => {
   const device = await getLedgerDevices();
 
   if (!device) {

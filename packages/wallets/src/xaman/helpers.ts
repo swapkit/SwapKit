@@ -1,4 +1,5 @@
 import { type AssetValue, Chain, SwapKitError } from "@swapkit/helpers";
+import type { getRippleToolbox } from "@swapkit/toolboxes/ripple";
 import type { Xumm } from "xumm";
 import { sendXamanTransaction } from "./walletMethods";
 
@@ -8,7 +9,19 @@ interface GetWalletForChainParams {
   xumm: Xumm;
 }
 
-export async function getWalletForChain({ xumm, chain, address }: GetWalletForChainParams) {
+type WalletRippleMethods = Awaited<ReturnType<typeof getRippleToolbox>> & {
+  address: string;
+  createAndSubscribePayment: typeof sendXamanTransaction;
+  disconnect: () => Promise<void>;
+  getAddress: () => string;
+  transfer: (params: { assetValue: AssetValue; recipient: string; memo?: string }) => Promise<string>;
+};
+
+export async function getWalletForChain({
+  xumm,
+  chain,
+  address,
+}: GetWalletForChainParams): Promise<WalletRippleMethods> {
   switch (chain) {
     case Chain.Ripple: {
       const { getRippleToolbox } = await import("@swapkit/toolboxes/ripple");
