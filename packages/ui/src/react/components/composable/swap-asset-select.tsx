@@ -174,7 +174,7 @@ export function SwapAssetSelect({
                       </span>
 
                       <span className="-mt-0.5 text-muted-foreground text-sm">
-                        {/* TODO: show the correct balance */}
+                        {/* TODO: show the correct USD balance value */}
                         {formatCurrency(asset?.balance?.getValue("number") || 0)}
                       </span>
                     </div>

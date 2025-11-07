@@ -96,15 +96,26 @@ function sortAssets({
   const lowerSearchQuery = filters?.searchQuery?.toLowerCase() ?? "";
 
   return assets.sort((tokenA, tokenB) => {
-    const hasAnyBalance =
-      (tokenA?.balance && tokenA?.balance?.getValue?.("number") > 0) ||
-      (tokenB?.balance && tokenB?.balance?.getValue?.("number") > 0);
+    const hasBalanceA = tokenA?.balance && tokenA?.balance?.getValue?.("number") >= 0;
+    const hasBalanceB = tokenB?.balance && tokenB?.balance?.getValue?.("number") >= 0;
 
-    if (hasAnyBalance) return sortByBalance({ tokenA, tokenB });
+    const exactMatchA = lowerSearchQuery.length >= 1 && tokenA.ticker.toLowerCase() === lowerSearchQuery;
+    const exactMatchB = lowerSearchQuery.length >= 1 && tokenB.ticker.toLowerCase() === lowerSearchQuery;
 
-    if (lowerSearchQuery.length >= 2) return sortBySearchQuery({ searchQuery: lowerSearchQuery, tokenA, tokenB });
+    // 1. Ticker matches search query + wallet has balance
+    if (exactMatchA && hasBalanceA && !(exactMatchB && hasBalanceB)) return -1;
+    if (exactMatchB && hasBalanceB && !(exactMatchA && hasBalanceA)) return 1;
 
-    return sortByTickerAlphabetically({ tokenA, tokenB });
+    // 2. Ticker matches search query + wallet has no balance
+    if (exactMatchA && !exactMatchB) return -1;
+    if (!exactMatchA && exactMatchB) return 1;
+
+    // 3. Asset has any balance defined (0 is valid)
+    if (hasBalanceA && !hasBalanceB) return -1;
+    if (!hasBalanceA && hasBalanceB) return 1;
+
+    // 4. Sort alphabetically within each group
+    return tokenA.ticker.localeCompare(tokenB.ticker);
   });
 }
 
@@ -139,53 +150,3 @@ function filterAssetsMap({
 
   return filteredAssetsMap;
 }
-
-const sortByBalance = ({
-  tokenA,
-  tokenB,
-}: {
-  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-}) => {
-  const hasBalanceA = tokenA?.balance && tokenA?.balance?.getValue?.("number") > 0;
-  const hasBalanceB = tokenB?.balance && tokenB?.balance?.getValue?.("number") > 0;
-
-  if (hasBalanceA && !hasBalanceB) return -1;
-  if (!hasBalanceA && hasBalanceB) return 1;
-
-  return 0;
-};
-
-const sortBySearchQuery = ({
-  tokenA,
-  tokenB,
-  searchQuery,
-}: {
-  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-  searchQuery: string;
-}) => {
-  const startsWithA = tokenA.ticker.toLowerCase().startsWith(searchQuery);
-  const startsWithB = tokenB.ticker.toLowerCase().startsWith(searchQuery);
-
-  if (startsWithA && !startsWithB) return -1;
-  if (!startsWithA && startsWithB) return 1;
-
-  return 0;
-};
-
-const sortByTickerAlphabetically = ({
-  tokenA,
-  tokenB,
-}: {
-  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
-}) => {
-  const isUpperA = tokenA.ticker.toUpperCase() === tokenA.ticker;
-  const isUpperB = tokenB.ticker.toUpperCase() === tokenB.ticker;
-
-  if (isUpperA && !isUpperB) return -1;
-  if (!isUpperA && isUpperB) return 1;
-
-  return tokenA.ticker.localeCompare(tokenB.ticker);
-};
