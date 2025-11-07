@@ -92,10 +92,10 @@ function sortAssets({
 }: {
   assets: (UseFilteredSortedAssetsToken & { balance?: AssetValue })[];
   filters: UseFilteredSortedAssetsOptions;
-}): UseFilteredSortedAssetsToken[] {
+}) {
   const lowerSearchQuery = filters?.searchQuery?.toLowerCase() ?? "";
 
-  return assets.sort((tokenA, tokenB) => {
+  return assets?.sort((tokenA, tokenB) => {
     const hasBalanceA = tokenA?.balance && tokenA?.balance?.getValue?.("number") >= 0;
     const hasBalanceB = tokenB?.balance && tokenB?.balance?.getValue?.("number") >= 0;
 
@@ -125,11 +125,14 @@ function filterAssetsMap({
 }: {
   assetsMap: Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken>;
   filters: UseFilteredSortedAssetsOptions;
-}): Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken & { balance?: AssetValue }> {
+}) {
   const lowerSearchQuery = filters.searchQuery?.toLowerCase() ?? "";
   const selectedNetworks = filters.selectedNetworks ?? [];
 
-  const filteredAssetsMap = new Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken>();
+  const filteredAssetsMap = new Map<
+    UseFilteredSortedAssetsToken["identifier"],
+    UseFilteredSortedAssetsToken & { balance?: AssetValue }
+  >();
 
   assetsMap.forEach((asset) => {
     if (!asset?.ticker || asset.ticker.length === 0) return;
