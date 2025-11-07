@@ -67,7 +67,7 @@ export function SwapAssetSelect({
         <SwapAssetItem asset={selectedAsset} />
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="flex flex-col">
         <DialogHeader>
           <DialogTitle>Select Token</DialogTitle>
         </DialogHeader>
@@ -134,7 +134,7 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="mt-2 flex flex-col">
+        <DialogFooter className="mt-2 flex max-h-[clamp(16rem,50svh,32rem)] flex-col">
           {match({ assets, isWalletConnected })
             .with({ isWalletConnected: false }, () => (
               <div className="flex h-40 flex-col items-center justify-center gap-1">
@@ -156,10 +156,10 @@ export function SwapAssetSelect({
               ),
             )
             .otherwise(() => (
-              <div className="-mx-6 flex max-h-[30vh] flex-col gap-2 overflow-y-auto overflow-x-hidden px-6">
+              <div className="-mx-6 flex flex-col overflow-y-auto overflow-x-hidden px-6">
                 {assets?.slice(0, 100)?.map((asset) => (
                   <Button
-                    className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
+                    className="-mx-4 h-auto w-auto justify-between rounded-lg px-4 py-2"
                     key={`swap-asset-item-${asset.identifier}-${asset.chainId}`}
                     onClick={() => {
                       setSelectedAsset(asset.identifier);
@@ -168,16 +168,13 @@ export function SwapAssetSelect({
                     variant="ghost">
                     <SwapAssetItem asset={asset.identifier} />
 
-                    <div
-                      className={cn(
-                        "flex flex-col items-end",
-                        (!asset?.balance || asset?.balance?.getValue("number") === 0) && "opacity-50",
-                      )}>
+                    <div className={cn("flex flex-col items-end", !asset?.balance && "opacity-50")}>
                       <span className="font-medium text-base text-foreground">
                         {asset?.balance?.getValue("number")?.toFixed(6) || "0.00"}
                       </span>
 
                       <span className="-mt-0.5 text-muted-foreground text-sm">
+                        {/* TODO: show the correct balance */}
                         {formatCurrency(asset?.balance?.getValue("number") || 0)}
                       </span>
                     </div>
