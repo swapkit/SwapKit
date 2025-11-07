@@ -4,7 +4,7 @@ import type { SwapKitPluginParams } from "./types";
 
 export function createPlugin<
   const Name extends string,
-  T extends (params: SwapKitPluginParams) => Record<string, unknown>,
+  T extends (params: SwapKitPluginParams) => ReturnType<T>,
   K extends { supportedSwapkitProviders?: readonly ProviderName[] },
 >({ name, properties, methods }: { name: Name; properties?: K; methods: T }) {
   function plugin(pluginParams: SwapKitPluginParams) {

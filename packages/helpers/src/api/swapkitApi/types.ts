@@ -553,7 +553,7 @@ const QuoteResponseRouteLegItem = object({
   sellAsset: string().describe("Asset to sell"),
 });
 
-const QuoteResponseRouteItem = object({
+export const QuoteResponseRouteItem = object({
   buyAsset: string().describe("Asset to buy"),
   destinationAddress: string().describe("Destination address"),
   estimatedTime: optional(EstimatedTimeSchema),

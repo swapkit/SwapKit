@@ -75,46 +75,46 @@ export const useSwapKit = () => {
           case WalletOption.METAMASK:
           case WalletOption.COINBASE_WEB:
           case WalletOption.TRUSTWALLET_WEB:
-            await swapKit?.connectEVMWallet(chains as EVMChain[]);
+            await swapKit?.connectEVMWallet?.(chains as EVMChain[]);
             break;
 
           case WalletOption.PHANTOM:
-            await swapKit?.connectPhantom(chains);
+            await swapKit?.connectPhantom?.(chains);
             break;
 
           case WalletOption.KEPLR:
-            await swapKit?.connectKeplr(chains);
+            await swapKit?.connectKeplr?.(chains);
             break;
 
           case WalletOption.LEDGER:
-            await swapKit?.connectLedger(chains);
+            await swapKit?.connectLedger?.(chains);
             break;
 
           case WalletOption.TREZOR: {
             const [chain] = chains;
             if (!chain) throw new Error("Chain is required for Trezor");
-            await swapKit?.connectTrezor(chains, NetworkDerivationPath[chain]);
+            await swapKit?.connectTrezor?.(chains, NetworkDerivationPath[chain]);
             break;
           }
 
           case WalletOption.WALLETCONNECT:
-            await swapKit?.connectWalletconnect(chains);
+            await swapKit?.connectWalletconnect?.(chains);
             break;
 
           case WalletOption.COINBASE_MOBILE:
-            await swapKit?.connectCoinbaseWallet(chains);
+            await swapKit?.connectCoinbaseWallet?.(chains);
             break;
 
           case WalletOption.BITGET:
-            await swapKit?.connectBitget(chains);
+            await swapKit?.connectBitget?.(chains);
             break;
 
           case WalletOption.CTRL:
-            await swapKit?.connectCtrl(chains);
+            await swapKit?.connectCtrl?.(chains);
             break;
 
           case WalletOption.KEEPKEY:
-            await swapKit?.connectKeepkey(chains);
+            await swapKit?.connectKeepkey?.(chains);
             break;
 
           case WalletOption.KEEPKEY_BEX:
@@ -131,19 +131,19 @@ export const useSwapKit = () => {
 
           case WalletOption.OKX:
           case WalletOption.OKX_MOBILE:
-            await swapKit?.connectOkx(chains);
+            await swapKit?.connectOkx?.(chains);
             break;
 
           case WalletOption.POLKADOT_JS:
-            await swapKit?.connectPolkadotJs(chains);
+            await swapKit?.connectPolkadotJs?.(chains);
             break;
 
           case WalletOption.RADIX_WALLET:
-            await swapKit?.connectRadixWallet(chains);
+            await swapKit?.connectRadixWallet?.(chains);
             break;
 
           case WalletOption.TALISMAN:
-            await swapKit?.connectTalisman(chains);
+            await swapKit?.connectTalisman?.(chains);
             break;
 
           default:
@@ -191,7 +191,7 @@ export const useSwapKit = () => {
 
         if (!phrase) throw new Error("Failed to decrypt keystore");
 
-        await swapKit.connectKeystore(keystoreFile.chains, phrase);
+        await swapKit?.connectKeystore?.(keystoreFile.chains, phrase);
 
         setWalletState({ connected: true, type: WalletOption.KEYSTORE });
 

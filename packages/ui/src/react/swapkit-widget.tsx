@@ -62,7 +62,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         await swapKit.approveAssetValue(inputAssetValue, route?.sourceAddress);
       }
 
-      const routeWithTx = await SwapKitApi.getTxForRoute({ routeId: route.routeId });
+      const routeWithTx = await SwapKitApi.getRouteWithTx({ routeId: route.routeId });
 
       if (!routeWithTx) throw new Error("No route with TX found");
 

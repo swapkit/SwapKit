@@ -25,6 +25,7 @@ import {
   type QuoteRequest,
   type QuoteResponse,
   type QuoteResponseRoute,
+  QuoteResponseRouteItem,
   QuoteResponseSchema,
   type TokenListProvidersResponse,
   type TokensResponseV2,
@@ -83,7 +84,7 @@ export async function getSwapQuote(json: QuoteRequest) {
   }
 }
 
-export async function getTxForRoute(json: { routeId: string }) {
+export async function getRouteWithTx(json: { routeId: string }) {
   const experimentalApiKey = SKConfig.get("envs").experimental_apiKey;
 
   const response = await SKRequestClient.post<QuoteResponseRoute>(getApiUrl("/swap"), {
@@ -92,7 +93,7 @@ export async function getTxForRoute(json: { routeId: string }) {
   });
 
   try {
-    const parsedResponse = QuoteResponseSchema.safeParse(response);
+    const parsedResponse = QuoteResponseRouteItem.safeParse(response);
 
     if (!parsedResponse.success) {
       throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);

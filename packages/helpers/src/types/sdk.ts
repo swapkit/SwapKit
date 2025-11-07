@@ -6,6 +6,7 @@ export type GenericSwapParams<T = unknown> = {
   recipient?: string;
   feeOptionKey?: FeeOption;
   route: T;
+  useApiTx?: boolean;
 };
 
 export type SwapParams<PluginNames = string, R = unknown> = GenericSwapParams<R> & { pluginName?: PluginNames };

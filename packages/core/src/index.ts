@@ -106,12 +106,10 @@ export function SwapKit<
 
     if (plugin) {
       if (type === ApproveMode.CheckOnly && "isAssetValueApproved" in plugin) {
-        // @ts-expect-error TODO: add optional approve for plugin
-        return plugin.isAssetValueApproved({ assetValue }) as ApproveReturnType<T>;
+        return plugin?.isAssetValueApproved({ assetValue }) as ApproveReturnType<T>;
       }
       if (type === ApproveMode.Approve && "approveAssetValue" in plugin) {
-        // @ts-expect-error TODO: add optional approve for plugin
-        return plugin.approveAssetValue({ assetValue }) as ApproveReturnType<T>;
+        return plugin?.approveAssetValue({ assetValue }) as ApproveReturnType<T>;
       }
 
       throw new SwapKitError({
@@ -205,8 +203,7 @@ export function SwapKit<
     const plugin = getSwapKitPlugin(pluginName || route.providers[0]);
 
     if ("swap" in plugin) {
-      // @ts-expect-error TODO: fix this
-      return plugin.swap({ ...rest, route });
+      return plugin?.swap?.({ ...rest, route });
     }
 
     throw new SwapKitError("core_plugin_swap_not_found");
