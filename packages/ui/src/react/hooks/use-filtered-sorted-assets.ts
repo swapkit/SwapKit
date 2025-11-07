@@ -1,4 +1,4 @@
-import type { Chain } from "@swapkit/sdk";
+import type { AssetValue, Chain } from "@swapkit/sdk";
 import { loadTokenLists } from "@swapkit/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useSwapKit } from "../swapkit-context";
@@ -6,18 +6,19 @@ import type { UseFilteredSortedAssetsOptions, UseFilteredSortedAssetsToken } fro
 import { useDebouncedEffect } from "./use-debounced-effect";
 
 export function useFilteredSortedAssets() {
-  const { connectedChains } = useSwapKit();
+  const { balances, isWalletConnected } = useSwapKit();
 
   // internal and public state required to support debouncing
   const [filters, setFilters] = useState<UseFilteredSortedAssetsOptions>({ searchQuery: "", selectedNetworks: [] });
   const [internalFiltersState, setInternalFilterState] = useState(filters);
 
-  const [tokens, setTokens] = useState<UseFilteredSortedAssetsToken[]>([]);
+  const [assetsMap, setAssetsMap] = useState<
+    Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken>
+  >(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   useDebouncedEffect(
     () => {
-      console.log("debouncing filters", filters);
       setInternalFilterState(filters);
     },
     [filters],
@@ -25,76 +26,79 @@ export function useFilteredSortedAssets() {
   );
 
   useEffect(() => {
+    if (!isWalletConnected) return;
+
     let isCancelled = false;
 
     void loadTokenLists().then((tokenLists) => {
       if (isCancelled) return;
 
-      const tokensMapEntries = Object.values(tokenLists).flatMap(
+      // nested foreach would be more efficient here
+      const assetsMapEntries = Object.values(tokenLists).flatMap(
         ({ tokens }: { tokens: UseFilteredSortedAssetsToken[] }) =>
           tokens.filter((token) => !!token).map((token) => [token.identifier, token]),
       );
 
-      const uniqueTokensMap = new Map<string, UseFilteredSortedAssetsToken>(
-        tokensMapEntries as [string, UseFilteredSortedAssetsToken][],
+      const uniqueAssetsMap = new Map<string, UseFilteredSortedAssetsToken>(
+        assetsMapEntries as [string, UseFilteredSortedAssetsToken][],
       );
 
-      setTokens(Array.from(uniqueTokensMap.values()));
+      setAssetsMap(uniqueAssetsMap);
       setIsLoading(false);
     });
 
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [isWalletConnected]);
 
   const networks = useMemo(() => {
     const uniqueNetworks = new Set<Chain>();
 
-    tokens.forEach((token) => {
-      if (!token?.chain) return;
+    assetsMap.forEach((asset) => {
+      if (!asset?.chain) return;
 
-      uniqueNetworks.add(token.chain);
+      uniqueNetworks.add(asset.chain);
     }, []);
 
     return Array.from(uniqueNetworks).sort((a, b) => a.localeCompare(b));
-  }, [tokens]);
+  }, [assetsMap.forEach]);
 
-  const assets = useMemo(() => {
-    const filteredTokens = filterAssets({ filters: internalFiltersState, tokens });
+  const filteredAssets = useMemo(() => {
+    const filteredAssetsMap = filterAssetsMap({ assetsMap, filters: internalFiltersState });
 
-    const assets = filteredTokens.map((token) => {
-      const matchingConnectedChain = connectedChains?.find(
-        ({ chain, assetValue }) =>
-          chain === token.chain && token.chainId === assetValue.chainId && assetValue.ticker === token.ticker,
-      );
+    balances?.forEach(({ identifier, balance }) => {
+      const matchingAsset = filteredAssetsMap.get(identifier);
 
-      return {
-        ...token,
-        assetValue: matchingConnectedChain?.assetValue,
-        chain: matchingConnectedChain?.chain,
-      } satisfies UseFilteredSortedAssetsToken;
+      if (!matchingAsset) return;
+
+      filteredAssetsMap.set(matchingAsset.identifier, { ...matchingAsset, balance });
     });
 
-    return sortAssets({ assets, filters: internalFiltersState });
-  }, [tokens, internalFiltersState, connectedChains?.find]);
+    const assets = Array.from(filteredAssetsMap.values());
 
-  return useMemo(() => ({ assets, filters, isLoading, networks, setFilters }), [assets, filters, isLoading, networks]);
+    return sortAssets({ assets, filters: internalFiltersState });
+  }, [internalFiltersState, balances, assetsMap]);
+
+  return useMemo(
+    () => ({ assets: filteredAssets, filters, isLoading, networks, setFilters }),
+    [filters, isLoading, networks, filteredAssets],
+  );
 }
 
 function sortAssets({
   assets,
   filters,
 }: {
-  assets: UseFilteredSortedAssetsToken[];
+  assets: (UseFilteredSortedAssetsToken & { balance?: AssetValue })[];
   filters: UseFilteredSortedAssetsOptions;
 }): UseFilteredSortedAssetsToken[] {
   const lowerSearchQuery = filters?.searchQuery?.toLowerCase() ?? "";
 
-  return [...assets].sort((tokenA, tokenB) => {
+  return assets.sort((tokenA, tokenB) => {
     const hasAnyBalance =
-      (tokenA?.assetValue && tokenA?.assetValue?.getValue?.("number") > 0) ||
-      (tokenB?.assetValue && tokenB?.assetValue?.getValue?.("number") > 0);
+      (tokenA?.balance && tokenA?.balance?.getValue?.("number") > 0) ||
+      (tokenB?.balance && tokenB?.balance?.getValue?.("number") > 0);
 
     if (hasAnyBalance) return sortByBalance({ tokenA, tokenB });
 
@@ -104,45 +108,47 @@ function sortAssets({
   });
 }
 
-function filterAssets({
-  tokens,
+function filterAssetsMap({
+  assetsMap,
   filters,
 }: {
-  tokens: UseFilteredSortedAssetsToken[];
+  assetsMap: Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken>;
   filters: UseFilteredSortedAssetsOptions;
-}): UseFilteredSortedAssetsToken[] {
+}): Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken & { balance?: AssetValue }> {
   const lowerSearchQuery = filters.searchQuery?.toLowerCase() ?? "";
   const selectedNetworks = filters.selectedNetworks ?? [];
 
-  return tokens.filter((token) => {
-    if (!token?.ticker || token.ticker.length === 0) return false;
-    if (!token?.chain || token.chain.length === 0) return false;
-    if (!token?.address && !token?.chainId) return false;
+  const filteredAssetsMap = new Map<UseFilteredSortedAssetsToken["identifier"], UseFilteredSortedAssetsToken>();
 
-    if (selectedNetworks.length > 0 && !selectedNetworks.includes(token.chain)) {
-      return false;
-    }
+  assetsMap.forEach((asset) => {
+    if (!asset?.ticker || asset.ticker.length === 0) return;
+    if (!asset?.chain || asset.chain.length === 0) return;
+    if (!asset?.address && !asset?.chainId) return;
 
-    if (lowerSearchQuery.length <= 1) return true;
+    if (selectedNetworks.length > 0 && !selectedNetworks.includes(asset.chain)) return;
 
     const matchesSearchQuery =
-      token?.symbol?.toLowerCase()?.includes(lowerSearchQuery) ||
-      token?.ticker?.toLowerCase()?.includes(lowerSearchQuery) ||
-      token?.chain?.toLowerCase()?.includes(lowerSearchQuery);
+      asset?.symbol?.toLowerCase()?.includes(lowerSearchQuery) ||
+      asset?.ticker?.toLowerCase()?.includes(lowerSearchQuery) ||
+      asset?.chain?.toLowerCase()?.includes(lowerSearchQuery);
 
-    return matchesSearchQuery;
+    if (lowerSearchQuery.length >= 1 && !matchesSearchQuery) return;
+
+    filteredAssetsMap.set(asset.identifier, asset);
   });
+
+  return filteredAssetsMap;
 }
 
 const sortByBalance = ({
   tokenA,
   tokenB,
 }: {
-  tokenA: UseFilteredSortedAssetsToken;
-  tokenB: UseFilteredSortedAssetsToken;
+  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
+  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
 }) => {
-  const hasBalanceA = tokenA?.assetValue && tokenA?.assetValue?.getValue?.("number") > 0;
-  const hasBalanceB = tokenB?.assetValue && tokenB?.assetValue?.getValue?.("number") > 0;
+  const hasBalanceA = tokenA?.balance && tokenA?.balance?.getValue?.("number") > 0;
+  const hasBalanceB = tokenB?.balance && tokenB?.balance?.getValue?.("number") > 0;
 
   if (hasBalanceA && !hasBalanceB) return -1;
   if (!hasBalanceA && hasBalanceB) return 1;
@@ -155,8 +161,8 @@ const sortBySearchQuery = ({
   tokenB,
   searchQuery,
 }: {
-  tokenA: UseFilteredSortedAssetsToken;
-  tokenB: UseFilteredSortedAssetsToken;
+  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
+  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
   searchQuery: string;
 }) => {
   const startsWithA = tokenA.ticker.toLowerCase().startsWith(searchQuery);
@@ -172,8 +178,8 @@ const sortByTickerAlphabetically = ({
   tokenA,
   tokenB,
 }: {
-  tokenA: UseFilteredSortedAssetsToken;
-  tokenB: UseFilteredSortedAssetsToken;
+  tokenA: UseFilteredSortedAssetsToken & { balance?: AssetValue };
+  tokenB: UseFilteredSortedAssetsToken & { balance?: AssetValue };
 }) => {
   const isUpperA = tokenA.ticker.toUpperCase() === tokenA.ticker;
   const isUpperB = tokenB.ticker.toUpperCase() === tokenB.ticker;

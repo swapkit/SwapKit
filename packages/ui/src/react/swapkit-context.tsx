@@ -1,6 +1,6 @@
 "use client";
 
-import type { Chain, EVMChain, SKConfigState } from "@swapkit/sdk";
+import type { Chain, ChainWallet, EVMChain, SKConfigState } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
@@ -209,11 +209,10 @@ export const useSwapKit = () => {
     [keystoreFile, swapKit, setWalletState, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
   );
 
-  const connectedChains =
-    Object.entries(swapKit?.getAllWallets() || {})?.map(([chain, assetValue]) => ({
-      assetValue: assetValue as AssetValue,
-      chain: chain as Chain,
-    })) || [];
+  const balances =
+    (Object.entries(swapKit?.getAllWallets() || {})?.flatMap(([chain, wallet]) =>
+      wallet?.balance?.flatMap((balance) => ({ balance, chain, identifier: `${chain}.${balance.symbol}`, wallet })),
+    ) as { balance: AssetValue; chain: Chain; identifier: string; wallet: ChainWallet<Chain> }[]) || [];
 
   return useMemo(
     // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -221,7 +220,7 @@ export const useSwapKit = () => {
       swapKit,
       loadSwapKit,
 
-      connectedChains,
+      balances,
 
       walletType,
       isConnectingWallet,
@@ -245,10 +244,10 @@ export const useSwapKit = () => {
     [
       swapKit,
       loadSwapKit,
+      balances,
       walletType,
       isConnectingWallet,
       isWalletConnected,
-      connectedChains,
       checkIfChainConnected,
       connectKeystore,
       connectWallet,
