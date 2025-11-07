@@ -155,6 +155,25 @@ describe("swapKitConfig", () => {
     });
   });
 
+  describe("setApiEndpoint", () => {
+    test("sets balance endpoint", () => {
+      SKConfig.reinitialize();
+
+      const customBalanceUrl = "https://custom-balance-api.example.com";
+      SKConfig.setApiEndpoint("balance", customBalanceUrl);
+      expect(SKConfig.get("apiEndpoints").balance).toBe(customBalanceUrl);
+    });
+
+    test("merges apiEndpoints via setConfig", () => {
+      SKConfig.reinitialize();
+
+      SKConfig.set({ apiEndpoints: { balance: "https://proxy.example.com" } });
+
+      const apiEndpoints = SKConfig.get("apiEndpoints");
+      expect(apiEndpoints.balance).toBe("https://proxy.example.com");
+    });
+  });
+
   describe("setRpcUrl", () => {
     test("sets RPC URL for single chain", () => {
       SKConfig.reinitialize();

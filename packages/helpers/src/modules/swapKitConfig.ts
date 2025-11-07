@@ -50,6 +50,7 @@ const rpcUrls = AllChains.reduce(
 
 // biome-ignore assist/source/useSortedKeys: Config
 const initialState = {
+  apiEndpoints: { balance: undefined as string | undefined },
   apiKeys: { blockchair: "", keepKey: "", swapKit: "", walletConnectProjectId: "", xaman: "" },
   // TODO: figure out how to type apis without using toolbox directly
   // Maybe move rpc/toolbox apis to helpers?
@@ -81,6 +82,7 @@ const initialState = {
 type SKState = typeof initialState;
 
 export type SKConfigState = {
+  apiEndpoints?: Partial<SKState["apiEndpoints"]>;
   apiKeys?: Partial<SKState["apiKeys"]>;
   chains?: SKState["chains"];
   envs?: Partial<SKState["envs"]>;
@@ -91,6 +93,7 @@ export type SKConfigState = {
 };
 
 type SwapKitConfigStore = SKState & {
+  setApiEndpoint: <T extends keyof SKState["apiEndpoints"]>(key: T, url: SKState["apiEndpoints"][T]) => void;
   setApiKey: (key: keyof SKState["apiKeys"], apiKey: string) => void;
   setConfig: (config: SKConfigState) => void;
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) => void;
@@ -106,9 +109,11 @@ type SwapKitConfigStore = SKState & {
 export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
   ...initialState,
 
+  setApiEndpoint: (key, url) => set((s) => ({ apiEndpoints: { ...s.apiEndpoints, [key]: url } })),
   setApiKey: (key, apiKey) => set((s) => ({ apiKeys: { ...s.apiKeys, [key]: apiKey } })),
   setConfig: (config) =>
     set((s) => ({
+      apiEndpoints: { ...s.apiEndpoints, ...config?.apiEndpoints },
       apiKeys: { ...s.apiKeys, ...config?.apiKeys },
       chains: s.chains.concat(config?.chains || []),
       envs: { ...s.envs, ...config?.envs },
@@ -134,6 +139,7 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
 export const useSwapKitConfig = () =>
   useSwapKitStore(
     useShallow((state) => ({
+      apiEndpoints: state?.apiEndpoints,
       apiKeys: state?.apiKeys,
       chains: state?.chains,
       envs: state?.envs,
@@ -150,6 +156,8 @@ export const SKConfig = {
   reinitialize: () => useSwapKitStore.setState(initialState),
   set: <T extends SKConfigState>(config: T) => useSwapKitStore.getState().setConfig(config),
 
+  setApiEndpoint: <T extends keyof SKState["apiEndpoints"]>(key: T, url: SKState["apiEndpoints"][T]) =>
+    useSwapKitStore.getState().setApiEndpoint(key, url),
   setApiKey: <T extends keyof SKState["apiKeys"]>(key: T, apiKey: string) =>
     useSwapKitStore.getState().setApiKey(key, apiKey),
   setEnv: <T extends keyof SKState["envs"]>(key: T, value: SKState["envs"][T]) =>
