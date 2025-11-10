@@ -1,5 +1,7 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MoveDownIcon } from "lucide-react";
 import { useModal } from "../../hooks/use-modal";
+import { SwapAmountInput } from "../composable/swap-amount-input";
+import { SwapAssetItem } from "../composable/swap-asset-item";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -26,14 +28,36 @@ export const SwapConfirmDialog = () => {
           <DialogTitle>Confirm swap</DialogTitle>
         </DialogHeader>
 
-        <div>
-          <div>ETH</div>
-          <div>
-            <div>1</div>
-            <ChevronDown />
-            <div>1</div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <SwapAssetItem asset="ETH" />
+
+            <SwapAmountInput
+              amount="1"
+              className="[&_input]:!opacity-100 [&_input]:!cursor-text"
+              disabled
+              formattedAmountUSD="$1.00"
+            />
           </div>
-          <div>BTC</div>
+
+          <div className="flex items-center gap-2">
+            <div className="h-px w-full bg-border" />
+
+            <MoveDownIcon className="size-4 shrink-0 stroke-[2.5] font-bold text-[#8b8c8b]" />
+
+            <div className="h-px w-full bg-border" />
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <SwapAssetItem asset="BTC" />
+
+            <SwapAmountInput
+              amount="1"
+              className="[&_input]:!opacity-100 [&_input]:!cursor-text"
+              disabled
+              formattedAmountUSD="$1.00"
+            />
+          </div>
         </div>
 
         <div className="overflow-hidden rounded-lg border p-4 text-sm">
