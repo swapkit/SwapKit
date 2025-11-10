@@ -16,6 +16,7 @@ import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 import "@swapkit/ui/swapkit.css";
 import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
+import { SwapConfirmDialog } from "./components/dialogs/swap-confirm-dialog";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
@@ -49,6 +50,10 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     if (!swapKit) return;
 
     try {
+      const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
+
+      if (!confirmed) return;
+
       setIsSwapping(true);
       const swap = await swapKit.swap({ route });
 

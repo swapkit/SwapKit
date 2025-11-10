@@ -104,7 +104,7 @@ export function SwapQuotePreview({
             <AccordionContent className="rounded-b-lg border-card border-r border-b border-l bg-background px-4 pb-4 duration-150">
               <ul className="flex flex-col gap-2 text-muted-foreground">
                 <li className="flex items-center gap-1">
-                  <span>Minimum received after slippage (6.5%)</span>
+                  <span>Minimum received after slippage ({selectedRoute?.formattedMaxSlippagePercentage})</span>
 
                   <InfoIcon className="size-4" />
 

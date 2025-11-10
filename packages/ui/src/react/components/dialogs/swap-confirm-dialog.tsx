@@ -1,25 +1,35 @@
 import { ChevronDown, MoveDownIcon } from "lucide-react";
+import { useMemo } from "react";
 import { useModal } from "../../hooks/use-modal";
+import type { useSwapQuote } from "../../hooks/use-swap-quote";
 import { SwapAmountInput } from "../composable/swap-amount-input";
 import { SwapAssetItem } from "../composable/swap-asset-item";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-
-const totalFeesListItems = [
-  { title: "Network fee", value: "$0.02" },
-  { title: "Liquidity fee", value: "$0.02" },
-  { title: "Exchange fee", value: "$0.02" },
-];
-
-const swapListItems = [
-  { title: "Estimated time", value: "<10m" },
-  { title: "Max. slippage", value: "3.00%" },
-  { title: "Recipient", value: "0x1234567890123456789012345678901234567890" },
-  { title: "Min received", value: "0,161711 USDT" },
-];
-export const SwapConfirmDialog = () => {
+export const SwapConfirmDialog = ({
+  swapRoute,
+}: {
+  swapRoute: NonNullable<ReturnType<typeof useSwapQuote>["selectedRoute"]>;
+}) => {
   const modal = useModal();
+
+  const { totalFeesListItems, swapSummaryListItems } = useMemo(() => {
+    const totalFeesListItems = [
+      { title: "Network fee", value: swapRoute.formattedInboundNetworkFeeUSD },
+      { title: "Liquidity fee", value: swapRoute.formattedLiquidityFeeUSD },
+      { title: "Exchange fee", value: swapRoute.formattedExchangeFeeUSD },
+    ];
+
+    const swapSummaryListItems = [
+      { title: "Estimated time", value: swapRoute.formattedEstimatedTime },
+      { title: "Max. slippage", value: swapRoute?.formattedMaxSlippagePercentage },
+      { title: "Recipient", value: swapRoute.route?.destinationAddress },
+      { title: "Min received", value: `${swapRoute.expectedBuyAmountMaxSlippage} ${swapRoute.route?.buyAsset}` },
+    ];
+
+    return { swapSummaryListItems, totalFeesListItems };
+  }, [swapRoute]);
 
   return (
     <Dialog {...modal}>
@@ -30,13 +40,13 @@ export const SwapConfirmDialog = () => {
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <SwapAssetItem asset="ETH" />
+            <SwapAssetItem asset={swapRoute?.route?.sellAsset} />
 
             <SwapAmountInput
-              amount="1"
+              amount={swapRoute.amount}
               className="[&_input]:!opacity-100 [&_input]:!cursor-text"
               disabled
-              formattedAmountUSD="$1.00"
+              formattedAmountUSD={swapRoute.formattedInputAssetPriceUSD}
             />
           </div>
 
@@ -49,13 +59,13 @@ export const SwapConfirmDialog = () => {
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <SwapAssetItem asset="BTC" />
+            <SwapAssetItem asset={swapRoute?.route?.buyAsset} />
 
             <SwapAmountInput
-              amount="1"
+              amount={swapRoute?.expectedBuyAmount?.toString()}
               className="[&_input]:!opacity-100 [&_input]:!cursor-text"
               disabled
-              formattedAmountUSD="$1.00"
+              formattedAmountUSD={swapRoute?.formattedOutputAssetPriceUSD}
             />
           </div>
         </div>
@@ -70,7 +80,7 @@ export const SwapConfirmDialog = () => {
 
                 <ChevronDown className="mt-px ml-1 size-4" />
 
-                <span className="ml-auto font-medium text-foreground">$0.02</span>
+                <span className="ml-auto font-medium text-foreground">{swapRoute?.formattedTotalFeesUSD}</span>
               </AccordionTrigger>
 
               <AccordionContent className="mt-3 pb-0">
@@ -86,7 +96,7 @@ export const SwapConfirmDialog = () => {
               </AccordionContent>
 
               <ul className="mt-3 flex flex-col gap-3">
-                {swapListItems.map((item) => (
+                {swapSummaryListItems.map((item) => (
                   <li className="flex items-start justify-between gap-1" key={`swap-list-item-${item.title}`}>
                     <span className="text-muted-foreground">{item.title}</span>
 
