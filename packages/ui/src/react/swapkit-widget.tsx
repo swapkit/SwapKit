@@ -1,11 +1,11 @@
-"use client";
-
 import { AssetValue, ProviderName, type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
+// import "@swapkit/ui/swapkit.css";
+import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -14,8 +14,6 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
-import "@swapkit/ui/swapkit.css";
-import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");

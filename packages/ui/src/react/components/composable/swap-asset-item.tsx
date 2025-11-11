@@ -1,5 +1,3 @@
-"use client";
-
 import { AssetValue } from "@swapkit/sdk";
 import { AssetIcon } from "../asset-icon";
 

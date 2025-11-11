@@ -28,7 +28,7 @@ const nextConfig = {
         new webpack.ProvidePlugin({
           Buffer: ["buffer", "Buffer"],
           global: require.resolve("global"),
-          process: "process/browser",
+          // process: "process/browser",
         }),
       );
 
@@ -41,7 +41,7 @@ const nextConfig = {
         }),
       );
 
-      config.plugins.push(new webpack.NormalModuleReplacementPlugin(/^node:crypto$/, "crypto-browserify"));
+      config.plugins.push(new webpack.NormalModuleReplacementPlugin(/^node:crypto$/, require.resolve("crypto-browserify")));
 
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -49,7 +49,7 @@ const nextConfig = {
         crypto: require.resolve("crypto-browserify"),
         fs: false,
         path: require.resolve("path-browserify"),
-        process: require.resolve("process/browser"),
+        // process: require.resolve("process/browser"),
         stream: require.resolve("stream-browserify"),
       };
 
@@ -60,7 +60,7 @@ const nextConfig = {
         https: require.resolve("https-browserify"),
         os: require.resolve("os-browserify/browser"),
         path: require.resolve("path-browserify"),
-        process: require.resolve("process/browser"),
+        // process: require.resolve("process/browser"),
         stream: require.resolve("stream-browserify"),
       };
     }

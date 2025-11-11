@@ -1,5 +1,3 @@
-"use client";
-
 import { Loader2Icon } from "lucide-react";
 import { Input } from "../ui/input";
 import { SwapAssetSelect } from "./swap-asset-select";

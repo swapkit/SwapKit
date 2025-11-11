@@ -1,5 +1,3 @@
-"use client";
-
 import { Chain } from "@swapkit/sdk";
 import { SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";

@@ -1,5 +1,3 @@
-"use client";
-
 import { AssetValue } from "@swapkit/helpers";
 import { cn } from "../../lib/utils";
 

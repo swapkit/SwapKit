@@ -1,5 +1,3 @@
-"use client";
-
 import { PriorityLabel } from "@swapkit/sdk";
 import { ArrowLeftRight, ChevronRight, InfoIcon, TimerIcon } from "lucide-react";
 import { match } from "ts-pattern";

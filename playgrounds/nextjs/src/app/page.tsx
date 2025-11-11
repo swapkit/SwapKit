@@ -17,7 +17,7 @@ export default function SwapPage() {
     <div className="grid w-full grid-cols-3 gap-4">
       <AppSidebar>
         <WidgetConfigurator control={control} />
-      </AppSidebar>
+      </AppSidebar> 
 
       <div className="col-span-2 flex w-full max-w-xl items-center justify-center">
         <SwapKitWidget

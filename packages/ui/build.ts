@@ -5,6 +5,8 @@ const bunTailwind3Plugin: BunPlugin = {
   name: "bun-plugin-tailwind-3",
   setup: (build) => {
     build.onLoad({ filter: /\.css$/ }, async (_args) => {
+      console.info("Building swapkit.css ONLOAD CALLED");
+
       const cssFileInput = "./src/swapkit.css";
       const cssFileOutput = "./dist/swapkit.css";
 
@@ -15,4 +17,10 @@ const bunTailwind3Plugin: BunPlugin = {
   },
 };
 
-void buildPackage({ evmOnly: true, plugins: [bunTailwind3Plugin] });
+void buildPackage({
+  banner: '"use client";',
+  evmOnly: true,
+  plugins: [bunTailwind3Plugin],
+  splitting: true,
+  // target: "browser",
+});

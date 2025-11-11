@@ -1,3 +1,3 @@
 import { buildPackage } from "../../tools/builder";
 
-void buildPackage();
+void buildPackage({ splitting: true });

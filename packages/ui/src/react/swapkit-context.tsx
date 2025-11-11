@@ -1,5 +1,3 @@
-"use client";
-
 import type { Chain, EVMChain, SKConfigState } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
