@@ -13,4 +13,7 @@ export default defineConfig({
   esbuild: { jsx: "automatic", jsxDev: false },
   plugins: [react(), nodePolyfills({ globals: { Buffer: true, global: true, process: true } })],
   resolve: { dedupe: ["react", "react-dom"] },
+  optimizeDeps: {
+    include: ["@passkeys/react"],
+  },
 });
