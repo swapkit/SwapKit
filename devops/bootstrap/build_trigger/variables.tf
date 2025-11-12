@@ -25,13 +25,13 @@ variable "trigger_name" {
 variable "branch_name" {
   description = "Branch name pattern."
   type        = string
-  default     = "feat/DOP-112"
+  default     = "develop"
 }
 
 variable "branch_ref" {
   description = "Branch reference."
   type        = string
-  default     = "refs/heads/feat/DOP-112"
+  default     = "refs/heads/develop"
 }
 
 variable "repository_name" {

@@ -23,7 +23,7 @@ steps:
     args:
       - '-c'
       - |
-        cd playgrounds/vite/terraform/${PROJECT_ID}
+        cd playgrounds/vite-lite/terraform/${PROJECT_ID}
         
         echo "Initializing Terraform..."
         echo "Backend bucket: sk-frontend-terraform-be"
@@ -42,7 +42,7 @@ steps:
     args:
       - '-c'
       - |
-        cd playgrounds/vite/terraform/${PROJECT_ID}
+        cd playgrounds/vite-lite/terraform/${PROJECT_ID}
         
         echo "=== Terraform Configuration Validation ==="
         echo "Project ID: ${PROJECT_ID}"
@@ -66,7 +66,7 @@ steps:
     args:
       - '-c'
       - |
-        cd playgrounds/vite/terraform/${PROJECT_ID}
+        cd playgrounds/vite-lite/terraform/${PROJECT_ID}
         
         echo "=== Generating Terraform Plan ==="
         
@@ -89,7 +89,7 @@ steps:
     args:
       - '-c'
       - |
-        cd playgrounds/vite/terraform/${PROJECT_ID}
+        cd playgrounds/vite-lite/terraform/${PROJECT_ID}
         
         # Get service name and regions from Terraform variables
         SERVICE_NAME="${_SERVICE_NAME}"
@@ -206,7 +206,7 @@ tags:
   - terraform
   - widget
   - cloud-run
-  - playgrounds-vite
+  - playgrounds-vite-lite
 
 options:
   logging: CLOUD_LOGGING_ONLY

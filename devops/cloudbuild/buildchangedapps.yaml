@@ -41,7 +41,7 @@ steps:
         echo "HEAD SHA: $(git rev-parse HEAD)"
 
         # Skip change detection for non-core branches
-        if [ "$BRANCH_NAME" = "feat/DOP-112" ] || [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "staging" ]; then
+        if [ "$BRANCH_NAME" = "feat/DOP-112" ] || [ "$BRANCH_NAME" = "develop" ] || [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "staging" ]; then
           : # This is an allowed branch, continue with processing
         else
           echo "Non-core branch detected ($BRANCH_NAME) - creating empty changed_files.txt"
@@ -89,7 +89,7 @@ steps:
       then
         TARGET_ENV=dev
       fi
-      # if [ "${BRANCH_NAME}" == "development" ]
+      # if [ "${BRANCH_NAME}" == "develop" ]
       # then
       #  TARGET_ENV=stage
       # fi
