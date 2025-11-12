@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 RUN git init && git add -A && git commit -m "initial" || true
 RUN bun install || echo "Install completed with warnings"
-RUN bun add @passkeys/react --no-save || echo "Failed to add @passkeys/react"
+#RUN bun add @passkeys/react --no-save || echo "Failed to add @passkeys/react"
 RUN bun run build:ci || bun run build || echo "Build completed with warnings"
 RUN bun --cwd=playgrounds/vite-lite run build
 RUN ls -la playgrounds/vite-lite/dist/ && \

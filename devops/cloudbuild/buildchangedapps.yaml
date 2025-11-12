@@ -126,7 +126,7 @@ steps:
         echo "      - --cache=true" >> /workspace/kaniko_steps.yaml
         echo "      - --cache-ttl=6h" >> /workspace/kaniko_steps.yaml
         echo "      - --context=/workspace/" >> /workspace/kaniko_steps.yaml
-        echo "      - --dockerfile=/workspace/playgrounds/vite/Dockerfile" >> /workspace/kaniko_steps.yaml
+        echo "      - --dockerfile=/workspace/playgrounds/vite-lite/Dockerfile" >> /workspace/kaniko_steps.yaml
         
         echo "options:" >> /workspace/kaniko_steps.yaml
         echo "  logging: CLOUD_LOGGING_ONLY" >> /workspace/kaniko_steps.yaml
