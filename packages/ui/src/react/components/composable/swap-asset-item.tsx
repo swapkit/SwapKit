@@ -3,7 +3,7 @@
 import { AssetValue } from "@swapkit/sdk";
 import { AssetIcon } from "../asset-icon";
 
-export function SwapAssetItem({ asset }: { asset: string | undefined }) {
+export function SwapAssetItem({ asset }: { asset: string | null | undefined }) {
   if (!asset) return;
 
   const assetValue = AssetValue.from({ asset });

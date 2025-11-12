@@ -195,6 +195,11 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
       const canShowFees = outputAssetPriceUSD && inputAssetPriceUSD;
 
+      const maxSlippageRatio =
+        1 -
+        Number.parseFloat(expectedBuyAmountMaxSlippage ?? "0") /
+          Number.parseFloat(quoteResponseRoute?.expectedBuyAmount ?? "0");
+
       // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
       return {
         routeIndex: index,
@@ -210,6 +215,10 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
         expectedBuyAmount,
         expectedBuyAmountMaxSlippage,
+        formattedMaxSlippagePercentage:
+          quoteResponseRoute?.expectedBuyAmountMaxSlippage && quoteResponseRoute?.expectedBuyAmountMaxSlippage
+            ? `${(maxSlippageRatio * 100).toFixed(2)}%`
+            : "-",
 
         formattedEstimatedTime,
         formattedExchangeFeeUSD: canShowFees ? formatCurrency(exchangeFeeUSD) : "-",
