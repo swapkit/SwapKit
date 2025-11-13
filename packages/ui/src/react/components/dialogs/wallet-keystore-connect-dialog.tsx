@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KEYSTORE_SUPPORTED_CHAINS, type Keystore } from "@swapkit/wallet-keystore";
 import { CheckIcon, UploadIcon } from "lucide-react";
-import { useId } from "react";
+import { useCallback, useId } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -69,6 +69,28 @@ export function WalletKeystoreConnectDialog() {
     }
   });
 
+  const handleKeystoreFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const keystoreFile = e?.target?.files?.[0];
+
+      if (!keystoreFile) return;
+
+      try {
+        form.setValue(
+          "keystoreFile",
+          { file: keystoreFile, keystore: JSON.parse(await keystoreFile.text()) as Keystore },
+          { shouldValidate: true },
+        );
+      } catch (error) {
+        console.error("Error parsing keystore file:", error);
+        toast.error("Something went wrong while parsing the keystore file", {
+          description: "Please check if the file is a valid keystore file",
+        });
+      }
+    },
+    [form],
+  );
+
   const [currentStep, keystoreFile] = form.watch(["currentStep", "keystoreFile"]);
 
   return (
@@ -123,24 +145,7 @@ export function WalletKeystoreConnectDialog() {
                     accept=".json,.txt,text/plain,application/json"
                     className="hidden"
                     id={fileInputId}
-                    onChange={async (e) => {
-                      const keystoreFile = e?.target?.files?.[0];
-
-                      if (!keystoreFile) return;
-
-                      try {
-                        form.setValue(
-                          "keystoreFile",
-                          { file: keystoreFile, keystore: JSON.parse(await keystoreFile.text()) as Keystore },
-                          { shouldValidate: true },
-                        );
-                      } catch (error) {
-                        console.error("Error parsing keystore file:", error);
-                        toast.error("Something went wrong while parsing the keystore file", {
-                          description: "Please check if the file is a valid keystore file",
-                        });
-                      }
-                    }}
+                    onChange={handleKeystoreFileChange}
                     type="file"
                   />
                 </div>
@@ -157,7 +162,11 @@ export function WalletKeystoreConnectDialog() {
                   Cancel
                 </Button>
 
-                <Button disabled={!form.formState.isValid} type="submit" variant="primary">
+                <Button
+                  disabled={!form?.formState?.isValid}
+                  isLoading={form?.formState?.isSubmitting}
+                  type="submit"
+                  variant="primary">
                   Upload File
                 </Button>
               </DialogFooter>
@@ -208,7 +217,11 @@ export function WalletKeystoreConnectDialog() {
                   Go Back
                 </Button>
 
-                <Button disabled={!form.formState.isValid} type="submit" variant="primary">
+                <Button
+                  disabled={!form?.formState?.isValid}
+                  isLoading={form?.formState?.isSubmitting}
+                  type="submit"
+                  variant="primary">
                   Connect Wallet
                 </Button>
               </DialogFooter>
