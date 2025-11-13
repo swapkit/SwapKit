@@ -159,7 +159,7 @@ const BERAConfig = createChain({
 
 const HYPEREVMConfig = createChain({
   baseDecimal,
-  blockTime: 2, // TODO: Check this value
+  blockTime: 1,
   chain: Chain.Hyperevm,
   chainId: ChainId.Hyperevm,
   chainIdHex: "0x3e7",
@@ -269,6 +269,34 @@ const SONICConfig = createChain({
   type,
 });
 
+const MONADConfig = createChain({
+  baseDecimal,
+  blockTime: 0.4,
+  chain: Chain.Monad,
+  chainId: ChainId.Monad,
+  chainIdHex: "0x8f",
+  explorerUrl: "https://monvision.io",
+  name: "Monad",
+  nativeCurrency: "MON",
+  networkDerivationPath,
+  rpcUrls: [],
+  type,
+});
+
+const MEGAETHConfig = createChain({
+  baseDecimal,
+  blockTime: 0.01,
+  chain: Chain.MegaETH,
+  chainId: ChainId.MegaETH,
+  chainIdHex: "0x10e6",
+  explorerUrl: "",
+  name: "MegaETH",
+  nativeCurrency: "ETH",
+  networkDerivationPath,
+  rpcUrls: [],
+  type,
+});
+
 export const EVMChainConfigs = [
   ARBConfig,
   AURORAConfig,
@@ -283,6 +311,8 @@ export const EVMChainConfigs = [
   ETHConfig,
   GNOConfig,
   HYPEREVMConfig,
+  MEGAETHConfig,
+  MONADConfig,
   OPConfig,
   POLConfig,
   SONICConfig,
@@ -304,6 +334,9 @@ export const EVMChains = [
   Chain.Ethereum,
   Chain.Gnosis,
   Chain.Hyperevm,
+  // TODO: Enable once live
+  // Chain.MegaETH,
+  // Chain.Monad,
   Chain.Optimism,
   Chain.Polygon,
   Chain.Sonic,
