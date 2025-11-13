@@ -1,5 +1,13 @@
 # @swapkit/wallet-mobile
 
+## 4.0.45
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.1
+  - @swapkit/toolboxes@4.3.1
+
 ## 4.0.44
 
 ### Patch Changes
