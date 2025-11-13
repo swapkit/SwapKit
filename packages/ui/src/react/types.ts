@@ -1,4 +1,4 @@
-import type { AssetValue, Chain, createSwapKit, SKConfigState, WalletOption } from "@swapkit/sdk";
+import type { AssetValue, Chain, ChainWallet, createSwapKit, SKConfigState, WalletOption } from "@swapkit/sdk";
 
 export type KeystoreFile = {
   keystore: import("@swapkit/sdk/wallets").Keystore | null;
@@ -44,3 +44,5 @@ export type UseFilteredSortedAssetsOptions = {
   selectedNetworks?: Chain[];
   includeBalances?: boolean;
 };
+
+export type BalanceDetails = { balance: AssetValue; wallet: ChainWallet<Chain>; chain: Chain; identifier: string };

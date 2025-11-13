@@ -4,7 +4,7 @@ import type { Chain, ChainWallet, EVMChain, SKConfigState } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
-import type { SwapKitState } from "./types";
+import type { BalanceDetails, SwapKitState } from "./types";
 
 const useSwapKitStore = create<SwapKitState>((set) => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -208,10 +208,18 @@ export const useSwapKit = () => {
     [keystoreFile, swapKit, setWalletState, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
   );
 
-  const balances =
-    (Object.entries(swapKit?.getAllWallets() || {})?.flatMap(([chain, wallet]) =>
-      wallet?.balance?.flatMap((balance) => ({ balance, chain, identifier: `${chain}.${balance.symbol}`, wallet })),
-    ) as { balance: AssetValue; chain: Chain; identifier: string; wallet: ChainWallet<Chain> }[]) || [];
+  const balancesByChain = new Map<Chain, BalanceDetails[]>();
+
+  Object.values((swapKit?.getAllWallets?.() as Record<Chain, ChainWallet<Chain>>) || {})?.forEach((wallet) => {
+    wallet?.balance?.forEach((balance) => {
+      const balances = balancesByChain.get(wallet.chain) || [];
+
+      balancesByChain.set(wallet.chain, [
+        ...balances,
+        { balance, chain: wallet.chain, identifier: `${wallet.chain}.${balance.symbol}`, wallet },
+      ]);
+    });
+  });
 
   return useMemo(
     // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -219,7 +227,7 @@ export const useSwapKit = () => {
       swapKit,
       loadSwapKit,
 
-      balances,
+      balancesByChain,
 
       walletType,
       isConnectingWallet,
@@ -243,7 +251,7 @@ export const useSwapKit = () => {
     [
       swapKit,
       loadSwapKit,
-      balances,
+      balancesByChain,
       walletType,
       isConnectingWallet,
       isWalletConnected,
