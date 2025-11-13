@@ -406,4 +406,20 @@ describe("swapKitConfig", () => {
       expect(SKConfig.get("apiKeys").xaman).toBe("xaman-key");
     });
   });
+
+  describe("setEndpoint", () => {
+    test("sets endpoint", async () => {
+      SKConfig.reinitialize();
+
+      SKConfig.setEndpoint("getBalance", ({ chain }) =>
+        Promise.resolve([{ chain, decimal: 18, identifier: "ETH", symbol: "ETH", ticker: "ETH", value: "100" }]),
+      );
+
+      const result = await SKConfig.get("endpoints").getBalance({ address: "0x123", chain: Chain.Ethereum });
+
+      expect(result).toEqual([
+        { chain: Chain.Ethereum, decimal: 18, identifier: "ETH", symbol: "ETH", ticker: "ETH", value: "100" },
+      ]);
+    });
+  });
 });

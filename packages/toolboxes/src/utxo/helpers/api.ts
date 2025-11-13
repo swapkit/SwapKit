@@ -289,7 +289,7 @@ async function getUtxos({
   return results;
 }
 
-function utxoApi(chain: UTXOChain) {
+export function getUtxoApi(chain: UTXOChain) {
   const apiKey = SKConfig.get("apiKeys").blockchair || "";
 
   warnOnce({
@@ -312,23 +312,8 @@ function utxoApi(chain: UTXOChain) {
 /**
  * "Factory" to ensure typing for custom UTXO APIs
  */
-export function createCustomUtxoApi(methods: ReturnType<typeof utxoApi>) {
+export function createCustomUtxoApi(methods: ReturnType<typeof getUtxoApi>) {
   return methods;
-}
-
-export function getUtxoApi(chain: UTXOChain) {
-  const customUtxoApi = SKConfig.get("apis")[chain];
-
-  if (customUtxoApi) {
-    warnOnce({
-      condition: true,
-      id: "custom_utxo_api_warning",
-      warning: "Using custom UTXO API. Be sure to implement all methods to avoid issues.",
-    });
-    return customUtxoApi as ReturnType<typeof utxoApi>;
-  }
-
-  return utxoApi(chain);
 }
 
 export function getUtxoNetwork() {
