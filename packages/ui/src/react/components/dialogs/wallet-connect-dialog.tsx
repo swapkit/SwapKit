@@ -7,13 +7,14 @@ import { SearchIcon, WalletMinimalIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { match, P } from "ts-pattern";
-import { useModal } from "../../hooks/use-modal";
+import { showModal, useModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../ui/sonner";
 import { WalletIcon } from "../wallet-icon";
+import { WalletKeystoreConnectDialog } from "./wallet-keystore-connect-dialog";
 
 const WALLET_GROUPS = {
   "Browser Extensions": [
@@ -190,7 +191,7 @@ const FEATURED_WALLETS = [
   WalletOption.METAMASK,
   WalletOption.CTRL,
   WalletOption.COINBASE_WEB,
-  WalletOption.PHANTOM,
+  WalletOption.KEYSTORE,
   WalletOption.LEDGER,
   WalletOption.TREZOR,
   WalletOption.BRAVE,
@@ -200,7 +201,6 @@ const FEATURED_WALLETS = [
 export function WalletConnectDialog() {
   const modal = useModal();
   const [isShowingAllWallets, setIsShowingAllWallets] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredWalletGroups = useMemo(() => {
@@ -292,11 +292,31 @@ function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
   const { connectWallet, isConnectingWallet, walletType } = useSwapKit();
   const modal = useModal();
 
-  const handleButtonClick = useCallback(async () => {
+  const handleWalletClick = useCallback(async () => {
     try {
-      await connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
+      const chainsForWallet = availableChainsByWallet?.[wallet] as Chain[];
 
-      modal.resolve({ confirmed: true, data: wallet });
+      if (!chainsForWallet || chainsForWallet?.length === 0) {
+        toast.error("This wallet does not support any chains", {
+          description: "Please try a different wallet.",
+          toasterId: SWAPKIT_WIDGET_TOASTER_ID,
+        });
+        return;
+      }
+
+      await match(wallet)
+        .with(WalletOption.KEYSTORE, async () => {
+          const { confirmed } = await showModal(<WalletKeystoreConnectDialog />);
+
+          if (!confirmed) return;
+
+          modal.resolve({ confirmed: true, data: wallet });
+        })
+        .otherwise(async () => {
+          await connectWallet(wallet, chainsForWallet);
+
+          modal.resolve({ confirmed: true, data: wallet });
+        });
     } catch {
       toast.error("Failed to connect your wallet", {
         description: "Make sure your wallet is connected and accessible by the browser.",
@@ -315,7 +335,7 @@ function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
       className="flex aspect-[1.525/1] h-full w-full flex-col items-center justify-center gap-1"
       isLoading={isConnectingWallet && walletType === wallet}
       key={`wallet-connect-button-${wallet}`}
-      onClick={handleButtonClick}>
+      onClick={handleWalletClick}>
       <WalletIcon className="size-5" wallet={wallet} />
 
       <span className="text-foreground text-sm">{walletName}</span>
