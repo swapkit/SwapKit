@@ -6,7 +6,7 @@ import type { UseFilteredSortedAssetsOptions, UseFilteredSortedAssetsToken } fro
 import { useDebouncedEffect } from "./use-debounced-effect";
 
 export function useFilteredSortedAssets() {
-  const { balances, isWalletConnected } = useSwapKit();
+  const { balancesByChain, isWalletConnected } = useSwapKit();
 
   // internal and public state required to support debouncing
   const [filters, setFilters] = useState<UseFilteredSortedAssetsOptions>({ searchQuery: "", selectedNetworks: [] });
@@ -67,18 +67,20 @@ export function useFilteredSortedAssets() {
   const filteredAssets = useMemo(() => {
     const filteredAssetsMap = filterAssetsMap({ assetsMap, filters: internalFiltersState });
 
-    balances?.forEach(({ identifier, balance }) => {
-      const matchingAsset = filteredAssetsMap.get(identifier);
+    Array.from(balancesByChain.values())
+      ?.flat()
+      .forEach(({ identifier, balance }) => {
+        const matchingAsset = filteredAssetsMap.get(identifier);
 
-      if (!matchingAsset) return;
+        if (!matchingAsset) return;
 
-      filteredAssetsMap.set(matchingAsset.identifier, { ...matchingAsset, balance });
-    });
+        filteredAssetsMap.set(matchingAsset.identifier, { ...matchingAsset, balance });
+      });
 
     const assets = Array.from(filteredAssetsMap.values());
 
     return sortAssets({ assets, filters: internalFiltersState });
-  }, [internalFiltersState, balances, assetsMap]);
+  }, [internalFiltersState, balancesByChain, assetsMap]);
 
   return useMemo(
     () => ({ assets: filteredAssets, filters, isLoading, networks, setFilters }),
