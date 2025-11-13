@@ -7,15 +7,9 @@ export interface SwapKitState {
   walletType: WalletOption | null;
   isWalletConnected: boolean;
   isConnectingWallet: boolean;
-  keystoreFile: KeystoreFile | null;
-  isKeystoreOpen: boolean;
-  isKeystoreDecrypting: boolean;
 
   setSwapKit: (swapKit: ReturnType<typeof createSwapKit> | null) => void;
   setWalletState: (state: { connected: boolean; type: WalletOption | null }) => void;
-  setKeystoreFile: (file: KeystoreFile | null) => void;
-  setIsKeystoreOpen: (isOpen: boolean) => void;
-  setIsKeystoreDecrypting: (isDecrypting: boolean) => void;
   setIsConnectingWallet: (isConnectingWallet: boolean) => void;
 }
 
