@@ -5,59 +5,59 @@ import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
 import { TokenBalance } from "./TokenBalance";
 import { TruncatedAddress } from "./TruncatedAddress";
+import { Separator } from "./ui/separator";
 
 export function WalletDrawer() {
   const modal = useModal();
-  const { walletType, disconnectWallet, balances } = useSwapKit();
+  const { walletType, disconnectWallet, balancesByChain } = useSwapKit();
 
   return (
     <Sheet {...modal}>
-      <SheetContent>
+      <SheetContent className="flex flex-col">
         <SheetHeader>
           <SheetTitle>Connected Wallets</SheetTitle>
           <SheetDescription>
-            {walletType} connected to {balances.length} chain
-            {balances.length !== 1 ? "s" : ""}
+            {walletType} connected to {balancesByChain.size} chain
+            {balancesByChain.size !== 1 ? "s" : ""}
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-6 pb-16">
-          {balances?.map(({ balance, identifier }) => {
+        <div className="-mr-4 mt-6 flex w-auto flex-1 flex-col space-y-6 overflow-y-auto pr-4 pb-16">
+          {balancesByChain?.entries()?.map(([chain, balances]) => {
+            const walletAddress = balances?.[0]?.wallet?.address;
+
             return (
-              <div className="space-y-4" key={`wallet-${identifier}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ChainIcon chain={balance.chain} className="h-6 w-6" />
+              <div className="space-y-4" key={`wallet-chain-${chain}`}>
+                <div className="flex items-center gap-2">
+                  <ChainIcon chain={chain} className="h-6 w-6" />
 
-                    <h3 className="font-semibold">{balance.chain}</h3>
-                  </div>
+                  <h3 className="font-semibold">{chain}</h3>
 
-                  {balance?.address && <TruncatedAddress address={balance.address} />}
+                  {walletAddress && <TruncatedAddress address={walletAddress} className="ml-auto" />}
                 </div>
 
-                <div className="space-y-2">
-                  {balance?.getValue?.("number") > 0 ? (
-                    <TokenBalance balance={balance} />
-                  ) : (
-                    <div className="text-muted-foreground text-sm">No balance found</div>
-                  )}
+                <div className="flex flex-col gap-2">
+                  {balances?.map(({ balance, identifier }) => (
+                    <TokenBalance balance={balance} key={`wallet-chain-balance-${identifier}`} />
+                  ))}
                 </div>
+
+                <Separator />
               </div>
             );
           })}
         </div>
-        <div className="absolute right-6 bottom-6 left-6">
-          <Button
-            className="w-full"
-            onClick={() => {
-              disconnectWallet();
-              modal.resolve({ confirmed: true, data: undefined });
-            }}
-            variant="destructive">
-            <LogOut className="mr-2 h-4 w-4" />
-            Disconnect
-          </Button>
-        </div>
+
+        <Button
+          className="w-full"
+          onClick={() => {
+            disconnectWallet();
+            modal.resolve({ confirmed: true, data: undefined });
+          }}
+          variant="destructive">
+          <LogOut className="mr-2 h-4 w-4" />
+          Disconnect
+        </Button>
       </SheetContent>
     </Sheet>
   );
