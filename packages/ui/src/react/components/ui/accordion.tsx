@@ -2,20 +2,27 @@
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
+import type { ComponentPropsWithoutRef, ComponentRef } from "react";
 import * as React from "react";
 import { cn } from "../../../lib/utils";
 
-const Accordion = AccordionPrimitive.Root;
+const Accordion: React.FC<ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>> = AccordionPrimitive.Root;
 
-const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+const AccordionItem: React.ForwardRefExoticComponent<
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Item> &
+    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Item>>
+> = React.forwardRef<
+  ComponentRef<typeof AccordionPrimitive.Item>,
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => <AccordionPrimitive.Item className={cn("", className)} ref={ref} {...props} />);
 AccordionItem.displayName = "AccordionItem";
 
-const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { showChevron?: boolean }
+const AccordionTrigger: React.ForwardRefExoticComponent<
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> &
+    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Trigger>>
+> = React.forwardRef<
+  ComponentRef<typeof AccordionPrimitive.Trigger>,
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { showChevron?: boolean }
 >(({ className, children, showChevron = true, ...props }, ref) => (
   <AccordionPrimitive.Header className="flex">
     <AccordionPrimitive.Trigger
@@ -32,9 +39,12 @@ const AccordionTrigger = React.forwardRef<
 ));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+const AccordionContent: React.ForwardRefExoticComponent<
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> &
+    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Content>>
+> = React.forwardRef<
+  ComponentRef<typeof AccordionPrimitive.Content>,
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"

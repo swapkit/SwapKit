@@ -1,8 +1,6 @@
 "use client";
-import type { Chain } from "@swapkit/helpers";
 import { ChainIcon, useModal, useSwapKit } from "@swapkit/ui/react";
 import { LogOut } from "lucide-react";
-import { useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/sheet";
 import { TokenBalance } from "./TokenBalance";
@@ -10,25 +8,7 @@ import { TruncatedAddress } from "./TruncatedAddress";
 
 export function WalletDrawer() {
   const modal = useModal();
-  const { balances, walletType, disconnectWallet } = useSwapKit();
-
-  const connectedChains = useMemo(() => {
-    const uniqueChains = new Set<Chain>();
-    for (const balance of balances) {
-      uniqueChains.add(balance.chain);
-    }
-    return Array.from(uniqueChains);
-  }, [balances]);
-
-  const chainAddresses = useMemo(() => {
-    const addresses = new Map<Chain, string>();
-    for (const balance of balances) {
-      if (!addresses.has(balance.chain)) {
-        addresses.set(balance.chain, balance.address || "");
-      }
-    }
-    return addresses;
-  }, [balances]);
+  const { walletType, disconnectWallet, balances } = useSwapKit();
 
   return (
     <Sheet {...modal}>
@@ -36,37 +16,31 @@ export function WalletDrawer() {
         <SheetHeader>
           <SheetTitle>Connected Wallets</SheetTitle>
           <SheetDescription>
-            {walletType} connected to {connectedChains.length} chain
-            {connectedChains.length !== 1 ? "s" : ""}
+            {walletType} connected to {balances.length} chain
+            {balances.length !== 1 ? "s" : ""}
           </SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6 pb-16">
-          {connectedChains?.map((chain) => {
-            const chainBalances = balances.filter((b) => b.chain === chain);
-            const address = chainAddresses.get(chain);
-            const gasAsset = chainBalances.find((b) => b.isGasAsset);
-            const otherBalances = chainBalances.filter((b) => !b.isGasAsset);
-
+          {balances?.map(({ balance, identifier }) => {
             return (
-              <div className="space-y-4" key={chain}>
+              <div className="space-y-4" key={`wallet-${identifier}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ChainIcon chain={chain} className="h-6 w-6" />
-                    <h3 className="font-semibold">{chain}</h3>
+                    <ChainIcon chain={balance.chain} className="h-6 w-6" />
+
+                    <h3 className="font-semibold">{balance.chain}</h3>
                   </div>
-                  {address && <TruncatedAddress address={address} />}
+
+                  {balance?.address && <TruncatedAddress address={balance.address} />}
                 </div>
+
                 <div className="space-y-2">
-                  {gasAsset && (
-                    <div className="mb-2">
-                      <TokenBalance balance={gasAsset} />
-                    </div>
+                  {balance?.getValue?.("number") > 0 ? (
+                    <TokenBalance balance={balance} />
+                  ) : (
+                    <div className="text-muted-foreground text-sm">No balance found</div>
                   )}
-                  {otherBalances.map((balance) => (
-                    <TokenBalance balance={balance} key={`${balance.chain}-${balance.ticker || balance.symbol}`} />
-                  ))}
-                  {chainBalances.length === 0 && <div className="text-muted-foreground text-sm">No balances found</div>}
                 </div>
               </div>
             );
@@ -77,7 +51,7 @@ export function WalletDrawer() {
             className="w-full"
             onClick={() => {
               disconnectWallet();
-              modal.resolve({ confirmed: true });
+              modal.resolve({ confirmed: true, data: undefined });
             }}
             variant="destructive">
             <LogOut className="mr-2 h-4 w-4" />
