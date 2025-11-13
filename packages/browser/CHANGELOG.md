@@ -1,5 +1,19 @@
 # @swapkit/browser
 
+## 4.1.0
+
+### Minor Changes
+
+- [`2f181c6`](https://github.com/swapkit/SwapKit/commit/2f181c6d891d963854c5b7702a3de583c38d9317) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Updates to isolated modules & wallet extensions extraction
+
+### Patch Changes
+
+- Updated dependencies [[`e6f25c7`](https://github.com/swapkit/SwapKit/commit/e6f25c78b0469131c9ff6895cc506075ead6290c), [`2f181c6`](https://github.com/swapkit/SwapKit/commit/2f181c6d891d963854c5b7702a3de583c38d9317)]:
+  - @swapkit/helpers@4.5.0
+  - @swapkit/plugins@4.2.0
+  - @swapkit/wallets@4.3.0
+  - @swapkit/core@4.1.0
+
 ## 4.0.48
 
 ### Patch Changes

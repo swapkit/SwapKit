@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1584](https://github.com/swapkit/SwapKit/pull/1584) [`bcb9509`](https://github.com/swapkit/SwapKit/commit/bcb9509cb004f80a7b22fdeafb2ce7d34d831c99) Thanks [@ice-chillios](https://github.com/ice-chillios)! - New EVM chains (Monad, MegaETH)
+
 ## 0.2.3
 
 ### Patch Changes

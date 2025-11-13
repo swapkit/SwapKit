@@ -1,7 +1,12 @@
 {
-  "dependencies": { "@swapkit/sdk": "workspace:*" },
+  "dependencies": {
+    "@swapkit/sdk": "workspace:*"
+  },
   "name": "@internal/playground-bun-backend",
   "private": true,
-  "scripts": { "dev": "bun run --watch src/index.ts", "start": "bun run build && bun run dist/index.js" },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run build && bun run dist/index.js"
+  },
   "version": "0.0.0"
 }

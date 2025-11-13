@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 4.1.0
+
+### Minor Changes
+
+- [`2f181c6`](https://github.com/swapkit/SwapKit/commit/2f181c6d891d963854c5b7702a3de583c38d9317) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Updates to isolated modules & wallet extensions extraction
+
 ## 4.0.43
 
 ### Patch Changes
