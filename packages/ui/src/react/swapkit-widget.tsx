@@ -1,11 +1,14 @@
 "use client";
 
-import { AssetValue, ProviderName, type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
+import { type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
+import "@swapkit/ui/swapkit.css";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
+import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
+import { SwapConfirmDialog } from "./components/dialogs/swap-confirm-dialog";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
@@ -14,9 +17,6 @@ import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
-import "@swapkit/ui/swapkit.css";
-import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
-import { SwapConfirmDialog } from "./components/dialogs/swap-confirm-dialog";
 
 export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
@@ -70,36 +70,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
-    if (!(inputAssetValue && swapKit)) return;
-
-    try {
-      const isChainflip = route?.providers?.includes(ProviderName.CHAINFLIP);
-      if (isChainflip) {
-        await handleSwap(route);
-        return;
-      }
-
-      const tx = route.tx;
-      if (!tx || typeof tx === "string" || !("from" in tx)) {
-        throw new Error("Invalid transaction format");
-      }
-
-      const isApproved = await swapKit.isAssetValueApproved(inputAssetValue, tx.from);
-      if (isApproved) {
-        await handleSwap(route);
-      } else {
-        await swapKit.approveAssetValue(inputAssetValue, tx.from);
-        toast.success("Asset approved, you can now swap", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
-      }
-    } catch (error) {
-      console.error("Swap process failed:", error);
-      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
-        toasterId: SWAPKIT_WIDGET_TOASTER_ID,
-      });
-    }
-  };
-
   const handleSubmitButtonClick = async () => {
     if (!isWalletConnected) {
       void showModal(<WalletConnectDialog />);
@@ -109,10 +79,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     try {
-      const inputAssetValue = await AssetValue.from({ amount, asset: inputAsset?.toString(), asyncTokenLookup: true });
-      const amountValue = inputAssetValue.set(amount);
-
-      await performSwap(selectedRoute?.route, amountValue);
+      await handleSwap(selectedRoute?.route);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -132,6 +99,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
     .with({ amount: P.nullish }, () => "Enter Amount")
     .otherwise(() => "Swap");
+
+  const isSubmitButtonDisabled =
+    (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) ||
+    isSwapping ||
+    isFetchingQuote;
 
   return (
     <div className="flex flex-col gap-4">
@@ -186,11 +158,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       <Button
         className="w-full"
-        disabled={
-          (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) ||
-          isSwapping ||
-          isFetchingQuote
-        }
+        disabled={isSubmitButtonDisabled}
         onClick={handleSubmitButtonClick}
         size="xl"
         variant="primary">
