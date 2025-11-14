@@ -27,19 +27,7 @@ export type SwapKitWidgetProps = { config?: SKConfigState };
 
 export type UseSwapQuoteParams = { inputAsset: string | null; outputAsset: string | null; amount: string };
 
-export type UseFilteredSortedAssetsToken = {
-  identifier: string;
-  ticker: string;
-  symbol?: string;
-  chainId: string;
-  address?: string;
-  decimals?: number;
-  logoURI?: string;
-  chain: Chain | undefined;
-  assetValue: AssetValue | undefined;
-};
-
-export type UseFilteredSortedAssetsOptions = {
+export type UseFilteredSortedAssetsFilters = {
   searchQuery?: string;
   selectedNetworks?: Chain[];
   includeBalances?: boolean;

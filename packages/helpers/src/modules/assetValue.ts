@@ -21,8 +21,8 @@ import type { SwapKitValueType } from "./swapKitNumber";
 const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near, Chain.Sui];
 const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
-const staticTokensMap = new Map<
-  TokenNames | string,
+export const staticTokensMap = new Map<
+  TokenNames | (string & {}),
   { tax?: TokenTax; decimal: number; identifier: string; logoURI?: string }
 >();
 
