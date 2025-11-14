@@ -6,25 +6,19 @@ import { useDebouncedEffect } from "./use-debounced-effect";
 
 export function useFilteredSortedAssets() {
   const { balancesByChain } = useSwapKit();
-
-  // internal and public state required to support debouncing
   const [filters, setFilters] = useState<UseFilteredSortedAssetsFilters>({ searchQuery: "", selectedNetworks: [] });
-  const [internalFiltersState, setInternalFilterState] = useState(() => filters);
 
-  useDebouncedEffect(
-    () => {
-      setInternalFilterState(filters);
-    },
-    [filters],
-    500,
-  );
+  // internal state for handling debouncing
+  const [_internalFiltersState, _setInternalFilterState] = useState(() => filters);
+
+  useDebouncedEffect(() => _setInternalFilterState(filters), [filters], 500);
 
   const filteredAssets = useMemo(() => {
-    const filteredAssetsMap = filterAssetsMap({ assetsMap, filters: internalFiltersState });
+    const filteredAssetsMap = filterAssetsMap({ assetsMap, filters: _internalFiltersState });
 
     Array.from(balancesByChain.values())
       ?.flat()
-      .forEach(({ identifier, balance }) => {
+      ?.forEach(({ identifier, balance }) => {
         const matchingAsset = filteredAssetsMap.get(identifier);
 
         if (!matchingAsset) return;
@@ -34,8 +28,8 @@ export function useFilteredSortedAssets() {
 
     const assets = Array.from(filteredAssetsMap.values());
 
-    return sortAssets({ assets, filters: internalFiltersState });
-  }, [internalFiltersState, balancesByChain]);
+    return sortAssets({ assets, filters: _internalFiltersState });
+  }, [_internalFiltersState, balancesByChain]);
 
   return useMemo(() => ({ assets: filteredAssets, filters, setFilters }), [filters, filteredAssets]);
 }
