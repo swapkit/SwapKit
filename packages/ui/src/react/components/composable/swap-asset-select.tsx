@@ -1,6 +1,6 @@
 "use client";
 
-import { Chain } from "@swapkit/sdk";
+import { AllChains, type Chain } from "@swapkit/sdk";
 import { SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
@@ -31,14 +31,15 @@ export function SwapAssetSelect({
 
   // 8 cols * 2 rows - 1 (button "all") - 2 (button "hide/show more")
   const collapsedNetworksAmount = 8 * 2 - 1 - 2;
-  const totalNetworksAmount = Object.values(Chain).length;
+  const totalNetworksAmount = AllChains.length;
   const visibleNetworksAmount = isNetworkListExpanded ? totalNetworksAmount : collapsedNetworksAmount;
   const canShowMore = collapsedNetworksAmount < totalNetworksAmount - 2;
 
   const networksToRender = useMemo(() => {
-    return Object.values(Chain)
-      ?.sort((a, b) => a?.localeCompare(b))
-      ?.slice(0, canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2);
+    return AllChains?.sort((a, b) => a?.localeCompare(b))?.slice(
+      0,
+      canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2,
+    );
   }, [canShowMore, visibleNetworksAmount]);
 
   const handleDialogTriggerClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -103,6 +104,7 @@ export function SwapAssetSelect({
 
             {networksToRender?.map((chain) => {
               const isSelected = selectedNetworks?.includes(chain);
+
               return (
                 <Button
                   className={cn(
@@ -157,29 +159,33 @@ export function SwapAssetSelect({
             )
             .otherwise(() => (
               <div className="-mx-6 flex flex-col overflow-y-auto overflow-x-hidden px-6">
-                {assets?.slice(0, 100)?.map((asset) => (
-                  <Button
-                    className="-mx-4 h-auto w-auto justify-between rounded-lg px-4 py-2"
-                    key={`swap-asset-item-${asset.identifier}-${asset.chainId}`}
-                    onClick={() => {
-                      setSelectedAsset(asset.identifier);
-                      setOpen(false);
-                    }}
-                    variant="ghost">
-                    <SwapAssetItem asset={asset.identifier} />
+                {assets?.slice(0, 100)?.map((asset) => {
+                  const assetIdentifier = asset.toString();
 
-                    <div className={cn("flex flex-col items-end", !asset?.balance && "opacity-50")}>
-                      <span className="font-medium text-base text-foreground">
-                        {asset?.balance?.getValue("number")?.toFixed(6) || "0.00"}
-                      </span>
+                  return (
+                    <Button
+                      className="-mx-4 h-auto w-auto justify-between rounded-lg px-4 py-2"
+                      key={`swap-asset-item-${assetIdentifier}-${asset.chainId}`}
+                      onClick={() => {
+                        setSelectedAsset(assetIdentifier);
+                        setOpen(false);
+                      }}
+                      variant="ghost">
+                      <SwapAssetItem asset={assetIdentifier} />
 
-                      <span className="-mt-0.5 text-muted-foreground text-sm">
-                        {/* TODO: show the correct USD balance value */}
-                        {formatCurrency(asset?.balance?.getValue("number") || 0)}
-                      </span>
-                    </div>
-                  </Button>
-                ))}
+                      <div className={cn("flex flex-col items-end", asset?.getValue("number") <= 0 && "opacity-50")}>
+                        <span className="font-medium text-base text-foreground">
+                          {asset?.getValue("number")?.toFixed(6) || "0.00"}
+                        </span>
+
+                        <span className="-mt-0.5 text-muted-foreground text-sm">
+                          {/* TODO: show the correct USD balance value */}
+                          {formatCurrency(asset?.getValue("number") || 0)}
+                        </span>
+                      </div>
+                    </Button>
+                  );
+                })}
               </div>
             ))}
         </DialogFooter>
