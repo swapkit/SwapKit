@@ -9,7 +9,7 @@ export function useFilteredSortedAssets() {
 
   // internal and public state required to support debouncing
   const [filters, setFilters] = useState<UseFilteredSortedAssetsFilters>({ searchQuery: "", selectedNetworks: [] });
-  const [internalFiltersState, setInternalFilterState] = useState(filters);
+  const [internalFiltersState, setInternalFilterState] = useState(() => filters);
 
   useDebouncedEffect(
     () => {

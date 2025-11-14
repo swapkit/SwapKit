@@ -38,12 +38,6 @@ export const assetsMap = new Map<TokenNames | (string & {}), AssetValue>(
   ]),
 );
 
-export const networks = new Set(
-  Array.from(assetsMap.values())
-    .map((asset) => asset.chain)
-    .filter((chain) => Boolean(chain)),
-);
-
 export const useSwapKit = () => {
   const {
     swapKit,
@@ -222,18 +216,26 @@ export const useSwapKit = () => {
     [keystoreFile, swapKit, setWalletState, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
   );
 
-  const balancesByChain = new Map<Chain, BalanceDetails[]>();
+  const stableWalletsMemoKey = Object.entries(swapKit?.getAllWallets?.() || {})
+    .map(([chain, wallet]) => `${chain}:${wallet?.balance?.map((bal) => bal.toString()).join("_")}`)
+    .join(",");
 
-  Object.values((swapKit?.getAllWallets?.() as Record<Chain, ChainWallet<Chain>>) || {})?.forEach((wallet) => {
-    wallet?.balance?.forEach((balance) => {
-      const balances = balancesByChain.get(wallet.chain) || [];
+  // biome-ignore lint/correctness/useExhaustiveDependencies: uses stable memo key for performance reasons
+  const balancesByChain = useMemo(() => {
+    const balancesByChain = new Map<Chain, BalanceDetails[]>();
 
-      balancesByChain.set(wallet.chain, [
-        ...balances,
-        { balance, chain: wallet.chain, identifier: `${wallet.chain}.${balance.symbol}`, wallet },
-      ]);
+    Object.values((swapKit?.getAllWallets?.() as Record<Chain, ChainWallet<Chain>>) || {})?.forEach((wallet) => {
+      wallet?.balance?.forEach((balance) => {
+        const balances = balancesByChain.get(wallet.chain) || [];
+
+        balances.push({ balance, chain: wallet.chain, identifier: balance.toString(), wallet });
+
+        balancesByChain.set(wallet.chain, balances);
+      });
     });
-  });
+
+    return balancesByChain;
+  }, [stableWalletsMemoKey]);
 
   return useMemo(
     // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
