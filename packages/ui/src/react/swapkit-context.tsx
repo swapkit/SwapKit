@@ -1,6 +1,6 @@
 "use client";
 
-import type { Chain, ChainWallet, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
+import type { Chain, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, staticTokensMap, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
@@ -224,7 +224,7 @@ export const useSwapKit = () => {
   const balancesByChain = useMemo(() => {
     const balancesByChain = new Map<Chain, BalanceDetails[]>();
 
-    Object.values((swapKit?.getAllWallets?.() as Record<Chain, ChainWallet<Chain>>) || {})?.forEach((wallet) => {
+    Object.values(swapKit?.getAllWallets?.() || {})?.forEach((wallet) => {
       wallet?.balance?.forEach((balance) => {
         const balances = balancesByChain.get(wallet.chain) || [];
 

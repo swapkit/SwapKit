@@ -8,19 +8,13 @@ import { cn } from "../../../lib/utils";
 
 const Accordion: React.FC<ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>> = AccordionPrimitive.Root;
 
-const AccordionItem: React.ForwardRefExoticComponent<
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Item> &
-    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Item>>
-> = React.forwardRef<
+const AccordionItem = React.forwardRef<
   ComponentRef<typeof AccordionPrimitive.Item>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => <AccordionPrimitive.Item className={cn("", className)} ref={ref} {...props} />);
 AccordionItem.displayName = "AccordionItem";
 
-const AccordionTrigger: React.ForwardRefExoticComponent<
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> &
-    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Trigger>>
-> = React.forwardRef<
+const AccordionTrigger = React.forwardRef<
   ComponentRef<typeof AccordionPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { showChevron?: boolean }
 >(({ className, children, showChevron = true, ...props }, ref) => (
@@ -39,10 +33,7 @@ const AccordionTrigger: React.ForwardRefExoticComponent<
 ));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const AccordionContent: React.ForwardRefExoticComponent<
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> &
-    React.RefAttributes<ComponentRef<typeof AccordionPrimitive.Content>>
-> = React.forwardRef<
+const AccordionContent = React.forwardRef<
   ComponentRef<typeof AccordionPrimitive.Content>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
