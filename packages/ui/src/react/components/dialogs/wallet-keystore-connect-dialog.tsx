@@ -163,7 +163,7 @@ export function WalletKeystoreConnectDialog() {
                 </Button>
 
                 <Button
-                  disabled={!form?.formState?.isValid}
+                  disabled={!form?.formState?.isValid || form?.formState?.isSubmitting}
                   isLoading={form?.formState?.isSubmitting}
                   type="submit"
                   variant="primary">
@@ -218,7 +218,7 @@ export function WalletKeystoreConnectDialog() {
                 </Button>
 
                 <Button
-                  disabled={!form?.formState?.isValid}
+                  disabled={!form?.formState?.isValid || form?.formState?.isSubmitting}
                   isLoading={form?.formState?.isSubmitting}
                   type="submit"
                   variant="primary">
@@ -248,7 +248,9 @@ export function WalletKeystoreConnectDialog() {
                   Go Back
                 </Button>
 
-                <Button type="submit">Done</Button>
+                <Button type="submit" variant="primary">
+                  Done
+                </Button>
               </DialogFooter>
             </form>
           </TabsContent>
