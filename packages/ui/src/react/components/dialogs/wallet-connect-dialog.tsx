@@ -7,14 +7,13 @@ import { SearchIcon, WalletMinimalIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { match, P } from "ts-pattern";
-import { showModal, useModal } from "../../hooks/use-modal";
+import { useModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../ui/sonner";
 import { WalletIcon } from "../wallet-icon";
-import { GlobalKeystoreDialog } from "./wallet-connect-keystore-dialog";
 
 const WALLET_GROUPS = {
   "Browser Extensions": [
@@ -295,20 +294,7 @@ function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
 
   const handleButtonClick = useCallback(async () => {
     try {
-      if (wallet === WalletOption.KEYSTORE) {
-        return void showModal(<GlobalKeystoreDialog />);
-      }
-
-      await connectWallet(wallet, [
-        Chain.Cosmos,
-        Chain.Maya,
-        Chain.THORChain,
-        Chain.Kujira,
-        Chain.Bitcoin,
-        Chain.Ethereum,
-        Chain.Avalanche,
-        Chain.BinanceSmartChain,
-      ] as Chain[]);
+      await connectWallet(wallet, [Chain.Cosmos, Chain.Maya, Chain.THORChain, Chain.Kujira] as Chain[]);
 
       modal.resolve({ confirmed: true, data: wallet });
     } catch {
