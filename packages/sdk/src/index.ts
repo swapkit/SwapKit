@@ -114,7 +114,7 @@ export const defaultWallets = {
   ...walletSelectorWallet,
   ...walletconnectWallet,
   ...xamanWallet,
-};
+} as ReturnType<typeof createWallet>;
 
 export function createSwapKit<
   PluginName extends string,

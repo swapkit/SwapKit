@@ -11,7 +11,13 @@ export default function SwapPage() {
     defaultValues: { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" },
   });
 
-  const [apiKey, apiUrl] = watch(["apiKey", "apiUrl"]);
+  const [apiKey, apiUrl, experimentalApiUrlQuote, experimentalApiUrlSwap, experimentalApiKey] = watch([
+    "apiKey",
+    "apiUrl",
+    "experimental.apiUrlQuote",
+    "experimental.apiUrlSwap",
+    "experimental.apiKey",
+  ]);
 
   return (
     <div className="grid w-full grid-cols-3 gap-4">
@@ -27,7 +33,13 @@ export default function SwapPage() {
               swapKit: apiKey,
               walletConnectProjectId: "",
             },
-            envs: { devApiUrl: apiUrl, isDev: true },
+            envs: {
+              devApiUrl: apiUrl,
+              experimental_apiKey: experimentalApiKey,
+              experimental_apiUrlQuote: experimentalApiUrlQuote,
+              experimental_apiUrlSwap: experimentalApiUrlSwap,
+              isDev: true,
+            },
             integrations: {
               keepKey: {
                 basePath: "http://localhost:1646/spec/swagger.json",

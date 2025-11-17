@@ -2,7 +2,8 @@
 
 import "@swapkit/ui/swapkit.css";
 
-import { type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
+import { type AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
+import "@swapkit/ui/swapkit.css";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
@@ -47,23 +48,36 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey]);
 
-  const handleSwap = async (route: QuoteResponseRoute) => {
-    if (!swapKit) return;
+  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
+    if (!(inputAssetValue && swapKit)) return;
 
     try {
-      const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
-
-      if (!confirmed) return;
-
       setIsSwapping(true);
-      const swap = await swapKit.swap({ route });
 
-      await swap.wait();
-      setAmount("");
-      toast.success("Swap completed successfully", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
+      if (!route?.sourceAddress || !route?.destinationAddress || Number.parseFloat(route?.sellAmount) <= 0) {
+        console.error("Invalid route parameters. Please check the route details and try again.", { route });
+
+        throw new Error("Invalid route parameters. Please check the route details and try again.");
+      }
+
+      const isApproved = await swapKit.isAssetValueApproved(inputAssetValue, route?.sourceAddress);
+
+      if (!isApproved) {
+        await swapKit.approveAssetValue(inputAssetValue, route?.sourceAddress);
+      }
+
+      const routeWithTx = await SwapKitApi.getRouteWithTx({ routeId: route.routeId });
+
+      if (!routeWithTx) throw new Error("No route with TX found");
+
+      const swap = await swapKit.swap({ route: routeWithTx, useApiTx: true });
+
+      await swap?.wait?.();
+
+      toast.success("Swap transaction has been successfully submitted!", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
     } catch (error) {
-      console.error("Swap failed:", error);
-      toast.error(`Swap failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
+      console.error("Swap process failed:", error);
+      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
         toasterId: SWAPKIT_WIDGET_TOASTER_ID,
       });
     } finally {
@@ -73,14 +87,18 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const handleSubmitButtonClick = async () => {
     if (!isWalletConnected) {
-      void showModal(<WalletConnectDialog />);
+      await showModal(<WalletConnectDialog />);
       return;
     }
 
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
+    const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
+
+    if (!confirmed) return;
+
     try {
-      await handleSwap(selectedRoute?.route);
+      await performSwap(selectedRoute?.route);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
