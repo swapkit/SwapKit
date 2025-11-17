@@ -70,7 +70,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
       if (!routeWithTx) throw new Error("No route with TX found");
 
-      const swap = await swapKit.swap({ route: routeWithTx, useApiTx: true });
+      const swap = await swapKit.swap({ route: routeWithTx });
 
       await swap?.wait?.();
 

@@ -34,12 +34,7 @@ import {
   type TrackingRequest,
 } from "./types";
 
-const SKRequestClient = RequestClient.extend({
-  dynamicHeader: () => {
-    const { swapKit } = SKConfig.get("apiKeys");
-    return swapKit ? { "x-api-key": swapKit } : {};
-  },
-});
+export const SKRequestClient = RequestClient;
 
 export async function getTrackerDetails(json: TrackingRequest) {
   const response = await SKRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
@@ -59,12 +54,11 @@ export async function getTrackerDetails(json: TrackingRequest) {
 }
 
 export async function getSwapQuote(json: QuoteRequest) {
-  const experimentalApiKey = SKConfig.get("envs").experimental_apiKey;
+  const { getQuote } = SKConfig.get("endpoints");
 
-  const response = await SKRequestClient.post<QuoteResponse>(getApiUrl("/quote"), {
-    ...(experimentalApiKey ? { dynamicHeader: () => ({ "x-api-key": experimentalApiKey }) } : {}),
-    json,
-  });
+  if (getQuote) return getQuote(json);
+
+  const response = await SKRequestClient.post<QuoteResponse>(getApiUrl("/quote"), { json });
 
   if (response.error) {
     throw new SwapKitError("api_v2_server_error", { message: response.error });
@@ -85,12 +79,11 @@ export async function getSwapQuote(json: QuoteRequest) {
 }
 
 export async function getRouteWithTx(json: { routeId: string }) {
-  const experimentalApiKey = SKConfig.get("envs").experimental_apiKey;
+  const { getRouteWithTx } = SKConfig.get("endpoints");
 
-  const response = await SKRequestClient.post<QuoteResponseRoute>(getApiUrl("/swap"), {
-    ...(experimentalApiKey ? { dynamicHeader: () => ({ "x-api-key": experimentalApiKey }) } : {}),
-    json,
-  });
+  if (getRouteWithTx) return getRouteWithTx(json);
+
+  const response = await SKRequestClient.post<QuoteResponseRoute>(getApiUrl("/swap"), { json });
 
   try {
     const parsedResponse = QuoteResponseRouteItem.safeParse(response);

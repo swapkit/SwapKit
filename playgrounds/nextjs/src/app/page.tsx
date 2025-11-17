@@ -1,5 +1,6 @@
 "use client";
 
+import {QuoteResponse, QuoteResponseRoute, RequestClient} from "@swapkit/sdk";
 import { SwapKitWidget } from "@swapkit/ui/react";
 
 import { useForm } from "react-hook-form";
@@ -35,10 +36,15 @@ export default function SwapPage() {
             },
             envs: {
               devApiUrl: apiUrl,
-              experimental_apiKey: experimentalApiKey,
-              experimental_apiUrlQuote: experimentalApiUrlQuote,
-              experimental_apiUrlSwap: experimentalApiUrlSwap,
               isDev: true,
+            },
+            endpoints: {
+              getQuote: (json) => {
+                return RequestClient.post<QuoteResponse>(`${experimentalApiUrlQuote}/quote`, { json });
+              },
+              getRouteWithTx: (json) => {
+                return RequestClient.post<QuoteResponseRoute>(`${experimentalApiUrlSwap}/swap`, { json });
+              },
             },
             integrations: {
               keepKey: {

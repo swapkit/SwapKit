@@ -8,7 +8,7 @@ import {
 } from "@swapkit/types";
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
-import type { BalanceResponse } from "../api";
+import type { BalanceResponse, QuoteRequest, QuoteResponse, QuoteResponseRoute } from "../api";
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
@@ -38,6 +38,8 @@ export type SKConfigIntegrations = {
 
 export type CustomApiEndpoints = {
   getBalance: ({ chain, address }: { chain: Chain; address: string }) => Promise<BalanceResponse>;
+  getQuote: (json: QuoteRequest) => Promise<QuoteResponse>;
+  getRouteWithTx: (json: { routeId: string }) => Promise<QuoteResponseRoute>;
 };
 
 const rpcUrls = AllChains.reduce(
