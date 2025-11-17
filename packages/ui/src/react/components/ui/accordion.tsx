@@ -18,16 +18,18 @@ const AccordionTrigger = React.forwardRef<
   ComponentRef<typeof AccordionPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { showChevron?: boolean }
 >(({ className, children, showChevron = true, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
+  <AccordionPrimitive.Header className="sk-ui-flex">
     <AccordionPrimitive.Trigger
       className={cn(
-        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        "sk-ui-flex sk-ui-flex-1 sk-ui-items-center sk-ui-justify-between sk-ui-py-4 sk-ui-font-medium sk-ui-transition-all hover:sk-ui-underline [&[data-state=open]>svg]:sk-ui-rotate-180",
         className,
       )}
       ref={ref}
       {...props}>
       {children}
-      {showChevron && <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />}
+      {showChevron && (
+        <ChevronDown className="sk-ui-h-4 sk-ui-w-4 sk-ui-shrink-0 sk-ui-transition-transform sk-ui-duration-200" />
+      )}
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
@@ -38,10 +40,10 @@ const AccordionContent = React.forwardRef<
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="sk-ui-overflow-hidden sk-ui-text-sm sk-ui-transition-all data-[state=closed]:sk-ui-animate-accordion-up data-[state=open]:sk-ui-animate-accordion-down"
     ref={ref}
     {...props}>
-    <div className={cn("pt-0 pb-4", className)}>{children}</div>
+    <div className={cn("sk-ui-pt-0 sk-ui-pb-4", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 

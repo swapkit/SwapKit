@@ -122,7 +122,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
       <>
-        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
         Swapping...
       </>
     ))
@@ -137,13 +137,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     isFetchingQuote;
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="font-medium text-2xl">Swap</h1>
+    <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
+      <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
 
       <Card>
-        <CardContent className="grid gap-6">
-          <div className="space-y-4">
-            <div className="grid gap-4">
+        <CardContent className="sk-ui-grid sk-ui-gap-6">
+          <div className="sk-ui-space-y-4">
+            <div className="sk-ui-grid sk-ui-gap-4">
               <SwapInputWithChainSelector
                 amount={amount}
                 formattedAmountUSD={selectedRoute?.formattedInputAssetPriceUSD}
@@ -154,11 +154,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 setSelectedAsset={setInputAsset}
               />
 
-              <div className="-my-4 flex items-center space-x-4">
-                <span className="h-px w-full bg-border" />
+              <div className="sk-ui--my-4 sk-ui-flex sk-ui-items-center sk-ui-space-x-4">
+                <span className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
 
                 <Button
-                  className="size-10 shrink-0 rounded-full"
+                  className="sk-ui-size-10 sk-ui-shrink-0 sk-ui-rounded-full"
                   onClick={() => {
                     setInputAsset(outputAsset);
                     setOutputAsset(inputAsset);
@@ -167,10 +167,10 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                   }}
                   size="unstyled"
                   variant="tertiary">
-                  <ArrowDownUpIcon className="size-6" />
+                  <ArrowDownUpIcon className="sk-ui-size-6" />
                 </Button>
 
-                <span className="h-px w-full bg-border" />
+                <span className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
               </div>
 
               <SwapInputWithChainSelector
@@ -188,7 +188,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       </Card>
 
       <Button
-        className="w-full"
+        className="sk-ui-w-full"
         disabled={isSubmitButtonDisabled}
         onClick={handleSubmitButtonClick}
         size="xl"

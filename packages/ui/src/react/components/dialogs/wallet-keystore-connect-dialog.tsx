@@ -82,8 +82,7 @@ export function WalletKeystoreConnectDialog() {
           { shouldValidate: true },
         );
       } catch (error) {
-        console.error("Error parsing keystore file:", error);
-        toast.error("Something went wrong while parsing the keystore file", {
+        console.error("Error parsing keystore file:", error); toast.error("Something went wrong while parsing the keystore file", {
           description: "Please check if the file is a valid keystore file",
         });
       }
@@ -103,9 +102,9 @@ export function WalletKeystoreConnectDialog() {
         <Tabs
           onValueChange={(newValue) => form.setValue("currentStep", Number.parseInt(newValue, 10) as 1 | 2 | 3)}
           value={currentStep.toString()}>
-          <TabsList className="h-fit w-full gap-2 bg-transparent p-0">
-            <TabsTrigger className={cn(currentStep > 1 && "bg-accent")} value="1" variant="stepper" />
-            <TabsTrigger className={cn(currentStep > 2 && "bg-accent")} value="2" variant="stepper" />
+          <TabsList className="sk-ui-h-fit sk-ui-w-full sk-ui-gap-2 sk-ui-bg-transparent sk-ui-p-0">
+            <TabsTrigger className={cn(currentStep > 1 && "sk-ui-bg-accent")} value="1" variant="stepper" />
+            <TabsTrigger className={cn(currentStep > 2 && "sk-ui-bg-accent")} value="2" variant="stepper" />
             <TabsTrigger className={cn(currentStep >= 3 && "!bg-accent")} value="3" variant="stepper" />
           </TabsList>
 
@@ -114,28 +113,28 @@ export function WalletKeystoreConnectDialog() {
               onSubmit={form.handleSubmit(() => {
                 form.setValue("currentStep", 2);
               })}>
-              <div className="flex flex-col gap-4">
-                <span className="text-sm text-white text-opacity-65">
+              <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
+                <span className="sk-ui-text-sm sk-ui-text-white sk-ui-text-opacity-65">
                   Upload your keystore file to connect your wallet
                 </span>
 
-                <div className="flex flex-col gap-2">
-                  <span className="font-medium text-secondary-hover-text text-sm">Keystore file</span>
+                <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-2">
+                  <span className="sk-ui-font-medium sk-ui-text-secondary-hover-text sk-ui-text-sm">Keystore file</span>
                   <label
-                    className={`flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-white border-dashed border-opacity-25 transition-colors hover:border-opacity-40 ${keystoreFile?.file ? "border-green-500 border-opacity-50 bg-green-500/5" : ""} `}
+                    className={`sk-ui-flex sk-ui-h-24 sk-ui-w-full sk-ui-cursor-pointer sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-border-2 sk-ui-border-white sk-ui-border-dashed sk-ui-border-opacity-25 sk-ui-transition-colors hover:sk-ui-border-opacity-40 ${keystoreFile?.file ? "border-green-500 sk-ui-border-opacity-50 bg-green-500/5" : ""} `}
                     htmlFor={fileInputId}>
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="sk-ui-flex sk-ui-flex-col sk-ui-items-center sk-ui-gap-2">
                       {keystoreFile?.file ? (
                         <>
-                          <CheckIcon className="h-6 w-6 text-green-500" />
-                          <span className="font-medium text-green-400 text-sm">{keystoreFile?.file?.name}</span>
-                          <span className="text-muted-foreground text-xs">Click to select a different file</span>
+                          <CheckIcon className="sk-ui-h-6 sk-ui-w-6 sk-ui-text-green-500" />
+                          <span className="sk-ui-font-medium sk-ui-text-green-400 sk-ui-text-sm">{keystoreFile?.file?.name}</span>
+                          <span className="sk-ui-text-muted-foreground sk-ui-text-xs">Click to select a different file</span>
                         </>
                       ) : (
                         <>
-                          <UploadIcon className="h-6 w-6 text-muted-foreground" />
-                          <span className="font-medium text-sm">Choose keystore file</span>
-                          <span className="text-muted-foreground text-xs">JSON files only</span>
+                          <UploadIcon className="sk-ui-h-6 sk-ui-w-6 sk-ui-text-muted-foreground" />
+                          <span className="sk-ui-font-medium sk-ui-text-sm">Choose keystore file</span>
+                          <span className="sk-ui-text-muted-foreground sk-ui-text-xs">JSON files only</span>
                         </>
                       )}
                     </div>
@@ -143,7 +142,7 @@ export function WalletKeystoreConnectDialog() {
 
                   <input
                     accept=".json,.txt,text/plain,application/json"
-                    className="hidden"
+                    className="sk-ui-hidden"
                     id={fileInputId}
                     onChange={handleKeystoreFileChange}
                     type="file"
@@ -151,13 +150,13 @@ export function WalletKeystoreConnectDialog() {
                 </div>
 
                 {keystoreFile?.file && (
-                  <div className="text-muted-foreground text-xs">
+                  <div className="sk-ui-text-muted-foreground sk-ui-text-xs">
                     Selected: {keystoreFile?.file?.name} ({(keystoreFile?.file?.size / 1024).toFixed(1)} KB)
                   </div>
                 )}
               </div>
 
-              <DialogFooter className="mt-4">
+              <DialogFooter className="sk-ui-mt-4">
                 <Button onClick={() => modal.resolve({ confirmed: false })} type="button">
                   Cancel
                 </Button>
@@ -175,14 +174,14 @@ export function WalletKeystoreConnectDialog() {
 
           <TabsContent value="2">
             <form onSubmit={handleConnectWallet}>
-              <div className="mt-4 flex flex-col gap-4">
-                <span className="text-sm text-white text-opacity-65">Enter the password for your keystore file</span>
+              <div className="sk-ui-mt-4 sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
+                <span className="sk-ui-text-sm sk-ui-text-white sk-ui-text-opacity-65">Enter the password for your keystore file</span>
 
                 {keystoreFile?.file && (
-                  <div className="rounded-md border border-blue-500/20 bg-blue-500/10 p-3">
-                    <div className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4 text-blue-400" />
-                      <span className="text-blue-300 text-sm">Keystore file: {keystoreFile?.file?.name}</span>
+                  <div className="sk-ui-rounded-md sk-ui-border sk-ui-border-blue-500/20 sk-ui-bg-blue-500/10 sk-ui-p-3">
+                    <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
+                      <CheckIcon className="sk-ui-h-4 sk-ui-w-4 sk-ui-text-blue-400" />
+                      <span className="sk-ui-text-blue-300 sk-ui-text-sm">Keystore file: {keystoreFile?.file?.name}</span>
                     </div>
                   </div>
                 )}
@@ -212,7 +211,7 @@ export function WalletKeystoreConnectDialog() {
                 </Form>
               </div>
 
-              <DialogFooter className="mt-4">
+              <DialogFooter className="sk-ui-mt-4">
                 <Button onClick={() => form.setValue("currentStep", 1)} type="button">
                   Go Back
                 </Button>
@@ -233,17 +232,17 @@ export function WalletKeystoreConnectDialog() {
               onSubmit={form.handleSubmit(() => {
                 modal.resolve({ confirmed: true, data: undefined });
               })}>
-              <div className="mt-4 flex flex-col gap-4 text-center">
-                <div className="rounded-md border border-green-500/20 bg-green-500/10 p-4">
-                  <CheckIcon className="mx-auto mb-2 h-8 w-8 text-green-500" />
-                  <h3 className="mb-1 font-medium text-green-300">Wallet Connected Successfully!</h3>
-                  <p className="text-muted-foreground text-sm">
+              <div className="sk-ui-mt-4 sk-ui-flex sk-ui-flex-col sk-ui-gap-4 sk-ui-text-center">
+                <div className="sk-ui-rounded-md sk-ui-border sk-ui-border-green-500/20 sk-ui-bg-green-500/10 sk-ui-p-4">
+                  <CheckIcon className="sk-ui-mx-auto sk-ui-mb-2 sk-ui-h-8 sk-ui-w-8 sk-ui-text-green-500" />
+                  <h3 className="sk-ui-mb-1 sk-ui-font-medium sk-ui-text-green-300">Wallet Connected Successfully!</h3>
+                  <p className="sk-ui-text-muted-foreground sk-ui-text-sm">
                     Your keystore wallet is now connected and ready to use.
                   </p>
                 </div>
               </div>
 
-              <DialogFooter className="mt-4">
+              <DialogFooter className="sk-ui-mt-4">
                 <Button onClick={() => form.setValue("currentStep", 2)} type="button">
                   Go Back
                 </Button>

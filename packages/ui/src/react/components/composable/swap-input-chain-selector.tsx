@@ -31,10 +31,10 @@ export function SwapInputWithChainSelector({
   const isInputDisabled = !selectedAsset || isSwapping || isLoading || !setAmount;
 
   return (
-    <div className="-my-2">
-      <span className="text-muted-foreground text-xs">{label}</span>
+    <div className="sk-ui--my-2">
+      <span className="sk-ui-text-muted-foreground sk-ui-text-xs">{label}</span>
 
-      <div className="flex justify-between">
+      <div className="sk-ui-flex sk-ui-justify-between">
         <SwapAssetSelect selectedAsset={selectedAsset} setSelectedAsset={setSelectedAsset} />
 
         <SwapAmountInput

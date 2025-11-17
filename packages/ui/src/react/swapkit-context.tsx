@@ -192,8 +192,7 @@ export const useSwapKit = () => {
 
         await Promise.allSettled(keystoreFile.chains.map((balance) => swapKit?.getWalletWithBalance(balance)));
       } catch (error) {
-        console.error("Failed to decrypt keystore:", error);
-        throw new Error("Failed to decrypt keystore");
+        console.error("Failed to decrypt keystore:", error); throw new Error("Failed to decrypt keystore");
       } finally {
         setIsConnectingWallet(false);
       }
