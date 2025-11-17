@@ -8,7 +8,6 @@ const context: {
 } = {} as any;
 
 beforeAll(async () => {
-  SKConfig.set({ rpcUrls: { [Chain.Tron]: ["https://api.trongrid.io"] } });
   context.validateAddress = await getTronAddressValidator();
 });
 
@@ -173,58 +172,50 @@ describe("TRON createTransaction with Extended Expiration", () => {
     expect(transaction.raw_data.data).toBeDefined();
   });
 
-  test(
-    "should create token transfer with extended expiration",
-    async () => {
-      const toolbox = context.toolbox;
-      const beforeTimestamp = Date.now();
+  test("should create token transfer with extended expiration", async () => {
+    const toolbox = context.toolbox;
+    const beforeTimestamp = Date.now();
 
-      const transaction = await toolbox.createTransaction({
-        assetValue: AssetValue.from({
-          asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          value: "100", // 100 USDT
-        }),
-        expiration: extendedExpiration,
-        recipient: toAddress,
-        sender: fromAddress,
-      });
+    const transaction = await toolbox.createTransaction({
+      assetValue: AssetValue.from({
+        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        value: "100", // 100 USDT
+      }),
+      expiration: extendedExpiration,
+      recipient: toAddress,
+      sender: fromAddress,
+    });
 
-      expect(transaction.raw_data.expiration).toBeDefined();
+    expect(transaction.raw_data.expiration).toBeDefined();
 
-      const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
-      const actualExpiration = transaction.raw_data.expiration;
+    const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
+    const actualExpiration = transaction.raw_data.expiration;
 
-      // Allow 10 second tolerance for test execution time
-      expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
-      expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
-    },
-    { retry: 3 },
-  );
+    // Allow 10 second tolerance for test execution time
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+  });
 
-  test(
-    "should create token transfer with extended expiration and memo",
-    async () => {
-      const toolbox = context.toolbox;
-      const beforeTimestamp = Date.now();
+  test("should create token transfer with extended expiration and memo", async () => {
+    const toolbox = context.toolbox;
+    const beforeTimestamp = Date.now();
 
-      const transaction = await toolbox.createTransaction({
-        assetValue: AssetValue.from({
-          asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          value: "100", // 100 USDT
-        }),
-        expiration: extendedExpiration,
-        memo,
-        recipient: toAddress,
-        sender: fromAddress,
-      });
+    const transaction = await toolbox.createTransaction({
+      assetValue: AssetValue.from({
+        asset: "TRON.USDT-TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        value: "100", // 100 USDT
+      }),
+      expiration: extendedExpiration,
+      memo,
+      recipient: toAddress,
+      sender: fromAddress,
+    });
 
-      const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
-      const actualExpiration = transaction.raw_data.expiration;
+    const expectedExpiration = beforeTimestamp + (baseExpiration + extendedExpiration) * 1000;
+    const actualExpiration = transaction.raw_data.expiration;
 
-      expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
-      expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
-      expect(transaction.raw_data).toMatchObject({ data: expect.any(String), expiration: expect.any(Number) });
-    },
-    { retry: 3 },
-  );
+    expect(actualExpiration).toBeGreaterThanOrEqual(expectedExpiration - buffer);
+    expect(actualExpiration).toBeLessThanOrEqual(expectedExpiration + buffer);
+    expect(transaction.raw_data).toMatchObject({ data: expect.any(String), expiration: expect.any(Number) });
+  });
 });

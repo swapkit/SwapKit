@@ -31,6 +31,8 @@ import type {
   GNOToolbox,
   HYPEREVMToolbox,
   MATICToolbox,
+  MEGAETHToolbox,
+  MONADToolbox,
   OPToolbox,
   SONICToolbox,
   UNIToolbox,
@@ -131,9 +133,11 @@ export type EVMToolboxes = {
   [Chain.Core]: Awaited<ReturnType<typeof COREToolbox>>;
   [Chain.Corn]: Awaited<ReturnType<typeof CORNToolbox>>;
   [Chain.Cronos]: Awaited<ReturnType<typeof CROToolbox>>;
-  [Chain.Hyperevm]: Awaited<ReturnType<typeof HYPEREVMToolbox>>;
   [Chain.Ethereum]: Awaited<ReturnType<typeof ETHToolbox>>;
   [Chain.Gnosis]: Awaited<ReturnType<typeof GNOToolbox>>;
+  [Chain.Hyperevm]: Awaited<ReturnType<typeof HYPEREVMToolbox>>;
+  [Chain.MegaETH]: Awaited<ReturnType<typeof MEGAETHToolbox>>;
+  [Chain.Monad]: Awaited<ReturnType<typeof MONADToolbox>>;
   [Chain.Optimism]: Awaited<ReturnType<typeof OPToolbox>>;
   [Chain.Polygon]: Awaited<ReturnType<typeof MATICToolbox>>;
   [Chain.Sonic]: Awaited<ReturnType<typeof SONICToolbox>>;

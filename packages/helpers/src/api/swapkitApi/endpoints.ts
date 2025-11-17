@@ -86,10 +86,12 @@ export async function getChainBalance<T extends Chain>({
   address: string;
   scamFilter?: boolean;
 }) {
+  const { getBalance } = SKConfig.get("endpoints");
+  if (getBalance) return getBalance({ address, chain });
+
   const url = getApiUrl(`/balance?chain=${chain}&address=${address}`);
   const balanceResponse = await SKRequestClient.get<BalanceResponse>(url);
   const balances = Array.isArray(balanceResponse) ? balanceResponse : [];
-
   return scamFilter ? filterAssets(balances) : balances;
 }
 

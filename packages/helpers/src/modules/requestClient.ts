@@ -24,9 +24,9 @@ const calculateDelay = (attempt: number, { baseDelay, backoffMultiplier, maxDela
 
 const makeRequest = async (url: string, config: RequestInit) => {
   const response = await fetch(url, config);
+
   if (!response.ok) {
-    const message = await response.text();
-    const errorData = { message, status: response.status, statusText: response.statusText };
+    const errorData = { status: response.status, statusText: response.statusText };
     throw new SwapKitError({ errorKey: "helpers_invalid_response", info: errorData }, errorData);
   }
   return response.json();

@@ -10,7 +10,7 @@
  * - NEAR API JS types
  */
 
-import type { PublicKey } from "near-api-js/lib/utils";
+import type { PublicKey } from "@near-js/crypto";
 
 /**
  * Transaction action types supported by NEAR
@@ -248,7 +248,7 @@ declare global {
     // Specific wallet providers
     okxwallet?: { near: NearBrowserWalletProvider };
 
-    xfi?: { near: NearBrowserWalletProvider };
+    ctrl?: { near: NearBrowserWalletProvider };
 
     // Add other wallet-specific providers as needed
   }

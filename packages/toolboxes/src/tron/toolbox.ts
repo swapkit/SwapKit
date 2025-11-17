@@ -229,7 +229,8 @@ export const createTronToolbox = async (
 
       return balance ? (typeof balance === "bigint" ? balance : BigInt(balance)) : 0n;
     } catch (err) {
-      console.warn(`balanceOf() failed for ${contractAddress}:`, err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.warn(`balanceOf() failed for ${contractAddress}: ${errorMessage}`);
       return 0n;
     }
   };
@@ -329,7 +330,8 @@ export const createTronToolbox = async (
 
         return balances;
       } catch (fallbackError) {
-        console.error("Tron balance fetch failed:", fallbackError);
+        const errorMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+        console.error(`Tron balance fetch failed: ${errorMessage}`);
         return fallbackBalance;
       }
     }
@@ -486,8 +488,7 @@ export const createTronToolbox = async (
       return txWithData;
     } catch (error) {
       throw new SwapKitError("toolbox_tron_transaction_creation_failed", {
-        message:
-          "Failed to create TRC20 transaction. This might be due to TronWeb 6.0.3 bug. Use the transfer method directly instead.",
+        message: "Failed to create TRC20 transaction.",
         originalError: error instanceof Error ? error.message : String(error),
       });
     }

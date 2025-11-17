@@ -1,30 +1,10 @@
 export const list = {
-  count: 17,
+  count: 14,
   keywords: [],
   name: "GARDEN",
   provider: "GARDEN",
-  timestamp: "2025-10-15T15:12:22.530Z",
+  timestamp: "2025-11-13T12:40:02.543Z",
   tokens: [
-    {
-      address: "0x86f65121804D2Cdbef79F9f072D4e0c2eEbABC08",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 18,
-      identifier: "ARB.SEED-0x86f65121804D2Cdbef79F9f072D4e0c2eEbABC08",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.seed-0x86f65121804d2cdbef79f9f072d4e0c2eebabc08.png",
-      ticker: "SEED",
-    },
-    {
-      address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
-      chain: "ARB",
-      chainId: "42161",
-      decimals: 6,
-      identifier: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
-      ticker: "USDC",
-    },
     {
       address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
       chain: "ARB",
@@ -44,16 +24,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/base.cbbtc-0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf.png",
       ticker: "CBBTC",
-    },
-    {
-      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-      chain: "BASE",
-      chainId: "8453",
-      decimals: 6,
-      identifier: "BASE.USDC-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/base.usdc-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.png",
-      ticker: "USDC",
     },
     {
       address: "",
@@ -85,6 +55,16 @@ export const list = {
       ticker: "USDC",
     },
     {
+      address: "0x55d398326f99059fF775485246999027B3197955",
+      chain: "BSC",
+      chainId: "56",
+      decimals: 18,
+      identifier: "BSC.USDT-0x55d398326f99059fF775485246999027B3197955",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.usdt-0x55d398326f99059ff775485246999027b3197955.png",
+      ticker: "USDT",
+    },
+    {
       address: "",
       chain: "BTC",
       chainId: "bitcoin",
@@ -104,33 +84,14 @@ export const list = {
       ticker: "CBBTC",
     },
     {
-      address: "",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
-      ticker: "ETH",
-    },
-    {
-      address: "0x5eed99d066a8CaF10f3E4327c1b3D8b673485eED",
-      chain: "ETH",
-      chainId: "1",
-      decimals: 18,
-      identifier: "ETH.SEED-0x5eed99d066a8CaF10f3E4327c1b3D8b673485eED",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.seed-0x5eed99d066a8caf10f3e4327c1b3d8b673485eed.png",
-      ticker: "SEED",
-    },
-    {
-      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
       chain: "ETH",
       chainId: "1",
       decimals: 6,
-      identifier: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      identifier: "ETH.USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
-      ticker: "USDC",
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+      ticker: "USDT",
     },
     {
       address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
@@ -170,6 +131,16 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdc-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.png",
       ticker: "USDC",
+    },
+    {
+      address: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.USDT-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdt-es9vmfrzacermjfrf4h2fyd4kconky11mcce8benwnyb.png",
+      ticker: "USDT",
     },
   ],
   version: { major: 1, minor: 0, patch: 0 },

@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { "allowJs": true, "jsx": "react-jsx", "paths": { "@/*": ["./src/*"] }, "types": ["bun-types"] },
+  "compilerOptions": { "allowJs": true, "jsx": "react-jsx", "paths": { "@/*": ["./src/*"] }, "types": ["@types/bun"] },
   "extends": "../../tsconfig.json",
   "include": ["**/*.ts", "**/*.tsx"]
 }

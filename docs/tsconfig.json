@@ -1,6 +1,6 @@
 {
-  "compilerOptions": { "types": ["bun-types"] },
-  "exclude": ["node_modules", "dist"],
-  "extends": "astro/tsconfigs/base",
+  "compilerOptions": { "types": ["@types/bun"] },
+  "exclude": ["dist"],
+  "extends": ["./node_modules/astro/tsconfigs/base.json", "../tools/typescript/base.json"],
   "include": [".astro/types.d.ts", ".astro/content.d.ts", "./src", "../packages/**/*"]
 }

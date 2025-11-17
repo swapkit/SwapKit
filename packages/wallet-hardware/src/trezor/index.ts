@@ -100,7 +100,7 @@ async function getTrezorWallet<T extends Chain>({
 
           const outputs = zcashPsbt.txOutputs.map((output) => {
             if (
-              output.value === 0n &&
+              Number(output.value) === 0 &&
               output.script.length > 0 &&
               output.script[0] === 0x6a &&
               script.decompile(output.script)

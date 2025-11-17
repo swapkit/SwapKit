@@ -47,33 +47,37 @@ describe("getAssetBy", () => {
     expect(assetByChainAndContract).toBeUndefined();
   });
 
-  test("find asset by chain and radix resource", async () => {
-    const assetByChainAndContract = await findAssetBy({
-      chain: Chain.Radix,
-      contract: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
+  describe(Chain.Radix, () => {
+    test("find asset by identifier", async () => {
+      const assetByChainAndContract = await findAssetBy({ identifier: "XRD.XRD" });
+      expect(assetByChainAndContract?.toUpperCase()).toBe("XRD.XRD".toUpperCase());
     });
-    expect(assetByChainAndContract?.toUpperCase()).toBe(
-      "XRD.XWBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75".toUpperCase(),
-    );
-  });
 
-  test("find asset by radix identifier", async () => {
-    const assetByChainAndContract = await findAssetBy({ identifier: "XRD.XRD" });
-    expect(assetByChainAndContract?.toUpperCase()).toBe("XRD.XRD".toUpperCase());
-  });
-
-  test("find asset by chain and Solana resource", async () => {
-    const assetByChainAndContract = await findAssetBy({
-      chain: Chain.Solana,
-      contract: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    test("find asset by chain and contract", async () => {
+      const assetByChainAndContract = await findAssetBy({
+        chain: Chain.Radix,
+        contract: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
+      });
+      expect(assetByChainAndContract?.toUpperCase()).toBe(
+        "XRD.XWBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75".toUpperCase(),
+      );
     });
-    expect(assetByChainAndContract?.toUpperCase()).toBe(
-      "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toUpperCase(),
-    );
   });
 
-  test("find asset by Solana identifier", async () => {
-    const assetByChainAndContract = await findAssetBy({ identifier: "SOL.SOL" });
-    expect(assetByChainAndContract?.toUpperCase()).toBe("SOL.SOL".toUpperCase());
+  describe(Chain.Solana, () => {
+    test("find asset by identifier", async () => {
+      const assetByChainAndContract = await findAssetBy({ identifier: "SOL.SOL" });
+      expect(assetByChainAndContract?.toUpperCase()).toBe("SOL.SOL".toUpperCase());
+    });
+
+    test("find asset by chain and contract", async () => {
+      const assetByChainAndContract = await findAssetBy({
+        chain: Chain.Solana,
+        contract: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      });
+      expect(assetByChainAndContract?.toUpperCase()).toBe(
+        "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toUpperCase(),
+      );
+    });
   });
 });

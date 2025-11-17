@@ -11,7 +11,12 @@ const nextConfig = {
     remotePatterns: [
       {
         hostname: "storage.googleapis.com",
-        pathname: process.env.NODE_ENV === "development" ? "/token-list-swapkit-dev/**" : "/token-list-swapkit/**",
+        pathname: "/token-list-swapkit-dev/**",
+        protocol: "https",
+      },
+      {
+        hostname: "storage.googleapis.com",
+        pathname: "/token-list-swapkit/**",
         protocol: "https",
       },
     ],
@@ -41,7 +46,7 @@ const nextConfig = {
         }),
       );
 
-      config.plugins.push(new webpack.NormalModuleReplacementPlugin(/^node:crypto$/, "crypto-browserify"));
+      config.plugins.push(new webpack.NormalModuleReplacementPlugin(/^node:crypto$/, require.resolve("crypto-browserify")));
 
       config.resolve.fallback = {
         ...config.resolve.fallback,

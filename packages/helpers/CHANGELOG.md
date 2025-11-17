@@ -1,5 +1,26 @@
 # @swapkit/helpers
 
+## 4.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`82d0fd8`](https://github.com/swapkit/SwapKit/commit/82d0fd8f1072d7341f45e3d07114181cec7500e1)]:
+  - @swapkit/tokens@4.1.1
+
+## 4.5.0
+
+### Minor Changes
+
+- [#1585](https://github.com/swapkit/SwapKit/pull/1585) [`e6f25c7`](https://github.com/swapkit/SwapKit/commit/e6f25c78b0469131c9ff6895cc506075ead6290c) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Customisable api endpoints
+
+- [`2f181c6`](https://github.com/swapkit/SwapKit/commit/2f181c6d891d963854c5b7702a3de583c38d9317) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Updates to isolated modules & wallet extensions extraction
+
+### Patch Changes
+
+- Updated dependencies [[`bcb9509`](https://github.com/swapkit/SwapKit/commit/bcb9509cb004f80a7b22fdeafb2ce7d34d831c99), [`2f181c6`](https://github.com/swapkit/SwapKit/commit/2f181c6d891d963854c5b7702a3de583c38d9317)]:
+  - @swapkit/types@0.3.0
+  - @swapkit/tokens@4.1.0
+
 ## 4.4.5
 
 ### Patch Changes

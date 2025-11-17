@@ -1,10 +1,10 @@
 "use client";
 
-import type { Chain, EVMChain, SKConfigState } from "@swapkit/sdk";
-import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
+import type { Chain, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
+import { AssetValue, NetworkDerivationPath, staticTokensMap, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
-import type { SwapKitState } from "./types";
+import type { BalanceDetails, KeystoreFile, SwapKitState } from "./types";
 
 const useSwapKitStore = create<SwapKitState>((set) => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -16,36 +16,29 @@ const useSwapKitStore = create<SwapKitState>((set) => {
     isConnectingWallet: false,
     isWalletConnected: false,
 
-    keystoreFile: null,
-    isKeystoreOpen: false,
-    isKeystoreDecrypting: false,
-
     setSwapKit: (swapKit) => set({ swapKit }),
-    setBalances: (balances) => set({ balances }),
     setWalletState: ({ connected, type }) => set({ isWalletConnected: connected, walletType: type }),
-    setKeystoreFile: (keystoreFile) => set({ keystoreFile }),
-    setIsKeystoreOpen: (isKeystoreOpen) => set({ isKeystoreOpen }),
-    setIsKeystoreDecrypting: (isKeystoreDecrypting) => set({ isKeystoreDecrypting }),
     setIsConnectingWallet: (isConnectingWallet) => set({ isConnectingWallet }),
   };
 });
 
+await AssetValue.loadStaticAssets();
+
+export const assetsMap = new Map<TokenNames | (string & {}), AssetValue>(
+  Array.from(staticTokensMap.keys()).map((identifier) => [
+    identifier,
+    AssetValue.from({ asset: identifier as TokenNames }),
+  ]),
+);
+
 export const useSwapKit = () => {
   const {
     swapKit,
-    balances,
     walletType,
     isWalletConnected,
-    keystoreFile,
-    isKeystoreOpen,
-    isKeystoreDecrypting,
     isConnectingWallet,
     setSwapKit,
-    setBalances,
     setWalletState,
-    setKeystoreFile,
-    setIsKeystoreOpen,
-    setIsKeystoreDecrypting,
     setIsConnectingWallet,
   } = useSwapKitStore((state) => state);
 
@@ -53,33 +46,18 @@ export const useSwapKit = () => {
   useEffect(() => {
     if (swapKit) return;
 
-    void AssetValue.loadStaticAssets();
     void loadSwapKit();
   }, []);
 
-  async function loadSwapKit(params?: { config: SKConfigState | undefined }) {
-    const { createSwapKit } = await import("@swapkit/sdk");
+  const loadSwapKit = useCallback(
+    async (params?: { config: SKConfigState | undefined }) => {
+      const { createSwapKit } = await import("@swapkit/sdk");
 
-    const swapKitClient = createSwapKit({ config: params?.config });
+      const swapKitClient = createSwapKit({ config: params?.config });
 
-    setSwapKit(swapKitClient);
-  }
-
-  const getBalances = useCallback(
-    async (refresh?: boolean) => {
-      if ((!refresh && balances.length) || !swapKit) return;
-
-      const connectedWallets = swapKit.getAllWallets();
-      let nextBalances: AssetValue[] = [];
-
-      for (const chain of Object.keys(connectedWallets)) {
-        const balance = await swapKit?.getBalance(chain as Chain);
-        nextBalances = nextBalances.concat(balance);
-      }
-
-      setBalances(nextBalances.sort((a, b) => a.getValue("number") - b.getValue("number")));
+      setSwapKit(swapKitClient);
     },
-    [swapKit, setBalances, balances],
+    [setSwapKit],
   );
 
   const connectWallet = useCallback(
@@ -135,11 +113,11 @@ export const useSwapKit = () => {
             break;
 
           case WalletOption.KEEPKEY_BEX:
-            await swapKit?.connectKeepkeyBex?.(chains);
+            await swapKit?.connectKeepkeyBex(chains);
             break;
 
           case WalletOption.ONEKEY:
-            await swapKit?.connectOnekeyWallet?.(chains);
+            await swapKit?.connectOnekeyWallet(chains);
             break;
 
           case WalletOption.KEYSTORE:
@@ -168,18 +146,14 @@ export const useSwapKit = () => {
         }
 
         const isConnected = chains.some((chain) => !!swapKit?.getAddress(chain));
+
+        if (!isConnected) throw new Error("Failed to connect wallet");
+
         setWalletState({ connected: isConnected, type: option });
 
-        if (isConnected) {
-          const balancePromises = chains.map(async (chain) => {
-            const wallet = await swapKit?.getWalletWithBalance(chain);
-            if (!(wallet && "balance" in wallet)) return [];
-            return wallet.balance as AssetValue[];
-          });
-          const chainBalances = await Promise.all(balancePromises);
-          const allBalances = chainBalances.flat();
-          setBalances(allBalances.sort((a, b) => a.getValue("number") - b.getValue("number")));
-        }
+        await Promise.allSettled(chains.map((chain) => swapKit?.getWalletWithBalance(chain)));
+
+        setSwapKit(swapKit);
       } catch (error) {
         console.error(`Failed to connect ${option}:`, error);
 
@@ -190,96 +164,91 @@ export const useSwapKit = () => {
         setIsConnectingWallet(false);
       }
     },
-    [setWalletState, setBalances, swapKit, setIsConnectingWallet],
+    [setWalletState, swapKit, setIsConnectingWallet, setSwapKit],
   );
 
   const disconnectWallet = useCallback(() => {
     swapKit?.disconnectAll();
     setWalletState({ connected: false, type: null });
-  }, [swapKit?.disconnectAll, setWalletState]);
+  }, [swapKit, setWalletState]);
 
-  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit?.getAddress]);
+  const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit]);
 
   const connectKeystore = useCallback(
-    async (password: string) => {
-      if (!(keystoreFile && swapKit)) return;
+    async (keystoreFile: KeystoreFile, password: string) => {
+      if (!keystoreFile?.keystore || !swapKit) return;
 
       try {
-        setIsKeystoreDecrypting(true);
-        const { decryptFromKeystore } = await import("@swapkit/wallets/keystore");
+        setIsConnectingWallet(true);
+
+        const { decryptFromKeystore } = await import("@swapkit/wallet-keystore");
         const phrase = await decryptFromKeystore(keystoreFile.keystore, password);
+
         if (!phrase) throw new Error("Failed to decrypt keystore");
 
-        await swapKit.connectKeystore(keystoreFile.chains, phrase);
-        setWalletState({ connected: true, type: WalletOption.KEYSTORE });
-        setIsKeystoreOpen(false);
-        setKeystoreFile(null);
+        await swapKit?.connectKeystore?.(keystoreFile.chains, phrase);
 
-        const balancePromises = keystoreFile.chains.map(async (chain) => {
-          const wallet = await swapKit?.getWalletWithBalance(chain);
-          if (!(wallet && "balance" in wallet)) return [];
-          return wallet.balance as AssetValue[];
-        });
-        const chainBalances = await Promise.all(balancePromises);
-        const allBalances = chainBalances.flat();
-        setBalances(allBalances.sort((a, b) => a.getValue("number") - b.getValue("number")));
+        setWalletState({ connected: true, type: WalletOption.KEYSTORE });
+
+        await Promise.allSettled(keystoreFile.chains.map((balance) => swapKit?.getWalletWithBalance(balance)));
       } catch (error) {
         console.error("Failed to decrypt keystore:", error);
-        setWalletState({ connected: false, type: null });
+        throw new Error("Failed to decrypt keystore");
       } finally {
-        setIsKeystoreDecrypting(false);
+        setIsConnectingWallet(false);
       }
     },
-    [keystoreFile, swapKit, setWalletState, setBalances, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
+    [swapKit, setWalletState, setIsConnectingWallet],
   );
 
-  const { chains, balanceGroupedByChain } = useMemo(() => {
-    const balanceGroupedByChain = (Array.isArray(balances) ? balances : []).reduce(
-      (acc: Record<Chain, AssetValue[]>, assetValue: AssetValue) => {
-        if (!acc[assetValue.chain]) {
-          acc[assetValue.chain] = [];
-        }
+  const stableWalletsMemoKey = Object.entries(swapKit?.getAllWallets?.() || {})
+    .map(([chain, wallet]) => `${chain}:${wallet?.balance?.map((bal) => bal.toString()).join("_")}`)
+    .join(",");
 
-        if (assetValue.isGasAsset || assetValue.getValue("number") > 0) {
-          acc[assetValue.chain].push(assetValue);
-        }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: uses stable memo key for performance reasons
+  const balancesByChain = useMemo(() => {
+    const balancesByChain = new Map<Chain, BalanceDetails[]>();
 
-        return acc;
-      },
-      {} as Record<Chain, AssetValue[]>,
-    );
+    Object.values(swapKit?.getAllWallets?.() || {})?.forEach((wallet) => {
+      wallet?.balance?.forEach((balance) => {
+        const balances = balancesByChain.get(wallet.chain) || [];
 
-    const chains = Object.keys(balanceGroupedByChain) as Chain[];
+        balances.push({ balance, chain: wallet.chain, identifier: balance.toString(), wallet });
 
-    return { balanceGroupedByChain, chains };
-  }, [balances]);
+        balancesByChain.set(wallet.chain, balances);
+      });
+    });
 
-  // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
-  return {
-    swapKit,
-    loadSwapKit,
+    return balancesByChain;
+  }, [stableWalletsMemoKey]);
 
-    walletType,
-    balanceGroupedByChain,
-    balances,
-    chains,
-    isConnectingWallet,
-    isWalletConnected,
+  return useMemo(
+    // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
+    () => ({
+      swapKit,
+      loadSwapKit,
 
-    checkIfChainConnected,
-    connectKeystore,
-    connectWallet,
-    disconnectWallet,
-    getBalances,
+      balancesByChain,
+      isWalletConnected,
+      isConnectingWallet,
+      walletType,
 
-    // Keystore related
-    keystoreFile,
-
-    isKeystoreDecrypting,
-    isKeystoreOpen,
-
-    setIsKeystoreDecrypting,
-    setIsKeystoreOpen,
-    setKeystoreFile,
-  };
+      checkIfChainConnected,
+      connectKeystore,
+      connectWallet,
+      disconnectWallet,
+    }),
+    [
+      swapKit,
+      balancesByChain,
+      isWalletConnected,
+      isConnectingWallet,
+      walletType,
+      checkIfChainConnected,
+      connectKeystore,
+      connectWallet,
+      disconnectWallet,
+      loadSwapKit,
+    ],
+  );
 };

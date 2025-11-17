@@ -1504,4 +1504,134 @@ describe("asyncTokenLookup", () => {
       expect(assetValue.address).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
     });
   });
+
+  describe("getIconUrl", () => {
+    test("returns logoURI when token is in static map", async () => {
+      await AssetValue.loadStaticAssets();
+      const asset = AssetValue.from({ asset: "BTC.BTC" });
+
+      expect(asset.getIconUrl()).toBeString();
+      expect(asset.getIconUrl()?.length).toBeGreaterThan(0);
+    });
+
+    test("returns undefined for custom token not in map", () => {
+      AssetValue.setStaticAssets(new Map());
+
+      const asset = AssetValue.from({ asset: "BTC.BTC" });
+      expect(asset.getIconUrl()).toBeUndefined();
+
+      void AssetValue.loadStaticAssets();
+    });
+  });
+
+  describe("setStaticAssets", () => {
+    test("sets custom static assets map", () => {
+      const customMap = new Map();
+
+      customMap.set("ETH.CUSTOMTOKEN-0X123", {
+        address: "0x123",
+        chain: Chain.Ethereum,
+        decimal: 18,
+        identifier: "ETH.CUSTOMTOKEN-0x123",
+        tax: undefined,
+      });
+
+      const result = AssetValue.setStaticAssets(customMap);
+      expect(result).toBe(true);
+
+      const asset = AssetValue.from({ asset: "ETH.CUSTOMTOKEN-0X123" });
+      expect(asset.decimal).toBe(18);
+      expect(asset.toString()).toBe("ETH.CUSTOMTOKEN-0x123");
+    });
+
+    test("clears existing static assets when setting new ones", () => {
+      const map1 = new Map();
+      map1.set("BTC.TOKEN1", { chain: Chain.Bitcoin, decimal: 8, identifier: "BTC.TOKEN1" });
+
+      AssetValue.setStaticAssets(map1);
+
+      const map2 = new Map();
+      map2.set("ETH.TOKEN2-0xABC", {
+        address: "0xABC",
+        chain: Chain.Ethereum,
+        decimal: 18,
+        identifier: "ETH.TOKEN2-0xABC",
+      });
+
+      AssetValue.setStaticAssets(map2);
+
+      // TOKEN2 should exist
+      const asset2 = AssetValue.from({ asset: "ETH.TOKEN2-0xABC" });
+      expect(asset2.decimal).toBe(18);
+    });
+
+    test("handles token with decimals property", () => {
+      const customMap = new Map();
+
+      customMap.set("AVAX.CUSTOMUSDC-0X456", {
+        address: "0x456",
+        chain: Chain.Avalanche,
+        decimals: 6,
+        identifier: "AVAX.CUSTOMUSDC-0x456",
+      });
+
+      AssetValue.setStaticAssets(customMap);
+
+      const asset = AssetValue.from({ asset: "AVAX.CUSTOMUSDC-0X456" });
+      expect(asset.decimal).toBe(6);
+    });
+
+    test("handles case sensitive chains correctly", () => {
+      const customMap = new Map();
+
+      // SOL is case sensitive
+      customMap.set("SOL.CUSTOMTOKEN-ADDRESS123", {
+        address: "ADDRESS123",
+        chain: Chain.Solana,
+        decimal: 9,
+        identifier: "SOL.CUSTOMTOKEN-ADDRESS123",
+      });
+
+      AssetValue.setStaticAssets(customMap);
+
+      const asset = AssetValue.from({ asset: "SOL.CUSTOMTOKEN-ADDRESS123" });
+      expect(asset.decimal).toBe(9);
+      expect(asset.address).toBe("ADDRESS123");
+    });
+
+    test("populates chain:address map for lookups", () => {
+      const customMap = new Map();
+
+      customMap.set("BSC.TOKEN-0XDEF", {
+        address: "0xDEF",
+        chain: Chain.BinanceSmartChain,
+        decimal: 18,
+        identifier: "BSC.TOKEN-0xDEF",
+      });
+
+      AssetValue.setStaticAssets(customMap);
+
+      // Should be able to find by chain:address
+      const asset = AssetValue.from({ address: "0XDEF", chain: Chain.BinanceSmartChain });
+      expect(asset.decimal).toBe(18);
+    });
+
+    test("handles tokens with tax property", () => {
+      const customMap = new Map();
+
+      const tax = { buy: 0.1, sell: 0.2 };
+      customMap.set("ETH.TAXTOKEN-0X789", {
+        address: "0x789",
+        chain: Chain.Ethereum,
+        decimal: 18,
+        identifier: "ETH.TAXTOKEN-0x789",
+        tax,
+      });
+
+      AssetValue.setStaticAssets(customMap);
+
+      const asset = AssetValue.from({ asset: "ETH.TAXTOKEN-0X789" });
+      expect(asset.tax).toEqual(tax);
+    });
+  });
 });

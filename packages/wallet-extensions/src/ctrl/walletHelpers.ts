@@ -45,7 +45,7 @@ export async function getCtrlProvider<T extends Chain>(
         ? Eip1193Provider
         : undefined
 > {
-  if (!window.xfi) throw new SwapKitError("wallet_ctrl_not_found");
+  if (!window.ctrl) throw new SwapKitError("wallet_ctrl_not_found");
   const { match } = await import("ts-pattern");
 
   // @ts-expect-error
@@ -61,16 +61,16 @@ export async function getCtrlProvider<T extends Chain>(
       Chain.Gnosis,
       Chain.Optimism,
       Chain.Polygon,
-      () => window.xfi?.ethereum,
+      () => window.ctrl?.ethereum,
     )
-    .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, () => window.xfi?.keplr)
-    .with(Chain.Bitcoin, () => window.xfi?.bitcoin)
-    .with(Chain.BitcoinCash, () => window.xfi?.bitcoincash)
-    .with(Chain.Dogecoin, () => window.xfi?.dogecoin)
-    .with(Chain.Litecoin, () => window.xfi?.litecoin)
-    .with(Chain.Solana, () => window.xfi?.solana)
-    .with(Chain.THORChain, () => window.xfi?.thorchain)
-    .with(Chain.Maya, () => window.xfi?.mayachain)
+    .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, () => window.ctrl?.keplr)
+    .with(Chain.Bitcoin, () => window.ctrl?.bitcoin)
+    .with(Chain.BitcoinCash, () => window.ctrl?.bitcoincash)
+    .with(Chain.Dogecoin, () => window.ctrl?.dogecoin)
+    .with(Chain.Litecoin, () => window.ctrl?.litecoin)
+    .with(Chain.Solana, () => window.ctrl?.solana)
+    .with(Chain.THORChain, () => window.ctrl?.thorchain)
+    .with(Chain.Maya, () => window.ctrl?.mayachain)
     .otherwise(() => undefined);
 }
 
@@ -140,16 +140,16 @@ export async function getCtrlAddress(chain: Chain) {
     }
 
     if (chain === Chain.Near) {
-      if (!window.xfi?.near) {
+      if (!window.ctrl?.near) {
         throw new SwapKitError("wallet_ctrl_not_found", { chain: Chain.Near });
       }
 
-      if (!window.xfi.near.isSignedIn?.()) {
-        const result = await window.xfi.near.request<string[]>?.({ method: "connect" });
+      if (!window.ctrl.near.isSignedIn?.()) {
+        const result = await window.ctrl.near.request<string[]>?.({ method: "connect" });
         return result?.[0] || "";
       }
 
-      return window.xfi.near.getAccountId?.() || "";
+      return window.ctrl.near.getAccountId?.() || "";
     }
 
     const accounts = await eipProvider.request({ method: "request_accounts", params: [] });

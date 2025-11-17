@@ -111,17 +111,19 @@ export const defaultWallets = {
   ...trezorWallet,
   ...tronlinkWallet,
   ...vultisigWallet,
-  ...walletconnectWallet,
   ...walletSelectorWallet,
+  ...walletconnectWallet,
   ...xamanWallet,
 };
 
 export function createSwapKit<
-  Plugins extends ReturnType<typeof createPlugin> = typeof defaultPlugins,
-  Wallets extends ReturnType<typeof createWallet> = typeof defaultWallets,
+  PluginName extends string,
+  WalletName extends string,
+  Plugins extends Record<PluginName, ReturnType<typeof createPlugin>[PluginName]>,
+  Wallets extends Record<WalletName, ReturnType<typeof createWallet>[WalletName]>,
 >({ config, plugins, wallets }: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
-  const mergedPlugins = { ...defaultPlugins, ...plugins } as typeof defaultPlugins & Plugins;
-  const mergedWallets = { ...defaultWallets, ...wallets } as typeof defaultWallets & Wallets;
+  const mergedPlugins = { ...defaultPlugins, ...plugins };
+  const mergedWallets = { ...defaultWallets, ...wallets };
 
   return SwapKit({ config: config, plugins: mergedPlugins, wallets: mergedWallets });
 }

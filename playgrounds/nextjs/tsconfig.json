@@ -9,7 +9,12 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["DOM", "ES2020", "ES2021", "ES2022"],
+    "lib": [
+      "DOM",
+      "ES2020",
+      "ES2021",
+      "ES2022"
+    ],
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noEmit": true,
@@ -20,8 +25,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
-    "paths": { "~/*": ["./src/*"] },
-    "plugins": [{ "name": "next" }],
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "preserveSymlinks": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -33,6 +46,6 @@
     "target": "ES2022",
     "useDefineForClassFields": true
   },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

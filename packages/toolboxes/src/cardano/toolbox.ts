@@ -40,7 +40,8 @@ async function getCardanoBalance(address: string) {
 
     return balances;
   } catch (error) {
-    console.error("Cardano balance fetch error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Cardano balance fetch error: ${errorMessage}`);
     return [AssetValue.from({ chain: Chain.Cardano })];
   }
 }

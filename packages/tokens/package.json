@@ -1,15 +1,17 @@
 {
   "author": "swapkit-oss",
-  "dependencies": {
-    "@swapkit/helpers": "workspace:*",
-    "@swapkit/toolboxes": "workspace:*",
-    "@swapkit/wallets": "workspace:*"
-  },
+  "dependencies": { "ts-pattern": "^5.9.0" },
   "description": "SwapKit - Tokens",
+  "devDependencies": { "@swapkit/helpers": "workspace:*", "ts-pattern": "5.9.0" },
   "exports": {
-    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs", "types": "./dist/types/index.d.ts" }
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
   },
-  "files": ["dist/"],
+  "files": ["dist/", "src/"],
   "homepage": "https://github.com/swapkit/SwapKit",
   "license": "Apache-2.0",
   "name": "@swapkit/tokens",
@@ -18,12 +20,12 @@
     "build": "bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo",
-    "generate-tokens": "bun --bun ./fetchTokenLists.ts",
+    "generate-tokens": "bun --bun --env-file=../../.env ./fetchTokenLists.ts",
     "test": "echo 'bun test'",
     "test:ci": "echo 'bun test --coverage'",
     "type-check": "bun tsc --noEmit",
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.0.43"
+  "version": "4.1.1"
 }

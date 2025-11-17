@@ -1,8 +1,6 @@
-import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
-import { Chain, type ChainSigner, type DerivationPathArray, SwapKitError, type UTXOChain } from "@swapkit/helpers";
-import type { Psbt } from "bitcoinjs-lib";
-import type { TransactionBuilderType, TransactionType, UTXOType } from "../types";
+import { Chain, type DerivationPathArray, SwapKitError, type UTXOChain } from "@swapkit/helpers";
 import { createBCHToolbox } from "./bitcoinCash";
+import type { UtxoToolboxParams } from "./params";
 import { createUTXOToolbox } from "./utxo";
 import { createZcashToolbox } from "./zcash";
 
@@ -23,15 +21,6 @@ export type UTXOToolboxes = {
 
 export type UTXOWallets = {
   [key in keyof UTXOToolboxes]: UTXOToolboxes[key];
-};
-
-export type UtxoToolboxParams = {
-  [Chain.BitcoinCash]: { signer: ChainSigner<{ builder: TransactionBuilderType; utxos: UTXOType[] }, TransactionType> };
-  [Chain.Bitcoin]: { signer: ChainSigner<Psbt, Psbt> };
-  [Chain.Dogecoin]: { signer: ChainSigner<Psbt, Psbt> };
-  [Chain.Litecoin]: { signer: ChainSigner<Psbt, Psbt> };
-  [Chain.Dash]: { signer: ChainSigner<Psbt, Psbt> };
-  [Chain.Zcash]: { signer?: ChainSigner<ZcashPsbt, ZcashPsbt> };
 };
 
 export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
@@ -66,4 +55,5 @@ export async function getUtxoToolbox<T extends keyof UTXOToolboxes>(
 }
 
 export { stripToCashAddress } from "./bitcoinCash";
+export * from "./params";
 export { bchValidateAddress, stripPrefix, validateZcashAddress } from "./validators";

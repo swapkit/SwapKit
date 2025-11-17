@@ -1,10 +1,11 @@
 "use client";
 
-import { Chain } from "@swapkit/sdk";
+import { AllChains, type Chain } from "@swapkit/sdk";
 import { SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
-import { cn } from "../../../lib/utils";
+import { cn, formatCurrency } from "../../../lib/utils";
+import { useFilteredSortedAssets } from "../../hooks/use-filtered-sorted-assets";
 import { showModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
 import { ChainIcon } from "../chain-icon";
@@ -22,43 +23,24 @@ export function SwapAssetSelect({
   setSelectedAsset: (asset: string) => void;
 }) {
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<Chain[]>([]);
   const [open, setOpen] = useState(false);
-  const { chains, balanceGroupedByChain, isWalletConnected } = useSwapKit();
+  const { isWalletConnected } = useSwapKit();
+
+  const { assets, filters, setFilters } = useFilteredSortedAssets();
 
   // 8 cols * 2 rows - 1 (button "all") - 2 (button "hide/show more")
   const collapsedNetworksAmount = 8 * 2 - 1 - 2;
-  const totalNetworksAmount = Object.values(Chain).length;
+  const totalNetworksAmount = AllChains.length;
   const visibleNetworksAmount = isNetworkListExpanded ? totalNetworksAmount : collapsedNetworksAmount;
   const canShowMore = collapsedNetworksAmount < totalNetworksAmount - 2;
 
-  const lowerSearchQuery = searchQuery.toLowerCase();
-
   const networksToRender = useMemo(() => {
-    return Object.values(Chain)
-      ?.sort((a, b) => a?.localeCompare(b))
-      ?.slice(0, canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2);
+    return AllChains?.sort((a, b) => a?.localeCompare(b))?.slice(
+      0,
+      canShowMore ? visibleNetworksAmount : visibleNetworksAmount + 2,
+    );
   }, [canShowMore, visibleNetworksAmount]);
-
-  const assetsToRender = useMemo(() => {
-    return chains
-      ?.flatMap?.((chain) => {
-        if (selectedNetworks.length > 0 && !selectedNetworks?.includes(chain)) return null;
-        if (!balanceGroupedByChain?.[chain]?.length) return null;
-
-        const filteredAssets = balanceGroupedByChain?.[chain]?.filter?.((assetValue) => {
-          return (
-            assetValue?.symbol?.toLowerCase()?.includes(lowerSearchQuery) ||
-            assetValue?.ticker?.toLowerCase()?.includes(lowerSearchQuery) ||
-            assetValue?.chain?.toLowerCase()?.includes(lowerSearchQuery)
-          );
-        });
-
-        return filteredAssets;
-      })
-      ?.filter((assetValue) => assetValue !== null);
-  }, [balanceGroupedByChain, selectedNetworks, lowerSearchQuery, chains?.flatMap]);
 
   const handleDialogTriggerClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -86,7 +68,7 @@ export function SwapAssetSelect({
         <SwapAssetItem asset={selectedAsset} />
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="flex flex-col">
         <DialogHeader>
           <DialogTitle>Select Token</DialogTitle>
         </DialogHeader>
@@ -94,9 +76,9 @@ export function SwapAssetSelect({
         <div className="relative">
           <Input
             className="h-10 bg-secondary pl-9 placeholer:text-muted-foreground text-base text-foreground"
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setFilters({ searchQuery: e.target.value })}
             placeholder="Search token name"
-            value={searchQuery}
+            value={filters?.searchQuery ?? ""}
           />
 
           <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground" />
@@ -122,13 +104,14 @@ export function SwapAssetSelect({
 
             {networksToRender?.map((chain) => {
               const isSelected = selectedNetworks?.includes(chain);
+
               return (
                 <Button
                   className={cn(
                     "aspect-[1.3/1] h-auto border border-transparent p-0",
                     isSelected && "border-foreground text-foreground",
                   )}
-                  key={`swap-asset-item-${chain}`}
+                  key={`swap-asset-network-${chain}`}
                   onClick={() => {
                     setSelectedNetworks((selectedNetworks) => {
                       if (isSelected) {
@@ -153,8 +136,8 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="mt-2 flex flex-col">
-          {match({ assetsToRender, isWalletConnected })
+        <DialogFooter className="mt-2 max-h-[clamp(16rem,50svh,32rem)] overflow-y-auto overflow-x-hidden">
+          {match({ assets, isWalletConnected })
             .with({ isWalletConnected: false }, () => (
               <div className="flex h-40 flex-col items-center justify-center gap-1">
                 <header className="font-medium">Connect your wallet</header>
@@ -163,7 +146,7 @@ export function SwapAssetSelect({
               </div>
             ))
             .when(
-              ({ assetsToRender }) => assetsToRender?.length <= 0,
+              ({ assets }) => assets?.length <= 0,
               () => (
                 <div className="flex h-40 flex-col items-center justify-center gap-1">
                   <header className="font-medium">No assets found</header>
@@ -175,25 +158,30 @@ export function SwapAssetSelect({
               ),
             )
             .otherwise(() => (
-              <div className="flex flex-col gap-2">
-                {assetsToRender?.map((assetValue) => {
-                  const assetValueString = assetValue?.toString();
+              <div className="flex w-auto flex-1 flex-col">
+                {assets?.slice(0, 100)?.map((asset) => {
+                  const assetIdentifier = asset.toString();
 
                   return (
                     <Button
-                      className="-mx-4 w-auto flex-1 justify-between rounded-lg px-4 py-2"
-                      key={`swap-asset-item-${assetValueString}`}
+                      className="-mx-4 h-auto w-auto justify-between rounded-lg px-4 py-2"
+                      key={`swap-asset-item-${assetIdentifier}-${asset.chainId}`}
                       onClick={() => {
-                        setSelectedAsset(assetValueString);
+                        setSelectedAsset(assetIdentifier);
                         setOpen(false);
                       }}
                       variant="ghost">
-                      <SwapAssetItem asset={assetValueString} />
+                      <SwapAssetItem asset={assetIdentifier} />
 
-                      <div className="flex flex-col items-end">
-                        <span className="font-medium text-base text-foreground">Label</span>
+                      <div className={cn("flex flex-col items-end", asset?.getValue("number") <= 0 && "opacity-50")}>
+                        <span className="font-medium text-base text-foreground">
+                          {asset?.getValue("number")?.toFixed(6) || "0.00"}
+                        </span>
 
-                        <span className="-mt-0.5 text-muted-foreground text-sm">Label</span>
+                        <span className="-mt-0.5 text-muted-foreground text-sm">
+                          {/* TODO: show the correct USD balance value */}
+                          {formatCurrency(asset?.getValue("number") || 0)}
+                        </span>
                       </div>
                     </Button>
                   );

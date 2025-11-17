@@ -219,9 +219,9 @@ describe("SwapKitNumber", () => {
   describe("toCurrency", () => {
     test("returns abbreviation with up to 3 integer digits", () => {
       const skNumber = new SwapKitNumber(1234.5678);
-      expect(skNumber.toCurrency()).toBe("$1,234.56");
+      expect(skNumber.toCurrency()).toBe("$1,234.57");
       expect(skNumber.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: " " })).toBe(
-        "1 234,56€",
+        "1 234,57€",
       );
 
       const skNumber2 = new SwapKitNumber(0.5678);
@@ -229,10 +229,10 @@ describe("SwapKitNumber", () => {
       expect(skNumber2.toCurrency("€", { currencyPosition: "end", decimalSeparator: "," })).toBe("0,5678€");
 
       const skNumber3 = new SwapKitNumber(0.00005678);
-      expect(skNumber3.toCurrency()).toBe("$0.000057");
+      expect(skNumber3.toCurrency()).toBe("$0.00005678");
       expect(
         skNumber3.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: " " }),
-      ).toBe("0,000057€");
+      ).toBe("0,00005678€");
 
       const skNumber4 = new SwapKitNumber(12345);
       expect(skNumber4.toCurrency()).toBe("$12,345");
@@ -445,7 +445,7 @@ describe("SwapKitNumber", () => {
       const divider = new SwapKitNumber("105.2562773915526");
       const result = asset1.mul(multiplier).div(divider);
 
-      expect(result.getValue("string")).toBe("2.125399527674726");
+      expect(result.getValue("string")).toBe("2.12539952767472630150052259932285534");
     });
   });
 

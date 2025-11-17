@@ -157,7 +157,8 @@ async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: s
     );
     return rawTxResponse?.[txHash]?.raw_transaction || "";
   } catch (error) {
-    console.error("Failed to fetch raw transaction:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to fetch raw transaction: ${errorMessage}`);
     return "";
   }
 }
@@ -254,7 +255,8 @@ async function getUnspentUtxos({
 
     return pickMostValuableTxs(allUtxos, targetValue);
   } catch (error) {
-    console.error("Failed to fetch unspent UTXOs:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to fetch unspent UTXOs: ${errorMessage}`);
     return [];
   }
 }
@@ -287,7 +289,7 @@ async function getUtxos({
   return results;
 }
 
-function utxoApi(chain: UTXOChain) {
+export function getUtxoApi(chain: UTXOChain) {
   const apiKey = SKConfig.get("apiKeys").blockchair || "";
 
   warnOnce({
@@ -310,23 +312,8 @@ function utxoApi(chain: UTXOChain) {
 /**
  * "Factory" to ensure typing for custom UTXO APIs
  */
-export function createCustomUtxoApi(methods: ReturnType<typeof utxoApi>) {
+export function createCustomUtxoApi(methods: ReturnType<typeof getUtxoApi>) {
   return methods;
-}
-
-export function getUtxoApi(chain: UTXOChain) {
-  const customUtxoApi = SKConfig.get("apis")[chain];
-
-  if (customUtxoApi) {
-    warnOnce({
-      condition: true,
-      id: "custom_utxo_api_warning",
-      warning: "Using custom UTXO API. Be sure to implement all methods to avoid issues.",
-    });
-    return customUtxoApi as ReturnType<typeof utxoApi>;
-  }
-
-  return utxoApi(chain);
 }
 
 export function getUtxoNetwork() {
