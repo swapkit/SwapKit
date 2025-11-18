@@ -8,11 +8,7 @@ import { InputField } from "./ui/input-field";
 import { SidebarGroup } from "./ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-export type WidgetConfiguratorFormValues = {
-  apiKey: string;
-  apiUrl: string;
-  experimental: { apiUrlQuote: string; apiUrlSwap: string; apiKey: string };
-};
+export type WidgetConfiguratorFormValues = { apiKey: string; apiUrl: string; apiUrlQuote: string; apiUrlSwap: string };
 
 export function WidgetConfigurator({ control }: { control: Control<WidgetConfiguratorFormValues> }) {
   const [isAdvancedVisible, setIsAdvancedVisible] = useState(false);
@@ -51,22 +47,15 @@ export function WidgetConfigurator({ control }: { control: Control<WidgetConfigu
                 <InputField
                   control={control}
                   label="SwapKit API URL for /quote"
-                  name="experimental.apiUrlQuote"
+                  name="apiUrlQuote"
                   placeholder={apiUrl}
                 />
 
                 <InputField
                   control={control}
                   label="SwapKit API URL for /swap"
-                  name="experimental.apiUrlSwap"
+                  name="apiUrlSwap"
                   placeholder={apiUrl}
-                />
-
-                <InputField
-                  control={control}
-                  label="SwapKit API key for /quote and /swap"
-                  name="experimental.apiKey"
-                  placeholder={apiKey}
                 />
               </CardContent>
             </Card>

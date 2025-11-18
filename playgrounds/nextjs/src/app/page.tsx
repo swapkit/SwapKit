@@ -1,24 +1,27 @@
 "use client";
 
-import {QuoteResponse, QuoteResponseRoute, RequestClient} from "@swapkit/sdk";
+import { type QuoteResponse, type QuoteResponseRoute, RequestClient } from "@swapkit/sdk";
 import { SwapKitWidget } from "@swapkit/ui/react";
+import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
 import { AppSidebar } from "~/components/containers/AppSidebar";
 import { WidgetConfigurator, type WidgetConfiguratorFormValues } from "~/components/WidgetConfigurator";
 
 export default function SwapPage() {
-  const { watch, control } = useForm<WidgetConfiguratorFormValues>({
-    defaultValues: { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" },
-  });
+  const defaultValues =
+    typeof localStorage !== "undefined" && localStorage.getItem("formValues")
+      ? JSON.parse(localStorage.getItem("formValues") || "")
+      : { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" };
 
-  const [apiKey, apiUrl, experimentalApiUrlQuote, experimentalApiUrlSwap, experimentalApiKey] = watch([
-    "apiKey",
-    "apiUrl",
-    "experimental.apiUrlQuote",
-    "experimental.apiUrlSwap",
-    "experimental.apiKey",
-  ]);
+  const { watch, control } = useForm<WidgetConfiguratorFormValues>({ defaultValues });
+  const formValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("formValues", JSON.stringify(formValues));
+  }, [formValues]);
+
+  const [apiKey, apiUrl, apiUrlQuote, apiUrlSwap] = watch(["apiKey", "apiUrl", "apiUrlQuote", "apiUrlSwap"]);
 
   return (
     <div className="grid w-full grid-cols-3 gap-4">
@@ -34,18 +37,21 @@ export default function SwapPage() {
               swapKit: apiKey,
               walletConnectProjectId: "",
             },
-            envs: {
-              devApiUrl: apiUrl,
-              isDev: true,
-            },
             endpoints: {
               getQuote: (json) => {
-                return RequestClient.post<QuoteResponse>(`${experimentalApiUrlQuote}/quote`, { json });
+                return RequestClient.post<QuoteResponse>(apiUrlQuote, {
+                  headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+                  json,
+                });
               },
               getRouteWithTx: (json) => {
-                return RequestClient.post<QuoteResponseRoute>(`${experimentalApiUrlSwap}/swap`, { json });
+                return RequestClient.post<QuoteResponseRoute>(apiUrlSwap, {
+                  headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+                  json,
+                });
               },
             },
+            envs: { devApiUrl: apiUrl, isDev: true },
             integrations: {
               keepKey: {
                 basePath: "http://localhost:1646/spec/swagger.json",
