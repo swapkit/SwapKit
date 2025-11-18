@@ -7,6 +7,7 @@ import { SwapAssetItem } from "../composable/swap-asset-item";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+
 export const SwapConfirmDialog = ({
   swapRoute,
 }: {
@@ -108,7 +109,9 @@ export const SwapConfirmDialog = ({
           </Accordion>
         </div>
 
-        <Button variant="primary">Confirm swap</Button>
+        <Button onClick={() => modal.resolve({ confirmed: true, data: undefined })} variant="primary">
+          Confirm swap
+        </Button>
       </DialogContent>
     </Dialog>
   );

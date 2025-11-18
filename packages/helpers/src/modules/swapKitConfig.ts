@@ -117,6 +117,7 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
     set((s) => ({
       apiKeys: { ...s.apiKeys, ...config?.apiKeys },
       chains: s.chains.concat(config?.chains || []),
+      endpoints: { ...s.endpoints, ...config?.endpoints },
       envs: { ...s.envs, ...config?.envs },
       feeMultipliers: config?.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config?.integrations },
@@ -143,6 +144,7 @@ export const useSwapKitConfig = () =>
     useShallow((state) => ({
       apiKeys: state?.apiKeys,
       chains: state?.chains,
+      endpoints: state?.endpoints,
       envs: state?.envs,
       feeMultipliers: state?.feeMultipliers,
       integrations: state?.integrations,

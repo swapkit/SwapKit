@@ -73,8 +73,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         sourceAddress: swapKit.getAddress(sourceAsset.chain),
       });
 
-      console.log("route with tx", routeWithTx);
-
       if (!routeWithTx) throw new Error("No route with TX found");
 
       if (

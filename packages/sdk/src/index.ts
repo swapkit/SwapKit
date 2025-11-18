@@ -117,10 +117,8 @@ export const defaultWallets = {
 } as ReturnType<typeof createWallet>;
 
 export function createSwapKit<
-  PluginName extends string,
-  WalletName extends string,
-  Plugins extends Record<PluginName, ReturnType<typeof createPlugin>[PluginName]>,
-  Wallets extends Record<WalletName, ReturnType<typeof createWallet>[WalletName]>,
+  Plugins extends ReturnType<typeof createPlugin>,
+  Wallets extends ReturnType<typeof createWallet>,
 >({ config, plugins, wallets }: { config?: SKConfigState; plugins?: Plugins; wallets?: Wallets } = {}) {
   const mergedPlugins = { ...defaultPlugins, ...plugins };
   const mergedWallets = { ...defaultWallets, ...wallets };
