@@ -63,40 +63,40 @@ export function SwapAssetSelect({
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
-        className="-ml-2 mt-1 w-auto min-w-48 max-w-1/2 rounded-lg px-2 transition-colors duration-100 hover:bg-white/[0.08]"
+        className="sk-ui--ml-2 sk-ui-mt-1 sk-ui-w-auto sk-ui-min-w-48 sk-ui-max-w-1/2 sk-ui-rounded-lg sk-ui-px-2 sk-ui-transition-colors sk-ui-duration-100 hover:sk-ui-bg-white/[0.08]"
         onClick={handleDialogTriggerClick}>
         <SwapAssetItem asset={selectedAsset} />
       </DialogTrigger>
 
-      <DialogContent className="flex flex-col">
+      <DialogContent className="sk-ui-flex sk-ui-flex-col">
         <DialogHeader>
           <DialogTitle>Select Token</DialogTitle>
         </DialogHeader>
 
-        <div className="relative">
+        <div className="sk-ui-relative">
           <Input
-            className="h-10 bg-secondary pl-9 placeholer:text-muted-foreground text-base text-foreground"
+            className="sk-ui-h-10 sk-ui-bg-secondary sk-ui-pl-9 placeholer:sk-ui-text-muted-foreground sk-ui-text-base sk-ui-text-foreground"
             onChange={(e) => setFilters({ searchQuery: e.target.value })}
             placeholder="Search token name"
             value={filters?.searchQuery ?? ""}
           />
 
-          <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground" />
+          <SearchIcon className="sk-ui--translate-y-1/2 sk-ui-absolute sk-ui-top-1/2 sk-ui-left-3 sk-ui-size-4 sk-ui-text-muted-foreground" />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-muted-foreground text-sm">
+        <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-2">
+          <span className="sk-ui-text-muted-foreground sk-ui-text-sm">
             Network:{" "}
-            <span className="font-medium text-foreground">
+            <span className="sk-ui-font-medium sk-ui-text-foreground">
               {selectedNetworks?.length ? selectedNetworks?.map((network) => network.toString()).join(", ") : "All"}
             </span>
           </span>
 
-          <div className="grid grid-cols-8 gap-2">
+          <div className="sk-ui-grid sk-ui-grid-cols-8 sk-ui-gap-2">
             <Button
               className={cn(
-                "aspect-[1.3/1] h-auto border border-transparent",
-                selectedNetworks?.length === 0 && "border-foreground text-foreground",
+                "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-aspect-[1.3/1]",
+                selectedNetworks?.length === 0 && "sk-ui-border-foreground sk-ui-text-foreground",
               )}
               onClick={() => setSelectedNetworks([])}>
               All
@@ -108,8 +108,8 @@ export function SwapAssetSelect({
               return (
                 <Button
                   className={cn(
-                    "aspect-[1.3/1] h-auto border border-transparent p-0",
-                    isSelected && "border-foreground text-foreground",
+                    "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-p-0 sk-ui-aspect-[1.3/1]",
+                    isSelected && "sk-ui-border-foreground sk-ui-text-foreground",
                   )}
                   key={`swap-asset-network-${chain}`}
                   onClick={() => {
@@ -121,14 +121,14 @@ export function SwapAssetSelect({
                       return Array.from(new Set([...selectedNetworks, chain]));
                     });
                   }}>
-                  <ChainIcon chain={chain} className="size-5" />
+                  <ChainIcon chain={chain} className="sk-ui-size-5" />
                 </Button>
               );
             })}
 
             {canShowMore && (
               <Button
-                className="col-span-2 col-start-7 h-auto"
+                className="sk-ui-col-span-2 sk-ui-col-start-7 sk-ui-h-auto"
                 onClick={() => setIsNetworkListExpanded((isNetworkListExpanded) => !isNetworkListExpanded)}>
                 {isNetworkListExpanded ? "Hide" : "Show More"}
               </Button>
@@ -136,35 +136,37 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="mt-2 max-h-[clamp(16rem,50svh,32rem)] overflow-y-auto overflow-x-hidden">
+        <DialogFooter className="sk-ui-mt-2 sk-ui-overflow-y-auto sk-ui-overflow-x-hidden sk-ui-max-h-[clamp(16rem,50svh,32rem)]">
           {match({ assets, isWalletConnected })
             .with({ isWalletConnected: false }, () => (
-              <div className="flex h-40 flex-col items-center justify-center gap-1">
-                <header className="font-medium">Connect your wallet</header>
+              <div className="sk-ui-flex sk-ui-h-40 sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1">
+                <header className="sk-ui-font-medium">Connect your wallet</header>
 
-                <p className="text-muted-foreground text-sm">Please connect your wallet to see your assets</p>
+                <p className="sk-ui-text-muted-foreground sk-ui-text-sm">
+                  Please connect your wallet to see your assets
+                </p>
               </div>
             ))
             .when(
               ({ assets }) => assets?.length <= 0,
               () => (
-                <div className="flex h-40 flex-col items-center justify-center gap-1">
-                  <header className="font-medium">No assets found</header>
+                <div className="sk-ui-flex sk-ui-h-40 sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1">
+                  <header className="sk-ui-font-medium">No assets found</header>
 
-                  <p className="text-muted-foreground text-sm">
+                  <p className="sk-ui-text-muted-foreground sk-ui-text-sm">
                     Try changing the selected networks or the search query
                   </p>
                 </div>
               ),
             )
             .otherwise(() => (
-              <div className="flex w-auto flex-1 flex-col">
+              <div className="sk-ui-flex sk-ui-w-auto sk-ui-flex-1 sk-ui-flex-col">
                 {assets?.slice(0, 100)?.map((asset) => {
                   const assetIdentifier = asset.toString();
 
                   return (
                     <Button
-                      className="-mx-4 h-auto w-auto justify-between rounded-lg px-4 py-2"
+                      className="sk-ui--mx-4 sk-ui-h-auto sk-ui-w-auto sk-ui-justify-between sk-ui-rounded-lg sk-ui-px-4 sk-ui-py-2"
                       key={`swap-asset-item-${assetIdentifier}-${asset.chainId}`}
                       onClick={() => {
                         setSelectedAsset(assetIdentifier);
@@ -173,12 +175,16 @@ export function SwapAssetSelect({
                       variant="ghost">
                       <SwapAssetItem asset={assetIdentifier} />
 
-                      <div className={cn("flex flex-col items-end", asset?.getValue("number") <= 0 && "opacity-50")}>
-                        <span className="font-medium text-base text-foreground">
+                      <div
+                        className={cn(
+                          "sk-ui-flex sk-ui-flex-col sk-ui-items-end",
+                          asset?.getValue("number") <= 0 && "sk-ui-opacity-50",
+                        )}>
+                        <span className="sk-ui-font-medium sk-ui-text-base sk-ui-text-foreground">
                           {asset?.getValue("number")?.toFixed(6) || "0.00"}
                         </span>
 
-                        <span className="-mt-0.5 text-muted-foreground text-sm">
+                        <span className="sk-ui--mt-0.5 sk-ui-text-muted-foreground sk-ui-text-sm">
                           {/* TODO: show the correct USD balance value */}
                           {formatCurrency(asset?.getValue("number") || 0)}
                         </span>

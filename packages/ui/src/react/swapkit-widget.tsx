@@ -2,7 +2,7 @@
 
 import "@swapkit/ui/swapkit.css";
 
-import { type QuoteResponseRoute, useSwapKitStore } from "@swapkit/sdk";
+import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
@@ -47,23 +47,49 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey]);
 
-  const handleSwap = async (route: QuoteResponseRoute) => {
-    if (!swapKit) return;
-
+  const performSwap = async (route: QuoteResponseRoute) => {
     try {
-      const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
-
-      if (!confirmed) return;
-
       setIsSwapping(true);
-      const swap = await swapKit.swap({ route });
 
-      await swap.wait();
-      setAmount("");
-      toast.success("Swap completed successfully", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
+      const inputAssetValue = AssetValue.from({ asset: route?.sellAsset, value: route?.sellAmount });
+
+      if (!inputAssetValue || !swapKit) {
+        throw new Error("Invalid route parameters. Please check the route details and try again.");
+      }
+
+      const isApproved = await swapKit.isAssetValueApproved(inputAssetValue, route?.sourceAddress);
+
+      if (!isApproved) {
+        await swapKit.approveAssetValue(inputAssetValue, route?.sourceAddress);
+      }
+
+      const destinationAsset = AssetValue.from({ asset: route?.buyAsset });
+      const sourceAsset = AssetValue.from({ asset: route?.sellAsset });
+
+      const routeWithTx = await SwapKitApi.getRouteWithTx({
+        destinationAddress: swapKit.getAddress(destinationAsset.chain),
+        routeId: route.routeId,
+        sourceAddress: swapKit.getAddress(sourceAsset.chain),
+      });
+
+      if (!routeWithTx) throw new Error("No route with TX found");
+
+      if (
+        !routeWithTx?.sourceAddress ||
+        !routeWithTx?.destinationAddress ||
+        Number.parseFloat(routeWithTx?.sellAmount) <= 0
+      ) {
+        throw new Error("Invalid route parameters. Please check the route details and try again.");
+      }
+
+      const swap = await swapKit.swap({ route: routeWithTx });
+
+      await swap?.wait?.();
+
+      toast.success("Swap transaction has been successfully submitted!", { toasterId: SWAPKIT_WIDGET_TOASTER_ID });
     } catch (error) {
-      console.error("Swap failed:", error);
-      toast.error(`Swap failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
+      console.error("Swap process failed:", error);
+      toast.error(`Swap process failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
         toasterId: SWAPKIT_WIDGET_TOASTER_ID,
       });
     } finally {
@@ -73,14 +99,18 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const handleSubmitButtonClick = async () => {
     if (!isWalletConnected) {
-      void showModal(<WalletConnectDialog />);
+      await showModal(<WalletConnectDialog />);
       return;
     }
 
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
+    const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
+
+    if (!confirmed) return;
+
     try {
-      await handleSwap(selectedRoute?.route);
+      await performSwap(selectedRoute?.route);
     } catch (error) {
       console.error("Failed to prepare swap:", error);
       toast.error(`Failed to prepare swap: ${error instanceof Error ? error.message : "Unknown error"}`, {
@@ -92,7 +122,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
       <>
-        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
         Swapping...
       </>
     ))
@@ -107,13 +137,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     isFetchingQuote;
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="font-medium text-2xl">Swap</h1>
+    <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
+      <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
 
       <Card>
-        <CardContent className="grid gap-6">
-          <div className="space-y-4">
-            <div className="grid gap-4">
+        <CardContent className="sk-ui-grid sk-ui-gap-6">
+          <div className="sk-ui-space-y-4">
+            <div className="sk-ui-grid sk-ui-gap-4">
               <SwapInputWithChainSelector
                 amount={amount}
                 formattedAmountUSD={selectedRoute?.formattedInputAssetPriceUSD}
@@ -124,11 +154,11 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                 setSelectedAsset={setInputAsset}
               />
 
-              <div className="-my-4 flex items-center space-x-4">
-                <span className="h-px w-full bg-border" />
+              <div className="sk-ui--my-4 sk-ui-flex sk-ui-items-center sk-ui-space-x-4">
+                <span className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
 
                 <Button
-                  className="size-10 shrink-0 rounded-full"
+                  className="sk-ui-size-10 sk-ui-shrink-0 sk-ui-rounded-full"
                   onClick={() => {
                     setInputAsset(outputAsset);
                     setOutputAsset(inputAsset);
@@ -137,10 +167,10 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
                   }}
                   size="unstyled"
                   variant="tertiary">
-                  <ArrowDownUpIcon className="size-6" />
+                  <ArrowDownUpIcon className="sk-ui-size-6" />
                 </Button>
 
-                <span className="h-px w-full bg-border" />
+                <span className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
               </div>
 
               <SwapInputWithChainSelector
@@ -158,7 +188,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
       </Card>
 
       <Button
-        className="w-full"
+        className="sk-ui-w-full"
         disabled={isSubmitButtonDisabled}
         onClick={handleSubmitButtonClick}
         size="xl"

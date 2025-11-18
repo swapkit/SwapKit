@@ -4,46 +4,49 @@
 
 @layer base {
   :root {
-    --white: 0 0% 100%;
-    --black: 0 0% 0%;
+    --sk-ui-white: 0 0% 100%;
+    --sk-ui-black: 0 0% 0%;
 
-    --background: var(--primary);
-    --foreground: var(--primary-foreground);
+    --sk-ui-background: var(--primary);
+    --sk-ui-foreground: var(--primary-foreground);
 
-    --card: var(--secondary);
-    --card-foreground: var(--secondary-foreground);
+    --sk-ui-card: var(--secondary);
+    --sk-ui-card-foreground: var(--secondary-foreground);
 
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
+    --sk-ui-popover: 20 14.3% 4.1%;
+    --sk-ui-popover-foreground: 60 9.1% 97.8%;
 
-    --primary: 140 6% 8%;
-    --primary-foreground: var(--white) / 92%;
+    --sk-ui-primary: 140 6% 8%;
+    --sk-ui-primary-foreground: var(--sk-ui-white) / 92%;
 
-    --secondary: 120 3% 13%;
-    --secondary-foreground: var(--white) / 0.92;
+    --sk-ui-secondary: 120 3% 13%;
+    --sk-ui-secondary-foreground: var(--sk-ui-white) / 0.92;
 
-    --tertiary: var(--white) / 0.92;
-    --tertiary-foreground: 120 3% 13%;
+    --sk-ui-tertiary: var(--sk-ui-white) / 0.92;
+    --sk-ui-tertiary-foreground: 120 3% 13%;
 
-    --muted: var(--secondary);
-    --muted-foreground: var(--white) / 0.64;
+    --sk-ui-muted: var(--sk-ui-secondary);
+    --sk-ui-muted-foreground: var(--sk-ui-white) / 0.64;
 
-    --accent: 140 87% 79%;
-    --accent-foreground: 60 9.1% 97.8%;
+    --sk-ui-accent: 140 87% 79%;
+    --sk-ui-accent-foreground: 60 9.1% 97.8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
+    --sk-ui-destructive: 0 62.8% 30.6%;
+    --sk-ui-destructive-foreground: 60 9.1% 97.8%;
 
-    --border: var(--white) / 0.12;
-    --input: var(--white) / 0.32;
-    --ring: 24 5.7% 82.9%;
+    --sk-ui-success: 160 69% 45% / 0.16;
+    --sk-ui-success-foreground: 160 69% 45%;
+
+    --sk-ui-border: var(--sk-ui-white) / 0.12;
+    --sk-ui-input: var(--sk-ui-white) / 0.32;
+    --sk-ui-ring: 24 5.7% 82.9%;
   }
 
   * {
-    @apply border-border antialiased;
+    @apply sk-ui-border-border sk-ui-antialiased;
   }
   
   body {
-    @apply bg-background text-foreground;
+    @apply sk-ui-bg-background sk-ui-text-foreground;
   }
 }

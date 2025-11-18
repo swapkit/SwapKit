@@ -8,7 +8,7 @@ import {
 } from "@swapkit/types";
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
-import type { BalanceResponse } from "../api";
+import type { BalanceResponse, QuoteRequest, QuoteResponse, QuoteResponseRoute } from "../api";
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
@@ -38,6 +38,8 @@ export type SKConfigIntegrations = {
 
 export type CustomApiEndpoints = {
   getBalance: ({ chain, address }: { chain: Chain; address: string }) => Promise<BalanceResponse>;
+  getQuote: (json: QuoteRequest) => Promise<QuoteResponse>;
+  getRouteWithTx: (json: { routeId: string }) => Promise<QuoteResponseRoute>;
 };
 
 const rpcUrls = AllChains.reduce(
@@ -60,6 +62,9 @@ const initialState = {
   envs: {
     apiUrl: "https://api.swapkit.dev",
     devApiUrl: "https://dev-api.swapkit.dev",
+    experimental_apiKey: null as string | null,
+    experimental_apiUrlQuote: null as string | null,
+    experimental_apiUrlSwap: null as string | null,
     isDev: false,
     isStagenet: false,
   },
@@ -112,6 +117,7 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
     set((s) => ({
       apiKeys: { ...s.apiKeys, ...config?.apiKeys },
       chains: s.chains.concat(config?.chains || []),
+      endpoints: { ...s.endpoints, ...config?.endpoints },
       envs: { ...s.envs, ...config?.envs },
       feeMultipliers: config?.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config?.integrations },
@@ -138,6 +144,7 @@ export const useSwapKitConfig = () =>
     useShallow((state) => ({
       apiKeys: state?.apiKeys,
       chains: state?.chains,
+      endpoints: state?.endpoints,
       envs: state?.envs,
       feeMultipliers: state?.feeMultipliers,
       integrations: state?.integrations,

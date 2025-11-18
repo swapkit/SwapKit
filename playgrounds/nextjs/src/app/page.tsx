@@ -1,17 +1,27 @@
 "use client";
 
+import { type QuoteResponse, type QuoteResponseRoute, RequestClient } from "@swapkit/sdk";
 import { SwapKitWidget } from "@swapkit/ui/react";
+import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
 import { AppSidebar } from "~/components/containers/AppSidebar";
 import { WidgetConfigurator, type WidgetConfiguratorFormValues } from "~/components/WidgetConfigurator";
 
 export default function SwapPage() {
-  const { watch, control } = useForm<WidgetConfiguratorFormValues>({
-    defaultValues: { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" },
-  });
+  const defaultValues =
+    typeof localStorage !== "undefined" && localStorage.getItem("formValues")
+      ? JSON.parse(localStorage.getItem("formValues") || "")
+      : { apiKey: "16621042-80db-41ed-83be-3f0349e0d703", apiUrl: "https://dev-api.swapkit.dev" };
 
-  const [apiKey, apiUrl] = watch(["apiKey", "apiUrl"]);
+  const { watch, control } = useForm<WidgetConfiguratorFormValues>({ defaultValues });
+  const formValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("formValues", JSON.stringify(formValues));
+  }, [formValues]);
+
+  const [apiKey, apiUrl, apiUrlQuote, apiUrlSwap] = watch(["apiKey", "apiUrl", "apiUrlQuote", "apiUrlSwap"]);
 
   return (
     <div className="grid w-full grid-cols-3 gap-4">
@@ -26,6 +36,20 @@ export default function SwapPage() {
               keepKey: typeof window !== "undefined" ? localStorage.getItem("keepkeyApiKey") || "1234" : "1234",
               swapKit: apiKey,
               walletConnectProjectId: "",
+            },
+            endpoints: {
+              getQuote: (json) => {
+                return RequestClient.post<QuoteResponse>(apiUrlQuote, {
+                  headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+                  json,
+                });
+              },
+              getRouteWithTx: (json) => {
+                return RequestClient.post<QuoteResponseRoute>(apiUrlSwap, {
+                  headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+                  json,
+                });
+              },
             },
             envs: { devApiUrl: apiUrl, isDev: true },
             integrations: {

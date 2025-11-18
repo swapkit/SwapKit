@@ -1,13 +1,19 @@
 "use client";
 
-import type { Control } from "react-hook-form";
+import { useState } from "react";
+import { type Control, useWatch } from "react-hook-form";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
 import { InputField } from "./ui/input-field";
 import { SidebarGroup } from "./ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-export type WidgetConfiguratorFormValues = { apiKey: string; apiUrl: string };
+export type WidgetConfiguratorFormValues = { apiKey: string; apiUrl: string; apiUrlQuote: string; apiUrlSwap: string };
 
 export function WidgetConfigurator({ control }: { control: Control<WidgetConfiguratorFormValues> }) {
+  const [isAdvancedVisible, setIsAdvancedVisible] = useState(false);
+  const { apiUrl, apiKey } = useWatch<WidgetConfiguratorFormValues>({ control });
+
   return (
     <Tabs defaultValue="settings">
       <TabsList className="mx-4 flex justify-around">
@@ -22,10 +28,38 @@ export function WidgetConfigurator({ control }: { control: Control<WidgetConfigu
         <SidebarGroup>
           <InputField
             control={control}
-            label="SwapKit API Endpoint URL"
+            label={
+              <div className="flex items-center gap-2">
+                <span>SwapKit API Endpoint URL</span>
+
+                <Button className="ml-auto" onClick={() => setIsAdvancedVisible((val) => !val)} variant="link">
+                  Advanced
+                </Button>
+              </div>
+            }
             name="apiUrl"
             placeholder="https://api.swapkit.dev"
           />
+
+          {isAdvancedVisible && (
+            <Card>
+              <CardContent className="!py-2 !px-4">
+                <InputField
+                  control={control}
+                  label="SwapKit API URL for /quote"
+                  name="apiUrlQuote"
+                  placeholder={apiUrl}
+                />
+
+                <InputField
+                  control={control}
+                  label="SwapKit API URL for /swap"
+                  name="apiUrlSwap"
+                  placeholder={apiUrl}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <InputField
             control={control}

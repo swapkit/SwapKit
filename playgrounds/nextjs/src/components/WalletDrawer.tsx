@@ -23,7 +23,7 @@ export function WalletDrawer() {
         </SheetHeader>
 
         <div className="-mr-4 mt-6 flex w-auto flex-1 flex-col space-y-6 overflow-y-auto pr-4 pb-16">
-          {balancesByChain?.entries()?.map(([chain, balances]) => {
+          {Array.from(balancesByChain?.entries() ?? []).map(([chain, balances]) => {
             const walletAddress = balances?.[0]?.wallet?.address;
 
             return (
