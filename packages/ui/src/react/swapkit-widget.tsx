@@ -3,7 +3,6 @@
 import "@swapkit/ui/swapkit.css";
 
 import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
-import "@swapkit/ui/swapkit.css";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
