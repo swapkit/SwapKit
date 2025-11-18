@@ -4,7 +4,7 @@ import type { Chain, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, staticTokensMap, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
-import type { BalanceDetails, SwapKitState } from "./types";
+import type { BalanceDetails, KeystoreFile, SwapKitState } from "./types";
 
 const useSwapKitStore = create<SwapKitState>((set) => {
   // biome-ignore assist/source/useSortedKeys: sort by variable type/use case, not alphabetically
@@ -16,15 +16,8 @@ const useSwapKitStore = create<SwapKitState>((set) => {
     isConnectingWallet: false,
     isWalletConnected: false,
 
-    keystoreFile: null,
-    isKeystoreOpen: false,
-    isKeystoreDecrypting: false,
-
     setSwapKit: (swapKit) => set({ swapKit }),
     setWalletState: ({ connected, type }) => set({ isWalletConnected: connected, walletType: type }),
-    setKeystoreFile: (keystoreFile) => set({ keystoreFile }),
-    setIsKeystoreOpen: (isKeystoreOpen) => set({ isKeystoreOpen }),
-    setIsKeystoreDecrypting: (isKeystoreDecrypting) => set({ isKeystoreDecrypting }),
     setIsConnectingWallet: (isConnectingWallet) => set({ isConnectingWallet }),
   };
 });
@@ -43,15 +36,9 @@ export const useSwapKit = () => {
     swapKit,
     walletType,
     isWalletConnected,
-    keystoreFile,
-    isKeystoreOpen,
-    isKeystoreDecrypting,
     isConnectingWallet,
     setSwapKit,
     setWalletState,
-    setKeystoreFile,
-    setIsKeystoreOpen,
-    setIsKeystoreDecrypting,
     setIsConnectingWallet,
   } = useSwapKitStore((state) => state);
 
@@ -188,11 +175,12 @@ export const useSwapKit = () => {
   const checkIfChainConnected = useCallback((chain: Chain) => !!swapKit?.getAddress(chain), [swapKit]);
 
   const connectKeystore = useCallback(
-    async (password: string) => {
+    async (keystoreFile: KeystoreFile, password: string) => {
       if (!keystoreFile?.keystore || !swapKit) return;
 
       try {
-        setIsKeystoreDecrypting(true);
+        setIsConnectingWallet(true);
+
         const { decryptFromKeystore } = await import("@swapkit/wallet-keystore");
         const phrase = await decryptFromKeystore(keystoreFile.keystore, password);
 
@@ -203,17 +191,14 @@ export const useSwapKit = () => {
         setWalletState({ connected: true, type: WalletOption.KEYSTORE });
 
         await Promise.allSettled(keystoreFile.chains.map((balance) => swapKit?.getWalletWithBalance(balance)));
-
-        setIsKeystoreOpen(false);
-        setKeystoreFile(null);
       } catch (error) {
         console.error("Failed to decrypt keystore:", error);
-        setWalletState({ connected: false, type: null });
+        throw new Error("Failed to decrypt keystore");
       } finally {
-        setIsKeystoreDecrypting(false);
+        setIsConnectingWallet(false);
       }
     },
-    [keystoreFile, swapKit, setWalletState, setIsKeystoreOpen, setKeystoreFile, setIsKeystoreDecrypting],
+    [swapKit, setWalletState, setIsConnectingWallet],
   );
 
   const stableWalletsMemoKey = Object.entries(swapKit?.getAllWallets?.() || {})
@@ -244,43 +229,26 @@ export const useSwapKit = () => {
       loadSwapKit,
 
       balancesByChain,
-
-      walletType,
-      isConnectingWallet,
       isWalletConnected,
+      isConnectingWallet,
+      walletType,
 
       checkIfChainConnected,
       connectKeystore,
       connectWallet,
       disconnectWallet,
-
-      // Keystore related
-      keystoreFile,
-
-      isKeystoreDecrypting,
-      isKeystoreOpen,
-
-      setIsKeystoreDecrypting,
-      setIsKeystoreOpen,
-      setKeystoreFile,
     }),
     [
       swapKit,
-      loadSwapKit,
       balancesByChain,
-      walletType,
-      isConnectingWallet,
       isWalletConnected,
+      isConnectingWallet,
+      walletType,
       checkIfChainConnected,
       connectKeystore,
       connectWallet,
       disconnectWallet,
-      keystoreFile,
-      isKeystoreDecrypting,
-      isKeystoreOpen,
-      setIsKeystoreDecrypting,
-      setIsKeystoreOpen,
-      setKeystoreFile,
+      loadSwapKit,
     ],
   );
 };

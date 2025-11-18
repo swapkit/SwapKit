@@ -136,7 +136,7 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="mt-2 flex max-h-[clamp(16rem,50svh,32rem)] flex-col">
+        <DialogFooter className="mt-2 max-h-[clamp(16rem,50svh,32rem)] overflow-y-auto overflow-x-hidden">
           {match({ assets, isWalletConnected })
             .with({ isWalletConnected: false }, () => (
               <div className="flex h-40 flex-col items-center justify-center gap-1">
@@ -158,7 +158,7 @@ export function SwapAssetSelect({
               ),
             )
             .otherwise(() => (
-              <div className="-mx-6 flex flex-col overflow-y-auto overflow-x-hidden px-6">
+              <div className="flex w-auto flex-1 flex-col">
                 {assets?.slice(0, 100)?.map((asset) => {
                   const assetIdentifier = asset.toString();
 

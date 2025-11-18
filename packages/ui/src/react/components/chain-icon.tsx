@@ -16,7 +16,7 @@ export function ChainIcon({ chain, className }: ChainIconProps) {
 
   if (!iconUrl) {
     return (
-      <div className={cn("flex items-center justify-center rounded-full bg-accent font-medium text-xs", className)}>
+      <div className={cn("flex items-center justify-center rounded-full bg-card font-medium text-xs", className)}>
         {chain?.slice(0, 2)}
       </div>
     );
