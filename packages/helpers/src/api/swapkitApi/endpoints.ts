@@ -78,7 +78,7 @@ export async function getSwapQuote(json: QuoteRequest) {
   }
 }
 
-export async function getRouteWithTx(json: { routeId: string }) {
+export async function getRouteWithTx(json: { routeId: string; sourceAddress: string; destinationAddress: string }) {
   const { getRouteWithTx } = SKConfig.get("endpoints");
 
   if (getRouteWithTx) return getRouteWithTx(json);

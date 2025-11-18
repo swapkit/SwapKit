@@ -2,7 +2,7 @@
 
 import "@swapkit/ui/swapkit.css";
 
-import { type AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
+import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
 import "@swapkit/ui/swapkit.css";
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -48,15 +48,13 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
   }, [swapKit, stableConfigMemoKey]);
 
-  const performSwap = async (route: QuoteResponseRoute, inputAssetValue?: AssetValue) => {
-    if (!(inputAssetValue && swapKit)) return;
-
+  const performSwap = async (route: QuoteResponseRoute) => {
     try {
       setIsSwapping(true);
 
-      if (!route?.sourceAddress || !route?.destinationAddress || Number.parseFloat(route?.sellAmount) <= 0) {
-        console.error("Invalid route parameters. Please check the route details and try again.", { route });
+      const inputAssetValue = AssetValue.from({ asset: route?.sellAsset, value: route?.sellAmount });
 
+      if (!inputAssetValue || !swapKit) {
         throw new Error("Invalid route parameters. Please check the route details and try again.");
       }
 
@@ -66,9 +64,26 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
         await swapKit.approveAssetValue(inputAssetValue, route?.sourceAddress);
       }
 
-      const routeWithTx = await SwapKitApi.getRouteWithTx({ routeId: route.routeId });
+      const destinationAsset = AssetValue.from({ asset: route?.buyAsset });
+      const sourceAsset = AssetValue.from({ asset: route?.sellAsset });
+
+      const routeWithTx = await SwapKitApi.getRouteWithTx({
+        destinationAddress: swapKit.getAddress(destinationAsset.chain),
+        routeId: route.routeId,
+        sourceAddress: swapKit.getAddress(sourceAsset.chain),
+      });
+
+      console.log("route with tx", routeWithTx);
 
       if (!routeWithTx) throw new Error("No route with TX found");
+
+      if (
+        !routeWithTx?.sourceAddress ||
+        !routeWithTx?.destinationAddress ||
+        Number.parseFloat(routeWithTx?.sellAmount) <= 0
+      ) {
+        throw new Error("Invalid route parameters. Please check the route details and try again.");
+      }
 
       const swap = await swapKit.swap({ route: routeWithTx });
 
