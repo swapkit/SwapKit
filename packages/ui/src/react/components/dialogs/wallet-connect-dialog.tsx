@@ -259,7 +259,7 @@ export function WalletConnectDialog() {
             ))}
         </div>
 
-        <DialogFooter className="sk-ui-items-center sk-ui-justify-center">
+        <DialogFooter className="sk-ui-items-center sk-ui-justify-center sm:sk-ui-flex-col">
           <Button
             className="sk-ui--mt-1 sk-ui-w-auto sk-ui-text-foreground"
             onClick={() => {
@@ -332,7 +332,7 @@ function WalletConnectButton({ wallet }: { wallet: WalletOption }) {
 
   return (
     <Button
-      className="sk-ui-flex aspect-[1.525/1] sk-ui-h-full sk-ui-w-full sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1"
+      className="sk-ui-flex sk-ui-h-full sk-ui-w-full sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1 sk-ui-aspect-[1.525/1]"
       isLoading={isConnectingWallet && walletType === wallet}
       key={`wallet-connect-button-${wallet}`}
       onClick={handleWalletClick}>

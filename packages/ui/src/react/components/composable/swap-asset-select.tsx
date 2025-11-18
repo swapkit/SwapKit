@@ -95,7 +95,7 @@ export function SwapAssetSelect({
           <div className="sk-ui-grid sk-ui-grid-cols-8 sk-ui-gap-2">
             <Button
               className={cn(
-                "aspect-[1.3/1] sk-ui-h-auto sk-ui-border sk-ui-border-transparent",
+                "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-aspect-[1.3/1]",
                 selectedNetworks?.length === 0 && "sk-ui-border-foreground sk-ui-text-foreground",
               )}
               onClick={() => setSelectedNetworks([])}>
@@ -108,7 +108,7 @@ export function SwapAssetSelect({
               return (
                 <Button
                   className={cn(
-                    "aspect-[1.3/1] sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-p-0",
+                    "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-p-0 sk-ui-aspect-[1.3/1]",
                     isSelected && "sk-ui-border-foreground sk-ui-text-foreground",
                   )}
                   key={`swap-asset-network-${chain}`}
@@ -136,13 +136,15 @@ export function SwapAssetSelect({
           </div>
         </div>
 
-        <DialogFooter className="sk-ui-mt-2 max-h-[clamp(16rem,50svh,32rem)] sk-ui-overflow-y-auto sk-ui-overflow-x-hidden">
+        <DialogFooter className="sk-ui-mt-2 sk-ui-overflow-y-auto sk-ui-overflow-x-hidden sk-ui-max-h-[clamp(16rem,50svh,32rem)]">
           {match({ assets, isWalletConnected })
             .with({ isWalletConnected: false }, () => (
               <div className="sk-ui-flex sk-ui-h-40 sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1">
                 <header className="sk-ui-font-medium">Connect your wallet</header>
 
-                <p className="sk-ui-text-muted-foreground sk-ui-text-sm">Please connect your wallet to see your assets</p>
+                <p className="sk-ui-text-muted-foreground sk-ui-text-sm">
+                  Please connect your wallet to see your assets
+                </p>
               </div>
             ))
             .when(
@@ -173,7 +175,11 @@ export function SwapAssetSelect({
                       variant="ghost">
                       <SwapAssetItem asset={assetIdentifier} />
 
-                      <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-items-end", asset?.getValue("number") <= 0 && "opacity-50")}>
+                      <div
+                        className={cn(
+                          "sk-ui-flex sk-ui-flex-col sk-ui-items-end",
+                          asset?.getValue("number") <= 0 && "sk-ui-opacity-50",
+                        )}>
                         <span className="sk-ui-font-medium sk-ui-text-base sk-ui-text-foreground">
                           {asset?.getValue("number")?.toFixed(6) || "0.00"}
                         </span>

@@ -45,7 +45,7 @@ export const SwapConfirmDialog = ({
 
             <SwapAmountInput
               amount={swapRoute.amount}
-              className="[&_input]:!opacity-100 [&_input]:!cursor-text"
+              className="[&_input]:!sk-ui-opacity-100 [&_input]:!sk-ui-cursor-text"
               disabled
               formattedAmountUSD={swapRoute.formattedInputAssetPriceUSD}
             />
@@ -54,7 +54,7 @@ export const SwapConfirmDialog = ({
           <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
             <div className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
 
-            <MoveDownIcon className="sk-ui-size-4 sk-ui-shrink-0 stroke-[2.5] sk-ui-font-bold text-[#8b8c8b]" />
+            <MoveDownIcon className="sk-ui-size-4 sk-ui-shrink-0 sk-ui-font-bold sk-ui-stroke-[2.5] sk-ui-text-[#8b8c8b]" />
 
             <div className="sk-ui-h-px sk-ui-w-full sk-ui-bg-border" />
           </div>
@@ -64,7 +64,7 @@ export const SwapConfirmDialog = ({
 
             <SwapAmountInput
               amount={swapRoute?.expectedBuyAmount?.toString()}
-              className="[&_input]:!opacity-100 [&_input]:!cursor-text"
+              className="[&_input]:!sk-ui-opacity-100 [&_input]:!sk-ui-cursor-text"
               disabled
               formattedAmountUSD={swapRoute?.formattedOutputAssetPriceUSD}
             />
@@ -81,16 +81,22 @@ export const SwapConfirmDialog = ({
 
                 <ChevronDown className="sk-ui-mt-px sk-ui-ml-1 sk-ui-size-4" />
 
-                <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">{swapRoute?.formattedTotalFeesUSD}</span>
+                <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">
+                  {swapRoute?.formattedTotalFeesUSD}
+                </span>
               </AccordionTrigger>
 
               <AccordionContent className="sk-ui-mt-3 sk-ui-pb-0">
                 <ul className="sk-ui-flex sk-ui-flex-col sk-ui-gap-3 sk-ui-border-b sk-ui-pb-3">
                   {totalFeesListItems.map((item) => (
-                    <li className="sk-ui-flex sk-ui-items-start sk-ui-justify-between sk-ui-gap-1" key={`total-fee-list-item-${item.title}`}>
+                    <li
+                      className="sk-ui-flex sk-ui-items-start sk-ui-justify-between sk-ui-gap-1"
+                      key={`total-fee-list-item-${item.title}`}>
                       <span className="sk-ui-text-muted-foreground">{item.title}</span>
 
-                      <span className="sk-ui-max-w-[60%] sk-ui-break-all sk-ui-text-right sk-ui-font-medium">{item.value}</span>
+                      <span className="sk-ui-max-w-[60%] sk-ui-break-all sk-ui-text-right sk-ui-font-medium">
+                        {item.value}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -98,10 +104,14 @@ export const SwapConfirmDialog = ({
 
               <ul className="sk-ui-mt-3 sk-ui-flex sk-ui-flex-col sk-ui-gap-3">
                 {swapSummaryListItems.map((item) => (
-                  <li className="sk-ui-flex sk-ui-items-start sk-ui-justify-between sk-ui-gap-1" key={`swap-list-item-${item.title}`}>
+                  <li
+                    className="sk-ui-flex sk-ui-items-start sk-ui-justify-between sk-ui-gap-1"
+                    key={`swap-list-item-${item.title}`}>
                     <span className="sk-ui-text-muted-foreground">{item.title}</span>
 
-                    <span className="sk-ui-max-w-[60%] sk-ui-break-all sk-ui-text-right sk-ui-font-medium">{item.value}</span>
+                    <span className="sk-ui-max-w-[60%] sk-ui-break-all sk-ui-text-right sk-ui-font-medium">
+                      {item.value}
+                    </span>
                   </li>
                 ))}
               </ul>

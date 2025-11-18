@@ -74,7 +74,7 @@ export function SwapQuotePreview({
               )}
             </div>
 
-            <div className="!ml-auto sk-ui-mr-4 sk-ui-flex sk-ui-items-center sk-ui-gap-1 sk-ui-text-muted-foreground sk-ui-text-sm">
+            <div className="!sk-ui-ml-auto sk-ui-mr-4 sk-ui-flex sk-ui-items-center sk-ui-gap-1 sk-ui-text-muted-foreground sk-ui-text-sm">
               <TimerIcon className="sk-ui-size-4" />
 
               <span className="sk-ui-font-normal">{selectedRoute?.formattedEstimatedTime}</span>
@@ -98,7 +98,9 @@ export function SwapQuotePreview({
                 {selectedRoute?.outputAssetTicker}
               </span>
 
-              <span className="sk-ui-mr-2 sk-ui-ml-auto sk-ui-font-medium">Fees: {selectedRoute?.formattedTotalFeesUSD}</span>
+              <span className="sk-ui-mr-2 sk-ui-ml-auto sk-ui-font-medium">
+                Fees: {selectedRoute?.formattedTotalFeesUSD}
+              </span>
             </AccordionTrigger>
 
             <AccordionContent className="sk-ui-rounded-b-lg sk-ui-border-card sk-ui-border-r sk-ui-border-b sk-ui-border-l sk-ui-bg-background sk-ui-px-4 sk-ui-pb-4 sk-ui-duration-150">

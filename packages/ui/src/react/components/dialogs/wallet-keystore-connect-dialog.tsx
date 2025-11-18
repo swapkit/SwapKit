@@ -82,7 +82,8 @@ export function WalletKeystoreConnectDialog() {
           { shouldValidate: true },
         );
       } catch (error) {
-        console.error("Error parsing keystore file:", error); toast.error("Something went wrong while parsing the keystore file", {
+        console.error("Error parsing keystore file:", error);
+        toast.error("Something went wrong while parsing the keystore file", {
           description: "Please check if the file is a valid keystore file",
         });
       }
@@ -102,10 +103,10 @@ export function WalletKeystoreConnectDialog() {
         <Tabs
           onValueChange={(newValue) => form.setValue("currentStep", Number.parseInt(newValue, 10) as 1 | 2 | 3)}
           value={currentStep.toString()}>
-          <TabsList className="sk-ui-h-fit sk-ui-w-full sk-ui-gap-2 sk-ui-bg-transparent sk-ui-p-0">
-            <TabsTrigger className={cn(currentStep > 1 && "sk-ui-bg-accent")} value="1" variant="stepper" />
-            <TabsTrigger className={cn(currentStep > 2 && "sk-ui-bg-accent")} value="2" variant="stepper" />
-            <TabsTrigger className={cn(currentStep >= 3 && "!bg-accent")} value="3" variant="stepper" />
+          <TabsList className="sk-ui-w-full sk-ui-gap-2 sk-ui-h-auto sk-ui-p-0">
+            <TabsTrigger className={cn(currentStep > 1 && "!sk-ui-bg-accent")} value="1" variant="stepper" />
+            <TabsTrigger className={cn(currentStep > 2 && "!sk-ui-bg-accent")} value="2" variant="stepper" />
+            <TabsTrigger className={cn(currentStep >= 3 && "!sk-ui-bg-accent")} value="3" variant="stepper" />
           </TabsList>
 
           <TabsContent value="1">
@@ -121,14 +122,21 @@ export function WalletKeystoreConnectDialog() {
                 <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-2">
                   <span className="sk-ui-font-medium sk-ui-text-secondary-hover-text sk-ui-text-sm">Keystore file</span>
                   <label
-                    className={`sk-ui-flex sk-ui-h-24 sk-ui-w-full sk-ui-cursor-pointer sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-border-2 sk-ui-border-white sk-ui-border-dashed sk-ui-border-opacity-25 sk-ui-transition-colors hover:sk-ui-border-opacity-40 ${keystoreFile?.file ? "border-green-500 sk-ui-border-opacity-50 bg-green-500/5" : ""} `}
+                    className={cn(
+                      "sk-ui-flex sk-ui-h-24 sk-ui-w-full sk-ui-cursor-pointer sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-border-2 sk-ui-border-white sk-ui-border-dashed sk-ui-border-opacity-25 sk-ui-transition-colors hover:sk-ui-border-opacity-40",
+                      keystoreFile?.file && "sk-ui-border-opacity-50 sk-ui-bg-green-500/5 sk-ui-border-green-500",
+                    )}
                     htmlFor={fileInputId}>
                     <div className="sk-ui-flex sk-ui-flex-col sk-ui-items-center sk-ui-gap-2">
                       {keystoreFile?.file ? (
                         <>
                           <CheckIcon className="sk-ui-h-6 sk-ui-w-6 sk-ui-text-green-500" />
-                          <span className="sk-ui-font-medium sk-ui-text-green-400 sk-ui-text-sm">{keystoreFile?.file?.name}</span>
-                          <span className="sk-ui-text-muted-foreground sk-ui-text-xs">Click to select a different file</span>
+                          <span className="sk-ui-font-medium sk-ui-text-green-400 sk-ui-text-sm">
+                            {keystoreFile?.file?.name}
+                          </span>
+                          <span className="sk-ui-text-muted-foreground sk-ui-text-xs">
+                            Click to select a different file
+                          </span>
                         </>
                       ) : (
                         <>
@@ -175,13 +183,17 @@ export function WalletKeystoreConnectDialog() {
           <TabsContent value="2">
             <form onSubmit={handleConnectWallet}>
               <div className="sk-ui-mt-4 sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
-                <span className="sk-ui-text-sm sk-ui-text-white sk-ui-text-opacity-65">Enter the password for your keystore file</span>
+                <span className="sk-ui-text-sm sk-ui-text-white sk-ui-text-opacity-65">
+                  Enter the password for your keystore file
+                </span>
 
                 {keystoreFile?.file && (
                   <div className="sk-ui-rounded-md sk-ui-border sk-ui-border-blue-500/20 sk-ui-bg-blue-500/10 sk-ui-p-3">
                     <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
                       <CheckIcon className="sk-ui-h-4 sk-ui-w-4 sk-ui-text-blue-400" />
-                      <span className="sk-ui-text-blue-300 sk-ui-text-sm">Keystore file: {keystoreFile?.file?.name}</span>
+                      <span className="sk-ui-text-blue-300 sk-ui-text-sm">
+                        Keystore file: {keystoreFile?.file?.name}
+                      </span>
                     </div>
                   </div>
                 )}

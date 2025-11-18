@@ -20,7 +20,7 @@ export function SwapAmountInput({
   return (
     <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-items-end", className)}>
       <Input
-        className="sk-ui--mr-3 !shadow-none !border-0 !ring-0 !ring-offset-0 sk-ui-bg-transparent sk-ui-text-end sk-ui-font-medium sk-ui-text-2xl"
+        className="sk-ui--mr-3 !sk-ui-shadow-none !sk-ui-border-0 !sk-ui-ring-0 !sk-ui-ring-offset-0 sk-ui-bg-transparent sk-ui-text-end sk-ui-font-medium sk-ui-text-2xl"
         disabled={disabled}
         onChange={(e) => setAmount?.(e.target.value)}
         placeholder="0.00"

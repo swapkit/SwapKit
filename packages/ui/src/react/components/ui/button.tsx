@@ -7,7 +7,7 @@ import * as React from "react";
 import { cn } from "../../../lib/utils";
 
 const buttonVariants = cva(
-  "sk-ui-inline-flex sk-ui-items-center sk-ui-justify-center sk-ui-whitespace-nowrap sk-ui-rounded-md sk-ui-text-sm sk-ui-font-medium sk-ui-ring-offset-background sk-ui-transition-colors sk-ui-focus-visible:outline-none sk-ui-focus-visible:ring-2 sk-ui-focus-visible:ring-ring sk-ui-focus-visible:ring-offset-0 disabled:sk-ui-pointer-events-none disabled:sk-ui-opacity-50",
+  "sk-ui-inline-flex sk-ui-items-center sk-ui-justify-center sk-ui-whitespace-nowrap sk-ui-rounded-md sk-ui-text-sm sk-ui-font-medium sk-ui-ring-offset-background sk-ui-transition-colors focus-visible:outline-none focus-visible:sk-ui-ring-2 focus-visible:sk-ui-ring-ring focus-visible:ring-offset-0 disabled:sk-ui-pointer-events-none disabled:sk-ui-opacity-50",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -23,9 +23,11 @@ const buttonVariants = cva(
       // biome-ignore assist/source/useSortedKeys: sort by role, not alphabetically
       variant: {
         default: "sk-ui-bg-white/[0.08] sk-ui-text-muted-foreground hover:sk-ui-bg-white/[0.12]",
-        ghost: "hover:sk-ui-bg-white/[0.08] sk-ui-bg-transparent hover:sk-ui-text-foreground sk-ui-text-muted-foreground",
+        ghost:
+          "hover:sk-ui-bg-white/[0.08] sk-ui-bg-transparent hover:sk-ui-text-foreground sk-ui-text-muted-foreground",
         link: "sk-ui-text-primary sk-ui-underline-offset-4 hover:sk-ui-underline",
-        outline: "sk-ui-border sk-ui-border-input sk-ui-bg-background hover:sk-ui-bg-accent hover:sk-ui-text-accent-foreground",
+        outline:
+          "sk-ui-border sk-ui-border-input sk-ui-bg-background hover:sk-ui-bg-accent hover:sk-ui-text-accent-foreground",
 
         primary: "sk-ui-bg-primary-foreground sk-ui-text-primary hover:sk-ui-opacity-80 sk-ui-transition-opacity",
         secondary: "sk-ui-bg-secondary sk-ui-text-secondary-foreground hover:sk-ui-opacity-80 sk-ui-transition-opacity",
