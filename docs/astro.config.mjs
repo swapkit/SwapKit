@@ -92,6 +92,8 @@ export default defineConfig({
 });
 
 function createDocs() {
+
+
   if (process.env.REFERENCES !== "enable") {
     return { plugins: [], sidebarItems: [] };
   }
