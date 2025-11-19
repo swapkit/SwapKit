@@ -1,7 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
+import tailwindConfig from "../tailwind.config";
 
-const twMergeWithPrefix = extendTailwindMerge({ prefix: "sk-ui-" });
+const twMergeWithPrefix = extendTailwindMerge({ prefix: tailwindConfig.prefix });
 
 export function cn(...inputs: ClassValue[]) {
   return twMergeWithPrefix(clsx(inputs));

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Chain, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
-import { AssetValue, NetworkDerivationPath, staticTokensMap, WalletOption } from "@swapkit/sdk";
+import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
 import type { BalanceDetails, KeystoreFile, SwapKitState } from "./types";
@@ -25,7 +25,7 @@ const useSwapKitStore = create<SwapKitState>((set) => {
 await AssetValue.loadStaticAssets();
 
 export const assetsMap = new Map<TokenNames | (string & {}), AssetValue>(
-  Array.from(staticTokensMap.keys()).map((identifier) => [
+  Array.from(AssetValue.staticAssets.keys()).map((identifier) => [
     identifier,
     AssetValue.from({ asset: identifier as TokenNames }),
   ]),

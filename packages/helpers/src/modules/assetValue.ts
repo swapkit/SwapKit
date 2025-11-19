@@ -21,7 +21,7 @@ import type { SwapKitValueType } from "./swapKitNumber";
 const CASE_SENSITIVE_CHAINS: Chain[] = [Chain.Solana, Chain.Tron, Chain.Near, Chain.Sui];
 const TC_CHAINS: Chain[] = [Chain.THORChain, Chain.Maya];
 
-export const staticTokensMap = new Map<
+const staticTokensMap = new Map<
   TokenNames | (string & {}),
   { tax?: TokenTax; decimal: number; identifier: string; logoURI?: string }
 >();
@@ -297,6 +297,10 @@ or by passing asyncTokenLookup: true to the from() function, which will make it 
       }
     }
     return true;
+  }
+
+  static get staticAssets() {
+    return staticTokensMap;
   }
 }
 
