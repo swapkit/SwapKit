@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.23 AS builder
+FROM oven/bun:1.3.2 AS builder
 RUN apt-get update && apt-get install -y \
     python3 make gcc g++ git \
     linux-libc-dev libudev-dev libusb-dev \
