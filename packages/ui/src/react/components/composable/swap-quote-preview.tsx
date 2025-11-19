@@ -37,25 +37,25 @@ export function SwapQuotePreview({
 
   return (
     <Card className={className}>
-      <CardContent className="fade-in-0 flex animate-in flex-col items-stretch duration-300">
+      <CardContent className="sk-ui-fade-in-0 sk-ui-flex sk-ui-animate-in sk-ui-flex-col sk-ui-items-stretch sk-ui-duration-300">
         <Button
-          className="-mt-4 -mx-4 flex rounded-t-xl rounded-b-none px-4 py-3 hover:bg-white/[0.08]"
+          className="sk-ui--mt-4 sk-ui--mx-4 sk-ui-flex sk-ui-rounded-t-xl sk-ui-rounded-b-none sk-ui-px-4 sk-ui-py-3 hover:sk-ui-bg-white/[0.08]"
           onClick={selectQuoteRoute}
           variant="unstyled">
-          <CardHeader className="flex w-full flex-row items-center space-y-0 text-sm">
-            <div className="flex items-center gap-2">
+          <CardHeader className="sk-ui-flex sk-ui-w-full sk-ui-flex-row sk-ui-items-center sk-ui-space-y-0 sk-ui-text-sm">
+            <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
               {selectedRoute?.providerName && (
                 <img
                   alt={selectedRoute?.providerName}
-                  className="size-6 rounded-full bg-primary"
+                  className="sk-ui-size-6 sk-ui-rounded-full sk-ui-bg-primary"
                   src={selectedRoute?.providerLogoURI ?? ""}
                 />
               )}
 
-              <div className="font-medium">{selectedRoute?.providerName}</div>
+              <div className="sk-ui-font-medium">{selectedRoute?.providerName}</div>
 
               {selectedRouteHasTags && (
-                <div className="rounded bg-success px-1 py-0.5 text-success-foreground text-xs">
+                <div className="sk-ui-rounded sk-ui-bg-success sk-ui-px-1 sk-ui-py-0.5 sk-ui-text-success-foreground sk-ui-text-xs">
                   {match(selectedRoute?.tags)
                     .when(
                       (tags) => tags?.includes(PriorityLabel.RECOMMENDED),
@@ -74,82 +74,84 @@ export function SwapQuotePreview({
               )}
             </div>
 
-            <div className="!ml-auto mr-4 flex items-center gap-1 text-muted-foreground text-sm">
-              <TimerIcon className="size-4" />
+            <div className="!sk-ui-ml-auto sk-ui-mr-4 sk-ui-flex sk-ui-items-center sk-ui-gap-1 sk-ui-text-muted-foreground sk-ui-text-sm">
+              <TimerIcon className="sk-ui-size-4" />
 
-              <span className="font-normal">{selectedRoute?.formattedEstimatedTime}</span>
+              <span className="sk-ui-font-normal">{selectedRoute?.formattedEstimatedTime}</span>
             </div>
 
-            <div className="font-medium text-foreground">
+            <div className="sk-ui-font-medium sk-ui-text-foreground">
               {selectedRoute?.expectedBuyAmount} {selectedRoute?.outputAssetTicker}
             </div>
 
-            <ChevronRight className="ml-2 size-4 text-foreground" />
+            <ChevronRight className="sk-ui-ml-2 sk-ui-size-4 sk-ui-text-foreground" />
           </CardHeader>
         </Button>
 
         <Accordion collapsible type="single">
-          <AccordionItem className="-mb-4 -mx-4" value="quote">
-            <AccordionTrigger className="flex items-center rounded-b-lg border-card border-r border-b border-l bg-background p-4 text-sm hover:bg-background/50 hover:no-underline data-[state=open]:rounded-b-none data-[state=open]:border-b-transparent">
-              <ArrowLeftRight className="size-4 text-muted-foreground" />
+          <AccordionItem className="sk-ui--mb-4 sk-ui--mx-4" value="quote">
+            <AccordionTrigger className="sk-ui-flex sk-ui-items-center sk-ui-rounded-b-lg sk-ui-border-card sk-ui-border-r sk-ui-border-b sk-ui-border-l sk-ui-bg-background sk-ui-p-4 sk-ui-text-sm hover:sk-ui-bg-background/50 hover:sk-ui-no-underline data-[state=open]:sk-ui-rounded-b-none data-[state=open]:sk-ui-border-b-transparent">
+              <ArrowLeftRight className="sk-ui-size-4 sk-ui-text-muted-foreground" />
 
-              <span className="ml-2">
+              <span className="sk-ui-ml-2">
                 1 {selectedRoute?.inputAssetTicker} ≈ {selectedRoute?.expectedBuyAmountFor1Input.toFixed(6)}{" "}
                 {selectedRoute?.outputAssetTicker}
               </span>
 
-              <span className="mr-2 ml-auto font-medium">Fees: {selectedRoute?.formattedTotalFeesUSD}</span>
+              <span className="sk-ui-mr-2 sk-ui-ml-auto sk-ui-font-medium">
+                Fees: {selectedRoute?.formattedTotalFeesUSD}
+              </span>
             </AccordionTrigger>
 
-            <AccordionContent className="rounded-b-lg border-card border-r border-b border-l bg-background px-4 pb-4 duration-150">
-              <ul className="flex flex-col gap-2 text-muted-foreground">
-                <li className="flex items-center gap-1">
+            <AccordionContent className="sk-ui-rounded-b-lg sk-ui-border-card sk-ui-border-r sk-ui-border-b sk-ui-border-l sk-ui-bg-background sk-ui-px-4 sk-ui-pb-4 sk-ui-duration-150">
+              <ul className="sk-ui-flex sk-ui-flex-col sk-ui-gap-2 sk-ui-text-muted-foreground">
+                <li className="sk-ui-flex sk-ui-items-center sk-ui-gap-1">
                   <span>Minimum received after slippage ({selectedRoute?.formattedMaxSlippagePercentage})</span>
 
-                  <InfoIcon className="size-4" />
+                  <InfoIcon className="sk-ui-size-4" />
 
-                  <span className="ml-auto font-medium text-foreground">
+                  <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">
                     {selectedRoute?.expectedBuyAmountMaxSlippage} {selectedRoute?.outputAssetTicker}
                   </span>
                 </li>
 
-                <li className="flex items-center gap-1">
+                <li className="sk-ui-flex sk-ui-items-center sk-ui-gap-1">
                   <span>Liquidity fee</span>
 
-                  <InfoIcon className="size-4" />
+                  <InfoIcon className="sk-ui-size-4" />
 
                   {selectedRoute?.formattedLiquidityFeeUSD === "$0.00" ? (
-                    <span className="ml-auto font-medium text-success-foreground">FREE</span>
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-success-foreground">FREE</span>
                   ) : (
-                    <span className="ml-auto font-medium text-foreground">
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">
                       {selectedRoute?.formattedLiquidityFeeUSD}
                     </span>
                   )}
                 </li>
 
-                <li className="flex items-center gap-1">
+                <li className="sk-ui-flex sk-ui-items-center sk-ui-gap-1">
                   <span>Exchange fee</span>
 
-                  <InfoIcon className="size-4" />
+                  <InfoIcon className="sk-ui-size-4" />
 
                   {selectedRoute?.formattedExchangeFeeUSD === "$0.00" ? (
-                    <span className="ml-auto font-medium text-success-foreground">FREE</span>
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-success-foreground">FREE</span>
                   ) : (
-                    <span className="ml-auto font-medium text-foreground">
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">
                       {selectedRoute?.formattedExchangeFeeUSD}
                     </span>
                   )}
                 </li>
 
-                <li className="flex items-center gap-1">
+                <li className="sk-ui-flex sk-ui-items-center sk-ui-gap-1">
                   <span>Inbound network fee</span>
 
-                  <InfoIcon className="size-4" />
+                  <InfoIcon className="sk-ui-size-4" />
 
                   {selectedRoute?.formattedInboundNetworkFeeUSD === "$0.00" ? (
-                    <span className="ml-auto font-medium text-success-foreground">FREE</span>
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-success-foreground">FREE</span>
                   ) : (
-                    <span className="ml-auto font-medium text-foreground">
+                    <span className="sk-ui-ml-auto sk-ui-font-medium sk-ui-text-foreground">
                       {selectedRoute?.formattedInboundNetworkFeeUSD}
                     </span>
                   )}

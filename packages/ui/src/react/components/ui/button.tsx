@@ -7,32 +7,34 @@ import * as React from "react";
 import { cn } from "../../../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
+  "sk-ui-inline-flex sk-ui-items-center sk-ui-justify-center sk-ui-whitespace-nowrap sk-ui-rounded-md sk-ui-text-sm sk-ui-font-medium sk-ui-ring-offset-background sk-ui-transition-colors focus-visible:outline-none focus-visible:sk-ui-ring-2 focus-visible:sk-ui-ring-ring focus-visible:ring-offset-0 disabled:sk-ui-pointer-events-none disabled:sk-ui-opacity-50",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
       // biome-ignore assist/source/useSortedKeys: sort by size, not alphabetically
       size: {
-        sm: "h-9 rounded-md px-3 gap-1.5",
-        default: "h-10 px-4 py-2 gap-2",
-        lg: "h-12 font-medium text-base rounded-lg px-4",
-        xl: "h-11 font-medium text-base rounded-xl px-8",
-        icon: "size-10",
-        unstyled: "p-0 m-0 h-auto w-auto",
+        sm: "sk-ui-h-9 sk-ui-rounded-md sk-ui-px-3 sk-ui-gap-1.5",
+        default: "sk-ui-h-10 sk-ui-px-4 sk-ui-py-2 sk-ui-gap-2",
+        lg: "sk-ui-h-12 sk-ui-font-medium sk-ui-text-base sk-ui-rounded-lg sk-ui-px-4",
+        xl: "sk-ui-h-11 sk-ui-font-medium sk-ui-text-base sk-ui-rounded-xl sk-ui-px-8",
+        icon: "sk-ui-size-10",
+        unstyled: "sk-ui-p-0 sk-ui-m-0 sk-ui-h-auto sk-ui-w-auto",
       },
       // biome-ignore assist/source/useSortedKeys: sort by role, not alphabetically
       variant: {
-        default: "bg-white/[0.08] text-muted-foreground  hover:bg-white/[0.12]",
-        ghost: "hover:bg-white/[0.08] bg-transparent hover:text-foreground text-muted-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        default: "sk-ui-bg-white/[0.08] sk-ui-text-muted-foreground hover:sk-ui-bg-white/[0.12]",
+        ghost:
+          "hover:sk-ui-bg-white/[0.08] sk-ui-bg-transparent hover:sk-ui-text-foreground sk-ui-text-muted-foreground",
+        link: "sk-ui-text-primary sk-ui-underline-offset-4 hover:sk-ui-underline",
+        outline:
+          "sk-ui-border sk-ui-border-input sk-ui-bg-background hover:sk-ui-bg-accent hover:sk-ui-text-accent-foreground",
 
-        primary: "bg-primary-foreground text-primary hover:opacity-80 transition-opacity",
-        secondary: "bg-secondary text-secondary-foreground hover:opacity-80 transition-opacity",
-        tertiary: "bg-tertiary text-tertiary-foreground hover:opacity-80 transition-opacity",
+        primary: "sk-ui-bg-primary-foreground sk-ui-text-primary hover:sk-ui-opacity-80 sk-ui-transition-opacity",
+        secondary: "sk-ui-bg-secondary sk-ui-text-secondary-foreground hover:sk-ui-opacity-80 sk-ui-transition-opacity",
+        tertiary: "sk-ui-bg-tertiary sk-ui-text-tertiary-foreground hover:sk-ui-opacity-80 sk-ui-transition-opacity",
 
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        unstyled: "p-0 m-0 h-auto w-auto",
+        destructive: "sk-ui-bg-destructive sk-ui-text-destructive-foreground hover:sk-ui-bg-destructive/90",
+        unstyled: "sk-ui-p-0 sk-ui-m-0 sk-ui-h-auto sk-ui-w-auto",
       },
     },
   },
@@ -51,12 +53,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp className={cn(buttonVariants({ className, size, variant }))} ref={ref} {...props}>
         {isLoading ? (
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2Icon className="size-5 animate-spin" />
+          <div className="sk-ui-relative">
+            <div className="sk-ui-absolute sk-ui-inset-0 sk-ui-flex sk-ui-items-center sk-ui-justify-center">
+              <Loader2Icon className="sk-ui-size-5 sk-ui-animate-spin" />
             </div>
 
-            <div className="invisible">
+            <div className="sk-ui-invisible">
               <Slottable>{children}</Slottable>
             </div>
           </div>

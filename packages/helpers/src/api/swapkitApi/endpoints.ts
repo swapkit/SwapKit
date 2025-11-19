@@ -8,7 +8,7 @@ import {
   SKConfig,
   SwapKitError,
 } from "@swapkit/helpers";
-
+import { match, P } from "ts-pattern";
 import {
   type BalanceResponse,
   type BrokerDepositChannelParams,
@@ -24,6 +24,8 @@ import {
   PriceResponseSchema,
   type QuoteRequest,
   type QuoteResponse,
+  type QuoteResponseRoute,
+  QuoteResponseRouteItem,
   QuoteResponseSchema,
   type TokenListProvidersResponse,
   type TokensResponseV2,
@@ -32,12 +34,7 @@ import {
   type TrackingRequest,
 } from "./types";
 
-const SKRequestClient = RequestClient.extend({
-  dynamicHeader: () => {
-    const { swapKit } = SKConfig.get("apiKeys");
-    return swapKit ? { "x-api-key": swapKit } : {};
-  },
-});
+export const SKRequestClient = RequestClient;
 
 export async function getTrackerDetails(json: TrackingRequest) {
   const response = await SKRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
@@ -57,6 +54,10 @@ export async function getTrackerDetails(json: TrackingRequest) {
 }
 
 export async function getSwapQuote(json: QuoteRequest) {
+  const { getQuote } = SKConfig.get("endpoints");
+
+  if (getQuote) return getQuote(json);
+
   const response = await SKRequestClient.post<QuoteResponse>(getApiUrl("/quote"), { json });
 
   if (response.error) {
@@ -73,6 +74,27 @@ export async function getSwapQuote(json: QuoteRequest) {
     return parsedResponse.data;
   } catch {
     // throw new SwapKitError("api_v2_invalid_response", error);
+    return response;
+  }
+}
+
+export async function getRouteWithTx(json: { routeId: string; sourceAddress: string; destinationAddress: string }) {
+  const { getRouteWithTx } = SKConfig.get("endpoints");
+
+  if (getRouteWithTx) return getRouteWithTx(json);
+
+  const response = await SKRequestClient.post<QuoteResponseRoute>(getApiUrl("/swap"), { json });
+
+  try {
+    const parsedResponse = QuoteResponseRouteItem.safeParse(response);
+
+    if (!parsedResponse.success) {
+      throw new SwapKitError("api_v2_invalid_response", parsedResponse.error);
+    }
+
+    return parsedResponse.data;
+  } catch (error) {
+    console.error(new SwapKitError("api_v2_invalid_response", error));
     return response;
   }
 }
@@ -187,9 +209,20 @@ export async function getNearDepositChannel(body: NearDepositChannelParams) {
 }
 
 function getApiUrl(path?: `/${string}`) {
-  const { isDev, apiUrl, devApiUrl } = SKConfig.get("envs");
+  const { isDev, apiUrl, devApiUrl, experimental_apiUrlQuote, experimental_apiUrlSwap } = SKConfig.get("envs");
 
-  return `${isDev ? devApiUrl : apiUrl}${path}`;
+  const defaultUrl = `${isDev ? devApiUrl : apiUrl}${path}`;
+
+  return match({ experimental_apiUrlQuote, experimental_apiUrlSwap, path })
+    .with(
+      { experimental_apiUrlQuote: P.string.startsWith("http"), path: "/quote" },
+      ({ experimental_apiUrlQuote, path }) => `${experimental_apiUrlQuote}${path}`,
+    )
+    .with(
+      { experimental_apiUrlSwap: P.string.startsWith("http"), path: "/swap" },
+      ({ experimental_apiUrlSwap, path }) => `${experimental_apiUrlSwap}${path}`,
+    )
+    .otherwise(() => defaultUrl);
 }
 
 function evmAssetHasAddress(assetString: string) {

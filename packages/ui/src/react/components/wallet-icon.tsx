@@ -8,7 +8,7 @@ export function WalletIcon({ wallet, className = "" }: { wallet: WalletOption; c
   return (
     <img
       alt={wallet}
-      className={cn("inline-block size-5 object-contain", className)}
+      className={cn("sk-ui-inline-block sk-ui-size-5 sk-ui-object-contain", className)}
       src={`${temp_host}/images/wallets/${wallet.toLowerCase()}.png`}
     />
   );

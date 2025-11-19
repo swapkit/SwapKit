@@ -1,35 +1,41 @@
 import type { Config } from "tailwindcss";
 
+import tailwindCssAnimatePlugin from "tailwindcss-animate";
+
 const config = {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  corePlugins: { preflight: false },
   darkMode: "class",
-  plugins: [require("tailwindcss-animate")],
-  prefix: "",
+  plugins: [tailwindCssAnimatePlugin],
+  prefix: "sk-ui-",
   theme: {
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
     extend: {
       animation: { "accordion-down": "accordion-down 0.2s ease-out", "accordion-up": "accordion-up 0.2s ease-out" },
       // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "hsl(var(--sk-ui-background))",
+        foreground: "hsl(var(--sk-ui-foreground))",
 
-        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
-        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
-        tertiary: { DEFAULT: "hsl(var(--tertiary))", foreground: "hsl(var(--tertiary-foreground))" },
+        primary: { DEFAULT: "hsl(var(--sk-ui-primary))", foreground: "hsl(var(--sk-ui-primary-foreground))" },
+        secondary: { DEFAULT: "hsl(var(--sk-ui-secondary))", foreground: "hsl(var(--sk-ui-secondary-foreground))" },
+        tertiary: { DEFAULT: "hsl(var(--sk-ui-tertiary))", foreground: "hsl(var(--sk-ui-tertiary-foreground))" },
 
-        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
-        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+        accent: { DEFAULT: "hsl(var(--sk-ui-accent))", foreground: "hsl(var(--sk-ui-accent-foreground))" },
+        muted: { DEFAULT: "hsl(var(--sk-ui-muted))", foreground: "hsl(var(--sk-ui-muted-foreground))" },
 
-        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
-        success: { DEFAULT: "hsl(var(--success))", foreground: "hsl(var(--success-foreground))" },
+        destructive: {
+          DEFAULT: "hsl(var(--sk-ui-destructive))",
+          foreground: "hsl(var(--sk-ui-destructive-foreground))",
+        },
+        success: { DEFAULT: "hsl(var(--sk-ui-success))", foreground: "hsl(var(--sk-ui-success-foreground))" },
 
-        border: "hsl(var(--border))",
-        ring: "hsl(var(--ring))",
-        input: "hsl(var(--input))",
+        border: "hsl(var(--sk-ui-border))",
+        ring: "hsl(var(--sk-ui-ring))",
+        input: "hsl(var(--sk-ui-input))",
 
-        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
-        popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+        card: { DEFAULT: "hsl(var(--sk-ui-card))", foreground: "hsl(var(--sk-ui-card-foreground))" },
+        popover: { DEFAULT: "hsl(var(--sk-ui-popover))", foreground: "hsl(var(--sk-ui       -popover-foreground))" },
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
