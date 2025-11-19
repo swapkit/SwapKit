@@ -82,7 +82,7 @@ export function BaseEVMToolbox<
     },
     isApproved: getIsApproved({ chain, provider }),
     sendTransaction: getSendTransaction({ chain, isEIP1559Compatible, provider, signer }),
-    signMessage: signer?.signMessage,
+    signMessage: signer ? (message: string | Uint8Array) => signer.signMessage(message) : undefined,
     transfer: getTransfer({ chain, isEIP1559Compatible, provider, signer }),
     validateAddress: (address: string) => evmValidateAddress({ address }),
   };
