@@ -18,9 +18,9 @@ export function SwapAmountInput({
   setAmount?: (amount: string) => void;
 }) {
   return (
-    <div className={cn("flex flex-col items-end", className)}>
+    <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-items-end", className)}>
       <Input
-        className="-mr-3 !shadow-none !border-0 !ring-0 !ring-offset-0 bg-transparent text-end font-medium text-2xl"
+        className="sk-ui--mr-3 !sk-ui-shadow-none !sk-ui-border-0 !sk-ui-ring-0 !sk-ui-ring-offset-0 sk-ui-bg-transparent sk-ui-text-end sk-ui-font-medium sk-ui-text-2xl"
         disabled={disabled}
         onChange={(e) => setAmount?.(e.target.value)}
         placeholder="0.00"
@@ -28,10 +28,10 @@ export function SwapAmountInput({
         value={amount ?? "0.00"}
       />
 
-      <div className="flex items-center gap-1">
-        {isLoading && <Loader2Icon className="size-3.5 animate-spin" />}
+      <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-1">
+        {isLoading && <Loader2Icon className="sk-ui-size-3.5 sk-ui-animate-spin" />}
 
-        <span className="text-muted-foreground text-sm">{formattedAmountUSD}</span>
+        <span className="sk-ui-text-muted-foreground sk-ui-text-sm">{formattedAmountUSD}</span>
       </div>
     </div>
   );
