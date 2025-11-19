@@ -79,6 +79,7 @@
         "noUselessElse": "error",
         "useAsConstAssertion": "error",
         "useBlockStatements": "off",
+        "useComponentExportOnlyModules": "off",
         "useDefaultParameterLast": "error",
         "useEnumInitializers": "error",
         "useExplicitLengthCheck": "off",
