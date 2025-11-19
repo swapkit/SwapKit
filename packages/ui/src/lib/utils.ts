@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-import tailwindConfig from "../../tailwind.config";
+import tailwindConfig from "../tailwind.config";
 
 const twMergeWithPrefix = extendTailwindMerge({ prefix: tailwindConfig.prefix });
 
