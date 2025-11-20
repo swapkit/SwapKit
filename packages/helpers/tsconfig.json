@@ -1,1 +1,5 @@
-{ "extends": "../../tools/typescript/base.json", "include": ["src", "./build.ts", "../tokens/fetchTokenLists.ts"] }
+{
+  "compilerOptions": { "tsBuildInfoFile": "./tsconfig.tsbuildinfo" },
+  "extends": "../../tools/typescript/base.json",
+  "include": ["src", "./build.ts", "../tokens/fetchTokenLists.ts"]
+}
