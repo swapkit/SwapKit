@@ -16,9 +16,9 @@ import type { keepkeyWallet } from "@swapkit/wallet-hardware/keepkey";
 import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
 import type { coinbaseWallet } from "./coinbase";
-import type { exodusWallet } from "./exodus";
 import type { keystoreWallet } from "./keystore";
 import type { walletSelectorWallet } from "./near-wallet-selector";
+import type { passkeysWallet } from "./passkeys";
 import type { radixWallet } from "./radix";
 import type { walletconnectWallet } from "./walletconnect";
 import type { xamanWallet } from "./xaman";
@@ -31,7 +31,7 @@ export type SKWallets = {
   [WalletOption.COSMOSTATION]: typeof cosmostationWallet;
   [WalletOption.CTRL]: typeof ctrlWallet;
   [WalletOption.EIP6963]: typeof evmWallet;
-  [WalletOption.EXODUS]: typeof exodusWallet;
+  [WalletOption.EXODUS]: typeof passkeysWallet;
   [WalletOption.KEEPKEY]: typeof keepkeyWallet;
   [WalletOption.KEEPKEY_BEX]: typeof keepkeyBexWallet;
   [WalletOption.KEPLR]: typeof keplrWallet;
@@ -43,6 +43,7 @@ export type SKWallets = {
   [WalletOption.OKX]: typeof okxWallet;
   [WalletOption.OKX_MOBILE]: typeof evmWallet;
   [WalletOption.ONEKEY]: typeof onekeyWallet;
+  [WalletOption.PASSKEYS]: typeof passkeysWallet;
   [WalletOption.PHANTOM]: typeof phantomWallet;
   [WalletOption.POLKADOT_JS]: typeof polkadotWallet;
   [WalletOption.RADIX_WALLET]: typeof radixWallet;
@@ -66,7 +67,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.COSMOSTATION]: typeof cosmostationWallet.connectCosmostation.supportedChains;
   [WalletOption.CTRL]: typeof ctrlWallet.connectCtrl.supportedChains;
   [WalletOption.EIP6963]: typeof evmWallet.connectEVMWallet.supportedChains;
-  [WalletOption.EXODUS]: typeof exodusWallet.connectExodusWallet.supportedChains;
+  [WalletOption.EXODUS]: typeof passkeysWallet.connectPasskeys.supportedChains;
   [WalletOption.KEEPKEY]: typeof keepkeyWallet.connectKeepkey.supportedChains;
   [WalletOption.KEEPKEY_BEX]: typeof keepkeyBexWallet.connectKeepkeyBex.supportedChains;
   [WalletOption.KEPLR]: typeof keplrWallet.connectKeplr.supportedChains;
@@ -78,6 +79,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.OKX]: typeof okxWallet.connectOkx.supportedChains;
   [WalletOption.OKX_MOBILE]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.ONEKEY]: typeof onekeyWallet.connectOnekeyWallet.supportedChains;
+  [WalletOption.PASSKEYS]: typeof passkeysWallet.connectPasskeys.supportedChains;
   [WalletOption.PHANTOM]: typeof phantomWallet.connectPhantom.supportedChains;
   [WalletOption.POLKADOT_JS]: typeof polkadotWallet.connectPolkadotJs.supportedChains;
   [WalletOption.RADIX_WALLET]: typeof radixWallet.connectRadixWallet.supportedChains;

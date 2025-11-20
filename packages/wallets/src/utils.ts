@@ -11,7 +11,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.VULTISIG, async () => (await import("@swapkit/wallet-extensions/vultisig")).vultisigWallet)
     .with(WalletOption.OKX, async () => (await import("@swapkit/wallet-extensions/okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("@swapkit/wallet-extensions/onekey")).onekeyWallet)
-    .with(WalletOption.EXODUS, async () => (await import("./exodus")).exodusWallet)
+    .with(WalletOption.EXODUS, async () => (await import("./passkeys")).passkeysWallet)
     .with(WalletOption.KEEPKEY, async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet)
     .with(
       WalletOption.KEEPKEY_BEX,
@@ -45,7 +45,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
       WalletOption.LEDGER_LIVE,
       async () => (await import("@swapkit/wallet-hardware/ledger")).ledgerWallet,
     )
-
+    .with(WalletOption.PASSKEYS, async () => (await import("./passkeys")).passkeysWallet)
     .with(WalletOption.PHANTOM, async () => (await import("@swapkit/wallet-extensions/phantom")).phantomWallet)
     .with(WalletOption.POLKADOT_JS, async () => (await import("@swapkit/wallet-extensions/polkadotjs")).polkadotWallet)
     .with(WalletOption.RADIX_WALLET, async () => (await import("./radix")).radixWallet)
