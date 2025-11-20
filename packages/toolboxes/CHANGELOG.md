@@ -1,5 +1,14 @@
 # @swapkit/toolboxes
 
+## 4.3.2
+
+### Patch Changes
+
+- [#1592](https://github.com/swapkit/SwapKit/pull/1592) [`948bc18`](https://github.com/swapkit/SwapKit/commit/948bc1889870c1bf4fb00abf72e8ad1fe13474a0) Thanks [@0xepicode](https://github.com/0xepicode)! - Fix evm signMessage method loosing context
+
+- Updated dependencies [[`5c84d8a`](https://github.com/swapkit/SwapKit/commit/5c84d8a6525973692b23676a01995091df4a7a7d)]:
+  - @swapkit/helpers@4.5.2
+
 ## 4.3.1
 
 ### Patch Changes
