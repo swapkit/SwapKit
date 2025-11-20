@@ -1,4 +1,4 @@
-import { WalletWidget } from "@passkeys/react";
+// import { WalletWidget } from "@passkeys/react";
 import { type AssetValue, Chain, SKConfig } from "@swapkit/core";
 import type { FullWallet } from "@swapkit/sdk";
 import { SwapKitWidget } from "@swapkit/ui/react";
@@ -429,7 +429,7 @@ const App = () => {
               padding: 12,
               width: 700,
             }}>
-            <WalletWidget />
+            {/* <WalletWidget /> */}
 
             {skClient && wallet && (
               <>

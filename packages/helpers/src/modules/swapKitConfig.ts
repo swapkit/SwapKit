@@ -56,7 +56,7 @@ const rpcUrls = AllChains.reduce(
 );
 
 const initialState = {
-  apiKeys: { blockchair: "", keepKey: "", swapKit: "", walletConnectProjectId: "", xaman: "" },
+  apiKeys: { blockchair: "", keepKey: "", passkeys: "", swapKit: "", walletConnectProjectId: "", xaman: "" },
   chains: AllChains,
   endpoints: {} as CustomApiEndpoints,
   envs: {
