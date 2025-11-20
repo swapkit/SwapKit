@@ -8,6 +8,7 @@
     "disableSizeLimit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedDeclarations": false,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -37,5 +38,5 @@
     "useDefineForClassFields": true,
     "verbatimModuleSyntax": true
   },
-  "exclude": ["dist"]
+  "exclude": ["node_modules", "dist", "**/node_modules"]
 }
