@@ -4,11 +4,13 @@ import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import {
+  type Control,
   Controller,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
   FormProvider,
+  useController,
   useFormContext,
 } from "react-hook-form";
 
@@ -20,7 +22,7 @@ const Form = FormProvider;
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = { name: TName };
+> = { name: TName; control: Control<TFieldValues, any, TFieldValues> | undefined };
 
 const FormFieldContext = React.createContext<FormFieldContextValue | null>(null);
 
@@ -31,7 +33,8 @@ const FormField = <
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldContext.Provider
+      value={{ control: props.control as Control<FieldValues, any, FieldValues>, name: props.name }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   );
@@ -40,7 +43,7 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
+  const formContext = useFormContext();
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
@@ -50,18 +53,27 @@ const useFormField = () => {
     throw new Error("useFormField should be used within <FormItem>");
   }
 
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const fieldController = useController({ control: fieldContext.control, name: fieldContext.name });
+
+  const fieldState = formContext
+    ? formContext.getFieldState?.(fieldContext.name, formContext.formState)
+    : fieldController.fieldState;
+
+  console.log("fieldstate", fieldState, fieldController);
 
   const { id } = itemContext;
 
-  return {
-    formDescriptionId: `${id}-form-item-description`,
-    formItemId: `${id}-form-item`,
-    formMessageId: `${id}-form-item-message`,
-    id,
-    name: fieldContext.name,
-    ...fieldState,
-  };
+  return React.useMemo(
+    () => ({
+      formDescriptionId: `${id}-form-item-description`,
+      formItemId: `${id}-form-item`,
+      formMessageId: `${id}-form-item-message`,
+      id,
+      name: fieldContext.name,
+      ...fieldState,
+    }),
+    [fieldState, id, fieldContext.name],
+  );
 };
 
 type FormItemContextValue = { id: string };
