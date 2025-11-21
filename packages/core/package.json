@@ -5,10 +5,11 @@
     "@swapkit/plugins": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
     "@swapkit/wallets": "workspace:*",
+    "cosmjs-types": "0.10.1",
     "ts-pattern": "^5.9.0"
   },
   "description": "SwapKit - Core",
-  "devDependencies": { "ts-pattern": "5.9.0" },
+  "devDependencies": { "cosmjs-types": "0.10.1", "ts-pattern": "5.9.0" },
   "exports": {
     ".": {
       "bun": "./src/index.ts",

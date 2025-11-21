@@ -6,7 +6,8 @@
     "@swapkit/plugins": "workspace:*",
     "@swapkit/server": "workspace:*",
     "@swapkit/toolboxes": "workspace:*",
-    "@swapkit/wallets": "workspace:*"
+    "@swapkit/wallets": "workspace:*",
+    "cosmjs-types": "0.10.1"
   },
   "description": "SwapKit - SDK",
   "exports": {

@@ -22,6 +22,7 @@
     "@swapkit/wallets": "workspace:*",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "cosmjs-types": "0.10.1",
     "lucide-react": "0.552.0",
     "react": "19.1.1",
     "react-hook-form": "7.65.0",
