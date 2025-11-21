@@ -41,7 +41,7 @@
     "playground:react-bun": "bun --cwd=./playgrounds/bun-react",
     "playground:vite": "bun --cwd=./playgrounds/vite",
     "postinstall": "lefthook install; bun lint:ws",
-    "publish-packages": "bun build:ci; bun ./tools/builder/set-versions.ts; bun changeset publish",
+    "publish-packages": "bun build:ci && bun run ./tools/builder/set-versions.ts && bun changeset publish",
     "test": "bun --filter '*' --elide-lines=0 test",
     "test:ci": "bun --filter '*' test:ci",
     "test:coverage": "bun --filter '*' --elide-lines=0 test:ci",
