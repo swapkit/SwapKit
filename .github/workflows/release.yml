@@ -47,8 +47,6 @@ jobs:
       - name: Setup Repo
         uses: ./tools/github/setup-repo
 
-      - run: bun build:ci
-
       - name: Copy npmrc config
         run: cp .npmrc.prod .npmrc
 
