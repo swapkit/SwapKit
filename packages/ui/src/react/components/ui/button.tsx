@@ -25,7 +25,7 @@ const buttonVariants = cva(
         default: "sk-ui-bg-white/[0.08] sk-ui-text-muted-foreground hover:sk-ui-bg-white/[0.12]",
         ghost:
           "hover:sk-ui-bg-white/[0.08] sk-ui-bg-transparent hover:sk-ui-text-foreground sk-ui-text-muted-foreground",
-        link: "sk-ui-text-primary sk-ui-underline-offset-4 hover:sk-ui-underline",
+        link: "sk-ui-text-primary-foreground sk-ui-underline-offset-4 hover:sk-ui-underline sk-ui-px-0 sk-ui-h-auto sk-ui-w-auto sk-ui-display-inline",
         outline:
           "sk-ui-border sk-ui-border-input sk-ui-bg-background hover:sk-ui-bg-accent hover:sk-ui-text-accent-foreground",
 

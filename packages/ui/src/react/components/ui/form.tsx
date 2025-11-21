@@ -12,6 +12,7 @@ import {
   FormProvider,
   useController,
   useFormContext,
+  useFormState,
 } from "react-hook-form";
 
 import { cn } from "../../../lib/utils";
@@ -24,17 +25,17 @@ type FormFieldContextValue<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = { name: TName; control: Control<TFieldValues, any, TFieldValues> | undefined };
 
-const FormFieldContext = React.createContext<FormFieldContextValue | null>(null);
+const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  ...props
-}: ControllerProps<TFieldValues, TName>) => {
+>(
+  props: ControllerProps<TFieldValues, TName>,
+) => {
   return (
     <FormFieldContext.Provider
-      value={{ control: props.control as Control<FieldValues, any, FieldValues>, name: props.name }}>
+      value={{ control: props?.control as Control<FieldValues, any, FieldValues>, name: props?.name }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   );
@@ -43,23 +44,17 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
+  const formState = useFormState({ control: fieldContext?.control, name: fieldContext?.name });
+  const controlState = useController({ control: fieldContext?.control, name: fieldContext?.name });
   const formContext = useFormContext();
+
+  const fieldState = formContext
+    ? formContext?.getFieldState?.(fieldContext?.name, formState)
+    : controlState?.fieldState;
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
-
-  if (!itemContext) {
-    throw new Error("useFormField should be used within <FormItem>");
-  }
-
-  const fieldController = useController({ control: fieldContext.control, name: fieldContext.name });
-
-  const fieldState = formContext
-    ? formContext.getFieldState?.(fieldContext.name, formContext.formState)
-    : fieldController.fieldState;
-
-  console.log("fieldstate", fieldState, fieldController);
 
   const { id } = itemContext;
 
@@ -78,7 +73,7 @@ const useFormField = () => {
 
 type FormItemContextValue = { id: string };
 
-const FormItemContext = React.createContext<FormItemContextValue | null>(null);
+const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
 const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
@@ -86,7 +81,7 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
     return (
       <FormItemContext.Provider value={{ id }}>
-        <div className={cn("sk-ui-space-y-2", className)} ref={ref} {...props} />
+        <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-gap-2", className)} ref={ref} {...props} />
       </FormItemContext.Provider>
     );
   },

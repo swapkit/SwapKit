@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from "react";
-import { createFormControl, useWatch } from "react-hook-form";
-import { create } from "zustand";
+"use client";
 
-export type ControlsStoreFieldValues = { apiUrl: string; apiKey: string; apiUrlQuote: string; apiUrlSwap: string };
+import { useEffect, useMemo, useRef } from "react";
+import { createFormControl, useForm } from "react-hook-form";
+import type { ControlsStoreFieldValues } from "../types";
 
 const hasLocalStorageFormValues = typeof localStorage !== "undefined" && localStorage.getItem("formValues");
 
@@ -15,13 +15,13 @@ const defaultValues = hasLocalStorageFormValues
       apiUrlSwap: "",
     };
 
-const useControlsStore = create(() => ({ form: createFormControl<ControlsStoreFieldValues>({ defaultValues }) }));
+const formControlInstance = createFormControl<ControlsStoreFieldValues>({ defaultValues });
 
 export const useSwapKitWidgetControlsForm = () => {
-  const _form = useControlsStore((state) => state.form);
   const previousValues = useRef<string>("");
+  const form = useForm({ formControl: formControlInstance });
 
-  const { apiUrl, apiKey, apiUrlQuote, apiUrlSwap } = useWatch({ control: _form.control }) ?? {};
+  const [apiUrl, apiKey, apiUrlQuote, apiUrlSwap] = form.watch(["apiUrl", "apiKey", "apiUrlQuote", "apiUrlSwap"]);
 
   const stringifiedValues = JSON.stringify({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap });
 
@@ -33,7 +33,7 @@ export const useSwapKitWidgetControlsForm = () => {
   }, [stringifiedValues]);
 
   return useMemo(
-    () => ({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap, control: _form.control }),
-    [apiUrl, apiKey, apiUrlQuote, apiUrlSwap, _form.control],
+    () => ({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap, control: form.control }),
+    [apiUrl, apiKey, apiUrlQuote, apiUrlSwap, form.control],
   );
 };

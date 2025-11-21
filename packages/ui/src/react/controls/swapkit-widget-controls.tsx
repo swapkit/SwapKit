@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { InputField } from "../components/ui/input-field";
-import { SidebarGroup } from "../components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { useSwapKitWidgetControlsForm } from "./use-swapkit-widget-controls-form";
 
@@ -13,17 +12,17 @@ export function SwapKitWidgetControls() {
   const { apiUrl, control } = useSwapKitWidgetControlsForm();
 
   return (
-    <Tabs defaultValue="settings">
-      <TabsList className="sk-ui-mx-4 sk-ui-flex sk-ui-justify-around">
-        <TabsTrigger disabled value="design">
-          Design
-        </TabsTrigger>
+    <div className="sk-ui-bg-background sk-ui-p-4 sk-ui-border-border sk-ui-border-r">
+      <Tabs defaultValue="settings">
+        <TabsList className="sk-ui-mx-4 sk-ui-flex sk-ui-justify-around sk-ui-gap-4">
+          <TabsTrigger disabled value="design">
+            Design
+          </TabsTrigger>
 
-        <TabsTrigger value="settings">Settings</TabsTrigger>
-      </TabsList>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
 
-      <TabsContent asChild value="settings">
-        <SidebarGroup className="sk-ui-p-4">
+        <TabsContent className="flex flex-col gap-4" value="settings">
           <InputField
             control={control}
             label={
@@ -77,8 +76,8 @@ export function SwapKitWidgetControls() {
             name="apiKey"
             placeholder="4531f781-9ff9-4a3f-933f-ce992cc265c1"
           />
-        </SidebarGroup>
-      </TabsContent>
-    </Tabs>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

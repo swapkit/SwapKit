@@ -37,7 +37,7 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       className={cn(
-        "data-[state=closed]:sk-ui-fade-out-0 data-[state=open]:sk-ui-fade-in-0 data-[state=closed]:sk-ui-zoom-out-95 data-[state=open]:sk-ui-zoom-in-95 data-[state=closed]:sk-ui-slide-out-to-left-1/2 data-[state=closed]:sk-ui-slide-out-to-top-[48%] data-[state=open]:sk-ui-slide-in-from-left-1/2 data-[state=open]:sk-ui-slide-in-from-top-[48%] sk-ui-fixed sk-ui-top-[50%] sk-ui-left-[50%] sk-ui-z-50 sk-ui-grid sk-ui-max-h-[90svh] sk-ui-w-full sk-ui-max-w-lg sk-ui-translate-x-[-50%] sk-ui-translate-y-[-50%] sk-ui-gap-4 sk-ui-border sk-ui-bg-secondary sk-ui-p-6 sk-ui-shadow-lg sk-ui-duration-200 data-[state=closed]:sk-ui-animate-out data-[state=open]:sk-ui-animate-in sm:sk-ui-rounded-lg",
+        "data-[state=closed]:sk-ui-fade-out-0 data-[state=open]:sk-ui-fade-in-0 data-[state=closed]:sk-ui-zoom-out-95 data-[state=open]:sk-ui-zoom-in-95 data-[state=closed]:sk-ui-slide-out-to-left-1/2 data-[state=closed]:sk-ui-slide-out-to-top-[48%] data-[state=open]:sk-ui-slide-in-from-left-1/2 data-[state=open]:sk-ui-slide-in-from-top-[48%] sk-ui-fixed sk-ui-top-[50%] sk-ui-left-[50%] sk-ui-z-50 sk-ui-grid sk-ui-max-h-[90svh] sk-ui-w-full sk-ui-max-w-lg sk-ui-translate-x-[-50%] sk-ui-translate-y-[-50%] sk-ui-gap-4 sk-ui-border sk-ui-border-border sk-ui-bg-secondary sk-ui-p-6 sk-ui-shadow-lg sk-ui-duration-200 data-[state=closed]:sk-ui-animate-out data-[state=open]:sk-ui-animate-in sm:sk-ui-rounded-lg [&_*]:sk-ui-border-border",
         className,
       )}
       ref={ref}
@@ -63,7 +63,7 @@ DialogHeader.displayName = "DialogHeader";
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "sk-ui--mx-6 sk-ui--mb-6 sk-ui-flex sk-ui-w-auto sk-ui-flex-col sk-ui-justify-between sk-ui-border-t sk-ui-px-6 sk-ui-py-2 sm:sk-ui-flex-row",
+      "sk-ui--mx-6 sk-ui--mb-6 sk-ui-flex sk-ui-w-auto sk-ui-flex-col sk-ui-justify-between sk-ui-border-t sk-ui-border-border sk-ui-px-6 sk-ui-py-2 sm:sk-ui-flex-row",
       className,
     )}
     {...props}

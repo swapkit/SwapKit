@@ -7,17 +7,17 @@
     --sk-ui-white: 0 0% 100%;
     --sk-ui-black: 0 0% 0%;
 
-    --sk-ui-background: var(--primary);
-    --sk-ui-foreground: var(--primary-foreground);
+    --sk-ui-background: var(--sk-ui-primary);
+    --sk-ui-foreground: var(--sk-ui-primary-foreground);
 
-    --sk-ui-card: var(--secondary);
-    --sk-ui-card-foreground: var(--secondary-foreground);
+    --sk-ui-card: var(--sk-ui-secondary);
+    --sk-ui-card-foreground: var(--sk-ui-secondary-foreground);
 
     --sk-ui-popover: 20 14.3% 4.1%;
     --sk-ui-popover-foreground: 60 9.1% 97.8%;
 
     --sk-ui-primary: 140 6% 8%;
-    --sk-ui-primary-foreground: var(--sk-ui-white) / 92%;
+    --sk-ui-primary-foreground: var(--sk-ui-white) / 0.92;
 
     --sk-ui-secondary: 120 3% 13%;
     --sk-ui-secondary-foreground: var(--sk-ui-white) / 0.92;
@@ -49,13 +49,5 @@
     --sidebar-accent-foreground: var(--sk-ui-accent-foreground);
     --sk-ui-sidebar-border: var(--sk-ui-border);
     --sk-ui-sidebar-ring: var(--sk-ui-ring);
-  }
-
-  * {
-    @apply sk-ui-border-border sk-ui-antialiased;
-  }
-  
-  body {
-    @apply sk-ui-bg-background sk-ui-text-foreground;
   }
 }
