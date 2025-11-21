@@ -6,6 +6,7 @@ import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from
 import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
+import { cn } from "../lib/utils";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
@@ -19,11 +20,11 @@ import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
 import type { SwapKitWidgetProps } from "./types";
 
-export function SwapKitWidget({ config }: SwapKitWidgetProps) {
+export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
-  const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.MAYA");
+  const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.CACAO");
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const { setConfig } = useSwapKitStore();
@@ -137,7 +138,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     isFetchingQuote;
 
   return (
-    <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
+    <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
       <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
 
       <Card>

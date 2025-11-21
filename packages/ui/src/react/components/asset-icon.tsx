@@ -2,17 +2,13 @@
 
 import { AssetValue } from "@swapkit/helpers";
 import { cn } from "../../lib/utils";
+import { temp_host } from "./config";
 
 interface AssetIconProps {
   asset: string;
   className?: string;
   showSmallIcon?: boolean;
 }
-
-export const temp_host =
-  process.env.NODE_ENV === "development"
-    ? "https://storage.googleapis.com/token-list-swapkit-dev"
-    : "https://storage.googleapis.com/token-list-swapkit";
 
 export function AssetIcon({ asset, className }: AssetIconProps) {
   if (!asset) return null;

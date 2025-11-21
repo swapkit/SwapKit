@@ -4,6 +4,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vite.dev/config/
 export default defineConfig({
-  esbuild: { jsx: "automatic", jsxDev: false },
+  build: { commonjsOptions: { include: ["@swapkit/sdk", /node_modules/] } },
+  optimizeDeps: { include: ["@swapkit/sdk"] },
   plugins: [react(), nodePolyfills({ globals: { Buffer: true, global: true, process: true } })],
 });

@@ -12,7 +12,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency } from "../../lib/utils";
-import { temp_host } from "../components/asset-icon";
+import { temp_host } from "../components/config";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
 import { useSwapKit } from "../swapkit-context";
 import type { UseSwapQuoteParams } from "../types";
