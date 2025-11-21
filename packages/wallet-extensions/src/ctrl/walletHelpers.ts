@@ -14,6 +14,8 @@ import {
 } from "@swapkit/helpers";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { Eip1193Provider } from "ethers";
+import { match } from "ts-pattern";
+import type { NearBrowserWalletProvider } from "../helpers/near";
 
 type TransactionMethod = "transfer" | "deposit";
 
@@ -34,35 +36,22 @@ export type WalletTxParams = {
   gasLimit?: string | bigint;
 };
 
-export async function getCtrlProvider<T extends Chain>(
-  chain: T,
-): Promise<
-  T extends typeof Chain.Solana
-    ? SolanaProvider
-    : T extends Exclude<CosmosChain, TCLikeChain>
-      ? Keplr
-      : T extends EVMChain
-        ? Eip1193Provider
-        : undefined
-> {
+type CtrlProviderType<T> = T extends typeof Chain.Solana
+  ? SolanaProvider
+  : T extends Exclude<CosmosChain, TCLikeChain>
+    ? Keplr
+    : T extends EVMChain
+      ? Eip1193Provider
+      : T extends typeof Chain.Near
+        ? NearBrowserWalletProvider
+        : undefined;
+
+export function getCtrlProvider<T extends Chain>(chain: T): CtrlProviderType<T> {
   if (!window.ctrl) throw new SwapKitError("wallet_ctrl_not_found");
-  const { match } = await import("ts-pattern");
 
   // @ts-expect-error
   return match(chain as Chain)
-    .with(
-      Chain.Arbitrum,
-      Chain.Aurora,
-      Chain.Avalanche,
-      Chain.Base,
-      Chain.Berachain,
-      Chain.BinanceSmartChain,
-      Chain.Ethereum,
-      Chain.Gnosis,
-      Chain.Optimism,
-      Chain.Polygon,
-      () => window.ctrl?.ethereum,
-    )
+    .with(...EVMChains, () => window.ctrl?.ethereum)
     .with(Chain.Cosmos, Chain.Kujira, Chain.Noble, () => window.ctrl?.keplr)
     .with(Chain.Bitcoin, () => window.ctrl?.bitcoin)
     .with(Chain.BitcoinCash, () => window.ctrl?.bitcoincash)
@@ -71,6 +60,7 @@ export async function getCtrlProvider<T extends Chain>(
     .with(Chain.Solana, () => window.ctrl?.solana)
     .with(Chain.THORChain, () => window.ctrl?.thorchain)
     .with(Chain.Maya, () => window.ctrl?.mayachain)
+    .with(Chain.Near, () => window.ctrl?.near)
     .otherwise(() => undefined);
 }
 

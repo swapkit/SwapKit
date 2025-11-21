@@ -89,10 +89,10 @@
       "types": "./dist/types/evm-extensions.d.ts"
     },
     "./exodus": {
-      "bun": "./src/exodus/index.ts",
-      "default": "./dist/src/exodus/index.js",
-      "require": "./dist/src/exodus/index.cjs",
-      "types": "./dist/types/exodus/index.d.ts"
+      "bun": "./src/passkeys/index.ts",
+      "default": "./dist/src/passkeys/index.js",
+      "require": "./dist/src/passkeys/index.cjs",
+      "types": "./dist/types/passkeys/index.d.ts"
     },
     "./keepkey": {
       "bun": "./src/keepkey.ts",
@@ -141,6 +141,12 @@
       "default": "./dist/src/onekey.js",
       "require": "./dist/src/onekey.cjs",
       "types": "./dist/types/onekey.d.ts"
+    },
+    "./passkeys": {
+      "bun": "./src/passkeys/index.ts",
+      "default": "./dist/src/passkeys/index.js",
+      "require": "./dist/src/passkeys/index.cjs",
+      "types": "./dist/types/passkeys/index.d.ts"
     },
     "./phantom": {
       "bun": "./src/phantom.ts",
@@ -210,5 +216,5 @@
     "type-check:go": "tsgo"
   },
   "type": "module",
-  "version": "4.3.1"
+  "version": "4.3.2"
 }

@@ -5,10 +5,9 @@ const dtsPlugin = {
   setup: async (pkgName: string) => {
     const scope = `./packages/${pkgName}`;
 
-    // Clean existing .d.ts files to avoid TS5055 errors
-    await $`find ${scope}/dist/types/ -name "*.d.ts" -type f -delete 2>/dev/null || true`;
+    await $`find ${scope}/dist/types/ -name "*.d.ts*" -type f -delete 2>/dev/null || true`;
+    await $`rm -rf ${scope}/tsconfig.tsbuildinfo`;
 
-    // For packages with export maps, create a temp config with only src files
     const tempConfig = {
       compilerOptions: {
         allowImportingTsExtensions: false,
@@ -21,6 +20,7 @@ const dtsPlugin = {
         outDir: "./dist/types",
         paths: {} as Record<string, string[]>,
         rootDir: "./src",
+        tsBuildInfoFile: "./tsconfig.tsbuildinfo",
       },
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
       extends: "./tsconfig.json",
@@ -43,7 +43,7 @@ const dtsPlugin = {
 
     await Bun.write(`${scope}/.tsconfig.tmp.json`, JSON.stringify(tempConfig));
     try {
-      await $`cd ${scope} && bun --bun tsc -p .tsconfig.tmp.json --pretty`;
+      await $`cd ${scope} && bun --bun tsc -p .tsconfig.tmp.json`;
     } catch (error: any) {
       if (error?.stdout) {
         console.error(Buffer.from(error.stdout).toString());

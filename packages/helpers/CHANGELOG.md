@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.2
+
+### Patch Changes
+
+- [#1593](https://github.com/swapkit/SwapKit/pull/1593) [`5c84d8a`](https://github.com/swapkit/SwapKit/commit/5c84d8a6525973692b23676a01995091df4a7a7d) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Passkeys wallet and rename internally for that
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.1
 
 ### Patch Changes

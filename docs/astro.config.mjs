@@ -92,6 +92,8 @@ export default defineConfig({
 });
 
 function createDocs() {
+
+
   if (process.env.REFERENCES !== "enable") {
     return { plugins: [], sidebarItems: [] };
   }
@@ -103,7 +105,6 @@ function createDocs() {
     "coinbase",
     "ctrl",
     "evm-extensions",
-    "exodus",
     "keepkey",
     "keepkey-bex",
     "keplr",
@@ -111,6 +112,7 @@ function createDocs() {
     "ledger",
     "okx",
     "onekey",
+    "passkeys",
     "phantom",
     "polkadotjs",
     "radix",

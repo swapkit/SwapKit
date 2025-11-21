@@ -20,42 +20,25 @@ toolbox:
 hardware-wallet:
 - changed-files:
     any-glob-to-any-file:
-      - 'packages/wallets/src/ledger/**/*'
-      - 'packages/wallets/src/trezor/**/*'
-      - 'packages/wallets/src/keepkey/**/*'
+      - 'packages/wallets-hardware/src/**/*'
 
 mobile-wallet:
 - changed-files:
     any-glob-to-any-file:
       - 'packages/wallets/src/coinbase/**/*'
-      - 'packages/wallets/src/exodus/**/*'
+      - 'packages/wallets/src/passkeys/**/*'
       - 'packages/wallets/src/walletconnect/**/*'
 
 browser-extensions:
 - changed-files:
     any-glob-to-any-file:
-      - 'packages/wallets/src/bitget/**/*'
-      - 'packages/wallets/src/talisman/**/*'
-      - 'packages/wallets/src/coinbase/**/*'
-      - 'packages/wallets/src/ctrl/**/*'
-      - 'packages/wallets/src/evm-extensions/**/*'
-      - 'packages/wallets/src/keplr/**/*'
-      - 'packages/wallets/src/okx/**/*'
-      - 'packages/wallets/src/phantom/**/*'
-      - 'packages/wallets/src/polkadotjs/**/*'
-      - 'packages/wallets/src/radix/**/*'
+      - 'packages/wallet-extensions/src'
 
 evm:
 - changed-files:
     any-glob-to-any-file:
       - 'packages/toolboxes/src/evm/**/*'
       - 'packages/plugins/src/evm/**/*'
-
-radix:
-- changed-files:
-    any-glob-to-any-file:
-      - 'packages/toolboxes/src/radix/**/*'
-      - 'packages/plugins/src/cosmos/**/*'
 
 thorchain:
 - changed-files:
@@ -77,6 +60,7 @@ cosmos:
 solana:
 - changed-files:
     any-glob-to-any-file:
+      - 'packages/plugins/src/solana/**/*'
       - 'packages/toolboxes/src/solana/**/*'
 
 substrate:
@@ -89,8 +73,7 @@ utxo:
     any-glob-to-any-file:
       - 'packages/toolboxes/src/utxo/**/*'
 
-
 keystore:
 - changed-files:
     any-glob-to-any-file:
-      - 'packages/wallets/src/keystore/**/*'
+      - 'packages/wallet-keystore/src/**/*'

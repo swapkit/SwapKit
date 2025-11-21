@@ -1,5 +1,19 @@
 # @swapkit/sdk
 
+## 4.2.2
+
+### Patch Changes
+
+- [#1593](https://github.com/swapkit/SwapKit/pull/1593) [`5c84d8a`](https://github.com/swapkit/SwapKit/commit/5c84d8a6525973692b23676a01995091df4a7a7d) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Passkeys wallet and rename internally for that
+
+- Updated dependencies [[`948bc18`](https://github.com/swapkit/SwapKit/commit/948bc1889870c1bf4fb00abf72e8ad1fe13474a0), [`5c84d8a`](https://github.com/swapkit/SwapKit/commit/5c84d8a6525973692b23676a01995091df4a7a7d)]:
+  - @swapkit/toolboxes@4.3.2
+  - @swapkit/helpers@4.5.2
+  - @swapkit/wallets@4.3.2
+  - @swapkit/core@4.1.2
+  - @swapkit/plugins@4.2.2
+  - @swapkit/server@4.0.46
+
 ## 4.2.1
 
 ### Patch Changes

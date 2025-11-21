@@ -1,4 +1,4 @@
-import { type Chain, SKConfig } from "@swapkit/helpers";
+import { type Chain, SKConfig } from "@swapkit/core";
 import { useCallback, useState } from "react";
 
 type Props = { chains: Chain[]; setChains: (chains: Chain[]) => void; loading?: boolean };

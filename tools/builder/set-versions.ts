@@ -1,44 +1,42 @@
-import { $ } from "bun";
-import { readdir } from "fs/promises";
+import { $, Glob } from "bun";
 
 const cwd = process.cwd();
-const versions: Record<string, string> = {};
+const versions: Record<string, { filePath: string; version: string }> = {};
 
 async function setVersions() {
-  const files = await readdir("./packages", { recursive: true });
+  console.info("Setting versions...");
+  const glob = new Glob("**/package.json");
 
-  const onlyPackageJson = files.filter((file) => !file.includes("node_modules") && file.endsWith("package.json"));
-
-  for (const file of onlyPackageJson) {
-    const { version } = await import(`${cwd}/packages/${file}`);
+  for await (const file of glob.scan("./packages")) {
+    console.info(`File: ${file}`);
+    const filePath = `./packages/${file}`;
+    const { version } = await Bun.file(filePath).json();
     const [name] = file.split("/");
 
-    const packageName = `@swapkit/${name}`;
-
-    versions[packageName] = version;
+    versions[`@swapkit/${name}`] = { filePath, version };
   }
 
   console.info(`Versions: ${JSON.stringify(versions, null, 2)}`);
 
-  for (const file of onlyPackageJson) {
-    console.info(`Replacing versions in ${file}`);
+  for (const { filePath } of Object.values(versions)) {
+    console.info(`Replacing versions in ${filePath}`);
 
-    const pkgContent = await Bun.file(`${cwd}/packages/${file}`).json();
+    const pkgContent = await Bun.file(`${cwd}/${filePath}`).json();
 
-    for (const [key, value] of Object.entries(versions)) {
-      if (pkgContent?.dependencies?.[key]) {
-        pkgContent.dependencies[key] = value;
+    for (const [packageName, { version: dependencyVersion }] of Object.entries(versions)) {
+      if (pkgContent?.dependencies?.[packageName]) {
+        pkgContent.dependencies[packageName] = dependencyVersion;
       }
 
-      if (pkgContent?.peerDependencies?.[key]) {
-        pkgContent.peerDependencies[key] = value;
+      if (pkgContent?.peerDependencies?.[packageName]) {
+        pkgContent.peerDependencies[packageName] = dependencyVersion;
       }
 
-      if (pkgContent?.devDependencies?.[key]) {
-        pkgContent.devDependencies[key] = value;
+      if (pkgContent?.devDependencies?.[packageName]) {
+        pkgContent.devDependencies[packageName] = dependencyVersion;
       }
 
-      await Bun.write(`${cwd}/packages/${file}`, JSON.stringify(pkgContent, null, 2));
+      await Bun.write(`${cwd}/${filePath}`, JSON.stringify(pkgContent, null, 2));
     }
   }
 }

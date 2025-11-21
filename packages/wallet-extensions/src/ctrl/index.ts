@@ -60,13 +60,12 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
   switch (chain) {
     case Chain.Solana: {
       const { getSolanaToolbox } = await import("@swapkit/toolboxes/solana");
+      const provider = getCtrlProvider(chain);
 
-      const solanaProvider = window.ctrl?.solana;
-
-      if (!solanaProvider) {
+      if (!provider) {
         throw new SwapKitError("wallet_ctrl_not_found");
       }
-      const toolbox = await getSolanaToolbox({ signer: solanaProvider });
+      const toolbox = await getSolanaToolbox({ signer: provider });
 
       return toolbox;
     }
@@ -90,7 +89,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.Noble: {
       const { getCosmosToolbox } = await import("@swapkit/toolboxes/cosmos");
       const chainId = ChainToChainId[chain];
-      const provider = await getCtrlProvider(chain);
+      const provider = getCtrlProvider(chain);
 
       await provider?.enable(chainId);
       const signer = provider?.getOfflineSignerOnlyAmino(chainId, { preferNoSetFee: true });
@@ -128,7 +127,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
       const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const { BrowserProvider } = await import("ethers");
-      const ethereumWindowProvider = await getCtrlProvider(chain);
+      const ethereumWindowProvider = getCtrlProvider(chain);
 
       if (!ethereumWindowProvider) {
         throw new SwapKitError("wallet_ctrl_not_found");
@@ -154,14 +153,15 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     }
 
     case Chain.Near: {
-      if (!window.ctrl?.near) {
+      const provider = getCtrlProvider(chain);
+
+      if (!provider) {
         throw new SwapKitError("wallet_ctrl_not_found", { chain: Chain.Near });
       }
 
       const { createNearSignerFromProvider } = await import("../helpers/near");
       const { getNearToolbox } = await import("@swapkit/toolboxes/near");
 
-      const provider = window.ctrl.near;
       const signer = await createNearSignerFromProvider(provider, "CTRL");
       const accountId = await signer.getAddress();
       const toolbox = await getNearToolbox({ signer });

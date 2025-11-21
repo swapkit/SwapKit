@@ -170,16 +170,16 @@ const errorCodes = {
   wallet_bitkeep_failed_to_switch_network: 21002,
   wallet_bitkeep_no_accounts: 21003,
   /**
-   * Wallets - Exodus
+   * Wallets - Passkeys
    */
-  wallet_exodus_sign_transaction_error: 21101,
-  wallet_exodus_not_found: 21102,
-  wallet_exodus_no_address: 21103,
-  wallet_exodus_request_canceled: 21104,
-  wallet_exodus_signature_canceled: 21105,
-  wallet_exodus_failed_to_switch_network: 21106,
-  wallet_exodus_chain_not_supported: 21107,
-  wallet_exodus_instance_missing: 21108,
+  wallet_passkeys_sign_transaction_error: 21101,
+  wallet_passkeys_not_found: 21102,
+  wallet_passkeys_no_address: 21103,
+  wallet_passkeys_request_canceled: 21104,
+  wallet_passkeys_signature_canceled: 21105,
+  wallet_passkeys_failed_to_switch_network: 21106,
+  wallet_passkeys_chain_not_supported: 21107,
+  wallet_passkeys_instance_missing: 21108,
   /**
    * Wallets - OneKey
    */
@@ -211,10 +211,9 @@ const errorCodes = {
   wallet_cosmostation_no_evm_address: 21507,
   wallet_cosmostation_signer_not_found: 21508,
   /**
-   * Wallets - XDefi
+   * Wallets - ###EMPTY### 21601
    */
-  wallet_xdefi_not_found: 21601,
-  wallet_xdefi_chain_not_supported: 21602,
+
   /**
    * Wallets - Coinbase
    */
