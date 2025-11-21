@@ -47,6 +47,12 @@
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     },
+    "./react/controls": {
+      "bun": "./src/react/controls/index.ts",
+      "default": "./dist/react/controls/index.js",
+      "require": "./dist/react/controls/index.cjs",
+      "types": "./dist/types/react/controls/index.d.ts"
+    },
     "./swapkit.css": { "bun": "./src/swapkit.css", "default": "./dist/swapkit.css" }
   },
   "files": ["dist/", "src/"],
