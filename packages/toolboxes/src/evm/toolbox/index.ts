@@ -32,7 +32,6 @@ export async function getEvmToolbox<T extends EVMChain>(chain: T, params?: EVMTo
       .with(Chain.Sonic, () => evmToolboxes.SONICToolbox(toolboxParams) as Toolbox)
       .with(Chain.Unichain, () => evmToolboxes.UNIToolbox(toolboxParams) as Toolbox)
       .with(Chain.XLayer, () => evmToolboxes.XLayerToolbox(toolboxParams) as Toolbox)
-      // @ts-expect-error TODO: Remove once live
       .with(Chain.Monad, () => evmToolboxes.MONADToolbox(toolboxParams) as Toolbox)
       // @ts-expect-error TODO: Remove once live
       .with(Chain.MegaETH, () => evmToolboxes.MEGAETHToolbox(toolboxParams) as Toolbox)
