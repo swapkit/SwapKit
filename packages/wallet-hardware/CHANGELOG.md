@@ -1,5 +1,14 @@
 # @swapkit/wallet-hardware
 
+## 4.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.3
+  - @swapkit/toolboxes@4.3.3
+  - @swapkit/wallet-core@4.0.47
+
 ## 4.2.2
 
 ### Patch Changes

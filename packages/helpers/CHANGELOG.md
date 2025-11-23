@@ -1,5 +1,13 @@
 # @swapkit/helpers
 
+## 4.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`0c123f0`](https://github.com/swapkit/SwapKit/commit/0c123f08cb1c58296f3f98ff17689d65aaeed9ae)]:
+  - @swapkit/types@0.4.0
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.2
 
 ### Patch Changes

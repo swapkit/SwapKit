@@ -1,5 +1,15 @@
 # @swapkit/core
 
+## 4.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.3
+  - @swapkit/plugins@4.2.3
+  - @swapkit/toolboxes@4.3.3
+  - @swapkit/wallets@4.3.3
+
 ## 4.1.2
 
 ### Patch Changes

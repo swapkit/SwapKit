@@ -1,5 +1,15 @@
 # @swapkit/server
 
+## 4.0.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.3
+  - @swapkit/tokens@4.1.1
+  - @swapkit/toolboxes@4.3.3
+  - @swapkit/wallet-keystore@4.1.3
+
 ## 4.0.46
 
 ### Patch Changes
