@@ -44,7 +44,7 @@ export const MATICToolbox = createEvmToolbox(Chain.Polygon);
 export const SONICToolbox = createEvmToolbox(Chain.Sonic);
 export const UNIToolbox = createEvmToolbox(Chain.Unichain);
 export const XLayerToolbox = createEvmToolbox(Chain.XLayer);
-export const MONADToolbox = createEvmToolbox(Chain.Monad as EVMChain);
+export const MONADToolbox = createEvmToolbox(Chain.Monad);
 export const MEGAETHToolbox = createEvmToolbox(Chain.MegaETH as EVMChain);
 
 function createEvmToolbox<C extends EVMChain>(chain: C) {
