@@ -20,20 +20,24 @@ export default function App() {
               walletConnectProjectId: "",
             },
             endpoints: {
-              ...(apiUrlQuote && {
-                getQuote: (json) =>
-                  RequestClient.post<QuoteResponse>(apiUrlQuote, {
-                    headers: { "Content-Type": "application/json", "x-api-key": apiKey } as HeadersInit,
-                    json,
-                  }),
-              }),
-              ...(apiUrlSwap && {
-                getRouteWithTx: (json) =>
-                  RequestClient.post<QuoteResponseRoute>(apiUrlSwap, {
-                    headers: { "Content-Type": "application/json", "x-api-key": apiKey } as HeadersInit,
-                    json,
-                  }),
-              }),
+              // @ts-expect-error - temporary memo key
+              temp_memoKey: `${apiKey}-${apiUrlQuote}-${apiUrlSwap}`,
+              ...(apiUrlQuote &&
+                apiUrlQuote !== "" && {
+                  getQuote: (json) =>
+                    RequestClient.post<QuoteResponse>(apiUrlQuote, {
+                      headers: { "Content-Type": "application/json", "x-api-key": apiKey } as HeadersInit,
+                      json,
+                    }),
+                }),
+              ...(apiUrlSwap &&
+                apiUrlSwap !== "" && {
+                  getRouteWithTx: (json) =>
+                    RequestClient.post<QuoteResponseRoute>(apiUrlSwap, {
+                      headers: { "Content-Type": "application/json", "x-api-key": apiKey } as HeadersInit,
+                      json,
+                    }),
+                }),
             },
             envs: { devApiUrl: apiUrl, isDev: true },
             integrations: {

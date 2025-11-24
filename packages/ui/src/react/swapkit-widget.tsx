@@ -37,7 +37,6 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
     const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
 
@@ -46,7 +45,7 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
     setConfig(config);
 
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
-  }, [swapKit, stableConfigMemoKey]);
+  }, [swapKit, stableConfigMemoKey, config, setConfig]);
 
   const performSwap = async (route: QuoteResponseRoute) => {
     try {
