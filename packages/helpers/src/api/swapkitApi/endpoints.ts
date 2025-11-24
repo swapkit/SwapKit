@@ -34,7 +34,12 @@ import {
   type TrackingRequest,
 } from "./types";
 
-export const SKRequestClient = RequestClient;
+const SKRequestClient = RequestClient.extend({
+  dynamicHeader: () => {
+    const { swapKit } = SKConfig.get("apiKeys");
+    return swapKit ? { "x-api-key": swapKit } : {};
+  },
+});
 
 export async function getTrackerDetails(json: TrackingRequest) {
   const response = await SKRequestClient.post<TrackerResponse>(getApiUrl("/track"), { json });
