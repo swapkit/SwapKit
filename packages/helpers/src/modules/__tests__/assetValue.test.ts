@@ -1088,6 +1088,21 @@ describe("fromChainOrSignature", () => {
       }),
     );
 
+    const monadAsset = AssetValue.from({ chain: Chain.Monad });
+    const { baseDecimal: monadDecimal } = getChainConfig(Chain.Monad);
+    expect(monadAsset).toEqual(
+      expect.objectContaining({
+        address: undefined,
+        chain: Chain.Monad,
+        decimal: monadDecimal,
+        isGasAsset: true,
+        isSynthetic: false,
+        symbol: "MON",
+        ticker: "MON",
+        type: "Native",
+      }),
+    );
+
     const thorAsset = AssetValue.from({ chain: Chain.THORChain });
     const { baseDecimal: thorDecimal } = getChainConfig(Chain.THORChain);
     expect(thorAsset).toEqual(

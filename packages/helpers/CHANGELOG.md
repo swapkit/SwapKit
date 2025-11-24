@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.4
+
+### Patch Changes
+
+- [#1600](https://github.com/swapkit/SwapKit/pull/1600) [`0244423`](https://github.com/swapkit/SwapKit/commit/02444235e172e3227688a3bc6a25e863a52f97e4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Monad assetValue identifier and gas asset status
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.3
 
 ### Patch Changes
