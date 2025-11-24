@@ -1,5 +1,16 @@
 # @swapkit/wallet-extensions
 
+## 4.1.5
+
+### Patch Changes
+
+- [#1599](https://github.com/swapkit/SwapKit/pull/1599) [`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc) Thanks [@0xepicode](https://github.com/0xepicode)! - Export global extensions types
+
+- Updated dependencies [[`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc)]:
+  - @swapkit/helpers@4.5.5
+  - @swapkit/toolboxes@4.3.5
+  - @swapkit/wallet-core@4.0.49
+
 ## 4.1.4
 
 ### Patch Changes

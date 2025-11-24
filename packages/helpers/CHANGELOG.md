@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.5
+
+### Patch Changes
+
+- [#1599](https://github.com/swapkit/SwapKit/pull/1599) [`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc) Thanks [@0xepicode](https://github.com/0xepicode)! - Adds swapkit endpoint api key supporting client
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.4
 
 ### Patch Changes

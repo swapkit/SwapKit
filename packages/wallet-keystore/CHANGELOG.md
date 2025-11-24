@@ -1,5 +1,16 @@
 # @swapkit/wallet-keystore
 
+## 4.1.5
+
+### Patch Changes
+
+- [`e4a8700`](https://github.com/swapkit/SwapKit/commit/e4a8700c44e792e1da7f23b93fddf9a2f7a436c7) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Export named functions from keystore
+
+- Updated dependencies [[`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc)]:
+  - @swapkit/helpers@4.5.5
+  - @swapkit/toolboxes@4.3.5
+  - @swapkit/wallet-core@4.0.49
+
 ## 4.1.4
 
 ### Patch Changes
