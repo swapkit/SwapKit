@@ -197,7 +197,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       if (!address) return defaultResult;
 
       try {
-        const { TronWeb } = await import("tronweb");
+        const TW = await import("tronweb");
+        const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
         const rpcUrl = await getRPCUrl(Chain.Tron);
         const tronWeb = new TronWeb({
           fullHost: rpcUrl,
