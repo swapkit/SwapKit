@@ -17,6 +17,7 @@ import {
   type SwapParams,
   supportsV3SwapFlow,
   UTXOChains,
+  type WalletOption,
 } from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { createPlugin } from "@swapkit/plugins";
@@ -210,7 +211,7 @@ export function SwapKit<
       throw new SwapKitError("core_wallet_connection_not_found");
     }
 
-    const useV3Flow = supportsV3SwapFlow(wallet.walletType, fromChain) && route.tx;
+    const useV3Flow = supportsV3SwapFlow(wallet.walletType as WalletOption, fromChain) && route.tx;
 
     if (useV3Flow) {
       const plugin = getSwapKitPlugin("swap");

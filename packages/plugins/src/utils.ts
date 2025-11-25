@@ -19,7 +19,7 @@ export function createPlugin<
 export function approve<T extends ApproveMode>({ approveMode, getWallet }: { approveMode: T } & SwapKitPluginParams) {
   return function approve(params: { spenderAddress: string; assetValue: AssetValue; route?: QuoteResponseRoute }) {
     return match(params)
-      .with({ route: P.not(P.nullish) }, async ({ route }) => {
+      .with({ route: P.not(P.nullish), spenderAddress: P.string }, async ({ route, spenderAddress }) => {
         const assetValue = AssetValue.from({ asset: route.sellAsset, value: route.sellAmount });
         const isEVMChain = EVMChains.includes(assetValue.chain as EVMChain);
         const isNativeEVM = isEVMChain && assetValue.isGasAsset;
@@ -27,8 +27,7 @@ export function approve<T extends ApproveMode>({ approveMode, getWallet }: { app
           return true;
         }
 
-        const response = await SwapKitApi.getTokenApproval({ routeId: route.routeId });
-
+        const response = await SwapKitApi.getTokenApproval({ routeId: route.routeId, spender: spenderAddress });
         if (approveMode === "checkOnly") {
           return response.isApproved;
         }
