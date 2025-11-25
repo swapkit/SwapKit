@@ -53,13 +53,19 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-space-y-1.5 sk-ui-text-center sm:sk-ui-text-left", className)} {...props} />
+  <div
+    className={cn("sk-ui-flex sk-ui-flex-col sk-ui-space-y-1.5 sk-ui-text-center sm:sk-ui-text-left", className)}
+    {...props}
+  />
 );
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("sk-ui--mx-6 sk-ui--mb-6 sk-ui-flex sk-ui-w-auto sk-ui-flex-col sk-ui-justify-between sk-ui-border-t sk-ui-px-6 sk-ui-py-2 sm:sk-ui-flex-row", className)}
+    className={cn(
+      "sk-ui--mx-6 sk-ui--mb-6 sk-ui-flex sk-ui-w-auto sk-ui-flex-col sk-ui-justify-between sk-ui-border-t sk-ui-px-6 sk-ui-py-2 sm:sk-ui-flex-row",
+      className,
+    )}
     {...props}
   />
 );
@@ -81,7 +87,11 @@ const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description className={cn("sk-ui-text-muted-foreground sk-ui-text-sm", className)} ref={ref} {...props} />
+  <DialogPrimitive.Description
+    className={cn("sk-ui-text-muted-foreground sk-ui-text-sm", className)}
+    ref={ref}
+    {...props}
+  />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
