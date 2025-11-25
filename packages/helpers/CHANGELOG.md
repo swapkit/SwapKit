@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.6
+
+### Patch Changes
+
+- [#1603](https://github.com/swapkit/SwapKit/pull/1603) [`a49664e`](https://github.com/swapkit/SwapKit/commit/a49664e1e6ea20164fd4bfade21557f5fbb22603) Thanks [@towanTG](https://github.com/towanTG)! - Fixes network switch for evm extensions
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.5
 
 ### Patch Changes
