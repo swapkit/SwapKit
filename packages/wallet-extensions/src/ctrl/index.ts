@@ -43,6 +43,7 @@ export const ctrlWallet = createWallet({
     Chain.Kujira,
     Chain.Litecoin,
     Chain.Maya,
+    Chain.Monad,
     Chain.Near,
     Chain.Noble,
     Chain.Optimism,
@@ -121,6 +122,7 @@ async function getWalletMethods(chain: (typeof CTRL_SUPPORTED_CHAINS)[number]) {
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Gnosis:
+    case Chain.Monad:
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.XLayer: {

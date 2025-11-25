@@ -26,7 +26,7 @@ export type EthereumWindowProvider = BrowserProvider & {
 };
 
 export type NetworkParams = {
-  chainId: ReturnType<typeof getChainConfig>["chainId"];
+  chainId: ReturnType<typeof getChainConfig>["chainIdHex"];
   chainName: string;
   nativeCurrency: { name: string; symbol: string; decimals: number };
   rpcUrls: string[];
