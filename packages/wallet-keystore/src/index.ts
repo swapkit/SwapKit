@@ -13,6 +13,14 @@ import {
 import type { FullWallet } from "@swapkit/toolboxes";
 import { createWallet, getWalletSupportedChains } from "@swapkit/wallet-core";
 
+export {
+  decryptFromKeystore,
+  encryptToKeyStore,
+  generatePhrase,
+  type Keystore,
+  validatePhrase,
+} from "./helpers";
+
 export const keystoreWallet = createWallet({
   connect: ({ addChain }) =>
     async function connectKeystore(
@@ -98,5 +106,3 @@ export async function createKeystoreWallet<T extends Chain[]>({
     {} as { [key in T[number]]: FullWallet[key] },
   );
 }
-
-export * from "./helpers";

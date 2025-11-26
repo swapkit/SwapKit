@@ -197,7 +197,8 @@ export function fetchTokenInfo({ chain, address }: { chain: Chain; address: stri
       if (!address) return defaultResult;
 
       try {
-        const { TronWeb } = await import("tronweb");
+        const TW = await import("tronweb");
+        const TronWeb = TW.TronWeb ?? TW.default?.TronWeb;
         const rpcUrl = await getRPCUrl(Chain.Tron);
         const tronWeb = new TronWeb({
           fullHost: rpcUrl,
@@ -282,6 +283,7 @@ export function isGasAsset({ chain, symbol }: { chain: Chain; symbol: string }) 
     .with(Chain.Berachain, () => symbol === "BERA")
     .with(Chain.BinanceSmartChain, () => symbol === "BNB")
     .with(Chain.Gnosis, () => symbol === "xDAI" || symbol === "XDAI")
+    .with(Chain.Monad, () => symbol === "MON")
     .with(Chain.XLayer, () => symbol === "OKB")
     .with(Chain.Maya, () => symbol === "CACAO")
     .with(Chain.Cosmos, () => symbol === "ATOM")
@@ -300,6 +302,7 @@ export const getCommonAssetInfo = (assetString: CommonAssetString) => {
     .with(Chain.Cosmos, (asset) => ({ decimal, identifier: `${asset}.ATOM` }))
     .with(Chain.Maya, (asset) => ({ decimal: 10, identifier: `${asset}.CACAO` }))
     .with(Chain.BinanceSmartChain, (asset) => ({ decimal, identifier: `${asset}.BNB` }))
+    .with(Chain.Monad, (asset) => ({ decimal, identifier: `${asset}.MON` }))
     .with(Chain.Avalanche, (asset) => ({ decimal, identifier: `${asset}.AVAX` }))
     .with(Chain.Gnosis, (asset) => ({ decimal, identifier: `${asset}.xDAI` }))
     .with(Chain.XLayer, (asset) => ({ decimal, identifier: `${asset}.OKB` }))
@@ -348,6 +351,7 @@ export function getAssetType({ chain, symbol }: { chain: Chain; symbol: string }
     .with(Chain.Cosmos, () => symbol === "ATOM")
     .with(Chain.BinanceSmartChain, () => symbol === "BNB")
     .with(Chain.Maya, () => symbol === "CACAO")
+    .with(Chain.Monad, () => symbol === "MON")
     .with(Chain.THORChain, () => symbol === "RUNE")
     .with(Chain.Tron, () => symbol === "TRX")
     .with(Chain.XLayer, () => symbol === "OKB")

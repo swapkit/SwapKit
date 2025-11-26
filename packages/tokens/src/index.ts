@@ -19,6 +19,7 @@ export type TokenLists = {
   chainflip: typeof tokenLists.ChainflipList;
   jupiter: typeof tokenLists.JupiterList;
   garden: typeof tokenLists.GardenList;
+  harbor: typeof tokenLists.HarborList;
   mayachain: typeof tokenLists.MayaList;
   near: typeof tokenLists.NearList;
   okx: typeof tokenLists.OkxList;
@@ -44,6 +45,7 @@ const defaultLists = [
   "jupiter",
   "mayachain",
   "garden",
+  "harbor",
   "near",
   "okx",
   "oneinch",
@@ -77,6 +79,7 @@ async function loadTokenList<T extends TokenListName>(listName: T): Promise<Toke
     .with("caviar", () => import("./lists/caviar_v1"))
     .with("chainflip", () => import("./lists/chainflip"))
     .with("garden", () => import("./lists/garden"))
+    .with("harbor", () => import("./lists/harbor"))
     .with("jupiter", () => import("./lists/jupiter"))
     .with("mayachain", () => import("./lists/mayachain"))
     .with("near", () => import("./lists/near"))

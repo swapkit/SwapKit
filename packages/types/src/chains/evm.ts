@@ -279,7 +279,7 @@ const MONADConfig = createChain({
   name: "Monad",
   nativeCurrency: "MON",
   networkDerivationPath,
-  rpcUrls: [],
+  rpcUrls: ["https://rpc.monad.xyz/", "https://rpc3.monad.xyz/", "https://rpc-mainnet.monadinfra.com/"],
   type,
 });
 
@@ -336,7 +336,7 @@ export const EVMChains = [
   Chain.Hyperevm,
   // TODO: Enable once live
   // Chain.MegaETH,
-  // Chain.Monad,
+  Chain.Monad,
   Chain.Optimism,
   Chain.Polygon,
   Chain.Sonic,

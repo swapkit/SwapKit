@@ -9,6 +9,7 @@ const tickerMap: Record<string, string> = {
   [Chain.Aurora]: "ETH",
   [Chain.Base]: "ETH",
   [Chain.BinanceSmartChain]: "BNB",
+  [Chain.Monad]: "MON",
   [Chain.Cosmos]: "ATOM",
   [Chain.Maya]: "CACAO",
   [Chain.Optimism]: "ETH",

@@ -1,5 +1,11 @@
 # @swapkit/types
 
+## 0.4.0
+
+### Minor Changes
+
+- [#1596](https://github.com/swapkit/SwapKit/pull/1596) [`0c123f0`](https://github.com/swapkit/SwapKit/commit/0c123f08cb1c58296f3f98ff17689d65aaeed9ae) Thanks [@towanTG](https://github.com/towanTG)! - Enables Monad as EVMChain and adds rpc Urls to the chain config.
+
 ## 0.3.0
 
 ### Minor Changes

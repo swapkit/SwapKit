@@ -30,7 +30,7 @@ export const phantomWallet = createWallet({
       }
     },
   name: "connectPhantom",
-  supportedChains: [Chain.Bitcoin, Chain.Ethereum, Chain.Solana],
+  supportedChains: [Chain.Bitcoin, Chain.Ethereum, Chain.Monad, Chain.Solana],
   walletType: WalletOption.PHANTOM,
 });
 
@@ -54,8 +54,10 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
       return { ...toolbox, address };
     }
 
-    case Chain.Ethereum: {
+    case Chain.Ethereum:
+    case Chain.Monad: {
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
+      const { prepareNetworkSwitch, switchEVMWalletNetwork } = await import("@swapkit/helpers");
       const { BrowserProvider } = await import("ethers");
 
       const provider = new BrowserProvider(phantom?.ethereum, "any");
@@ -64,7 +66,12 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
       const signer = await provider.getSigner();
       const toolbox = await getEvmToolbox(chain, { provider, signer });
 
-      return { ...toolbox, address };
+      if (chain !== Chain.Ethereum) {
+        const networkParams = toolbox.getNetworkParams();
+        await switchEVMWalletNetwork(provider, chain, networkParams);
+      }
+
+      return { ...prepareNetworkSwitch({ chain, provider, toolbox }), address };
     }
 
     case Chain.Solana: {

@@ -1,5 +1,49 @@
 # @swapkit/helpers
 
+## 4.5.7
+
+### Patch Changes
+
+- [#1605](https://github.com/swapkit/SwapKit/pull/1605) [`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix tronweb import
+
+- Updated dependencies [[`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c)]:
+  - @swapkit/tokens@4.1.2
+
+## 4.5.6
+
+### Patch Changes
+
+- [#1603](https://github.com/swapkit/SwapKit/pull/1603) [`a49664e`](https://github.com/swapkit/SwapKit/commit/a49664e1e6ea20164fd4bfade21557f5fbb22603) Thanks [@towanTG](https://github.com/towanTG)! - Fixes network switch for evm extensions
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
+## 4.5.5
+
+### Patch Changes
+
+- [#1599](https://github.com/swapkit/SwapKit/pull/1599) [`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc) Thanks [@0xepicode](https://github.com/0xepicode)! - Adds swapkit endpoint api key supporting client
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
+## 4.5.4
+
+### Patch Changes
+
+- [#1600](https://github.com/swapkit/SwapKit/pull/1600) [`0244423`](https://github.com/swapkit/SwapKit/commit/02444235e172e3227688a3bc6a25e863a52f97e4) Thanks [@towanTG](https://github.com/towanTG)! - Fixes Monad assetValue identifier and gas asset status
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.1
+
+## 4.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`0c123f0`](https://github.com/swapkit/SwapKit/commit/0c123f08cb1c58296f3f98ff17689d65aaeed9ae)]:
+  - @swapkit/types@0.4.0
+  - @swapkit/tokens@4.1.1
+
 ## 4.5.2
 
 ### Patch Changes

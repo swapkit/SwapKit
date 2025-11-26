@@ -88,7 +88,7 @@ async function getTrezorWallet<T extends Chain>({
 
           const version = 5;
           const versionGroupId = 0x26a7270a;
-          const branchId = 0xc8e71055;
+          const branchId = 0x4dec4df0;
 
           const inputs = zcashPsbt.txInputs.map((input, idx) => ({
             address_n,

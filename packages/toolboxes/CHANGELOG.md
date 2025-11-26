@@ -1,5 +1,46 @@
 # @swapkit/toolboxes
 
+## 4.3.7
+
+### Patch Changes
+
+- [#1607](https://github.com/swapkit/SwapKit/pull/1607) [`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c) Thanks [@towanTG](https://github.com/towanTG)! - Updates Zcash Consensus branch id
+
+- [#1605](https://github.com/swapkit/SwapKit/pull/1605) [`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix tronweb import
+
+- Updated dependencies [[`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1)]:
+  - @swapkit/helpers@4.5.7
+
+## 4.3.6
+
+### Patch Changes
+
+- [#1603](https://github.com/swapkit/SwapKit/pull/1603) [`a49664e`](https://github.com/swapkit/SwapKit/commit/a49664e1e6ea20164fd4bfade21557f5fbb22603) Thanks [@towanTG](https://github.com/towanTG)! - Fixes network switch for evm extensions
+
+- Updated dependencies [[`a49664e`](https://github.com/swapkit/SwapKit/commit/a49664e1e6ea20164fd4bfade21557f5fbb22603)]:
+  - @swapkit/helpers@4.5.6
+
+## 4.3.5
+
+### Patch Changes
+
+- Updated dependencies [[`d38864a`](https://github.com/swapkit/SwapKit/commit/d38864a0d82f65f52e75cb4360b3880801b2b9cc)]:
+  - @swapkit/helpers@4.5.5
+
+## 4.3.4
+
+### Patch Changes
+
+- Updated dependencies [[`0244423`](https://github.com/swapkit/SwapKit/commit/02444235e172e3227688a3bc6a25e863a52f97e4)]:
+  - @swapkit/helpers@4.5.4
+
+## 4.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.3
+
 ## 4.3.2
 
 ### Patch Changes
