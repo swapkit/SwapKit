@@ -7,7 +7,6 @@ import { match } from "ts-pattern";
 import { cn, formatCurrency } from "../../../lib/utils";
 import { useFilteredSortedAssets } from "../../hooks/use-filtered-sorted-assets";
 import { showModal, useModal } from "../../hooks/use-modal";
-import { useSwapKit } from "../../swapkit-context";
 import { ChainIcon } from "../chain-icon";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -47,7 +46,6 @@ export function SwapAssetSelectTokenDialog() {
 
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
   const [selectedNetworks, setSelectedNetworks] = useState<Chain[]>([]);
-  const { isWalletConnected } = useSwapKit();
 
   // 8 cols * 2 rows - 1 (button "all") - 2 (button "hide/show more")
   const collapsedNetworksAmount = 8 * 2 - 1 - 2;
