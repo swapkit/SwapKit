@@ -4,7 +4,7 @@ export const list = {
   keywords: [],
   name: "HARBOR",
   provider: "HARBOR",
-  timestamp: "2025-11-13T12:40:04.043Z",
+  timestamp: "2025-11-26T00:04:29.470Z",
   tokens: [
     {
       chain: "BTC",

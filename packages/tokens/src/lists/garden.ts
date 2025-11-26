@@ -1,9 +1,9 @@
 export const list = {
-  count: 14,
+  count: 11,
   keywords: [],
   name: "GARDEN",
   provider: "GARDEN",
-  timestamp: "2025-11-13T12:40:02.543Z",
+  timestamp: "2025-11-26T00:04:27.692Z",
   tokens: [
     {
       address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
@@ -26,15 +26,6 @@ export const list = {
       ticker: "CBBTC",
     },
     {
-      address: "",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.BNB",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.bnb.png",
-      ticker: "BNB",
-    },
-    {
       address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
       chain: "BSC",
       chainId: "56",
@@ -43,26 +34,6 @@ export const list = {
       logoURI:
         "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.btcb-0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c.png",
       ticker: "BTCB",
-    },
-    {
-      address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.USDC-0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.usdc-0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d.png",
-      ticker: "USDC",
-    },
-    {
-      address: "0x55d398326f99059fF775485246999027B3197955",
-      chain: "BSC",
-      chainId: "56",
-      decimals: 18,
-      identifier: "BSC.USDT-0x55d398326f99059fF775485246999027B3197955",
-      logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/bsc.usdt-0x55d398326f99059ff775485246999027b3197955.png",
-      ticker: "USDT",
     },
     {
       address: "",
