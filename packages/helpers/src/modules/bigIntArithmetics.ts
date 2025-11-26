@@ -222,10 +222,15 @@ export class BigIntArithmetics {
     { currencyPosition = "start", decimal = 2, decimalSeparator = ".", thousandSeparator = "," } = {},
   ) {
     const valueStr = this.getValue("string");
-    const [int = "0", dec = ""] = valueStr.split(".");
+    const isNegative = valueStr.startsWith("-");
+    const absValueStr = isNegative ? valueStr.slice(1) : valueStr;
+    const [int = "0", dec = ""] = absValueStr.split(".");
+    const sign = isNegative ? "-" : "";
 
     if (int === "0" && dec) {
-      const formatted = `${Number.parseFloat(`0.${dec}`)}`.replace(".", decimalSeparator);
+      const trimmedDec = dec.replace(/0+$/, "");
+      const formatted = trimmedDec ? `${sign}0${decimalSeparator}${trimmedDec}` : "0";
+
       return match(currencyPosition)
         .with("start", () => `${currency}${formatted}`)
         .with("end", () => `${formatted}${currency}`)
