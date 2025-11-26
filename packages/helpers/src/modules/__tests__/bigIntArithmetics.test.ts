@@ -75,7 +75,7 @@ describe("BigIntArithmetics", () => {
       expect(num.toFixed(6)).toBe("0.000001");
     });
 
-    test("handles negative numbers", () => {
+    test("handles negative numbers with toFixed", () => {
       const num = new BigIntArithmetics(-123.456);
       expect(num.toFixed(2)).toBe("-123.46");
       expect(num.toFixed(4)).toBe("-123.4560");
@@ -230,7 +230,7 @@ describe("BigIntArithmetics", () => {
   });
 
   describe("toAbbreviation edge cases", () => {
-    test("handles negative numbers", () => {
+    test("handles negative numbers with abbreviation", () => {
       const num = new BigIntArithmetics(-1234567);
       expect(num.toAbbreviation()).toBe("-1.23M");
     });

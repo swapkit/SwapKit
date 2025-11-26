@@ -46,7 +46,7 @@ describe("feeMultiplier", () => {
       expect(getFeeMultiplierAsBigInt(FeeOption.Fastest)).toEqual({ denominator: 10n, numerator: 20n });
     });
 
-    test("defaults to Average", () => {
+    test("defaults to Average for bigint multiplier", () => {
       expect(getFeeMultiplierAsBigInt()).toEqual({ denominator: 10n, numerator: 10n });
     });
   });
@@ -62,7 +62,7 @@ describe("feeMultiplier", () => {
       expect(applyFeeMultiplierToBigInt(1000000000000000000n, FeeOption.Fastest)).toBe(2000000000000000000n);
     });
 
-    test("defaults to Average", () => {
+    test("defaults to Average for applyFeeMultiplierToBigInt", () => {
       expect(applyFeeMultiplierToBigInt(100n)).toBe(100n);
     });
   });
@@ -83,7 +83,7 @@ describe("feeMultiplier", () => {
       expect(applyFeeMultiplier(33, FeeOption.Fast, false)).toBe(49.5);
     });
 
-    test("defaults to Average", () => {
+    test("defaults to Average for applyFeeMultiplier", () => {
       expect(applyFeeMultiplier(100)).toBe(100);
     });
   });

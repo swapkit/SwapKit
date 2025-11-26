@@ -90,7 +90,7 @@ describe("AssetValue", () => {
     });
 
     describe("NEAR", () => {
-      test("assets creation", () => {
+      test("NEAR token assets creation", () => {
         // Standard NEAR token formats
         const wNear = AssetValue.from({ asset: "NEAR.wNEAR-wrap.near" });
         expect(wNear.toString()).toBe("NEAR.wNEAR-wrap.near");
@@ -339,7 +339,7 @@ describe("AssetValue", () => {
     });
 
     describe("SUI", () => {
-      test("assets creation", () => {
+      test("SUI native asset creation", () => {
         const sui = AssetValue.from({ asset: "SUI.SUI" });
         expect(sui.toString()).toBe("SUI.SUI");
         expect(sui).toMatchObject({ address: undefined, chain: Chain.Sui, symbol: "SUI", ticker: "SUI" });
@@ -534,7 +534,7 @@ describe("toString", () => {
 });
 
 describe("fromIdentifier", () => {
-  test("creates AssetValue from string", async () => {
+  test("creates AssetValue from known token identifier", async () => {
     const avaxUSDCAsset = await AssetValue.from({
       asset: "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
       asyncTokenLookup: true,
@@ -553,7 +553,7 @@ describe("fromIdentifier", () => {
     );
   });
 
-  test("creates AssetValue from string with multiple dashes", async () => {
+  test("creates AssetValue from identifier with multiple dashes", async () => {
     const ethPendleLptAsset = await AssetValue.from({ asset: "ETH.PENDLE-LPT-0x1234", asyncTokenLookup: true });
 
     expect(ethPendleLptAsset).toEqual(
@@ -571,7 +571,7 @@ describe("fromIdentifier", () => {
 });
 
 describe("fromString", () => {
-  test("creates AssetValue from string", async () => {
+  test("creates AssetValue from unknown token string", async () => {
     const fakeAvaxAssetString = "AVAX.ASDF-1234";
     const fakeAvaxAsset = await AssetValue.from({ asset: fakeAvaxAssetString, asyncTokenLookup: true });
 
@@ -588,7 +588,7 @@ describe("fromString", () => {
     );
   });
 
-  test("creates AssetValue from string with multiple dashes", async () => {
+  test("creates AssetValue from unknown token string with multiple dashes", async () => {
     const fakeAvaxAssetString = "AVAX.ASDF-LP-1234";
     const fakeAvaxAsset = await AssetValue.from({ asset: fakeAvaxAssetString, asyncTokenLookup: true });
 
@@ -878,6 +878,11 @@ describe("fromUrl", () => {
     expect(fromUrlTron.ticker).toBe("TRX");
     expect(fromUrlTron.isGasAsset).toBe(true);
   });
+
+  test("throws error for invalid URL without dot separator", () => {
+    expect(() => AssetValue.fromUrl("INVALIDURL")).toThrow("helpers_invalid_asset_url");
+    expect(() => AssetValue.fromUrl("")).toThrow("helpers_invalid_asset_url");
+  });
 });
 
 describe("fromIdentifierSync", () => {
@@ -933,7 +938,7 @@ describe("fromStringSync", () => {
     );
   });
 
-  test("returns safe decimals if string is not in `@swapkit/tokens` lists", async () => {
+  test("returns safe decimals for unknown token sync", async () => {
     await AssetValue.loadStaticAssets();
     const fakeAvaxUSDCAssetString = "AVAX.USDC-1234";
     const fakeAvaxUSDCAsset = AssetValue.from({ asset: fakeAvaxUSDCAssetString });
@@ -952,7 +957,7 @@ describe("fromStringSync", () => {
     );
   });
 
-  test("returns safe decimals if string is not in `@swapkit/tokens` lists with multiple dashes", async () => {
+  test("returns safe decimals for unknown token sync with multiple dashes", async () => {
     await AssetValue.loadStaticAssets();
     const fakeAvaxUSDCAssetString = "AVAX.USDC-LPT-1234";
     const fakeAvaxUSDCAsset2 = AssetValue.from({ asset: fakeAvaxUSDCAssetString });
@@ -971,7 +976,7 @@ describe("fromStringSync", () => {
     );
   });
 
-  test("returns proper avax string with address from `@swapkit/tokens` lists", async () => {
+  test("returns proper BTC.b token with address from static lists", async () => {
     await AssetValue.loadStaticAssets();
     const avaxBTCb = "AVAX.BTC.b-0x152b9d0fdc40c096757f570a51e494bd4b943e50";
     const AvaxBTCb = AssetValue.from({ asset: avaxBTCb });
@@ -1012,7 +1017,7 @@ describe("fromStringWithBaseSync", () => {
     expect(btc.getBaseValue("string")).toBe("5200000000000");
   });
 
-  test("returns safe decimals if string is not in `@swapkit/tokens` lists", async () => {
+  test("returns safe decimals for unknown token with base decimal conversion", async () => {
     await AssetValue.loadStaticAssets();
     const fakeAvaxUSDCAssetString = "AVAX.USDC-1234";
     const fakeAvaxUSDCAsset = AssetValue.from({ asset: fakeAvaxUSDCAssetString, fromBaseDecimal: 8, value: 1 });
@@ -1034,7 +1039,7 @@ describe("fromStringWithBaseSync", () => {
     expect(fakeAvaxUSDCAsset.getBaseValue("string")).toBe("10000000000");
   });
 
-  test("returns proper avax string with address from `@swapkit/tokens` lists", async () => {
+  test("returns proper USDC token with base decimal conversion from static lists", async () => {
     await AssetValue.loadStaticAssets();
     const avaxUSDC = "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e";
     const AvaxUSDC = AssetValue.from({ asset: avaxUSDC, fromBaseDecimal: 8, value: 100000000 });
@@ -1717,7 +1722,7 @@ describe("comparison", () => {
     expect(value.gt("0.00000101")).toBe(false);
 
     expect(value.gte(0.000001)).toBe(true);
-    expect(value.gte(0.000001)).toBe(true);
+    expect(value.gte("0.00000101")).toBe(false);
 
     expect(value.lt(0.00000101)).toBe(true);
     expect(value.lt(0.000001)).toBe(false);
@@ -1814,7 +1819,7 @@ describe("toCurrency", () => {
     expect(AssetValue.from({ asset: "ETH.ETH", value: 0.333145 }).toCurrency("")).toBe("0.333145");
     expect(AssetValue.from({ asset: "ETH.ETH", value: 0.00000548 }).toCurrency("")).toBe("0.00000548");
     expect(AssetValue.from({ asset: "ETH.ETH", value: 0.1 }).toCurrency("")).toBe("0.1");
-    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.1 }).toCurrency("")).toBe("0.1");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.10000001 }).toCurrency("")).toBe("0.10000001");
   });
 
   test("negative small values handled correctly", () => {

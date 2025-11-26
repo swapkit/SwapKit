@@ -12,7 +12,7 @@ describe("getTHORNameCost", () => {
     expect(getTHORNameCost(10)).toBe(20);
   });
 
-  test("throws for negative years", () => {
+  test("throws for negative years in THORName cost", () => {
     expect(() => getTHORNameCost(-1)).toThrow("helpers_invalid_number_of_years");
     expect(() => getTHORNameCost(-100)).toThrow("helpers_invalid_number_of_years");
   });
@@ -26,7 +26,7 @@ describe("getMAYANameCost", () => {
     expect(getMAYANameCost(10)).toBeCloseTo(20.512, 3);
   });
 
-  test("throws for negative years", () => {
+  test("throws for negative years in MAYAName cost", () => {
     expect(() => getMAYANameCost(-1)).toThrow("helpers_invalid_number_of_years");
   });
 });
@@ -109,12 +109,12 @@ describe("warnOnce", () => {
 });
 
 describe("getAssetBy", () => {
-  test("find asset by identifier", async () => {
+  test("find ETH asset by identifier", async () => {
     const assetByIdentifier = await findAssetBy({ identifier: "ETH.ETH" });
     expect(assetByIdentifier).toBe("ETH.ETH");
   });
 
-  test("find asset by chain and contract", async () => {
+  test("find ETH token by chain and contract", async () => {
     const assetByChainAndContract = await findAssetBy({
       chain: Chain.Ethereum,
       contract: "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
@@ -130,12 +130,12 @@ describe("getAssetBy", () => {
   });
 
   describe(Chain.Radix, () => {
-    test("find asset by identifier", async () => {
+    test("find Radix XRD by identifier", async () => {
       const assetByChainAndContract = await findAssetBy({ identifier: "XRD.XRD" });
       expect(assetByChainAndContract?.toUpperCase()).toBe("XRD.XRD".toUpperCase());
     });
 
-    test("find asset by chain and contract", async () => {
+    test("find Radix token by chain and contract", async () => {
       const assetByChainAndContract = await findAssetBy({
         chain: Chain.Radix,
         contract: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
@@ -147,12 +147,12 @@ describe("getAssetBy", () => {
   });
 
   describe(Chain.Solana, () => {
-    test("find asset by identifier", async () => {
+    test("find Solana SOL by identifier", async () => {
       const assetByChainAndContract = await findAssetBy({ identifier: "SOL.SOL" });
       expect(assetByChainAndContract?.toUpperCase()).toBe("SOL.SOL".toUpperCase());
     });
 
-    test("find asset by chain and contract", async () => {
+    test("find Solana token by chain and contract", async () => {
       const assetByChainAndContract = await findAssetBy({
         chain: Chain.Solana,
         contract: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",

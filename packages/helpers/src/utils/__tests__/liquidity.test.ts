@@ -21,7 +21,7 @@ describe("getAsymmetricRuneShare", () => {
     expect(result.getValue("number")).toBeGreaterThan(0);
   });
 
-  test("returns zero for zero liquidity units", () => {
+  test("returns zero rune share for zero liquidity units", () => {
     const result = getAsymmetricRuneShare({ liquidityUnits: "0", poolUnits: "1000000000", runeDepth: "500000000000" });
     expect(result.getValue("number")).toBe(0);
   });
@@ -46,7 +46,7 @@ describe("getAsymmetricAssetShare", () => {
     expect(result.getValue("number")).toBeGreaterThan(0);
   });
 
-  test("returns zero for zero liquidity units", () => {
+  test("returns zero asset share for zero liquidity units", () => {
     const result = getAsymmetricAssetShare({
       assetDepth: "200000000000",
       liquidityUnits: "0",
