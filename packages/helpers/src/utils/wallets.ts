@@ -260,6 +260,5 @@ export function supportsV3SwapFlow(walletType: WalletOption, chain: Chain): bool
     return false;
   }
 
-  const walletCapabilities = V3SwapFlowSupport[walletType];
-  return walletCapabilities?.[chain] === true;
+  return V3SwapFlowSupport[chain]?.includes(walletType) ?? false;
 }

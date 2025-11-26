@@ -1,4 +1,5 @@
-import type { Chain, getChainConfig } from "@swapkit/types";
+import type { getChainConfig } from "@swapkit/types";
+import { Chain } from "@swapkit/types";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
 
 import type { AssetValue } from "../modules/assetValue";
@@ -125,58 +126,92 @@ export type GenericCreateTransactionParams = Omit<GenericTransferParams, "feeOpt
 /**
  * V3 Swap Flow Support - Per-chain capability for raw transaction signing
  *
- * This mapping defines which wallets support the V3 swap flow (signing raw transactions
- * from the API) for each chain. Wallets not listed or with `false` for a chain will
- * fall back to named plugins (THORChain, Chainflip, etc.) which build transactions themselves.
+ * Maps chains to wallets that support signing raw transactions from the API.
+ * Wallets not listed fall back to named plugins (THORChain, Chainflip, etc.)
  *
- * Currently only KEYSTORE is enabled. Other wallets will be added after testing.
+ * See CLAUDE-WALLET-V3-SUPPORT.md for detailed analysis.
  */
-export const V3SwapFlowSupport: Partial<Record<WalletOption, Partial<Record<Chain, boolean>>>> = {
-  [WalletOption.KEYSTORE]: {
-    Arbitrum: true,
-    Aurora: true,
-    Avalanche: true,
-    Base: true,
-    Berachain: true,
-    BinanceSmartChain: true,
-    Bitcoin: true,
-    BitcoinCash: true,
-    Botanix: true,
-    Cardano: true,
-    Chainflip: true,
-    Core: true,
-    Corn: true,
-    Cosmos: true,
-    Cronos: true,
-    Dash: true,
-    Dogecoin: true,
-    Ethereum: true,
-    Gnosis: true,
-    Hyperevm: true,
-    Kujira: true,
-    Litecoin: true,
-    Maya: true,
-    MegaETH: true,
-    Monad: true,
-    Near: true,
-    Noble: true,
-    Optimism: true,
-    Polkadot: true,
-    Polygon: true,
-    Ripple: true,
-    Solana: true,
-    Sonic: true,
-    Sui: true,
-    THORChain: true,
-    Ton: true,
-    Tron: true,
-    Unichain: true,
-    XLayer: true,
-    Zcash: true,
-  } as Partial<Record<Chain, boolean>>,
 
-  // TODO: Add other wallets after testing
-  // [WalletOption.LEDGER]: { ... },
-  // [WalletOption.TREZOR]: { ... },
-  // [WalletOption.VULTISIG]: { ... },
+// Wallet groups for easier maintenance
+const EVMWallets = [
+  WalletOption.BITGET,
+  WalletOption.BRAVE,
+  WalletOption.COINBASE_MOBILE,
+  WalletOption.COINBASE_WEB,
+  WalletOption.COSMOSTATION,
+  WalletOption.CTRL,
+  WalletOption.EIP6963,
+  WalletOption.KEEPKEY,
+  WalletOption.KEEPKEY_BEX,
+  WalletOption.KEYSTORE,
+  WalletOption.LEDGER,
+  WalletOption.METAMASK,
+  WalletOption.OKX,
+  WalletOption.OKX_MOBILE,
+  WalletOption.PASSKEYS,
+  WalletOption.PHANTOM,
+  WalletOption.TALISMAN,
+  WalletOption.TREZOR,
+  WalletOption.TRUSTWALLET_WEB,
+  WalletOption.VULTISIG,
+  WalletOption.WALLETCONNECT,
+] as const;
+
+// Chain → Wallets mapping
+export const V3SwapFlowSupport: Partial<Record<Chain, readonly WalletOption[]>> = {
+  // EVM Chains - all EVM wallets support via eth_sendTransaction
+  [Chain.Arbitrum]: EVMWallets,
+  [Chain.Aurora]: EVMWallets,
+  [Chain.Avalanche]: EVMWallets,
+  [Chain.Base]: EVMWallets,
+  [Chain.Berachain]: EVMWallets,
+  [Chain.BinanceSmartChain]: EVMWallets,
+  [Chain.Botanix]: EVMWallets,
+  [Chain.Chainflip]: EVMWallets,
+  [Chain.Core]: EVMWallets,
+  [Chain.Corn]: EVMWallets,
+  [Chain.Cronos]: EVMWallets,
+  [Chain.Ethereum]: EVMWallets,
+  [Chain.Gnosis]: EVMWallets,
+  [Chain.Hyperevm]: EVMWallets,
+  [Chain.MegaETH]: EVMWallets,
+  [Chain.Monad]: EVMWallets,
+  [Chain.Optimism]: EVMWallets,
+  [Chain.Polygon]: EVMWallets,
+  [Chain.Sonic]: EVMWallets,
+  [Chain.Unichain]: EVMWallets,
+  [Chain.XLayer]: EVMWallets,
+
+  // UTXO Chains - only wallets with PSBT signing
+  [Chain.Bitcoin]: [
+    WalletOption.BITGET,
+    WalletOption.EXODUS,
+    WalletOption.KEYSTORE,
+    WalletOption.OKX,
+    WalletOption.ONEKEY,
+    WalletOption.PASSKEYS,
+    WalletOption.PHANTOM,
+  ],
+  [Chain.BitcoinCash]: [WalletOption.KEYSTORE],
+  [Chain.Dash]: [WalletOption.KEYSTORE],
+  [Chain.Dogecoin]: [WalletOption.KEYSTORE],
+  [Chain.Litecoin]: [WalletOption.KEYSTORE],
+  [Chain.Zcash]: [WalletOption.KEYSTORE],
+
+  // Cosmos Chains - only wallets with proto signing
+  [Chain.Cosmos]: [WalletOption.KEYSTORE],
+  [Chain.Kujira]: [WalletOption.KEYSTORE],
+  [Chain.Maya]: [WalletOption.KEYSTORE],
+  [Chain.Noble]: [WalletOption.KEYSTORE],
+  [Chain.THORChain]: [WalletOption.KEYSTORE],
+
+  // Other Chains
+  [Chain.Cardano]: [WalletOption.KEYSTORE],
+  [Chain.Near]: [WalletOption.KEYSTORE, WalletOption.LEDGER],
+  [Chain.Polkadot]: [WalletOption.KEYSTORE],
+  [Chain.Ripple]: [WalletOption.KEYSTORE, WalletOption.LEDGER],
+  [Chain.Solana]: [WalletOption.KEYSTORE, WalletOption.PASSKEYS, WalletOption.EXODUS, WalletOption.PHANTOM],
+  [Chain.Sui]: [WalletOption.KEYSTORE],
+  [Chain.Ton]: [WalletOption.KEYSTORE],
+  [Chain.Tron]: [WalletOption.KEYSTORE, WalletOption.LEDGER],
 };
