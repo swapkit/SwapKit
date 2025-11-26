@@ -3,7 +3,7 @@ export const list = {
   keywords: [],
   name: "OKX",
   provider: "OKX",
-  timestamp: "2025-11-13T12:39:11.815Z",
+  timestamp: "2025-11-26T00:03:35.106Z",
   tokens: [
     {
       address: "0xebf1f92d4384118bfb91b4496660a95931c92861",
