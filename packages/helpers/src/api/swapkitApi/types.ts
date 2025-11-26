@@ -184,44 +184,51 @@ export const PriceResponseSchema = array(
 
 export type PriceResponse = z.infer<typeof PriceResponseSchema>;
 
-export const QuoteRequestSchema = object({
-  affiliate: optional(string().describe("Affiliate thorname")),
-  affiliateFee: optional(
-    number()
-      .describe("Affiliate fee in basis points")
-      .refine((fee) => fee === Math.floor(fee) && fee >= 0, {
-        message: "affiliateFee must be a positive integer",
-        path: ["affiliateFee"],
-      }),
-  ),
-  allowSmartContractReceiver: optional(boolean().describe("Allow smart contract as recipient")),
-  allowSmartContractSender: optional(boolean().describe("Allow smart contract as sender")),
+const QuoteRequestSchemaBase = object({
   buyAsset: string().describe("Asset to buy"),
-  cfBoost: optional(boolean().describe("Set to true to enable CF boost to speed up Chainflip swaps. BTC only.")),
-  destinationAddress: optional(string().describe("Address to send asset to")),
-  disableSecurityChecks: optional(boolean().describe("Disable security checks")),
-  includeTx: optional(boolean().describe("Set to true to include an transaction object (EVM only)")),
-  providers: optional(
-    array(
-      string()
-        .describe("List of providers to use")
-        .refine((provider) => ProviderName[provider as ProviderName] !== undefined, {
-          message: "Invalid provider",
-          path: ["providers"],
-        }),
-    ),
-  ),
-  referrer: optional(string().describe("Referrer address (referral program)")),
   sellAmount: string()
     .describe("Amount of asset to sell")
     .refine((amount) => +amount > 0, { message: "sellAmount must be greater than 0", path: ["sellAmount"] }),
   sellAsset: string().describe("Asset to sell"),
-  slippage: optional(number().describe("Slippage tolerance as a percentage. Default is 3%.")),
-  sourceAddress: optional(string().describe("Address to send asset from")),
 }).refine((data) => data.sellAsset !== data.buyAsset, {
   message: "Must be different",
   path: ["sellAsset", "buyAsset"],
 });
+
+const QuoteRequestSchemaFull = QuoteRequestSchemaBase.extend(
+  object({
+    affiliate: optional(string().describe("Affiliate thorname")),
+    affiliateFee: optional(
+      number()
+        .describe("Affiliate fee in basis points")
+        .refine((fee) => fee === Math.floor(fee) && fee >= 0, {
+          message: "affiliateFee must be a positive integer",
+          path: ["affiliateFee"],
+        }),
+    ),
+    allowSmartContractReceiver: optional(boolean().describe("Allow smart contract as recipient")),
+    allowSmartContractSender: optional(boolean().describe("Allow smart contract as sender")),
+    cfBoost: optional(boolean().describe("Set to true to enable CF boost to speed up Chainflip swaps. BTC only.")),
+    destinationAddress: optional(string().describe("Address to send asset to")),
+    disableSecurityChecks: optional(boolean().describe("Disable security checks")),
+    includeTx: optional(boolean().describe("Set to true to include an transaction object (EVM only)")),
+    providers: optional(
+      array(
+        string()
+          .describe("List of providers to use")
+          .refine((provider) => ProviderName[provider as ProviderName] !== undefined, {
+            message: "Invalid provider",
+            path: ["providers"],
+          }),
+      ),
+    ),
+    referrer: optional(string().describe("Referrer address (referral program)")),
+    slippage: optional(number().describe("Slippage tolerance as a percentage. Default is 3%.")),
+    sourceAddress: optional(string().describe("Address to send asset from")),
+  }),
+).refine((data) => data.sellAsset !== data.buyAsset, { message: "Must be different", path: ["sellAsset", "buyAsset"] });
+
+export const QuoteRequestSchema = QuoteRequestSchemaBase.or(QuoteRequestSchemaFull);
 
 export type QuoteRequest = z.infer<typeof QuoteRequestSchema>;
 

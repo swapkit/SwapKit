@@ -4,7 +4,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMergeWithPrefix = extendTailwindMerge({ prefix: "sk-ui-" });
 
 export function cn(...inputs: ClassValue[]) {
-  return twMergeWithPrefix(clsx(inputs));
+  return twMergeWithPrefix(clsx(...inputs));
 }
 
 export function formatCurrency(amount: number | null) {

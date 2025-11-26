@@ -11,6 +11,7 @@ import {
 } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { match } from "ts-pattern";
 import { formatCurrency } from "../../lib/utils";
 import { temp_host } from "../components/config";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
@@ -58,7 +59,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     const isValid =
       amount &&
       swapKit &&
-      isWalletConnected &&
       inputAssetValue?.chain &&
       outputAssetValue?.chain &&
       outputAssetIdentifier &&
@@ -72,22 +72,36 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     try {
       setIsFetchingQuote(true);
 
-      const destinationAddress = swapKit.getAddress(outputAssetValue?.chain);
-      const sourceAddress = swapKit.getAddress(inputAssetValue?.chain);
+      const quote = await match({ isWalletConnected })
+        .with({ isWalletConnected: false }, async () => {
+          const quote = await SwapKitApi.getSwapQuote({
+            buyAsset: outputAssetIdentifier,
+            sellAmount: amount,
+            sellAsset: inputAssetIdentifier,
+          });
 
-      if (!destinationAddress || !sourceAddress) {
-        throw new Error("Destination or source address not found");
-      }
+          return quote;
+        })
+        .otherwise(async () => {
+          const destinationAddress = swapKit.getAddress(outputAssetValue?.chain);
+          const sourceAddress = swapKit.getAddress(inputAssetValue?.chain);
 
-      const quote = await SwapKitApi.getSwapQuote({
-        buyAsset: outputAssetIdentifier,
-        destinationAddress,
-        includeTx: true,
-        sellAmount: amount,
-        sellAsset: inputAssetIdentifier,
-        slippage: 3,
-        sourceAddress,
-      });
+          if (!destinationAddress || !sourceAddress) {
+            throw new Error("Destination or source address not found");
+          }
+
+          const quote = await SwapKitApi.getSwapQuote({
+            buyAsset: outputAssetIdentifier,
+            destinationAddress,
+            includeTx: true,
+            sellAmount: amount,
+            sellAsset: inputAssetIdentifier,
+            slippage: 3,
+            sourceAddress,
+          });
+
+          return quote;
+        });
 
       if (quote?.routes?.length <= 0) return;
 

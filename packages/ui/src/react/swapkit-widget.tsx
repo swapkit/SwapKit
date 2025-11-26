@@ -101,9 +101,8 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     if (!isWalletConnected) {
-      const { confirmed } = await showModal(<WalletConnectDialog />);
-
-      if (!confirmed) return;
+      await showModal(<WalletConnectDialog />);
+      return;
     }
 
     const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
@@ -120,23 +119,26 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
     }
   };
 
-  const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
+  const submitButtonContent = match({ amount, inputAsset, isFetchingQuote, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
       <>
         <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
         Swapping...
       </>
     ))
-    .with({ isWalletConnected: false }, () => "Connect wallet")
-    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
-    .with({ amount: P.nullish }, () => "Enter Amount")
+    .with({ isFetchingQuote: true }, () => (
+      <>
+        <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
+        Checking for the best quote...
+      </>
+    ))
+    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select tokens")
+    .with({ amount: P.nullish.or(P.string.length(0).or(P.number.lte(0))) }, () => "Enter transfer amount")
+    .with({ isWalletConnected: false }, () => "Connect your wallet")
     .otherwise(() => "Swap");
 
   const isSubmitButtonDisabled =
-    !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) ||
-    !isWalletConnected ||
-    isSwapping ||
-    isFetchingQuote;
+    !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) || isSwapping || isFetchingQuote;
 
   return (
     <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
