@@ -52,11 +52,15 @@ function sortAssets({ assets, filters }: { assets: AssetValue[]; filters: UseFil
     if (exactMatchA && !exactMatchB) return -1;
     if (!exactMatchA && exactMatchB) return 1;
 
-    // 3. Asset has any balance defined (0 is valid)
+    // 3. Asset has any balance greater than 0
     if (hasBalanceA && !hasBalanceB) return -1;
     if (!hasBalanceA && hasBalanceB) return 1;
 
-    // 4. Sort alphabetically within each group
+    // 4. Sort native assets to the top
+    if (tokenA.type === "Native" && tokenB.type !== "Native") return -1;
+    if (tokenA.type !== "Native" && tokenB.type === "Native") return 1;
+
+    // 5. Sort alphabetically within each group
     return tokenA.ticker.localeCompare(tokenB.ticker);
   });
 }
