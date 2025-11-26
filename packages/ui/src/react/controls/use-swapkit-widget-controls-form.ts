@@ -1,19 +1,18 @@
 "use client";
 
+import { SKConfig } from "@swapkit/helpers";
 import { useEffect, useMemo, useRef } from "react";
 import { createFormControl, useForm } from "react-hook-form";
 import type { ControlsStoreFieldValues } from "../types";
 
-const hasLocalStorageFormValues = typeof localStorage !== "undefined" && localStorage.getItem("formValues");
+const defaultApiUrl = SKConfig.getState().envs.devApiUrl;
 
-const defaultValues = hasLocalStorageFormValues
-  ? JSON.parse(localStorage.getItem("formValues") || "")
-  : {
-      apiKey: "16621042-80db-41ed-83be-3f0349e0d703",
-      apiUrl: "https://dev-api.swapkit.dev",
-      apiUrlQuote: "",
-      apiUrlSwap: "",
-    };
+const defaultValues = {
+  apiKey: "16621042-80db-41ed-83be-3f0349e0d703",
+  apiUrl: defaultApiUrl,
+  apiUrlQuote: `${defaultApiUrl}/quote`,
+  apiUrlSwap: `${defaultApiUrl}/swap`,
+};
 
 const formControlInstance = createFormControl<ControlsStoreFieldValues>({ defaultValues });
 
@@ -26,14 +25,30 @@ export const useSwapKitWidgetControlsForm = () => {
   const stringifiedValues = JSON.stringify({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap });
 
   useEffect(() => {
+    const persistedValues = localStorage.getItem("formValues");
+
+    if (!persistedValues) return;
+
+    try {
+      const parsed = JSON.parse(persistedValues);
+
+      form.reset(parsed, { keepDefaultValues: true });
+    } catch {
+      localStorage.removeItem("formValues");
+    }
+  }, [form]);
+
+  useEffect(() => {
+    if (!form.formState.isReady) return;
     if (previousValues.current === stringifiedValues) return;
 
     localStorage.setItem("formValues", stringifiedValues);
+
     previousValues.current = stringifiedValues;
-  }, [stringifiedValues]);
+  }, [stringifiedValues, form.formState.isReady]);
 
   return useMemo(
-    () => ({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap, control: form.control }),
-    [apiUrl, apiKey, apiUrlQuote, apiUrlSwap, form.control],
+    () => ({ apiKey, apiUrl, apiUrlQuote, apiUrlSwap, form }),
+    [apiUrl, apiKey, apiUrlQuote, apiUrlSwap, form],
   );
 };

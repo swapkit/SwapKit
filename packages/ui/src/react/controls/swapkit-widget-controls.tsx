@@ -9,7 +9,7 @@ import { useSwapKitWidgetControlsForm } from "./use-swapkit-widget-controls-form
 
 export function SwapKitWidgetControls() {
   const [isAdvancedVisible, setIsAdvancedVisible] = useState(false);
-  const { apiUrl, control } = useSwapKitWidgetControlsForm();
+  const { apiUrl, form } = useSwapKitWidgetControlsForm();
 
   return (
     <div className="sk-ui-bg-background sk-ui-p-4 sk-ui-border-border sk-ui-border-r">
@@ -22,9 +22,9 @@ export function SwapKitWidgetControls() {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
-        <TabsContent className="flex flex-col gap-4" value="settings">
+        <TabsContent className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4" value="settings">
           <InputField
-            control={control}
+            control={form.control}
             label={
               <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
                 <span>SwapKit API Endpoint URL</span>
@@ -42,14 +42,14 @@ export function SwapKitWidgetControls() {
             <Card>
               <CardContent className="!sk-ui-py-2 !sk-ui-px-4">
                 <InputField
-                  control={control}
+                  control={form.control}
                   label="SwapKit API URL for /quote"
                   name="apiUrlQuote"
                   placeholder={`${apiUrl}/quote`}
                 />
 
                 <InputField
-                  control={control}
+                  control={form.control}
                   label="SwapKit API URL for /swap"
                   name="apiUrlSwap"
                   placeholder={`${apiUrl}/swap`}
@@ -59,7 +59,7 @@ export function SwapKitWidgetControls() {
           )}
 
           <InputField
-            control={control}
+            control={form.control}
             description={
               <>
                 Don't have an API key yet?{" "}
@@ -76,6 +76,10 @@ export function SwapKitWidgetControls() {
             name="apiKey"
             placeholder="4531f781-9ff9-4a3f-933f-ce992cc265c1"
           />
+
+          <Button className="sk-ui-w-full" disabled={!form.formState.isDirty} onClick={() => form.reset()}>
+            Reset to default values
+          </Button>
         </TabsContent>
       </Tabs>
     </div>
