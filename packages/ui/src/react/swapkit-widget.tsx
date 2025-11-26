@@ -98,12 +98,13 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
   };
 
   const handleSubmitButtonClick = async () => {
-    if (!isWalletConnected) {
-      await showModal(<WalletConnectDialog />);
-      return;
-    }
-
     if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
+
+    if (!isWalletConnected) {
+      const { confirmed } = await showModal(<WalletConnectDialog />);
+
+      if (!confirmed) return;
+    }
 
     const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
 
@@ -132,7 +133,8 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
     .otherwise(() => "Swap");
 
   const isSubmitButtonDisabled =
-    (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) ||
+    !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) ||
+    !isWalletConnected ||
     isSwapping ||
     isFetchingQuote;
 
