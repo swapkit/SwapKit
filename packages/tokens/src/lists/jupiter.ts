@@ -1,4 +1,4 @@
-export const list = {
+export const list: any = {
   chainId: "solana",
   count: 4148,
   keywords: [],
