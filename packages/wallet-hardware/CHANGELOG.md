@@ -1,5 +1,16 @@
 # @swapkit/wallet-hardware
 
+## 4.2.7
+
+### Patch Changes
+
+- [#1607](https://github.com/swapkit/SwapKit/pull/1607) [`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c) Thanks [@towanTG](https://github.com/towanTG)! - Updates Zcash Consensus branch id
+
+- Updated dependencies [[`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c), [`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1)]:
+  - @swapkit/toolboxes@4.3.7
+  - @swapkit/helpers@4.5.7
+  - @swapkit/wallet-core@4.0.51
+
 ## 4.2.6
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @swapkit/tokens
 
+## 4.1.2
+
+### Patch Changes
+
+- [#1607](https://github.com/swapkit/SwapKit/pull/1607) [`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c) Thanks [@towanTG](https://github.com/towanTG)! - Enables Harbor token list in tokens package
+
 ## 4.1.1
 
 ### Patch Changes
