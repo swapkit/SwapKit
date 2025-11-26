@@ -605,7 +605,7 @@ describe("fromString", () => {
     );
   });
 
-  test.todo("creates AssetValue with _ symbol", async () => {
+  test("creates AssetValue with _ symbol", async () => {
     const radixXWBTC = await AssetValue.from({
       asset: "XRD.XWBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
       asyncTokenLookup: true,
@@ -615,7 +615,8 @@ describe("fromString", () => {
       expect.objectContaining({
         address: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
         chain: Chain.Radix,
-        // decimal: 8, // TODO: that supposed to be 8 but it doesn't fetch it via
+        // TODO: Failed to fetch Radix asset decimals for resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75: helpers_invalid_response: {"status":404,"statusText":"Not Found"}
+        // decimal: 8,
         isGasAsset: false,
         isSynthetic: false,
         symbol: "xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
