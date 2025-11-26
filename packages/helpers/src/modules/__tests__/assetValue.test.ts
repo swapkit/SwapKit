@@ -1650,3 +1650,237 @@ describe("asyncTokenLookup", () => {
     });
   });
 });
+
+describe("arithmetic", () => {
+  test("add with number, string, AssetValue, and chained calls", () => {
+    const base = AssetValue.from({ asset: "BTC.BTC", value: 10 });
+    const other = AssetValue.from({ asset: "ETH.ETH", value: 5 });
+
+    expect(base.add(5).getValue("string")).toBe("15");
+    expect(base.add("2.5").getValue("string")).toBe("12.5");
+    expect(base.add(other).getValue("string")).toBe("15");
+    expect(base.add(1, 2, 3).getValue("string")).toBe("16");
+    expect(base.add(0.00000001).getValue("string")).toBe("10.00000001");
+  });
+
+  test("sub with negative result and precision edge", () => {
+    const base = AssetValue.from({ asset: "MAYA.CACAO", value: 100 });
+
+    expect(base.sub(30).getValue("string")).toBe("70");
+    expect(base.sub(100).getValue("string")).toBe("0");
+    expect(base.sub(150).getValue("string")).toBe("-50");
+    expect(base.sub(0.00000001).getValue("string")).toBe("99.99999999");
+  });
+
+  test("mul with decimals, zero, and large numbers", () => {
+    const base = AssetValue.from({ asset: "SOL.SOL", value: "0.00001" });
+
+    expect(base.mul(1000000).getValue("string")).toBe("10");
+    expect(base.mul(0).getValue("string")).toBe("0");
+    expect(base.mul(0.5).getValue("string")).toBe("0.000005");
+
+    const large = AssetValue.from({ asset: "ETH.ETH", value: "999999999" });
+    expect(large.mul(2).getValue("string")).toBe("1999999998");
+  });
+
+  test("div with precision loss prevention and small divisors", () => {
+    const base = AssetValue.from({ asset: "GAIA.ATOM", value: 1 });
+
+    expect(base.div(3).getValue("string")).toMatch(/^0\.333333/);
+    expect(base.div(1000000).getValue("string")).toBe("0.000001");
+    expect(base.div(100000000).getValue("string")).toBe("0.00000001");
+
+    expect(() => base.div(0)).toThrow();
+  });
+
+  test("chained operations preserve synth/trade identity", () => {
+    const synth = AssetValue.from({ asset: "THOR.BTC/BTC", value: 1 });
+    const trade = AssetValue.from({ asset: "THOR.ETH~ETH", value: 1 });
+
+    const synthResult = synth.add(1).mul(2).div(4);
+    expect(synthResult.isSynthetic).toBe(true);
+    expect(synthResult.symbol).toBe("BTC/BTC");
+
+    const tradeResult = trade.sub(0.5).mul(3);
+    expect(tradeResult.isTradeAsset).toBe(true);
+    expect(tradeResult.symbol).toBe("ETH~ETH");
+  });
+});
+
+describe("comparison", () => {
+  test("gt/gte/lt/lte with various value types", () => {
+    const value = AssetValue.from({ asset: "BTC.BTC", value: "0.00000100" });
+
+    expect(value.gt(0.00000099)).toBe(true);
+    expect(value.gt(0.000001)).toBe(false);
+    expect(value.gt("0.00000101")).toBe(false);
+
+    expect(value.gte(0.000001)).toBe(true);
+    expect(value.gte(0.000001)).toBe(true);
+
+    expect(value.lt(0.00000101)).toBe(true);
+    expect(value.lt(0.000001)).toBe(false);
+
+    expect(value.lte(0.000001)).toBe(true);
+    expect(value.lte(0.00000099)).toBe(false);
+  });
+
+  test("eqValue across different decimals", () => {
+    const btc = AssetValue.from({ asset: "BTC.BTC", value: 1 });
+    const eth = AssetValue.from({ asset: "ETH.ETH", value: 1 });
+    const usdc = AssetValue.from({ asset: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", value: 1 });
+
+    expect(btc.eqValue(eth)).toBe(true);
+    expect(btc.eqValue(usdc)).toBe(true);
+    expect(btc.eqValue(1)).toBe(true);
+    expect(btc.eqValue("1")).toBe(true);
+    expect(btc.eqValue(1.00000001)).toBe(false);
+  });
+
+  test("comparison with zero and negative", () => {
+    const zero = AssetValue.from({ asset: "BTC.BTC", value: 0 });
+    const neg = AssetValue.from({ asset: "BTC.BTC", value: 10 }).sub(15);
+
+    expect(zero.eqValue(0)).toBe(true);
+    expect(zero.gt(0)).toBe(false);
+    expect(zero.lt(0)).toBe(false);
+
+    expect(neg.lt(0)).toBe(true);
+    expect(neg.lte(-5)).toBe(true);
+    expect(neg.gt(-6)).toBe(true);
+  });
+});
+
+describe("getValue and getBaseValue", () => {
+  test("getBaseValue respects asset decimal", async () => {
+    await AssetValue.loadStaticAssets();
+
+    const btc = AssetValue.from({ asset: "BTC.BTC", value: 1.5 });
+    expect(btc.getBaseValue("bigint")).toBe(150000000n);
+    expect(btc.getBaseValue("string")).toBe("150000000");
+
+    const usdc = AssetValue.from({ asset: "AVAX.USDC-0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e", value: 100 });
+    expect(usdc.getBaseValue("bigint", 6)).toBe(100000000n);
+
+    const cacao = AssetValue.from({ asset: "MAYA.CACAO", value: 1 });
+    expect(cacao.getBaseValue("bigint")).toBe(10000000000n);
+  });
+
+  test("getValue truncates to requested decimal", () => {
+    const eth = AssetValue.from({ asset: "ETH.ETH", value: "1.123456789012345678" });
+
+    expect(eth.getValue("string", 18)).toBe("1.123456789012345678");
+    expect(eth.getValue("string", 8)).toBe("1.12345679");
+    expect(eth.getValue("string", 2)).toBe("1.12");
+    expect(eth.getValue("number", 4)).toBe(1.1235);
+  });
+
+  test("getValue bigint scaling", () => {
+    const value = AssetValue.from({ asset: "BTC.BTC", value: 2.5 });
+    expect(value.getValue("bigint")).toBe(250000000n);
+  });
+});
+
+describe("formatting", () => {
+  test("toSignificant with integers, decimals, and edge cases", () => {
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 123456 }).toSignificant(3)).toBe("123000");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.00012345 }).toSignificant(3)).toBe("0.000123");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0 }).toSignificant(6)).toBe("0");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 9.99999 }).toSignificant(2)).toBe("9.9");
+  });
+
+  test("toFixed rounding and padding", () => {
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 1.005 }).toFixed(2)).toBe("1.01");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 1.004 }).toFixed(2)).toBe("1.00");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 100 }).toFixed(4)).toBe("100.0000");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: -1.999 }).toFixed(2)).toBe("-2.00");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 0 }).toFixed(0)).toBe("0");
+  });
+
+  test("toAbbreviation across magnitudes", () => {
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 500 }).toAbbreviation()).toBe("500");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1500 }).toAbbreviation()).toBe("1.50K");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1500000 }).toAbbreviation()).toBe("1.50M");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1500000000 }).toAbbreviation()).toBe("1.50B");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: "1500000000000" }).toAbbreviation()).toBe("1.50T");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1234 }).toAbbreviation(0)).toBe("1K");
+  });
+});
+
+describe("toCurrency", () => {
+  test("small values preserve precision without floating-point artifacts", () => {
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.015072 }).toCurrency("")).toBe("0.015072");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.333145 }).toCurrency("")).toBe("0.333145");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.00000548 }).toCurrency("")).toBe("0.00000548");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.1 }).toCurrency("")).toBe("0.1");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.1 }).toCurrency("")).toBe("0.1");
+  });
+
+  test("negative small values handled correctly", () => {
+    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.015072 }).toCurrency("")).toBe("-0.015072");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.00000001 }).toCurrency("")).toBe("-0.00000001");
+  });
+
+  test("large values with thousand separators and rounding", () => {
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1234567.891 }).toCurrency("$")).toBe("$1,234,567.89");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1000000 }).toCurrency("$")).toBe("$1,000,000");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 999.999 }).toCurrency("$")).toBe("$1,000");
+  });
+
+  test("custom currency symbol and position", () => {
+    const v = AssetValue.from({ asset: "ETH.ETH", value: 1234.56 });
+    expect(v.toCurrency("€", { currencyPosition: "end" })).toBe("1,234.56€");
+    expect(v.toCurrency("¥", { currencyPosition: "start" })).toBe("¥1,234.56");
+    expect(v.toCurrency("", { decimal: 4 })).toBe("1,234.5600");
+  });
+
+  test("custom separators for european format", () => {
+    const v = AssetValue.from({ asset: "ETH.ETH", value: 1234567.89 });
+    expect(v.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: "." })).toBe(
+      "1.234.567,89€",
+    );
+  });
+
+  test("zero value", () => {
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 0 }).toCurrency("$")).toBe("$0");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: 0 }).toCurrency("")).toBe("0");
+  });
+});
+
+describe("edge cases", () => {
+  test("set creates immutable copy", () => {
+    const a = AssetValue.from({ asset: "THOR.ETH/ETH", value: 10 });
+    const b = a.set(20);
+
+    expect(a.getValue("string")).toBe("10");
+    expect(b.getValue("string")).toBe("20");
+    expect(b.isSynthetic).toBe(true);
+    expect(b.toString({ includeSynthProtocol: true })).toBe("THOR.ETH/ETH");
+  });
+
+  test("minimum precision values", () => {
+    const btcMin = AssetValue.from({ asset: "BTC.BTC", value: 0.00000001 });
+    expect(btcMin.getBaseValue("bigint")).toBe(1n);
+    expect(btcMin.mul(2).getBaseValue("bigint")).toBe(2n);
+    expect(btcMin.div(2).getBaseValue("bigint")).toBe(1n);
+
+    const ethMin = AssetValue.from({ asset: "ETH.ETH", value: "0.000000000000000001" });
+    expect(ethMin.getValue("string")).toBe("0.000000000000000001");
+  });
+
+  test("large value arithmetic precision", () => {
+    const large1 = AssetValue.from({ asset: "ETH.ETH", value: "999999999999999" });
+    const large2 = AssetValue.from({ asset: "ETH.ETH", value: "1" });
+
+    expect(large1.add(large2).getValue("string")).toBe("1000000000000000");
+    expect(large1.mul(2).getValue("string")).toBe("1999999999999998");
+  });
+
+  test("fromBaseDecimal conversion", () => {
+    const fromBase8 = AssetValue.from({ asset: "BTC.BTC", fromBaseDecimal: 8, value: 100000000 });
+    expect(fromBase8.getValue("string")).toBe("1");
+
+    const fromBase18 = AssetValue.from({ asset: "ETH.ETH", fromBaseDecimal: 18, value: "1000000000000000000" });
+    expect(fromBase18.getValue("string")).toBe("1");
+  });
+});
