@@ -1,11 +1,4 @@
-import {
-  applyFeeMultiplierToBigInt,
-  Chain,
-  FeeOption,
-  getChainConfig,
-  getRPCUrl,
-  SwapKitError,
-} from "@swapkit/helpers";
+import { applyFeeMultiplierToBigInt, Chain, FeeOption, getRPCUrl, SwapKitError } from "@swapkit/helpers";
 import type { Authorization, BrowserProvider, JsonRpcProvider, Provider, TransactionRequest } from "ethers";
 import { Contract, HDNodeWallet } from "ethers";
 import { match, P } from "ts-pattern";
@@ -86,18 +79,6 @@ function estimateL1Gas<P extends JsonRpcProvider | BrowserProvider>(provider: P)
   };
 }
 
-function getNetworkParams() {
-  const { baseDecimal, chainId, explorerUrl, name, rpcUrls } = getChainConfig(Chain.Optimism);
-
-  return {
-    blockExplorerUrls: [explorerUrl],
-    chainId,
-    chainName: name,
-    nativeCurrency: { decimals: baseDecimal, name: "Ethereum", symbol: Chain.Ethereum },
-    rpcUrls,
-  };
-}
-
 async function estimateGasPrices(provider: Provider) {
   try {
     const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await provider.getFeeData();
@@ -158,6 +139,5 @@ export async function OPToolbox({ provider: providerParam, ...toolboxSignerParam
     estimateTotalGasCost: estimateTotalGasCost(provider),
     getBalance: getEvmApi(Chain.Optimism).getBalance,
     getL1GasPrice,
-    getNetworkParams,
   };
 }

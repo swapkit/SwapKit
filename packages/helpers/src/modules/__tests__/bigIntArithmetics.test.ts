@@ -304,6 +304,7 @@ describe("BigIntArithmetics", () => {
       expect(new BigIntArithmetics(80.865327).toCurrency("", { decimal: 2 })).toBe("80.87");
       expect(new BigIntArithmetics(33.432207).toCurrency("", { decimal: 2 })).toBe("33.43");
       expect(new BigIntArithmetics(999.999).toCurrency("$")).toBe("$1,000");
+      expect(new BigIntArithmetics(0.0000000000000000000000000000001).toCurrency("", { decimal: 8 })).toBe("0");
     });
 
     test("zero value", () => {

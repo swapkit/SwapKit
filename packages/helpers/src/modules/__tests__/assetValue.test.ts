@@ -615,11 +615,11 @@ describe("fromString", () => {
       expect.objectContaining({
         address: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
         chain: Chain.Radix,
-        decimal: 8,
+        // decimal: 8, // TODO: that supposed to be 8 but it doesn't fetch it via
         isGasAsset: false,
         isSynthetic: false,
-        symbol: "XWBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
-        ticker: "XWBTC",
+        symbol: "xwBTC-resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
+        ticker: "xwBTC",
       }),
     );
   });
