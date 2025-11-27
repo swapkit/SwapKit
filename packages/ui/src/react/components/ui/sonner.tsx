@@ -9,16 +9,16 @@ export const SWAPKIT_WIDGET_TOASTER_ID = "swapkit-widget-toaster";
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      className="toaster group"
+      className="sk-ui-toaster sk-ui-group"
       id={SWAPKIT_WIDGET_TOASTER_ID}
       theme="dark"
       toastOptions={{
         classNames: {
-          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-          description: "group-[.toast]:text-muted-foreground",
+          actionButton: "group-[.toast]:sk-ui-bg-primary group-[.toast]:sk-ui-text-primary-foreground",
+          cancelButton: "group-[.toast]:sk-ui-bg-muted group-[.toast]:sk-ui-text-muted-foreground",
+          description: "group-[.toast]:sk-ui-text-muted-foreground",
           toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+            "sk-ui-group toast group-[.toaster]:sk-ui-bg-background group-[.toaster]:sk-ui-text-foreground group-[.toaster]:sk-ui-border-border group-[.toaster]:sk-ui-shadow-lg",
         },
       }}
       {...props}

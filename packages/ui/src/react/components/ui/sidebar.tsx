@@ -153,7 +153,7 @@ const Sidebar = React.forwardRef<
           data-sidebar="sidebar"
           side={side}
           style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}>
-          <SheetHeader className="sr-only">
+          <SheetHeader className="sk-ui-sr-only">
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
@@ -238,10 +238,10 @@ const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"bu
       <button
         aria-label="Toggle Sidebar"
         className={cn(
-          "sk-ui--translate-x-1/2 group-data-[side=left]:-right-4 sk-ui-absolute sk-ui-inset-y-0 sk-ui-z-20 sk-ui-hidden sk-ui-w-4 sk-ui-transition-all sk-ui-ease-linear sk-ui-after:sk-ui-absolute sk-ui-after:sk-ui-inset-y-0 sk-ui-after:sk-ui-left-1/2 sk-ui-after:sk-ui-w-[2px] sk-ui-hover:sk-ui-after:sk-ui-bg-sidebar-border group-data-[side=right]:sk-ui-left-0 md:sk-ui-flex",
+          "sk-ui--translate-x-1/2 group-data-[side=left]:-right-4 sk-ui-absolute sk-ui-inset-y-0 sk-ui-z-20 sk-ui-hidden sk-ui-w-4 sk-ui-transition-all sk-ui-ease-linear after:sk-ui-absolute after:sk-ui-inset-y-0 after:sk-ui-left-1/2 after:sk-ui-w-[2px] hover:after:sk-ui-bg-sidebar-border group-data-[side=right]:sk-ui-left-0 md:sk-ui-flex",
           "[[data-side=left]_&]:sk-ui-cursor-w-resize [[data-side=right]_&]:sk-ui-cursor-e-resize",
           "[[data-side=left][data-state=collapsed]_&]:sk-ui-cursor-e-resize [[data-side=right][data-state=collapsed]_&]:sk-ui-cursor-w-resize",
-          "group-data-[collapsible=offcanvas]:sk-ui-translate-x-0 group-data-[collapsible=offcanvas]:sk-ui-hover:sk-ui-bg-sidebar group-data-[collapsible=offcanvas]:sk-ui-after:sk-ui-left-full",
+          "group-data-[collapsible=offcanvas]:sk-ui-translate-x-0 group-data-[collapsible=offcanvas]:hover:sk-ui-bg-sidebar group-data-[collapsible=offcanvas]:after:sk-ui-left-full",
           "[[data-side=left][data-collapsible=offcanvas]_&]:sk-ui--right-2",
           "[[data-side=right][data-collapsible=offcanvas]_&]:sk-ui--left-2",
           className,
@@ -278,7 +278,7 @@ const SidebarInput = React.forwardRef<React.ElementRef<typeof Input>, React.Comp
     return (
       <Input
         className={cn(
-          "sk-ui-h-8 sk-ui-w-full sk-ui-bg-background sk-ui-shadow-none sk-ui-focus-visible:sk-ui-ring-2 sk-ui-focus-visible:sk-ui-ring-sidebar-ring",
+          "sk-ui-h-8 sk-ui-w-full sk-ui-bg-background sk-ui-shadow-none focus-visible:sk-ui-ring-2 focus-visible:sk-ui-ring-sidebar-ring",
           className,
         )}
         data-sidebar="input"
@@ -365,8 +365,8 @@ const SidebarGroupLabel = React.forwardRef<HTMLDivElement, React.ComponentProps<
     return (
       <Comp
         className={cn(
-          "flex h-8 shrink-0 items-center rounded-md font-medium text-sidebar-foreground text-xs opacity-70 outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
-          "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
+          "sk-ui-flex sk-ui-h-8 sk-ui-shrink-0 sk-ui-items-center sk-ui-rounded-md sk-ui-font-medium sk-ui-text-sidebar-foreground sk-ui-text-xs sk-ui-opacity-70 sk-ui-outline-none sk-ui-ring-sidebar-ring sk-ui-transition-[margin,opacity] sk-ui-duration-200 sk-ui-ease-linear focus-visible:sk-ui-ring-2 [&>svg]:sk-ui-size-4 [&>svg]:sk-ui-shrink-0",
+          "group-data-[collapsible=icon]:sk-ui--mt-8 group-data-[collapsible=icon]:sk-ui-opacity-0",
           className,
         )}
         data-sidebar="group-label"
@@ -385,10 +385,10 @@ const SidebarGroupAction = React.forwardRef<HTMLButtonElement, React.ComponentPr
     return (
       <Comp
         className={cn(
-          "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+          "sk-ui-absolute sk-ui-top-3.5 sk-ui-right-3 sk-ui-flex sk-ui-aspect-square sk-ui-w-5 sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-p-0 sk-ui-text-sidebar-foreground sk-ui-outline-none sk-ui-ring-sidebar-ring sk-ui-transition-transform hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground focus-visible:sk-ui-ring-2 [&>svg]:sk-ui-size-4 [&>svg]:sk-ui-shrink-0",
           // Increases the hit area of the button on mobile.
-          "after:-inset-2 after:absolute after:md:hidden",
-          "group-data-[collapsible=icon]:hidden",
+          "after:sk-ui--inset-2 after:sk-ui-absolute after:md:sk-ui-hidden",
+          "group-data-[collapsible=icon]:sk-ui-hidden",
           className,
         )}
         data-sidebar="group-action"
@@ -402,31 +402,40 @@ SidebarGroupAction.displayName = "SidebarGroupAction";
 
 const SidebarGroupContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div className={cn("w-full text-sm", className)} data-sidebar="group-content" ref={ref} {...props} />
+    <div className={cn("sk-ui-w-full sk-ui-text-sm", className)} data-sidebar="group-content" ref={ref} {...props} />
   ),
 );
 SidebarGroupContent.displayName = "SidebarGroupContent";
 
 const SidebarMenu = React.forwardRef<HTMLUListElement, React.ComponentProps<"ul">>(({ className, ...props }, ref) => (
-  <ul className={cn("flex w-full min-w-0 flex-col gap-1", className)} data-sidebar="menu" ref={ref} {...props} />
+  <ul
+    className={cn("sk-ui-flex sk-ui-w-full sk-ui-min-w-0 sk-ui-flex-col sk-ui-gap-1", className)}
+    data-sidebar="menu"
+    ref={ref}
+    {...props}
+  />
 ));
 SidebarMenu.displayName = "SidebarMenu";
 
 const SidebarMenuItem = React.forwardRef<HTMLLIElement, React.ComponentProps<"li">>(({ className, ...props }, ref) => (
-  <li className={cn("group/menu-item relative", className)} data-sidebar="menu-item" ref={ref} {...props} />
+  <li className={cn("sk-ui-group/menu-item sk-ui-relative", className)} data-sidebar="menu-item" ref={ref} {...props} />
 ));
 SidebarMenuItem.displayName = "SidebarMenuItem";
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "sk-ui-peer/menu-button sk-ui-flex sk-ui-w-full sk-ui-items-center sk-ui-gap-2 sk-ui-overflow-hidden sk-ui-rounded-md sk-ui-p-2 sk-ui-text-left sk-ui-text-sm sk-ui-outline-none sk-ui-ring-sidebar-ring sk-ui-transition-[width,height,padding] hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground focus-visible:sk-ui-ring-2 active:sk-ui-bg-sidebar-accent active:sk-ui-text-sidebar-accent-foreground disabled:sk-ui-pointer-events-none disabled:sk-ui-opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:sk-ui-pr-8 aria-disabled:sk-ui-pointer-events-none aria-disabled:sk-ui-opacity-50 data-[active=true]:sk-ui-bg-sidebar-accent data-[active=true]:sk-ui-font-medium data-[active=true]:sk-ui-text-sidebar-accent-foreground data-[state=open]:hover:sk-ui-bg-sidebar-accent data-[state=open]:hover:sk-ui-text-sidebar-accent-foreground group-data-[collapsible=icon]:!sk-ui-size-8 group-data-[collapsible=icon]:!sk-ui-p-2 [&>span:last-child]:sk-ui-truncate [&>svg]:sk-ui-size-4 [&>svg]:sk-ui-shrink-0",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
-      size: { default: "h-8 text-sm", lg: "h-12 text-sm group-data-[collapsible=icon]:!p-0", sm: "h-7 text-xs" },
+      size: {
+        default: "sk-ui-h-8 sk-ui-text-sm",
+        lg: "sk-ui-h-12 sk-ui-text-sm group-data-[collapsible=icon]:!sk-ui-p-0",
+        sm: "sk-ui-h-7 sk-ui-text-xs",
+      },
       variant: {
-        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        default: "hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground",
         outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+          "sk-ui-bg-background sk-ui-shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground hover:sk-ui-shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
     },
   },
@@ -480,15 +489,15 @@ const SidebarMenuAction = React.forwardRef<
   return (
     <Comp
       className={cn(
-        "absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 peer-hover/menu-button:text-sidebar-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0",
+        "sk-ui-absolute sk-ui-top-1.5 sk-ui-right-1 sk-ui-flex sk-ui-aspect-square sk-ui-w-5 sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-p-0 sk-ui-text-sidebar-foreground sk-ui-outline-none sk-ui-ring-sidebar-ring sk-ui-transition-transform hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground focus-visible:sk-ui-ring-2 peer-hover/menu-button:sk-ui-text-sidebar-accent-foreground [&>svg]:sk-ui-size-4 [&>svg]:sk-ui-shrink-0",
         // Increases the hit area of the button on mobile.
-        "after:-inset-2 after:absolute after:md:hidden",
-        "peer-data-[size=sm]/menu-button:top-1",
-        "peer-data-[size=default]/menu-button:top-1.5",
-        "peer-data-[size=lg]/menu-button:top-2.5",
-        "group-data-[collapsible=icon]:hidden",
+        "after:sk-ui--inset-2 after:sk-ui-absolute after:md:sk-ui-hidden",
+        "peer-data-[size=sm]/menu-button:sk-ui-top-1",
+        "peer-data-[size=default]/menu-button:sk-ui-top-1.5",
+        "peer-data-[size=lg]/menu-button:sk-ui-top-2.5",
+        "group-data-[collapsible=icon]:sk-ui-hidden",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+          "group-focus-within/menu-item:sk-ui-opacity-100 group-hover/menu-item:sk-ui-opacity-100 data-[state=open]:sk-ui-opacity-100 peer-data-[active=true]/menu-button:sk-ui-text-sidebar-accent-foreground md:sk-ui-opacity-0",
         className,
       )}
       data-sidebar="menu-action"
@@ -503,12 +512,12 @@ const SidebarMenuBadge = React.forwardRef<HTMLDivElement, React.ComponentProps<"
   ({ className, ...props }, ref) => (
     <div
       className={cn(
-        "pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-md px-1 font-medium text-sidebar-foreground text-xs tabular-nums",
-        "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
-        "peer-data-[size=sm]/menu-button:top-1",
-        "peer-data-[size=default]/menu-button:top-1.5",
-        "peer-data-[size=lg]/menu-button:top-2.5",
-        "group-data-[collapsible=icon]:hidden",
+        "sk-ui-pointer-events-none sk-ui-absolute sk-ui-right-1 sk-ui-flex sk-ui-h-5 sk-ui-min-w-5 sk-ui-select-none sk-ui-items-center sk-ui-justify-center sk-ui-rounded-md sk-ui-px-1 sk-ui-font-medium sk-ui-text-sidebar-foreground sk-ui-text-xs sk-ui-tabular-nums",
+        "peer-hover/menu-button:sk-ui-text-sidebar-accent-foreground peer-data-[active=true]/menu-button:sk-ui-text-sidebar-accent-foreground",
+        "peer-data-[size=sm]/menu-button:sk-ui-top-1",
+        "peer-data-[size=default]/menu-button:sk-ui-top-1.5",
+        "peer-data-[size=lg]/menu-button:sk-ui-top-2.5",
+        "group-data-[collapsible=icon]:sk-ui-hidden",
         className,
       )}
       data-sidebar="menu-badge"
@@ -528,13 +537,13 @@ const SidebarMenuSkeleton = React.forwardRef<HTMLDivElement, React.ComponentProp
 
     return (
       <div
-        className={cn("flex h-8 items-center gap-2 rounded-md px-2", className)}
+        className={cn("sk-ui-flex sk-ui-h-8 sk-ui-items-center sk-ui-gap-2 sk-ui-rounded-md sk-ui-px-2", className)}
         data-sidebar="menu-skeleton"
         ref={ref}
         {...props}>
-        {showIcon && <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />}
+        {showIcon && <Skeleton className="sk-ui-size-4 sk-ui-rounded-md" data-sidebar="menu-skeleton-icon" />}
         <Skeleton
-          className="h-4 max-w-[--skeleton-width] flex-1"
+          className="sk-ui-h-4 sk-ui-max-w-[--skeleton-width] sk-ui-flex-1"
           data-sidebar="menu-skeleton-text"
           style={{ "--skeleton-width": width } as React.CSSProperties}
         />
@@ -548,8 +557,8 @@ const SidebarMenuSub = React.forwardRef<HTMLUListElement, React.ComponentProps<"
   ({ className, ...props }, ref) => (
     <ul
       className={cn(
-        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-sidebar-border border-l px-2.5 py-0.5",
-        "group-data-[collapsible=icon]:hidden",
+        "sk-ui-mx-3.5 sk-ui-flex sk-ui-min-w-0 sk-ui-translate-x-px sk-ui-flex-col sk-ui-gap-1 sk-ui-border-sidebar-border sk-ui-border-l sk-ui-px-2.5 sk-ui-py-0.5",
+        "group-data-[collapsible=icon]:sk-ui-hidden",
         className,
       )}
       data-sidebar="menu-sub"
@@ -574,11 +583,11 @@ const SidebarMenuSubButton = React.forwardRef<
   return (
     <Comp
       className={cn(
-        "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-        "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-        size === "sm" && "text-xs",
-        size === "md" && "text-sm",
-        "group-data-[collapsible=icon]:hidden",
+        "sk-ui--translate-x-px sk-ui-flex sk-ui-h-7 sk-ui-min-w-0 sk-ui-items-center sk-ui-gap-2 sk-ui-overflow-hidden sk-ui-rounded-md sk-ui-px-2 sk-ui-text-sidebar-foreground sk-ui-outline-none sk-ui-ring-sidebar-ring hover:sk-ui-bg-sidebar-accent hover:sk-ui-text-sidebar-accent-foreground focus-visible:sk-ui-ring-2 active:sk-ui-bg-sidebar-accent active:sk-ui-text-sidebar-accent-foreground disabled:sk-ui-pointer-events-none disabled:sk-ui-opacity-50 aria-disabled:sk-ui-pointer-events-none aria-disabled:sk-ui-opacity-50 [&>span:last-child]:sk-ui-truncate [&>svg]:sk-ui-size-4 [&>svg]:sk-ui-shrink-0 [&>svg]:sk-ui-text-sidebar-accent-foreground",
+        "data-[active=true]:sk-ui-bg-sidebar-accent data-[active=true]:sk-ui-text-sidebar-accent-foreground",
+        size === "sm" && "sk-ui-text-xs",
+        size === "md" && "sk-ui-text-sm",
+        "group-data-[collapsible=icon]:sk-ui-hidden",
         className,
       )}
       data-active={isActive}

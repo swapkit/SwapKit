@@ -32,17 +32,17 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "sk-ui-fixed sk-ui-z-50 sk-ui-gap-4 sk-ui-bg-background sk-ui-p-6 sk-ui-shadow-lg sk-ui-transition sk-ui-ease-in-out data-[state=open]:sk-ui-animate-in data-[state=closed]:sk-ui-animate-out data-[state=closed]:sk-ui-duration-300 data-[state=open]:sk-ui-duration-500",
+  "swapkit-ui-preflight sk-ui-fixed sk-ui-z-50 sk-ui-gap-4 sk-ui-bg-background sk-ui-p-6 sk-ui-shadow-lg sk-ui-transition sk-ui-ease-in-out data-[state=open]:sk-ui-animate-in data-[state=closed]:sk-ui-animate-out data-[state=closed]:sk-ui-duration-300 data-[state=open]:sk-ui-duration-500",
   {
     defaultVariants: { side: "right" },
     variants: {
       side: {
         bottom:
           "sk-ui-inset-x-0 sk-ui-bottom-0 sk-ui-border-t data-[state=closed]:sk-ui-slide-out-to-bottom data-[state=open]:sk-ui-slide-in-from-bottom",
-        left: "sk-ui-inset-y-0 sk-ui-left-0 sk-ui-h-full sk-ui-w-3/4 sk-ui-border-r data-[state=closed]:sk-ui-slide-out-to-left data-[state=open]:sk-ui-slide-in-from-left sm:max-w-sm",
+        left: "sk-ui-inset-y-0 sk-ui-left-0 sk-ui-h-full sk-ui-w-3/4 sk-ui-border-r data-[state=closed]:sk-ui-slide-out-to-left data-[state=open]:sk-ui-slide-in-from-left sm:sk-ui-max-w-sm",
         right:
-          "sk-ui-inset-y-0 sk-ui-right-0 sk-ui-h-full sk-ui-w-3/4 sk-ui-border-l data-[state=closed]:sk-ui-slide-out-to-right data-[state=open]:sk-ui-slide-in-from-right sm:max-w-sm",
-        top: "sk-ui-inset-x-0 sk-ui-top-0 sk-ui-border-b data-[state=closed]:sk-ui-slide-out-to-top data-[state=open]:sk-ui-  slide-in-from-top",
+          "sk-ui-inset-y-0 sk-ui-right-0 sk-ui-h-full sk-ui-w-3/4 sk-ui-border-l data-[state=closed]:sk-ui-slide-out-to-right data-[state=open]:sk-ui-slide-in-from-right sm:sk-ui-max-w-sm",
+        top: "sk-ui-inset-x-0 sk-ui-top-0 sk-ui-border-b data-[state=closed]:sk-ui-slide-out-to-top data-[state=open]:sm:sk-ui-slide-in-from-top",
       },
     },
   },
@@ -58,9 +58,9 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
       <SheetOverlay />
       <SheetPrimitive.Content className={cn(sheetVariants({ side }), className)} ref={ref} {...props}>
         {children}
-        <SheetPrimitive.Close className="sk-ui-absolute sk-ui-top-4 sk-ui-right-4 sk-ui-rounded-sm sk-ui-opacity-70 sk-ui-ring-offset-background sk-ui-transition-opacity sk-ui-hover:sk-ui-opacity-100 sk-ui-focus:sk-ui-outline-none sk-ui-focus:sk-ui-ring-2 sk-ui-focus:sk-ui-ring-ring sk-ui-focus:sk-ui-ring-offset-2 sk-ui-disabled:sk-ui-pointer-events-none data-[state=open]:sk-ui-bg-secondary">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+        <SheetPrimitive.Close className="sk-ui-absolute sk-ui-top-4 sk-ui-right-4 sk-ui-rounded-sm sk-ui-opacity-70 sk-ui-ring-offset-background sk-ui-transition-opacity hover:sk-ui-opacity-100 focus:sk-ui-outline-none focus:sk-ui-ring-2 focus:sk-ui-ring-ring focus:sk-ui-ring-offset-2 disabled:sk-ui-pointer-events-none data-[state=open]:sk-ui-bg-secondary">
+          <X className="sk-ui-h-4 sk-ui-w-4" />
+          <span className="sk-ui-sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>
