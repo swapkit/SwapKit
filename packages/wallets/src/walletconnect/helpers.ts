@@ -11,6 +11,7 @@ import {
   ETHEREUM_MAINNET_ID,
   KUJIRA_MAINNET_ID,
   MAYACHAIN_MAINNET_ID,
+  MONAD_MAINNET_ID,
   NEAR_MAINNET_ID,
   NEAR_TESTNET_ID,
   OPTIMISM_MAINNET_ID,
@@ -41,6 +42,8 @@ export const chainToChainId = (chain: Chain) => {
       return BSC_MAINNET_ID;
     case Chain.Berachain:
       return BERACHAIN_MAINNET_ID;
+    case Chain.Monad:
+      return MONAD_MAINNET_ID;
     case Chain.Ethereum:
       return ETHEREUM_MAINNET_ID;
     case Chain.THORChain:

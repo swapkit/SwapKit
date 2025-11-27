@@ -137,4 +137,5 @@ export const OptimismLedger = (params: LedgerParams) =>
 export const PolygonLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.Polygon });
 export const BinanceSmartChainLedger = (params: LedgerParams) =>
   new EVMLedgerInterface({ ...params, chainId: ChainId.BinanceSmartChain });
+export const MonadLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.Monad });
 export const XLayerLedger = (params: LedgerParams) => new EVMLedgerInterface({ ...params, chainId: ChainId.XLayer });
