@@ -12,7 +12,7 @@ export function SwapKitWidgetControls() {
   const { apiUrl, form } = useSwapKitWidgetControlsForm();
 
   return (
-    <div className="sk-ui-bg-background sk-ui-p-4 sk-ui-border-border sk-ui-border-r">
+    <div className="swapkit-ui-preflight sk-ui-bg-background sk-ui-p-4 sk-ui-border-border sk-ui-border-r">
       <Tabs defaultValue="settings">
         <TabsList className="sk-ui-mx-4 sk-ui-flex sk-ui-justify-around sk-ui-gap-4">
           <TabsTrigger disabled value="design">

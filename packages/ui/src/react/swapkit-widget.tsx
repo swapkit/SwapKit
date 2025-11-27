@@ -141,7 +141,7 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
     !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) || isSwapping || isFetchingQuote;
 
   return (
-    <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
+    <div className={cn("swapkit-ui-preflight sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
       <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
 
       <Card>

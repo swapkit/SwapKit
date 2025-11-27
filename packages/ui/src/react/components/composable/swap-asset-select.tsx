@@ -90,7 +90,7 @@ export function SwapAssetSelectTokenDialog() {
             <Button
               className={cn(
                 "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-aspect-[1.3/1]",
-                selectedNetworks?.length === 0 && "sk-ui-border-foreground sk-ui-text-foreground",
+                selectedNetworks?.length === 0 && "!sk-ui-border-foreground !sk-ui-text-foreground",
               )}
               onClick={() => setSelectedNetworks([])}>
               All
@@ -102,8 +102,8 @@ export function SwapAssetSelectTokenDialog() {
               return (
                 <Button
                   className={cn(
-                    "sk-ui-h-auto sk-ui-border sk-ui-border-transparent sk-ui-p-0 sk-ui-aspect-[1.3/1]",
-                    isSelected && "sk-ui-border-foreground sk-ui-text-foreground",
+                    "sk-ui-h-auto sk-ui-border !sk-ui-border-transparent sk-ui-p-0 sk-ui-aspect-[1.3/1]",
+                    isSelected && "!sk-ui-border-foreground !sk-ui-text-foreground",
                   )}
                   key={`swap-asset-network-${chain}`}
                   onClick={() => {
@@ -135,7 +135,7 @@ export function SwapAssetSelectTokenDialog() {
             .when(
               ({ assets }) => assets?.length <= 0,
               () => (
-                <div className="sk-ui-flex sk-ui-h-40 sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1">
+                <div className="sk-ui-flex sk-ui-h-40 sk-ui-flex-col sk-ui-items-center sk-ui-justify-center sk-ui-gap-1 sk-ui-w-full">
                   <header className="sk-ui-font-medium">No assets found</header>
 
                   <p className="sk-ui-text-muted-foreground sk-ui-text-sm">

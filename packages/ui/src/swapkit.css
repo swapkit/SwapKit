@@ -1,3 +1,6 @@
+/* Custom preflight applied only to @swapkit/ui components */
+@import "./swapkit-preflight.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

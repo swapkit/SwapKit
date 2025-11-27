@@ -9,7 +9,9 @@ export default function App() {
 
   return (
     <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "360px 1fr", minHeight: "100svh", width: "100%" }}>
-      <SwapKitWidgetControls />
+      <div style={{ borderRight: "1px solid #222", padding: "1rem 0.5rem" }}>
+        <SwapKitWidgetControls />
+      </div>
 
       <div style={{ margin: "auto", maxWidth: "640px" }}>
         <SwapKitWidget
