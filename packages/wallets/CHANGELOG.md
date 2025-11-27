@@ -1,5 +1,19 @@
 # @swapkit/wallets
 
+## 4.3.8
+
+### Patch Changes
+
+- [#1611](https://github.com/swapkit/SwapKit/pull/1611) [`3f02210`](https://github.com/swapkit/SwapKit/commit/3f02210940cb5861ceb8319d7ba1fdd8ea8fb0a0) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Always return gas asset of chain
+
+- Updated dependencies [[`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461), [`3f02210`](https://github.com/swapkit/SwapKit/commit/3f02210940cb5861ceb8319d7ba1fdd8ea8fb0a0)]:
+  - @swapkit/toolboxes@4.3.8
+  - @swapkit/helpers@4.5.8
+  - @swapkit/wallet-extensions@4.1.8
+  - @swapkit/wallet-hardware@4.2.8
+  - @swapkit/wallet-keystore@4.1.8
+  - @swapkit/wallet-core@4.0.52
+
 ## 4.3.7
 
 ### Patch Changes

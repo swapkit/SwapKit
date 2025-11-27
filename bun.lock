@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "swapkit-monorepo",
@@ -54,7 +55,7 @@
     },
     "packages/browser": {
       "name": "@swapkit/browser",
-      "version": "4.1.7",
+      "version": "4.1.8",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -68,7 +69,7 @@
     },
     "packages/core": {
       "name": "@swapkit/core",
-      "version": "4.1.7",
+      "version": "4.1.8",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -82,7 +83,7 @@
     },
     "packages/helpers": {
       "name": "@swapkit/helpers",
-      "version": "4.5.7",
+      "version": "4.5.8",
       "dependencies": {
         "@near-js/providers": "~2.5.0",
         "@swapkit/contracts": "workspace:*",
@@ -102,7 +103,7 @@
     },
     "packages/plugins": {
       "name": "@swapkit/plugins",
-      "version": "4.2.7",
+      "version": "4.2.8",
       "dependencies": {
         "@near-js/utils": "~2.5.0",
         "@polkadot/keyring": "~13.5.7",
@@ -122,7 +123,7 @@
     },
     "packages/sdk": {
       "name": "@swapkit/sdk",
-      "version": "4.2.7",
+      "version": "4.2.8",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -134,7 +135,7 @@
     },
     "packages/server": {
       "name": "@swapkit/server",
-      "version": "4.0.51",
+      "version": "4.0.52",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/tokens": "workspace:*",
@@ -155,7 +156,7 @@
     },
     "packages/toolboxes": {
       "name": "@swapkit/toolboxes",
-      "version": "4.3.7",
+      "version": "4.3.8",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "~1.2.0",
         "@bitgo/utxo-lib": "~11.13.1",
@@ -269,7 +270,7 @@
     },
     "packages/ui": {
       "name": "@swapkit/ui",
-      "version": "0.3.7",
+      "version": "0.3.8",
       "dependencies": {
         "@hookform/resolvers": "5.2.2",
         "@radix-ui/react-accordion": "1.2.12",
@@ -306,14 +307,14 @@
     },
     "packages/wallet-core": {
       "name": "@swapkit/wallet-core",
-      "version": "4.0.51",
+      "version": "4.0.52",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
       },
     },
     "packages/wallet-extensions": {
       "name": "@swapkit/wallet-extensions",
-      "version": "4.1.7",
+      "version": "4.1.8",
       "dependencies": {
         "@keplr-wallet/types": "0.12.285",
         "@near-js/accounts": "~2.5.0",
@@ -340,7 +341,7 @@
     },
     "packages/wallet-hardware": {
       "name": "@swapkit/wallet-hardware",
-      "version": "4.2.7",
+      "version": "4.2.8",
       "dependencies": {
         "@cosmjs/crypto": "0.37.0",
         "@keepkey/keepkey-sdk": "~0.2.62",
@@ -395,7 +396,7 @@
     },
     "packages/wallet-keystore": {
       "name": "@swapkit/wallet-keystore",
-      "version": "4.1.7",
+      "version": "4.1.8",
       "dependencies": {
         "@scure/bip39": "2.0.1",
         "@swapkit/helpers": "workspace:*",
@@ -406,7 +407,7 @@
     },
     "packages/wallet-mobile": {
       "name": "@swapkit/wallet-mobile",
-      "version": "4.0.51",
+      "version": "4.0.52",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
@@ -414,7 +415,7 @@
     },
     "packages/wallets": {
       "name": "@swapkit/wallets",
-      "version": "4.3.7",
+      "version": "4.3.8",
       "dependencies": {
         "@coinbase/wallet-sdk": "~4.3.7",
         "@cosmjs/amino": "~0.37.0",

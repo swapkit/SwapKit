@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.8
+
+### Patch Changes
+
+- [#1608](https://github.com/swapkit/SwapKit/pull/1608) [`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461) Thanks [@ice-chillios](https://github.com/ice-chillios)! - fix toCurrency formatter
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.2
+
 ## 4.5.7
 
 ### Patch Changes
