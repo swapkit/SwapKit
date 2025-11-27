@@ -61,5 +61,5 @@
     "clean": "rm -rf dist node_modules *.tsbuildinfo"
   },
   "type": "module",
-  "version": "0.3.8"
+  "version": "0.3.9"
 }

@@ -1,5 +1,12 @@
 # @swapkit/core
 
+## 4.1.9
+
+### Patch Changes
+
+- Updated dependencies [[`e792600`](https://github.com/swapkit/SwapKit/commit/e792600199e2e488bd1817f405839f649d9debde)]:
+  - @swapkit/wallets@4.3.9
+
 ## 4.1.8
 
 ### Patch Changes

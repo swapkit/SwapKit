@@ -1,5 +1,15 @@
 # @swapkit/wallets
 
+## 4.3.9
+
+### Patch Changes
+
+- [#1612](https://github.com/swapkit/SwapKit/pull/1612) [`e792600`](https://github.com/swapkit/SwapKit/commit/e792600199e2e488bd1817f405839f649d9debde) Thanks [@0xepicode](https://github.com/0xepicode)! - Add monad support to wallets
+
+- Updated dependencies [[`e792600`](https://github.com/swapkit/SwapKit/commit/e792600199e2e488bd1817f405839f649d9debde)]:
+  - @swapkit/wallet-extensions@4.1.9
+  - @swapkit/wallet-hardware@4.2.9
+
 ## 4.3.8
 
 ### Patch Changes
