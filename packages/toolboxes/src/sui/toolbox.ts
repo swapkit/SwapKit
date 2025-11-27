@@ -40,10 +40,11 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
       throw new SwapKitError("toolbox_sui_address_required" as any);
     }
 
+    const { baseDecimal: fromBaseDecimal, chain } = getChainConfig(Chain.Sui);
+
     try {
       const suiClient = await getSuiClient();
       const { totalBalance } = await suiClient.getBalance({ owner: addressToQuery });
-      const { baseDecimal: fromBaseDecimal, chain } = getChainConfig(Chain.Sui);
 
       const suiBalances = [AssetValue.from({ chain, fromBaseDecimal, value: totalBalance })];
 
@@ -60,8 +61,8 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
       }
 
       return suiBalances;
-    } catch (error) {
-      throw new SwapKitError("toolbox_sui_balance_error" as any, { error });
+    } catch {
+      return [AssetValue.from({ chain })];
     }
   }
 

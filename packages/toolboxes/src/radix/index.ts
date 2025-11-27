@@ -18,7 +18,13 @@ export function radixValidateAddress(address: string) {
 function getBalance({ networkApi }: { networkApi: GatewayApiClient }) {
   return async function getBalance(address: string) {
     const fungibleResources = await fetchFungibleResources({ address, networkApi });
-    const fungibleBalances = convertResourcesToBalances({ networkApi, resources: fungibleResources });
+    const fungibleBalances = await convertResourcesToBalances({ networkApi, resources: fungibleResources });
+
+    const hasNativeAsset = fungibleBalances.some((asset) => asset.isGasAsset);
+    if (!hasNativeAsset) {
+      return [AssetValue.from({ chain: Chain.Radix }), ...fungibleBalances];
+    }
+
     return fungibleBalances;
   };
 }

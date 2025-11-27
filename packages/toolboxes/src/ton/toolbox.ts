@@ -52,8 +52,8 @@ export async function getTONToolbox(toolboxParams: TONToolboxParams = {}) {
     try {
       const balance = await client.getBalance(Address.parse(address));
       return [AssetValue.from({ chain: Chain.Ton, value: SwapKitNumber.fromBigInt(balance, baseDecimal) })];
-    } catch (error) {
-      throw new SwapKitError("core_wallet_connection_not_found", { error });
+    } catch {
+      return [AssetValue.from({ chain: Chain.Ton })];
     }
   }
 

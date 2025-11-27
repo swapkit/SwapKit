@@ -20,8 +20,15 @@ export function getBalance<T extends Chain>(chain: T) {
   return async function getBalance(address: string, scamFilter = true) {
     const balances = await SwapKitApi.getChainBalance({ address, chain, scamFilter });
     const { baseDecimal } = getChainConfig(chain);
-    return balances.map(({ identifier, value, decimal }) => {
+    const assetValues = balances.map(({ identifier, value, decimal }) => {
       return new AssetValue({ decimal: decimal || baseDecimal, identifier, value });
     });
+
+    const hasNativeAsset = assetValues.some((asset) => asset.isGasAsset);
+    if (!hasNativeAsset) {
+      return [AssetValue.from({ chain }), ...assetValues];
+    }
+
+    return assetValues;
   };
 }
