@@ -124,6 +124,11 @@ async function getBalance(address: string): Promise<AssetValue[]> {
     }
   }
 
+  const hasNativeAsset = balances.some((asset) => asset.isGasAsset);
+  if (!hasNativeAsset) {
+    return [AssetValue.from({ chain: Chain.Radix }), ...balances];
+  }
+
   return balances;
 }
 

@@ -29,7 +29,7 @@ export async function getSubstrateBalance(
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(`Error fetching substrate balance: ${errorMessage}`);
-    return [];
+    return [gasAsset.set(0)];
   }
 }
 
@@ -66,7 +66,7 @@ export async function getChainflipBalance(
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(`Error fetching chainflip balance: ${errorMessage}`);
-    return [];
+    return [gasAsset.set(0)];
   }
 }
 
