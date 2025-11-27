@@ -541,7 +541,9 @@ const SidebarMenuSkeleton = React.forwardRef<HTMLDivElement, React.ComponentProp
         data-sidebar="menu-skeleton"
         ref={ref}
         {...props}>
-        {showIcon && <Skeleton className="sk-ui-size-4 sk-ui-rounded-md" data-sidebar="menu-skeleton-icon" />}
+        {showIcon && (
+          <Skeleton className="sk-ui-size-4 sk-ui-rounded-md" data-sidebar="menu-skeleton-icon" isLoading={true} />
+        )}
         <Skeleton
           className="sk-ui-h-4 sk-ui-max-w-[--skeleton-width] sk-ui-flex-1"
           data-sidebar="menu-skeleton-text"

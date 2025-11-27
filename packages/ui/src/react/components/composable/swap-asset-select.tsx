@@ -7,6 +7,7 @@ import { match } from "ts-pattern";
 import { cn, formatCurrency } from "../../../lib/utils";
 import { useFilteredSortedAssets } from "../../hooks/use-filtered-sorted-assets";
 import { showModal, useModal } from "../../hooks/use-modal";
+import { useTokenPrices } from "../../hooks/use-token-prices";
 import { ChainIcon } from "../simple/chain-icon";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -43,6 +44,7 @@ export function SwapAssetSelectTokenDialog() {
   const modal = useModal();
 
   const { assets, filters, setFilters } = useFilteredSortedAssets();
+  const { pricesByTokenId, isFetchingTokenPrices } = useTokenPrices();
 
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
   const [selectedNetworks, setSelectedNetworks] = useState<Chain[]>([]);
@@ -148,6 +150,9 @@ export function SwapAssetSelectTokenDialog() {
               <div className="sk-ui-flex sk-ui-w-auto sk-ui-flex-1 sk-ui-flex-col">
                 {assets?.slice(0, 100)?.map((asset) => {
                   const assetIdentifier = asset.toString();
+                  const amountHeldInWallet = asset?.getValue("number") ?? 0;
+
+                  const assetPriceUSD = pricesByTokenId?.get(asset?.toString())?.priceUSD;
 
                   return (
                     <Button
@@ -159,20 +164,17 @@ export function SwapAssetSelectTokenDialog() {
                       variant="ghost">
                       <SwapAssetItem asset={assetIdentifier} />
 
-                      <div
-                        className={cn(
-                          "sk-ui-flex sk-ui-flex-col sk-ui-items-end",
-                          asset?.getValue("number") <= 0 && "sk-ui-opacity-50",
-                        )}>
-                        <span className="sk-ui-font-medium sk-ui-text-base sk-ui-text-foreground">
-                          {asset?.getValue("number")?.toFixed(6) || "0.00"}
-                        </span>
+                      {amountHeldInWallet > 0 && (
+                        <div className={cn("sk-ui-flex sk-ui-flex-col sk-ui-items-end")}>
+                          <span className="sk-ui-font-medium sk-ui-text-base sk-ui-text-foreground">
+                            {asset?.getValue("number")?.toFixed(6)}
+                          </span>
 
-                        <span className="sk-ui--mt-0.5 sk-ui-text-muted-foreground sk-ui-text-sm">
-                          {/* TODO: show the correct USD balance value */}
-                          {formatCurrency(asset?.getValue("number") || 0)}
-                        </span>
-                      </div>
+                          <span className={cn("sk-ui--mt-0.5 sk-ui-text-muted-foreground sk-ui-text-sm")}>
+                            {assetPriceUSD ? formatCurrency(assetPriceUSD * amountHeldInWallet) : "\u00A0"}
+                          </span>
+                        </div>
+                      )}
                     </Button>
                   );
                 })}

@@ -162,14 +162,12 @@ export const AssetValueSchema = object({
 });
 
 export const TokenDetailsMetadataSchema = object({
-  id: string(),
+  cg: optional(object({ id: string() })),
+  identifier: string(),
   market_cap: number(),
-  name: string(),
-  price_change_24h_usd: number(),
-  price_change_percentage_24h_usd: number(),
-  sparkline_in_7d: array(number()),
-  timestamp: string(),
-  total_volume: number(),
+  price_usd: number(),
+  provider: string(),
+  timestamp: number(),
 });
 
 export const PriceResponseSchema = array(

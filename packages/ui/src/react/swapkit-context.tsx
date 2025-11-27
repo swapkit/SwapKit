@@ -4,6 +4,7 @@ import type { Chain, EVMChain, SKConfigState, TokenNames } from "@swapkit/sdk";
 import { AssetValue, NetworkDerivationPath, WalletOption } from "@swapkit/sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
+import { useTokenPrices } from "./hooks/use-token-prices";
 import type { BalanceDetails, KeystoreFile, SwapKitState } from "./types";
 
 const useSwapKitStore = create<SwapKitState>((set) => {
@@ -41,6 +42,7 @@ export const useSwapKit = () => {
     setWalletState,
     setIsConnectingWallet,
   } = useSwapKitStore((state) => state);
+  const { fetchTokenPrices } = useTokenPrices();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: biome is bugging out
   useEffect(() => {
@@ -149,9 +151,15 @@ export const useSwapKit = () => {
 
         if (!isConnected) throw new Error("Failed to connect wallet");
 
-        setWalletState({ connected: isConnected, type: option });
+        void Promise.allSettled(chains.map((chain) => swapKit?.getWalletWithBalance(chain))).then((results) =>
+          fetchTokenPrices(
+            results
+              ?.filter((result) => result.status === "fulfilled")
+              ?.flatMap((result) => result.value?.balance?.map((balance) => balance.toString()) ?? []),
+          ),
+        );
 
-        await Promise.allSettled(chains.map((chain) => swapKit?.getWalletWithBalance(chain)));
+        setWalletState({ connected: isConnected, type: option });
 
         setSwapKit(swapKit);
       } catch (error) {
@@ -164,7 +172,7 @@ export const useSwapKit = () => {
         setIsConnectingWallet(false);
       }
     },
-    [setWalletState, swapKit, setIsConnectingWallet, setSwapKit],
+    [setWalletState, swapKit, setIsConnectingWallet, setSwapKit, fetchTokenPrices],
   );
 
   const disconnectWallet = useCallback(() => {
@@ -190,7 +198,14 @@ export const useSwapKit = () => {
 
         setWalletState({ connected: true, type: WalletOption.KEYSTORE });
 
-        await Promise.allSettled(keystoreFile.chains.map((balance) => swapKit?.getWalletWithBalance(balance)));
+        void Promise.allSettled(keystoreFile?.chains?.map((balance) => swapKit?.getWalletWithBalance(balance))).then(
+          (results) =>
+            fetchTokenPrices(
+              results
+                ?.filter((result) => result.status === "fulfilled")
+                ?.flatMap((result) => result.value?.balance?.map((balance) => balance.toString())),
+            ),
+        );
       } catch (error) {
         console.error("Failed to decrypt keystore:", error);
         throw new Error("Failed to decrypt keystore");
@@ -198,7 +213,7 @@ export const useSwapKit = () => {
         setIsConnectingWallet(false);
       }
     },
-    [swapKit, setWalletState, setIsConnectingWallet],
+    [swapKit, setWalletState, setIsConnectingWallet, fetchTokenPrices],
   );
 
   const stableWalletsMemoKey = Object.entries(swapKit?.getAllWallets?.() || {})

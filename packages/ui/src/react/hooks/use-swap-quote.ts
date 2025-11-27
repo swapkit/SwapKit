@@ -2,7 +2,6 @@
 
 import {
   AssetValue,
-  type PriceResponse,
   PriorityLabel,
   type QuoteResponse,
   type QuoteResponseRoute,
@@ -18,15 +17,16 @@ import { SWAPKIT_WIDGET_TOASTER_ID } from "../components/ui/sonner";
 import { useSwapKit } from "../swapkit-context";
 import type { UseSwapQuoteParams } from "../types";
 import { useDebouncedEffect } from "./use-debounced-effect";
+import { useTokenPrices } from "./use-token-prices";
 
 export type UseSwapQuoteReturn = ReturnType<typeof useSwapQuote>;
 
 export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuoteParams) => {
   const [isFetchingQuote, setIsFetchingQuote] = useState(false);
   const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
-  const [priceResponse, setPriceResponse] = useState<PriceResponse | null>(null);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
   const [expectedBuyAmountFor1Input, setExpectedBuyAmountFor1Input] = useState(0);
+  const { setTokenPrices, pricesByTokenId } = useTokenPrices();
 
   const { swapKit, isWalletConnected } = useSwapKit();
   const swapKitConfig = useSwapKitConfig();
@@ -42,15 +42,6 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
     return AssetValue.from({ asset: outputAsset });
   }, [outputAsset]);
-
-  useEffect(() => {
-    if (!inputAsset || !outputAsset || !swapKitConfig?.apiKeys?.swapKit) return;
-
-    void SwapKitApi.getPrice({
-      metadata: false,
-      tokens: [{ identifier: inputAsset }, { identifier: outputAsset }],
-    }).then((price) => setPriceResponse(price));
-  }, [inputAsset, outputAsset, swapKitConfig?.apiKeys?.swapKit]);
 
   const outputAssetIdentifier = outputAssetValue?.toString();
   const inputAssetIdentifier = inputAssetValue?.toString();
@@ -139,36 +130,15 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
       selectedRoute?.expectedBuyAmount ? Number.parseFloat(selectedRoute?.expectedBuyAmount) / Number(amount) : 0,
     );
 
-    setPriceResponse((oldPriceResponse) => {
-      const newPriceResponse = [...(oldPriceResponse ?? [])];
+    const tokenPricesFromQuoteRoute = selectedRoute?.meta?.assets?.map((asset) => ({
+      identifier: AssetValue.from({ asset: asset?.asset }).toString(),
+      priceUSD: asset?.price,
+    }));
 
-      selectedRoute?.meta?.assets?.forEach((asset) => {
-        const priceIndex = newPriceResponse?.findIndex((p) => p?.identifier === asset?.asset);
+    setTokenPrices(tokenPricesFromQuoteRoute);
+  }, [amount, quoteResponse?.routes, selectedRouteIndex, setTokenPrices]);
 
-        if (priceIndex === -1) {
-          newPriceResponse.push({ identifier: asset?.asset, price_usd: asset?.price });
-          return;
-        }
-
-        newPriceResponse[priceIndex] = { ...newPriceResponse[priceIndex], price_usd: asset?.price };
-      });
-
-      return newPriceResponse;
-    });
-  }, [amount, quoteResponse?.routes, selectedRouteIndex]);
-
-  const getAssetPriceUSD = useCallback(
-    (asset: AssetValue) => {
-      const assetIdentifier = asset.toString();
-
-      const price = priceResponse?.find((p) => p.identifier === assetIdentifier)?.price_usd || null;
-
-      return price;
-    },
-    [priceResponse],
-  );
-
-  const inputAssetPriceUSD = inputAssetValue && getAssetPriceUSD(inputAssetValue);
+  const inputAssetPriceUSD = inputAssetValue && pricesByTokenId.get(inputAssetValue.toString())?.priceUSD;
   const inputAssetTicker = inputAssetValue?.ticker || null;
 
   const swapQuoteRoutes = useMemo(() => {
@@ -183,7 +153,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     };
 
     const assetValueToUSD = (assetValue: AssetValue) => {
-      const assetPriceUSD = getAssetPriceUSD(assetValue);
+      const assetPriceUSD = pricesByTokenId.get(assetValue.toString())?.priceUSD;
 
       if (!assetPriceUSD) return 0;
 
@@ -196,7 +166,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
 
       const providerName = quoteResponseRoute?.providers?.[0] || null;
 
-      const outputAssetPriceUSD = outputAssetValue && getAssetPriceUSD(outputAssetValue);
+      const outputAssetPriceUSD = outputAssetValue && pricesByTokenId.get(outputAssetValue.toString())?.priceUSD;
       const outputAssetTicker = outputAssetValue?.ticker || null;
 
       const totalFeesUSD =
@@ -262,7 +232,7 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     };
 
     return quoteResponse?.routes?.map(parseQuoteResponseRoute);
-  }, [quoteResponse?.routes, outputAssetValue, getAssetPriceUSD, inputAssetPriceUSD]);
+  }, [quoteResponse?.routes, outputAssetValue, inputAssetPriceUSD, pricesByTokenId.get]);
 
   const reset = useCallback(() => {
     setQuoteResponse(null);
