@@ -1,12 +1,12 @@
 "use client";
 import { ChainIcon, useModal, useSwapKit } from "@swapkit/ui/react";
 import { LogOut } from "lucide-react";
+import { TokenBalance } from "./components/simple/token-balance";
+import { TruncatedAddress } from "./components/simple/truncated-address";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./components/ui/sheet";
 import { showModal } from "./hooks/use-modal";
-import { TokenBalance } from "./TokenBalance";
-import { TruncatedAddress } from "./TruncatedAddress";
 
 export function showSwapKitWalletDrawer() {
   return showModal(<SwapKitWalletDrawer />);

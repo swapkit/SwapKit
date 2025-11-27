@@ -1,7 +1,7 @@
 "use client";
 
 import { AssetValue, type Chain } from "@swapkit/helpers";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 
 interface ChainIconProps {
   chain: Chain;

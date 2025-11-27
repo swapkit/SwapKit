@@ -3,7 +3,7 @@
 import { AssetValue } from "@swapkit/sdk";
 import { forwardRef } from "react";
 import { cn } from "../../../lib/utils";
-import { AssetIcon } from "../asset-icon";
+import { AssetIcon } from "../simple/asset-icon";
 
 type SwapAssetItemProps = { asset: string | null | undefined; className?: string };
 

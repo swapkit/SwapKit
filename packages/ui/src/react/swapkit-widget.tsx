@@ -12,10 +12,10 @@ import { SwapInputWithChainSelector } from "./components/composable/swap-input-c
 import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 import { SwapConfirmDialog } from "./components/dialogs/swap-confirm-dialog";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
+import { WalletIcon } from "./components/simple/wallet-icon";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
-import { WalletIcon } from "./components/wallet-icon";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";

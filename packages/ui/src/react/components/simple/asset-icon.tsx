@@ -1,8 +1,8 @@
 "use client";
 
 import { AssetValue } from "@swapkit/helpers";
-import { cn } from "../../lib/utils";
-import { temp_host } from "./config";
+import { cn } from "../../../lib/utils";
+import { temp_host } from "../config";
 
 interface AssetIconProps {
   asset: string;

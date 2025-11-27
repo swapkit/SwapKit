@@ -7,7 +7,7 @@ import { match } from "ts-pattern";
 import { cn, formatCurrency } from "../../../lib/utils";
 import { useFilteredSortedAssets } from "../../hooks/use-filtered-sorted-assets";
 import { showModal, useModal } from "../../hooks/use-modal";
-import { ChainIcon } from "../chain-icon";
+import { ChainIcon } from "../simple/chain-icon";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";

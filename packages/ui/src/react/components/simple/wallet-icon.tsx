@@ -1,8 +1,8 @@
 "use client";
 
 import type { WalletOption } from "@swapkit/helpers";
-import { cn } from "../../lib/utils";
-import { temp_host } from "./config";
+import { cn } from "../../../lib/utils";
+import { temp_host } from "../config";
 
 export function WalletIcon({ wallet, className = "" }: { wallet: WalletOption; className?: string }) {
   return (
