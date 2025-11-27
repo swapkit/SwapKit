@@ -3,7 +3,7 @@
 import "@swapkit/ui/swapkit.css";
 
 import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
-import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
+import { ArrowDownUpIcon, Loader2Icon, LogOutIcon, Wallet2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
 import { cn } from "../lib/utils";
@@ -15,6 +15,7 @@ import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog"
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
+import { WalletIcon } from "./components/wallet-icon";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
@@ -28,7 +29,7 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const { setConfig } = useSwapKitStore();
-  const { swapKit, isWalletConnected } = useSwapKit();
+  const { swapKit, isWalletConnected, walletType, disconnectWallet } = useSwapKit();
   const { isFetchingQuote, selectedRoute, setSelectedRouteIndex, routes, reset } = useSwapQuote({
     amount,
     inputAsset,
@@ -139,10 +140,46 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
 
   const isSubmitButtonDisabled =
     !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) || isSwapping || isFetchingQuote;
+  const addressForInputAsset = swapKit?.getAddress(AssetValue.from({ asset: inputAsset as string }).chain);
 
   return (
     <div className={cn("swapkit-ui-preflight sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
-      <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
+      <div className="sk-ui-flex sk-ui-items-center sk-ui-justify-between">
+        <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
+
+        {!isWalletConnected ? (
+          <Button
+            onClick={() => {
+              void showModal(<WalletConnectDialog />);
+            }}
+            size="xs"
+            variant="ghost">
+            <Wallet2Icon className="sk-ui-size-4" />
+
+            <span>Connect wallet</span>
+          </Button>
+        ) : walletType ? (
+          <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-px">
+            <Button
+              className="sk-ui-rounded-r-none"
+              onClick={() => {
+                // TODO: open wallet drawer
+              }}
+              size="xs"
+              variant="primary">
+              <WalletIcon wallet={walletType} />
+
+              <div>
+                {addressForInputAsset?.slice(0, 6)}...{addressForInputAsset?.slice(-4)}
+              </div>
+            </Button>
+
+            <Button className="sk-ui-rounded-l-none" onClick={() => disconnectWallet()} size="xs" variant="primary">
+              <LogOutIcon className="sk-ui-size-3.5" />
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
       <Card>
         <CardContent className="sk-ui-grid sk-ui-gap-6">

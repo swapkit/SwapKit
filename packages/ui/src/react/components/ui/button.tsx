@@ -13,6 +13,7 @@ const buttonVariants = cva(
     variants: {
       // biome-ignore assist/source/useSortedKeys: sort by size, not alphabetically
       size: {
+        xs: "sk-ui-h-7 sk-ui-text-sm sk-ui-rounded-md sk-ui-px-2 sk-ui-gap-1.5",
         sm: "sk-ui-h-9 sk-ui-rounded-md sk-ui-px-3 sk-ui-gap-1.5",
         default: "sk-ui-h-10 sk-ui-px-4 sk-ui-py-2 sk-ui-gap-2",
         lg: "sk-ui-h-12 sk-ui-font-medium sk-ui-text-base sk-ui-rounded-lg sk-ui-px-4",
