@@ -20,7 +20,7 @@ export function SwapKitWidgetControls() {
       <Tabs className="sk-ui-mt-8" defaultValue="settings">
         <TabsList className="sk-ui-flex sk-ui-gap-1.5 sk-ui-bg-white/[0.04] sk-ui-p-1.5 sk-ui-h-auto sk-ui-rounded-lg">
           <TabsTrigger
-            className="sk-ui-text-white/[0.92] sk-ui-bg-transparent data-[state=disabled]:sk-ui-opacity-50 sk-ui-h-auto sk-ui-py-1 sk-ui-rounded-md"
+            className="sk-ui-text-white/[0.92] sk-ui-bg-transparent data-[state=active]:sk-ui-bg-white/[0.08] sk-ui-h-auto sk-ui-py-1 sk-ui-rounded-md disabled:sk-ui-cursor-not-allowed disabled:sk-ui-pointer-events-auto"
             disabled
             value="design">
             Design
@@ -77,13 +77,11 @@ export function SwapKitWidgetControls() {
             description={
               <>
                 Don't have an API key yet?{" "}
-                <a
-                  className="sk-ui-font-medium sk-ui-text-primary-foreground sk-ui-hover:underline"
-                  href="https://swapkit.dev/contact/"
-                  rel="noopener noreferrer"
-                  target="_blank">
-                  Get your API key
-                </a>
+                <Button asChild variant="link">
+                  <a href="https://swapkit.dev/contact/" rel="noopener noreferrer" target="_blank">
+                    Get your API key
+                  </a>
+                </Button>
               </>
             }
             label="SwapKit API key"
