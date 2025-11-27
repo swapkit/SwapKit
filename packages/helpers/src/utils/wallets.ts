@@ -181,7 +181,7 @@ export function getETHDefaultWallet() {
   if (isTrust) return WalletOption.TRUSTWALLET_WEB;
   if (isBraveWallet) return WalletOption.BRAVE;
   if (overrideIsMetaMask && selectedProvider?.isCoinbaseWallet) return WalletOption.COINBASE_WEB;
-  if (__XDEFI) WalletOption.CTRL;
+  if (__XDEFI) return WalletOption.CTRL;
   if (window?.$onekey?.ethereum) return WalletOption.ONEKEY;
   return WalletOption.METAMASK;
 }
