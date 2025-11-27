@@ -10,8 +10,8 @@ const defaultApiUrl = SKConfig.getState().envs.devApiUrl;
 const defaultValues = {
   apiKey: "16621042-80db-41ed-83be-3f0349e0d703",
   apiUrl: defaultApiUrl,
-  apiUrlQuote: `${defaultApiUrl}/quote`,
-  apiUrlSwap: `${defaultApiUrl}/swap`,
+  apiUrlQuote: `${defaultApiUrl}/v3/quote`,
+  apiUrlSwap: `${defaultApiUrl}/v3/swap`,
 };
 
 const formControlInstance = createFormControl<ControlsStoreFieldValues>({ defaultValues });

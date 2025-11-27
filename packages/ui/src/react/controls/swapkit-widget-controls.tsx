@@ -45,14 +45,14 @@ export function SwapKitWidgetControls() {
                   control={form.control}
                   label="SwapKit API URL for /quote"
                   name="apiUrlQuote"
-                  placeholder={`${apiUrl}/quote`}
+                  placeholder={`${apiUrl}/v3/quote`}
                 />
 
                 <InputField
                   control={form.control}
                   label="SwapKit API URL for /swap"
                   name="apiUrlSwap"
-                  placeholder={`${apiUrl}/swap`}
+                  placeholder={`${apiUrl}/v3/swap`}
                 />
               </CardContent>
             </Card>
