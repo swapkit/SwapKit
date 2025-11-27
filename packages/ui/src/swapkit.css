@@ -53,4 +53,8 @@
     --sk-ui-sidebar-border: var(--sk-ui-border);
     --sk-ui-sidebar-ring: var(--sk-ui-ring);
   }
+
+  :where(.swapkit-ui-preflight) * {
+    @apply sk-ui-border-border sk-ui-antialiased;
+  }
 }

@@ -19,6 +19,7 @@ import { WalletIcon } from "./components/wallet-icon";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
+import { showSwapKitWalletDrawer } from "./swapkit-wallet-drawer";
 import type { SwapKitWidgetProps } from "./types";
 
 export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProps) {
@@ -163,7 +164,7 @@ export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProp
             <Button
               className="sk-ui-rounded-r-none"
               onClick={() => {
-                // TODO: open wallet drawer
+                void showSwapKitWalletDrawer();
               }}
               size="xs"
               variant="primary">

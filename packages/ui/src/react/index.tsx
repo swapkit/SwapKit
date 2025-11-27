@@ -8,5 +8,6 @@ export * from "./components/wallet-icon";
 
 export * from "./hooks/use-modal";
 export * from "./swapkit-context";
+export * from "./swapkit-wallet-drawer";
 export * from "./swapkit-widget";
 export * from "./types";
