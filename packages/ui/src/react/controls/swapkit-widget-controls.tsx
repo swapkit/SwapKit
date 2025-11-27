@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { SwapKitLogoHorizontalWhite } from "../assets/swapkit-logo-horizontal-white";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { InputField } from "../components/ui/input-field";
+import { Separator } from "../components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { useSwapKitWidgetControlsForm } from "./use-swapkit-widget-controls-form";
 
@@ -13,23 +15,35 @@ export function SwapKitWidgetControls() {
 
   return (
     <div className="swapkit-ui-preflight sk-ui-bg-background sk-ui-p-4 sk-ui-border-border sk-ui-border-r">
-      <Tabs defaultValue="settings">
-        <TabsList className="sk-ui-mx-4 sk-ui-flex sk-ui-justify-around sk-ui-gap-4">
-          <TabsTrigger disabled value="design">
+      <SwapKitLogoHorizontalWhite className="sk-ui-w-full sk-ui-max-w-40" />
+
+      <Tabs className="sk-ui-mt-8" defaultValue="settings">
+        <TabsList className="sk-ui-flex sk-ui-gap-1.5 sk-ui-bg-white/[0.04] sk-ui-p-1.5 sk-ui-h-auto sk-ui-rounded-lg">
+          <TabsTrigger
+            className="sk-ui-text-white/[0.92] sk-ui-bg-transparent data-[state=disabled]:sk-ui-opacity-50 sk-ui-h-auto sk-ui-py-1 sk-ui-rounded-md"
+            disabled
+            value="design">
             Design
           </TabsTrigger>
 
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger
+            className="sk-ui-text-white/[0.92] sk-ui-bg-transparent data-[state=active]:sk-ui-bg-white/[0.08] sk-ui-h-auto sk-ui-py-1 sk-ui-rounded-md"
+            value="settings">
+            Settings
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4" value="settings">
+        <TabsContent className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4 sk-ui-mt-4" value="settings">
           <InputField
             control={form.control}
             label={
               <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-2">
                 <span>SwapKit API Endpoint URL</span>
 
-                <Button className="sk-ui-ml-auto" onClick={() => setIsAdvancedVisible((val) => !val)} variant="link">
+                <Button
+                  className="sk-ui-ml-auto sk-ui-text-muted-foreground"
+                  onClick={() => setIsAdvancedVisible((val) => !val)}
+                  variant="link">
                   Advanced
                 </Button>
               </div>
@@ -40,7 +54,7 @@ export function SwapKitWidgetControls() {
 
           {isAdvancedVisible && (
             <Card>
-              <CardContent className="!sk-ui-py-2 !sk-ui-px-4">
+              <CardContent className="!sk-ui-py-4 !sk-ui-px-4 sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
                 <InputField
                   control={form.control}
                   label="SwapKit API URL for /quote"
@@ -76,6 +90,8 @@ export function SwapKitWidgetControls() {
             name="apiKey"
             placeholder="4531f781-9ff9-4a3f-933f-ce992cc265c1"
           />
+
+          <Separator />
 
           <Button className="sk-ui-w-full" disabled={!form.formState.isDirty} onClick={() => form.reset()}>
             Reset to default values

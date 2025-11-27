@@ -31,7 +31,7 @@ export function InputField<
             <Input {...field} {...props} />
           </FormControl>
 
-          <FormDescription>{description}</FormDescription>
+          {description && <FormDescription>{description}</FormDescription>}
 
           <FormMessage />
         </FormItem>
