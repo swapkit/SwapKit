@@ -219,34 +219,25 @@ export class BigIntArithmetics {
 
   toCurrency(
     currency = "$",
-    { currencyPosition = "start", decimal = 2, decimalSeparator = ".", thousandSeparator = "," } = {},
+    {
+      currencyPosition = "start",
+      decimal = 2,
+      decimalSeparator = ".",
+      thousandSeparator = ",",
+      trimTrailingZeros = true,
+    } = {},
   ) {
-    const valueStr = this.getValue("string");
-    const isNegative = valueStr.startsWith("-");
-    const absValueStr = isNegative ? valueStr.slice(1) : valueStr;
-    const [int = "0", dec = ""] = absValueStr.split(".");
-    const sign = isNegative ? "-" : "";
+    const isCurrencyAtEnd = currencyPosition === "end";
+    const [int = "0", dec = ""] = this.toFixed(decimal).split(".");
 
-    if (int === "0" && dec) {
-      const trimmedDec = dec.replace(/0+$/, "");
-      const formatted = trimmedDec ? `${sign}0${decimalSeparator}${trimmedDec}` : "0";
+    const formattedInt = int.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+    const hasDecimals = dec && Number.parseInt(dec, 10) > 0;
+    const formattedValue = hasDecimals ? `${formattedInt}${decimalSeparator}${dec}` : formattedInt;
+    const value = isCurrencyAtEnd ? `${formattedValue}${currency}` : `${currency}${formattedValue}`;
 
-      return match(currencyPosition)
-        .with("start", () => `${currency}${formatted}`)
-        .with("end", () => `${formatted}${currency}`)
-        .otherwise(() => `${currency}${formatted}`);
-    }
+    if (!trimTrailingZeros || !hasDecimals) return value;
 
-    const roundedStr = this.toFixed(decimal);
-    const [roundedInt = "0", roundedDec = ""] = roundedStr.split(".");
-    const formattedInt = roundedInt.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
-    const hasDecimals = roundedDec && Number.parseInt(roundedDec, 10) > 0;
-    const value = hasDecimals ? `${formattedInt}${decimalSeparator}${roundedDec}` : formattedInt;
-
-    return match(currencyPosition)
-      .with("start", () => `${currency}${value}`)
-      .with("end", () => `${value}${currency}`)
-      .otherwise(() => `${currency}${value}`);
+    return value.replace(/\.?0*$/, "");
   }
 
   formatBigIntToSafeValue(value: bigint, decimal?: number) {

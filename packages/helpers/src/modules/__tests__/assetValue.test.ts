@@ -1815,16 +1815,25 @@ describe("formatting", () => {
 
 describe("toCurrency", () => {
   test("small values preserve precision without floating-point artifacts", () => {
-    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.015072 }).toCurrency("")).toBe("0.015072");
-    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.333145 }).toCurrency("")).toBe("0.333145");
-    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.00000548 }).toCurrency("")).toBe("0.00000548");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 1.339145 }).toCurrency("")).toBe("1.34");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.015072 }).toCurrency("")).toBe("0.02");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.333145 }).toCurrency("", { decimal: 1 })).toBe("0.3");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.00000548 }).toCurrency("")).toBe("0");
     expect(AssetValue.from({ asset: "ETH.ETH", value: 0.1 }).toCurrency("")).toBe("0.1");
-    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.10000001 }).toCurrency("")).toBe("0.10000001");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: 0.10000001 }).toCurrency("")).toBe("0.1");
+    expect(
+      AssetValue.from({ asset: "ETH.ETH", value: "0.000000000001251251235123125123" }).toCurrency("", { decimal: 6 }),
+    ).toBe("0");
+    expect(AssetValue.from({ asset: "ETH.ETH", value: "0.1000000000000000001" }).toCurrency("", { decimal: 6 })).toBe(
+      "0.1",
+    );
   });
 
   test("negative small values handled correctly", () => {
-    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.015072 }).toCurrency("")).toBe("-0.015072");
-    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.00000001 }).toCurrency("")).toBe("-0.00000001");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.015072 }).toCurrency("")).toBe("-0.02");
+    expect(AssetValue.from({ asset: "BTC.BTC", value: -0.00000001 }).toCurrency("", { decimal: 8 })).toBe(
+      "-0.00000001",
+    );
   });
 
   test("large values with thousand separators and rounding", () => {
@@ -1834,10 +1843,10 @@ describe("toCurrency", () => {
   });
 
   test("custom currency symbol and position", () => {
-    const v = AssetValue.from({ asset: "ETH.ETH", value: 1234.56 });
-    expect(v.toCurrency("€", { currencyPosition: "end" })).toBe("1,234.56€");
-    expect(v.toCurrency("¥", { currencyPosition: "start" })).toBe("¥1,234.56");
-    expect(v.toCurrency("", { decimal: 4 })).toBe("1,234.5600");
+    const v = AssetValue.from({ asset: "ETH.ETH", value: 1234.5678 });
+    expect(v.toCurrency("€", { currencyPosition: "end" })).toBe("1,234.57€");
+    expect(v.toCurrency("¥", { currencyPosition: "start" })).toBe("¥1,234.57");
+    expect(v.toCurrency("", { decimal: 4 })).toBe("1,234.5678");
   });
 
   test("custom separators for european format", () => {
