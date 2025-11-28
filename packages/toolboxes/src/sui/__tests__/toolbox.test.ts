@@ -42,11 +42,15 @@ describe("Sui Toolbox", () => {
     }
   });
 
-  test("should fetch balance for known address", async () => {
-    const balances = await context.toolbox.getBalance(KNOWN_SUI_ADDRESS);
-    expect(balances[0]?.chain).toBe(Chain.Sui);
-    expect(balances[0]?.symbol).toBe("SUI");
-  });
+  test(
+    "should fetch balance for known address",
+    async () => {
+      const balances = await context.toolbox.getBalance(KNOWN_SUI_ADDRESS);
+      expect(balances[0]?.chain).toBe(Chain.Sui);
+      expect(balances[0]?.symbol).toBe("SUI");
+    },
+    { retry: 3, timeout: 10000 },
+  );
 
   test("should estimate transaction fee", async () => {
     const fee = await context.toolbox.estimateTransactionFee();
