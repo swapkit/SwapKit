@@ -1,5 +1,14 @@
 # @swapkit/helpers
 
+## 4.5.9
+
+### Patch Changes
+
+- [#1614](https://github.com/swapkit/SwapKit/pull/1614) [`4bf4ca6`](https://github.com/swapkit/SwapKit/commit/4bf4ca65b55ea81c00aafa555aef6f50009e7a20) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Handle edge cases and trailing decimlas
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.2
+
 ## 4.5.8
 
 ### Patch Changes
