@@ -183,7 +183,8 @@ export class BigIntArithmetics {
     const valueStr = this.getValue("string");
     const isNegative = valueStr.startsWith("-");
     const [int = "0", dec = ""] = (isNegative ? valueStr.slice(1) : valueStr).split(".");
-    const sign = isNegative ? "-" : "";
+    const valueRoundsToZero = int === "0" && Number.parseInt(dec.slice(0, fixedDigits), 10) === 0;
+    const sign = isNegative && !valueRoundsToZero ? "-" : "";
 
     if (fixedDigits === 0) {
       if (int === "0" && !dec) return "0";
@@ -227,17 +228,19 @@ export class BigIntArithmetics {
       trimTrailingZeros = true,
     } = {},
   ) {
+    const fixedValue = this.toFixed(decimal);
     const isCurrencyAtEnd = currencyPosition === "end";
-    const [int = "0", dec = ""] = this.toFixed(decimal).split(".");
+    const [int = "0", dec = ""] = fixedValue.split(".");
 
     const formattedInt = int.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
     const hasDecimals = dec && Number.parseInt(dec, 10) > 0;
     const formattedValue = hasDecimals ? `${formattedInt}${decimalSeparator}${dec}` : formattedInt;
-    const value = isCurrencyAtEnd ? `${formattedValue}${currency}` : `${currency}${formattedValue}`;
 
-    if (!trimTrailingZeros || !hasDecimals) return value;
+    // Prevent regex from taking too long for large values
+    const canTrimTrailingZeros = formattedValue.length < 100 && trimTrailingZeros && hasDecimals;
+    const value = canTrimTrailingZeros ? formattedValue.replace(/\.?0*$/, "") : formattedValue;
 
-    return value.replace(/\.?0*$/, "");
+    return isCurrencyAtEnd ? `${value}${currency}` : `${currency}${value}`;
   }
 
   formatBigIntToSafeValue(value: bigint, decimal?: number) {

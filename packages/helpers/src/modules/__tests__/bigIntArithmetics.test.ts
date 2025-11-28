@@ -280,23 +280,25 @@ describe("BigIntArithmetics", () => {
       );
     });
 
-    test("small values < 1 preserve precision without floating-point artifacts", () => {
-      expect(new BigIntArithmetics(0.015072).toCurrency("")).toBe("0.015072");
-      expect(new BigIntArithmetics(0.333145).toCurrency("")).toBe("0.333145");
-      expect(new BigIntArithmetics(0.000005).toCurrency("")).toBe("0.000005");
-      expect(new BigIntArithmetics(0.00000548).toCurrency("")).toBe("0.00000548");
-      expect(new BigIntArithmetics(0.00003801).toCurrency("")).toBe("0.00003801");
+    test("small values < 1 rounds to decimal with trailing zeros removed without floating-point artifacts", () => {
+      expect(new BigIntArithmetics(0.015072).toCurrency("")).toBe("0.02");
+      expect(new BigIntArithmetics(0.333145).toCurrency("")).toBe("0.33");
+      expect(new BigIntArithmetics(0.000005).toCurrency("")).toBe("0");
+      expect(new BigIntArithmetics(0.00000548).toCurrency("", { decimal: 6 })).toBe("0.000005");
+      expect(new BigIntArithmetics(0.00003801).toCurrency("", { decimal: 6 })).toBe("0.000038");
     });
 
     test("small values strip trailing zeros", () => {
       expect(new BigIntArithmetics(0.12).toCurrency("")).toBe("0.12");
       expect(new BigIntArithmetics(0.1).toCurrency("")).toBe("0.1");
-      expect(new BigIntArithmetics(0.10000001).toCurrency("")).toBe("0.10000001");
+      expect(new BigIntArithmetics(0.10000001).toCurrency("")).toBe("0.1");
     });
 
     test("negative small values", () => {
-      expect(new BigIntArithmetics(-0.015072).toCurrency("")).toBe("-0.015072");
-      expect(new BigIntArithmetics(-0.00000001).toCurrency("")).toBe("-0.00000001");
+      expect(new BigIntArithmetics(-0.015072).toCurrency("")).toBe("-0.02");
+      expect(new BigIntArithmetics(-0.00000001).toCurrency("", { decimal: 8 })).toBe("-0.00000001");
+      expect(new BigIntArithmetics(-0.00003801).toCurrency("", { decimal: 6 })).toBe("-0.000038");
+      expect(new BigIntArithmetics(-0.00000548).toCurrency("")).toBe("0");
     });
 
     test("values >= 1 round to decimal param", () => {
@@ -313,9 +315,9 @@ describe("BigIntArithmetics", () => {
     });
 
     test("custom decimal separator for small values", () => {
-      expect(new BigIntArithmetics(0.015072).toCurrency("€", { currencyPosition: "end", decimalSeparator: "," })).toBe(
-        "0,015072€",
-      );
+      expect(
+        new BigIntArithmetics(0.015072).toCurrency("€", { currencyPosition: "end", decimal: 6, decimalSeparator: "," }),
+      ).toBe("0,015072€");
     });
   });
 
