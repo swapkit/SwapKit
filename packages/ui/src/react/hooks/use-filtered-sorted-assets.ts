@@ -37,12 +37,15 @@ export function useFilteredSortedAssets() {
 function sortAssets({ assets, filters }: { assets: AssetValue[]; filters: UseFilteredSortedAssetsFilters }) {
   const lowerSearchQuery = filters?.searchQuery?.toLowerCase() ?? "";
 
-  return assets?.sort((tokenA, tokenB) => {
-    const hasBalanceA = tokenA?.getValue?.("number") > 0;
-    const hasBalanceB = tokenB?.getValue?.("number") > 0;
+  return assets?.sort((assetValueA, assetValueB) => {
+    const assetValueIdentifierA = assetValueA.toString();
+    const assetValueIdentifierB = assetValueB.toString();
 
-    const exactMatchA = lowerSearchQuery.length >= 1 && tokenA.ticker.toLowerCase() === lowerSearchQuery;
-    const exactMatchB = lowerSearchQuery.length >= 1 && tokenB.ticker.toLowerCase() === lowerSearchQuery;
+    const hasBalanceA = assetValueA?.getValue?.("number") > 0;
+    const hasBalanceB = assetValueB?.getValue?.("number") > 0;
+
+    const exactMatchA = lowerSearchQuery.length >= 1 && assetValueIdentifierA.toLowerCase() === lowerSearchQuery;
+    const exactMatchB = lowerSearchQuery.length >= 1 && assetValueIdentifierB.toLowerCase() === lowerSearchQuery;
 
     // 1. Ticker matches search query + wallet has balance
     if (exactMatchA && hasBalanceA && !(exactMatchB && hasBalanceB)) return -1;
@@ -57,11 +60,11 @@ function sortAssets({ assets, filters }: { assets: AssetValue[]; filters: UseFil
     if (!hasBalanceA && hasBalanceB) return 1;
 
     // 4. Sort native assets to the top
-    if (tokenA.type === "Native" && tokenB.type !== "Native") return -1;
-    if (tokenA.type !== "Native" && tokenB.type === "Native") return 1;
+    if (assetValueA.type === "Native" && assetValueB.type !== "Native") return -1;
+    if (assetValueA.type !== "Native" && assetValueB.type === "Native") return 1;
 
     // 5. Sort alphabetically within each group
-    return tokenA.ticker.localeCompare(tokenB.ticker);
+    return assetValueIdentifierA.localeCompare(assetValueIdentifierB);
   });
 }
 

@@ -10,6 +10,7 @@ interface TokenBalanceProps {
 
 export function TokenBalance({ balance }: TokenBalanceProps) {
   const displaySymbol = balance.ticker || balance.symbol;
+  const formattedBalance = balance.getValue("number") > 0 ? balance.getValue("number")?.toFixed(6) : "0.00";
 
   return (
     <div
@@ -22,9 +23,8 @@ export function TokenBalance({ balance }: TokenBalanceProps) {
 
         <span className={balance.isGasAsset ? "sk-ui-font-medium" : ""}>{displaySymbol}</span>
       </div>
-      <span className={balance.isGasAsset ? "sk-ui-font-medium" : ""}>
-        {balance.getValue("number") > 0 ? balance.getValue("string") : "-"}
-      </span>
+
+      <span className={balance.isGasAsset ? "sk-ui-font-medium" : ""}>{formattedBalance}</span>
     </div>
   );
 }
