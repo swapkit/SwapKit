@@ -133,7 +133,9 @@ export const useSwapQuote = ({ inputAsset, outputAsset, amount }: UseSwapQuotePa
     const tokenPricesFromQuoteRoute = selectedRoute?.meta?.assets?.map((asset) => ({
       identifier: AssetValue.from({ asset: asset?.asset }).toString(),
       priceUSD: asset?.price,
-    }));
+    }))
+
+    if (!tokenPricesFromQuoteRoute || tokenPricesFromQuoteRoute?.length <= 0) return;
 
     setTokenPrices(tokenPricesFromQuoteRoute);
   }, [amount, quoteResponse?.routes, selectedRouteIndex, setTokenPrices]);

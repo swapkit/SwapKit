@@ -1,5 +1,33 @@
 # @swapkit/ui
 
+## 0.3.10
+
+### Patch Changes
+
+- Updated dependencies [[`4bf4ca6`](https://github.com/swapkit/SwapKit/commit/4bf4ca65b55ea81c00aafa555aef6f50009e7a20)]:
+  - @swapkit/helpers@4.5.9
+  - @swapkit/sdk@4.2.10
+  - @swapkit/wallet-keystore@4.1.9
+  - @swapkit/wallets@4.3.10
+
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies [[`e792600`](https://github.com/swapkit/SwapKit/commit/e792600199e2e488bd1817f405839f649d9debde)]:
+  - @swapkit/wallets@4.3.9
+  - @swapkit/sdk@4.2.9
+
+## 0.3.8
+
+### Patch Changes
+
+- Updated dependencies [[`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461), [`3f02210`](https://github.com/swapkit/SwapKit/commit/3f02210940cb5861ceb8319d7ba1fdd8ea8fb0a0)]:
+  - @swapkit/helpers@4.5.8
+  - @swapkit/wallets@4.3.8
+  - @swapkit/sdk@4.2.8
+  - @swapkit/wallet-keystore@4.1.8
+
 ## 0.3.7
 
 ### Patch Changes

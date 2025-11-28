@@ -9,6 +9,7 @@ import {
   BinanceSmartChainLedger,
   EthereumLedger,
   GnosisLedger,
+  MonadLedger,
   OptimismLedger,
   PolygonLedger,
   XLayerLedger,
@@ -40,6 +41,7 @@ type LedgerSignerMap = {
   [Chain.Ethereum]: ReturnType<typeof EthereumLedger>;
   [Chain.Gnosis]: ReturnType<typeof GnosisLedger>;
   [Chain.Litecoin]: ReturnType<typeof LitecoinLedger>;
+  [Chain.Monad]: ReturnType<typeof MonadLedger>;
   [Chain.Near]: ReturnType<typeof getNearLedgerClient>;
   [Chain.Optimism]: ReturnType<typeof OptimismLedger>;
   [Chain.Polygon]: ReturnType<typeof PolygonLedger>;
@@ -85,6 +87,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
         Chain.BinanceSmartChain,
         Chain.Ethereum,
         Chain.Gnosis,
+        Chain.Monad,
         Chain.Optimism,
         Chain.Polygon,
         Chain.Base,
@@ -102,6 +105,7 @@ export const getLedgerClient = async <T extends LedgerSupportedChain>({
             .with(Chain.Base, () => BaseLedger(params) as LedgerSignerMap[T])
             .with(Chain.Aurora, () => AuroraLedger(params) as LedgerSignerMap[T])
             .with(Chain.Gnosis, () => GnosisLedger(params) as LedgerSignerMap[T])
+            .with(Chain.Monad, () => MonadLedger(params) as LedgerSignerMap[T])
             .with(Chain.XLayer, () => XLayerLedger(params) as LedgerSignerMap[T])
             .otherwise(() => EthereumLedger(params) as LedgerSignerMap[T]);
         },

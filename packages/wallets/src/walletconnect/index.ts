@@ -77,6 +77,7 @@ export const walletconnectWallet = createWallet({
     Chain.Ethereum,
     Chain.Kujira,
     Chain.Maya,
+    Chain.Monad,
     Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
@@ -110,6 +111,7 @@ async function getToolbox<T extends (typeof WC_SUPPORTED_CHAINS)[number]>({
     case Chain.Base:
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
+    case Chain.Monad:
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.XLayer: {

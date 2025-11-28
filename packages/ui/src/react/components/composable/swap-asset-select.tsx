@@ -44,7 +44,7 @@ export function SwapAssetSelectTokenDialog() {
   const modal = useModal();
 
   const { assets, filters, setFilters } = useFilteredSortedAssets();
-  const { pricesByTokenId, isFetchingTokenPrices } = useTokenPrices();
+  const { pricesByTokenId } = useTokenPrices();
 
   const [isNetworkListExpanded, setIsNetworkListExpanded] = useState(false);
   const [selectedNetworks, setSelectedNetworks] = useState<Chain[]>([]);

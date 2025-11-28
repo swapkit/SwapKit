@@ -1,5 +1,23 @@
 # @swapkit/toolboxes
 
+## 4.3.9
+
+### Patch Changes
+
+- Updated dependencies [[`4bf4ca6`](https://github.com/swapkit/SwapKit/commit/4bf4ca65b55ea81c00aafa555aef6f50009e7a20)]:
+  - @swapkit/helpers@4.5.9
+
+## 4.3.8
+
+### Patch Changes
+
+- [#1608](https://github.com/swapkit/SwapKit/pull/1608) [`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461) Thanks [@ice-chillios](https://github.com/ice-chillios)! - fix toCurrency formatter
+
+- [#1611](https://github.com/swapkit/SwapKit/pull/1611) [`3f02210`](https://github.com/swapkit/SwapKit/commit/3f02210940cb5861ceb8319d7ba1fdd8ea8fb0a0) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Always return gas asset of chain
+
+- Updated dependencies [[`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461)]:
+  - @swapkit/helpers@4.5.8
+
 ## 4.3.7
 
 ### Patch Changes

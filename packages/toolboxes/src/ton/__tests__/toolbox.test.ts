@@ -39,11 +39,15 @@ describe("TON Toolbox", () => {
     expect(context.toolbox.validateAddress(address)).toBe(true);
   });
 
-  test("should fetch balance for known address", async () => {
-    const balances = await context.toolbox.getBalance(KNOWN_TON_ADDRESS);
-    expect(balances[0]?.chain).toBe(Chain.Ton);
-    expect(balances[0]?.symbol).toBe("TON");
-  });
+  test(
+    "should fetch balance for known address",
+    async () => {
+      const balances = await context.toolbox.getBalance(KNOWN_TON_ADDRESS);
+      expect(balances[0]?.chain).toBe(Chain.Ton);
+      expect(balances[0]?.symbol).toBe("TON");
+    },
+    { retry: 3, timeout: 10000 },
+  );
 
   test("should estimate transaction fee", async () => {
     const fee = await context.toolbox.estimateTransactionFee();

@@ -14,15 +14,13 @@ export function toHexString(value: bigint) {
 export function getNetworkParams<C extends EVMChain>(chain: C) {
   const { explorerUrl, chainIdHex, rpcUrls } = getChainConfig(chain);
 
-  return () =>
-    (chain === Chain.Ethereum
-      ? undefined
-      : {
-          ...getNetworkInfo({ chain }),
-          blockExplorerUrls: [explorerUrl],
-          chainId: chainIdHex,
-          rpcUrls,
-        }) as C extends typeof Chain.Ethereum ? undefined : NetworkParams;
+  return function getNetworkParams(): C extends Chain.Ethereum ? undefined : NetworkParams {
+    return (
+      chain !== Chain.Ethereum
+        ? { ...getNetworkInfo({ chain }), blockExplorerUrls: [explorerUrl], chainId: chainIdHex, rpcUrls }
+        : undefined
+    ) as C extends Chain.Ethereum ? undefined : NetworkParams;
+  };
 }
 
 export function getIsEIP1559Compatible<C extends EVMChain>(chain: C) {

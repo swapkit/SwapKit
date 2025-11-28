@@ -65,6 +65,7 @@ export const keepkeyWallet = createWallet({
     Chain.Dash,
     Chain.Ethereum,
     Chain.Litecoin,
+    Chain.Monad,
     Chain.Ripple,
     Chain.Optimism,
     Chain.Polygon,
@@ -96,6 +97,7 @@ async function getWalletMethods({
     case Chain.Avalanche:
     case Chain.Base:
     case Chain.Ethereum:
+    case Chain.Monad:
     case Chain.XLayer: {
       const provider = await getProvider(chain);
       const signer = new KeepKeySigner({ chain, derivationPath, provider, sdk });
