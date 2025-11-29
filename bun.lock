@@ -6,7 +6,7 @@
       "name": "swapkit-monorepo",
       "devDependencies": {
         "@biomejs/biome": "2.3.4",
-        "@bitgo/utxo-lib": "11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@changesets/changelog-github": "0.5.1",
         "@changesets/cli": "2.29.7",
         "@cosmjs/amino": "0.37.0",
@@ -159,7 +159,7 @@
       "version": "4.3.9",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "~1.2.0",
-        "@bitgo/utxo-lib": "~11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@cosmjs/amino": "~0.37.0",
         "@cosmjs/crypto": "0.37.0",
         "@cosmjs/proto-signing": "~0.37.0",
@@ -209,7 +209,7 @@
       },
       "devDependencies": {
         "@bitcoinerlab/secp256k1": "1.2.0",
-        "@bitgo/utxo-lib": "11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@cosmjs/amino": "0.37.0",
         "@cosmjs/crypto": "0.37.0",
         "@cosmjs/proto-signing": "0.37.0",
@@ -763,7 +763,7 @@
 
     "@bitgo/secp256k1": ["@bitgo/secp256k1@1.7.0", "", { "dependencies": { "@brandonblack/musig": "^0.0.1-alpha.0", "@noble/secp256k1": "1.6.3", "bip32": "^3.0.1", "create-hash": "^1.2.0", "create-hmac": "^1.1.7", "ecpair": "npm:@bitgo/ecpair@2.1.0-rc.0" } }, "sha512-pFzmFyDLNg4tyYUaSu1cvI724xxGSlMjD/G5yo/P3IEyz5WbE++3QxdijqxWubb86xpwIsNSV/coutLYUCagkQ=="],
 
-    "@bitgo/utxo-lib": ["@bitgo/utxo-lib@11.13.1", "", { "dependencies": { "@bitgo/blake2b": "^3.2.4", "@bitgo/secp256k1": "^1.7.0", "@brandonblack/musig": "^0.0.1-alpha.0", "bech32": "^2.0.0", "bip174": "npm:@bitgo-forks/bip174@3.1.0-master.4", "bitcoin-ops": "^1.3.0", "bitcoinjs-lib": "npm:@bitgo-forks/bitcoinjs-lib@7.1.0-master.11", "bs58check": "^2.1.2", "cashaddress": "^1.1.0", "fastpriorityqueue": "^0.7.1", "typeforce": "^1.11.3", "varuint-bitcoin": "^1.1.2" } }, "sha512-qL02OxrsfhzF4rag/0aDfcZ1RDQihlFyBhBIWQpSC3UY7xIMFT+X2Pi5/BOMsDYyB7aulThtvonAGj32mRr6xw=="],
+    "@bitgo/utxo-lib": ["@bitgo/utxo-lib@11.16.1", "", { "dependencies": { "@bitgo/blake2b": "^3.2.4", "@bitgo/secp256k1": "^1.7.0", "@brandonblack/musig": "^0.0.1-alpha.0", "bech32": "^2.0.0", "bip174": "npm:@bitgo-forks/bip174@3.1.0-master.4", "bitcoin-ops": "^1.3.0", "bitcoinjs-lib": "npm:@bitgo-forks/bitcoinjs-lib@7.1.0-master.11", "bs58check": "^2.1.2", "cashaddress": "^1.1.0", "fastpriorityqueue": "^0.7.1", "typeforce": "^1.11.3", "varuint-bitcoin": "^1.1.2" } }, "sha512-CaQ13+sAWxwIy/c+UhVaC7ZG9/jBFJ87zVMNKceQVZaYSTmcRnsodggUok/UqKxM0uF2b2FPKtcv2VOXD6M+ww=="],
 
     "@brandonblack/musig": ["@brandonblack/musig@0.0.1-alpha.1", "", {}, "sha512-00RbByQG85lSzrkDjCblzrUc2n1LJAPPrEMHS4oMg+QckE0kzjd26JytT6yx6tNU2+aOXfK7O4kGW/sKVL67cw=="],
 
