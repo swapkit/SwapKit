@@ -1,7 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
-    "@near-js/providers": "~2.5.0",
+    "@near-js/providers": "~2.5.1",
     "@swapkit/contracts": "workspace:*",
     "@swapkit/tokens": "workspace:*",
     "@swapkit/types": "workspace:*",
@@ -12,7 +12,7 @@
   },
   "description": "SwapKit - Helpers",
   "devDependencies": {
-    "@near-js/providers": "2.5.0",
+    "@near-js/providers": "2.5.1",
     "@swapkit/toolboxes": "workspace:*",
     "ethers": "6.15.0",
     "tronweb": "6.1.0"
