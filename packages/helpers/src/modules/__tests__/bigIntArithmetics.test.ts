@@ -75,7 +75,7 @@ describe("BigIntArithmetics", () => {
       expect(num.toFixed(6)).toBe("0.000001");
     });
 
-    test("handles negative numbers", () => {
+    test("handles negative numbers with toFixed", () => {
       const num = new BigIntArithmetics(-123.456);
       expect(num.toFixed(2)).toBe("-123.46");
       expect(num.toFixed(4)).toBe("-123.4560");
@@ -230,7 +230,7 @@ describe("BigIntArithmetics", () => {
   });
 
   describe("toAbbreviation edge cases", () => {
-    test("handles negative numbers", () => {
+    test("handles negative numbers with abbreviation", () => {
       const num = new BigIntArithmetics(-1234567);
       expect(num.toAbbreviation()).toBe("-1.23M");
     });
@@ -260,37 +260,64 @@ describe("BigIntArithmetics", () => {
   });
 
   describe("toCurrency edge cases", () => {
-    test("handles different currency symbols", () => {
+    test("currency symbols €, £, ¥", () => {
       const num = new BigIntArithmetics(1234.56);
-      expect(num.toCurrency("€")).toContain("€");
-      expect(num.toCurrency("£")).toContain("£");
-      expect(num.toCurrency("¥")).toContain("¥");
+      expect(num.toCurrency("€")).toBe("€1,234.56");
+      expect(num.toCurrency("£")).toBe("£1,234.56");
+      expect(num.toCurrency("¥")).toBe("¥1,234.56");
     });
 
-    test("handles currency position", () => {
+    test("currency position start and end", () => {
       const num = new BigIntArithmetics(1234.56);
-      expect(num.toCurrency("€", { currencyPosition: "start" })).toMatch(/^€/);
-      expect(num.toCurrency("€", { currencyPosition: "end" })).toMatch(/€$/);
+      expect(num.toCurrency("€", { currencyPosition: "start" })).toBe("€1,234.56");
+      expect(num.toCurrency("€", { currencyPosition: "end" })).toBe("1,234.56€");
     });
 
-    test("handles custom separators", () => {
+    test("european format with custom separators", () => {
       const num = new BigIntArithmetics(1234567.89);
-      const result = num.toCurrency("$", { decimalSeparator: ",", thousandSeparator: " " });
-      expect(result).toContain(" ");
-      expect(result).toContain(",");
+      expect(num.toCurrency("€", { currencyPosition: "end", decimalSeparator: ",", thousandSeparator: "." })).toBe(
+        "1.234.567,89€",
+      );
     });
 
-    test("handles zero with currency", () => {
-      const num = new BigIntArithmetics(0);
-      expect(num.toCurrency()).toContain("$");
-      expect(num.toCurrency()).toContain("0");
+    test("small values < 1 rounds to decimal with trailing zeros removed without floating-point artifacts", () => {
+      expect(new BigIntArithmetics(0.015072).toCurrency("")).toBe("0.02");
+      expect(new BigIntArithmetics(0.333145).toCurrency("")).toBe("0.33");
+      expect(new BigIntArithmetics(0.000005).toCurrency("")).toBe("0");
+      expect(new BigIntArithmetics(0.00000548).toCurrency("", { decimal: 6 })).toBe("0.000005");
+      expect(new BigIntArithmetics(0.00003801).toCurrency("", { decimal: 6 })).toBe("0.000038");
     });
 
-    test("handles custom decimal places", () => {
-      const num = new BigIntArithmetics(1234.56789);
-      const result = num.toCurrency("$", { decimal: 4 });
-      expect(result).toContain("$");
-      expect(result).toContain("1");
+    test("small values strip trailing zeros", () => {
+      expect(new BigIntArithmetics(0.12).toCurrency("")).toBe("0.12");
+      expect(new BigIntArithmetics(0.1).toCurrency("")).toBe("0.1");
+      expect(new BigIntArithmetics(0.10000001).toCurrency("")).toBe("0.1");
+    });
+
+    test("negative small values", () => {
+      expect(new BigIntArithmetics(-0.015072).toCurrency("")).toBe("-0.02");
+      expect(new BigIntArithmetics(-0.00000001).toCurrency("", { decimal: 8 })).toBe("-0.00000001");
+      expect(new BigIntArithmetics(-0.00003801).toCurrency("", { decimal: 6 })).toBe("-0.000038");
+      expect(new BigIntArithmetics(-0.00000548).toCurrency("")).toBe("0");
+    });
+
+    test("values >= 1 round to decimal param", () => {
+      expect(new BigIntArithmetics(5.12).toCurrency("", { decimal: 2 })).toBe("5.12");
+      expect(new BigIntArithmetics(80.865327).toCurrency("", { decimal: 2 })).toBe("80.87");
+      expect(new BigIntArithmetics(33.432207).toCurrency("", { decimal: 2 })).toBe("33.43");
+      expect(new BigIntArithmetics(999.999).toCurrency("$")).toBe("$1,000");
+      expect(new BigIntArithmetics(0.0000000000000000000000000000001).toCurrency("", { decimal: 8 })).toBe("0");
+    });
+
+    test("zero value", () => {
+      expect(new BigIntArithmetics(0).toCurrency("$")).toBe("$0");
+      expect(new BigIntArithmetics(0).toCurrency("")).toBe("0");
+    });
+
+    test("custom decimal separator for small values", () => {
+      expect(
+        new BigIntArithmetics(0.015072).toCurrency("€", { currencyPosition: "end", decimal: 6, decimalSeparator: "," }),
+      ).toBe("0,015072€");
     });
   });
 

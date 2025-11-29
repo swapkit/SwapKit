@@ -1,9 +1,8 @@
 import { Chain, type EVMChain, FeeOption, getRPCUrl } from "@swapkit/helpers";
 import { match, P } from "ts-pattern";
 
-import { getEvmApi } from "../api";
 import { multicallAbi } from "../contracts/eth/multicall";
-import { getIsEIP1559Compatible, getNetworkParams, getProvider } from "../helpers";
+import { getIsEIP1559Compatible, getProvider } from "../helpers";
 import type { EVMToolboxParams } from "../types";
 import { BaseEVMToolbox } from "./baseEVMToolbox";
 
@@ -62,6 +61,6 @@ function createEvmToolbox<C extends EVMChain>(chain: C) {
 
     const evmToolbox = BaseEVMToolbox({ chain, isEIP1559Compatible, provider, signer });
 
-    return { ...evmToolbox, getBalance: getEvmApi(chain).getBalance, getNetworkParams: getNetworkParams(chain) };
+    return evmToolbox;
   };
 }

@@ -31,6 +31,7 @@ export const talismanWallet = createWallet({
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.Base,
+    Chain.Monad,
     Chain.Polygon,
     Chain.BinanceSmartChain,
     Chain.Optimism,
@@ -84,6 +85,7 @@ async function getWalletMethods(chain: Chain) {
     case Chain.Avalanche:
     case Chain.BinanceSmartChain:
     case Chain.Base:
+    case Chain.Monad:
     case Chain.XLayer: {
       if (!(window.talismanEth && "send" in window.talismanEth)) {
         throw new SwapKitError({ errorKey: "wallet_talisman_not_found", info: { chain } });

@@ -25,7 +25,7 @@ describe("getMemoForLeaveAndBond", () => {
 });
 
 describe("getMemoForNameRegister", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for name registration", () => {
     const result = getMemoForNameRegister({
       address: "0xaasd123",
       chain: Chain.Ethereum,
@@ -37,7 +37,7 @@ describe("getMemoForNameRegister", () => {
 });
 
 describe("getMemoForNamePreferredAssetRegister", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for preferred asset registration", () => {
     const result = getMemoForNamePreferredAssetRegister({
       asset: "ETH.USDC-0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
       chain: Chain.Ethereum,
@@ -52,7 +52,7 @@ describe("getMemoForNamePreferredAssetRegister", () => {
 });
 
 describe("getMemoForDeposit", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for deposit", () => {
     const result = getMemoForDeposit({ chain: Chain.Ethereum, symbol: "ETH" });
     expect(result).toBe("+:ETH.ETH");
   });
@@ -69,21 +69,21 @@ describe("getMemoForDeposit", () => {
 });
 
 describe("getMemoForWithdraw", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for withdraw", () => {
     const result = getMemoForWithdraw({ basisPoints: 100, chain: Chain.Ethereum, symbol: "ETH", ticker: "ETH" });
     expect(result).toBe("-:ETH.ETH:100");
   });
 });
 
 describe("getMemoForRunePoolDeposit", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for rune pool deposit", () => {
     const result = getMemoForRunePoolDeposit();
     expect(result).toBe("POOL+");
   });
 });
 
 describe("getMemoForRunePoolWithdraw", () => {
-  test("returns correct memo for single side", () => {
+  test("returns correct memo for rune pool withdraw", () => {
     const result = getMemoForRunePoolWithdraw({ basisPoints: 500 });
     expect(result).toBe("POOL-:500");
   });

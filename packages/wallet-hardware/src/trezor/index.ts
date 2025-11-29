@@ -42,6 +42,7 @@ async function getTrezorWallet<T extends Chain>({
     case Chain.BinanceSmartChain:
     case Chain.Ethereum:
     case Chain.Gnosis:
+    case Chain.Monad:
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.XLayer: {
@@ -336,6 +337,7 @@ export const trezorWallet = createWallet({
     Chain.Ethereum,
     Chain.Gnosis,
     Chain.Litecoin,
+    Chain.Monad,
     Chain.Optimism,
     Chain.Polygon,
     Chain.XLayer,

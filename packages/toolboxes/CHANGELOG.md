@@ -1,5 +1,34 @@
 # @swapkit/toolboxes
 
+## 4.3.9
+
+### Patch Changes
+
+- Updated dependencies [[`4bf4ca6`](https://github.com/swapkit/SwapKit/commit/4bf4ca65b55ea81c00aafa555aef6f50009e7a20)]:
+  - @swapkit/helpers@4.5.9
+
+## 4.3.8
+
+### Patch Changes
+
+- [#1608](https://github.com/swapkit/SwapKit/pull/1608) [`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461) Thanks [@ice-chillios](https://github.com/ice-chillios)! - fix toCurrency formatter
+
+- [#1611](https://github.com/swapkit/SwapKit/pull/1611) [`3f02210`](https://github.com/swapkit/SwapKit/commit/3f02210940cb5861ceb8319d7ba1fdd8ea8fb0a0) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Always return gas asset of chain
+
+- Updated dependencies [[`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461)]:
+  - @swapkit/helpers@4.5.8
+
+## 4.3.7
+
+### Patch Changes
+
+- [#1607](https://github.com/swapkit/SwapKit/pull/1607) [`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c) Thanks [@towanTG](https://github.com/towanTG)! - Updates Zcash Consensus branch id
+
+- [#1605](https://github.com/swapkit/SwapKit/pull/1605) [`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix tronweb import
+
+- Updated dependencies [[`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1)]:
+  - @swapkit/helpers@4.5.7
+
 ## 4.3.6
 
 ### Patch Changes
