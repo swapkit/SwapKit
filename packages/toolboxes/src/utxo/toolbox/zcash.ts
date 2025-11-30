@@ -1,5 +1,5 @@
 import { bitgo, crypto, ECPair, networks, address as zcashAddress } from "@bitgo/utxo-lib";
-import type { ZcashPsbt } from "@bitgo/utxo-lib/dist/src/bitgo";
+import { type ZcashPsbt, ZcashTransaction } from "@bitgo/utxo-lib/dist/src/bitgo";
 import { HDKey } from "@scure/bip32";
 import { mnemonicToSeedSync } from "@scure/bip39";
 import {
@@ -143,17 +143,10 @@ async function createTransaction(buildTxParams: UTXOBuildTxParams) {
     throw new SwapKitError("toolbox_utxo_insufficient_balance", { assetValue, sender });
   }
 
-  const psbt = bitgo.createPsbtForNetwork({ network: getZcashNetwork() }, { version: 455 }) as ZcashPsbt;
-
-  const branchId = 0x4dec4df0;
-
-  const CONSENSUS_BRANCH_ID_KEY = Buffer.concat([Buffer.of(0xfc), Buffer.of(0x05), Buffer.from("BITGO"), Buffer.of(0)]);
-
-  // PSBT value must be 4-byte little-endian
-  const value = Buffer.allocUnsafe(4);
-  value.writeUInt32LE(branchId >>> 0, 0);
-
-  psbt.addUnknownKeyValToGlobal({ key: CONSENSUS_BRANCH_ID_KEY, value });
+  const psbt = bitgo.createPsbtForNetwork(
+    { network: getZcashNetwork() },
+    { version: ZcashTransaction.VERSION4_BRANCH_NU6_1 },
+  ) as ZcashPsbt;
 
   const { psbt: mappedPsbt, inputs: mappedInputs } = await addInputsAndOutputs({
     compiledMemo,
@@ -162,6 +155,8 @@ async function createTransaction(buildTxParams: UTXOBuildTxParams) {
     psbt,
     sender,
   });
+
+  mappedPsbt.setDefaultsForVersion(getZcashNetwork(), ZcashTransaction.VERSION4_BRANCH_NU6_1);
 
   return { inputs: mappedInputs, outputs, psbt: mappedPsbt };
 }
@@ -194,9 +189,14 @@ export async function createZcashToolbox(
 
     const signedPsbt = await signer.signTransaction(psbt);
 
+    signedPsbt.validateSignaturesOfAllInputs();
+
     signedPsbt.finalizeAllInputs();
 
-    return baseToolbox.broadcastTx(signedPsbt.extractTransaction().toHex());
+    const finalTx = signedPsbt.extractTransaction();
+    const txHex = finalTx.toHex();
+
+    return baseToolbox.broadcastTx(txHex);
   }
 
   function createKeysForPath({

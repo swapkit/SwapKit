@@ -67,17 +67,11 @@ async function getSolanaBalance(address: string) {
   const { PublicKey } = await import("@solana/web3.js");
   const { TOKEN_PROGRAM_ID } = await import("@solana/spl-token");
   const publicKey = new PublicKey(address);
+  const { baseDecimal } = getChainConfig(Chain.Solana);
 
-  const balances: AssetValue[] = [];
-
-  // Get SOL balance
   const solBalance = await connection.getBalance(publicKey);
-  if (solBalance > 0) {
-    const { baseDecimal } = getChainConfig(Chain.Solana);
-    balances.push(AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: baseDecimal, value: solBalance }));
-  }
+  const balances = [AssetValue.from({ chain: Chain.Solana, fromBaseDecimal: baseDecimal, value: solBalance || 0 })];
 
-  // Get token balances
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID });
 
   for (const { account } of tokenAccounts.value) {

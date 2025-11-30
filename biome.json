@@ -94,6 +94,7 @@
         "noConsole": "off",
         "noEvolvingTypes": "off",
         "noExplicitAny": "off",
+        "noFocusedTests": { "fix": "none", "level": "error" },
         "noReactSpecificProps": "off",
         "useAwait": "error"
       }

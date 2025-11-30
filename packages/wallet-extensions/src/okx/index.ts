@@ -29,6 +29,7 @@ export const okxWallet = createWallet({
     Chain.Cosmos,
     Chain.Ethereum,
     Chain.Gnosis,
+    Chain.Monad,
     // NEAR transfer is not yet supported in OKX Wallet
     // Chain.Near,
     Chain.Optimism,

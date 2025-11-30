@@ -43,6 +43,7 @@ export const ledgerWallet = createWallet({
     Chain.Ethereum,
     Chain.Gnosis,
     Chain.Litecoin,
+    Chain.Monad,
     Chain.Near,
     Chain.Optimism,
     Chain.Polygon,
@@ -135,6 +136,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
     case Chain.Base:
     case Chain.Aurora:
     case Chain.Gnosis:
+    case Chain.Monad:
     case Chain.XLayer: {
       const { getEvmToolbox } = await import("@swapkit/toolboxes/evm");
       const signer = await getLedgerClient({ chain, derivationPath });

@@ -26,7 +26,8 @@ import {
   type Signer,
 } from "ethers";
 import { match } from "ts-pattern";
-import { toHexString } from "../helpers";
+import { getEvmApi } from "../api";
+import { getNetworkParams, toHexString } from "../helpers";
 import type {
   ApproveParams,
   CallParams,
@@ -80,6 +81,8 @@ export function BaseEVMToolbox<
     getAddress: () => {
       return signer ? signer.getAddress() : undefined;
     },
+    getBalance: getEvmApi(chain).getBalance,
+    getNetworkParams: getNetworkParams(chain),
     isApproved: getIsApproved({ chain, provider }),
     sendTransaction: getSendTransaction({ chain, isEIP1559Compatible, provider, signer }),
     signMessage: signer ? (message: string | Uint8Array) => signer.signMessage(message) : undefined,

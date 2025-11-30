@@ -1,11 +1,12 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "swapkit-monorepo",
       "devDependencies": {
         "@biomejs/biome": "2.3.4",
-        "@bitgo/utxo-lib": "11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@changesets/changelog-github": "0.5.1",
         "@changesets/cli": "2.29.7",
         "@cosmjs/amino": "0.37.0",
@@ -54,7 +55,7 @@
     },
     "packages/browser": {
       "name": "@swapkit/browser",
-      "version": "4.1.6",
+      "version": "4.1.10",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -68,7 +69,7 @@
     },
     "packages/core": {
       "name": "@swapkit/core",
-      "version": "4.1.6",
+      "version": "4.1.10",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/plugins": "workspace:*",
@@ -84,7 +85,7 @@
     },
     "packages/helpers": {
       "name": "@swapkit/helpers",
-      "version": "4.5.6",
+      "version": "4.5.9",
       "dependencies": {
         "@near-js/providers": "~2.5.0",
         "@swapkit/contracts": "workspace:*",
@@ -104,7 +105,7 @@
     },
     "packages/plugins": {
       "name": "@swapkit/plugins",
-      "version": "4.2.6",
+      "version": "4.2.9",
       "dependencies": {
         "@near-js/transactions": "2.5.0",
         "@near-js/utils": "~2.5.0",
@@ -125,7 +126,7 @@
     },
     "packages/sdk": {
       "name": "@swapkit/sdk",
-      "version": "4.2.6",
+      "version": "4.2.10",
       "dependencies": {
         "@swapkit/core": "workspace:*",
         "@swapkit/helpers": "workspace:*",
@@ -138,7 +139,7 @@
     },
     "packages/server": {
       "name": "@swapkit/server",
-      "version": "4.0.50",
+      "version": "4.0.53",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/tokens": "workspace:*",
@@ -148,7 +149,7 @@
     },
     "packages/tokens": {
       "name": "@swapkit/tokens",
-      "version": "4.1.1",
+      "version": "4.1.2",
       "dependencies": {
         "ts-pattern": "^5.9.0",
       },
@@ -159,10 +160,10 @@
     },
     "packages/toolboxes": {
       "name": "@swapkit/toolboxes",
-      "version": "4.3.6",
+      "version": "4.3.9",
       "dependencies": {
         "@bitcoinerlab/secp256k1": "~1.2.0",
-        "@bitgo/utxo-lib": "~11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@cosmjs/amino": "~0.37.0",
         "@cosmjs/crypto": "0.37.0",
         "@cosmjs/proto-signing": "~0.37.0",
@@ -212,7 +213,7 @@
       },
       "devDependencies": {
         "@bitcoinerlab/secp256k1": "1.2.0",
-        "@bitgo/utxo-lib": "11.13.1",
+        "@bitgo/utxo-lib": "11.16.1",
         "@cosmjs/amino": "0.37.0",
         "@cosmjs/crypto": "0.37.0",
         "@cosmjs/proto-signing": "0.37.0",
@@ -273,7 +274,7 @@
     },
     "packages/ui": {
       "name": "@swapkit/ui",
-      "version": "0.3.6",
+      "version": "0.3.10",
       "dependencies": {
         "@hookform/resolvers": "5.2.2",
         "@radix-ui/react-accordion": "1.2.12",
@@ -311,14 +312,14 @@
     },
     "packages/wallet-core": {
       "name": "@swapkit/wallet-core",
-      "version": "4.0.50",
+      "version": "4.0.53",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
       },
     },
     "packages/wallet-extensions": {
       "name": "@swapkit/wallet-extensions",
-      "version": "4.1.6",
+      "version": "4.1.10",
       "dependencies": {
         "@keplr-wallet/types": "0.12.285",
         "@near-js/accounts": "~2.5.0",
@@ -347,7 +348,7 @@
     },
     "packages/wallet-hardware": {
       "name": "@swapkit/wallet-hardware",
-      "version": "4.2.6",
+      "version": "4.2.10",
       "dependencies": {
         "@cosmjs/crypto": "0.37.0",
         "@keepkey/keepkey-sdk": "~0.2.62",
@@ -402,7 +403,7 @@
     },
     "packages/wallet-keystore": {
       "name": "@swapkit/wallet-keystore",
-      "version": "4.1.6",
+      "version": "4.1.9",
       "dependencies": {
         "@scure/bip39": "2.0.1",
         "@swapkit/helpers": "workspace:*",
@@ -413,7 +414,7 @@
     },
     "packages/wallet-mobile": {
       "name": "@swapkit/wallet-mobile",
-      "version": "4.0.50",
+      "version": "4.0.53",
       "dependencies": {
         "@swapkit/helpers": "workspace:*",
         "@swapkit/toolboxes": "workspace:*",
@@ -421,7 +422,7 @@
     },
     "packages/wallets": {
       "name": "@swapkit/wallets",
-      "version": "4.3.6",
+      "version": "4.3.10",
       "dependencies": {
         "@coinbase/wallet-sdk": "~4.3.7",
         "@cosmjs/amino": "~0.37.0",
@@ -769,7 +770,7 @@
 
     "@bitgo/secp256k1": ["@bitgo/secp256k1@1.7.0", "", { "dependencies": { "@brandonblack/musig": "^0.0.1-alpha.0", "@noble/secp256k1": "1.6.3", "bip32": "^3.0.1", "create-hash": "^1.2.0", "create-hmac": "^1.1.7", "ecpair": "npm:@bitgo/ecpair@2.1.0-rc.0" } }, "sha512-pFzmFyDLNg4tyYUaSu1cvI724xxGSlMjD/G5yo/P3IEyz5WbE++3QxdijqxWubb86xpwIsNSV/coutLYUCagkQ=="],
 
-    "@bitgo/utxo-lib": ["@bitgo/utxo-lib@11.13.1", "", { "dependencies": { "@bitgo/blake2b": "^3.2.4", "@bitgo/secp256k1": "^1.7.0", "@brandonblack/musig": "^0.0.1-alpha.0", "bech32": "^2.0.0", "bip174": "npm:@bitgo-forks/bip174@3.1.0-master.4", "bitcoin-ops": "^1.3.0", "bitcoinjs-lib": "npm:@bitgo-forks/bitcoinjs-lib@7.1.0-master.11", "bs58check": "^2.1.2", "cashaddress": "^1.1.0", "fastpriorityqueue": "^0.7.1", "typeforce": "^1.11.3", "varuint-bitcoin": "^1.1.2" } }, "sha512-qL02OxrsfhzF4rag/0aDfcZ1RDQihlFyBhBIWQpSC3UY7xIMFT+X2Pi5/BOMsDYyB7aulThtvonAGj32mRr6xw=="],
+    "@bitgo/utxo-lib": ["@bitgo/utxo-lib@11.16.1", "", { "dependencies": { "@bitgo/blake2b": "^3.2.4", "@bitgo/secp256k1": "^1.7.0", "@brandonblack/musig": "^0.0.1-alpha.0", "bech32": "^2.0.0", "bip174": "npm:@bitgo-forks/bip174@3.1.0-master.4", "bitcoin-ops": "^1.3.0", "bitcoinjs-lib": "npm:@bitgo-forks/bitcoinjs-lib@7.1.0-master.11", "bs58check": "^2.1.2", "cashaddress": "^1.1.0", "fastpriorityqueue": "^0.7.1", "typeforce": "^1.11.3", "varuint-bitcoin": "^1.1.2" } }, "sha512-CaQ13+sAWxwIy/c+UhVaC7ZG9/jBFJ87zVMNKceQVZaYSTmcRnsodggUok/UqKxM0uF2b2FPKtcv2VOXD6M+ww=="],
 
     "@brandonblack/musig": ["@brandonblack/musig@0.0.1-alpha.1", "", {}, "sha512-00RbByQG85lSzrkDjCblzrUc2n1LJAPPrEMHS4oMg+QckE0kzjd26JytT6yx6tNU2+aOXfK7O4kGW/sKVL67cw=="],
 

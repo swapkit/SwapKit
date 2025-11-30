@@ -1,5 +1,32 @@
 # @swapkit/helpers
 
+## 4.5.9
+
+### Patch Changes
+
+- [#1614](https://github.com/swapkit/SwapKit/pull/1614) [`4bf4ca6`](https://github.com/swapkit/SwapKit/commit/4bf4ca65b55ea81c00aafa555aef6f50009e7a20) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Handle edge cases and trailing decimlas
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.2
+
+## 4.5.8
+
+### Patch Changes
+
+- [#1608](https://github.com/swapkit/SwapKit/pull/1608) [`eb73020`](https://github.com/swapkit/SwapKit/commit/eb73020fc9703e778c23ee4a17954b00730d1461) Thanks [@ice-chillios](https://github.com/ice-chillios)! - fix toCurrency formatter
+
+- Updated dependencies []:
+  - @swapkit/tokens@4.1.2
+
+## 4.5.7
+
+### Patch Changes
+
+- [#1605](https://github.com/swapkit/SwapKit/pull/1605) [`b4ad8d4`](https://github.com/swapkit/SwapKit/commit/b4ad8d4a06eb8a12250e80c82eb2a5998badb2d1) Thanks [@ice-chillios](https://github.com/ice-chillios)! - Fix tronweb import
+
+- Updated dependencies [[`3ef370f`](https://github.com/swapkit/SwapKit/commit/3ef370fd628a8cc4d37d3643209b66927b16b48c)]:
+  - @swapkit/tokens@4.1.2
+
 ## 4.5.6
 
 ### Patch Changes

@@ -71,10 +71,14 @@ describe("Cosmos Toolbox", () => {
     }
   });
 
-  test("should fetch balance for known address", async () => {
-    const balances = await context.toolbox.getBalance(KNOWN_COSMOS_ADDRESS);
-    expect(balances[0]).toMatchObject({ chain: Chain.Cosmos, decimal: 6, symbol: "ATOM" });
-  });
+  test(
+    "should fetch balance for known address",
+    async () => {
+      const balances = await context.toolbox.getBalance(KNOWN_COSMOS_ADDRESS);
+      expect(balances[0]).toMatchObject({ chain: Chain.Cosmos, decimal: 6, symbol: "ATOM" });
+    },
+    { retry: 3, timeout: 10000 },
+  );
 
   test("should not have 8 decimal bug (would be 100x too much)", () => {
     const atomValue = AssetValue.from({ chain: Chain.Cosmos, value: 3.2 });
