@@ -42,11 +42,11 @@
     --sk-ui-ring: 24 5.7% 82.9%;
   }
 
-  * {
+  /* * {
     @apply sk-ui-border-border sk-ui-antialiased;
   }
   
   body {
     @apply sk-ui-bg-background sk-ui-text-foreground;
-  }
+  } */
 }
