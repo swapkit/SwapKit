@@ -22,12 +22,7 @@
   },
   "name": "@internal/playground-vite-lite",
   "private": true,
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+  "scripts": { "build": "vite build", "dev": "vite", "lint": "eslint .", "preview": "vite preview" },
   "type": "module",
   "version": "0.0.0"
 }
