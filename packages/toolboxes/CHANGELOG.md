@@ -1,5 +1,16 @@
 # @swapkit/toolboxes
 
+## 4.3.10
+
+### Patch Changes
+
+- [#1619](https://github.com/swapkit/SwapKit/pull/1619) [`7cbd7b6`](https://github.com/swapkit/SwapKit/commit/7cbd7b6aac79fbf186149ebc78954f513e7ae0dd) Thanks [@towanTG](https://github.com/towanTG)! - Filters out Rujira assets with double dash on THORChain
+
+- [#1617](https://github.com/swapkit/SwapKit/pull/1617) [`a3c50c0`](https://github.com/swapkit/SwapKit/commit/a3c50c0ef56eb00121009ed9f13ea601cc8ece38) Thanks [@towanTG](https://github.com/towanTG)! - Fixes TX version of Zcash transactions
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.9
+
 ## 4.3.9
 
 ### Patch Changes

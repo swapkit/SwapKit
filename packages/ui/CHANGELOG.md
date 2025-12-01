@@ -1,5 +1,15 @@
 # @swapkit/ui
 
+## 0.3.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @swapkit/helpers@4.5.9
+  - @swapkit/sdk@4.2.11
+  - @swapkit/wallet-keystore@4.1.10
+  - @swapkit/wallets@4.3.11
+
 ## 0.3.10
 
 ### Patch Changes
