@@ -106,6 +106,7 @@
       "name": "@swapkit/plugins",
       "version": "4.2.9",
       "dependencies": {
+        "@mysten/sui": "1.44.0",
         "@near-js/transactions": "2.5.0",
         "@near-js/utils": "~2.5.0",
         "@polkadot/keyring": "~13.5.7",

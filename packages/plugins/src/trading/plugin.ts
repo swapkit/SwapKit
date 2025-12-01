@@ -21,11 +21,11 @@ const isEVMTransaction = (tx: unknown) => EVMTransactionSchema.safeParse(tx).suc
 const isTronTransaction = (tx: unknown) => TronTransactionSchema.safeParse(tx).success;
 const isCosmosTransaction = (tx: unknown) => CosmosTransactionSchema.safeParse(tx).success;
 
-export const SwapPlugin = createPlugin({
+export const TradingPlugin = createPlugin({
   methods: ({ getWallet }) => ({
     approveAssetValue: approve({ approveMode: ApproveMode.Approve, getWallet }),
     isAssetValueApproved: approve({ approveMode: ApproveMode.CheckOnly, getWallet }),
-    swap: function swap({ route }: SwapParams<"swap", QuoteResponseRoute>) {
+    swap: function swap({ route }: SwapParams<"trading", QuoteResponseRoute>) {
       const { sellAsset, tx } = route;
       const sellAssetValue = AssetValue.from({ asset: sellAsset });
       const chain = sellAssetValue.chain;
@@ -98,11 +98,16 @@ export const SwapPlugin = createPlugin({
 
           return wallet.signAndBroadcastTransaction(transaction);
         })
+        .with({ chain: Chain.Sui, tx: P.string }, async ({ chain, tx }) => {
+          const wallet = await getWallet(chain);
+
+          return wallet.signAndBroadcastTransaction(tx);
+        })
         .otherwise(() => {
           throw new SwapKitError("plugin_generic_swap_invalid_data", { chain, tx });
         });
     },
   }),
-  name: "swap",
+  name: "trading",
   properties: { supportedSwapkitProviders: [] },
 });

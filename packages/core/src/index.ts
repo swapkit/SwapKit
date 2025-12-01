@@ -214,7 +214,7 @@ export function SwapKit<
     const useV3Flow = supportsV3SwapFlow(wallet.walletType as WalletOption, fromChain) && route.tx;
 
     if (useV3Flow) {
-      const plugin = getSwapKitPlugin("swap");
+      const plugin = getSwapKitPlugin("trading");
       if ("swap" in plugin) {
         // @ts-expect-error TODO: fix this
         return plugin.swap({ ...rest, route });

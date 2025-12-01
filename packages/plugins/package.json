@@ -1,6 +1,7 @@
 {
   "author": "swapkit-oss",
   "dependencies": {
+    "@mysten/sui": "1.44.0",
     "@near-js/transactions": "2.5.0",
     "@near-js/utils": "~2.5.0",
     "@polkadot/keyring": "~13.5.7",
@@ -61,17 +62,17 @@
       "require": "./dist/src/solana/index.cjs",
       "types": "./dist/types/solana/index.d.ts"
     },
-    "./swap": {
-      "bun": "./src/swap/index.ts",
-      "default": "./dist/src/swap/index.js",
-      "require": "./dist/src/swap/index.cjs",
-      "types": "./dist/types/swap/index.d.ts"
-    },
     "./thorchain": {
       "bun": "./src/thorchain/index.ts",
       "default": "./dist/src/thorchain/index.js",
       "require": "./dist/src/thorchain/index.cjs",
       "types": "./dist/types/thorchain/index.d.ts"
+    },
+    "./trading": {
+      "bun": "./src/trading/index.ts",
+      "default": "./dist/src/trading/index.js",
+      "require": "./dist/src/trading/index.cjs",
+      "types": "./dist/types/trading/index.d.ts"
     }
   },
   "files": ["dist/", "src/"],

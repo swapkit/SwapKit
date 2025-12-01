@@ -1,3 +1,4 @@
+import type { Transaction } from "@mysten/sui/transactions";
 import { AssetValue, Chain, getChainConfig, SwapKitError } from "@swapkit/helpers";
 import { match, P } from "ts-pattern";
 import type { SuiCreateTransactionParams, SuiToolboxParams, SuiTransferParams } from "./types";
@@ -154,11 +155,37 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
     return txHash;
   }
 
+  async function broadcastTransaction(signedTransaction: { bytes: string; signature: string }) {
+    const suiClient = await getSuiClient();
+    const { digest: txHash } = await suiClient.executeTransactionBlock({
+      signature: signedTransaction.signature,
+      transactionBlock: signedTransaction.bytes,
+    });
+
+    return txHash;
+  }
+
+  async function signAndBroadcastTransaction(transaction: Transaction | Uint8Array<ArrayBuffer> | string) {
+    if (!signer) {
+      throw new SwapKitError("toolbox_sui_no_signer");
+    }
+
+    const suiClient = await getSuiClient();
+
+    const txBytes = typeof transaction === "string" ? Uint8Array.from(Buffer.from(transaction, "base64")) : transaction;
+
+    const { digest: txHash } = await suiClient.signAndExecuteTransaction({ signer, transaction: txBytes });
+
+    return txHash;
+  }
+
   return {
+    broadcastTransaction,
     createTransaction,
     estimateTransactionFee,
     getAddress,
     getBalance,
+    signAndBroadcastTransaction,
     signTransaction,
     transfer,
     validateAddress,

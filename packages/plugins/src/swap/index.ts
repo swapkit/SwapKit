@@ -1,1 +1,0 @@
-export { SwapPlugin } from "./plugin";
