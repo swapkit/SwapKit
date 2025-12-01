@@ -2,7 +2,7 @@ import type { Chain, ProviderName, TokenNames, WalletOption } from "@swapkit/hel
 
 const getAssetsBaseUrl = () => {
   if (import.meta.env.MODE === "development") {
-    return "https://storage.googleapis.com/token-list-swapkit";
+    return "https://storage.googleapis.com/token-list-swapkit-dev";
   }
 
   return "https://storage.googleapis.com/token-list-swapkit";
