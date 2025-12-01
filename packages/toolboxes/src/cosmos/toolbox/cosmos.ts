@@ -213,7 +213,12 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
       const denomBalances = await cosmosBalanceDenomsGetter(rpcUrl)(address);
       const balances = await Promise.all(
         denomBalances
-          .filter(({ denom }) => denom && !denom.includes("IBC/"))
+          .filter(
+            ({ denom }) =>
+              denom &&
+              !denom.includes("IBC/") &&
+              !([Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) && denom.split("-").length > 2),
+          )
           .map(({ denom, amount }) => {
             const fullDenom =
               [Chain.THORChain, Chain.Maya].includes(chain as TCLikeChain) &&
