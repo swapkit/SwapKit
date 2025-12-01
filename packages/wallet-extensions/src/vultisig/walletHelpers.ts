@@ -115,7 +115,7 @@ export async function getVultisigAddress(chain: Chain) {
       await windowProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 
       let account = await windowProvider.request({ method: "get_accounts" });
-      if (!account) {
+      if (!account || (Array.isArray(account) && account.length === 0)) {
         const connectedAcount = await windowProvider.request({ method: "request_accounts" });
         account = connectedAcount[0].address;
       }
