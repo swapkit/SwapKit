@@ -393,6 +393,9 @@ const errorCodes = {
   toolbox_sui_broadcast_error: 90706,
   toolbox_sui_no_signer: 90707,
   toolbox_sui_no_sender: 90708,
+  toolbox_sui_missing_coin_type: 90709,
+  toolbox_sui_no_coins_found: 90710,
+  toolbox_sui_insufficient_balance: 90711,
   /**
    * Toolboxes - General
    */
