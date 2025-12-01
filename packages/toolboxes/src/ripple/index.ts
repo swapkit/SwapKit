@@ -138,6 +138,14 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     return signer.signTransaction(tx);
   };
 
+  const signRawTransaction = (tx: string) => {
+    if (!signer) {
+      throw new SwapKitError({ errorKey: "toolbox_ripple_signer_not_found" });
+    }
+    const transaction = JSON.parse(tx) as Transaction;
+    return signer.signTransaction(transaction);
+  };
+
   const broadcastTransaction = async (signedTxHex: string) => {
     const submitResult = await client.submitAndWait(signedTxHex);
     const result = submitResult.result;
@@ -172,6 +180,7 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     getBalance,
     // Signer related
     signer, // Expose the signer instance if created/provided
+    signRawTransaction,
     signTransaction,
     transfer,
     validateAddress: rippleValidateAddress,

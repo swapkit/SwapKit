@@ -124,7 +124,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
         return tx;
       };
 
-      return { ...toolbox, address, transfer };
+      return { ...toolbox, address, signTransaction: signer.signTransaction, transfer };
     }
 
     case Chain.Ethereum:
