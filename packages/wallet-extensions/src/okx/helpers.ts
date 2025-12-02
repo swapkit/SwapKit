@@ -73,10 +73,11 @@ export async function getWalletMethods(chain: Chain) {
           Chain.Berachain,
           Chain.BinanceSmartChain,
           Chain.Ethereum,
-          Chain.XLayer,
           Chain.Gnosis,
+          Chain.Monad,
           Chain.Optimism,
           Chain.Polygon,
+          Chain.XLayer,
         ),
         async () => {
           if (!(window.okxwallet && "send" in window.okxwallet)) {
