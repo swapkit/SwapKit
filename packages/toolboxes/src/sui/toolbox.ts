@@ -1,6 +1,53 @@
+import type { SuiClient } from "@mysten/sui/client";
+import type { Transaction } from "@mysten/sui/transactions";
 import { AssetValue, Chain, getChainConfig, SwapKitError } from "@swapkit/helpers";
 import { match, P } from "ts-pattern";
 import type { SuiCreateTransactionParams, SuiToolboxParams, SuiTransferParams } from "./types";
+
+type CoinData = { coinObjectId: string; balance: string };
+
+async function fetchAllCoins(
+  suiClient: SuiClient,
+  owner: string,
+  coinType: string,
+  coins: CoinData[] = [],
+  cursor?: string | null,
+): Promise<CoinData[]> {
+  const response = await suiClient.getCoins({ coinType, cursor, owner });
+  const allCoins = [...coins, ...response.data];
+
+  return response.hasNextPage ? fetchAllCoins(suiClient, owner, coinType, allCoins, response.nextCursor) : allCoins;
+}
+
+function prepareCoinForTransfer(tx: Transaction, coins: CoinData[], amountToSend: bigint) {
+  const totalBalance = coins.reduce((sum, coin) => sum + BigInt(coin.balance), 0n);
+
+  if (totalBalance < amountToSend) {
+    throw new SwapKitError("toolbox_sui_insufficient_balance", {
+      available: totalBalance.toString(),
+      required: amountToSend.toString(),
+    });
+  }
+
+  const { ids } = coins.reduce<{ ids: string[]; total: bigint }>(
+    (acc, coin) => {
+      if (acc.total >= amountToSend) return acc;
+      return { ids: [...acc.ids, coin.coinObjectId], total: acc.total + BigInt(coin.balance) };
+    },
+    { ids: [], total: 0n },
+  );
+
+  const primaryCoinId = ids[0] as string;
+  const otherCoinIds = ids.slice(1);
+
+  if (otherCoinIds.length > 0) {
+    tx.mergeCoins(primaryCoinId, otherCoinIds);
+  }
+
+  const [coinToTransfer] = tx.splitCoins(primaryCoinId, [amountToSend]);
+
+  return coinToTransfer;
+}
 
 export async function getSuiAddressValidator() {
   const { isValidSuiAddress } = await import("@mysten/sui/utils");
@@ -37,7 +84,7 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
   async function getBalance(targetAddress?: string) {
     const addressToQuery = targetAddress || getAddress();
     if (!addressToQuery) {
-      throw new SwapKitError("toolbox_sui_address_required" as any);
+      throw new SwapKitError("toolbox_sui_address_required");
     }
 
     const { baseDecimal: fromBaseDecimal, chain } = getChainConfig(Chain.Sui);
@@ -105,7 +152,22 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
         const [suiCoin] = tx.splitCoins(tx.gas, [assetValue.getBaseValue("string")]);
         tx.transferObjects([suiCoin], recipient);
       } else {
-        throw new SwapKitError("toolbox_sui_custom_token_transfer_not_implemented" as any);
+        // Custom token transfer - need to fetch and merge coin objects
+        const coinType = assetValue.address;
+        if (!coinType) {
+          throw new SwapKitError("toolbox_sui_missing_coin_type");
+        }
+
+        const suiClient = await getSuiClient();
+        const amountToSend = assetValue.getBaseValue("bigint");
+
+        const coins = await fetchAllCoins(suiClient, senderAddress, coinType);
+        if (!coins.length) {
+          throw new SwapKitError("toolbox_sui_no_coins_found", { coinType });
+        }
+
+        const coinToSend = prepareCoinForTransfer(tx, coins, amountToSend);
+        tx.transferObjects([coinToSend], recipient);
       }
 
       if (gasBudget) {
@@ -117,7 +179,8 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
 
       return { tx, txBytes };
     } catch (error) {
-      throw new SwapKitError("toolbox_sui_transaction_creation_error" as any, { error });
+      if (error instanceof SwapKitError) throw error;
+      throw new SwapKitError("toolbox_sui_transaction_creation_error", { error });
     }
   }
 
@@ -139,7 +202,7 @@ export async function getSuiToolbox({ provider: providerParam, ...signerParams }
 
   async function transfer({ assetValue, gasBudget, recipient }: SuiTransferParams) {
     if (!signer) {
-      throw new SwapKitError("toolbox_sui_no_signer" as any);
+      throw new SwapKitError("toolbox_sui_no_signer");
     }
 
     const sender = signer.toSuiAddress() || getAddress();
