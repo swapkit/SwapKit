@@ -143,6 +143,7 @@ export async function getSolanaToolbox(
     getBalance,
     getConnection,
     getPubkeyFromAddress,
+    signRawTransaction: signRawTransaction(getConnection, signer),
     signTransaction: signTransaction(getConnection, signer),
     transfer: transfer(getConnection, signer),
   };
@@ -355,6 +356,14 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
   return async (transaction: Transaction | VersionedTransaction) => {
     const connection = await getConnection();
     return connection.sendRawTransaction(transaction.serialize());
+  };
+}
+
+function signRawTransaction(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
+  return async (tx: string) => {
+    const { Transaction } = await import("@solana/web3.js");
+    const transaction = Transaction.from(Buffer.from(tx, "base64"));
+    return signTransaction(getConnection, signer)(transaction);
   };
 }
 

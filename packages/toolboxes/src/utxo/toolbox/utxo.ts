@@ -208,6 +208,7 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       const keys = createKeysForPath(params);
       return keys.toWIF();
     },
+    signRawTransaction: signer ? signRawTransaction(signer as ChainSigner<Psbt, Psbt>) : undefined,
     transfer: transfer(signer as UtxoToolboxParams["BTC"]["signer"]),
     validateAddress: (address: string) => validateAddress({ address, chain }),
   };
@@ -378,6 +379,15 @@ export function addressFromKeysGetter(chain: UTXOChain) {
     if (!address) throw new SwapKitError("toolbox_utxo_invalid_address", { error: "Address not defined" });
 
     return address;
+  };
+}
+
+function signRawTransaction(signer: ChainSigner<Psbt, Psbt>) {
+  return async function signRawTransaction(tx: string) {
+    const psbt = Psbt.fromBase64(tx);
+    const signed = await signer.signTransaction(psbt);
+    signed.finalizeAllInputs();
+    return signed.extractTransaction().toHex();
   };
 }
 

@@ -1,11 +1,77 @@
 import { networks as zcashNetworks } from "@bitgo/utxo-lib";
-import { Chain, getRPCUrl, RequestClient, SKConfig, SwapKitError, type UTXOChain, warnOnce } from "@swapkit/helpers";
+import {
+  Chain,
+  getChainConfig,
+  getRPCUrl,
+  RequestClient,
+  SKConfig,
+  SwapKitError,
+  type UTXOChain,
+  warnOnce,
+} from "@swapkit/helpers";
 import { networks } from "bitcoinjs-lib";
 // @ts-expect-error
 import coininfo from "coininfo";
 import { uniqid } from "../../utils";
 
+// =============================================================================
+// Types
+// =============================================================================
+
 type BlockchairParams<T> = T & { chain: Chain; apiKey?: string };
+type UtxoApiParams<T> = T & { chain: Chain; apiKey?: string; useRpcPriority: boolean };
+
+// =============================================================================
+// Priority Detection Helpers
+// =============================================================================
+
+function hasCustomRpcUrl(chain: Chain): boolean {
+  const configuredUrls = SKConfig.get("rpcUrls")[chain] || [];
+  const defaultUrls = getChainConfig(chain).rpcUrls || [];
+
+  if (configuredUrls.length === 0) return false;
+  if (defaultUrls.length === 0) return configuredUrls.length > 0;
+
+  return configuredUrls[0] !== defaultUrls[0];
+}
+
+function hasBlockchairApiKey(): boolean {
+  const apiKey = SKConfig.get("apiKeys").blockchair;
+  return Boolean(apiKey && apiKey.length > 0);
+}
+
+/**
+ * Determines if RPC should be prioritized over Blockchair.
+ *
+ * Priority logic:
+ * 1. If Blockchair API key is set → use Blockchair (return false)
+ * 2. If custom RPC is set but no Blockchair key → use RPC (return true)
+ * 3. If neither is set → use Blockchair without key (return false)
+ */
+function shouldPrioritizeRpc(chain: Chain): boolean {
+  return hasCustomRpcUrl(chain) && !hasBlockchairApiKey();
+}
+
+// =============================================================================
+// RPC Request Helper
+// =============================================================================
+
+async function rpcRequest<T>(rpcUrl: string, method: string, params: unknown[] = []): Promise<T> {
+  const response = await RequestClient.post<{
+    id: string;
+    result: T;
+    error: { message: string; code?: number } | null;
+  }>(rpcUrl, {
+    body: JSON.stringify({ id: uniqid(), jsonrpc: "1.0", method, params }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (response.error) {
+    throw new SwapKitError("toolbox_utxo_api_error", { error: response.error.message });
+  }
+
+  return response.result;
+}
 type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
   offset?: number;
   limit?: number;
@@ -14,48 +80,60 @@ type BlockchairFetchUnspentUtxoParams = BlockchairParams<{
   accumulativeValue?: number;
 }>;
 
-async function broadcastUTXOTx({ chain, txHash }: { chain: Chain; txHash: string }) {
-  // Use Blockchair's push transaction endpoint (no API key needed)
+// =============================================================================
+// Broadcast Transaction
+// =============================================================================
+
+async function broadcastViaBlockchair(chain: Chain, txHash: string) {
   const url = `${baseUrl(chain)}/push/transaction`;
   const body = JSON.stringify({ data: txHash });
 
+  const response = await RequestClient.post<{
+    data: { transaction_hash: string } | null;
+    context: { code: number; error?: string };
+  }>(url, { body, headers: { "Content-Type": "application/json" } });
+
+  if (response.context.code !== 200) {
+    throw new SwapKitError("toolbox_utxo_broadcast_failed", {
+      error: response.context.error || "Transaction broadcast failed",
+    });
+  }
+
+  return response.data?.transaction_hash || txHash;
+}
+
+async function broadcastViaRpc(chain: Chain, txHash: string) {
+  const rpcUrl = await getRPCUrl(chain);
+  const result = await rpcRequest<string>(rpcUrl, "sendrawtransaction", [txHash]);
+
+  if (result.includes('"code":-26')) {
+    throw new SwapKitError("toolbox_utxo_invalid_transaction", { error: "Transaction amount was too low" });
+  }
+
+  return result;
+}
+
+async function broadcastUTXOTx({
+  chain,
+  txHash,
+  useRpcPriority,
+}: {
+  chain: Chain;
+  txHash: string;
+  useRpcPriority: boolean;
+}) {
+  const [primary, fallback] = useRpcPriority
+    ? [() => broadcastViaRpc(chain, txHash), () => broadcastViaBlockchair(chain, txHash)]
+    : [() => broadcastViaBlockchair(chain, txHash), () => broadcastViaRpc(chain, txHash)];
+
   try {
-    const response = await RequestClient.post<{
-      data: { transaction_hash: string } | null;
-      context: { code: number; error?: string };
-    }>(url, { body, headers: { "Content-Type": "application/json" } });
-
-    if (response.context.code !== 200) {
-      throw new SwapKitError("toolbox_utxo_broadcast_failed", {
-        error: response.context.error || "Transaction broadcast failed",
-      });
-    }
-
-    return response.data?.transaction_hash || txHash;
+    return await primary();
   } catch (error) {
-    // Fallback to RPC if Blockchair fails
-    const rpcUrl = await getRPCUrl(chain);
-    if (rpcUrl) {
-      const rpcBody = JSON.stringify({ id: uniqid(), jsonrpc: "2.0", method: "sendrawtransaction", params: [txHash] });
-
-      const rpcResponse = await RequestClient.post<{
-        id: string;
-        result: string;
-        error: { message: string; code?: number } | null;
-      }>(rpcUrl, { body: rpcBody, headers: { "Content-Type": "application/json" } });
-
-      if (rpcResponse.error) {
-        throw new SwapKitError("toolbox_utxo_broadcast_failed", { error: rpcResponse.error?.message });
-      }
-
-      if (rpcResponse.result.includes('"code":-26')) {
-        throw new SwapKitError("toolbox_utxo_invalid_transaction", { error: "Transaction amount was too low" });
-      }
-
-      return rpcResponse.result;
+    try {
+      return await fallback();
+    } catch {
+      throw error;
     }
-
-    throw error;
   }
 }
 
@@ -126,40 +204,122 @@ async function blockchairRequest<T>(url: string, apiKey?: string): Promise<T> {
   return response.data as T;
 }
 
-async function getAddressData({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
+// =============================================================================
+// Get Address Data & Balance
+// =============================================================================
+
+type AddressDataResult = {
+  address: { balance: number };
+  utxo: { block_id: number; index: number; transaction_hash: string; value: number }[];
+};
+
+async function getAddressDataViaBlockchair(chain: Chain, address: string, apiKey?: string): Promise<AddressDataResult> {
+  const response = await blockchairRequest<BlockchairAddressResponse>(
+    `${baseUrl(chain)}/dashboards/address/${address}?transaction_details=true`,
+    apiKey,
+  );
+  const data = response[address];
+  if (!data) {
+    return { address: { balance: 0 }, utxo: [] };
+  }
+  return { address: { balance: data.address.balance }, utxo: data.utxo };
+}
+
+async function getAddressDataViaRpc(chain: Chain, address: string): Promise<AddressDataResult> {
+  const rpcUrl = await getRPCUrl(chain);
+  const scanResult = await rpcRequest<{
+    success: boolean;
+    unspents: { txid: string; vout: number; scriptPubKey: string; amount: number; height: number }[];
+    total_amount: number;
+  }>(rpcUrl, "scantxoutset", ["start", [`addr(${address})`]]);
+
+  if (!scanResult.success) {
+    throw new SwapKitError("toolbox_utxo_api_error", { error: "scantxoutset failed" });
+  }
+
+  return {
+    address: { balance: Math.round(scanResult.total_amount * 1e8) },
+    utxo: scanResult.unspents.map((u) => ({
+      block_id: u.height,
+      index: u.vout,
+      transaction_hash: u.txid,
+      value: Math.round(u.amount * 1e8),
+    })),
+  };
+}
+
+async function getAddressData({ address, chain, apiKey, useRpcPriority }: UtxoApiParams<{ address?: string }>) {
   if (!address) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
-  try {
-    const response = await blockchairRequest<BlockchairAddressResponse>(
-      `${baseUrl(chain)}/dashboards/address/${address}?transaction_details=true`,
-      apiKey,
-    );
+  const [primary, fallback] = useRpcPriority
+    ? [() => getAddressDataViaRpc(chain, address), () => getAddressDataViaBlockchair(chain, address, apiKey)]
+    : [() => getAddressDataViaBlockchair(chain, address, apiKey), () => getAddressDataViaRpc(chain, address)];
 
-    return response[address];
+  try {
+    return await primary();
   } catch {
-    return { address: { balance: 0, transaction_count: 0 }, utxo: [] };
+    try {
+      return await fallback();
+    } catch {
+      return { address: { balance: 0 }, utxo: [] };
+    }
   }
 }
 
-async function getUnconfirmedBalance({ address, chain, apiKey }: BlockchairParams<{ address?: string }>) {
-  const response = await getAddressData({ address, apiKey, chain });
+async function getUnconfirmedBalance({ address, chain, apiKey, useRpcPriority }: UtxoApiParams<{ address?: string }>) {
+  if (!address) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "Address is required" });
 
-  return response?.address.balance || 0;
-}
-
-async function getRawTx({ chain, apiKey, txHash }: BlockchairParams<{ txHash?: string }>) {
-  if (!txHash) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "TxHash is required" });
+  const [primary, fallback] = useRpcPriority
+    ? [() => getAddressDataViaRpc(chain, address), () => getAddressDataViaBlockchair(chain, address, apiKey)]
+    : [() => getAddressDataViaBlockchair(chain, address, apiKey), () => getAddressDataViaRpc(chain, address)];
 
   try {
-    const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
-      `${baseUrl(chain)}/raw/transaction/${txHash}`,
-      apiKey,
-    );
-    return rawTxResponse?.[txHash]?.raw_transaction || "";
+    const result = await primary();
+    return result?.address.balance || 0;
+  } catch {
+    try {
+      const result = await fallback();
+      return result?.address.balance || 0;
+    } catch {
+      return 0;
+    }
+  }
+}
+
+// =============================================================================
+// Get Raw Transaction
+// =============================================================================
+
+async function getRawTxViaBlockchair(chain: Chain, txHash: string, apiKey?: string) {
+  const rawTxResponse = await blockchairRequest<BlockchairRawTransactionResponse>(
+    `${baseUrl(chain)}/raw/transaction/${txHash}`,
+    apiKey,
+  );
+  return rawTxResponse?.[txHash]?.raw_transaction || "";
+}
+
+async function getRawTxViaRpc(chain: Chain, txHash: string) {
+  const rpcUrl = await getRPCUrl(chain);
+  return rpcRequest<string>(rpcUrl, "getrawtransaction", [txHash]);
+}
+
+async function getRawTx({ chain, apiKey, txHash, useRpcPriority }: UtxoApiParams<{ txHash?: string }>) {
+  if (!txHash) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "TxHash is required" });
+
+  const [primary, fallback] = useRpcPriority
+    ? [() => getRawTxViaRpc(chain, txHash), () => getRawTxViaBlockchair(chain, txHash, apiKey)]
+    : [() => getRawTxViaBlockchair(chain, txHash, apiKey), () => getRawTxViaRpc(chain, txHash)];
+
+  try {
+    return await primary();
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Failed to fetch raw transaction: ${errorMessage}`);
-    return "";
+    try {
+      return await fallback();
+    } catch {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to fetch raw transaction: ${errorMessage}`);
+      return "";
+    }
   }
 }
 
@@ -261,21 +421,35 @@ async function getUnspentUtxos({
   }
 }
 
-async function getUtxos({
+// =============================================================================
+// Get UTXOs
+// =============================================================================
+
+type UtxoResult = {
+  address: string;
+  hash: string;
+  index: number;
+  txHex: string | undefined;
+  value: number;
+  witnessUtxo: { script: Buffer; value: number };
+};
+
+async function getUtxosViaBlockchair({
   address,
   chain,
   apiKey,
   fetchTxHex = true,
   targetValue,
-}: BlockchairParams<{ address: string; fetchTxHex?: boolean; targetValue?: number }>) {
+  useRpcPriority,
+}: UtxoApiParams<{ address: string; fetchTxHex?: boolean; targetValue?: number }>): Promise<UtxoResult[]> {
   const utxos = await getUnspentUtxos({ address, apiKey, chain, targetValue });
 
-  const results = [];
+  const results: UtxoResult[] = [];
 
   for (const { hash, index, script_hex, value } of utxos) {
     let txHex: string | undefined;
     if (fetchTxHex) {
-      txHex = await getRawTx({ apiKey, chain, txHash: hash });
+      txHex = await getRawTx({ apiKey, chain, txHash: hash, useRpcPriority });
     }
     results.push({
       address,
@@ -289,23 +463,123 @@ async function getUtxos({
   return results;
 }
 
+async function getUtxosViaRpc({
+  address,
+  chain,
+  fetchTxHex = true,
+  targetValue,
+}: {
+  address: string;
+  chain: Chain;
+  fetchTxHex?: boolean;
+  targetValue?: number;
+}): Promise<UtxoResult[]> {
+  const rpcUrl = await getRPCUrl(chain);
+
+  const scanResult = await rpcRequest<{
+    success: boolean;
+    unspents: { txid: string; vout: number; scriptPubKey: string; amount: number; height: number }[];
+    total_amount: number;
+  }>(rpcUrl, "scantxoutset", ["start", [`addr(${address})`]]);
+
+  if (!scanResult.success) {
+    throw new SwapKitError("toolbox_utxo_api_error", { error: "scantxoutset failed" });
+  }
+
+  let unspents = scanResult.unspents.map((u) => ({
+    ...u,
+    // Convert BTC amount to satoshis
+    value: Math.round(u.amount * 1e8),
+  }));
+
+  // Sort by value descending and pick most valuable if targetValue is set
+  unspents.sort((a, b) => b.value - a.value);
+
+  if (targetValue) {
+    const selected = [];
+    let accumulated = 0;
+    for (const utxo of unspents) {
+      selected.push(utxo);
+      accumulated += utxo.value;
+      if (accumulated >= targetValue) break;
+    }
+    unspents = selected;
+  }
+
+  const results: UtxoResult[] = [];
+
+  for (const { txid, vout, scriptPubKey, value } of unspents) {
+    let txHex: string | undefined;
+    if (fetchTxHex) {
+      try {
+        txHex = await rpcRequest<string>(rpcUrl, "getrawtransaction", [txid]);
+      } catch {
+        // Continue without txHex if fetch fails
+      }
+    }
+    results.push({
+      address,
+      hash: txid,
+      index: vout,
+      txHex,
+      value,
+      witnessUtxo: { script: Buffer.from(scriptPubKey, "hex"), value },
+    });
+  }
+
+  return results;
+}
+
+async function getUtxos({
+  address,
+  chain,
+  apiKey,
+  fetchTxHex = true,
+  targetValue,
+  useRpcPriority,
+}: UtxoApiParams<{ address: string; fetchTxHex?: boolean; targetValue?: number }>): Promise<UtxoResult[]> {
+  const [primary, fallback] = useRpcPriority
+    ? [
+        () => getUtxosViaRpc({ address, chain, fetchTxHex, targetValue }),
+        () => getUtxosViaBlockchair({ address, apiKey, chain, fetchTxHex, targetValue, useRpcPriority }),
+      ]
+    : [
+        () => getUtxosViaBlockchair({ address, apiKey, chain, fetchTxHex, targetValue, useRpcPriority }),
+        () => getUtxosViaRpc({ address, chain, fetchTxHex, targetValue }),
+      ];
+
+  try {
+    return await primary();
+  } catch (error) {
+    try {
+      return await fallback();
+    } catch {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to fetch UTXOs: ${errorMessage}`);
+      return [];
+    }
+  }
+}
+
 export function getUtxoApi(chain: UTXOChain) {
   const apiKey = SKConfig.get("apiKeys").blockchair || "";
+  const useRpcPriority = shouldPrioritizeRpc(chain);
 
+  // Only warn if using Blockchair without API key (not when using custom RPC)
   warnOnce({
-    condition: !apiKey,
+    condition: !apiKey && !useRpcPriority,
     id: "no_blockchair_api_key_warning",
     warning: "No Blockchair API key found. Functionality will be limited.",
   });
 
   return {
-    broadcastTx: (txHash: string) => broadcastUTXOTx({ chain, txHash }),
-    getAddressData: (address: string) => getAddressData({ address, apiKey, chain }),
-    getBalance: (address: string) => getUnconfirmedBalance({ address, apiKey, chain }),
-    getRawTx: (txHash: string) => getRawTx({ apiKey, chain, txHash }),
+    broadcastTx: (txHash: string) => broadcastUTXOTx({ chain, txHash, useRpcPriority }),
+    getAddressData: (address: string) => getAddressData({ address, apiKey, chain, useRpcPriority }),
+    getBalance: (address: string) => getUnconfirmedBalance({ address, apiKey, chain, useRpcPriority }),
+    getRawTx: (txHash: string) => getRawTx({ apiKey, chain, txHash, useRpcPriority }),
     getSuggestedTxFee: () => getSuggestedTxFee(chain),
     getUtxos: (params: { address: string; fetchTxHex?: boolean; targetValue?: number }) =>
-      getUtxos({ ...params, apiKey, chain }),
+      getUtxos({ ...params, apiKey, chain, useRpcPriority }),
   };
 }
 

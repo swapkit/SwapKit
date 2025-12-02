@@ -231,6 +231,17 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     return signedTx;
   }
 
+  async function signRawTransaction(tx: string): Promise<SignedTransaction> {
+    if (!signer) {
+      throw new SwapKitError("toolbox_near_no_signer");
+    }
+
+    const { Transaction } = await import("@near-js/transactions");
+    const transaction = Transaction.decode(Buffer.from(tx, "base64"));
+    const [_hash, signedTx] = await signer.signTransaction(transaction);
+    return signedTx;
+  }
+
   async function broadcastTransaction(signedTransaction: SignedTransaction) {
     const result = await provider.sendTransaction(signedTransaction);
     return result.transaction.hash;
@@ -414,6 +425,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     provider,
     serializeTransaction,
     signAndSendTransaction,
+    signRawTransaction,
     signTransaction,
     transfer,
     validateAddress: await getValidateNearAddress(),

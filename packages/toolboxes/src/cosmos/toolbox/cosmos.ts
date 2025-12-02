@@ -21,7 +21,7 @@ import {
   type TCLikeChain,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { type CosmosTransaction, SwapKitApi } from "@swapkit/helpers/api";
 import { match, P } from "ts-pattern";
 import type { CosmosToolboxParams } from "../types";
 import {
@@ -172,6 +172,26 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     return Buffer.from(txBytes).toString("hex");
   }
 
+  async function signRawTransaction(tx: CosmosTransaction) {
+    const from = await getAddress();
+
+    if (!(signer && from)) {
+      throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+    }
+
+    const signingClient = await createSigningStargateClient(rpcUrl, signer);
+    const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
+
+    const txRaw = await signingClient.sign(from, tx.msgs, tx.fee, tx.memo, {
+      accountNumber: tx.accountNumber,
+      chainId: tx.chainId,
+      sequence: tx.sequence,
+    });
+
+    const txBytes = TxRaw.encode(txRaw).finish();
+    return Buffer.from(txBytes).toString("hex");
+  }
+
   async function transfer({
     recipient,
     assetValue,
@@ -203,7 +223,15 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     return transactionHash;
   }
 
+  async function broadcastTransaction(txHex: string) {
+    const client = await createStargateClient(rpcUrl);
+    const txBytes = Uint8Array.from(Buffer.from(txHex, "hex"));
+    const result = await client.broadcastTx(txBytes);
+    return result.transactionHash;
+  }
+
   return {
+    broadcastTransaction,
     createPrivateKeyFromPhrase: createPrivateKeyFromPhrase(derivationPath),
     createTransaction: cosmosCreateTransaction,
     fetchFeeRateFromSwapKit,
@@ -251,6 +279,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         importedSigning.DirectSecp256k1Wallet ?? importedSigning.default?.DirectSecp256k1Wallet;
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
+    signRawTransaction,
     signTransaction,
     transfer,
     validateAddress: getCosmosValidateAddress(chain),
