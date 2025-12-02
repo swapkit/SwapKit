@@ -1,5 +1,11 @@
 # @swapkit/wallet-extensions
 
+## 4.1.12
+
+### Patch Changes
+
+- [#1621](https://github.com/swapkit/SwapKit/pull/1621) [`d6b21ba`](https://github.com/swapkit/SwapKit/commit/d6b21ba91c5d1550303d9a8e4b11ade035610b53) Thanks [@0xepicode](https://github.com/0xepicode)! - Fix connecting bitget and okx wallets to monad
+
 ## 4.1.11
 
 ### Patch Changes
