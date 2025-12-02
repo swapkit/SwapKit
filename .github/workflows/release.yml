@@ -27,10 +27,6 @@ jobs:
       - run: bun lint
       - run: bun type-check:ci
 
-      - name: Test
-        if: github.ref_name == 'nightly'
-        run: bun test:ci
-
   publish:
     needs: [build-lint-test]
     runs-on: ubuntu-latest

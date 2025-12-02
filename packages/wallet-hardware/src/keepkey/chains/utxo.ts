@@ -31,7 +31,7 @@ export async function utxoWalletMethods({
   chain: Exclude<UTXOChain, typeof Chain.Zcash>;
   derivationPath?: DerivationPathArray;
 }): Promise<
-  UTXOToolboxes[UTXOChain] & {
+  Omit<UTXOToolboxes[UTXOChain], "signTransaction"> & {
     address: string;
     signTransaction: (psbt: Psbt, inputs: KeepKeyInputObject[], memo?: string) => Promise<string>;
   }
@@ -105,10 +105,7 @@ export async function utxoWalletMethods({
     if (!recipient)
       throw new SwapKitError("wallet_keepkey_invalid_params", { reason: "Recipient address must be provided" });
 
-    const createTxMethod =
-      chain === Chain.BitcoinCash
-        ? (toolbox as UTXOToolboxes["BCH"]).buildTx
-        : (toolbox as UTXOToolboxes["BTC"]).createTransaction;
+    const createTxMethod = (toolbox as UTXOToolboxes["BTC"]).createTransaction;
 
     const { psbt, inputs: rawInputs } = await createTxMethod({
       ...rest,

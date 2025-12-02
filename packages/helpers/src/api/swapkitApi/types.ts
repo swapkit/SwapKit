@@ -446,6 +446,21 @@ export const EVMTransactionSchema = object({
 
 export type EVMTransaction = z.infer<typeof EVMTransactionSchema>;
 
+export const TronTransactionSchema = z.object({
+  raw_data: z.object({
+    contract: z.any(),
+    expiration: z.number(),
+    ref_block_bytes: z.string(),
+    ref_block_hash: z.string(),
+    timestamp: z.number(),
+  }),
+  raw_data_hex: z.string(),
+  txID: z.string(),
+  visible: z.boolean(),
+});
+
+export type TronTransaction = z.infer<typeof TronTransactionSchema>;
+
 export const EVMTransactionDetailsParamsSchema = array(
   union([
     string(),
@@ -468,7 +483,36 @@ export const EVMTransactionDetailsSchema = object({
 
 export type EVMTransactionDetails = z.infer<typeof EVMTransactionDetailsSchema>;
 
-const EncodeObjectSchema = object({ typeUrl: string(), value: unknown() });
+const ThorchainDepositMsgSchema = object({
+  typeUrl: string("/types.MsgDeposit"),
+  value: object({
+    coins: array(
+      object({
+        amount: string(),
+        asset: object({ chain: string(), symbol: string(), synth: boolean(), ticker: string() }),
+      }),
+    ),
+    memo: string(),
+    signer: string(),
+  }),
+});
+
+export type ThorchainDepositMsg = z.infer<typeof ThorchainDepositMsgSchema>;
+
+const CosmosSendMsgSchema = object({
+  typeUrl: string("/types.MsgSend"),
+  value: object({
+    amount: array(object({ amount: string(), denom: string() })),
+    fromAddress: string(),
+    toAddress: string(),
+  }),
+});
+
+export type CosmosSendMsg = z.infer<typeof CosmosSendMsgSchema>;
+
+const EncodeObjectSchema = object({ typeUrl: string(), value: CosmosSendMsgSchema.or(ThorchainDepositMsgSchema) });
+
+export type APICosmosEncodedObject = z.infer<typeof EncodeObjectSchema>;
 
 const FeeSchema = object({ amount: array(object({ amount: string(), denom: string() })), gas: string() });
 
@@ -572,7 +616,7 @@ export const QuoteResponseRouteItem = object({
   sourceAddress: string().describe("Source address"),
   targetAddress: optional(string().describe("Target address")),
   totalSlippageBps: number().describe("Total slippage in bps"),
-  tx: optional(union([EVMTransactionSchema, CosmosTransactionSchema, string()])),
+  tx: optional(union([EVMTransactionSchema, CosmosTransactionSchema, TronTransactionSchema, string()])),
   txType: optional(z.enum(RouteQuoteTxType)),
   warnings: RouteQuoteWarningSchema,
 });
@@ -622,3 +666,34 @@ const BalanceResponseSchema = array(
 );
 
 export type BalanceResponse = z.infer<typeof BalanceResponseSchema>;
+
+export const ApproveRequestParams = z.union([
+  z.object({ amount: z.string(), spender: z.string(), tokenIdentifier: z.string(), userWalletAddress: z.string() }),
+  z.object({
+    amount: z.string(),
+    chainId: z.enum(ChainId),
+    spender: z.string(),
+    tokenContractAddress: z.string(),
+    userWalletAddress: z.string(),
+  }),
+  z.object({ routeId: z.string() }),
+]);
+
+export type ApproveRequest = z.infer<typeof ApproveRequestParams>;
+
+export const ApproveResponseSchema = z.object({
+  approvalTransaction: z.optional(
+    z.object({
+      data: z.string(),
+      from: z.string(),
+      gasLimit: z.optional(z.string()),
+      gasPrice: z.optional(z.string()),
+      to: z.string(),
+      value: z.string(),
+    }),
+  ),
+  approvedAmount: z.string(),
+  isApproved: z.boolean(),
+});
+
+export type ApproveResponse = z.infer<typeof ApproveResponseSchema>;

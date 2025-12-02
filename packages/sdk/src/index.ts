@@ -11,6 +11,7 @@ import { NearPlugin } from "@swapkit/plugins/near";
 import { RadixPlugin } from "@swapkit/plugins/radix";
 import { SolanaPlugin } from "@swapkit/plugins/solana";
 import { MayachainPlugin, ThorchainPlugin } from "@swapkit/plugins/thorchain";
+import { TradingPlugin } from "@swapkit/plugins/trading";
 import type { createWallet } from "@swapkit/wallets";
 
 import { bitgetWallet } from "@swapkit/wallets/bitget";
@@ -92,6 +93,7 @@ export const defaultPlugins = {
   ...SolanaPlugin,
   ...NearPlugin,
   ...GardenPlugin,
+  ...TradingPlugin,
 };
 
 export const defaultWallets = {

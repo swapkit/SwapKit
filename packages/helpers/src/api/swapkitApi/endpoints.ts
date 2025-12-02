@@ -1,4 +1,5 @@
 import {
+  AssetValue,
   type Chain,
   type EVMChain,
   EVMChains,
@@ -10,6 +11,7 @@ import {
 } from "@swapkit/helpers";
 import { match, P } from "ts-pattern";
 import {
+  type ApproveResponse,
   type BalanceResponse,
   type BrokerDepositChannelParams,
   type DepositChannelResponse,
@@ -120,6 +122,26 @@ export async function getChainBalance<T extends Chain>({
   const balanceResponse = await SKRequestClient.get<BalanceResponse>(url);
   const balances = Array.isArray(balanceResponse) ? balanceResponse : [];
   return scamFilter ? filterAssets(balances) : balances;
+}
+
+export function getTokenApproval(
+  params: { spender: string; userWallet: string; assetValue: AssetValue } | { routeId: string; spender: string },
+) {
+  return match(params)
+    .with({ routeId: P.string, spender: P.string }, ({ routeId, spender }) => {
+      const url = getApiUrl(`/approve?routeId=${routeId}&sourceAddress=${spender}`);
+      return SKRequestClient.get<ApproveResponse>(url);
+    })
+    .with(
+      { assetValue: P.instanceOf(AssetValue), spender: P.string, userWallet: P.string },
+      ({ spender, userWallet, assetValue }) => {
+        const url = getApiUrl(
+          `/approve?tokenIdentifier=${assetValue.toString()}&userWalletAddress=${userWallet}&spender=${spender}&amount=${assetValue.getValue("string")}`,
+        );
+        return SKRequestClient.get<ApproveResponse>(url);
+      },
+    )
+    .exhaustive();
 }
 
 export function getTokenListProviders() {

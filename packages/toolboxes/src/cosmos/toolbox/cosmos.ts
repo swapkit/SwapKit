@@ -21,7 +21,8 @@ import {
   type TCLikeChain,
   updateDerivationPath,
 } from "@swapkit/helpers";
-import { SwapKitApi } from "@swapkit/helpers/api";
+import { type CosmosTransaction, SwapKitApi } from "@swapkit/helpers/api";
+import type { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { match, P } from "ts-pattern";
 import type { CosmosToolboxParams } from "../types";
 import {
@@ -136,41 +137,77 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     return base64.encode(account?.pubkey);
   }
 
-  async function signTransaction({
-    recipient,
-    assetValue,
-    memo = "",
-    feeRate,
-    feeOptionKey = FeeOption.Fast,
-  }: GenericTransferParams) {
+  async function signTransaction(transaction: CosmosTransaction): Promise<TxRaw> {
     const from = await getAddress();
 
     if (!(signer && from)) {
       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
     }
 
-    const feeAssetValue = AssetValue.from({ chain });
-    const assetDenom = getDenomWithChain(feeAssetValue);
-    const txFee = feeRate || feeToStdFee((await getFees(chain, SafeDefaultFeeValues[chain]))[feeOptionKey], assetDenom);
+    const signingClient = await createSigningStargateClient(rpcUrl, signer);
+
+    const txRaw = await signingClient.sign(from, transaction.msgs, transaction.fee, transaction.memo, {
+      accountNumber: transaction.accountNumber,
+      chainId: transaction.chainId,
+      sequence: transaction.sequence,
+    });
+
+    return txRaw;
+  }
+
+  async function signAndBroadcastTransaction(transaction: CosmosTransaction) {
+    const from = await getAddress();
+
+    if (!(signer && from)) {
+      throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+    }
 
     const signingClient = await createSigningStargateClient(rpcUrl, signer);
-    const denom = getMsgSendDenom(assetValue.symbol);
-    const amount = assetValue.getBaseValue("string");
 
-    const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
+    const result = await signingClient.signAndBroadcast(from, transaction.msgs, transaction.fee, transaction.memo);
 
-    const msgSend = { amount: [{ amount, denom }], fromAddress: from, toAddress: recipient };
+    if (result.code !== 0) {
+      throw new SwapKitError("core_swap_transaction_error", { code: result.code, message: result.rawLog });
+    }
 
-    const txRaw = await signingClient.sign(
-      from,
-      [{ typeUrl: "/cosmos.bank.v1beta1.MsgSend", value: msgSend }],
-      txFee as StdFee,
-      memo,
-    );
-
-    const txBytes = TxRaw.encode(txRaw).finish();
-    return Buffer.from(txBytes).toString("hex");
+    return result.transactionHash;
   }
+
+  //   async function transfer({
+  //     recipient,
+  //     assetValue,
+  //     memo = "",
+  //     feeRate,
+  //     feeOptionKey = FeeOption.Fast,
+  //   }: GenericTransferParams) {
+  //     const from = await getAddress();
+
+  //     if (!(signer && from)) {
+  //       throw new SwapKitError("toolbox_cosmos_signer_not_defined");
+  //     }
+
+  //     const feeAssetValue = AssetValue.from({ chain });
+  //     const assetDenom = getDenomWithChain(feeAssetValue);
+  //     const txFee = feeRate || feeToStdFee((await getFees(chain, SafeDefaultFeeValues[chain]))[feeOptionKey], assetDenom);
+
+  //     const signingClient = await createSigningStargateClient(rpcUrl, signer);
+  //     const denom = getMsgSendDenom(assetValue.symbol);
+  //     const amount = assetValue.getBaseValue("string");
+
+  //     const { TxRaw } = await import("cosmjs-types/cosmos/tx/v1beta1/tx");
+
+  //     const msgSend = { amount: [{ amount, denom }], fromAddress: from, toAddress: recipient };
+
+  //     const txRaw = await signingClient.sign(
+  //       from,
+  //       [{ typeUrl: "/cosmos.bank.v1beta1.MsgSend", value: msgSend }],
+  //       txFee as StdFee,
+  //       memo,
+  //     );
+
+  //     const txBytes = TxRaw.encode(txRaw).finish();
+  //     return Buffer.from(txBytes).toString("hex");
+  //   }
 
   async function transfer({
     recipient,
@@ -178,12 +215,7 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
     memo = "",
     feeRate,
     feeOptionKey = FeeOption.Fast,
-    dryRun = false,
-  }: GenericTransferParams & { dryRun?: boolean }) {
-    if (dryRun) {
-      return signTransaction({ assetValue, feeOptionKey, feeRate, memo, recipient });
-    }
-
+  }: GenericTransferParams) {
     const from = await getAddress();
 
     if (!(signer && from)) {
@@ -251,6 +283,9 @@ export async function createCosmosToolbox({ chain, ...toolboxParams }: CosmosToo
         importedSigning.DirectSecp256k1Wallet ?? importedSigning.default?.DirectSecp256k1Wallet;
       return DirectSecp256k1Wallet.fromKey(privateKey, chainPrefix);
     },
+
+    signAndBroadcastTransaction,
+    signer,
     signTransaction,
     transfer,
     validateAddress: getCosmosValidateAddress(chain),

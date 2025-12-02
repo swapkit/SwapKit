@@ -410,6 +410,10 @@ const errorCodes = {
    */
   plugin_garden_missing_data: 42001,
   /**
+   * Swap Plugin
+   */
+  plugin_generic_swap_invalid_data: 43001,
+  /**
    * SwapKit API
    */
   api_v2_invalid_response: 60001,

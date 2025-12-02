@@ -15,7 +15,9 @@ import {
   type SKConfigState,
   SwapKitError,
   type SwapParams,
+  supportsV3SwapFlow,
   UTXOChains,
+  type WalletOption,
 } from "@swapkit/helpers";
 import type { EVMTransaction, QuoteResponseRoute } from "@swapkit/helpers/api";
 import type { createPlugin } from "@swapkit/plugins";
@@ -202,6 +204,23 @@ export function SwapKit<
   }
 
   function swap<T extends PluginName>({ route, pluginName, ...rest }: SwapParams<T, QuoteResponseRoute>) {
+    const fromChain = AssetValue.from({ asset: route.sellAsset }).chain;
+    const wallet = getWallet(fromChain);
+
+    if (!wallet) {
+      throw new SwapKitError("core_wallet_connection_not_found");
+    }
+
+    const useV3Flow = supportsV3SwapFlow(wallet.walletType as WalletOption, fromChain) && route.tx;
+
+    if (useV3Flow) {
+      const plugin = getSwapKitPlugin("trading");
+      if ("swap" in plugin) {
+        // @ts-expect-error TODO: fix this
+        return plugin.swap({ ...rest, route });
+      }
+    }
+
     const plugin = getSwapKitPlugin(pluginName || route.providers[0]);
 
     if ("swap" in plugin) {

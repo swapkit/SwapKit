@@ -143,6 +143,11 @@ export async function getSolanaToolbox(
     getBalance,
     getConnection,
     getPubkeyFromAddress,
+    signAndBroadcastTransaction: async (transaction: Transaction | VersionedTransaction) => {
+      const signedTx = await signTransaction(getConnection, signer)(transaction);
+      return broadcastTransaction(getConnection)(signedTx);
+    },
+    signer,
     signTransaction: signTransaction(getConnection, signer),
     transfer: transfer(getConnection, signer),
   };
@@ -360,10 +365,10 @@ function broadcastTransaction(getConnection: () => Promise<Connection>) {
 
 function signTransaction(getConnection: () => Promise<Connection>, signer?: SolanaSigner) {
   return async (transaction: Transaction | VersionedTransaction) => {
-    const { VersionedTransaction } = await import("@solana/web3.js");
     if (!signer) {
       throw new SwapKitError("toolbox_solana_no_signer");
     }
+    const { VersionedTransaction } = await import("@solana/web3.js");
 
     if (!(transaction instanceof VersionedTransaction)) {
       const connection = await getConnection();

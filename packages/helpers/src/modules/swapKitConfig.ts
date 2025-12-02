@@ -12,6 +12,15 @@ import type { BalanceResponse, QuoteRequest, QuoteResponse, QuoteResponseRoute }
 import { WalletOption } from "../types";
 import type { FeeMultiplierConfig } from "./feeMultiplier";
 
+export type V3SwapFlowConfig = {
+  /**
+   * Global flag to enable/disable V3 swap flow (raw tx signing from API).
+   * When disabled, always falls back to named plugins.
+   * @default true
+   */
+  enabled: boolean;
+};
+
 export type SKConfigIntegrations = {
   chainflip?: { useSDKBroker?: boolean; brokerUrl: string };
   coinbase?: {
@@ -80,6 +89,7 @@ const initialState = {
 
   requestOptions: { retry: { backoffMultiplier: 2, baseDelay: 300, maxDelay: 5000, maxRetries: 3 }, timeoutMs: 30000 },
   rpcUrls,
+  v3SwapFlow: { enabled: true } as V3SwapFlowConfig,
   wallets: Object.values(WalletOption),
 };
 type SKState = typeof initialState;
@@ -89,10 +99,11 @@ export type SKConfigState = {
   chains?: SKState["chains"];
   endpoints?: Partial<CustomApiEndpoints>;
   envs?: Partial<SKState["envs"]>;
+  feeMultipliers?: FeeMultiplierConfig;
   integrations?: Partial<SKConfigIntegrations>;
   rpcUrls?: Partial<SKState["rpcUrls"]>;
+  v3SwapFlow?: Partial<V3SwapFlowConfig>;
   wallets?: SKState["wallets"];
-  feeMultipliers?: FeeMultiplierConfig;
 };
 
 type SwapKitConfigStore = SKState & {
@@ -122,6 +133,7 @@ export const useSwapKitStore = create<SwapKitConfigStore>((set) => ({
       feeMultipliers: config?.feeMultipliers || s.feeMultipliers,
       integrations: { ...s.integrations, ...config?.integrations },
       rpcUrls: { ...s.rpcUrls, ...config?.rpcUrls },
+      v3SwapFlow: { ...s.v3SwapFlow, ...config?.v3SwapFlow },
       wallets: s.wallets.concat(config?.wallets || []),
     })),
   setEndpoint: (key, endpoint) => set((s) => ({ endpoints: { ...s.endpoints, [key]: endpoint } })),
@@ -149,6 +161,7 @@ export const useSwapKitConfig = () =>
       feeMultipliers: state?.feeMultipliers,
       integrations: state?.integrations,
       rpcUrls: state?.rpcUrls,
+      v3SwapFlow: state?.v3SwapFlow,
       wallets: state?.wallets,
     })),
   );

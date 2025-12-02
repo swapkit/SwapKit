@@ -1,11 +1,13 @@
 import { type Chain, getChainConfig } from "@swapkit/types";
 import type { BrowserProvider, JsonRpcProvider } from "ethers";
+import { SKConfig } from "../modules/swapKitConfig";
 import { SwapKitError } from "../modules/swapKitError";
 import {
   type EIP6963AnnounceProviderEvent,
   type EIP6963Provider,
   type EthereumWindowProvider,
   type NetworkParams,
+  V3SwapFlowSupport,
   WalletOption,
 } from "../types";
 import { warnOnce } from "./others";
@@ -234,4 +236,29 @@ export function providerRequest({
 
   const providerParams = params ? (Array.isArray(params) ? params : [params]) : [];
   return provider.send(method, providerParams);
+}
+
+/**
+ * Check if a wallet supports V3 swap flow (raw tx signing from API) for a specific chain.
+ *
+ * The V3 swap flow allows signing raw transactions returned by the API instead of
+ * having plugins build transactions themselves. This is more efficient but requires
+ * wallet support for signing arbitrary transactions.
+ *
+ * Takes into account:
+ * 1. Global v3SwapFlow.enabled flag
+ * 2. Per-chain capability in V3SwapFlowSupport registry
+ *
+ * @param walletType - The wallet type (e.g., WalletOption.KEYSTORE)
+ * @param chain - The chain to check support for
+ * @returns true if the wallet supports V3 flow for the chain, false otherwise
+ */
+export function supportsV3SwapFlow(walletType: WalletOption, chain: Chain): boolean {
+  const config = SKConfig.get("v3SwapFlow");
+
+  if (!config?.enabled) {
+    return false;
+  }
+
+  return V3SwapFlowSupport[chain]?.includes(walletType) ?? false;
 }

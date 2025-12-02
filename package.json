@@ -22,7 +22,7 @@
     "xrpl": "4.4.2"
   },
   "name": "swapkit-monorepo",
-  "packageManager": "bun@^1.3.1",
+  "packageManager": "bun@^1.3.2",
   "private": true,
   "scripts": {
     "bootstrap": "bun clean --force; bun build:ci",

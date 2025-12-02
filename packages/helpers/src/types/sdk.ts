@@ -8,7 +8,10 @@ export type GenericSwapParams<T = unknown> = {
   route: T;
 };
 
-export type SwapParams<PluginNames = string, R = unknown> = GenericSwapParams<R> & { pluginName?: PluginNames };
+export type SwapParams<PluginNames = string, R = unknown> = GenericSwapParams<R> & {
+  pluginName?: PluginNames;
+  useApiTx?: boolean;
+};
 
 export enum FeeOption {
   Average = "average",

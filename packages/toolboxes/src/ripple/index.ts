@@ -149,6 +149,16 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
     throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple } });
   };
 
+  const signAndBroadcastTransaction = async (tx: Transaction) => {
+    try {
+      const signedTx = await signTransaction(tx);
+
+      return await broadcastTransaction(signedTx.tx_blob);
+    } catch (error) {
+      throw new SwapKitError({ errorKey: "toolbox_ripple_broadcast_error", info: { chain: Chain.Ripple, error } });
+    }
+  };
+
   const transfer = async (params: GenericTransferParams) => {
     if (!signer) {
       throw new SwapKitError({ errorKey: "toolbox_ripple_signer_not_found" });
@@ -163,15 +173,14 @@ export const getRippleToolbox = async (params: RippleToolboxParams = {}) => {
 
   return {
     broadcastTransaction,
-    createSigner, // Expose the helper
+    createSigner,
     createTransaction,
     disconnect,
     estimateTransactionFee,
-    // Core methods
     getAddress,
     getBalance,
-    // Signer related
-    signer, // Expose the signer instance if created/provided
+    signAndBroadcastTransaction,
+    signer,
     signTransaction,
     transfer,
     validateAddress: rippleValidateAddress,

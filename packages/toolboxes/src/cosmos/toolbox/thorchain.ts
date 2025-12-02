@@ -242,6 +242,7 @@ export async function createThorchainToolbox({ chain, ...toolboxParams }: Cosmos
       derivationPath: derivationPathToString(derivationPath),
       prefix: chainPrefix,
     }),
+    signer,
     signMultisigTx: signMultisigTx(chain),
     signWithPrivateKey,
     transfer,

@@ -1,6 +1,4 @@
 import secp256k1 from "@bitcoinerlab/secp256k1";
-// @ts-expect-error
-import { ECPair, HDNode } from "@psf/bitcoincashjs-lib";
 import { HDKey } from "@scure/bip32";
 import { mnemonicToSeedSync } from "@scure/bip39";
 import {
@@ -8,7 +6,6 @@ import {
   applyFeeMultiplier,
   Chain,
   type ChainSigner,
-  DerivationPath,
   type DerivationPathArray,
   derivationPathToString,
   FeeOption,
@@ -162,6 +159,40 @@ async function createSignerWithKeys({
   return { getAddress, signTransaction };
 }
 
+function getSignTransaction({ chain, signer }: { chain: UTXOChain; signer?: ChainSigner<Psbt, Psbt> }) {
+  return async function signTransaction(psbt: Psbt): Promise<Psbt> {
+    if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+    // Check if this is a standard PSBT signer (not BCH)
+    if (chain !== Chain.BitcoinCash) {
+      const signedPsbt = await signer.signTransaction(psbt);
+      return signedPsbt;
+    }
+    // BCH uses a different transaction type, so we can't support PSBT signing
+    throw new SwapKitError("toolbox_utxo_invalid_params", {
+      chain,
+      error: "PSBT signing is not supported for BitcoinCash. Use the BCH-specific signTransaction method.",
+    });
+  };
+}
+
+function getSignAndBroadcastTransaction({ chain, signer }: { chain: UTXOChain; signer?: ChainSigner<Psbt, Psbt> }) {
+  return async function signAndBroadcastTransaction(psbt: Psbt): Promise<string> {
+    if (!signer) throw new SwapKitError("toolbox_utxo_no_signer");
+    // Check if this is a standard PSBT signer (not BCH)
+    if (chain !== Chain.BitcoinCash) {
+      const signedPsbt = await signer.signTransaction(psbt);
+      signedPsbt.finalizeAllInputs();
+      const txHex = signedPsbt.extractTransaction().toHex();
+      return getUtxoApi(chain).broadcastTx(txHex);
+    }
+    // BCH uses a different transaction type, so we can't support PSBT signing
+    throw new SwapKitError("toolbox_utxo_invalid_params", {
+      chain,
+      error: "PSBT signing is not supported for BitcoinCash. Use the BCH-specific signTransaction method.",
+    });
+  };
+}
+
 export async function createUTXOToolbox<T extends UTXOChain>({
   chain,
   ...toolboxParams
@@ -208,6 +239,9 @@ export async function createUTXOToolbox<T extends UTXOChain>({
       const keys = createKeysForPath(params);
       return keys.toWIF();
     },
+    signAndBroadcastTransaction: getSignAndBroadcastTransaction({ chain, signer: signer as ChainSigner<Psbt, Psbt> }),
+    signer,
+    signTransaction: getSignTransaction({ chain, signer: signer as ChainSigner<Psbt, Psbt> }),
     transfer: transfer(signer as UtxoToolboxParams["BTC"]["signer"]),
     validateAddress: (address: string) => validateAddress({ address, chain }),
   };
@@ -295,7 +329,7 @@ function estimateTransactionFee(chain: UTXOChain) {
 }
 
 type CreateKeysForPathReturnType = {
-  [Chain.BitcoinCash]: BchECPair;
+  [Chain.BitcoinCash]: ECPairInterface;
   [Chain.Bitcoin]: ECPairInterface;
   [Chain.Dash]: ECPairInterface;
   [Chain.Dogecoin]: ECPairInterface;
@@ -309,30 +343,8 @@ export async function getCreateKeysForPath<T extends keyof CreateKeysForPathRetu
   const getNetwork = await getUtxoNetwork();
 
   switch (chain) {
-    case Chain.BitcoinCash: {
-      return function createKeysForPath({
-        phrase,
-        derivationPath = `${DerivationPath.BCH}/0`,
-        wif,
-      }: {
-        wif?: string;
-        phrase?: string;
-        derivationPath?: string;
-      }) {
-        const network = getNetwork(chain);
-
-        if (wif) {
-          return ECPair.fromWIF(wif, network) as BchECPair;
-        }
-        if (!phrase) throw new SwapKitError("toolbox_utxo_invalid_params", { error: "No phrase provided" });
-
-        const masterHDNode = HDNode.fromSeedBuffer(Buffer.from(mnemonicToSeedSync(phrase)), network);
-        const keyPair = masterHDNode.derivePath(derivationPath).keyPair;
-
-        return keyPair as BchECPair;
-      } as (params: { wif?: string; phrase?: string; derivationPath?: string }) => CreateKeysForPathReturnType[T];
-    }
     case Chain.Bitcoin:
+    case Chain.BitcoinCash:
     case Chain.Dogecoin:
     case Chain.Litecoin:
     case Chain.Zcash:

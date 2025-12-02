@@ -116,7 +116,6 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     const { assetValue, recipient, memo } = params;
     const sender = await getAddress();
 
-    // Handle NEP-141 token transfers - check if recipient needs storage
     if (!assetValue.isGasAsset && assetValue.address) {
       const storageBalance = await checkStorageBalance({ accountId: recipient, contractId: assetValue.address });
 
@@ -125,9 +124,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
       }
     }
 
-    // Standard transfer (native NEAR or token with registered storage)
     const transaction = await createTransaction({ ...params, sender });
-    return signAndSendTransaction(transaction);
+    return signAndBroadcastTransaction(transaction);
   }
 
   async function createTransaction(params: NearCreateTransactionParams) {
@@ -236,7 +234,7 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     return result.transaction.hash;
   }
 
-  async function signAndSendTransaction(transaction: Transaction) {
+  async function signAndBroadcastTransaction(transaction: Transaction) {
     if (!signer) {
       throw new SwapKitError("toolbox_near_no_signer");
     }
@@ -413,7 +411,8 @@ export async function getNearToolbox(toolboxParams?: NearToolboxParams) {
     getSignerFromPrivateKey: getNearSignerFromPrivateKey,
     provider,
     serializeTransaction,
-    signAndSendTransaction,
+    signAndBroadcastTransaction,
+    signer,
     signTransaction,
     transfer,
     validateAddress: await getValidateNearAddress(),

@@ -48,8 +48,20 @@ async function getWalletMethods(chain: PhantomSupportedChain) {
       }
 
       const { getUtxoToolbox } = await import("@swapkit/toolboxes/utxo");
+      const { Psbt } = await import("bitcoinjs-lib");
       const [{ address }] = await provider.requestAccounts();
-      const toolbox = await getUtxoToolbox(chain);
+
+      async function signTransaction(psbt: InstanceType<typeof Psbt>) {
+        const psbtBytes = psbt.toBuffer();
+        const signedPsbtBytes = await provider.signPSBT(psbtBytes, {
+          inputsToSign: [{ address, signingIndexes: psbt.txInputs.map((_, index) => index) }],
+        });
+
+        return Psbt.fromBuffer(Buffer.from(signedPsbtBytes));
+      }
+
+      const signer = { getAddress: () => Promise.resolve(address), signTransaction };
+      const toolbox = await getUtxoToolbox(chain, { signer });
 
       return { ...toolbox, address };
     }

@@ -194,7 +194,7 @@ export const NearPlugin = createPlugin({
           sender: wallet.address,
         });
 
-        return wallet.signAndSendTransaction(unsignedTransaction);
+        return wallet.signAndBroadcastTransaction(unsignedTransaction);
       }
 
       if (!wallet) {
