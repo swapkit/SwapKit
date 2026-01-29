@@ -62,6 +62,7 @@ declare global {
       polkadot: Eip1193Provider;
       ripple: Eip1193Provider;
       dash: Eip1193Provider;
+      tron: TronLinkWindow;
       zcash: Eip1193Provider;
     };
 

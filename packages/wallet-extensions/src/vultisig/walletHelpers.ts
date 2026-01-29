@@ -18,6 +18,7 @@ import type { getCosmosToolbox } from "@swapkit/toolboxes/cosmos";
 import type { ApproveParams, CallParams, EVMTxParams } from "@swapkit/toolboxes/evm";
 import type { SolanaProvider } from "@swapkit/toolboxes/solana";
 import type { BrowserProvider, Eip1193Provider } from "ethers";
+import type { TronLinkWindow } from "../tronlink/types";
 import type { VultisigCosmosProvider } from "../types";
 
 type TransactionMethod = "send_transaction" | "deposit_transaction";
@@ -46,9 +47,11 @@ type VultisigProviderType<T> = T extends typeof Chain.Solana
     ? VultisigCosmosProvider
     : T extends EVMChain
       ? Eip1193Provider
-      : T extends typeof Chain.Maya | typeof Chain.THORChain | typeof Chain.Ripple | typeof Chain.Polkadot | UTXOChain
-        ? Eip1193Provider
-        : undefined;
+      : T extends typeof Chain.Tron
+        ? TronLinkWindow
+        : T extends typeof Chain.Maya | typeof Chain.THORChain | typeof Chain.Ripple | typeof Chain.Polkadot | UTXOChain
+          ? Eip1193Provider
+          : undefined;
 
 export async function getVultisigProvider<T extends Chain>(chain: T): Promise<VultisigProviderType<T>> {
   if (!window.vultisig) throw new SwapKitError("wallet_vultisig_not_found");
@@ -67,6 +70,7 @@ export async function getVultisigProvider<T extends Chain>(chain: T): Promise<Vu
     .with(Chain.Maya, () => window.vultisig?.mayachain as Eip1193Provider)
     .with(Chain.Polkadot, () => window.vultisig?.polkadot as Eip1193Provider)
     .with(Chain.Ripple, () => window.vultisig?.ripple as Eip1193Provider)
+    .with(Chain.Tron, () => window.vultisig?.tron as TronLinkWindow)
     .with(Chain.Zcash, () => window.vultisig?.zcash as Eip1193Provider)
     .otherwise(() => undefined) as VultisigProviderType<T>;
 }
@@ -115,11 +119,11 @@ export async function getVultisigAddress(chain: Chain) {
       await windowProvider.request({ method: "wallet_switch_chain", params: [{ chainId }] });
 
       let account = await windowProvider.request({ method: "get_accounts" });
-      if (!account) {
+      if (!account || (Array.isArray(account) && account.length === 0)) {
         const connectedAcount = await windowProvider.request({ method: "request_accounts" });
         account = connectedAcount[0].address;
       }
-      return account;
+      return Array.isArray(account) ? account[0] : account;
     }
 
     if (EVMChains.includes(chain as EVMChain)) {
@@ -134,6 +138,33 @@ export async function getVultisigAddress(chain: Chain) {
 
       const accounts = await solanaProvider.connect();
       return accounts.publicKey.toString();
+    }
+
+    if (chain === Chain.Tron) {
+      const tronProvider = (await getVultisigProvider(Chain.Tron)) as TronLinkWindow;
+      if (!tronProvider) {
+        throw new SwapKitError({
+          errorKey: "wallet_provider_not_found",
+          info: { chain, wallet: WalletOption.VULTISIG },
+        });
+      }
+
+      const response = await tronProvider.request({ method: "tron_requestAccounts" });
+      if (response === "") {
+        throw new SwapKitError("wallet_vultisig_locked", {
+          message: "Vultisig is locked. Please unlock it to continue.",
+        });
+      }
+
+      const address = tronProvider.tronWeb?.defaultAddress?.base58;
+      if (!address) {
+        throw new SwapKitError({
+          errorKey: "wallet_provider_not_found",
+          info: { chain, wallet: WalletOption.VULTISIG },
+        });
+      }
+
+      return address;
     }
 
     const accounts = await windowProvider.request({ method: "request_accounts", params: [] });
