@@ -76,6 +76,7 @@ export const vultisigWallet = createWallet({
     Chain.Ripple,
     Chain.Solana,
     Chain.THORChain,
+    Chain.Tron,
     Chain.Zcash,
     Chain.XLayer,
   ],
@@ -169,6 +170,35 @@ async function getWalletMethods(chain: (typeof VULTISIG_SUPPORTED_CHAINS)[number
       const { getSubstrateToolbox } = await import("@swapkit/toolboxes/substrate");
       const toolbox = await getSubstrateToolbox(chain as SubstrateChain);
       return { ...toolbox, transfer: walletTransfer };
+    })
+
+    .with(Chain.Tron, async () => {
+      const { createTronToolbox } = await import("@swapkit/toolboxes/tron");
+      const tronProvider = window.vultisig?.tron;
+      if (!tronProvider) throw new SwapKitError("wallet_vultisig_not_found");
+
+      const response = await tronProvider.request({ method: "tron_requestAccounts" });
+      if (response === "") {
+        throw new SwapKitError("wallet_vultisig_locked", {
+          message: "Vultisig is locked. Please unlock it to continue.",
+        });
+      }
+
+      const address = tronProvider.tronWeb?.defaultAddress?.base58;
+      if (!address) {
+        throw new SwapKitError("wallet_vultisig_no_accounts", { chain: Chain.Tron });
+      }
+
+      const signer = {
+        getAddress: async () => address,
+        signTransaction: async (transaction: any) => {
+          return await tronProvider.tronWeb.trx.sign(transaction);
+        },
+      };
+
+      const toolbox = await createTronToolbox({ signer });
+
+      return { ...toolbox, address };
     })
 
     .otherwise(async () => null);

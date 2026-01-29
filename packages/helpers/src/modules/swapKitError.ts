@@ -246,6 +246,9 @@ const errorCodes = {
   wallet_vultisig_contract_address_not_provided: 22102,
   wallet_vultisig_asset_not_defined: 22103,
   wallet_vultisig_send_transaction_no_address: 22104,
+  wallet_vultisig_locked: 22105,
+  wallet_vultisig_no_accounts: 22106,
+  wallet_vultisig_transaction_failed: 22107,
 
   /**
    * Wallets - Xaman
