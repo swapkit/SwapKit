@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./form";
@@ -29,7 +31,7 @@ export function InputField<
             <Input {...field} {...props} />
           </FormControl>
 
-          <FormDescription>{description}</FormDescription>
+          {description && <FormDescription>{description}</FormDescription>}
 
           <FormMessage />
         </FormItem>

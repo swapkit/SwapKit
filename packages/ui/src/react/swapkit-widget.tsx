@@ -3,31 +3,34 @@
 import "@swapkit/ui/swapkit.css";
 
 import { AssetValue, type QuoteResponseRoute, SwapKitApi, useSwapKitStore } from "@swapkit/sdk";
-import { ArrowDownUpIcon, Loader2Icon } from "lucide-react";
+import { ArrowDownUpIcon, Loader2Icon, LogOutIcon, Wallet2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { match, P } from "ts-pattern";
+import { cn } from "../lib/utils";
 import { getStableConfigMemoKey } from "../utils";
 import { SwapInputWithChainSelector } from "./components/composable/swap-input-chain-selector";
 import { SwapQuotePreview } from "./components/composable/swap-quote-preview";
 import { SwapConfirmDialog } from "./components/dialogs/swap-confirm-dialog";
 import { WalletConnectDialog } from "./components/dialogs/wallet-connect-dialog";
+import { WalletIcon } from "./components/simple/wallet-icon";
 import { Button } from "./components/ui/button";
 import { Card, CardContent } from "./components/ui/card";
 import { SWAPKIT_WIDGET_TOASTER_ID, Toaster, toast } from "./components/ui/sonner";
 import { ModalSpawner, showModal } from "./hooks/use-modal";
 import { useSwapQuote } from "./hooks/use-swap-quote";
 import { useSwapKit } from "./swapkit-context";
+import { showSwapKitWalletDrawer } from "./swapkit-wallet-drawer";
 import type { SwapKitWidgetProps } from "./types";
 
-export function SwapKitWidget({ config }: SwapKitWidgetProps) {
+export function SwapKitWidget({ config, className, ...props }: SwapKitWidgetProps) {
   const [amount, setAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const [inputAsset, setInputAsset] = useState<string | null>("THOR.RUNE");
-  const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.MAYA");
+  const [outputAsset, setOutputAsset] = useState<string | null>("MAYA.CACAO");
   const cachedStableConfigMemoKey = useRef<string | null>(null);
 
   const { setConfig } = useSwapKitStore();
-  const { swapKit, isWalletConnected } = useSwapKit();
+  const { swapKit, isWalletConnected, walletType, disconnectWallet } = useSwapKit();
   const { isFetchingQuote, selectedRoute, setSelectedRouteIndex, routes, reset } = useSwapQuote({
     amount,
     inputAsset,
@@ -36,7 +39,6 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
 
   const stableConfigMemoKey = getStableConfigMemoKey(config);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger only on primitive values change, so we don't need widget users to remember about memoizing config objects
   useEffect(() => {
     const isConfigSame = cachedStableConfigMemoKey?.current === stableConfigMemoKey;
 
@@ -45,7 +47,7 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     setConfig(config);
 
     cachedStableConfigMemoKey.current = stableConfigMemoKey;
-  }, [swapKit, stableConfigMemoKey]);
+  }, [swapKit, stableConfigMemoKey, config, setConfig]);
 
   const performSwap = async (route: QuoteResponseRoute) => {
     try {
@@ -98,12 +100,12 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
   };
 
   const handleSubmitButtonClick = async () => {
+    if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
+
     if (!isWalletConnected) {
       await showModal(<WalletConnectDialog />);
       return;
     }
-
-    if (!selectedRoute?.route || !inputAsset || !outputAsset) return;
 
     const { confirmed } = await showModal(<SwapConfirmDialog swapRoute={selectedRoute} />);
 
@@ -119,26 +121,66 @@ export function SwapKitWidget({ config }: SwapKitWidgetProps) {
     }
   };
 
-  const submitButtonContent = match({ amount, inputAsset, isSwapping, isWalletConnected, outputAsset })
+  const submitButtonContent = match({ amount, inputAsset, isFetchingQuote, isSwapping, isWalletConnected, outputAsset })
     .with({ isSwapping: true }, () => (
       <>
         <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
         Swapping...
       </>
     ))
-    .with({ isWalletConnected: false }, () => "Connect wallet")
-    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select Assets")
-    .with({ amount: P.nullish }, () => "Enter Amount")
+    .with({ isFetchingQuote: true }, () => (
+      <>
+        <Loader2Icon className="sk-ui-mr-2 sk-ui-h-4 sk-ui-w-4 sk-ui-animate-spin" />
+        Checking for the best quote...
+      </>
+    ))
+    .with({ inputAsset: P.nullish }, { outputAsset: P.nullish }, () => "Select tokens")
+    .with({ amount: P.nullish.or(P.string.length(0).or(P.number.lte(0))) }, () => "Enter transfer amount")
+    .with({ isWalletConnected: false }, () => "Connect your wallet")
     .otherwise(() => "Swap");
 
   const isSubmitButtonDisabled =
-    (isWalletConnected && !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0)) ||
-    isSwapping ||
-    isFetchingQuote;
+    !(inputAsset && outputAsset && Number.parseFloat(amount ?? "0") > 0) || isSwapping || isFetchingQuote;
+  const addressForInputAsset = swapKit?.getAddress(AssetValue.from({ asset: inputAsset as string }).chain);
 
   return (
-    <div className="sk-ui-flex sk-ui-flex-col sk-ui-gap-4">
-      <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
+    <div className={cn("swapkit-ui-preflight sk-ui-flex sk-ui-flex-col sk-ui-gap-4", className)} {...props}>
+      <div className="sk-ui-flex sk-ui-items-center sk-ui-justify-between">
+        <h1 className="sk-ui-font-medium sk-ui-text-2xl">Swap</h1>
+
+        {!isWalletConnected ? (
+          <Button
+            onClick={() => {
+              void showModal(<WalletConnectDialog />);
+            }}
+            size="xs"
+            variant="ghost">
+            <Wallet2Icon className="sk-ui-size-4" />
+
+            <span>Connect wallet</span>
+          </Button>
+        ) : walletType ? (
+          <div className="sk-ui-flex sk-ui-items-center sk-ui-gap-px">
+            <Button
+              className="sk-ui-rounded-r-none"
+              onClick={() => {
+                void showSwapKitWalletDrawer();
+              }}
+              size="xs"
+              variant="primary">
+              <WalletIcon wallet={walletType} />
+
+              <div>
+                {addressForInputAsset?.slice(0, 6)}...{addressForInputAsset?.slice(-4)}
+              </div>
+            </Button>
+
+            <Button className="sk-ui-rounded-l-none" onClick={() => disconnectWallet()} size="xs" variant="primary">
+              <LogOutIcon className="sk-ui-size-3.5" />
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
       <Card>
         <CardContent className="sk-ui-grid sk-ui-gap-6">

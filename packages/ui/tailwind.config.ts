@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import tailwindCssAnimatePlugin from "tailwindcss-animate";
 
 const config = {
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./src/**/*.{ts,tsx}"],
   corePlugins: { preflight: false },
   darkMode: "class",
   plugins: [tailwindCssAnimatePlugin],
@@ -11,7 +11,11 @@ const config = {
   theme: {
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
     extend: {
-      animation: { "accordion-down": "accordion-down 0.2s ease-out", "accordion-up": "accordion-up 0.2s ease-out" },
+      animation: {
+        "sk-ui-accordion-down": "sk-ui-accordion-down 0.2s ease-out",
+        "sk-ui-accordion-up": "sk-ui-accordion-up 0.2s ease-out",
+      },
+
       // biome-ignore assist/source/useSortedKeys: sort by use case, not alphabetically
       colors: {
         background: "hsl(var(--sk-ui-background))",
@@ -35,11 +39,21 @@ const config = {
         input: "hsl(var(--sk-ui-input))",
 
         card: { DEFAULT: "hsl(var(--sk-ui-card))", foreground: "hsl(var(--sk-ui-card-foreground))" },
-        popover: { DEFAULT: "hsl(var(--sk-ui-popover))", foreground: "hsl(var(--sk-ui       -popover-foreground))" },
+        popover: { DEFAULT: "hsl(var(--sk-ui-popover))", foreground: "hsl(var(--sk-ui-popover-foreground))" },
+        sidebar: {
+          accent: "hsl(var(--sk-ui-sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sk-ui-sidebar-border))",
+          DEFAULT: "hsl(var(--sk-ui-sidebar-background))",
+          foreground: "hsl(var(--sk-ui-sidebar-foreground))",
+          primary: "hsl(var(--sk-ui-sidebar-primary))",
+          "primary-foreground": "hsl(var(--sk-ui-sidebar-primary-foreground))",
+          ring: "hsl(var(--sk-ui-sidebar-ring))",
+        },
       },
       keyframes: {
-        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
-        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
+        "sk-ui-accordion-down": { from: { height: "0" }, to: { height: "var(--sk-ui-accordion-content-height)" } },
+        "sk-ui-accordion-up": { from: { height: "var(--sk-ui-accordion-content-height)" }, to: { height: "0" } },
       },
     },
   },

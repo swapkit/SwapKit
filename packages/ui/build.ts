@@ -15,4 +15,9 @@ const bunTailwind3Plugin: BunPlugin = {
   },
 };
 
-void buildPackage({ evmOnly: true, plugins: [bunTailwind3Plugin] });
+void buildPackage({
+  evmOnly: true,
+  external: ["react", "react-dom"],
+  plugins: [bunTailwind3Plugin],
+  target: "browser",
+});

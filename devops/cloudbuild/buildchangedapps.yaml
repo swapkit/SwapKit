@@ -1,0 +1,162 @@
+timeout: 1800s
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Step 0: Fetch full Git history for proper change detection
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'fetch-full-history'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Configure GitHub authentication using the token
+        git config --global url."https://$$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+        
+        # Fetch complete repository history for accurate diffing
+        git fetch --unshallow --tags
+        
+        # For PR builds, fetch the target branch for comparison
+        if [ -n "$_PR_NUMBER" ] && [ -n "$BRANCH_NAME" ]; then
+          git fetch origin $BRANCH_NAME
+        fi
+        
+        # Debug output to verify repository state
+        echo "Repository prepared:"
+        git log --oneline -n 5
+    secretEnv: ['GITHUB_TOKEN']
+
+  # Step 1: Detect changed files in the Vite project
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'get-changed-files'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Print build environment for debugging
+        echo "Build environment:"
+        echo "PR_NUMBER: ${_PR_NUMBER:-NOT_SET}"
+        echo "BRANCH_NAME: ${BRANCH_NAME:-NOT_SET}"
+        echo "COMMIT_SHA: ${COMMIT_SHA:-NOT_SET}"
+        echo "HEAD SHA: $(git rev-parse HEAD)"
+
+        # Skip change detection for non-core branches
+        if [ "$BRANCH_NAME" = "feat/DOP-112" ] || [ "$BRANCH_NAME" = "develop" ] || [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "staging" ]; then
+          : # This is an allowed branch, continue with processing
+        else
+          echo "Non-core branch detected ($BRANCH_NAME) - creating empty changed_files.txt"
+          touch /workspace/changed_files.txt
+          exit 0
+        fi
+
+        # Determine changed files with fallback mechanisms
+        if [ -n "$_PR_NUMBER" ]; then
+          echo "PR build detected - comparing with target branch $BRANCH_NAME"
+          git fetch origin $BRANCH_NAME --depth=1
+          git diff --name-only origin/$BRANCH_NAME HEAD > /workspace/changed_files.txt || {
+            echo "Diff failed, fallback to listing all files"
+            git ls-files > /workspace/changed_files.txt
+          }
+        else
+          echo "Non-PR build detected - comparing HEAD^ with HEAD"
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            git diff --name-only HEAD^ HEAD > /workspace/changed_files.txt || {
+              echo "Diff failed, using commit range"
+              git diff --name-only $COMMIT_SHA~1 $COMMIT_SHA > /workspace/changed_files.txt || {
+                echo "Final fallback - listing all files"
+                git ls-files > /workspace/changed_files.txt
+              }
+            }
+          else
+            echo "Shallow clone with no history - listing all files"
+            git ls-files > /workspace/changed_files.txt
+          fi
+        fi
+
+        # Output the changed files for debugging
+        echo "Changed files detected:"
+        cat /workspace/changed_files.txt
+        echo "Total changed files: $(wc -l < /workspace/changed_files.txt)"
+
+  # Step 2: Set target environment based on branch
+  - id: set-env-vars
+    name: 'gcr.io/cloud-builders/gcloud'
+    script: |
+      #!/usr/bin/env bash
+      # Determine target environment based on branch name
+      TARGET_ENV=feature
+      if [ "${BRANCH_NAME}" == "main" ]
+      then
+        TARGET_ENV=dev
+      fi
+      # if [ "${BRANCH_NAME}" == "develop" ]
+      # then
+      #  TARGET_ENV=stage
+      # fi
+      # if [ "${BRANCH_NAME}" == "devops" ]
+      # then
+      #  TARGET_ENV=dev
+      # fi
+      
+      echo "Building for environment: ${TARGET_ENV}"
+      echo "export TARGET_ENV=${TARGET_ENV}" >> /workspace/vars.env
+      echo "Current environment variables:"
+      cat /workspace/vars.env
+    env:
+      - 'BRANCH_NAME=${BRANCH_NAME}'
+
+  # Step 3: Build the Vite application with Kaniko
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'generate-build-step'
+    waitFor: ['set-env-vars']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Generate Kaniko build configuration for the Vite app
+        source /workspace/vars.env
+        
+        echo "Generating Kaniko build configuration for Vite application:"
+        echo "steps:" > /workspace/kaniko_steps.yaml
+        echo "  - name: 'gcr.io/kaniko-project/executor:latest'" >> /workspace/kaniko_steps.yaml
+        echo "    id: 'build-vite-app'" >> /workspace/kaniko_steps.yaml
+        echo "    args:" >> /workspace/kaniko_steps.yaml
+        echo "      - --destination=us-docker.pkg.dev/$PROJECT_ID/widget/widget:$SHORT_SHA" >> /workspace/kaniko_steps.yaml
+        echo "      - --destination=us-docker.pkg.dev/$PROJECT_ID/widget/widget:$${TARGET_ENV}" >> /workspace/kaniko_steps.yaml
+        echo "      - --cache=true" >> /workspace/kaniko_steps.yaml
+        echo "      - --cache-ttl=6h" >> /workspace/kaniko_steps.yaml
+        echo "      - --context=/workspace/" >> /workspace/kaniko_steps.yaml
+        echo "      - --dockerfile=/workspace/playgrounds/vite-lite/Dockerfile" >> /workspace/kaniko_steps.yaml
+        
+        echo "options:" >> /workspace/kaniko_steps.yaml
+        echo "  logging: CLOUD_LOGGING_ONLY" >> /workspace/kaniko_steps.yaml
+        
+        echo "Generated kaniko_steps.yaml:"
+        cat /workspace/kaniko_steps.yaml
+
+  # Step 4: Execute the Kaniko build
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'run-kaniko-build'
+    waitFor: ['generate-build-step']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Execute the Kaniko build for the Vite application
+        echo "Starting Kaniko build for Vite application..."
+        exec gcloud builds submit \
+          --region=us-central1 \
+          --config=/workspace/kaniko_steps.yaml \
+          --machine-type=e2-highcpu-32 \
+          --async \
+          --format='value(id)' \
+          --service-account="projects/${PROJECT_ID}/serviceAccounts/cloudbuild@${PROJECT_ID}.iam.gserviceaccount.com" \
+          .
+
+tags:
+  - "widget-build"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/cloudbuild-github-access-token/versions/latest
+      env: 'GITHUB_TOKEN'

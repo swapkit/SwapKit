@@ -27,7 +27,7 @@
   "scripts": {
     "bootstrap": "bun clean --force; bun build:ci",
     "build": "bun --filter '!@internal/docs' --elide-lines=0 build",
-    "build:ci": "bun build:dts && bun --filter '!@internal/docs' build",
+    "build:ci": "bun build:dts && bun --filter='!{@internal/docs,@internal/playground-vite-lite}' run build",
     "build:clean": "bun build:dts && bun --filter '!@internal/docs' --elide-lines=0 build:clean",
     "build:debug": "DEBUG=true bun build:dts && bun --filter '!@internal/docs' build",
     "build:dts": "bun ./tools/builder/dts.ts",

@@ -20,3 +20,10 @@ dist/
 node_modules/
 references/
 zig-out/
+
+#terraform
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*

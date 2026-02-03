@@ -9,11 +9,11 @@ import { toast } from "sonner";
 import { match, P } from "ts-pattern";
 import { showModal, useModal } from "../../hooks/use-modal";
 import { useSwapKit } from "../../swapkit-context";
+import { WalletIcon } from "../simple/wallet-icon";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SWAPKIT_WIDGET_TOASTER_ID } from "../ui/sonner";
-import { WalletIcon } from "../wallet-icon";
 import { WalletKeystoreConnectDialog } from "./wallet-keystore-connect-dialog";
 
 const WALLET_GROUPS = {

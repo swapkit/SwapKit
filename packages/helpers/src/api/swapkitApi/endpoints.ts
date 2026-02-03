@@ -8,7 +8,6 @@ import {
   SKConfig,
   SwapKitError,
 } from "@swapkit/helpers";
-import { match, P } from "ts-pattern";
 import {
   type BalanceResponse,
   type BrokerDepositChannelParams,
@@ -214,20 +213,11 @@ export async function getNearDepositChannel(body: NearDepositChannelParams) {
 }
 
 function getApiUrl(path?: `/${string}`) {
-  const { isDev, apiUrl, devApiUrl, experimental_apiUrlQuote, experimental_apiUrlSwap } = SKConfig.get("envs");
+  const { isDev, apiUrl, devApiUrl } = SKConfig.get("envs");
 
   const defaultUrl = `${isDev ? devApiUrl : apiUrl}${path}`;
 
-  return match({ experimental_apiUrlQuote, experimental_apiUrlSwap, path })
-    .with(
-      { experimental_apiUrlQuote: P.string.startsWith("http"), path: "/quote" },
-      ({ experimental_apiUrlQuote, path }) => `${experimental_apiUrlQuote}${path}`,
-    )
-    .with(
-      { experimental_apiUrlSwap: P.string.startsWith("http"), path: "/swap" },
-      ({ experimental_apiUrlSwap, path }) => `${experimental_apiUrlSwap}${path}`,
-    )
-    .otherwise(() => defaultUrl);
+  return defaultUrl;
 }
 
 function evmAssetHasAddress(assetString: string) {

@@ -1,0 +1,380 @@
+---
+title: Starknet Technical Reference
+description: Technical reference and cheat sheet for Starknet integration with SwapKit SDK
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+This document provides a technical reference for developers integrating Starknet with SwapKit, including chain configuration, contract addresses, key derivation details, and quick reference code snippets.
+
+## Chain Configuration
+
+| Property | Value |
+|----------|-------|
+| Chain Identifier | `Chain.Starknet` / `"STRK"` |
+| Chain Name | Starknet |
+| Network Type | ZK-Rollup Layer 2 |
+| Native Token | STRK |
+| Secondary Token | ETH (bridged) |
+| Decimals | 18 |
+| Virtual Machine | Cairo VM |
+| Consensus | Validity Proof (ZK-STARK) |
+
+### Network IDs
+
+| Network | Chain ID (felt) | Hex Representation |
+|---------|-----------------|-------------------|
+| Mainnet | `SN_MAIN` | `0x534e5f4d41494e` |
+| Goerli | `SN_GOERLI` | `0x534e5f474f45524c49` |
+| Sepolia | `SN_SEPOLIA` | `0x534e5f5345504f4c4941` |
+
+## Contract Addresses
+
+### Core Token Contracts
+
+```typescript
+// STRK Token (Native Gas Token)
+const STRK_CONTRACT_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
+
+// ETH Token (Bridged from L1)
+const ETH_CONTRACT_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+
+// OpenZeppelin Account Class Hash (for account abstraction)
+const OZ_ACCOUNT_CLASS_HASH = "0x01a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
+```
+
+### Account Class Hashes
+
+| Account Type | Class Hash |
+|--------------|-----------|
+| OpenZeppelin v0.8.0 | `0x01a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003` |
+| Argent | See Argent documentation |
+| Braavos | See Braavos documentation |
+
+## Key Derivation
+
+### Derivation Path
+
+```
+m/44'/9004'/0'/0/{index}
+```
+
+- **Purpose**: `44'` (BIP44 standard)
+- **Coin Type**: `9004'` (Starknet)
+- **Account**: `0'`
+- **Change**: `0`
+- **Address Index**: `{index}` (0, 1, 2, ...)
+
+### Key Generation Process
+
+```typescript
+// @noErrorValidation
+import { deriveStarknetKeys } from "@swapkit/toolboxes/starknet";
+
+// Step 1: Derive keys from mnemonic
+const keys = await deriveStarknetKeys({
+  phrase: "your twelve word mnemonic phrase here",
+  derivationPath: "m/44'/9004'/0'/0/0"
+});
+
+// Step 2: Keys structure
+// keys.privateKey - Ground key for signing (Stark curve)
+// keys.publicKey - Public key derived from private key
+// keys.address - Contract address computed from public key + class hash
+```
+
+### Address Computation
+
+Starknet addresses are computed from:
+1. Public key
+2. Account class hash (e.g., OpenZeppelin)
+3. Constructor calldata
+4. Salt (0 for standard derivation)
+
+```typescript
+// @noErrorValidation
+// Address computation formula (internal)
+const address = hash.calculateContractAddressFromHash(
+  publicKey,           // Public key as salt
+  OZ_ACCOUNT_CLASS_HASH, // Account implementation
+  constructorCallData, // CallData.compile({ publicKey })
+  0                    // Deployer address (0 for UDC)
+);
+```
+
+## RPC Endpoints
+
+### Public RPC Providers
+
+| Provider | Mainnet URL | Testnet URL |
+|----------|-------------|-------------|
+| Blast API | `https://starknet-mainnet.public.blastapi.io` | `https://starknet-goerli.public.blastapi.io` |
+| Nethermind | `https://free-rpc.nethermind.io/mainnet-juno` | `https://free-rpc.nethermind.io/goerli-juno` |
+| BlockPI | `https://starknet.blockpi.network/v1/rpc/public` | - |
+| Alchemy | `https://starknet-mainnet.g.alchemy.com/v2/{key}` | `https://starknet-goerli.g.alchemy.com/v2/{key}` |
+| Infura | `https://starknet-mainnet.infura.io/v3/{key}` | `https://starknet-goerli.infura.io/v3/{key}` |
+
+### SwapKit RPC Configuration
+
+```typescript
+// @noErrorValidation
+import { getRPCUrl, Chain } from "@swapkit-dev/helpers";
+
+// Get configured RPC URL
+const rpcUrl = await getRPCUrl(Chain.Starknet);
+
+// Set custom RPC (via SKConfig)
+import { SKConfig } from "@swapkit/sdk";
+SKConfig.setRpcUrl(Chain.Starknet, "https://your-custom-rpc.com");
+```
+
+## Quick Reference Cheat Sheet
+
+### Imports
+
+```typescript
+// SDK approach
+import { createSwapKit, Chain, AssetValue, FeeOption } from "@swapkit/sdk";
+
+// Standalone toolbox approach
+import {
+  getStarknetToolbox,
+  validateStarknetAddress,
+  deriveStarknetKeys,
+  createKeysForPath
+} from "@swapkit/toolboxes/starknet";
+
+// Helpers
+import { SwapKitError } from "@swapkit/sdk";
+```
+
+### Toolbox Initialization
+
+<Tabs>
+<TabItem label="From Mnemonic">
+```typescript
+// @noErrorValidation
+const toolbox = getStarknetToolbox({
+  phrase: "your twelve word mnemonic",
+  index: 0  // Optional: account index
+});
+```
+</TabItem>
+<TabItem label="From Private Key">
+```typescript
+// @noErrorValidation
+const toolbox = getStarknetToolbox({
+  privateKey: "0x...",
+  address: "0x..."
+});
+```
+</TabItem>
+<TabItem label="From Existing Signer">
+```typescript
+// @noErrorValidation
+import { Account } from "starknet";
+
+const toolbox = getStarknetToolbox({
+  signer: existingStarknetAccount
+});
+```
+</TabItem>
+</Tabs>
+
+### Core Operations
+
+```typescript
+// @noErrorValidation
+
+// Get address
+const address = await toolbox.getAddress();
+
+// Validate address
+const isValid = validateStarknetAddress("0x...");
+
+// Get balances
+const balances = await toolbox.getBalance(address);
+
+// Estimate fee
+const fee = await toolbox.estimateTransactionFee({
+  recipient: "0x...",
+  assetValue: AssetValue.from({ chain: Chain.Starknet, value: "10" })
+});
+
+// Transfer STRK
+const txHash = await toolbox.transfer({
+  recipient: "0x...",
+  assetValue: AssetValue.from({ chain: Chain.Starknet, value: "10" }),
+  memo: "Optional memo"
+});
+
+// Sign typed data
+const signature = await toolbox.signMessage(typedData);
+```
+
+### Creating Asset Values
+
+```typescript
+// @noErrorValidation
+
+// STRK (native token)
+const strkAsset = AssetValue.from({
+  chain: Chain.Starknet,
+  value: "100"
+});
+
+// ETH on Starknet
+const ethAsset = AssetValue.from({
+  chain: Chain.Starknet,
+  symbol: "ETH",
+  address: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+  value: "0.5"
+});
+```
+
+### Transaction Building
+
+```typescript
+// @noErrorValidation
+
+// Create transfer calls
+const calls = await toolbox.createTransaction({
+  recipient: "0x...",
+  assetValue: AssetValue.from({ chain: Chain.Starknet, value: "10" })
+});
+
+// Broadcast transaction
+const txHash = await toolbox.broadcastTransaction(calls);
+
+// Or sign and broadcast in one step
+const txHash2 = await toolbox.signAndBroadcastTransaction(calls);
+```
+
+### Cross-Chain Swaps
+
+```typescript
+// @noErrorValidation
+
+// Get quote
+const quote = await swapKit.getQuote({
+  sellAsset: "STRK.STRK",
+  sellAmount: "100",
+  buyAsset: "BTC.BTC",
+  senderAddress: swapKit.getAddress(Chain.Starknet),
+  recipientAddress: swapKit.getAddress(Chain.Bitcoin)
+});
+
+// Execute swap
+const swapTx = await swapKit.swap({
+  route: quote.routes[0],
+  feeOptionKey: FeeOption.Fast
+});
+```
+
+## Method Signatures
+
+### StarknetToolbox Methods
+
+| Method | Parameters | Returns |
+|--------|------------|---------|
+| `getAddress()` | none | `Promise<string>` |
+| `getBalance(address, scamFilter?)` | `string, boolean` | `Promise<AssetValue[]>` |
+| `transfer({recipient, assetValue, memo?})` | `StarknetTransferParams` | `Promise<string>` |
+| `createTransaction({recipient, assetValue, memo?})` | `StarknetCreateTransactionParams` | `Promise<Call[]>` |
+| `broadcastTransaction(calls)` | `Call[]` | `Promise<string>` |
+| `signAndBroadcastTransaction(calls)` | `Call[]` | `Promise<string>` |
+| `estimateTransactionFee({recipient, assetValue, sender?})` | `StarknetTransferParams & {sender?}` | `Promise<AssetValue>` |
+| `signMessage(typedData)` | `TypedData` | `Promise<string[]>` |
+| `validateAddress(address)` | `string` | `boolean` |
+| `getProvider()` | none | `Promise<RpcProvider>` |
+
+### Standalone Functions
+
+| Function | Parameters | Returns |
+|----------|------------|---------|
+| `validateStarknetAddress(address)` | `string \| undefined` | `boolean` |
+| `deriveStarknetKeys({phrase, derivationPath?})` | `{phrase: string, derivationPath?: string}` | `Promise<{address, privateKey, publicKey}>` |
+| `createKeysForPath({phrase, derivationPath?})` | `{phrase: string, derivationPath?: string}` | `Promise<Account>` |
+
+## TypeScript Types
+
+```typescript
+// @noErrorValidation
+
+// Toolbox params - one of these options
+type StarknetToolboxParams =
+  | { signer?: Account }
+  | { phrase?: string; index?: number; derivationPath?: DerivationPathArray }
+  | { privateKey?: string; address?: string };
+
+// Transfer params
+type StarknetTransferParams = {
+  recipient: string;
+  assetValue: AssetValue;
+  memo?: string;
+};
+
+// Create transaction params
+type StarknetCreateTransactionParams = {
+  recipient: string;
+  assetValue: AssetValue;
+  sender?: string;
+  memo?: string;
+  feeRate?: number;
+  feeOptionKey?: FeeOption;
+};
+```
+
+## Error Codes
+
+| Error Code | Description | Resolution |
+|------------|-------------|------------|
+| `toolbox_starknet_no_signer` | No signer available | Connect wallet or provide credentials |
+| `toolbox_starknet_invalid_address` | Invalid address format | Verify address matches `0x[0-9a-fA-F]{1,64}` |
+| `toolbox_starknet_fee_estimation_failed` | Fee estimation failed | Check network connection, verify sender has funds |
+| `core_transaction_invalid_recipient_address` | Invalid recipient | Validate recipient address before transfer |
+
+## Starknet-Specific Considerations
+
+### Account Abstraction
+
+Starknet accounts are smart contracts, meaning:
+1. Accounts must be **deployed** before receiving tokens
+2. Account logic is defined by the **class hash**
+3. Signatures use the **STARK curve** (not secp256k1)
+
+### Transaction Types
+
+1. **INVOKE** - Call contract methods (transfers, etc.)
+2. **DECLARE** - Publish contract class
+3. **DEPLOY_ACCOUNT** - Deploy a new account
+
+### Fee Payment
+
+- Fees are paid in **STRK** or **ETH**
+- Fee estimation returns the maximum fee
+- Actual fee may be lower
+
+### Block Finality
+
+- Blocks are **pending** until proven
+- L1 finality requires proof submission (~hours)
+- L2 finality is fast (~seconds)
+
+## Integration Checklist
+
+- [ ] Install required packages (`@swapkit/sdk` or `@swapkit/toolboxes`)
+- [ ] Configure RPC endpoint (optional, default provided)
+- [ ] Initialize toolbox with credentials
+- [ ] Validate addresses before transactions
+- [ ] Estimate fees before transfers
+- [ ] Handle errors appropriately
+- [ ] Test on testnet before mainnet
+- [ ] Consider account deployment status
+
+## Related Documentation
+
+- [Starknet Integration Guide](/guides/chains/starknet) - Comprehensive integration guide
+- [Cross-Chain Swaps](/guides/actions/swap) - Swap between chains
+- [Error Handling](/guides/error-handling) - Error handling patterns
+- [Production Best Practices](/guides/production-best-practices) - Deployment guidelines

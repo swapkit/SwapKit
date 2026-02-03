@@ -13,7 +13,7 @@ export interface SwapKitState {
   setIsConnectingWallet: (isConnectingWallet: boolean) => void;
 }
 
-export type SwapKitWidgetProps = { config?: SKConfigState };
+export type SwapKitWidgetProps = { config?: SKConfigState } & React.HTMLAttributes<HTMLDivElement>;
 
 export type UseSwapQuoteParams = { inputAsset: string | null; outputAsset: string | null; amount: string };
 
@@ -24,3 +24,5 @@ export type UseFilteredSortedAssetsFilters = {
 };
 
 export type BalanceDetails = { balance: AssetValue; wallet: ChainWallet<Chain>; chain: Chain; identifier: string };
+
+export type ControlsStoreFieldValues = { apiUrl: string; apiKey: string; apiUrlQuote: string; apiUrlSwap: string };

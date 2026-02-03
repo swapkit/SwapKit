@@ -12,6 +12,7 @@
     "@radix-ui/react-label": "2.1.8",
     "@radix-ui/react-menubar": "1.1.16",
     "@radix-ui/react-select": "2.2.6",
+    "@radix-ui/react-separator": "1.1.8",
     "@radix-ui/react-slot": "1.2.4",
     "@radix-ui/react-switch": "1.2.6",
     "@radix-ui/react-tabs": "1.1.13",
@@ -47,6 +48,12 @@
       "require": "./dist/react/index.cjs",
       "types": "./dist/types/react/index.d.ts"
     },
+    "./react/controls": {
+      "bun": "./src/react/controls/index.ts",
+      "default": "./dist/react/controls/index.js",
+      "require": "./dist/react/controls/index.cjs",
+      "types": "./dist/types/react/controls/index.d.ts"
+    },
     "./swapkit.css": { "bun": "./src/swapkit.css", "default": "./dist/swapkit.css" }
   },
   "files": ["dist/", "src/"],
@@ -56,7 +63,7 @@
   "private": true,
   "repository": { "directory": "packages/ui", "type": "git", "url": "git+https://github.com/swapkit/SwapKit.git" },
   "scripts": {
-    "build": "bun run ./build.ts",
+    "build": "NODE_ENV=production bun run ./build.ts",
     "build:clean": "rm -rf dist && bun run ./build.ts",
     "clean": "rm -rf dist node_modules *.tsbuildinfo"
   },
