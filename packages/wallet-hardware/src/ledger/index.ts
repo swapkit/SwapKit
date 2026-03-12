@@ -34,6 +34,7 @@ export const ledgerWallet = createWallet({
     Chain.Aurora,
     Chain.Avalanche,
     Chain.Base,
+    Chain.Berachain,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -130,6 +131,7 @@ async function getWalletMethods({ chain, derivationPath }: { chain: Chain; deriv
     case Chain.Ethereum:
     case Chain.Avalanche:
     case Chain.Arbitrum:
+    case Chain.Berachain:
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.BinanceSmartChain:
