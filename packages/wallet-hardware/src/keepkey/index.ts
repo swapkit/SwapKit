@@ -57,6 +57,7 @@ export const keepkeyWallet = createWallet({
     Chain.Arbitrum,
     Chain.Avalanche,
     Chain.Base,
+    Chain.Berachain,
     Chain.BinanceSmartChain,
     Chain.Bitcoin,
     Chain.BitcoinCash,
@@ -64,6 +65,7 @@ export const keepkeyWallet = createWallet({
     Chain.Dogecoin,
     Chain.Dash,
     Chain.Ethereum,
+    Chain.Gnosis,
     Chain.Litecoin,
     Chain.Monad,
     Chain.Ripple,
@@ -92,6 +94,8 @@ async function getWalletMethods({
   switch (chain) {
     case Chain.BinanceSmartChain:
     case Chain.Arbitrum:
+    case Chain.Berachain:
+    case Chain.Gnosis:
     case Chain.Optimism:
     case Chain.Polygon:
     case Chain.Avalanche:
