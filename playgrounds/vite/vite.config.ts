@@ -23,6 +23,20 @@ export default defineConfig({
 
   esbuild: { logOverride: { "this-is-undefined-in-esm": "silent" }, target: "es2022" },
   optimizeDeps: {
+    // NOTE: MetaMask's connect SDK renders its install/QR modal via Stencil lazy
+    // web components (@metamask/multichain-ui) that resolve their chunks from
+    // import.meta.url. Pre-bundling breaks that, so serve that package as native ESM.
+    exclude: ["@metamask/multichain-ui"],
+    // NOTE: connect-multichain dynamically imports these CJS packages with NAMED
+    // imports (e.g. { SessionStore } from "@metamask/mobile-wallet-protocol-core").
+    // Without listing them here, Vite emits default-only interop chunks
+    // (`export default require_dist()`) so the named members are undefined at runtime
+    // and the mobile/QR (extension-not-installed) flow throws before it can connect.
+    include: [
+      "@metamask/mobile-wallet-protocol-core",
+      "@metamask/mobile-wallet-protocol-dapp-client",
+      "eciesjs",
+    ],
     esbuildOptions: {
       // NOTE: Have to be added to fix: Uncaught ReferenceError: global is not defined
       define: { global: "globalThis" },

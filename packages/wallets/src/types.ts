@@ -17,6 +17,7 @@ import type { ledgerWallet } from "@swapkit/wallet-hardware/ledger";
 import type { trezorWallet } from "@swapkit/wallet-hardware/trezor";
 import type { coinbaseWallet } from "./coinbase";
 import type { keystoreWallet } from "./keystore";
+import type { metamaskWallet } from "./metamask";
 import type { walletSelectorWallet } from "./near-wallet-selector";
 import type { passkeysWallet } from "./passkeys";
 import type { radixWallet } from "./radix";
@@ -39,7 +40,7 @@ export type SKWallets = {
   [WalletOption.LEAP]: typeof keplrWallet;
   [WalletOption.LEDGER]: typeof ledgerWallet;
   [WalletOption.LEDGER_LIVE]: typeof ledgerWallet;
-  [WalletOption.METAMASK]: typeof evmWallet;
+  [WalletOption.METAMASK]: typeof metamaskWallet;
   [WalletOption.OKX]: typeof okxWallet;
   [WalletOption.OKX_MOBILE]: typeof evmWallet;
   [WalletOption.ONEKEY]: typeof onekeyWallet;
@@ -75,7 +76,7 @@ export type SKWalletsSupportedChains = {
   [WalletOption.LEAP]: typeof keplrWallet.connectKeplr.supportedChains;
   [WalletOption.LEDGER]: typeof ledgerWallet.connectLedger.supportedChains;
   [WalletOption.LEDGER_LIVE]: typeof ledgerWallet.connectLedger.supportedChains;
-  [WalletOption.METAMASK]: typeof evmWallet.connectEVMWallet.supportedChains;
+  [WalletOption.METAMASK]: typeof metamaskWallet.connectMetamask.supportedChains;
   [WalletOption.OKX]: typeof okxWallet.connectOkx.supportedChains;
   [WalletOption.OKX_MOBILE]: typeof evmWallet.connectEVMWallet.supportedChains;
   [WalletOption.ONEKEY]: typeof onekeyWallet.connectOnekeyWallet.supportedChains;

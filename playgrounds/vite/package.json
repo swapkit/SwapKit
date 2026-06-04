@@ -22,7 +22,10 @@
     "vite-plugin-node-polyfills": "0.24.0"
   },
   "devDependencies": {
+    "@metamask/mobile-wallet-protocol-core": "0.4.0",
+    "@metamask/mobile-wallet-protocol-dapp-client": "0.3.0",
     "@vitejs/plugin-react": "5.1.0",
+    "eciesjs": "0.4.17",
     "rollup-plugin-visualizer": "6.0.5",
     "typescript": "5.9.3",
     "vite-plugin-top-level-await": "1.6.0",

@@ -82,10 +82,11 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
         case WalletOption.BITGET:
           return skClient.connectBitget?.(chainsToConnect);
         case WalletOption.COINBASE_WEB:
-        case WalletOption.METAMASK:
         case WalletOption.TRUSTWALLET_WEB:
         case WalletOption.EIP6963:
           return skClient.connectEVMWallet(chainsToConnect, option, provider);
+        case WalletOption.METAMASK:
+          return skClient.connectMetamask(chainsToConnect);
         case WalletOption.TALISMAN:
           return skClient.connectTalisman(chainsToConnect);
         case WalletOption.KEPLR:
@@ -252,7 +253,13 @@ export const WalletPicker = ({ skClient, setWallet, setPhrase }: Props) => {
     [chains.length, handleConnection],
   );
 
-  const eip6963Wallets = getEIP6963Wallets().providers;
+  // MetaMask now connects via the dedicated SDK-backed METAMASK button
+  // (@metamask/connect-evm), which also handles the installed extension. Drop it
+  // from the EIP-6963 discovery list to avoid a duplicate, SDK-bypassing entry.
+  // EIP6963ProviderInfo has no `rdns`, so match on the announced name.
+  const eip6963Wallets = getEIP6963Wallets().providers.filter(
+    (wallet) => !/metamask/i.test(wallet.info.name),
+  );
 
   return (
     <div style={{ display: "flex", gap: 12, position: "relative" }}>

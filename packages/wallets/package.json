@@ -3,6 +3,7 @@
     "@coinbase/wallet-sdk": "~4.3.7",
     "@cosmjs/amino": "~0.37.0",
     "@cosmjs/proto-signing": "~0.37.0",
+    "@metamask/connect-evm": "~1.4.0",
     "@near-js/transactions": "~2.5.0",
     "@near-wallet-selector/bitget-wallet": "~10.1.0",
     "@near-wallet-selector/core": "~10.1.0",
@@ -31,6 +32,7 @@
     "@coinbase/wallet-sdk": "4.3.7",
     "@cosmjs/amino": "0.37.0",
     "@cosmjs/proto-signing": "0.37.0",
+    "@metamask/connect-evm": "1.4.0",
     "@near-js/transactions": "2.5.0",
     "@near-wallet-selector/bitget-wallet": "10.1.0",
     "@near-wallet-selector/core": "10.1.0",
@@ -123,6 +125,12 @@
       "default": "./dist/src/ledger.js",
       "require": "./dist/src/ledger.cjs",
       "types": "./dist/types/ledger.d.ts"
+    },
+    "./metamask": {
+      "bun": "./src/metamask/index.ts",
+      "default": "./dist/src/metamask/index.js",
+      "require": "./dist/src/metamask/index.cjs",
+      "types": "./dist/types/metamask/index.d.ts"
     },
     "./near-wallet-selector": {
       "bun": "./src/near-wallet-selector/index.ts",

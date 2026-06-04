@@ -67,10 +67,13 @@ export const useSwapKit = () => {
 
       try {
         switch (option) {
-          case WalletOption.METAMASK:
           case WalletOption.COINBASE_WEB:
           case WalletOption.TRUSTWALLET_WEB:
             await swapKit?.connectEVMWallet?.(chains as EVMChain[]);
+            break;
+
+          case WalletOption.METAMASK:
+            await swapKit?.connectMetamask?.(chains);
             break;
 
           case WalletOption.PHANTOM:
