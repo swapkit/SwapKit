@@ -11,6 +11,7 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
     .with(WalletOption.VULTISIG, async () => (await import("@swapkit/wallet-extensions/vultisig")).vultisigWallet)
     .with(WalletOption.OKX, async () => (await import("@swapkit/wallet-extensions/okx")).okxWallet)
     .with(WalletOption.ONEKEY, async () => (await import("@swapkit/wallet-extensions/onekey")).onekeyWallet)
+    .with(WalletOption.METAMASK, async () => (await import("./metamask")).metamaskWallet)
     .with(WalletOption.EXODUS, async () => (await import("./passkeys")).passkeysWallet)
     .with(WalletOption.KEEPKEY, async () => (await import("@swapkit/wallet-hardware/keepkey")).keepkeyWallet)
     .with(
@@ -31,7 +32,6 @@ export async function loadWallet<W extends WalletOption>(walletOption: W): Promi
       WalletOption.BRAVE,
       WalletOption.COINBASE_WEB,
       WalletOption.EIP6963,
-      WalletOption.METAMASK,
       WalletOption.OKX_MOBILE,
       WalletOption.TRUSTWALLET_WEB,
       async () => (await import("@swapkit/wallet-extensions/evm-extensions")).evmWallet,
