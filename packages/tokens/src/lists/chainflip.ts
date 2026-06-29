@@ -1,16 +1,16 @@
 export const list = {
-  count: 10,
+  count: 13,
   keywords: [],
   name: "CHAINFLIP",
   provider: "CHAINFLIP",
-  timestamp: "2025-11-26T00:01:55.463Z",
+  timestamp: "2026-06-16T00:03:26.267Z",
   tokens: [
     {
       chain: "ARB",
       chainId: "42161",
       decimals: 18,
       identifier: "ARB.ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/arb.eth.png",
       ticker: "ETH",
     },
     {
@@ -20,15 +20,25 @@ export const list = {
       decimals: 6,
       identifier: "ARB.USDC-0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdc-0xaf88d065e77c8cc2239327c5edb3a432268e5831.png",
       ticker: "USDC",
+    },
+    {
+      address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      chain: "ARB",
+      chainId: "42161",
+      decimals: 6,
+      identifier: "ARB.USDT-0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/arb.usdt-0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png",
+      ticker: "USDT",
     },
     {
       chain: "BTC",
       chainId: "bitcoin",
       decimals: 8,
       identifier: "BTC.BTC",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/btc.btc.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/btc.btc.png",
       ticker: "BTC",
     },
     {
@@ -36,7 +46,7 @@ export const list = {
       chainId: "polkadot",
       decimals: 10,
       identifier: "DOT.DOT",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/dot.dot.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/dot.dot.png",
       ticker: "DOT",
     },
     {
@@ -44,7 +54,7 @@ export const list = {
       chainId: "1",
       decimals: 18,
       identifier: "ETH.ETH",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.eth.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/eth.eth.png",
       ticker: "ETH",
     },
     {
@@ -54,7 +64,7 @@ export const list = {
       decimals: 18,
       identifier: "ETH.FLIP-0x826180541412D574cf1336d22c0C0a287822678A",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.flip-0x826180541412d574cf1336d22c0c0a287822678a.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.flip-0x826180541412d574cf1336d22c0c0a287822678a.png",
       ticker: "FLIP",
     },
     {
@@ -64,7 +74,7 @@ export const list = {
       decimals: 6,
       identifier: "ETH.USDC-0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
       ticker: "USDC",
     },
     {
@@ -74,15 +84,25 @@ export const list = {
       decimals: 6,
       identifier: "ETH.USDT-0xdAC17F958D2ee523a2206206994597C13D831ec7",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.usdt-0xdac17f958d2ee523a2206206994597c13d831ec7.png",
       ticker: "USDT",
+    },
+    {
+      address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+      chain: "ETH",
+      chainId: "1",
+      decimals: 8,
+      identifier: "ETH.WBTC-0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/eth.wbtc-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png",
+      ticker: "WBTC",
     },
     {
       chain: "SOL",
       chainId: "solana",
       decimals: 9,
       identifier: "SOL.SOL",
-      logoURI: "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.sol.png",
+      logoURI: "https://storage.googleapis.com/token-list-swapkit/images/sol.sol.png",
       ticker: "SOL",
     },
     {
@@ -92,8 +112,18 @@ export const list = {
       decimals: 6,
       identifier: "SOL.USDC-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       logoURI:
-        "https://storage.googleapis.com/token-list-swapkit-dev/images/sol.usdc-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.png",
+        "https://storage.googleapis.com/token-list-swapkit/images/sol.usdc-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.png",
       ticker: "USDC",
+    },
+    {
+      address: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      chain: "SOL",
+      chainId: "solana",
+      decimals: 6,
+      identifier: "SOL.USDT-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      logoURI:
+        "https://storage.googleapis.com/token-list-swapkit/images/sol.usdt-es9vmfrzacermjfrf4h2fyd4kconky11mcce8benwnyb.png",
+      ticker: "USDT",
     },
   ],
   version: { major: 1, minor: 0, patch: 0 },
